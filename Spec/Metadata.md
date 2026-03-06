@@ -1,8 +1,8 @@
 <h1 align="center">🐸 FROG Metadata Specification</h1>
 
 <p align="center">
-  Metadata definition for <strong>.frog</strong> files<br/>
-  <em>FROG — Free Open Graphical Language</em>
+Metadata definition for <strong>.frog</strong> files<br/>
+<em>FROG — Free Open Graphical Language</em>
 </p>
 
 <hr/>
@@ -16,20 +16,22 @@
   <li><a href="#fields">4. Field definitions</a>
     <ul>
       <li><a href="#field-name">4.1 <code>name</code></a></li>
-      <li><a href="#field-description">4.2 <code>description</code></a></li>
-      <li><a href="#field-author">4.3 <code>author</code></a></li>
-      <li><a href="#field-program-version">4.4 <code>program_version</code></a></li>
-      <li><a href="#field-tags">4.5 <code>tags</code></a></li>
-      <li><a href="#field-created">4.6 <code>created</code></a></li>
-      <li><a href="#field-updated">4.7 <code>updated</code></a></li>
-      <li><a href="#field-license">4.8 <code>license</code> (optional)</a></li>
+      <li><a href="#field-summary">4.2 <code>summary</code></a></li>
+      <li><a href="#field-description">4.3 <code>description</code></a></li>
+      <li><a href="#field-author">4.4 <code>author</code></a></li>
+      <li><a href="#field-program-version">4.5 <code>program_version</code></a></li>
+      <li><a href="#field-tags">4.6 <code>tags</code></a></li>
+      <li><a href="#field-is-example">4.7 <code>is_example</code></a></li>
+      <li><a href="#field-created">4.8 <code>created</code></a></li>
+      <li><a href="#field-updated">4.9 <code>updated</code></a></li>
+      <li><a href="#field-license">4.10 <code>license</code></a></li>
     </ul>
   </li>
   <li><a href="#minimal-example">5. Minimal metadata example</a></li>
   <li><a href="#extended-example">6. Extended metadata example</a></li>
   <li><a href="#validation">7. Validation rules</a></li>
   <li><a href="#extensibility">8. Extensibility</a></li>
-  <li><a href="#goals">9. Design goals</a></li>
+  <li><a href="#design-goals">9. Design goals</a></li>
   <li><a href="#summary">10. Summary</a></li>
 </ul>
 
@@ -38,13 +40,20 @@
 <h2 id="overview">1. Overview</h2>
 
 <p>
-The <strong>metadata</strong> section describes the identity and documentation of a Frog.
-It is intended for indexing, documentation, search, and general project organization.
+The <strong>metadata</strong> section describes the identity and documentation of a Frog program.
 </p>
 
 <p>
-The metadata section <strong>does not affect execution semantics</strong>.
-Execution behavior MUST be derived exclusively from the <code>diagram</code>, <code>interface</code>, and validation rules defined by the language.
+It provides descriptive information used by development tools for indexing, search, documentation generation, and project organization.
+</p>
+
+<p>
+The metadata section <strong>MUST NOT affect execution semantics</strong>.
+Execution behavior MUST be derived exclusively from the <code>diagram</code>, <code>interface</code>, and language validation rules.
+</p>
+
+<p>
+Runtimes MUST ignore metadata fields during execution.
 </p>
 
 <p>
@@ -52,9 +61,9 @@ Typical consumers of metadata include:
 </p>
 
 <ul>
-  <li>Development environments (search, browsing, UI)</li>
+  <li>Development environments</li>
   <li>Documentation generators</li>
-  <li>Example catalogs</li>
+  <li>Example browsers</li>
   <li>Library indexers</li>
   <li>Version tracking tools</li>
 </ul>
@@ -81,8 +90,8 @@ Rules:
 </p>
 
 <ul>
-  <li><code>metadata</code> MUST be present.</li>
-  <li>Runtimes MUST ignore metadata fields for execution decisions.</li>
+  <li><code>metadata</code> MUST exist.</li>
+  <li>Execution engines MUST ignore metadata when executing a Frog.</li>
 </ul>
 
 <hr/>
@@ -90,22 +99,24 @@ Rules:
 <h2 id="structure">3. Metadata structure</h2>
 
 <p>
-A typical metadata object:
+Typical metadata object:
 </p>
 
 <pre>"metadata": {
   "name": "Add",
+  "summary": "Simple numeric addition example.",
   "description": "Adds two floating-point numbers.",
-  "author": "Author Name",
+  "author": "Example Labs",
   "program_version": "1.0.0",
-  "tags": ["math", "arithmetic"],
+  "tags": ["math", "example"],
+  "is_example": true,
   "created": "2026-03-05T10:00:00Z",
   "updated": "2026-03-05T12:00:00Z",
   "license": "Apache-2.0"
 }</pre>
 
 <p>
-Only a minimal subset is required. Additional fields are allowed.
+Only a minimal subset is required. Additional fields MAY be introduced by tools.
 </p>
 
 <hr/>
@@ -123,37 +134,42 @@ Human-readable name of the Frog.
 <ul>
   <li>MUST be a string.</li>
   <li>SHOULD be concise and descriptive.</li>
-  <li>SHOULD be unique within a library or project scope.</li>
+  <li>SHOULD be unique within a project or library scope.</li>
 </ul>
-
-<p>
-Examples:
-</p>
-
-<pre>Add
-LowPassFilter
-PIDController
-ReadTemperature</pre>
 
 <hr/>
 
-<h3 id="field-description">4.2 <code>description</code></h3>
+<h3 id="field-summary">4.2 <code>summary</code></h3>
 
 <p>
-Short explanation of what the Frog does.
+Short one-line description used for indexing, search results, or UI previews.
+</p>
+
+<pre>"summary": "Simple numeric addition example."</pre>
+
+<ul>
+  <li>MUST be a string if present.</li>
+  <li>SHOULD be a single sentence.</li>
+</ul>
+
+<hr/>
+
+<h3 id="field-description">4.3 <code>description</code></h3>
+
+<p>
+Longer explanation of what the Frog does.
 </p>
 
 <pre>"description": "Adds two floating-point numbers."</pre>
 
 <ul>
   <li>MUST be a string.</li>
-  <li>SHOULD be one or two sentences.</li>
-  <li>SHOULD describe behavior, not implementation details.</li>
+  <li>SHOULD describe behavior rather than implementation.</li>
 </ul>
 
 <hr/>
 
-<h3 id="field-author">4.3 <code>author</code></h3>
+<h3 id="field-author">4.4 <code>author</code></h3>
 
 <p>
 Identifies the creator or maintainer.
@@ -163,64 +179,57 @@ Identifies the creator or maintainer.
 
 <ul>
   <li>MUST be a string if present.</li>
-  <li>MAY include an organization name.</li>
-  <li>MAY include multiple names using a single string.</li>
+  <li>MAY include organization names.</li>
 </ul>
 
 <hr/>
 
-<h3 id="field-program-version">4.4 <code>program_version</code></h3>
+<h3 id="field-program-version">4.5 <code>program_version</code></h3>
 
 <p>
-Version of the Frog program itself (not the specification version).
+Version of the Frog program itself.
 </p>
 
 <pre>"program_version": "1.2.0"</pre>
 
 <ul>
   <li>MUST be a string if present.</li>
-  <li>SHOULD follow semantic versioning: <code>MAJOR.MINOR.PATCH</code>.</li>
+  <li>SHOULD follow semantic versioning (<code>MAJOR.MINOR.PATCH</code>).</li>
 </ul>
-
-<p>
-Examples:
-</p>
-
-<pre>1.0.0
-2.3.1
-0.9.0</pre>
 
 <hr/>
 
-<h3 id="field-tags">4.5 <code>tags</code></h3>
+<h3 id="field-tags">4.6 <code>tags</code></h3>
 
 <p>
 Keywords used for indexing and searching.
 </p>
 
-<pre>"tags": ["math", "arithmetic"]</pre>
+<pre>"tags": ["math", "signal", "example"]</pre>
 
 <ul>
   <li>MUST be an array of strings if present.</li>
-  <li>SHOULD contain short, lowercase keywords.</li>
-  <li>SHOULD describe the domain and behavior.</li>
+  <li>SHOULD contain short lowercase keywords.</li>
 </ul>
-
-<p>
-Example tags:
-</p>
-
-<pre>math
-signal
-control
-robotics
-filter
-array
-example</pre>
 
 <hr/>
 
-<h3 id="field-created">4.6 <code>created</code></h3>
+<h3 id="field-is-example">4.7 <code>is_example</code></h3>
+
+<p>
+Indicates whether the Frog is intended to be used as an example or tutorial element.
+</p>
+
+<pre>"is_example": true</pre>
+
+<ul>
+  <li>MUST be boolean if present.</li>
+  <li>Tools MAY use this field to populate example browsers.</li>
+</ul>
+
+<hr/>
+
+<h3 id="field-created">4.8 <code>created</code></h3>
 
 <p>
 Timestamp indicating when the Frog was created.
@@ -230,55 +239,42 @@ Timestamp indicating when the Frog was created.
 
 <ul>
   <li>MUST be a string if present.</li>
-  <li>SHOULD be ISO 8601.</li>
-  <li>SHOULD be expressed in UTC using <code>Z</code>.</li>
+  <li>SHOULD follow ISO-8601 UTC format.</li>
 </ul>
-
-<p>
-Recommended format:
-</p>
-
-<pre>YYYY-MM-DDTHH:MM:SSZ</pre>
 
 <hr/>
 
-<h3 id="field-updated">4.7 <code>updated</code></h3>
+<h3 id="field-updated">4.9 <code>updated</code></h3>
 
 <p>
-Timestamp of the last update.
+Timestamp of the last modification.
 </p>
 
 <pre>"updated": "2026-03-05T12:00:00Z"</pre>
 
 <ul>
   <li>MUST be a string if present.</li>
-  <li>SHOULD be ISO 8601 UTC.</li>
-  <li>SHOULD be updated automatically by tools.</li>
+  <li>SHOULD follow ISO-8601 UTC format.</li>
 </ul>
 
 <hr/>
 
-<h3 id="field-license">4.8 <code>license</code> (optional)</h3>
+<h3 id="field-license">4.10 <code>license</code></h3>
 
 <p>
-Informational license string for the Frog.
+Informational license identifier for the Frog.
 </p>
 
 <pre>"license": "Apache-2.0"</pre>
 
 <ul>
   <li>MUST be a string if present.</li>
-  <li>SHOULD use SPDX identifiers when possible.</li>
-  <li>This field is informational and does not enforce legal behavior.</li>
+  <li>SHOULD use SPDX identifiers.</li>
 </ul>
 
 <hr/>
 
 <h2 id="minimal-example">5. Minimal metadata example</h2>
-
-<p>
-A minimal valid metadata object:
-</p>
 
 <pre>"metadata": {
   "name": "Add",
@@ -291,10 +287,12 @@ A minimal valid metadata object:
 
 <pre>"metadata": {
   "name": "PIDController",
+  "summary": "Basic PID controller example.",
   "description": "Implements a proportional–integral–derivative controller.",
   "author": "Example Automation",
   "program_version": "1.2.0",
   "tags": ["control", "pid", "automation"],
+  "is_example": true,
   "created": "2026-03-05T10:00:00Z",
   "updated": "2026-03-05T14:00:00Z",
   "license": "Apache-2.0"
@@ -303,10 +301,6 @@ A minimal valid metadata object:
 <hr/>
 
 <h2 id="validation">7. Validation rules</h2>
-
-<p>
-Implementations MUST enforce:
-</p>
 
 <ul>
   <li><code>metadata</code> MUST exist.</li>
@@ -321,8 +315,8 @@ Unknown metadata fields:
 </p>
 
 <ul>
-  <li>Tools MAY introduce additional fields.</li>
-  <li>Runtimes MUST ignore unknown metadata fields.</li>
+  <li>MAY be added by tools.</li>
+  <li>MUST be ignored by runtimes.</li>
 </ul>
 
 <hr/>
@@ -330,7 +324,7 @@ Unknown metadata fields:
 <h2 id="extensibility">8. Extensibility</h2>
 
 <p>
-Tools MAY extend metadata with additional fields.
+Tools MAY extend metadata with additional properties.
 </p>
 
 <pre>"metadata": {
@@ -346,14 +340,14 @@ Such extensions MUST NOT affect execution and MUST be safely ignorable.
 
 <hr/>
 
-<h2 id="goals">9. Design goals</h2>
+<h2 id="design-goals">9. Design goals</h2>
 
 <ul>
-  <li>Provide clear identity and documentation.</li>
-  <li>Enable indexing and discovery.</li>
-  <li>Support stable version tracking.</li>
-  <li>Remain tool-agnostic and extensible.</li>
-  <li>Remain non-executable and non-authoritative for runtime behavior.</li>
+  <li>Provide clear program identity.</li>
+  <li>Enable search and discovery.</li>
+  <li>Support version tracking.</li>
+  <li>Remain tool-agnostic.</li>
+  <li>Remain non-authoritative for runtime behavior.</li>
 </ul>
 
 <hr/>
@@ -361,7 +355,7 @@ Such extensions MUST NOT affect execution and MUST be safely ignorable.
 <h2 id="summary">10. Summary</h2>
 
 <p>
-The metadata section provides descriptive information about a Frog without affecting execution.
-It enables documentation, discoverability, indexing, and version tracking while preserving a strict separation between
+The metadata section provides descriptive information about a Frog program without influencing execution.
+It enables documentation, indexing, and discoverability while preserving a strict separation between
 <strong>program description</strong> and <strong>program execution</strong>.
 </p>
