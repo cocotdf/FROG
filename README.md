@@ -31,20 +31,19 @@
 
 <p>
 FROG is an open, hardware-agnostic <strong>graphical dataflow programming language</strong>
-designed to orchestrate computation through explicit dataflow graphs.
+designed to describe computation through explicit dataflow graphs.
 </p>
 
 <p>
-Instead of writing programs as sequences of instructions,
-FROG programs are expressed as <strong>graphs of operations connected by data</strong>.
-Execution emerges naturally from the movement and availability of data
-through the system.
+Instead of expressing programs as sequences of instructions,
+FROG represents programs as <strong>graphs of operations connected by data</strong>.
+Execution emerges from the availability and movement of data through the system.
 </p>
 
 <p>
 FROG defines an open standard for describing computation as
 <strong>executable dataflow graphs</strong> composed of nodes, connections,
-types, and interaction interfaces.
+types, interfaces, and interaction layers.
 </p>
 
 <p>
@@ -53,8 +52,8 @@ IDE, compiler, runtime, or vendor ecosystem.
 </p>
 
 <p>
-This separation ensures long-term stability, interoperability,
-and the possibility of multiple independent implementations.
+This separation enables long-term stability, interoperability,
+and multiple independent implementations.
 </p>
 
 <hr/>
@@ -62,7 +61,7 @@ and the possibility of multiple independent implementations.
 <h2 id="why-frog-exists">Why FROG exists</h2>
 
 <p>
-Graphical dataflow programming has demonstrated powerful advantages
+Graphical dataflow programming has demonstrated major advantages
 for building complex systems:
 </p>
 
@@ -75,19 +74,19 @@ for building complex systems:
 </ul>
 
 <p>
-However, most existing graphical dataflow languages have historically been
+However, most graphical dataflow environments have historically been
 tightly coupled to proprietary ecosystems where the language,
 runtime, and development environment are inseparable.
 </p>
 
 <p>
-This restricts innovation, limits portability,
-and prevents independent implementations.
+This limits portability, slows innovation,
+and prevents independent implementations of the same language.
 </p>
 
 <p>
 FROG addresses this limitation by defining an <strong>open language specification</strong>
-separate from any particular tool.
+separate from any single tool or vendor.
 </p>
 
 <p>
@@ -130,8 +129,8 @@ Dataflow execution
 </pre>
 
 <p>
-Execution order therefore emerges from data dependencies rather than
-being explicitly defined.
+Execution order therefore emerges from data dependencies
+rather than being manually sequenced.
 </p>
 
 <p>
@@ -150,7 +149,7 @@ This model enables:
 <h2 id="from-prototyping-to-critical-systems">From prototyping to critical systems</h2>
 
 <p>
-FROG is designed to combine two goals that are often seen as contradictory
+FROG is designed to combine two goals that are often treated as contradictory
 in programming languages.
 </p>
 
@@ -160,10 +159,14 @@ in programming languages.
 </ul>
 
 <p>
-Graphical programming dramatically lowers the barrier to entry.
-By expressing systems visually as dataflow graphs,
-engineers and scientists can prototype complex systems rapidly
-without the cognitive overhead of traditional syntax-based languages.
+Graphical programming lowers the barrier to entry by allowing systems
+to be expressed visually as dataflow graphs,
+reducing the cognitive overhead of syntax-driven programming.
+</p>
+
+<p>
+This makes rapid prototyping more accessible to engineers,
+scientists, researchers, and system designers.
 </p>
 
 <p>
@@ -171,10 +174,10 @@ At the same time, accessibility must not come at the cost of efficiency.
 </p>
 
 <p>
-Through its intermediate representation and compilation pipeline,
-FROG enables deep optimization of execution graphs,
+Through a dedicated execution representation and compilation pipeline,
+FROG is designed to support deep optimization of dataflow graphs,
 allowing programs to scale from simple experiments
-to high-performance deterministic systems.
+to deterministic and high-performance systems.
 </p>
 
 <p>
@@ -197,9 +200,9 @@ FROG aims to provide a unified programming model where
 </p>
 
 <p>
-The ambition is to contribute to a significant evolution in the design
-of programming languages by bringing together graphical programming,
-dataflow execution, and modern compiler architectures.
+Its ambition is to contribute to a significant evolution in the design
+of programming languages by combining graphical programming,
+dataflow execution, and modern compiler architectures in an open ecosystem.
 </p>
 
 <hr/>
@@ -220,18 +223,18 @@ The diagram defines the program logic as a directed dataflow graph composed of:
 <li>nodes representing operations</li>
 <li>edges representing data connections</li>
 <li>typed ports defining valid data exchange</li>
-<li>execution metadata describing scheduling behavior</li>
+<li>execution metadata describing execution-related constraints</li>
 </ul>
 
 <p>
-Execution is derived exclusively from the graph structure and the
-availability of data.
+Execution is derived exclusively from the graph structure
+and the availability of data.
 </p>
 
 <h3>Front Panel — the interaction layer</h3>
 
 <p>
-The front panel defines the user interface used to interact with the program.
+The front panel defines the user-facing interaction layer of the program.
 </p>
 
 <ul>
@@ -242,12 +245,12 @@ The front panel defines the user interface used to interact with the program.
 </ul>
 
 <p>
-Front panel elements follow <strong>SVG semantics</strong> for graphical
-representation and rendering.
+Front panel elements follow <strong>SVG-oriented graphical semantics</strong>
+for representation and rendering.
 </p>
 
 <p>
-These interface elements are connected to the diagram through explicit
+These interface elements are connected to the diagram through explicit,
 typed bindings.
 </p>
 
@@ -256,48 +259,35 @@ typed bindings.
 <h2 id="program-representation">Program representation</h2>
 
 <p>
-FROG programs exist in two complementary representations.
+FROG programs exist across three distinct representation levels.
 </p>
 
-<h3>FROG IR — Intermediate Representation</h3>
+<h3>FROG Expression</h3>
 
 <p>
-The <strong>FROG IR</strong> is the canonical internal representation
-used for execution and compilation.
-</p>
-
-<p>
-It contains:
-</p>
-
-<ul>
-<li>nodes and operations</li>
-<li>data connections</li>
-<li>type information</li>
-<li>execution constraints</li>
-<li>scheduling metadata</li>
-</ul>
-
-<h3>FROG Expression — canonical program format</h3>
-
-<p>
-The <strong>FROG Expression</strong> is the serialized program representation.
+The <strong>FROG Expression</strong> is the serialized source representation
+stored in a <code>.frog</code> file.
 </p>
 
 <p>
-It contains:
+It is the canonical source form of a FROG program.
+</p>
+
+<p>
+It may contain:
 </p>
 
 <ul>
 <li>diagram definition</li>
 <li>front panel definition</li>
-<li>embedded SVG interface elements</li>
-<li>type system definitions</li>
-<li>program metadata</li>
+<li>interface definitions</li>
+<li>icon and metadata sections</li>
+<li>IDE-related preferences</li>
+<li>other source-level program sections defined by the specification</li>
 </ul>
 
 <p>
-The expression is designed for:
+The Expression is designed for:
 </p>
 
 <ul>
@@ -307,9 +297,51 @@ The expression is designed for:
 <li>long-term durability</li>
 </ul>
 
+<h3>FROG Program Model</h3>
+
 <p>
-Programs are never executed directly from the expression.
-Execution always occurs through the validated intermediate representation.
+The <strong>FROG Program Model</strong> is the canonical editable in-memory representation
+used by development tools.
+</p>
+
+<p>
+It is reconstructed from the FROG Expression when a program is loaded,
+and it is continuously updated while the user edits the diagram or front panel.
+</p>
+
+<p>
+The Program Model exists for authoring, synchronization, validation,
+and preparation for execution-oriented processing.
+</p>
+
+<h3>FROG Execution IR</h3>
+
+<p>
+The <strong>FROG Execution IR</strong> is the canonical execution-oriented representation
+derived from the validated Program Model.
+</p>
+
+<p>
+It contains the information required for execution-related workflows such as:
+</p>
+
+<ul>
+<li>resolved operations and nodes</li>
+<li>validated data connections</li>
+<li>normalized type information</li>
+<li>execution constraints</li>
+<li>scheduling metadata</li>
+<li>compiler preparation data</li>
+</ul>
+
+<p>
+Programs are not executed directly from the Expression.
+Execution occurs from source-derived, validated execution representations.
+</p>
+
+<p>
+Optional cache files may store derived execution data such as cached Execution IR,
+but cache content is always non-authoritative.
 </p>
 
 <hr/>
@@ -317,25 +349,42 @@ Execution always occurs through the validated intermediate representation.
 <h2 id="execution-architecture">Execution architecture</h2>
 
 <pre>
-                FROG IDE
-               /        \
-              /          \
-             ↓            ↓
-   FROG Expression     FROG IR
-     (storage)      (execution graph)
-              \          /
-               \        /
-                ↓      ↓
-               Compiler(s)
-                    ↓
-             Target runtime
-                    ↓
-     CPU / RT / FPGA / GPU / Embedded
+                 FROG IDE
+        +---------------------------+
+        | Diagram + Front Panel UI  |
+        +-------------+-------------+
+                      |
+                      v
+             FROG Program Model
+         (editable in-memory model)
+              /               \
+             /                 \
+            v                   v
+   FROG Expression        Validation / Lowering
+    (.frog source)               |
+                                 v
+                       FROG Execution IR
+                    (execution-oriented form)
+                                 |
+                                 v
+                            Compiler(s)
+                                 |
+                                 v
+                           Target Runtime
+                                 |
+                                 v
+              CPU / RT / FPGA / GPU / Embedded
 </pre>
 
 <p>
-During development, the IDE maintains the IR while the diagram is edited.
-Saving a program serializes the IR into the canonical program expression.
+During development, tools maintain the <strong>FROG Program Model</strong>.
+Saving a program serializes that model into the canonical
+<strong>FROG Expression</strong>.
+</p>
+
+<p>
+When execution is requested, the validated Program Model is lowered into the
+<strong>FROG Execution IR</strong>, which is then used by compilers and runtimes.
 </p>
 
 <hr/>
@@ -343,7 +392,8 @@ Saving a program serializes the IR into the canonical program expression.
 <h2 id="hardware-agnostic-execution">Hardware-agnostic execution</h2>
 
 <p>
-FROG programs are designed to run across multiple targets without modification.
+FROG programs are designed to run across multiple targets without changing
+their source-level programming model.
 </p>
 
 <ul>
@@ -353,7 +403,7 @@ FROG programs are designed to run across multiple targets without modification.
 </ul>
 
 <p>
-The diagram and front panel remain identical across targets.
+The diagram and front panel remain conceptually identical across targets.
 Only the compiler and runtime implementations differ.
 </p>
 
@@ -369,12 +419,12 @@ FROG integrates validation and optimization directly into its architecture.
 <li>strict type validation</li>
 <li>graph verification before execution</li>
 <li>controlled execution boundaries</li>
-<li>sandboxed runtime environments</li>
+<li>optional sandboxed runtime environments</li>
 <li>deterministic execution guarantees</li>
 </ul>
 
 <p>
-Optimization is performed at the IR and compilation levels:
+Optimization is performed at the Execution IR and compilation levels:
 </p>
 
 <ul>
@@ -391,7 +441,8 @@ Optimization is performed at the IR and compilation levels:
 <h2 id="interoperability">Interoperability</h2>
 
 <p>
-FROG integrates with external languages through stable ABI interfaces.
+FROG is designed to integrate with external languages
+through stable ABI-based interfaces.
 </p>
 
 <ul>
@@ -399,7 +450,7 @@ FROG integrates with external languages through stable ABI interfaces.
 <li>Rust</li>
 <li>Python</li>
 <li>.NET</li>
-<li>other languages via ABI bindings</li>
+<li>other languages via compatible ABI bindings</li>
 </ul>
 
 <p>
@@ -416,8 +467,11 @@ FROG explicitly separates:
 </p>
 
 <ul>
-<li>language specification</li>
-<li>intermediate representation</li>
+<li>the language specification</li>
+<li>the serialized source representation</li>
+<li>the editable program model</li>
+<li>the execution-oriented representation</li>
+<li>compiler implementations</li>
 <li>runtime implementations</li>
 <li>development environments</li>
 </ul>
@@ -434,7 +488,7 @@ This architecture enables:
 </ul>
 
 <p>
-The specification defines the language — not a particular implementation.
+The specification defines the language, not a specific product or implementation.
 </p>
 
 <hr/>
@@ -443,8 +497,8 @@ The specification defines the language — not a particular implementation.
 
 <p>
 FROG is currently in early development.
-The language specification, intermediate representation,
-and reference tooling are under active design.
+The language specification, program representation model,
+execution architecture, and reference tooling are under active design.
 </p>
 
 <p>
