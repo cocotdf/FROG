@@ -17,13 +17,14 @@ Definition of program interfaces for <strong>.frog</strong> files<br/>
 <li><a href="#inputs">5. Input Ports</a></li>
 <li><a href="#outputs">6. Output Ports</a></li>
 <li><a href="#port-properties">7. Port Properties</a></li>
-<li><a href="#type-system">8. Type System Integration</a></li>
-<li><a href="#diagram-binding">9. Binding with the Diagram</a></li>
-<li><a href="#connector-relation">10. Relation with Connector</a></li>
-<li><a href="#examples">11. Examples</a></li>
-<li><a href="#validation">12. Validation Rules</a></li>
-<li><a href="#extensibility">13. Extensibility</a></li>
-<li><a href="#summary">14. Summary</a></li>
+<li><a href="#connection-requirement">8. Connection Requirement</a></li>
+<li><a href="#type-system">9. Type System Integration</a></li>
+<li><a href="#diagram-binding">10. Binding with the Diagram</a></li>
+<li><a href="#connector-relation">11. Relation with Connector</a></li>
+<li><a href="#examples">12. Examples</a></li>
+<li><a href="#validation">13. Validation Rules</a></li>
+<li><a href="#extensibility">14. Extensibility</a></li>
+<li><a href="#summary">15. Summary</a></li>
 </ul>
 
 <hr/>
@@ -43,6 +44,7 @@ It specifies:
 <li>the program outputs</li>
 <li>their identifiers</li>
 <li>their data types</li>
+<li>their connection requirements</li>
 </ul>
 
 <p>
@@ -128,6 +130,19 @@ The interface describes the logical contract only.
 It does not define where ports are drawn on a node. That responsibility belongs to the <code>connector</code> section.
 </p>
 
+<p>
+Direction is defined structurally:
+</p>
+
+<ul>
+<li>a port inside <code>inputs</code> is an input port</li>
+<li>a port inside <code>outputs</code> is an output port</li>
+</ul>
+
+<p>
+No additional <code>direction</code> property is required.
+</p>
+
 <hr/>
 
 <h2 id="inputs">5. Input Ports</h2>
@@ -156,7 +171,7 @@ Rules:
 <ul>
 <li>Each input port MUST define an <code>id</code>.</li>
 <li>Each input port MUST define a <code>type</code>.</li>
-<li>Input port identifiers MUST be unique within the interface.</li>
+<li>Input port identifiers MUST be unique across the whole interface.</li>
 <li>Input ports represent externally provided values, signals, events, or references.</li>
 </ul>
 
@@ -184,7 +199,7 @@ Rules:
 <ul>
 <li>Each output port MUST define an <code>id</code>.</li>
 <li>Each output port MUST define a <code>type</code>.</li>
-<li>Output port identifiers MUST be unique within the interface.</li>
+<li>Output port identifiers MUST be unique across the whole interface.</li>
 <li>Output ports represent values, signals, events, or references made available to other Frogs or hosting environments.</li>
 </ul>
 
@@ -235,7 +250,7 @@ Rules:
 <li>MUST be sufficient for static compatibility checks.</li>
 </ul>
 
-<h3>Optional Properties</h3>
+<h3>Optional Metadata</h3>
 
 <p>
 Additional metadata MAY be attached to a port.
@@ -245,7 +260,6 @@ Additional metadata MAY be attached to a port.
 {
   "id": "gain",
   "type": "float64",
-  "default": 1.0,
   "description": "Gain factor"
 }
 </pre>
@@ -256,7 +270,91 @@ Such metadata does not change the meaning of the interface contract unless expli
 
 <hr/>
 
-<h2 id="type-system">8. Type System Integration</h2>
+<h2 id="connection-requirement">8. Connection Requirement</h2>
+
+<p>
+Input ports MAY define a <code>connection</code> property to express how strongly an external connection is expected.
+</p>
+
+<pre>
+{
+  "id": "gain",
+  "type": "float64",
+  "connection": "optional",
+  "default": 1.0
+}
+</pre>
+
+<p>
+Allowed values are:
+</p>
+
+<ul>
+<li><code>required</code></li>
+<li><code>recommended</code></li>
+<li><code>optional</code></li>
+</ul>
+
+<h3>required</h3>
+
+<p>
+The input is expected to be connected.
+If it is not connected, validation MUST fail unless another rule in the active profile explicitly defines a valid fallback behavior.
+</p>
+
+<h3>recommended</h3>
+
+<p>
+The input is intended to be connected in normal use.
+If it is left unconnected, validation MAY succeed, but tools SHOULD emit a warning, lint message, or equivalent diagnostic.
+</p>
+
+<h3>optional</h3>
+
+<p>
+The input may be left unconnected without producing a validation error.
+A default value MAY be provided when appropriate.
+</p>
+
+<h3>Default Behavior</h3>
+
+<p>
+If <code>connection</code> is omitted on an input port, the default value is <code>required</code>.
+</p>
+
+<h3>Use on Outputs</h3>
+
+<p>
+The <code>connection</code> property applies to input ports only in this specification version.
+Output ports do not use <code>required</code>, <code>recommended</code>, or <code>optional</code> in v0.1.
+</p>
+
+<h3>default</h3>
+
+<p>
+An input port MAY define a <code>default</code> value.
+</p>
+
+<pre>
+{
+  "id": "enable",
+  "type": "bool",
+  "connection": "optional",
+  "default": true
+}
+</pre>
+
+<p>
+The default value, when present, MUST be compatible with the declared port type.
+</p>
+
+<p>
+A <code>default</code> value provides a fallback when the input is not externally connected and when the active execution or validation profile allows such behavior.
+</p>
+
+<hr/>
+
+<h2 id="type-system">9. Type System Integration</h2>
 
 <p>
 The interface relies on the FROG type system.
@@ -284,7 +382,7 @@ Libraries MAY introduce additional types, provided that tools can validate or sa
 
 <hr/>
 
-<h2 id="diagram-binding">9. Binding with the Diagram</h2>
+<h2 id="diagram-binding">10. Binding with the Diagram</h2>
 
 <p>
 Interface ports define the external contract of the Frog and MUST be bound to the internal program graph.
@@ -315,7 +413,7 @@ Rules:
 
 <hr/>
 
-<h2 id="connector-relation">10. Relation with Connector</h2>
+<h2 id="connector-relation">11. Relation with Connector</h2>
 
 <p>
 The <code>interface</code> section defines the logical ports of the Frog.
@@ -355,7 +453,7 @@ Rules:
 
 <hr/>
 
-<h2 id="examples">11. Examples</h2>
+<h2 id="examples">12. Examples</h2>
 
 <h3>Minimal Interface</h3>
 
@@ -370,14 +468,30 @@ Rules:
 }
 </pre>
 
+<h3>Interface with Optional and Recommended Inputs</h3>
+
+<pre>
+"interface": {
+  "inputs": [
+    { "id": "temperature", "type": "float64", "connection": "required" },
+    { "id": "pressure", "type": "float64", "connection": "recommended" },
+    { "id": "enable", "type": "bool", "connection": "optional", "default": true }
+  ],
+  "outputs": [
+    { "id": "density", "type": "float64" },
+    { "id": "status", "type": "string" }
+  ]
+}
+</pre>
+
 <h3>Arithmetic Node with Connector Mapping</h3>
 
 <pre>
 {
   "interface": {
     "inputs": [
-      { "id": "a", "type": "float64" },
-      { "id": "b", "type": "float64" }
+      { "id": "a", "type": "float64", "connection": "required" },
+      { "id": "b", "type": "float64", "connection": "required" }
     ],
     "outputs": [
       { "id": "result", "type": "float64" }
@@ -394,25 +508,9 @@ Rules:
 }
 </pre>
 
-<h3>Multi-Input Process Node</h3>
-
-<pre>
-"interface": {
-  "inputs": [
-    { "id": "temperature", "type": "float64" },
-    { "id": "pressure", "type": "float64" },
-    { "id": "enable", "type": "bool", "default": true }
-  ],
-  "outputs": [
-    { "id": "density", "type": "float64" },
-    { "id": "status", "type": "string" }
-  ]
-}
-</pre>
-
 <hr/>
 
-<h2 id="validation">12. Validation Rules</h2>
+<h2 id="validation">13. Validation Rules</h2>
 
 <p>
 Implementations MUST enforce the following rules:
@@ -426,6 +524,19 @@ Implementations MUST enforce the following rules:
 <li>Port identifiers MUST be unique across the whole interface.</li>
 <li>Declared types MUST be syntactically valid according to the active specification profile.</li>
 <li>The diagram binding MUST be consistent with the declared interface.</li>
+</ul>
+
+<p>
+Additional rules for input connection requirements:
+</p>
+
+<ul>
+<li>if <code>connection</code> is present, it MUST be one of <code>required</code>, <code>recommended</code>, or <code>optional</code></li>
+<li>if <code>connection</code> is omitted on an input, it MUST be interpreted as <code>required</code></li>
+<li>if <code>default</code> is present, it MUST be type-compatible with the declared input type</li>
+<li>an unconnected <code>required</code> input MUST trigger a validation error unless the active profile defines an allowed fallback</li>
+<li>an unconnected <code>recommended</code> input SHOULD trigger a warning or equivalent diagnostic</li>
+<li>an unconnected <code>optional</code> input MUST NOT trigger a validation error solely because it is unconnected</li>
 </ul>
 
 <p>
@@ -443,7 +554,7 @@ Unknown properties MUST be ignored unless a stricter profile explicitly defines 
 
 <hr/>
 
-<h2 id="extensibility">13. Extensibility</h2>
+<h2 id="extensibility">14. Extensibility</h2>
 
 <p>
 Tools and libraries MAY add additional non-breaking metadata fields to port definitions.
@@ -453,6 +564,7 @@ Tools and libraries MAY add additional non-breaking metadata fields to port defi
 {
   "id": "speed",
   "type": "float64",
+  "connection": "recommended",
   "unit": "m/s",
   "description": "Measured linear speed"
 }
@@ -476,7 +588,7 @@ Runtime systems and validators that do not understand these extra properties MUS
 
 <hr/>
 
-<h2 id="summary">14. Summary</h2>
+<h2 id="summary">15. Summary</h2>
 
 <p>
 The interface defines the external logical contract of a Frog.
@@ -490,6 +602,7 @@ It provides:
 <li>clear program boundaries</li>
 <li>type-aware composition</li>
 <li>stable port identifiers</li>
+<li>explicit input connection requirements</li>
 <li>a foundation for reusable graphical nodes</li>
 </ul>
 
