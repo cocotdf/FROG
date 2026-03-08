@@ -17,14 +17,16 @@ Definition of executable graphs in <strong>.frog</strong> programs<br/>
   <li><a href="#node-model">5. Node Model</a></li>
   <li><a href="#port-resolution-model">6. Port Resolution Model</a></li>
   <li><a href="#edge-model">7. Edge Model</a></li>
-  <li><a href="#layout-information">8. Layout Information</a></li>
-  <li><a href="#frog-dependencies">9. Frog Dependencies</a></li>
-  <li><a href="#subfrog-invocation">10. Sub-Frog Invocation</a></li>
-  <li><a href="#interface-boundary-nodes">11. Interface Boundary Nodes</a></li>
-  <li><a href="#graph-validation">12. Graph Validation</a></li>
-  <li><a href="#execution-semantics">13. Execution Semantics</a></li>
-  <li><a href="#examples">14. Examples</a></li>
-  <li><a href="#summary">15. Summary</a></li>
+  <li><a href="#diagram-annotations">8. Diagram Annotations</a></li>
+  <li><a href="#documentation-and-tags">9. Documentation and Tags</a></li>
+  <li><a href="#layout-information">10. Layout Information</a></li>
+  <li><a href="#frog-dependencies">11. Frog Dependencies</a></li>
+  <li><a href="#subfrog-invocation">12. Sub-Frog Invocation</a></li>
+  <li><a href="#interface-boundary-nodes">13. Interface Boundary Nodes</a></li>
+  <li><a href="#graph-validation">14. Graph Validation</a></li>
+  <li><a href="#execution-semantics">15. Execution Semantics</a></li>
+  <li><a href="#examples">16. Examples</a></li>
+  <li><a href="#summary">17. Summary</a></li>
 </ul>
 
 <hr/>
@@ -36,11 +38,11 @@ The <strong>diagram</strong> section defines the executable dataflow graph of a 
 </p>
 
 <p>
-It contains the nodes representing operations and the edges representing directed data connections between them.
+It contains the nodes representing operations, the edges representing directed data connections between them, and the source-level annotations used to document and organize the graph.
 </p>
 
 <p>
-Execution semantics are derived from this graph together with the validated interface contract, the FROG type system, and any standardized interaction rules that apply to diagram nodes.
+Execution semantics are derived from the validated graph together with the public interface contract, the FROG type system, and any standardized interaction rules that apply to diagram nodes.
 </p>
 
 <hr/>
@@ -56,12 +58,14 @@ The diagram provides:
   <li>the complete data dependency graph,</li>
   <li>the structural link between the public interface and internal execution logic,</li>
   <li>the hierarchical composition mechanism used to invoke other Frogs,</li>
-  <li>the location where standardized primitive operations, including widget interaction primitives, participate in execution.</li>
+  <li>the place where standardized primitive operations, including widget interaction primitives, participate in execution,</li>
+  <li>the canonical source-level space for diagram annotations and documentation.</li>
 </ul>
 
 <p>
 Nodes represent computation, interface boundaries, reusable sub-Frog invocations, or other standardized primitive behavior.
 Edges represent directional data flow.
+Annotations represent source documentation and visual organization only.
 </p>
 
 <hr/>
@@ -92,14 +96,15 @@ The <code>diagram</code> section MUST exist in a canonical <code>.frog</code> so
 <h2 id="structure">4. Diagram Structure</h2>
 
 <p>
-The diagram object contains three fields:
+The diagram object contains up to four fields:
 </p>
 
 <pre>
 "diagram": {
   "nodes": [],
   "edges": [],
-  "dependencies": []
+  "dependencies": [],
+  "annotations": []
 }
 </pre>
 
@@ -111,11 +116,17 @@ Fields:
   <li><strong>nodes</strong> — required array of graph nodes</li>
   <li><strong>edges</strong> — required array of directed data connections</li>
   <li><strong>dependencies</strong> — optional array of referenced external Frogs</li>
+  <li><strong>annotations</strong> — optional array of visible diagram annotations</li>
 </ul>
 
 <p>
 The <code>nodes</code> and <code>edges</code> arrays MUST exist, even if one of them is empty.
-The <code>dependencies</code> field MAY be omitted when no external Frog is referenced.
+The <code>dependencies</code> and <code>annotations</code> fields MAY be omitted when unused.
+</p>
+
+<p>
+The <code>annotations</code> field belongs to canonical source because it describes author-created documentation and visual organization of the diagram.
+It does not affect execution semantics.
 </p>
 
 <hr/>
@@ -141,6 +152,8 @@ A node MAY also define:
 
 <ul>
   <li><strong>layout</strong> — graphical editor position</li>
+  <li><strong>doc</strong> — optional structured documentation</li>
+  <li><strong>tags</strong> — optional structured tags</li>
   <li>kind-specific fields defined below</li>
 </ul>
 
@@ -402,6 +415,15 @@ Fields:
 </ul>
 
 <p>
+An edge MAY also define:
+</p>
+
+<ul>
+  <li><strong>doc</strong> — optional structured documentation</li>
+  <li><strong>tags</strong> — optional structured tags</li>
+</ul>
+
+<p>
 Edges represent directional data flow and MUST respect resolved port direction.
 </p>
 
@@ -418,10 +440,289 @@ A valid edge endpoint object has the following form:
 
 <hr/>
 
-<h2 id="layout-information">8. Layout Information</h2>
+<h2 id="diagram-annotations">8. Diagram Annotations</h2>
 
 <p>
-Nodes MAY include layout information for graphical editors.
+The <code>annotations</code> array contains visible, non-executable source annotations created by the author to document, organize, or label the diagram.
+</p>
+
+<p>
+Annotations are part of the canonical expression when they represent intended source documentation.
+They MUST NOT alter execution semantics.
+</p>
+
+<h3>8.1 Purpose of annotations</h3>
+
+<p>
+Annotations may be used for:
+</p>
+
+<ul>
+  <li>free labels,</li>
+  <li>attached comments,</li>
+  <li>wire labels,</li>
+  <li>functional regions or framed sections,</li>
+  <li>other documented visible note forms standardized by an active profile.</li>
+</ul>
+
+<h3>8.2 Annotation structure</h3>
+
+<p>
+Recommended annotation shape:
+</p>
+
+<pre>
+{
+  "id": "ann_1",
+  "kind": "free_label",
+  "text": "Initialization",
+  "layout": {
+    "x": 20,
+    "y": 20,
+    "width": 140,
+    "height": 24
+  }
+}
+</pre>
+
+<p>
+Common annotation fields:
+</p>
+
+<ul>
+  <li><code>id</code> — unique annotation identifier</li>
+  <li><code>kind</code> — annotation category</li>
+  <li><code>text</code> — annotation text when applicable</li>
+  <li><code>layout</code> — visible placement and size when applicable</li>
+  <li><code>target</code> — optional attachment to a node or edge</li>
+  <li><code>targets</code> — optional grouped target collection</li>
+  <li><code>style_ref</code> — optional style reference</li>
+  <li><code>doc</code> — optional structured documentation</li>
+  <li><code>tags</code> — optional structured tags</li>
+</ul>
+
+<h3>8.3 Standard annotation kinds for v0.1</h3>
+
+<ul>
+  <li><code>free_label</code></li>
+  <li><code>comment</code></li>
+  <li><code>wire_label</code></li>
+  <li><code>region</code></li>
+</ul>
+
+<h3>8.4 Free label</h3>
+
+<p>
+A <code>free_label</code> is free-standing visible text placed on the diagram.
+</p>
+
+<pre>
+{
+  "id": "ann_init",
+  "kind": "free_label",
+  "text": "Initialization",
+  "layout": {
+    "x": 20,
+    "y": 20,
+    "width": 160,
+    "height": 24
+  }
+}
+</pre>
+
+<h3>8.5 Comment</h3>
+
+<p>
+A <code>comment</code> is a textual annotation that may optionally target a node or an edge.
+</p>
+
+<pre>
+{
+  "id": "ann_todo",
+  "kind": "comment",
+  "text": "TODO: optimize for RT target",
+  "target": {
+    "scope": "node",
+    "id": "mul_1"
+  },
+  "tags": ["todo", "performance", "rt-safe"]
+}
+</pre>
+
+<h3>8.6 Wire label</h3>
+
+<p>
+A <code>wire_label</code> is a textual annotation attached to an edge.
+</p>
+
+<pre>
+{
+  "id": "ann_wire_1",
+  "kind": "wire_label",
+  "text": "temperature_filtered",
+  "target": {
+    "scope": "edge",
+    "id": "e1"
+  }
+}
+</pre>
+
+<h3>8.7 Region</h3>
+
+<p>
+A <code>region</code> groups or frames a functional portion of the diagram visually.
+It may optionally reference nodes.
+</p>
+
+<pre>
+{
+  "id": "ann_region_1",
+  "kind": "region",
+  "text": "Acquisition",
+  "layout": {
+    "x": 10,
+    "y": 10,
+    "width": 300,
+    "height": 180
+  },
+  "targets": {
+    "nodes": ["n1", "n2", "n3"]
+  }
+}
+</pre>
+
+<h3>8.8 Annotation targets</h3>
+
+<p>
+When <code>target</code> is present, it SHOULD follow one of these forms:
+</p>
+
+<ul>
+  <li><code>{ "scope": "node", "id": "node_id" }</code></li>
+  <li><code>{ "scope": "edge", "id": "edge_id" }</code></li>
+</ul>
+
+<p>
+A <code>targets</code> object MAY be used when an annotation references multiple nodes or edges for organizational purposes.
+</p>
+
+<h3>8.9 Execution neutrality</h3>
+
+<p>
+Annotations are source documentation and visual structure only.
+They MUST NOT alter:
+</p>
+
+<ul>
+  <li>node behavior,</li>
+  <li>edge behavior,</li>
+  <li>scheduling,</li>
+  <li>type compatibility,</li>
+  <li>the public interface contract.</li>
+</ul>
+
+<hr/>
+
+<h2 id="documentation-and-tags">9. Documentation and Tags</h2>
+
+<p>
+FROG v0.1 distinguishes between:
+</p>
+
+<ul>
+  <li><strong>visible annotations</strong> stored in <code>diagram.annotations</code>,</li>
+  <li><strong>structured documentation</strong> attached directly to nodes, edges, or annotations,</li>
+  <li><strong>editor-only navigation state</strong> that belongs to IDE-specific data rather than the canonical diagram expression.</li>
+</ul>
+
+<h3>9.1 Structured documentation</h3>
+
+<p>
+A node, edge, or annotation MAY define a <code>doc</code> object.
+</p>
+
+<p>
+Recommended shape:
+</p>
+
+<pre>
+"doc": {
+  "summary": "Short human-readable summary",
+  "description": "Longer structured explanation."
+}
+</pre>
+
+<p>
+This documentation is canonical source documentation.
+It is not required to be rendered directly on the diagram surface.
+</p>
+
+<h3>9.2 Structured tags</h3>
+
+<p>
+A node, edge, or annotation MAY define a <code>tags</code> array.
+</p>
+
+<pre>
+"tags": ["todo", "warning", "performance"]
+</pre>
+
+<p>
+Tags are intended to support structured source organization, filtering, searching, tooling, and future documentation workflows.
+</p>
+
+<p>
+Examples of meaningful tags:
+</p>
+
+<ul>
+  <li><code>todo</code></li>
+  <li><code>fixme</code></li>
+  <li><code>warning</code></li>
+  <li><code>note</code></li>
+  <li><code>performance</code></li>
+  <li><code>rt-safe</code></li>
+  <li><code>deprecated</code></li>
+  <li><code>algorithm:kalman</code></li>
+</ul>
+
+<p>
+This document does not impose a closed vocabulary for tags in v0.1.
+</p>
+
+<h3>9.3 Source documentation vs IDE-only state</h3>
+
+<p>
+The following belong in canonical source when author-intended:
+</p>
+
+<ul>
+  <li>free labels,</li>
+  <li>comments,</li>
+  <li>wire labels,</li>
+  <li>regions,</li>
+  <li>structured documentation,</li>
+  <li>structured tags.</li>
+</ul>
+
+<p>
+The following do <strong>not</strong> belong in the canonical diagram source and should instead belong to IDE-specific data such as <code>ide</code>:
+</p>
+
+<ul>
+  <li>bookmarks used only for navigation,</li>
+  <li>viewport position,</li>
+  <li>zoom state,</li>
+  <li>temporary selection state,</li>
+  <li>other editor-session-only navigation metadata.</li>
+</ul>
+
+<hr/>
+
+<h2 id="layout-information">10. Layout Information</h2>
+
+<p>
+Nodes and annotations MAY include layout information for graphical editors.
 </p>
 
 <pre>
@@ -432,13 +733,25 @@ Nodes MAY include layout information for graphical editors.
 </pre>
 
 <p>
+Typical layout fields may include:
+</p>
+
+<ul>
+  <li><code>x</code></li>
+  <li><code>y</code></li>
+  <li><code>width</code></li>
+  <li><code>height</code></li>
+  <li><code>z</code> when needed by a stricter profile</li>
+</ul>
+
+<p>
 Layout information is optional and affects graphical rendering only.
 It MUST NOT influence execution semantics, scheduling, typing, or dataflow behavior.
 </p>
 
 <hr/>
 
-<h2 id="frog-dependencies">9. Frog Dependencies</h2>
+<h2 id="frog-dependencies">11. Frog Dependencies</h2>
 
 <p>
 When a diagram uses nodes implemented by other Frogs, those Frogs MUST be referenced in <code>dependencies</code>.
@@ -478,7 +791,7 @@ This document does not standardize packaging, search paths, remote resolution, o
 
 <hr/>
 
-<h2 id="subfrog-invocation">10. Sub-Frog Invocation</h2>
+<h2 id="subfrog-invocation">12. Sub-Frog Invocation</h2>
 
 <p>
 Sub-Frog invocation enables hierarchical program composition.
@@ -509,7 +822,7 @@ Conceptually:
 
 <hr/>
 
-<h2 id="interface-boundary-nodes">11. Interface Boundary Nodes</h2>
+<h2 id="interface-boundary-nodes">13. Interface Boundary Nodes</h2>
 
 <p>
 The executable graph MUST be consistent with the public interface declared in the <code>interface</code> section.
@@ -545,7 +858,7 @@ An <code>interface_output</code> node consumes internal data and exposes it as a
 
 <hr/>
 
-<h2 id="graph-validation">12. Graph Validation</h2>
+<h2 id="graph-validation">14. Graph Validation</h2>
 
 <p>
 Implementations MUST enforce the following rules:
@@ -588,12 +901,25 @@ For widget interaction primitives:
 </ul>
 
 <p>
-Unknown node properties MAY be ignored unless a stricter active profile defines them.
+For annotations and source documentation:
+</p>
+
+<ul>
+  <li>if present, <code>annotations</code> MUST be an array,</li>
+  <li>annotation identifiers MUST be unique within the diagram,</li>
+  <li>annotation targets MUST reference existing nodes or edges when specified,</li>
+  <li><code>doc</code> fields MUST be objects when present,</li>
+  <li><code>tags</code> fields MUST be arrays of strings when present,</li>
+  <li>annotations MUST NOT be interpreted as executable nodes or executable edges.</li>
+</ul>
+
+<p>
+Unknown node or annotation properties MAY be ignored unless a stricter active profile defines them.
 </p>
 
 <hr/>
 
-<h2 id="execution-semantics">13. Execution Semantics</h2>
+<h2 id="execution-semantics">15. Execution Semantics</h2>
 
 <p>
 Execution follows a pure dataflow model.
@@ -618,7 +944,7 @@ However, the graph MUST be interpreted together with:
 </ul>
 
 <p>
-Layout, connector placement, icon content, IDE preferences, and cache data MUST NOT alter execution semantics.
+Layout, connector placement, icon content, IDE preferences, cache data, annotations, structured documentation, and structured tags MUST NOT alter execution semantics.
 </p>
 
 <p>
@@ -628,9 +954,9 @@ However, they do not redefine the public interface contract and do not alter the
 
 <hr/>
 
-<h2 id="examples">14. Examples</h2>
+<h2 id="examples">16. Examples</h2>
 
-<h3>14.1 Minimal arithmetic diagram</h3>
+<h3>16.1 Minimal arithmetic diagram</h3>
 
 <pre>
 "diagram": {
@@ -682,7 +1008,7 @@ However, they do not redefine the public interface contract and do not alter the
 }
 </pre>
 
-<h3>14.2 Primitive-based diagram</h3>
+<h3>16.2 Primitive-based diagram</h3>
 
 <pre>
 "diagram": {
@@ -724,11 +1050,24 @@ However, they do not redefine the public interface contract and do not alter the
       "from": { "node": "mul_1", "port": "result" },
       "to": { "node": "output_scaled", "port": "value" }
     }
+  ],
+  "annotations": [
+    {
+      "id": "ann_section",
+      "kind": "region",
+      "text": "Signal processing",
+      "layout": {
+        "x": 10,
+        "y": 10,
+        "width": 360,
+        "height": 160
+      }
+    }
   ]
 }
 </pre>
 
-<h3>14.3 Diagram using widget interaction primitives</h3>
+<h3>16.3 Diagram using widget interaction primitives</h3>
 
 <pre>
 "diagram": {
@@ -772,7 +1111,7 @@ However, they do not redefine the public interface contract and do not alter the
 }
 </pre>
 
-<h3>14.4 Diagram writing a widget part property</h3>
+<h3>16.4 Diagram writing a widget part property</h3>
 
 <pre>
 "diagram": {
@@ -803,9 +1142,53 @@ However, they do not redefine the public interface contract and do not alter the
 }
 </pre>
 
+<h3>16.5 Node documentation and tags</h3>
+
+<pre>
+{
+  "id": "kalman_1",
+  "kind": "primitive",
+  "type": "KalmanFilter",
+  "doc": {
+    "summary": "Kalman filter step",
+    "description": "Computes the next state estimate and covariance update."
+  },
+  "tags": ["algorithm:kalman", "performance", "rt-safe"]
+}
+</pre>
+
+<h3>16.6 Comment attached to a node</h3>
+
+<pre>
+{
+  "id": "ann_todo_1",
+  "kind": "comment",
+  "text": "TODO: replace with FPGA version",
+  "target": {
+    "scope": "node",
+    "id": "kalman_1"
+  },
+  "tags": ["todo", "performance"]
+}
+</pre>
+
+<h3>16.7 Wire label attached to an edge</h3>
+
+<pre>
+{
+  "id": "ann_wire_temp",
+  "kind": "wire_label",
+  "text": "temperature_filtered",
+  "target": {
+    "scope": "edge",
+    "id": "e_temp"
+  }
+}
+</pre>
+
 <hr/>
 
-<h2 id="summary">15. Summary</h2>
+<h2 id="summary">17. Summary</h2>
 
 <p>
 The diagram defines the executable structure of a Frog.
@@ -820,7 +1203,8 @@ It provides:
   <li>a resolved node and port model,</li>
   <li>a dependency mechanism for reusable Frogs,</li>
   <li>a structural bridge between the public interface and internal execution logic,</li>
-  <li>a place where standardized primitive node families, including widget interaction primitives, participate in execution.</li>
+  <li>a place where standardized primitive node families, including widget interaction primitives, participate in execution,</li>
+  <li>a canonical source-level place for diagram annotations, documentation, and structured tags.</li>
 </ul>
 
 <p>
@@ -828,5 +1212,6 @@ The diagram is the authoritative definition of execution structure.
 The interface defines the public contract.
 The type system defines compatibility and coercion.
 The widget interaction model defines how diagrams may safely interact with front panel widgets.
-Together, they make a Frog executable, composable, and statically verifiable.
+Annotations and documentation define how authors explain and organize the graph without altering execution.
+Together, they make a Frog executable, composable, documented, and statically verifiable.
 </p>
