@@ -486,7 +486,7 @@ FROG/
 │
 ├── compiler/
 ├── runtime/
-├── spec/
+├── Spec/
 └── tools/
 
 </pre>
@@ -513,3 +513,4 @@ FROG — Free Open Graphical Language
 </p>
 
 </div>
+
