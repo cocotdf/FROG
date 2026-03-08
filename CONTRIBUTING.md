@@ -84,7 +84,7 @@ coherence of the project architecture.
 
 <ul>
 <li><code>README.md</code></li>
-<li>The <code>/specs</code> directory</li>
+<li>The <code>/Spec</code> directory</li>
 <li>Existing issues and discussions</li>
 </ul>
 
