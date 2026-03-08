@@ -40,7 +40,7 @@ It contains the nodes representing operations and the edges representing directe
 </p>
 
 <p>
-Execution semantics are derived from this graph together with the validated interface contract and the FROG type system.
+Execution semantics are derived from this graph together with the validated interface contract, the FROG type system, and any standardized interaction rules that apply to diagram nodes.
 </p>
 
 <hr/>
@@ -55,11 +55,12 @@ The diagram provides:
   <li>the executable logic of the Frog,</li>
   <li>the complete data dependency graph,</li>
   <li>the structural link between the public interface and internal execution logic,</li>
-  <li>the hierarchical composition mechanism used to invoke other Frogs.</li>
+  <li>the hierarchical composition mechanism used to invoke other Frogs,</li>
+  <li>the location where standardized primitive operations, including widget interaction primitives, participate in execution.</li>
 </ul>
 
 <p>
-Nodes represent computation, interface boundaries, or reusable sub-Frog invocations.
+Nodes represent computation, interface boundaries, reusable sub-Frog invocations, or other standardized primitive behavior.
 Edges represent directional data flow.
 </p>
 
@@ -193,6 +194,24 @@ Rules:
   <li>The meaning and port signature of the primitive are defined by the active profile, standard library, or implementation-defined primitive catalog.</li>
 </ul>
 
+<p>
+Primitive nodes include ordinary computational primitives such as arithmetic operations, but may also include other standardized primitive families defined elsewhere in the specification.
+</p>
+
+<p>
+For example, <code>Widget interaction.md</code> defines standardized primitive identifiers such as:
+</p>
+
+<ul>
+  <li><code>frog.ui.property_read</code></li>
+  <li><code>frog.ui.property_write</code></li>
+  <li><code>frog.ui.method_invoke</code></li>
+</ul>
+
+<p>
+These remain <code>primitive</code> nodes and are validated according to both this document and the widget interaction specification.
+</p>
+
 <h3>5.4 Sub-Frog nodes</h3>
 
 <p>
@@ -297,8 +316,22 @@ Instead, valid ports are resolved from the node kind and its definition source.
 
 <p>
 For a <code>primitive</code> node, port names, directions, arity, and types are defined by the active primitive catalog or profile.
-This document does not standardize the primitive catalog itself.
+This document does not standardize the full primitive catalog itself.
 </p>
+
+<p>
+However, some primitive families are standardized by other specification documents.
+When this is the case, their port model MUST be resolved according to the corresponding document.
+</p>
+
+<p>
+In particular:
+</p>
+
+<ul>
+  <li>ordinary computational primitives resolve ports according to the active primitive catalog,</li>
+  <li>widget interaction primitives resolve ports according to <code>Widget interaction.md</code>.</li>
+</ul>
 
 <h3>6.3 Sub-Frog node ports</h3>
 
@@ -544,6 +577,17 @@ In particular:
 </ul>
 
 <p>
+For widget interaction primitives:
+</p>
+
+<ul>
+  <li>the node MUST satisfy the rules defined in <code>Widget interaction.md</code>,</li>
+  <li>the referenced widget MUST exist in the <code>front_panel</code>,</li>
+  <li>the referenced widget member MUST be valid for the addressed widget or widget part,</li>
+  <li>the resolved widget interaction ports MUST remain type-compatible with connected edges.</li>
+</ul>
+
+<p>
 Unknown node properties MAY be ignored unless a stricter active profile defines them.
 </p>
 
@@ -569,11 +613,17 @@ However, the graph MUST be interpreted together with:
 <ul>
   <li>the public interface contract,</li>
   <li>the type system and implicit coercion rules,</li>
-  <li>the primitive and sub-Frog operation definitions available in the active execution profile.</li>
+  <li>the primitive and sub-Frog operation definitions available in the active execution profile,</li>
+  <li>the widget interaction rules for any standardized widget interaction primitive nodes.</li>
 </ul>
 
 <p>
 Layout, connector placement, icon content, IDE preferences, and cache data MUST NOT alter execution semantics.
+</p>
+
+<p>
+When widget interaction nodes are present, they participate in execution as ordinary validated diagram nodes.
+However, they do not redefine the public interface contract and do not alter the core dataflow execution model.
 </p>
 
 <hr/>
@@ -678,6 +728,81 @@ Layout, connector placement, icon content, IDE preferences, and cache data MUST 
 }
 </pre>
 
+<h3>14.3 Diagram using widget interaction primitives</h3>
+
+<pre>
+"diagram": {
+  "nodes": [
+    {
+      "id": "read_gain_value",
+      "kind": "primitive",
+      "type": "frog.ui.property_read",
+      "target": {
+        "widget": "ctrl_gain",
+        "member": "value"
+      }
+    },
+    {
+      "id": "mul_1",
+      "kind": "primitive",
+      "type": "Multiply"
+    },
+    {
+      "id": "write_result_value",
+      "kind": "primitive",
+      "type": "frog.ui.property_write",
+      "target": {
+        "widget": "ind_result",
+        "member": "value"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "from": { "node": "read_gain_value", "port": "value" },
+      "to": { "node": "mul_1", "port": "x" }
+    },
+    {
+      "id": "e2",
+      "from": { "node": "mul_1", "port": "result" },
+      "to": { "node": "write_result_value", "port": "value" }
+    }
+  ]
+}
+</pre>
+
+<h3>14.4 Diagram writing a widget part property</h3>
+
+<pre>
+"diagram": {
+  "nodes": [
+    {
+      "id": "status_text",
+      "kind": "interface_input",
+      "interface_port": "status_text"
+    },
+    {
+      "id": "write_label_text",
+      "kind": "primitive",
+      "type": "frog.ui.property_write",
+      "target": {
+        "widget": "ctrl_gain",
+        "part": "label",
+        "member": "text"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "from": { "node": "status_text", "port": "value" },
+      "to": { "node": "write_label_text", "port": "value" }
+    }
+  ]
+}
+</pre>
+
 <hr/>
 
 <h2 id="summary">15. Summary</h2>
@@ -694,12 +819,14 @@ It provides:
   <li>a directed dataflow graph,</li>
   <li>a resolved node and port model,</li>
   <li>a dependency mechanism for reusable Frogs,</li>
-  <li>a structural bridge between the public interface and internal execution logic.</li>
+  <li>a structural bridge between the public interface and internal execution logic,</li>
+  <li>a place where standardized primitive node families, including widget interaction primitives, participate in execution.</li>
 </ul>
 
 <p>
 The diagram is the authoritative definition of execution structure.
 The interface defines the public contract.
 The type system defines compatibility and coercion.
+The widget interaction model defines how diagrams may safely interact with front panel widgets.
 Together, they make a Frog executable, composable, and statically verifiable.
 </p>
