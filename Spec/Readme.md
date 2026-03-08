@@ -20,6 +20,7 @@
   <li><a href="#sections">Sections overview</a></li>
   <li><a href="#type-system">Type system</a></li>
   <li><a href="#widget-model">Widget model</a></li>
+  <li><a href="#widget-interaction-model">Widget interaction model</a></li>
   <li><a href="#interface-connector-and-front-panel">Interface, connector, and front panel</a></li>
   <li><a href="#program-representation-model">Program representation model</a></li>
   <li><a href="#execution-model">Execution model</a></li>
@@ -58,7 +59,7 @@ The FROG specification covers both:
 
 <ul>
   <li>the top-level source structure stored in a <code>.frog</code> file, and</li>
-  <li>the cross-cutting rules that apply to typed values, widgets, interfaces, diagrams, front panels, and tool-related metadata.</li>
+  <li>the cross-cutting rules that apply to typed values, widgets, widget interactions, interfaces, diagrams, front panels, and tool-related metadata.</li>
 </ul>
 
 <hr/>
@@ -73,6 +74,7 @@ Each section below has its own detailed specification document:
   <li><a href="./Metadata.md"><strong>Metadata.md</strong></a></li>
   <li><a href="./Type.md"><strong>Type.md</strong></a></li>
   <li><a href="./Widget.md"><strong>Widget.md</strong></a></li>
+  <li><a href="./Widget%20interaction.md"><strong>Widget interaction.md</strong></a></li>
   <li><a href="./Interface.md"><strong>Interface.md</strong></a></li>
   <li><a href="./Connector.md"><strong>Connector.md</strong></a></li>
   <li><a href="./Diagram.md"><strong>Diagram.md</strong></a></li>
@@ -83,7 +85,7 @@ Each section below has its own detailed specification document:
 </ul>
 
 <p>
-Unlike section-specific documents such as <strong>Interface.md</strong> or <strong>Diagram.md</strong>, both <strong>Type.md</strong> and <strong>Widget.md</strong> define cross-cutting language subsystems rather than dedicated required top-level JSON sections.
+Unlike section-specific documents such as <strong>Interface.md</strong>, <strong>Diagram.md</strong>, or <strong>Front panel.md</strong>, <strong>Type.md</strong>, <strong>Widget.md</strong>, and <strong>Widget interaction.md</strong> define cross-cutting language subsystems rather than dedicated required top-level JSON sections.
 </p>
 
 <p>
@@ -92,6 +94,10 @@ Unlike section-specific documents such as <strong>Interface.md</strong> or <stro
 
 <p>
 <strong>Widget.md</strong> specifies the object model of front panel widgets, including widget classes, roles, value-carrying behavior, attached parts, and the conceptual property/method/event surface used by front panel elements.
+</p>
+
+<p>
+<strong>Widget interaction.md</strong> specifies how diagrams interact with front panel widgets through standardized property-read, property-write, and method-invocation mechanisms.
 </p>
 
 <hr/>
@@ -121,7 +127,7 @@ A canonical <code>.frog</code> source file MAY also contain optional sections:
 </ul>
 
 <p>
-In addition to these sections, all typed values contained in a <code>.frog</code> file are governed by the FROG type system defined in <a href="./Type.md"><strong>Type.md</strong></a>, and all front panel UI objects are governed by the widget model defined in <a href="./Widget.md"><strong>Widget.md</strong></a>.
+In addition to these sections, all typed values contained in a <code>.frog</code> file are governed by the FROG type system defined in <a href="./Type.md"><strong>Type.md</strong></a>, all front panel UI objects are governed by the widget model defined in <a href="./Widget.md"><strong>Widget.md</strong></a>, and all diagram-level interaction with widgets is governed by <a href="./Widget%20interaction.md"><strong>Widget interaction.md</strong></a>.
 </p>
 
 <p>
@@ -226,6 +232,11 @@ FROG v0.1 does not define a mandatory top-level <code>widgets</code> section eit
 Widget instances are embedded directly inside the <code>front_panel</code> section according to <a href="./Front%20panel.md"><strong>Front panel.md</strong></a> and <a href="./Widget.md"><strong>Widget.md</strong></a>.
 </p>
 
+<p>
+FROG v0.1 also does not define a mandatory top-level <code>widget_interactions</code> section.
+Widget interactions are represented inside the executable diagram according to <a href="./Widget%20interaction.md"><strong>Widget interaction.md</strong></a>.
+</p>
+
 <hr/>
 
 <h2 id="section-presence-rules">Section presence rules</h2>
@@ -309,12 +320,14 @@ Detailed spec: <a href="./Connector.md"><strong>Connector.md</strong></a>
 <p>
 Required section defining the executable dataflow graph.
 Typed values and compatible connections within the diagram MUST follow the FROG type system.
+Diagram-level interaction with front panel widgets MUST follow the widget interaction model.
 </p>
 
 <p>
 Detailed specs:
 <a href="./Diagram.md"><strong>Diagram.md</strong></a>,
-<a href="./Type.md"><strong>Type.md</strong></a>
+<a href="./Type.md"><strong>Type.md</strong></a>,
+<a href="./Widget%20interaction.md"><strong>Widget interaction.md</strong></a>
 </p>
 
 <h3>Front panel</h3>
@@ -379,6 +392,7 @@ This type system is cross-cutting and applies wherever values are declared, cons
   <li>diagram node ports,</li>
   <li>wires and edge validation,</li>
   <li>front panel bindings involving typed values,</li>
+  <li>widget interaction node ports,</li>
   <li>constants and other typed elements defined by section-specific specifications.</li>
 </ul>
 
@@ -435,6 +449,37 @@ The widget model standardizes:
 <p>
 The widget model is not represented as a dedicated required top-level section in v0.1.
 Instead, widget instances are serialized inside the <code>front_panel</code> section.
+</p>
+
+<hr/>
+
+<h2 id="widget-interaction-model">Widget interaction model</h2>
+
+<p>
+FROG v0.1 defines a normative widget interaction model described in <a href="./Widget%20interaction.md"><strong>Widget interaction.md</strong></a>.
+</p>
+
+<p>
+This model is cross-cutting and applies to diagram-level interaction with front panel widgets.
+</p>
+
+<p>
+It standardizes:
+</p>
+
+<ul>
+  <li>widget member addressing,</li>
+  <li>property read interactions,</li>
+  <li>property write interactions,</li>
+  <li>method invocation interactions.</li>
+</ul>
+
+<p>
+In v0.1, these interactions are represented inside the executable diagram rather than as a dedicated top-level source section.
+</p>
+
+<p>
+Widget interaction nodes MUST remain consistent with both the widget object model defined in <a href="./Widget.md"><strong>Widget.md</strong></a> and the FROG type system defined in <a href="./Type.md"><strong>Type.md</strong></a>.
 </p>
 
 <hr/>
@@ -517,6 +562,10 @@ Type parsing, type identity, type compatibility, and implicit coercion behavior 
 Widget reconstruction, widget class interpretation, and widget property validation belong to the validated semantics of the front panel portion of the Program Model and are defined normatively by <a href="./Widget.md"><strong>Widget.md</strong></a> and <a href="./Front%20panel.md"><strong>Front panel.md</strong></a>.
 </p>
 
+<p>
+Widget member resolution, widget interaction node validation, and widget interaction port typing belong to the validated semantics of the diagram/front-panel bridge and are defined normatively by <a href="./Widget%20interaction.md"><strong>Widget interaction.md</strong></a>.
+</p>
+
 <hr/>
 
 <h2 id="execution-model">Execution model</h2>
@@ -549,6 +598,10 @@ The connector is a graphical reuse description, not an execution-semantic struct
 The front panel may participate in interaction, presentation, and widget state exposure, but it MUST NOT redefine the executable semantics already established by the validated interface, diagram, and type system.
 </p>
 
+<p>
+Widget interaction nodes participate in execution as validated diagram nodes, but they MUST NOT redefine the public interface contract of the Frog.
+</p>
+
 <hr/>
 
 <h2 id="validation-rules">Validation rules</h2>
@@ -557,6 +610,7 @@ The front panel may participate in interaction, presentation, and widget state e
   <li>All required top-level sections MUST be present in a canonical <code>.frog</code> file.</li>
   <li>All type expressions MUST parse according to <a href="./Type.md"><strong>Type.md</strong></a>.</li>
   <li>All widget instances MUST be valid according to <a href="./Widget.md"><strong>Widget.md</strong></a> and the front panel specification.</li>
+  <li>All widget interaction nodes MUST be valid according to <a href="./Widget%20interaction.md"><strong>Widget interaction.md</strong></a>.</li>
   <li>Node identifiers MUST be unique within a diagram.</li>
   <li>Edge identifiers MUST be unique within a diagram.</li>
   <li>All edges MUST reference existing nodes and ports.</li>
@@ -596,6 +650,10 @@ Type expressions embedded inside JSON values SHOULD use the canonical serialized
 
 <p>
 Widget instances embedded inside <code>front_panel</code> SHOULD use the canonical field and class conventions defined in <a href="./Widget.md"><strong>Widget.md</strong></a>.
+</p>
+
+<p>
+Widget interaction nodes embedded inside <code>diagram</code> SHOULD use the canonical interaction forms defined in <a href="./Widget%20interaction.md"><strong>Widget interaction.md</strong></a>.
 </p>
 
 <hr/>
