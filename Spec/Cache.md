@@ -1,8 +1,8 @@
-<h1 align="center">🐸 FROG Specification</h1>
+<h1 align="center">🐸 FROG Cache Specification</h1>
 
 <p align="center">
-  <strong>FROG - Free Open Graphical Language</strong><br/>
-  Official Language and File Format Specification (v0.1 draft)
+Definition of optional cache data for <strong>.frog</strong> programs<br/>
+<em>FROG — Free Open Graphical Language</em>
 </p>
 
 <hr/>
@@ -10,338 +10,43 @@
 <h2>Contents</h2>
 
 <ul>
-  <li><a href="#overview">Overview</a></li>
-  <li><a href="#spec-documents">Specification documents</a></li>
-  <li><a href="#what-a-frog-describes">What a <code>.frog</code> describes</a></li>
-  <li><a href="#frog-file-tree">FROG file tree</a></li>
-  <li><a href="#file-types-source-cache-distribution">File types: source, cache, distribution</a></li>
-  <li><a href="#frog-json-top-level">FROG JSON top-level structure</a></li>
-  <li><a href="#section-presence-rules">Section presence rules</a></li>
-  <li><a href="#sections">Sections overview</a></li>
-  <li><a href="#interface-connector-and-front-panel">Interface, connector, and front panel</a></li>
-  <li><a href="#program-representation-model">Program representation model</a></li>
-  <li><a href="#execution-model">Execution model</a></li>
-  <li><a href="#validation-rules">Validation rules</a></li>
-  <li><a href="#json-ordering">JSON ordering and canonical formatting</a></li>
-  <li><a href="#normative-terminology">Normative terminology</a></li>
-  <li><a href="#status">Status</a></li>
-  <li><a href="#license">License</a></li>
+  <li><a href="#overview">1. Overview</a></li>
+  <li><a href="#goals">2. Design Goals</a></li>
+  <li><a href="#storage-options">3. Cache Storage Options</a></li>
+  <li><a href="#cache-file">4. External <code>.frog.cache</code> File</a></li>
+  <li><a href="#embedded-cache">5. Embedded <code>cache</code> Object</a></li>
+  <li><a href="#model">6. Cache Model</a></li>
+  <li><a href="#structure">7. Cache Object Structure</a></li>
+  <li><a href="#fields">8. Top-Level Fields</a></li>
+  <li><a href="#entry-kinds">9. Common Cache Entry Kinds</a></li>
+  <li><a href="#authority-rules">10. Non-Authoritative Rules</a></li>
+  <li><a href="#stale-cache">11. Stale or Invalid Cache Handling</a></li>
+  <li><a href="#security">12. Security Considerations</a></li>
+  <li><a href="#validation">13. Validation Rules</a></li>
+  <li><a href="#examples">14. Examples</a></li>
+  <li><a href="#summary">15. Summary</a></li>
 </ul>
 
 <hr/>
 
-<h2 id="overview">Overview</h2>
+<h2 id="overview">1. Overview</h2>
 
 <p>
-This repository defines the official specification of <strong>FROG - Free Open Graphical Language</strong>.
+The <strong>cache</strong> mechanism stores optional derived data associated with a FROG program.
+Its purpose is to accelerate tooling workflows such as validation, indexing, analysis, compilation preparation,
+and execution IR generation.
 </p>
 
 <p>
-FROG is an open, hardware-agnostic graphical dataflow language designed to provide a durable and independent foundation for graphical programming.
+A common use case is caching an intermediate representation (IR) derived from the canonical source
+<code>.frog</code> file. However, cache is not limited to IR and MAY also contain other derived artifacts
+useful to tools.
 </p>
 
 <p>
-The fundamental executable unit of the language is called a <strong>Frog</strong>.
-A Frog is a self-contained graphical program represented as a structured JSON source file (<code>.frog</code>).
-</p>
-
-<p>
-The <code>.frog</code> file is the canonical source representation of a Frog program.
-It is called the <strong>FROG Expression</strong>.
-</p>
-
-<hr/>
-
-<h2 id="spec-documents">Specification documents</h2>
-
-<p>
-Each section below has its own detailed specification document:
-</p>
-
-<ul>
-  <li><a href="./Metadata.md"><strong>Metadata.md</strong></a></li>
-  <li><a href="./Interface.md"><strong>Interface.md</strong></a></li>
-  <li><a href="./Connector.md"><strong>Connector.md</strong></a></li>
-  <li><a href="./Diagram.md"><strong>Diagram.md</strong></a></li>
-  <li><a href="./Front%20panel.md"><strong>Front panel.md</strong></a></li>
-  <li><a href="./Icon.md"><strong>Icon.md</strong></a></li>
-  <li><a href="./IDE%20preferences.md"><strong>IDE preferences.md</strong></a></li>
-  <li><a href="./Cache.md"><strong>Cache.md</strong></a></li>
-</ul>
-
-<hr/>
-
-<h2 id="what-a-frog-describes">What a <code>.frog</code> describes</h2>
-
-<p>
-A canonical <code>.frog</code> source file describes a complete Frog program through the following required sections:
-</p>
-
-<ul>
-  <li><strong>Metadata</strong>: identity, documentation, versioning</li>
-  <li><strong>Interface</strong>: public typed inputs and outputs</li>
-  <li><strong>Diagram</strong>: executable dataflow graph (nodes, edges, layout, dependencies)</li>
-  <li><strong>Front panel</strong>: interaction layer (controls, indicators, layout)</li>
-</ul>
-
-<p>
-A canonical <code>.frog</code> source file MAY also contain optional sections:
-</p>
-
-<ul>
-  <li><strong>Connector</strong>: graphical mapping of interface ports when the Frog is reused as a node</li>
-  <li><strong>Icon</strong>: graphical icon used by tools and editors</li>
-  <li><strong>IDE preferences</strong>: tool-specific editing preferences</li>
-  <li><strong>Cache</strong>: optional derived non-authoritative cache data</li>
-</ul>
-
-<p>
-A <code>.frog</code> file MUST NOT contain hidden compiled binaries.
-It is a transparent source representation.
-</p>
-
-<hr/>
-
-<h2 id="frog-file-tree">FROG file tree</h2>
-
-<pre>
-FROG
-│
-├─ Source (canonical)
-│   └─ example.frog
-│
-├─ Optional build/cache artifacts
-│   └─ example.frog.cache
-│
-└─ Optional distribution artifact
-    └─ example.frogbin
-</pre>
-
-<p>
-The <code>.frog</code> file is the canonical source representation.
-Cache and distribution artifacts are optional and generated by tools.
-</p>
-
-<hr/>
-
-<h2 id="file-types-source-cache-distribution">File types: source, cache, distribution</h2>
-
-<h3>1) <code>.frog</code> - Source (canonical)</h3>
-
-<ul>
-  <li>Human-readable JSON</li>
-  <li>Version-control friendly</li>
-  <li>Contains all required source sections</li>
-  <li>May include optional sections</li>
-  <li>Represents the canonical <strong>FROG Expression</strong></li>
-</ul>
-
-<h3>2) <code>.frog.cache</code> - Cache (optional)</h3>
-
-<ul>
-  <li>Optional artifact generated by tools</li>
-  <li>May contain cached <strong>FROG Execution IR</strong> and other derived analysis data</li>
-  <li>Used to accelerate loading, validation, and compilation workflows</li>
-  <li>Safe to delete and regenerate</li>
-  <li>Non-authoritative with respect to program meaning</li>
-</ul>
-
-<p>
-See: <a href="./Cache.md"><strong>Cache.md</strong></a>
-</p>
-
-<h3>3) <code>.frogbin</code> - Distribution (optional)</h3>
-
-<ul>
-  <li>Optional artifact intended for distribution</li>
-  <li>May omit non-essential source details</li>
-  <li>May contain execution-oriented or compiled payloads</li>
-  <li>Is not the canonical editable source format</li>
-</ul>
-
-<hr/>
-
-<h2 id="frog-json-top-level">FROG JSON top-level structure</h2>
-
-<pre>
-{
-  "spec_version": "0.1",
-
-  "metadata": {},
-  "interface": {},
-  "connector": {},
-
-  "diagram": {},
-  "front_panel": {},
-
-  "icon": {},
-  "ide": {},
-
-  "cache": {}
-}
-</pre>
-
-<p>
-The canonical top-level object is composed of required and optional sections.
-Required and optional status is defined below.
-Optional sections MUST NOT affect execution semantics.
-</p>
-
-<hr/>
-
-<h2 id="section-presence-rules">Section presence rules</h2>
-
-<p>
-A canonical <code>.frog</code> source file MUST contain the following sections:
-</p>
-
-<ul>
-  <li><code>spec_version</code></li>
-  <li><code>metadata</code></li>
-  <li><code>interface</code></li>
-  <li><code>diagram</code></li>
-  <li><code>front_panel</code></li>
-</ul>
-
-<p>
-A canonical <code>.frog</code> source file MAY contain the following optional sections:
-</p>
-
-<ul>
-  <li><code>connector</code></li>
-  <li><code>icon</code></li>
-  <li><code>ide</code></li>
-  <li><code>cache</code></li>
-</ul>
-
-<p>
-The presence of <code>front_panel</code> is required in the source format even when a program is executed in a headless or non-interactive context.
-In such cases, runtimes MAY ignore the interaction layer, but the source section still remains part of the canonical program description.
-</p>
-
-<p>
-The <code>connector</code> section is optional.
-It SHOULD be present when the Frog is intended to be instantiated as a reusable graphical node inside another Frog.
-</p>
-
-<p>
-Optional sections are non-authoritative with respect to execution and MUST NOT modify program semantics, scheduling, typing, or observable runtime behavior.
-</p>
-
-<hr/>
-
-<h2 id="sections">Sections overview</h2>
-
-<h3>Metadata</h3>
-
-<p>
-Required section defining the identity and documentation of the Frog.
-</p>
-
-<p>
-Detailed spec: <a href="./Metadata.md"><strong>Metadata.md</strong></a>
-</p>
-
-<h3>Interface</h3>
-
-<p>
-Required section defining the public typed inputs and outputs of the Frog.
-</p>
-
-<p>
-Detailed spec: <a href="./Interface.md"><strong>Interface.md</strong></a>
-</p>
-
-<h3>Connector</h3>
-
-<p>
-Optional section defining the graphical mapping of interface ports when a Frog is used as a node inside another diagram.
-</p>
-
-<p>
-Detailed spec: <a href="./Connector.md"><strong>Connector.md</strong></a>
-</p>
-
-<h3>Diagram</h3>
-
-<p>
-Required section defining the executable dataflow graph.
-</p>
-
-<p>
-Detailed spec: <a href="./Diagram.md"><strong>Diagram.md</strong></a>
-</p>
-
-<h3>Front panel</h3>
-
-<p>
-Required source section defining the interaction layer including controls, indicators, and layout.
-This section is part of the canonical program description even when execution does not require a user interface.
-</p>
-
-<p>
-Detailed spec: <a href="./Front%20panel.md"><strong>Front panel.md</strong></a>
-</p>
-
-<h3>Icon</h3>
-
-<p>
-Optional section containing a 40×40 SVG icon representing the Frog when embedded as a node.
-</p>
-
-<p>
-Detailed spec: <a href="./Icon.md"><strong>Icon.md</strong></a>
-</p>
-
-<h3>IDE preferences</h3>
-
-<p>
-Optional section containing tool preferences interpreted by development environments.
-Runtimes MUST ignore this section.
-</p>
-
-<p>
-Detailed spec: <a href="./IDE%20preferences.md"><strong>IDE preferences.md</strong></a>
-</p>
-
-<h3>Cache</h3>
-
-<p>
-Optional section used to accelerate tooling workflows.
-It contains derived, non-authoritative data and is safe to discard.
-</p>
-
-<p>
-Detailed spec: <a href="./Cache.md"><strong>Cache.md</strong></a>
-</p>
-
-<hr/>
-
-<h2 id="interface-connector-and-front-panel">Interface, connector, and front panel</h2>
-
-<p>
-FROG explicitly distinguishes three different concepts that may appear related but serve different purposes:
-</p>
-
-<ul>
-  <li><strong>Interface</strong> defines the public logical contract of the Frog</li>
-  <li><strong>Connector</strong> defines the graphical projection of that public contract when the Frog is reused as a node</li>
-  <li><strong>Front panel</strong> defines the user interaction layer of the Frog</li>
-</ul>
-
-<p>
-The <strong>interface</strong> describes what the Frog exposes to the outside world:
-public inputs, public outputs, types, and related port semantics.
-</p>
-
-<p>
-The <strong>connector</strong> does not define new ports.
-It only determines where public interface ports appear on the perimeter of the reusable node.
-</p>
-
-<p>
-The <strong>front panel</strong> does not define the public contract of the Frog.
-Instead, it describes controls, indicators, layout, and user-facing interaction bindings.
+Cache data is <strong>non-authoritative</strong>.
+The meaning of a FROG program is always defined by the canonical source expression,
+not by any cache content.
 </p>
 
 <p>
@@ -349,140 +54,498 @@ Therefore:
 </p>
 
 <ul>
-  <li>a Frog MAY have an interface without a connector</li>
-  <li>a Frog MAY be executable without a connector</li>
-  <li>a Frog MUST NOT define a connector without an interface</li>
-  <li>the front panel MUST NOT be interpreted as the definition of the public program contract</li>
+  <li>cache data <strong>MUST NOT</strong> define program semantics,</li>
+  <li>cache data <strong>MUST NOT</strong> alter typing, scheduling, or observable behavior,</li>
+  <li>cache data <strong>MUST</strong> be safe to delete and regenerate.</li>
 </ul>
 
+<hr/>
+
+<h2 id="goals">2. Design Goals</h2>
+
+<ul>
+  <li>Speed up loading, validation, and compilation workflows</li>
+  <li>Avoid recomputing derived IR and analysis artifacts when unchanged</li>
+  <li>Keep source files authoritative and human-readable</li>
+  <li>Allow cache to be safely deleted, ignored, or regenerated</li>
+  <li>Prevent cache data from redefining execution semantics</li>
+  <li>Support clean version control workflows with minimal diff noise</li>
+</ul>
+
+<hr/>
+
+<h2 id="storage-options">3. Cache Storage Options</h2>
+
 <p>
-In short:
+FROG supports two cache storage options:
 </p>
 
 <ul>
-  <li><strong>interface</strong> = what the Frog exposes</li>
-  <li><strong>connector</strong> = how that interface appears when reused as a node</li>
-  <li><strong>front_panel</strong> = how users interact with the Frog</li>
+  <li><strong>Preferred:</strong> a separate sidecar cache file (<code>.frog.cache</code>)</li>
+  <li><strong>Optional:</strong> an embedded <code>cache</code> object inside the canonical <code>.frog</code> file</li>
 </ul>
+
+<p>
+The sidecar file is preferred because it keeps the canonical source cleaner and reduces noisy diffs,
+merge conflicts, and unnecessary version control churn.
+</p>
+
+<p>
+Embedded cache is still allowed for workflows where portability or single-file transport is desirable.
+</p>
 
 <hr/>
 
-<h2 id="program-representation-model">Program representation model</h2>
+<h2 id="cache-file">4. External <code>.frog.cache</code> File</h2>
 
 <p>
-FROG distinguishes three representation levels:
+A cache sidecar file is associated with a source file by name.
+</p>
+
+<pre><code>example.frog
+example.frog.cache</code></pre>
+
+<p>
+The external cache file MAY be generated automatically by tooling and MAY be deleted at any time.
+Tools SHOULD regenerate it when needed.
+</p>
+
+<p>
+The external cache file is a derived artifact. It is not part of the authoritative source definition.
+</p>
+
+<hr/>
+
+<h2 id="embedded-cache">5. Embedded <code>cache</code> Object</h2>
+
+<p>
+In some workflows, tools MAY embed cache data directly inside the canonical <code>.frog</code> file.
+</p>
+
+<p>
+If embedded, the <code>cache</code> object:
 </p>
 
 <ul>
-  <li><strong>FROG Expression</strong> - the serialized source representation stored in a <code>.frog</code> file</li>
-  <li><strong>FROG Program Model</strong> - the canonical editable in-memory representation used by development tools</li>
-  <li><strong>FROG Execution IR</strong> - the canonical execution-oriented representation derived from the validated Program Model</li>
+  <li><strong>MUST</strong> remain optional,</li>
+  <li><strong>MUST</strong> remain non-authoritative,</li>
+  <li><strong>MUST NOT</strong> be required for correctness,</li>
+  <li><strong>MUST</strong> be safe to remove without changing program meaning.</li>
 </ul>
 
 <p>
-The specification defined in this directory primarily describes the <strong>FROG Expression</strong>, which is the authoritative source form of a program.
-</p>
-
-<p>
-Tool implementations MAY reconstruct a Program Model from the Expression, and MAY derive an Execution IR from the validated Program Model for compilation and execution.
+Embedded cache is allowed for convenience, but it is generally less desirable than a sidecar file for collaborative source control workflows.
 </p>
 
 <hr/>
 
-<h2 id="execution-model">Execution model</h2>
+<h2 id="model">6. Cache Model</h2>
 
 <p>
-Execution follows a pure dataflow model:
+The cache model is intentionally simple:
+</p>
+
+<pre><code>        Canonical source
+     +----------------------+
+     |     program.frog     |
+     |----------------------|
+     | metadata             |
+     | interface            |
+     | connector            |
+     | diagram              |
+     | front_panel          |
+     | icon                 |
+     | ide                  |
+     | cache (optional)     |
+     +----------+-----------+
+                |
+                | derived from source
+                v
+     +----------------------+
+     |   source fingerprint |
+     +----------+-----------+
+                |
+                v
+     +----------------------+
+     |       entries        |
+     |----------------------|
+     | frog.ir              |
+     | frog.validation      |
+     | frog.analysis        |
+     | tool-specific data   |
+     +----------------------+
+
+Cache can be:
+- embedded inside .frog
+- external in .frog.cache
+
+In all cases:
+- derived
+- optional
+- non-authoritative
+- safe to delete
+</code></pre>
+
+<hr/>
+
+<h2 id="structure">7. Cache Object Structure</h2>
+
+<p>
+Recommended cache structure:
+</p>
+
+<pre><code>"cache": {
+  "format_version": "0.1",
+  "generator": {
+    "tool": "frog-ide",
+    "version": "0.1.0"
+  },
+  "source_fingerprint": "sha256:...",
+  "entries": {
+    "frog.ir": {
+      "kind": "execution_ir",
+      "schema_version": "0.1",
+      "created": "2026-03-05T12:00:00Z",
+      "depends_on": ["interface", "diagram", "front_panel"],
+      "data": {}
+    }
+  }
+}</code></pre>
+
+<p>
+This structure is generic enough to support multiple derived artifacts while keeping a stable,
+simple contract.
+</p>
+
+<hr/>
+
+<h2 id="fields">8. Top-Level Fields</h2>
+
+<h3>8.1 <code>format_version</code></h3>
+
+<p>
+Version of the cache container format.
 </p>
 
 <ul>
-  <li>A node becomes executable when all required inputs are available.</li>
-  <li>Execution order derives solely from data dependencies.</li>
-  <li>Nodes MAY execute in parallel.</li>
+  <li><strong>MUST</strong> be a string if present.</li>
+  <li><strong>SHOULD</strong> identify the cache container schema version.</li>
 </ul>
 
-<p>
-A <code>.frog</code> source file MUST be validated before execution.
-Execution MUST proceed from a validated, source-derived execution representation rather than directly from unvalidated source text.
-</p>
+<h3>8.2 <code>generator</code></h3>
 
 <p>
-In a typical architecture, tools reconstruct a <strong>FROG Program Model</strong> from the source Expression, validate it, and derive a <strong>FROG Execution IR</strong> for compilation and execution.
+Describes the tool that generated the cache.
 </p>
 
-<p>
-Optional sections such as <code>connector</code>, <code>icon</code>, <code>ide</code>, and <code>cache</code> MUST NOT influence execution behavior directly.
-The connector is a graphical reuse description, not an execution-semantic structure.
-</p>
-
-<hr/>
-
-<h2 id="validation-rules">Validation rules</h2>
+<pre><code>"generator": {
+  "tool": "frog-ide",
+  "version": "0.1.0"
+}</code></pre>
 
 <ul>
-  <li>All required top-level sections MUST be present in a canonical <code>.frog</code> file.</li>
-  <li>Node identifiers MUST be unique within a diagram.</li>
-  <li>Edge identifiers MUST be unique within a diagram.</li>
-  <li>All edges MUST reference existing nodes and ports.</li>
-  <li>Connected ports MUST be type-compatible.</li>
-  <li>Connector ports MUST reference existing interface ports.</li>
-  <li>Front panel bindings MUST reference valid targets as defined by the front panel specification.</li>
+  <li><strong>MUST</strong> be an object if present.</li>
+  <li>All fields are informational only.</li>
+  <li><strong>MUST NOT</strong> affect program meaning.</li>
 </ul>
 
-<hr/>
-
-<h2 id="json-ordering">JSON ordering and canonical formatting</h2>
+<h3>8.3 <code>source_fingerprint</code></h3>
 
 <p>
-JSON key ordering MUST NOT affect semantics.
+Fingerprint of the canonical source state from which the cache was derived.
 </p>
-
-<p>
-Recommended canonical ordering:
-</p>
-
-<pre>
-spec_version
-metadata
-interface
-connector
-diagram
-front_panel
-icon
-ide
-cache
-</pre>
-
-<hr/>
-
-<h2 id="normative-terminology">Normative terminology</h2>
 
 <ul>
-  <li><strong>MUST</strong> - required</li>
-  <li><strong>SHOULD</strong> - recommended</li>
-  <li><strong>MAY</strong> - optional</li>
-  <li><strong>MUST NOT</strong> - prohibited</li>
+  <li><strong>MUST</strong> be a string if present.</li>
+  <li><strong>SHOULD</strong> be stable for identical canonical source content.</li>
+  <li><strong>SHOULD</strong> change when authoritative source content changes.</li>
+  <li>Tools <strong>MUST</strong> treat cache as stale if the fingerprint does not match the current source.</li>
+</ul>
+
+<h3>8.4 <code>entries</code></h3>
+
+<p>
+Collection of named cache entries.
+</p>
+
+<ul>
+  <li><strong>MUST</strong> be an object if present.</li>
+  <li>Each property name identifies one cache entry.</li>
+  <li>Unknown entries <strong>MUST</strong> be safely ignorable.</li>
+</ul>
+
+<p>
+Recommended naming:
+</p>
+
+<ul>
+  <li><code>frog.*</code> for project-defined common entries</li>
+  <li>reverse-domain prefixes for tool-specific entries</li>
+</ul>
+
+<p>
+Examples:
+</p>
+
+<ul>
+  <li><code>frog.ir</code></li>
+  <li><code>frog.validation</code></li>
+  <li><code>frog.analysis</code></li>
+  <li><code>com.graiphic.ide.symbol_index</code></li>
+</ul>
+
+<h3>8.5 Entry structure</h3>
+
+<p>
+Each entry SHOULD follow this general structure:
+</p>
+
+<pre><code>"frog.ir": {
+  "kind": "execution_ir",
+  "schema_version": "0.1",
+  "created": "2026-03-05T12:00:00Z",
+  "depends_on": ["interface", "diagram", "front_panel"],
+  "data": {}
+}</code></pre>
+
+<ul>
+  <li><code>kind</code> — high-level category of cache entry</li>
+  <li><code>schema_version</code> — version of the entry payload schema</li>
+  <li><code>created</code> — creation timestamp in ISO 8601 UTC form</li>
+  <li><code>depends_on</code> — source sections or stable dependency identifiers</li>
+  <li><code>data</code> — opaque JSON payload containing the cached artifact</li>
+</ul>
+
+<p>
+The <code>data</code> field MAY contain any valid JSON value, but it <strong>MUST</strong> contain only derived information.
+</p>
+
+<hr/>
+
+<h2 id="entry-kinds">9. Common Cache Entry Kinds</h2>
+
+<h3>9.1 Execution IR cache</h3>
+
+<p>
+Stores a cached execution-oriented intermediate representation derived from the source graph.
+</p>
+
+<p>
+This is the most common and most important cache use case.
+It is intended to accelerate repeated validation, compilation, and execution preparation.
+</p>
+
+<h3>9.2 Validation cache</h3>
+
+<p>
+Stores derived validation outcomes, such as:
+</p>
+
+<ul>
+  <li>validation status,</li>
+  <li>diagnostic counts,</li>
+  <li>resolved warning sets,</li>
+  <li>last validated profile.</li>
+</ul>
+
+<h3>9.3 Analysis cache</h3>
+
+<p>
+Stores derived structural information, such as:
+</p>
+
+<ul>
+  <li>symbol indexes,</li>
+  <li>dependency analysis results,</li>
+  <li>graph summaries,</li>
+  <li>editor lookup tables.</li>
+</ul>
+
+<h3>9.4 Tool-specific cache</h3>
+
+<p>
+Tools MAY store private derived data under their own namespace, provided that the data remains optional,
+safe to ignore, and non-authoritative.
+</p>
+
+<hr/>
+
+<h2 id="authority-rules">10. Non-Authoritative Rules</h2>
+
+<p>
+Cache data <strong>MUST</strong> be treated as an optimization only.
+</p>
+
+<ul>
+  <li>Runtimes <strong>MUST NOT</strong> require cache data to execute a program.</li>
+  <li>Runtimes <strong>MUST NOT</strong> trust cache data for correctness.</li>
+  <li>Tools <strong>MUST</strong> be able to rebuild cache data from the canonical <code>.frog</code> source.</li>
+  <li>If cache conflicts with source content, the source content <strong>MUST</strong> win.</li>
+  <li>Removing cache <strong>MUST NOT</strong> change the meaning of the program.</li>
 </ul>
 
 <hr/>
 
-<h2 id="status">Status</h2>
+<h2 id="stale-cache">11. Stale or Invalid Cache Handling</h2>
 
 <p>
-FROG Specification v0.1 - Draft.
+Cache data SHOULD be treated as stale when:
+</p>
+
+<ul>
+  <li><code>source_fingerprint</code> does not match the current source content,</li>
+  <li><code>format_version</code> is not supported,</li>
+  <li>an entry <code>schema_version</code> is not supported,</li>
+  <li>an entry payload fails validation,</li>
+  <li>required dependencies listed in <code>depends_on</code> have changed,</li>
+  <li>the cache payload is incomplete or corrupted.</li>
+</ul>
+
+<p>
+When stale or invalid:
+</p>
+
+<ul>
+  <li>tools <strong>SHOULD</strong> discard the cache and regenerate it,</li>
+  <li>runtimes <strong>MUST</strong> ignore the cache for correctness decisions,</li>
+  <li>tools <strong>MAY</strong> keep only the valid cache entries and regenerate the others.</li>
+</ul>
+
+<hr/>
+
+<h2 id="security">12. Security Considerations</h2>
+
+<p>
+Cache content MUST NOT be treated as executable truth.
+</p>
+
+<ul>
+  <li>Tools <strong>SHOULD</strong> validate cache payloads before use.</li>
+  <li>Runtimes <strong>MUST</strong> validate source-derived IR regardless of cache presence.</li>
+  <li>Tools <strong>SHOULD</strong> avoid storing secrets or sensitive information in cache.</li>
+  <li>Cache data MAY be treated as untrusted input.</li>
+</ul>
+
+<p>
+A malformed cache file MUST NOT compromise correctness.
+At worst, it should be ignored and regenerated.
 </p>
 
 <hr/>
 
-<h2 id="license">License</h2>
+<h2 id="validation">13. Validation Rules</h2>
 
 <p>
-This specification is released under the Apache License 2.0.
+Implementations MUST enforce the following rules:
 </p>
+
+<ul>
+  <li>If present, embedded <code>cache</code> <strong>MUST</strong> be a JSON object.</li>
+  <li>If present, external <code>.frog.cache</code> root content <strong>MUST</strong> be a JSON object.</li>
+  <li>If present, <code>format_version</code> <strong>MUST</strong> be a string.</li>
+  <li>If present, <code>generator</code> <strong>MUST</strong> be an object.</li>
+  <li>If present, <code>source_fingerprint</code> <strong>MUST</strong> be a string.</li>
+  <li>If present, <code>entries</code> <strong>MUST</strong> be an object.</li>
+  <li>Each entry value inside <code>entries</code> <strong>MUST</strong> be an object.</li>
+  <li>If present, entry <code>kind</code> <strong>MUST</strong> be a string.</li>
+  <li>If present, entry <code>schema_version</code> <strong>MUST</strong> be a string or integer.</li>
+  <li>If present, entry <code>created</code> <strong>MUST</strong> be a string.</li>
+  <li>If present, entry <code>depends_on</code> <strong>MUST</strong> be an array of strings.</li>
+  <li>Entry <code>data</code> <strong>MAY</strong> be any valid JSON value.</li>
+  <li>Unknown cache entries <strong>MUST</strong> be ignorable.</li>
+  <li>Invalid, unreadable, stale, or incompatible cache <strong>MUST NOT</strong> change correctness.</li>
+</ul>
 
 <hr/>
 
-<p align="center">
-<strong>FROG - Free Open Graphical Language</strong><br/>
-An open foundation for graphical programming.
+<h2 id="examples">14. Examples</h2>
+
+<h3>14.1 Minimal embedded cache object</h3>
+
+<pre><code>"cache": {
+  "format_version": "0.1",
+  "source_fingerprint": "sha256:...",
+  "entries": {
+    "frog.ir": {
+      "kind": "execution_ir",
+      "schema_version": "0.1",
+      "data": {}
+    }
+  }
+}</code></pre>
+
+<h3>14.2 Extended embedded cache object</h3>
+
+<pre><code>"cache": {
+  "format_version": "0.1",
+  "generator": {
+    "tool": "frog-ide",
+    "version": "0.1.0"
+  },
+  "source_fingerprint": "sha256:7d1b...c9",
+  "entries": {
+    "frog.ir": {
+      "kind": "execution_ir",
+      "schema_version": "0.1",
+      "created": "2026-03-05T12:00:00Z",
+      "depends_on": ["interface", "diagram", "front_panel"],
+      "data": {
+        "graph": {},
+        "types": {}
+      }
+    },
+    "frog.validation": {
+      "kind": "validation",
+      "schema_version": "0.1",
+      "created": "2026-03-05T12:00:01Z",
+      "depends_on": ["interface", "diagram"],
+      "data": {
+        "valid": true,
+        "errors": []
+      }
+    }
+  }
+}</code></pre>
+
+<h3>14.3 External sidecar cache file</h3>
+
+<pre><code>{
+  "format_version": "0.1",
+  "generator": {
+    "tool": "frog-cli",
+    "version": "0.1.0"
+  },
+  "source_fingerprint": "sha256:7d1b...c9",
+  "entries": {
+    "frog.ir": {
+      "kind": "execution_ir",
+      "schema_version": "0.1",
+      "created": "2026-03-05T12:00:00Z",
+      "depends_on": ["interface", "diagram", "front_panel"],
+      "data": {
+        "graph": {}
+      }
+    }
+  }
+}</code></pre>
+
+<hr/>
+
+<h2 id="summary">15. Summary</h2>
+
+<p>
+The cache mechanism provides optional acceleration for tooling workflows.
+</p>
+
+<ul>
+  <li>Preferred storage is a separate <code>.frog.cache</code> file.</li>
+  <li>Embedded cache is allowed but secondary.</li>
+  <li>Cache data is derived, optional, and non-authoritative.</li>
+  <li>Execution IR is a primary cache use case, but not the only one.</li>
+  <li>Source content always defines program meaning.</li>
+</ul>
+
+<p>
+In FROG, source is authoritative.<br/>
+Cache is only an optimization.
 </p>
