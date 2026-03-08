@@ -10,21 +10,21 @@ Definition of program interfaces for <strong>.frog</strong> files<br/>
 <h2>Contents</h2>
 
 <ul>
-<li><a href="#overview">1. Overview</a></li>
-<li><a href="#purpose">2. Purpose of the Interface</a></li>
-<li><a href="#location">3. Location in a .frog file</a></li>
-<li><a href="#structure">4. Interface Structure</a></li>
-<li><a href="#inputs">5. Input Ports</a></li>
-<li><a href="#outputs">6. Output Ports</a></li>
-<li><a href="#port-properties">7. Port Properties</a></li>
-<li><a href="#connection-requirement">8. Connection Requirement</a></li>
-<li><a href="#type-system">9. Type System Integration</a></li>
-<li><a href="#diagram-binding">10. Binding with the Diagram</a></li>
-<li><a href="#connector-relation">11. Relation with Connector</a></li>
-<li><a href="#examples">12. Examples</a></li>
-<li><a href="#validation">13. Validation Rules</a></li>
-<li><a href="#extensibility">14. Extensibility</a></li>
-<li><a href="#summary">15. Summary</a></li>
+  <li><a href="#overview">1. Overview</a></li>
+  <li><a href="#purpose">2. Purpose of the Interface</a></li>
+  <li><a href="#location">3. Location in a .frog file</a></li>
+  <li><a href="#structure">4. Interface Structure</a></li>
+  <li><a href="#inputs">5. Input Ports</a></li>
+  <li><a href="#outputs">6. Output Ports</a></li>
+  <li><a href="#port-properties">7. Port Properties</a></li>
+  <li><a href="#input-connection-policy">8. Input Connection Policy</a></li>
+  <li><a href="#type-system-integration">9. Type System Integration</a></li>
+  <li><a href="#binding-with-the-diagram">10. Binding with the Diagram</a></li>
+  <li><a href="#relation-with-connector">11. Relation with Connector</a></li>
+  <li><a href="#examples">12. Examples</a></li>
+  <li><a href="#validation-rules">13. Validation Rules</a></li>
+  <li><a href="#extensibility">14. Extensibility</a></li>
+  <li><a href="#summary">15. Summary</a></li>
 </ul>
 
 <hr/>
@@ -32,7 +32,7 @@ Definition of program interfaces for <strong>.frog</strong> files<br/>
 <h2 id="overview">1. Overview</h2>
 
 <p>
-The <strong>interface</strong> section defines the public contract of a Frog.
+The <strong>interface</strong> section defines the public logical contract of a Frog.
 </p>
 
 <p>
@@ -40,19 +40,20 @@ It specifies:
 </p>
 
 <ul>
-<li>the program inputs</li>
-<li>the program outputs</li>
-<li>their identifiers</li>
-<li>their data types</li>
-<li>their connection requirements</li>
+  <li>the public inputs of the program,</li>
+  <li>the public outputs of the program,</li>
+  <li>their stable identifiers,</li>
+  <li>their declared types,</li>
+  <li>their connection policy when applicable.</li>
 </ul>
 
 <p>
-The interface defines how a Frog exchanges data with the outside world and with other Frogs.
+The interface describes how a Frog exchanges data with the outside world and with other Frogs.
+It is the logical boundary of the program.
 </p>
 
 <p>
-It is the logical boundary of the program. It does not define graphical layout, connector placement, or execution scheduling.
+The interface does <strong>not</strong> define graphical placement, connector geometry, diagram layout, or execution scheduling.
 </p>
 
 <hr/>
@@ -68,14 +69,14 @@ It enables:
 </p>
 
 <ul>
-<li>composition of Frogs into larger graphs</li>
-<li>static validation of connections</li>
-<li>clear and auditable program boundaries</li>
-<li>safe reuse across libraries and tools</li>
+  <li>composition of Frogs into larger graphs,</li>
+  <li>static validation of public connections,</li>
+  <li>clear and auditable program boundaries,</li>
+  <li>safe reuse across tools, runtimes, and libraries.</li>
 </ul>
 
 <p>
-The interface is part of the program definition and remains independent from IDE-specific presentation details.
+The interface is part of the canonical program definition and remains independent from IDE-specific presentation details.
 </p>
 
 <hr/>
@@ -98,7 +99,7 @@ The interface is defined as a top-level JSON object.
 </pre>
 
 <p>
-The <code>interface</code> section MUST be present.
+The <code>interface</code> section MUST be present in a canonical <code>.frog</code> source file.
 </p>
 
 <hr/>
@@ -106,16 +107,16 @@ The <code>interface</code> section MUST be present.
 <h2 id="structure">4. Interface Structure</h2>
 
 <p>
-The interface object contains two arrays:
+The interface object contains two required arrays:
 </p>
 
 <ul>
-<li><strong>inputs</strong></li>
-<li><strong>outputs</strong></li>
+  <li><strong>inputs</strong></li>
+  <li><strong>outputs</strong></li>
 </ul>
 
 <p>
-Each entry in these arrays defines one interface port.
+Each entry in these arrays defines one public interface port.
 </p>
 
 <pre>
@@ -127,20 +128,25 @@ Each entry in these arrays defines one interface port.
 
 <p>
 The interface describes the logical contract only.
-It does not define where ports are drawn on a node. That responsibility belongs to the <code>connector</code> section.
+It does not define where ports are drawn on a reusable node.
+That responsibility belongs to the <code>connector</code> section.
 </p>
 
 <p>
-Direction is defined structurally:
+Port direction is defined structurally:
 </p>
 
 <ul>
-<li>a port inside <code>inputs</code> is an input port</li>
-<li>a port inside <code>outputs</code> is an output port</li>
+  <li>a port inside <code>inputs</code> is an input port,</li>
+  <li>a port inside <code>outputs</code> is an output port.</li>
 </ul>
 
 <p>
-No additional <code>direction</code> property is required.
+No additional <code>direction</code> property is required in v0.1.
+</p>
+
+<p>
+Both arrays MUST exist, even if one of them is empty.
 </p>
 
 <hr/>
@@ -155,11 +161,11 @@ Input ports represent data entering the Frog from the outside.
 "inputs": [
   {
     "id": "a",
-    "type": "float64"
+    "type": "f64"
   },
   {
     "id": "b",
-    "type": "float64"
+    "type": "f64"
   }
 ]
 </pre>
@@ -169,10 +175,10 @@ Rules:
 </p>
 
 <ul>
-<li>Each input port MUST define an <code>id</code>.</li>
-<li>Each input port MUST define a <code>type</code>.</li>
-<li>Input port identifiers MUST be unique across the whole interface.</li>
-<li>Input ports represent externally provided values, signals, events, or references.</li>
+  <li>Each input port MUST define an <code>id</code>.</li>
+  <li>Each input port MUST define a <code>type</code>.</li>
+  <li>Input port identifiers MUST be unique across the whole interface.</li>
+  <li>Input ports represent externally provided values, signals, events, or equivalent public inputs.</li>
 </ul>
 
 <hr/>
@@ -187,7 +193,7 @@ Output ports represent data produced by the Frog and exposed to the outside.
 "outputs": [
   {
     "id": "result",
-    "type": "float64"
+    "type": "f64"
   }
 ]
 </pre>
@@ -197,10 +203,10 @@ Rules:
 </p>
 
 <ul>
-<li>Each output port MUST define an <code>id</code>.</li>
-<li>Each output port MUST define a <code>type</code>.</li>
-<li>Output port identifiers MUST be unique across the whole interface.</li>
-<li>Output ports represent values, signals, events, or references made available to other Frogs or hosting environments.</li>
+  <li>Each output port MUST define an <code>id</code>.</li>
+  <li>Each output port MUST define a <code>type</code>.</li>
+  <li>Output port identifiers MUST be unique across the whole interface.</li>
+  <li>Output ports represent values, signals, events, or equivalent public outputs made available to other Frogs or hosting environments.</li>
 </ul>
 
 <hr/>
@@ -211,10 +217,10 @@ Rules:
 Each port object contains required logical properties and MAY contain additional metadata.
 </p>
 
-<h3>id</h3>
+<h3>7.1 <code>id</code></h3>
 
 <p>
-Unique identifier of the port.
+Unique logical identifier of the port.
 </p>
 
 <pre>
@@ -226,19 +232,19 @@ Rules:
 </p>
 
 <ul>
-<li>MUST be a string.</li>
-<li>MUST be unique across all interface ports.</li>
-<li>MUST remain stable enough to support reuse, validation, and connector mapping.</li>
+  <li>MUST be a string.</li>
+  <li>MUST be unique across all interface ports, including both inputs and outputs.</li>
+  <li>MUST remain stable enough to support reuse, validation, connector mapping, and diagram binding.</li>
 </ul>
 
-<h3>type</h3>
+<h3>7.2 <code>type</code></h3>
 
 <p>
-Defines the declared data type of the port.
+Declared type of the port.
 </p>
 
 <pre>
-"type": "float64"
+"type": "f64"
 </pre>
 
 <p>
@@ -246,11 +252,12 @@ Rules:
 </p>
 
 <ul>
-<li>MUST reference a valid FROG type.</li>
-<li>MUST be sufficient for static compatibility checks.</li>
+  <li>MUST be a valid FROG type expression.</li>
+  <li>MUST use the canonical type syntax defined by <code>Type.md</code>.</li>
+  <li>MUST be sufficient for static compatibility checks.</li>
 </ul>
 
-<h3>Optional Metadata</h3>
+<h3>7.3 Optional metadata</h3>
 
 <p>
 Additional metadata MAY be attached to a port.
@@ -259,18 +266,18 @@ Additional metadata MAY be attached to a port.
 <pre>
 {
   "id": "gain",
-  "type": "float64",
+  "type": "f64",
   "description": "Gain factor"
 }
 </pre>
 
 <p>
-Such metadata does not change the meaning of the interface contract unless explicitly defined by a future specification.
+Such metadata does not change the meaning of the interface contract unless explicitly defined by a future specification revision or stricter active profile.
 </p>
 
 <hr/>
 
-<h2 id="connection-requirement">8. Connection Requirement</h2>
+<h2 id="input-connection-policy">8. Input Connection Policy</h2>
 
 <p>
 Input ports MAY define a <code>connection</code> property to express how strongly an external connection is expected.
@@ -279,7 +286,7 @@ Input ports MAY define a <code>connection</code> property to express how strongl
 <pre>
 {
   "id": "gain",
-  "type": "float64",
+  "type": "f64",
   "connection": "optional",
   "default": 1.0
 }
@@ -290,46 +297,46 @@ Allowed values are:
 </p>
 
 <ul>
-<li><code>required</code></li>
-<li><code>recommended</code></li>
-<li><code>optional</code></li>
+  <li><code>required</code></li>
+  <li><code>recommended</code></li>
+  <li><code>optional</code></li>
 </ul>
 
-<h3>required</h3>
+<h3>8.1 <code>required</code></h3>
 
 <p>
 The input is expected to be connected.
 If it is not connected, validation MUST fail unless another rule in the active profile explicitly defines a valid fallback behavior.
 </p>
 
-<h3>recommended</h3>
+<h3>8.2 <code>recommended</code></h3>
 
 <p>
 The input is intended to be connected in normal use.
 If it is left unconnected, validation MAY succeed, but tools SHOULD emit a warning, lint message, or equivalent diagnostic.
 </p>
 
-<h3>optional</h3>
+<h3>8.3 <code>optional</code></h3>
 
 <p>
 The input may be left unconnected without producing a validation error.
 A default value MAY be provided when appropriate.
 </p>
 
-<h3>Default Behavior</h3>
+<h3>8.4 Default behavior</h3>
 
 <p>
 If <code>connection</code> is omitted on an input port, the default value is <code>required</code>.
 </p>
 
-<h3>Use on Outputs</h3>
+<h3>8.5 Use on outputs</h3>
 
 <p>
-The <code>connection</code> property applies to input ports only in this specification version.
-Output ports do not use <code>required</code>, <code>recommended</code>, or <code>optional</code> in v0.1.
+The <code>connection</code> property applies to input ports only in v0.1.
+Output ports do not use <code>required</code>, <code>recommended</code>, or <code>optional</code> in this specification version.
 </p>
 
-<h3>default</h3>
+<h3>8.6 <code>default</code></h3>
 
 <p>
 An input port MAY define a <code>default</code> value.
@@ -352,44 +359,56 @@ The default value, when present, MUST be compatible with the declared port type.
 A <code>default</code> value provides a fallback when the input is not externally connected and when the active execution or validation profile allows such behavior.
 </p>
 
+<p>
+This document does not define a separate implicit coercion mechanism for defaults beyond the general type compatibility rules of FROG.
+</p>
+
 <hr/>
 
-<h2 id="type-system">9. Type System Integration</h2>
+<h2 id="type-system-integration">9. Type System Integration</h2>
 
 <p>
-The interface relies on the FROG type system.
+The interface relies normatively on the FROG type system defined in <code>Type.md</code>.
 </p>
 
 <p>
-Examples of valid type expressions may include:
+Examples of valid type expressions in v0.1 include:
 </p>
 
 <pre>
-float64
-int32
 bool
+i32
+f64
 string
-array&lt;float64&gt;
+array&lt;f64&gt;
+array&lt;u8, 1024&gt;
 </pre>
 
 <p>
-Type compatibility MUST be validated during graph validation.
+Type identity, type compatibility, and implicit coercion behavior are not redefined here.
+They MUST follow the rules defined in the FROG type specification.
 </p>
 
 <p>
-Libraries MAY introduce additional types, provided that tools can validate or safely reject them according to the active specification profile.
+In particular:
 </p>
+
+<ul>
+  <li>canonical type names such as <code>i32</code> and <code>f64</code> MUST be used,</li>
+  <li>non-canonical aliases such as <code>int32</code>, <code>float64</code>, or <code>double</code> are not valid canonical type expressions in v0.1,</li>
+  <li>user-defined named types and library-defined custom types are outside the scope of v0.1 unless standardized by a future revision.</li>
+</ul>
 
 <hr/>
 
-<h2 id="diagram-binding">10. Binding with the Diagram</h2>
+<h2 id="binding-with-the-diagram">10. Binding with the Diagram</h2>
 
 <p>
-Interface ports define the external contract of the Frog and MUST be bound to the internal program graph.
+Interface ports define the external contract of the Frog and MUST be bound consistently to the internal program graph.
 </p>
 
 <p>
-A diagram implementation MAY represent interface boundaries using dedicated entry and exit nodes, or any equivalent internal mechanism.
+A diagram implementation MAY represent interface boundaries using dedicated entry and exit nodes, or any equivalent internal mechanism, provided that the logical interface contract remains preserved.
 </p>
 
 <p>
@@ -406,17 +425,18 @@ Rules:
 </p>
 
 <ul>
-<li>Each declared interface input MUST be consumable by the diagram.</li>
-<li>Each declared interface output MUST be producible by the diagram.</li>
-<li>Unbound or inconsistent interface definitions MUST trigger validation errors.</li>
+  <li>Each declared interface input MUST be consumable by the diagram.</li>
+  <li>Each declared interface output MUST be producible by the diagram.</li>
+  <li>Unbound or inconsistent interface definitions MUST trigger validation errors.</li>
+  <li>The diagram MUST NOT silently redefine or contradict the declared interface contract.</li>
 </ul>
 
 <hr/>
 
-<h2 id="connector-relation">11. Relation with Connector</h2>
+<h2 id="relation-with-connector">11. Relation with Connector</h2>
 
 <p>
-The <code>interface</code> section defines the logical ports of the Frog.
+The <code>interface</code> section defines the logical public ports of the Frog.
 The <code>connector</code> section defines how those ports appear graphically when the Frog is reused as a node inside another diagram.
 </p>
 
@@ -445,56 +465,70 @@ Rules:
 </p>
 
 <ul>
-<li>Each <code>interface_port</code> value in the connector MUST reference an existing port declared in <code>interface</code>.</li>
-<li>The connector MUST NOT introduce new logical ports.</li>
-<li>The connector MUST NOT modify port types or port semantics.</li>
-<li>A port MAY exist in the interface without appearing in the connector if a given tool or profile allows it.</li>
+  <li>Each <code>interface_port</code> value in the connector MUST reference an existing port declared in <code>interface</code>.</li>
+  <li>The connector MUST NOT introduce new logical ports.</li>
+  <li>The connector MUST NOT modify port types, connection policy, or interface semantics.</li>
+  <li>A port MAY exist in the interface without appearing in the connector if a given tool or profile allows it.</li>
 </ul>
 
 <hr/>
 
 <h2 id="examples">12. Examples</h2>
 
-<h3>Minimal Interface</h3>
+<h3>12.1 Minimal interface</h3>
 
 <pre>
 "interface": {
   "inputs": [
-    { "id": "a", "type": "float64" }
+    { "id": "a", "type": "f64" }
   ],
   "outputs": [
-    { "id": "result", "type": "float64" }
+    { "id": "result", "type": "f64" }
   ]
 }
 </pre>
 
-<h3>Interface with Optional and Recommended Inputs</h3>
+<h3>12.2 Interface with optional and recommended inputs</h3>
 
 <pre>
 "interface": {
   "inputs": [
-    { "id": "temperature", "type": "float64", "connection": "required" },
-    { "id": "pressure", "type": "float64", "connection": "recommended" },
+    { "id": "temperature", "type": "f64", "connection": "required" },
+    { "id": "pressure", "type": "f64", "connection": "recommended" },
     { "id": "enable", "type": "bool", "connection": "optional", "default": true }
   ],
   "outputs": [
-    { "id": "density", "type": "float64" },
+    { "id": "density", "type": "f64" },
     { "id": "status", "type": "string" }
   ]
 }
 </pre>
 
-<h3>Arithmetic Node with Connector Mapping</h3>
+<h3>12.3 Interface with array types</h3>
+
+<pre>
+"interface": {
+  "inputs": [
+    { "id": "samples", "type": "array<f64>" },
+    { "id": "window", "type": "array<f64, 256>", "connection": "recommended" }
+  ],
+  "outputs": [
+    { "id": "spectrum", "type": "array<f64>" }
+  ]
+}
+</pre>
+
+<h3>12.4 Arithmetic node with connector mapping</h3>
 
 <pre>
 {
   "interface": {
     "inputs": [
-      { "id": "a", "type": "float64", "connection": "required" },
-      { "id": "b", "type": "float64", "connection": "required" }
+      { "id": "a", "type": "f64", "connection": "required" },
+      { "id": "b", "type": "f64", "connection": "required" }
     ],
     "outputs": [
-      { "id": "result", "type": "float64" }
+      { "id": "result", "type": "f64" }
     ]
   },
   "connector": {
@@ -510,33 +544,33 @@ Rules:
 
 <hr/>
 
-<h2 id="validation">13. Validation Rules</h2>
+<h2 id="validation-rules">13. Validation Rules</h2>
 
 <p>
 Implementations MUST enforce the following rules:
 </p>
 
 <ul>
-<li><code>interface</code> MUST exist.</li>
-<li><code>inputs</code> and <code>outputs</code> MUST exist and MUST be arrays.</li>
-<li>Each port object MUST define an <code>id</code>.</li>
-<li>Each port object MUST define a <code>type</code>.</li>
-<li>Port identifiers MUST be unique across the whole interface.</li>
-<li>Declared types MUST be syntactically valid according to the active specification profile.</li>
-<li>The diagram binding MUST be consistent with the declared interface.</li>
+  <li><code>interface</code> MUST exist.</li>
+  <li><code>inputs</code> and <code>outputs</code> MUST exist and MUST be arrays.</li>
+  <li>Each port object MUST define an <code>id</code>.</li>
+  <li>Each port object MUST define a <code>type</code>.</li>
+  <li>Port identifiers MUST be unique across the whole interface.</li>
+  <li>Declared type expressions MUST be syntactically valid according to <code>Type.md</code>.</li>
+  <li>The diagram binding MUST be consistent with the declared interface.</li>
 </ul>
 
 <p>
-Additional rules for input connection requirements:
+Additional rules for input connection policy:
 </p>
 
 <ul>
-<li>if <code>connection</code> is present, it MUST be one of <code>required</code>, <code>recommended</code>, or <code>optional</code></li>
-<li>if <code>connection</code> is omitted on an input, it MUST be interpreted as <code>required</code></li>
-<li>if <code>default</code> is present, it MUST be type-compatible with the declared input type</li>
-<li>an unconnected <code>required</code> input MUST trigger a validation error unless the active profile defines an allowed fallback</li>
-<li>an unconnected <code>recommended</code> input SHOULD trigger a warning or equivalent diagnostic</li>
-<li>an unconnected <code>optional</code> input MUST NOT trigger a validation error solely because it is unconnected</li>
+  <li>if <code>connection</code> is present, it MUST be one of <code>required</code>, <code>recommended</code>, or <code>optional</code>,</li>
+  <li>if <code>connection</code> is omitted on an input, it MUST be interpreted as <code>required</code>,</li>
+  <li>if <code>default</code> is present, it MUST be compatible with the declared input type,</li>
+  <li>an unconnected <code>required</code> input MUST trigger a validation error unless the active profile defines an allowed fallback,</li>
+  <li>an unconnected <code>recommended</code> input SHOULD trigger a warning or equivalent diagnostic,</li>
+  <li>an unconnected <code>optional</code> input MUST NOT trigger a validation error solely because it is unconnected.</li>
 </ul>
 
 <p>
@@ -544,8 +578,8 @@ When a connector is present:
 </p>
 
 <ul>
-<li>each referenced <code>interface_port</code> MUST exist in the interface</li>
-<li>connector mappings MUST remain compatible with the interface definition</li>
+  <li>each referenced <code>interface_port</code> MUST exist in the interface,</li>
+  <li>connector mappings MUST remain compatible with the interface definition.</li>
 </ul>
 
 <p>
@@ -563,7 +597,7 @@ Tools and libraries MAY add additional non-breaking metadata fields to port defi
 <pre>
 {
   "id": "speed",
-  "type": "float64",
+  "type": "f64",
   "connection": "recommended",
   "unit": "m/s",
   "description": "Measured linear speed"
@@ -575,11 +609,11 @@ Examples of such metadata may include:
 </p>
 
 <ul>
-<li>human-readable descriptions</li>
-<li>units</li>
-<li>default values</li>
-<li>editor hints</li>
-<li>documentation annotations</li>
+  <li>human-readable descriptions,</li>
+  <li>units,</li>
+  <li>default values,</li>
+  <li>editor hints,</li>
+  <li>documentation annotations.</li>
 </ul>
 
 <p>
@@ -599,15 +633,16 @@ It provides:
 </p>
 
 <ul>
-<li>clear program boundaries</li>
-<li>type-aware composition</li>
-<li>stable port identifiers</li>
-<li>explicit input connection requirements</li>
-<li>a foundation for reusable graphical nodes</li>
+  <li>clear program boundaries,</li>
+  <li>type-aware composition,</li>
+  <li>stable port identifiers,</li>
+  <li>explicit input connection policy,</li>
+  <li>a foundation for reusable graphical nodes.</li>
 </ul>
 
 <p>
 The interface describes <strong>what</strong> a Frog exposes.
 The connector describes <strong>where</strong> those ports appear graphically.
+The diagram defines how those public ports are bound to internal execution logic.
 Together, they allow Frogs to be safely validated, reused, and composed into larger executable graphs.
 </p>
