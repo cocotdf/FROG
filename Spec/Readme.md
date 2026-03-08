@@ -18,6 +18,7 @@
   <li><a href="#frog-json-top-level">FROG JSON top-level structure</a></li>
   <li><a href="#section-presence-rules">Section presence rules</a></li>
   <li><a href="#sections">Sections overview</a></li>
+  <li><a href="#type-system">Type system</a></li>
   <li><a href="#interface-connector-and-front-panel">Interface, connector, and front panel</a></li>
   <li><a href="#program-representation-model">Program representation model</a></li>
   <li><a href="#execution-model">Execution model</a></li>
@@ -50,6 +51,15 @@ The <code>.frog</code> file is the canonical source representation of a Frog pro
 It is called the <strong>FROG Expression</strong>.
 </p>
 
+<p>
+The FROG specification covers both:
+</p>
+
+<ul>
+  <li>the top-level source structure stored in a <code>.frog</code> file, and</li>
+  <li>the cross-cutting rules that apply to typed values, interfaces, diagrams, front panels, and tool-related metadata.</li>
+</ul>
+
 <hr/>
 
 <h2 id="spec-documents">Specification documents</h2>
@@ -60,6 +70,7 @@ Each section below has its own detailed specification document:
 
 <ul>
   <li><a href="./Metadata.md"><strong>Metadata.md</strong></a></li>
+  <li><a href="./Type.md"><strong>Type.md</strong></a></li>
   <li><a href="./Interface.md"><strong>Interface.md</strong></a></li>
   <li><a href="./Connector.md"><strong>Connector.md</strong></a></li>
   <li><a href="./Diagram.md"><strong>Diagram.md</strong></a></li>
@@ -68,6 +79,11 @@ Each section below has its own detailed specification document:
   <li><a href="./IDE%20preferences.md"><strong>IDE preferences.md</strong></a></li>
   <li><a href="./Cache%20(optional%20IR).md"><strong>Cache (optional IR).md</strong></a></li>
 </ul>
+
+<p>
+Unlike the other documents, <strong>Type.md</strong> defines a cross-cutting language subsystem rather than a dedicated top-level JSON section.
+It specifies canonical type expressions, built-in types, compatibility, and coercion rules used throughout the FROG Expression.
+</p>
 
 <hr/>
 
@@ -94,6 +110,10 @@ A canonical <code>.frog</code> source file MAY also contain optional sections:
   <li><strong>IDE preferences</strong>: tool-specific editing preferences</li>
   <li><strong>Cache</strong>: optional derived non-authoritative cache data</li>
 </ul>
+
+<p>
+In addition to these sections, all typed values contained in a <code>.frog</code> file are governed by the FROG type system defined in <a href="./Type.md"><strong>Type.md</strong></a>.
+</p>
 
 <p>
 A <code>.frog</code> file MUST NOT contain hidden compiled binaries.
@@ -187,6 +207,11 @@ Required and optional status is defined below.
 Optional sections MUST NOT affect execution semantics.
 </p>
 
+<p>
+FROG v0.1 does not define a mandatory top-level <code>types</code> section.
+Type information is embedded directly in typed elements through canonical type expressions defined in <a href="./Type.md"><strong>Type.md</strong></a>.
+</p>
+
 <hr/>
 
 <h2 id="section-presence-rules">Section presence rules</h2>
@@ -246,10 +271,13 @@ Detailed spec: <a href="./Metadata.md"><strong>Metadata.md</strong></a>
 
 <p>
 Required section defining the public typed inputs and outputs of the Frog.
+Type expressions used by interface ports MUST follow the FROG type system.
 </p>
 
 <p>
-Detailed spec: <a href="./Interface.md"><strong>Interface.md</strong></a>
+Detailed specs:
+<a href="./Interface.md"><strong>Interface.md</strong></a>,
+<a href="./Type.md"><strong>Type.md</strong></a>
 </p>
 
 <h3>Connector</h3>
@@ -266,10 +294,13 @@ Detailed spec: <a href="./Connector.md"><strong>Connector.md</strong></a>
 
 <p>
 Required section defining the executable dataflow graph.
+Typed values and compatible connections within the diagram MUST follow the FROG type system.
 </p>
 
 <p>
-Detailed spec: <a href="./Diagram.md"><strong>Diagram.md</strong></a>
+Detailed specs:
+<a href="./Diagram.md"><strong>Diagram.md</strong></a>,
+<a href="./Type.md"><strong>Type.md</strong></a>
 </p>
 
 <h3>Front panel</h3>
@@ -313,6 +344,47 @@ It contains derived, non-authoritative data and is safe to discard.
 
 <p>
 Detailed spec: <a href="./Cache%20(optional%20IR).md"><strong>Cache (optional IR).md</strong></a>
+</p>
+
+<hr/>
+
+<h2 id="type-system">Type system</h2>
+
+<p>
+FROG v0.1 defines a normative built-in type system described in <a href="./Type.md"><strong>Type.md</strong></a>.
+</p>
+
+<p>
+This type system is cross-cutting and applies wherever values are declared, constrained, connected, or converted, including:
+</p>
+
+<ul>
+  <li>interface ports,</li>
+  <li>diagram node ports,</li>
+  <li>wires and edge validation,</li>
+  <li>front panel bindings involving typed values,</li>
+  <li>constants and other typed elements defined by section-specific specifications.</li>
+</ul>
+
+<p>
+The type system is not represented as a dedicated required top-level section in v0.1.
+Instead, type information is embedded directly using canonical textual type expressions.
+</p>
+
+<p>
+FROG v0.1 standardizes:
+</p>
+
+<ul>
+  <li>built-in primitive types,</li>
+  <li>built-in array types,</li>
+  <li>type identity rules,</li>
+  <li>type compatibility rules,</li>
+  <li>implicit numeric coercion rules.</li>
+</ul>
+
+<p>
+User-defined named types, library-defined custom types, and more advanced structured types are outside the scope of v0.1 unless and until they are standardized in a future specification revision.
 </p>
 
 <hr/>
@@ -387,6 +459,10 @@ The specification defined in this directory primarily describes the <strong>FROG
 Tool implementations MAY reconstruct a Program Model from the Expression, and MAY derive an Execution IR from the validated Program Model for compilation and execution.
 </p>
 
+<p>
+Type parsing, type identity, type compatibility, and implicit coercion behavior belong to the validated semantics of the Program Model and are defined normatively by <a href="./Type.md"><strong>Type.md</strong></a>.
+</p>
+
 <hr/>
 
 <h2 id="execution-model">Execution model</h2>
@@ -421,10 +497,12 @@ The connector is a graphical reuse description, not an execution-semantic struct
 
 <ul>
   <li>All required top-level sections MUST be present in a canonical <code>.frog</code> file.</li>
+  <li>All type expressions MUST parse according to <a href="./Type.md"><strong>Type.md</strong></a>.</li>
   <li>Node identifiers MUST be unique within a diagram.</li>
   <li>Edge identifiers MUST be unique within a diagram.</li>
   <li>All edges MUST reference existing nodes and ports.</li>
   <li>Connected ports MUST be type-compatible.</li>
+  <li>Any implicit coercion MUST follow the rules defined in <a href="./Type.md"><strong>Type.md</strong></a>.</li>
   <li>Connector ports MUST reference existing interface ports.</li>
   <li>Front panel bindings MUST reference valid targets as defined by the front panel specification.</li>
 </ul>
@@ -452,6 +530,10 @@ icon
 ide
 cache
 </pre>
+
+<p>
+Type expressions embedded inside JSON values SHOULD use the canonical serialized form defined in <a href="./Type.md"><strong>Type.md</strong></a>.
+</p>
 
 <hr/>
 
