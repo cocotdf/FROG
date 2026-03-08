@@ -10,19 +10,21 @@ Definition of executable graphs in <strong>.frog</strong> programs<br/>
 <h2>Contents</h2>
 
 <ul>
-<li><a href="#overview">1. Overview</a></li>
-<li><a href="#purpose">2. Purpose of the Diagram</a></li>
-<li><a href="#location">3. Location in a .frog file</a></li>
-<li><a href="#structure">4. Diagram Structure</a></li>
-<li><a href="#nodes">5. Node Model</a></li>
-<li><a href="#edges">6. Edge Model</a></li>
-<li><a href="#layout">7. Layout Information</a></li>
-<li><a href="#dependencies">8. Frog Dependencies</a></li>
-<li><a href="#subfrogs">9. Sub-Frog Invocation</a></li>
-<li><a href="#validation">10. Graph Validation</a></li>
-<li><a href="#execution">11. Execution Semantics</a></li>
-<li><a href="#examples">12. Example</a></li>
-<li><a href="#summary">13. Summary</a></li>
+  <li><a href="#overview">1. Overview</a></li>
+  <li><a href="#purpose">2. Purpose of the Diagram</a></li>
+  <li><a href="#location">3. Location in a .frog file</a></li>
+  <li><a href="#structure">4. Diagram Structure</a></li>
+  <li><a href="#node-model">5. Node Model</a></li>
+  <li><a href="#port-resolution-model">6. Port Resolution Model</a></li>
+  <li><a href="#edge-model">7. Edge Model</a></li>
+  <li><a href="#layout-information">8. Layout Information</a></li>
+  <li><a href="#frog-dependencies">9. Frog Dependencies</a></li>
+  <li><a href="#subfrog-invocation">10. Sub-Frog Invocation</a></li>
+  <li><a href="#interface-boundary-nodes">11. Interface Boundary Nodes</a></li>
+  <li><a href="#graph-validation">12. Graph Validation</a></li>
+  <li><a href="#execution-semantics">13. Execution Semantics</a></li>
+  <li><a href="#examples">14. Examples</a></li>
+  <li><a href="#summary">15. Summary</a></li>
 </ul>
 
 <hr/>
@@ -30,41 +32,44 @@ Definition of executable graphs in <strong>.frog</strong> programs<br/>
 <h2 id="overview">1. Overview</h2>
 
 <p>
-The <strong>diagram</strong> defines the executable dataflow graph of a Frog.
+The <strong>diagram</strong> section defines the executable dataflow graph of a Frog.
 </p>
 
 <p>
-It contains the nodes representing operations and the edges representing
-data connections between them.
+It contains the nodes representing operations and the edges representing directed data connections between them.
 </p>
 
 <p>
-Execution semantics are derived exclusively from this graph.
+Execution semantics are derived from this graph together with the validated interface contract and the FROG type system.
 </p>
 
 <hr/>
 
 <h2 id="purpose">2. Purpose of the Diagram</h2>
 
+<p>
 The diagram provides:
+</p>
 
 <ul>
-<li>the executable logic of the Frog</li>
-<li>the complete data dependency graph</li>
-<li>the scheduling constraints for execution</li>
+  <li>the executable logic of the Frog,</li>
+  <li>the complete data dependency graph,</li>
+  <li>the structural link between the public interface and internal execution logic,</li>
+  <li>the hierarchical composition mechanism used to invoke other Frogs.</li>
 </ul>
 
-Nodes represent computation.
-
-Edges represent data flow.
+<p>
+Nodes represent computation, interface boundaries, or reusable sub-Frog invocations.
+Edges represent directional data flow.
+</p>
 
 <hr/>
 
 <h2 id="location">3. Location in a .frog file</h2>
 
-The diagram appears as a top-level object.
-
-Example:
+<p>
+The diagram appears as a top-level object in the canonical <code>.frog</code> source file.
+</p>
 
 <pre>
 {
@@ -77,13 +82,17 @@ Example:
 }
 </pre>
 
-The diagram section MUST exist.
+<p>
+The <code>diagram</code> section MUST exist in a canonical <code>.frog</code> source file.
+</p>
 
 <hr/>
 
 <h2 id="structure">4. Diagram Structure</h2>
 
-Example structure:
+<p>
+The diagram object contains three fields:
+</p>
 
 <pre>
 "diagram": {
@@ -93,21 +102,48 @@ Example structure:
 }
 </pre>
 
+<p>
 Fields:
+</p>
 
 <ul>
-<li><strong>nodes</strong> — graph nodes</li>
-<li><strong>edges</strong> — data connections</li>
-<li><strong>dependencies</strong> — external Frog references</li>
+  <li><strong>nodes</strong> — required array of graph nodes</li>
+  <li><strong>edges</strong> — required array of directed data connections</li>
+  <li><strong>dependencies</strong> — optional array of referenced external Frogs</li>
 </ul>
+
+<p>
+The <code>nodes</code> and <code>edges</code> arrays MUST exist, even if one of them is empty.
+The <code>dependencies</code> field MAY be omitted when no external Frog is referenced.
+</p>
 
 <hr/>
 
-<h2 id="nodes">5. Node Model</h2>
+<h2 id="node-model">5. Node Model</h2>
 
-A node represents an operation.
+<p>
+A node represents an executable or structurally meaningful element of the graph.
+</p>
 
-Example node:
+<p>
+Every node MUST define:
+</p>
+
+<ul>
+  <li><strong>id</strong> — unique node identifier</li>
+  <li><strong>kind</strong> — node category</li>
+</ul>
+
+<p>
+A node MAY also define:
+</p>
+
+<ul>
+  <li><strong>layout</strong> — graphical editor position</li>
+  <li>kind-specific fields defined below</li>
+</ul>
+
+<h3>5.1 Common node shape</h3>
 
 <pre>
 {
@@ -121,31 +157,192 @@ Example node:
 }
 </pre>
 
-Node fields:
+<h3>5.2 Supported node kinds in v0.1</h3>
 
 <ul>
-<li><strong>id</strong> — unique identifier</li>
-<li><strong>kind</strong> — node category</li>
-<li><strong>type</strong> — operation name</li>
-<li><strong>layout</strong> — graphical position</li>
+  <li><code>primitive</code></li>
+  <li><code>subfrog</code></li>
+  <li><code>interface_input</code></li>
+  <li><code>interface_output</code></li>
 </ul>
 
-Possible node kinds:
+<h3>5.3 Primitive nodes</h3>
+
+<p>
+A <code>primitive</code> node represents a built-in or profile-defined operation.
+</p>
+
+<pre>
+{
+  "id": "add_1",
+  "kind": "primitive",
+  "type": "Add",
+  "layout": {
+    "x": 240,
+    "y": 120
+  }
+}
+</pre>
+
+<p>
+Rules:
+</p>
 
 <ul>
-<li>primitive</li>
-<li>subfrog</li>
-<li>interface_input</li>
-<li>interface_output</li>
+  <li><code>type</code> MUST exist and identify the primitive operation.</li>
+  <li>The meaning and port signature of the primitive are defined by the active profile, standard library, or implementation-defined primitive catalog.</li>
+</ul>
+
+<h3>5.4 Sub-Frog nodes</h3>
+
+<p>
+A <code>subfrog</code> node represents an invocation of another Frog.
+</p>
+
+<pre>
+{
+  "id": "math_add_1",
+  "kind": "subfrog",
+  "ref": "Math.Add",
+  "layout": {
+    "x": 420,
+    "y": 120
+  }
+}
+</pre>
+
+<p>
+Rules:
+</p>
+
+<ul>
+  <li><code>ref</code> MUST exist.</li>
+  <li><code>ref</code> MUST match a declared dependency identifier.</li>
+  <li>The input and output ports of the node are derived from the referenced Frog interface.</li>
+</ul>
+
+<h3>5.5 Interface input nodes</h3>
+
+<p>
+An <code>interface_input</code> node represents the entry point of a declared public interface input inside the executable graph.
+</p>
+
+<pre>
+{
+  "id": "input_a",
+  "kind": "interface_input",
+  "interface_port": "a",
+  "layout": {
+    "x": 40,
+    "y": 100
+  }
+}
+</pre>
+
+<p>
+Rules:
+</p>
+
+<ul>
+  <li><code>interface_port</code> MUST exist.</li>
+  <li><code>interface_port</code> MUST reference an existing input declared in the <code>interface</code> section.</li>
+</ul>
+
+<h3>5.6 Interface output nodes</h3>
+
+<p>
+An <code>interface_output</code> node represents the exit point used to drive a declared public interface output from the executable graph.
+</p>
+
+<pre>
+{
+  "id": "output_result",
+  "kind": "interface_output",
+  "interface_port": "result",
+  "layout": {
+    "x": 760,
+    "y": 100
+  }
+}
+</pre>
+
+<p>
+Rules:
+</p>
+
+<ul>
+  <li><code>interface_port</code> MUST exist.</li>
+  <li><code>interface_port</code> MUST reference an existing output declared in the <code>interface</code> section.</li>
 </ul>
 
 <hr/>
 
-<h2 id="edges">6. Edge Model</h2>
+<h2 id="port-resolution-model">6. Port Resolution Model</h2>
 
-Edges define data connections.
+<p>
+FROG v0.1 does not require every node to declare an explicit <code>ports</code> array inside the diagram source.
+Instead, valid ports are resolved from the node kind and its definition source.
+</p>
 
-Example:
+<h3>6.1 Port resolution by node kind</h3>
+
+<ul>
+  <li><strong>primitive</strong> — ports are defined by the primitive operation signature.</li>
+  <li><strong>subfrog</strong> — ports are defined by the referenced Frog interface.</li>
+  <li><strong>interface_input</strong> — exactly one output port named <code>value</code>.</li>
+  <li><strong>interface_output</strong> — exactly one input port named <code>value</code>.</li>
+</ul>
+
+<h3>6.2 Primitive node ports</h3>
+
+<p>
+For a <code>primitive</code> node, port names, directions, arity, and types are defined by the active primitive catalog or profile.
+This document does not standardize the primitive catalog itself.
+</p>
+
+<h3>6.3 Sub-Frog node ports</h3>
+
+<p>
+For a <code>subfrog</code> node:
+</p>
+
+<ul>
+  <li>every referenced Frog input becomes an input port of the node using the same interface port identifier,</li>
+  <li>every referenced Frog output becomes an output port of the node using the same interface port identifier.</li>
+</ul>
+
+<p>
+The types of these ports are exactly the types declared by the referenced Frog interface.
+</p>
+
+<h3>6.4 Interface boundary node ports</h3>
+
+<p>
+For interface boundary nodes, the following fixed port model applies:
+</p>
+
+<ul>
+  <li><code>interface_input</code> exposes one output port named <code>value</code>,</li>
+  <li><code>interface_output</code> exposes one input port named <code>value</code>.</li>
+</ul>
+
+<p>
+The type of that <code>value</code> port is the type of the referenced interface port.
+</p>
+
+<h3>6.5 Port validation consequence</h3>
+
+<p>
+Any edge endpoint referencing a node port is valid only if that port exists after resolution under the rules above.
+</p>
+
+<hr/>
+
+<h2 id="edge-model">7. Edge Model</h2>
+
+<p>
+Edges define directional data connections between node ports.
+</p>
 
 <pre>
 {
@@ -161,23 +358,38 @@ Example:
 }
 </pre>
 
+<p>
 Fields:
+</p>
 
 <ul>
-<li><strong>id</strong> — unique edge identifier</li>
-<li><strong>from</strong> — source node and port</li>
-<li><strong>to</strong> — destination node and port</li>
+  <li><strong>id</strong> — unique edge identifier</li>
+  <li><strong>from</strong> — source node and source output port</li>
+  <li><strong>to</strong> — destination node and destination input port</li>
 </ul>
 
-Edges represent directional data flow.
+<p>
+Edges represent directional data flow and MUST respect resolved port direction.
+</p>
+
+<p>
+A valid edge endpoint object has the following form:
+</p>
+
+<pre>
+{
+  "node": "some_node_id",
+  "port": "some_port_name"
+}
+</pre>
 
 <hr/>
 
-<h2 id="layout">7. Layout Information</h2>
+<h2 id="layout-information">8. Layout Information</h2>
 
-Nodes may include layout information for graphical editors.
-
-Example:
+<p>
+Nodes MAY include layout information for graphical editors.
+</p>
 
 <pre>
 "layout": {
@@ -186,17 +398,18 @@ Example:
 }
 </pre>
 
-Layout information is optional and only affects graphical rendering.
-
-It does not influence execution.
+<p>
+Layout information is optional and affects graphical rendering only.
+It MUST NOT influence execution semantics, scheduling, typing, or dataflow behavior.
+</p>
 
 <hr/>
 
-<h2 id="dependencies">8. Frog Dependencies</h2>
+<h2 id="frog-dependencies">9. Frog Dependencies</h2>
 
-When a diagram uses nodes implemented by other Frogs, those Frogs must be referenced.
-
-Example:
+<p>
+When a diagram uses nodes implemented by other Frogs, those Frogs MUST be referenced in <code>dependencies</code>.
+</p>
 
 <pre>
 "dependencies": [
@@ -207,22 +420,37 @@ Example:
 ]
 </pre>
 
-Fields:
+<p>
+Dependency fields:
+</p>
 
 <ul>
-<li><strong>name</strong> — logical identifier</li>
-<li><strong>path</strong> — relative file path</li>
+  <li><strong>name</strong> — logical identifier used by <code>subfrog.ref</code></li>
+  <li><strong>path</strong> — relative path or equivalent source reference</li>
 </ul>
 
-Dependencies allow reusable Frog modules.
+<p>
+Rules:
+</p>
+
+<ul>
+  <li>Dependency names MUST be unique within the diagram.</li>
+  <li>Each <code>subfrog.ref</code> MUST resolve to an existing dependency name.</li>
+  <li>The referenced Frog MUST expose an interface usable to resolve the sub-Frog node ports.</li>
+</ul>
+
+<p>
+This document does not standardize packaging, search paths, remote resolution, or dependency locking mechanisms.
+</p>
 
 <hr/>
 
-<h2 id="subfrogs">9. Sub-Frog Invocation</h2>
+<h2 id="subfrog-invocation">10. Sub-Frog Invocation</h2>
 
-Nodes may reference other Frog programs.
-
-Example:
+<p>
+Sub-Frog invocation enables hierarchical program composition.
+A sub-Frog behaves as a reusable node whose public ports are derived from the referenced Frog interface.
+</p>
 
 <pre>
 {
@@ -236,49 +464,123 @@ Example:
 }
 </pre>
 
-Field:
+<p>
+Conceptually:
+</p>
 
 <ul>
-<li><strong>ref</strong> — dependency identifier</li>
+  <li>the invoked Frog interface defines the node contract,</li>
+  <li>the connector, if any, only affects graphical presentation when reused in tools,</li>
+  <li>execution semantics depend on the referenced Frog program, not on its connector or icon.</li>
 </ul>
-
-This enables hierarchical program composition.
 
 <hr/>
 
-<h2 id="validation">10. Graph Validation</h2>
+<h2 id="interface-boundary-nodes">11. Interface Boundary Nodes</h2>
 
+<p>
+The executable graph MUST be consistent with the public interface declared in the <code>interface</code> section.
+In v0.1, this consistency is established through dedicated interface boundary nodes.
+</p>
+
+<p>
+Therefore:
+</p>
+
+<ul>
+  <li>each public interface input SHOULD be represented by one <code>interface_input</code> node,</li>
+  <li>each public interface output SHOULD be represented by one <code>interface_output</code> node.</li>
+</ul>
+
+<p>
+For canonical v0.1 source diagrams, tools SHOULD emit exactly one boundary node for each declared interface port.
+</p>
+
+<p>
+Conceptually:
+</p>
+
+<pre>
+external input  ->  interface_input.value  ->  internal graph
+internal graph  ->  interface_output.value ->  external output
+</pre>
+
+<p>
+An <code>interface_input</code> node introduces externally provided data into the diagram.
+An <code>interface_output</code> node consumes internal data and exposes it as a public output.
+</p>
+
+<hr/>
+
+<h2 id="graph-validation">12. Graph Validation</h2>
+
+<p>
 Implementations MUST enforce the following rules:
+</p>
 
 <ul>
-<li>Node identifiers MUST be unique</li>
-<li>Edge identifiers MUST be unique</li>
-<li>Edges MUST reference existing nodes</li>
-<li>Referenced ports MUST exist</li>
-<li>Data types MUST be compatible</li>
+  <li>the <code>diagram</code> section MUST exist,</li>
+  <li><code>nodes</code> and <code>edges</code> MUST exist and MUST be arrays,</li>
+  <li>node identifiers MUST be unique within the diagram,</li>
+  <li>edge identifiers MUST be unique within the diagram,</li>
+  <li>every edge endpoint MUST reference an existing node,</li>
+  <li>every referenced port MUST exist after port resolution,</li>
+  <li>edge direction MUST match the direction of the referenced ports,</li>
+  <li>connected ports MUST be type-compatible according to <code>Type.md</code>,</li>
+  <li>every <code>interface_input</code> node MUST reference an existing interface input,</li>
+  <li>every <code>interface_output</code> node MUST reference an existing interface output,</li>
+  <li>every <code>subfrog.ref</code> MUST resolve to a declared dependency,</li>
+  <li>the diagram MUST remain consistent with the interface contract.</li>
 </ul>
 
-Invalid graphs MUST fail validation.
+<p>
+In particular:
+</p>
+
+<ul>
+  <li>each declared interface input MUST be consumable by the graph,</li>
+  <li>each declared interface output MUST be producible by the graph,</li>
+  <li>unbound, contradictory, or unreachable interface boundary definitions MUST trigger validation errors.</li>
+</ul>
+
+<p>
+Unknown node properties MAY be ignored unless a stricter active profile defines them.
+</p>
 
 <hr/>
 
-<h2 id="execution">11. Execution Semantics</h2>
+<h2 id="execution-semantics">13. Execution Semantics</h2>
 
-Execution follows a dataflow model.
+<p>
+Execution follows a pure dataflow model.
+</p>
 
 <ul>
-<li>A node becomes executable when all its inputs are available.</li>
-<li>Nodes may execute in parallel.</li>
-<li>Execution order is determined by data dependencies.</li>
+  <li>A node becomes executable when all required input values are available.</li>
+  <li>Execution order derives from data dependencies, not from source ordering.</li>
+  <li>Independent nodes MAY execute in parallel.</li>
 </ul>
 
-The diagram defines the execution graph.
+<p>
+The diagram is the authoritative structural definition of execution logic inside a Frog.
+However, the graph MUST be interpreted together with:
+</p>
+
+<ul>
+  <li>the public interface contract,</li>
+  <li>the type system and implicit coercion rules,</li>
+  <li>the primitive and sub-Frog operation definitions available in the active execution profile.</li>
+</ul>
+
+<p>
+Layout, connector placement, icon content, IDE preferences, and cache data MUST NOT alter execution semantics.
+</p>
 
 <hr/>
 
-<h2 id="examples">12. Example</h2>
+<h2 id="examples">14. Examples</h2>
 
-Example diagram:
+<h3>14.1 Minimal arithmetic diagram</h3>
 
 <pre>
 "diagram": {
@@ -292,12 +594,12 @@ Example diagram:
     {
       "id": "input_a",
       "kind": "interface_input",
-      "type": "a"
+      "interface_port": "a"
     },
     {
       "id": "input_b",
       "kind": "interface_input",
-      "type": "b"
+      "interface_port": "b"
     },
     {
       "id": "add_node",
@@ -305,9 +607,9 @@ Example diagram:
       "ref": "Math.Add"
     },
     {
-      "id": "output",
+      "id": "output_result",
       "kind": "interface_output",
-      "type": "result"
+      "interface_port": "result"
     }
   ],
   "edges": [
@@ -324,7 +626,53 @@ Example diagram:
     {
       "id": "e3",
       "from": { "node": "add_node", "port": "result" },
-      "to": { "node": "output", "port": "value" }
+      "to": { "node": "output_result", "port": "value" }
+    }
+  ]
+}
+</pre>
+
+<h3>14.2 Primitive-based diagram</h3>
+
+<pre>
+"diagram": {
+  "nodes": [
+    {
+      "id": "input_samples",
+      "kind": "interface_input",
+      "interface_port": "samples"
+    },
+    {
+      "id": "gain",
+      "kind": "interface_input",
+      "interface_port": "gain"
+    },
+    {
+      "id": "mul_1",
+      "kind": "primitive",
+      "type": "Multiply"
+    },
+    {
+      "id": "output_scaled",
+      "kind": "interface_output",
+      "interface_port": "scaled"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "from": { "node": "input_samples", "port": "value" },
+      "to": { "node": "mul_1", "port": "x" }
+    },
+    {
+      "id": "e2",
+      "from": { "node": "gain", "port": "value" },
+      "to": { "node": "mul_1", "port": "y" }
+    },
+    {
+      "id": "e3",
+      "from": { "node": "mul_1", "port": "result" },
+      "to": { "node": "output_scaled", "port": "value" }
     }
   ]
 }
@@ -332,16 +680,26 @@ Example diagram:
 
 <hr/>
 
-<h2 id="summary">13. Summary</h2>
+<h2 id="summary">15. Summary</h2>
 
+<p>
 The diagram defines the executable structure of a Frog.
+</p>
 
+<p>
 It provides:
+</p>
 
 <ul>
-<li>a directed dataflow graph</li>
-<li>a precise dependency model</li>
-<li>a hierarchical composition mechanism</li>
+  <li>a directed dataflow graph,</li>
+  <li>a resolved node and port model,</li>
+  <li>a dependency mechanism for reusable Frogs,</li>
+  <li>a structural bridge between the public interface and internal execution logic.</li>
 </ul>
 
-The diagram is the authoritative definition of execution logic.
+<p>
+The diagram is the authoritative definition of execution structure.
+The interface defines the public contract.
+The type system defines compatibility and coercion.
+Together, they make a Frog executable, composable, and statically verifiable.
+</p>
