@@ -17,7 +17,7 @@ Definition of the front panel (interaction layer) for <strong>.frog</strong> pro
   <li><a href="#front-panel-structure">5. Front Panel Structure</a></li>
   <li><a href="#canvas-and-coordinate-system">6. Canvas and Coordinate System</a></li>
   <li><a href="#widget-instances">7. Widget Instances</a></li>
-  <li><a href="#bindings">8. Bindings</a></li>
+  <li><a href="#value-participation-in-the-diagram">8. Value Participation in the Diagram</a></li>
   <li><a href="#layout-model">9. Layout Model</a></li>
   <li><a href="#style-system">10. Style System</a>
     <ul>
@@ -28,10 +28,11 @@ Definition of the front panel (interaction layer) for <strong>.frog</strong> pro
     </ul>
   </li>
   <li><a href="#ui-libraries">11. UI Libraries</a></li>
-  <li><a href="#out-of-scope">12. Out of Scope for v0.1</a></li>
-  <li><a href="#validation-rules">13. Validation Rules</a></li>
-  <li><a href="#examples">14. Examples</a></li>
-  <li><a href="#summary">15. Summary</a></li>
+  <li><a href="#runtime-considerations">12. Runtime Considerations</a></li>
+  <li><a href="#out-of-scope">13. Out of Scope for v0.1</a></li>
+  <li><a href="#validation-rules">14. Validation Rules</a></li>
+  <li><a href="#examples">15. Examples</a></li>
+  <li><a href="#summary">16. Summary</a></li>
 </ul>
 
 <hr/>
@@ -45,7 +46,8 @@ It describes the user-facing UI composition of the program.
 
 <p>
 The front panel is composed of <strong>widget instances</strong>.
-These widgets may provide user input, display program state, organize layout, or contribute purely visual decoration.
+These widgets may provide user input, display program state, organize layout,
+or contribute purely visual decoration.
 </p>
 
 <p>
@@ -71,10 +73,10 @@ Development tools, editors, and interactive runtimes MAY use it to render a user
   <li>tool-agnostic front panel representation,</li>
   <li>stable widget serialization across implementations,</li>
   <li>clear separation between logic, public contract, and UI,</li>
-  <li>explicit and auditable binding rules,</li>
   <li>consistent object-based widget composition,</li>
   <li>modular styling through themes, variables, shared styles, and overrides,</li>
-  <li>extensible UI composition through standard and library-defined widgets.</li>
+  <li>extensible UI composition through standard and library-defined widgets,</li>
+  <li>compatibility with efficient runtimes and partial redraw strategies.</li>
 </ul>
 
 <hr/>
@@ -117,13 +119,19 @@ Controls and indicators are user-facing widgets, not public logical ports.
 
 <p>
 The front panel also does not redefine execution semantics.
-It describes how widgets are arranged and how their primary value interaction is bound to interface ports or diagram targets.
+It describes how widgets are arranged, configured, composed, and styled.
 </p>
 
 <p>
 The object model of widgets is defined normatively by <code>Widget.md</code>.
-This document does not redefine widget inheritance, widget roles, widget parts, or widget property semantics.
+This document does not redefine widget inheritance, widget roles, widget parts,
+widget references, or widget property semantics.
 Instead, it defines how widget instances are composed inside the <code>front_panel</code> section.
+</p>
+
+<p>
+Value-carrying widgets participate in the diagram through the implicit terminal model defined by <code>Widget.md</code>.
+This means the front panel does not need a separate binding section for base value interaction.
 </p>
 
 <p>
@@ -134,7 +142,7 @@ In short:
   <li><strong>interface</strong> = what the FROG exposes,</li>
   <li><strong>diagram</strong> = how the FROG works,</li>
   <li><strong>widget model</strong> = what UI objects are,</li>
-  <li><strong>front_panel</strong> = how those UI objects are placed and bound for user interaction.</li>
+  <li><strong>front_panel</strong> = how those UI objects are placed, configured, and presented.</li>
 </ul>
 
 <hr/>
@@ -148,7 +156,6 @@ Recommended structure:
 <pre><code>"front_panel": {
   "canvas": {},
   "widgets": [],
-  "bindings": [],
   "style": {},
   "ui_libraries": []
 }</code></pre>
@@ -160,7 +167,6 @@ Fields:
 <ul>
   <li><code>canvas</code> — coordinate system and visual background,</li>
   <li><code>widgets</code> — widget instances serialized according to <code>Widget.md</code>,</li>
-  <li><code>bindings</code> — explicit value bindings from widgets to interface or diagram targets,</li>
   <li><code>style</code> — theme, fonts, colors, variables, and reusable style definitions,</li>
   <li><code>ui_libraries</code> — references to external UI widget libraries.</li>
 </ul>
@@ -209,7 +215,8 @@ It does not define widget class semantics, type behavior, or execution behavior.
 
 <p>
 Top-level widgets use the canvas coordinate system.
-Child widgets of a container use the local content coordinate system of their parent container unless a stricter profile defines additional composition rules.
+Child widgets of a container use the local content coordinate system of their parent container,
+unless a stricter profile defines additional composition rules.
 </p>
 
 <hr/>
@@ -283,142 +290,55 @@ A front panel MAY contain:
 </ul>
 
 <p>
-Canonical source serialization SHOULD store design-time configuration and optional initial/default state, not arbitrary runtime state snapshots.
+Canonical source serialization SHOULD store design-time configuration and optional initial or default state,
+not arbitrary runtime state snapshots.
 </p>
 
 <hr/>
 
-<h2 id="bindings">8. Bindings</h2>
+<h2 id="value-participation-in-the-diagram">8. Value Participation in the Diagram</h2>
 
 <p>
-Bindings connect widget instances to interface ports or diagram targets.
-Bindings <strong>MUST</strong> be explicit.
+Value-carrying widgets participate in the executable diagram through the implicit terminal model defined in <code>Widget.md</code>.
 </p>
 
 <p>
-In v0.1, a front panel binding represents a <strong>primary value binding</strong>.
-It binds the main value channel of a value-carrying widget to a program-facing target.
-It does not standardize arbitrary widget property, part, method, or event binding.
+Conceptually:
 </p>
 
-<p>
-Recommended binding structure:
-</p>
-
-<pre><code>"bindings": [
-  {
-    "widget": "ctrl_gain",
-    "mode": "write",
-    "target": {
-      "scope": "interface",
-      "port": "gain"
-    }
-  },
-  {
-    "widget": "ind_result",
-    "mode": "read",
-    "target": {
-      "scope": "interface",
-      "port": "result"
-    }
-  },
-  {
-    "widget": "ind_internal",
-    "mode": "read",
-    "target": {
-      "scope": "diagram",
-      "node": "compute_sum",
-      "port": "value"
-    }
-  }
-]</code></pre>
+<pre><code>Front panel widget
+        │
+        ▼
+widget.value
+        │
+        ▼
+diagram terminal</code></pre>
 
 <p>
-Fields:
+This means:
 </p>
 
 <ul>
-  <li><code>widget</code> — identifier of the bound widget instance,</li>
-  <li><code>mode</code> — value interaction mode such as <code>read</code> or <code>write</code>,</li>
-  <li><code>target</code> — binding destination in interface space or diagram space.</li>
+  <li>a control may provide a value to the diagram through its implicit <code>value</code> terminal,</li>
+  <li>an indicator may receive a value from the diagram through its implicit <code>value</code> terminal,</li>
+  <li>the front panel itself does not need to serialize separate base value bindings.</li>
 </ul>
 
 <p>
-Target forms:
-</p>
-
-<ul>
-  <li><strong>Interface target</strong>: <code>{ "scope": "interface", "port": "name" }</code></li>
-  <li><strong>Diagram target</strong>: <code>{ "scope": "diagram", "node": "node_id", "port": "port_name" }</code></li>
-</ul>
-
-<h3>8.1 Binding semantics</h3>
-
-<p>
-A front panel binding is defined at the level of the widget's primary value interaction:
-</p>
-
-<ul>
-  <li>for a control, this is normally the user-editable value flowing from UI toward the program,</li>
-  <li>for an indicator, this is normally the displayed value flowing from the program toward the UI.</li>
-</ul>
-
-<p>
-This document deliberately does not require a literal serialized member name such as <code>value</code> in front panel bindings.
-The binding is semantic rather than reflective.
+If a FROG author wants a widget value to influence public interface behavior,
+that relationship is expressed in the diagram by wiring widget terminals and interface terminals,
+not by a front panel binding object.
 </p>
 
 <p>
-If an implementation needs explicit property-level access such as reading or writing <code>value</code>, <code>label.text</code>, or invoking widget methods, those interactions belong to the diagram-level mechanisms and not to the base front panel binding model of v0.1.
-</p>
-
-<h3>8.2 Binding mode</h3>
-
-<p>
-Allowed binding modes in v0.1 are:
-</p>
-
-<ul>
-  <li><code>read</code></li>
-  <li><code>write</code></li>
-</ul>
-
-<p>
-Interpretation:
-</p>
-
-<ul>
-  <li><code>read</code> means the widget receives a value from the bound target for presentation,</li>
-  <li><code>write</code> means the widget provides a value to the bound target.</li>
-</ul>
-
-<p>
-A stricter profile MAY introduce additional modes such as bidirectional synchronization, but such behavior is outside the base specification in v0.1.
-</p>
-
-<h3>8.3 Binding rules</h3>
-
-<ul>
-  <li>Each binding <strong>MUST</strong> reference an existing widget id.</li>
-  <li>Each binding <strong>MUST</strong> reference a valid target according to its scope.</li>
-  <li>Bindings <strong>MUST</strong> be type-compatible.</li>
-  <li>Only value-carrying widgets SHOULD participate in primary value bindings.</li>
-  <li>Controls SHOULD use <code>write</code> bindings when they provide values to the program.</li>
-  <li>Indicators SHOULD use <code>read</code> bindings when they display values from the program.</li>
-  <li>Decoration widgets SHOULD NOT use primary value bindings.</li>
-  <li>Container widgets SHOULD NOT use primary value bindings in v0.1 unless a stricter profile explicitly defines such behavior.</li>
-</ul>
-
-<h3>8.4 Multiple bindings</h3>
-
-<p>
-In v0.1, a value-carrying widget SHOULD have at most one primary value binding.
-Multiple bindings targeting the same widget primary value channel are invalid unless a stricter profile explicitly defines their semantics.
+Likewise, if a widget must reflect an internal computed value,
+that relationship is also expressed in the diagram.
 </p>
 
 <p>
-The binding model defines interaction wiring only.
-It <strong>MUST NOT</strong> introduce additional execution semantics.
+Richer widget interactions such as property access, method calls, part access,
+or event handling belong to the widget-reference and diagram mechanisms,
+not to the base <code>front_panel</code> serialization model.
 </p>
 
 <hr/>
@@ -455,13 +375,15 @@ Example:
 
 <p>
 Layout fields are design-time and rendering-oriented.
-They <strong>MUST NOT</strong> affect execution semantics, scheduling, type rules, or public interface behavior.
+They <strong>MUST NOT</strong> affect execution semantics, scheduling, type rules,
+or public interface behavior.
 </p>
 
 <p>
 For top-level widgets, coordinates are interpreted in canvas space.
 For child widgets, coordinates are interpreted in parent-local space.
-The exact clipping, padding, and advanced responsive layout behavior are implementation-defined unless standardized by a stricter profile.
+The exact clipping, padding, and advanced responsive layout behavior are implementation-defined
+unless standardized by a stricter profile.
 </p>
 
 <hr/>
@@ -602,7 +524,39 @@ Rules:
 
 <hr/>
 
-<h2 id="out-of-scope">12. Out of Scope for v0.1</h2>
+<h2 id="runtime-considerations">12. Runtime Considerations</h2>
+
+<p>
+Although <code>front_panel</code> is a source-level UI description,
+it is intended to remain compatible with efficient runtime implementations.
+</p>
+
+<p>
+In particular, implementations MAY use:
+</p>
+
+<ul>
+  <li>retained widget trees,</li>
+  <li>incremental layout updates,</li>
+  <li>dirty-region rendering,</li>
+  <li>batched visual invalidation,</li>
+  <li>cached text and graphics resources.</li>
+</ul>
+
+<p>
+These runtime strategies do not change source semantics.
+They are implementation concerns enabled by the clear separation between:
+</p>
+
+<ul>
+  <li>design-time widget description,</li>
+  <li>runtime widget state,</li>
+  <li>rendering state.</li>
+</ul>
+
+<hr/>
+
+<h2 id="out-of-scope">13. Out of Scope for v0.1</h2>
 
 <p>
 The following topics are outside the strict scope of the base v0.1 front panel serialization model:
@@ -614,16 +568,19 @@ The following topics are outside the strict scope of the base v0.1 front panel s
   <li>general-purpose property node and method node serialization inside <code>front_panel</code>,</li>
   <li>arbitrary runtime UI state snapshotting,</li>
   <li>advanced responsive layout systems, docking systems, or constraint solvers,</li>
-  <li>bidirectional synchronization semantics beyond the basic <code>read</code> and <code>write</code> binding model.</li>
+  <li>full accessibility standardization,</li>
+  <li>animation and visual effect systems.</li>
 </ul>
 
 <p>
-These features MAY be defined later by the diagram model, by dedicated UI interaction specifications, or by stricter profiles.
+These features MAY be defined later by the diagram model,
+by dedicated UI interaction specifications,
+or by stricter profiles.
 </p>
 
 <hr/>
 
-<h2 id="validation-rules">13. Validation Rules</h2>
+<h2 id="validation-rules">14. Validation Rules</h2>
 
 <p>
 Implementations <strong>MUST</strong> enforce:
@@ -634,9 +591,6 @@ Implementations <strong>MUST</strong> enforce:
   <li>if present, <code>widgets</code> <strong>MUST</strong> be an array,</li>
   <li>widget identifiers <strong>MUST</strong> be unique within the front panel scope,</li>
   <li>all widget instances <strong>MUST</strong> be valid according to <code>Widget.md</code>,</li>
-  <li>all bindings <strong>MUST</strong> reference valid widget ids,</li>
-  <li>all bindings <strong>MUST</strong> reference valid targets according to their declared scope,</li>
-  <li>bindings <strong>MUST</strong> be type-compatible with their targets,</li>
   <li>if present, <code>canvas</code> <strong>MUST</strong> be an object,</li>
   <li>if present, <code>style</code> <strong>MUST</strong> be an object,</li>
   <li>if present, <code>ui_libraries</code> <strong>MUST</strong> be an array,</li>
@@ -651,16 +605,16 @@ Additionally:
 <ul>
   <li>an empty <code>front_panel</code> section is valid,</li>
   <li>style and UI library information <strong>MUST</strong> remain non-authoritative for execution,</li>
-  <li>tools MAY warn when a control uses a <code>read</code> binding,</li>
-  <li>tools MAY warn when an indicator uses a <code>write</code> binding,</li>
-  <li>tools MAY warn when a decoration or container widget participates in a primary value binding.</li>
+  <li>a value-carrying widget MAY exist in the front panel even if it is not wired in the diagram, subject to tool diagnostics,</li>
+  <li>tools MAY warn when a control or indicator appears unused in the diagram,</li>
+  <li>tools MAY warn when a decoration widget carries unexpected value-related fields.</li>
 </ul>
 
 <hr/>
 
-<h2 id="examples">14. Examples</h2>
+<h2 id="examples">15. Examples</h2>
 
-<h3>14.1 Minimal front panel</h3>
+<h3>15.1 Minimal front panel</h3>
 
 <pre><code>"front_panel": {
   "canvas": {
@@ -670,12 +624,11 @@ Additionally:
     "background": { "color": "#FFFFFF" }
   },
   "widgets": [],
-  "bindings": [],
   "style": {},
   "ui_libraries": []
 }</code></pre>
 
-<h3>14.2 Control and indicator bound to the public interface</h3>
+<h3>15.2 Front panel with control, indicator, and decoration widgets</h3>
 
 <pre><code>"front_panel": {
   "canvas": {
@@ -740,18 +693,6 @@ Additionally:
       "style_ref": "default.title"
     }
   ],
-  "bindings": [
-    {
-      "widget": "ctrl_gain",
-      "mode": "write",
-      "target": { "scope": "interface", "port": "gain" }
-    },
-    {
-      "widget": "ind_result",
-      "mode": "read",
-      "target": { "scope": "interface", "port": "result" }
-    }
-  ],
   "style": {
     "theme": "default",
     "fonts": {
@@ -774,42 +715,7 @@ Additionally:
   ]
 }</code></pre>
 
-<h3>14.3 Indicator bound to an internal diagram target</h3>
-
-<pre><code>"front_panel": {
-  "widgets": [
-    {
-      "id": "ind_internal",
-      "role": "indicator",
-      "widget": "frog.ui.standard.numeric_indicator",
-      "value_type": "f64",
-      "layout": { "x": 20, "y": 20, "width": 120, "height": 28 },
-      "props": {},
-      "parts": {
-        "label": {
-          "class": "frog.ui.standard.label_part",
-          "props": {
-            "text": "Internal sum",
-            "visible": true
-          }
-        }
-      }
-    }
-  ],
-  "bindings": [
-    {
-      "widget": "ind_internal",
-      "mode": "read",
-      "target": {
-        "scope": "diagram",
-        "node": "compute_sum",
-        "port": "value"
-      }
-    }
-  ]
-}</code></pre>
-
-<h3>14.4 Container widget with child widgets</h3>
+<h3>15.3 Container widget with child widgets</h3>
 
 <pre><code>"front_panel": {
   "widgets": [
@@ -846,9 +752,21 @@ Additionally:
   ]
 }</code></pre>
 
+<h3>15.4 Note about diagram participation</h3>
+
+<p>
+The following relationships are not serialized in <code>front_panel</code> itself,
+but are expressed in the diagram:
+</p>
+
+<pre><code>ctrl_gain.value  → internal node input
+internal result  → ind_result.value
+ctrl_gain.value  → interface input path
+interface output path → ind_result.value</code></pre>
+
 <hr/>
 
-<h2 id="summary">15. Summary</h2>
+<h2 id="summary">16. Summary</h2>
 
 <p>
 The front panel defines the interaction layer of a FROG through a structured widget-based model:
@@ -856,16 +774,24 @@ The front panel defines the interaction layer of a FROG through a structured wid
 
 <ul>
   <li><strong>widgets</strong> — serialized widget instances defined by <code>Widget.md</code>,</li>
-  <li><strong>bindings</strong> — explicit primary value links to interface ports or diagram targets,</li>
   <li><strong>layout</strong> — geometry and visual ordering,</li>
   <li><strong>style</strong> — themes, fonts, colors, variables, shared styles, references, and overrides,</li>
   <li><strong>ui_libraries</strong> — reusable widget vocabularies.</li>
 </ul>
 
 <p>
-The front panel is part of the canonical source format, but it is not the public contract and not the execution logic of the FROG.
+The front panel is part of the canonical source format,
+but it is not the public contract and not the execution logic of the FROG.
 </p>
 
 <p>
-It exists to define how users see and interact with a FROG, while remaining cleanly separated from interface semantics, widget semantics, and dataflow execution.
+It defines how users see and interact with a FROG,
+while remaining cleanly separated from interface semantics,
+widget semantics,
+and dataflow execution.
+</p>
+
+<p>
+In the base model, value interaction is achieved through the implicit widget terminal model,
+not through explicit front panel binding objects.
 </p>
