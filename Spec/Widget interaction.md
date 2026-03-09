@@ -20,7 +20,7 @@ Definition of diagram-level interaction with front panel widgets in <strong>.fro
   <li><a href="#property-read-node">8. Property Read Node</a></li>
   <li><a href="#property-write-node">9. Property Write Node</a></li>
   <li><a href="#method-invoke-node">10. Method Invoke Node</a></li>
-  <li><a href="#typing-rules">11. Typing Rules</a></li>
+  <li><a href="#typing-and-sequencing-ports">11. Typing and Sequencing Ports</a></li>
   <li><a href="#diagram-representation">12. Diagram Representation</a></li>
   <li><a href="#validation-rules">13. Validation Rules</a></li>
   <li><a href="#execution-semantics">14. Execution Semantics</a></li>
@@ -80,6 +80,7 @@ The widget interaction model is designed to satisfy the following goals:
   <li><strong>Diagram compatibility</strong> — widget interactions should integrate cleanly into the dataflow graph.</li>
   <li><strong>Extensibility</strong> — different widget classes may expose different members while still following a common addressing model.</li>
   <li><strong>Separation of concerns</strong> — UI interaction should not redefine interface semantics or general execution semantics.</li>
+  <li><strong>Sequencing clarity</strong> — UI side effects should be orderable explicitly when deterministic behavior is required.</li>
   <li><strong>Architectural clarity</strong> — the natural dataflow path for a widget value should remain distinct from explicit object-style access.</li>
 </ul>
 
@@ -97,7 +98,8 @@ FROG v0.1 standardizes:
   <li>property write interactions,</li>
   <li>method invocation interactions,</li>
   <li>their type and validation rules,</li>
-  <li>their integration with the widget reference model.</li>
+  <li>their integration with the widget reference model,</li>
+  <li>their optional sequencing ports.</li>
 </ul>
 
 <p>
@@ -109,7 +111,7 @@ FROG v0.1 does <strong>not</strong> fully standardize:
   <li>widget event registration nodes,</li>
   <li>asynchronous UI message delivery,</li>
   <li>runtime widget references as first-class general-purpose FROG value types,</li>
-  <li>full effect-ordering semantics between independent UI mutations.</li>
+  <li>a complete global effect system for every UI runtime profile.</li>
 </ul>
 
 <hr/>
@@ -133,7 +135,7 @@ It defines how diagram nodes interact with widget objects already defined elsewh
 </p>
 
 <p>
-This document also complements the <code>widget_value</code> and <code>widget_reference</code> node kinds defined by <code>Diagram.md</code>:
+This document complements the <code>widget_value</code> and <code>widget_reference</code> node kinds defined by <code>Diagram.md</code>:
 </p>
 
 <ul>
@@ -192,6 +194,12 @@ A widget interaction node does not replace the widget instance itself.
 It merely reads, writes, or invokes a member of a widget object defined in the front panel.
 </p>
 
+<p>
+When explicit deterministic ordering between UI interactions is required,
+widget interaction primitives may also participate in a sequencing chain through special ports:
+<code>ui_in</code> and <code>ui_out</code>.
+</p>
+
 <hr/>
 
 <h2 id="widget-member-addressing">6. Widget Member Addressing</h2>
@@ -232,12 +240,12 @@ Fields:
 
 <p>
 In the base diagram model of v0.1,
-the widget identity is normally carried by an incoming widget reference,
+the widget identity is carried by an incoming widget reference,
 not directly embedded in the primitive node.
 </p>
 
 <p>
-Therefore, interaction primitives SHOULD use a member descriptor of the following form:
+Therefore, property primitives use a canonical member descriptor of the form:
 </p>
 
 <pre><code>{
@@ -254,12 +262,29 @@ or, for a widget part:
 }</code></pre>
 
 <p>
+Method primitives use a canonical method descriptor of the form:
+</p>
+
+<pre><code>{
+  "name": "focus"
+}</code></pre>
+
+<p>
+or, for a widget part method:
+</p>
+
+<pre><code>{
+  "part": "label",
+  "name": "show"
+}</code></pre>
+
+<p>
 This means:
 </p>
 
 <ul>
   <li>the incoming <code>ref</code> port identifies the widget instance,</li>
-  <li>the primitive-local member descriptor identifies what is being addressed on that widget.</li>
+  <li>the primitive-local descriptor identifies what is being addressed on that widget.</li>
 </ul>
 
 <h3>6.3 Widget-level member addressing</h3>
@@ -274,7 +299,7 @@ Examples:
 
 <pre><code>{ "member": "value" }
 { "member": "visible" }
-{ "member": "focus" }</code></pre>
+{ "name": "focus" }</code></pre>
 
 <h3>6.4 Part-level member addressing</h3>
 
@@ -287,7 +312,8 @@ Examples:
 </p>
 
 <pre><code>{ "part": "label", "member": "text" }
-{ "part": "label", "member": "visible" }</code></pre>
+{ "part": "label", "member": "visible" }
+{ "part": "label", "name": "show" }</code></pre>
 
 <h3>6.5 Address validity</h3>
 
@@ -333,38 +359,18 @@ Each such node MUST use:
 </ul>
 
 <p>
-In the base model, each such node also consumes a widget reference through an input port named <code>ref</code>.
-</p>
-
-<p>
-The node SHOULD declare its target member using a member descriptor such as:
-</p>
-
-<pre><code>"widget_member": {
-  "part": "label",
-  "member": "text"
-}</code></pre>
-
-<p>
-or:
-</p>
-
-<pre><code>"widget_method": {
-  "name": "focus"
-}</code></pre>
-
-<p>
-The exact field naming MAY be profile-defined,
-but the conceptual distinction between:
+In the base model, each such node also consumes:
 </p>
 
 <ul>
-  <li>the widget reference input, and</li>
-  <li>the addressed member description</li>
+  <li>a widget reference through an input port named <code>ref</code>,</li>
+  <li>an optional sequencing input port named <code>ui_in</code>,</li>
+  <li>an optional sequencing output port named <code>ui_out</code>.</li>
 </ul>
 
 <p>
-is normative.
+Property primitives MUST declare a canonical <code>widget_member</code> descriptor.
+Method primitives MUST declare a canonical <code>widget_method</code> descriptor.
 </p>
 
 <hr/>
@@ -411,8 +417,10 @@ A property read node exposes:
 </p>
 
 <ul>
-  <li>one input port named <code>ref</code>,</li>
-  <li>one output port named <code>value</code>.</li>
+  <li>one required input port named <code>ref</code>,</li>
+  <li>one optional input port named <code>ui_in</code>,</li>
+  <li>one output port named <code>value</code>,</li>
+  <li>one optional output port named <code>ui_out</code>.</li>
 </ul>
 
 <p>
@@ -431,20 +439,14 @@ However, when the intent is ordinary dataflow wiring of a widget primary value,
 tools SHOULD prefer the natural <code>widget_value</code> representation.
 </p>
 
-<h3>8.6 Example</h3>
+<h3>8.6 Sequenced read semantics</h3>
 
 <p>
-Reading the numeric value property of a widget explicitly through the object model:
+When <code>ui_in</code> is connected,
+the read MUST observe widget state after the preceding UI interaction represented by that sequencing chain.
+When <code>ui_out</code> is connected,
+it becomes available after the read observation has completed.
 </p>
-
-<pre><code>{
-  "id": "read_gain_value",
-  "kind": "primitive",
-  "type": "frog.ui.property_read",
-  "widget_member": {
-    "member": "value"
-  }
-}</code></pre>
 
 <hr/>
 
@@ -490,9 +492,10 @@ A property write node exposes:
 </p>
 
 <ul>
-  <li>one input port named <code>ref</code>,</li>
-  <li>one input port named <code>value</code>,</li>
-  <li>no required data output.</li>
+  <li>one required input port named <code>ref</code>,</li>
+  <li>one required input port named <code>value</code>,</li>
+  <li>one optional input port named <code>ui_in</code>,</li>
+  <li>one optional output port named <code>ui_out</code>.</li>
 </ul>
 
 <p>
@@ -511,21 +514,14 @@ However, when the intent is ordinary dataflow wiring to a widget primary value,
 tools SHOULD prefer the natural <code>widget_value</code> representation.
 </p>
 
-<h3>9.6 Example</h3>
+<h3>9.6 Sequenced write semantics</h3>
 
 <p>
-Writing the text of a widget label:
+When <code>ui_in</code> is connected,
+the write MUST occur after the preceding UI interaction represented by that sequencing chain.
+When <code>ui_out</code> is connected,
+it becomes available only after the widget mutation has been applied.
 </p>
-
-<pre><code>{
-  "id": "write_gain_label_text",
-  "kind": "primitive",
-  "type": "frog.ui.property_write",
-  "widget_member": {
-    "part": "label",
-    "member": "text"
-  }
-}</code></pre>
 
 <hr/>
 
@@ -570,33 +566,29 @@ A method invoke node exposes:
 </p>
 
 <ul>
-  <li>one input port named <code>ref</code>,</li>
+  <li>one required input port named <code>ref</code>,</li>
   <li>zero or more input ports for method parameters,</li>
-  <li>zero or more output ports for method return values.</li>
+  <li>one optional input port named <code>ui_in</code>,</li>
+  <li>zero or more output ports for method return values,</li>
+  <li>one optional output port named <code>ui_out</code>.</li>
 </ul>
 
 <p>
 The exact parameter and return structure of a method is defined by the widget class or part class under the active profile.
 </p>
 
-<h3>10.5 Example</h3>
+<h3>10.5 Sequenced method semantics</h3>
 
 <p>
-Invoking a focus method with no parameters and no data outputs:
+When <code>ui_in</code> is connected,
+the method MUST execute after the preceding UI interaction represented by that sequencing chain.
+When <code>ui_out</code> is connected,
+it becomes available only after the method action has been applied and any method return values are stable.
 </p>
-
-<pre><code>{
-  "id": "focus_name_ctrl",
-  "kind": "primitive",
-  "type": "frog.ui.method_invoke",
-  "widget_method": {
-    "name": "focus"
-  }
-}</code></pre>
 
 <hr/>
 
-<h2 id="typing-rules">11. Typing Rules</h2>
+<h2 id="typing-and-sequencing-ports">11. Typing and Sequencing Ports</h2>
 
 <p>
 Widget interaction nodes are typed through:
@@ -660,11 +652,23 @@ For <code>frog.ui.method_invoke</code>:
 </p>
 
 <ul>
-  <li>input port types other than <code>ref</code> are the parameter types of the addressed method,</li>
-  <li>output port types are the return types of the addressed method.</li>
+  <li>input port types other than <code>ref</code> and <code>ui_in</code> are the parameter types of the addressed method,</li>
+  <li>output port types other than <code>ui_out</code> are the return types of the addressed method.</li>
 </ul>
 
-<h3>11.5 Compatibility</h3>
+<h3>11.5 Sequencing port semantics</h3>
+
+<p>
+The sequencing ports <code>ui_in</code> and <code>ui_out</code> are opaque sequencing ports,
+not ordinary user-visible FROG data values.
+</p>
+
+<p>
+They exist only to express explicit ordering constraints between UI interactions.
+They are not part of the ordinary user-level type system and SHOULD NOT be treated as general-purpose program data.
+</p>
+
+<h3>11.6 Compatibility</h3>
 
 <p>
 Standard FROG type compatibility and implicit coercion rules apply to ordinary value ports of widget interaction nodes
@@ -681,6 +685,7 @@ Widget interaction nodes are serialized as primitive nodes in the diagram.
 
 <p>
 In the base model, they are expected to consume a widget reference produced by a <code>widget_reference</code> node.
+They may also participate in an explicit UI sequencing chain through <code>ui_in</code> and <code>ui_out</code>.
 </p>
 
 <h3>12.1 Property read</h3>
@@ -754,6 +759,16 @@ In the base model, they are expected to consume a widget reference produced by a
   }
 ]</code></pre>
 
+<h3>12.5 Sequencing connection example</h3>
+
+<pre><code>"edges": [
+  {
+    "id": "e_ui_1",
+    "from": { "node": "write_visible", "port": "ui_out" },
+    "to": { "node": "write_label_text", "port": "ui_in" }
+  }
+]</code></pre>
+
 <hr/>
 
 <h2 id="validation-rules">13. Validation Rules</h2>
@@ -793,6 +808,17 @@ For <code>member = "value"</code>:
   <li>tools MAY warn when ordinary primary value wiring is modeled through object-style primitives instead of <code>widget_value</code>.</li>
 </ul>
 
+<p>
+For sequencing:
+</p>
+
+<ul>
+  <li>if connected, <code>ui_in</code> MUST receive a valid UI sequencing token,</li>
+  <li>if connected, <code>ui_out</code> MUST only connect to compatible UI sequencing inputs,</li>
+  <li>multiple non-sequenced widget mutations that may conflict on the same widget member MAY trigger tool warnings,</li>
+  <li>mixing <code>widget_value</code> and <code>property_write(value)</code> on the same widget without explicit sequencing MAY trigger tool warnings.</li>
+</ul>
+
 <hr/>
 
 <h2 id="execution-semantics">14. Execution Semantics</h2>
@@ -822,15 +848,45 @@ the interaction remains valid as an object-style operation.
 However, the natural terminal model remains the preferred representation for ordinary widget value dataflow.
 </p>
 
+<h3>14.1 Unsequenced execution</h3>
+
 <p>
-Implementations MAY restrict certain widget interactions in headless runtimes or non-interactive profiles.
-Such restrictions belong to the active runtime profile and do not alter the canonical source meaning of the node.
+If <code>ui_in</code> and <code>ui_out</code> are not used,
+a widget interaction primitive executes when its ordinary required inputs are available.
 </p>
 
 <p>
-Detailed sequencing guarantees between independent widget side effects are outside the strict scope of v0.1.
-If deterministic ordering between multiple widget mutations is required,
-the active profile SHOULD define an explicit sequencing strategy.
+In that case, the relative ordering between independent UI interactions is not guaranteed unless already implied by ordinary dataflow dependencies.
+</p>
+
+<h3>14.2 Sequenced execution</h3>
+
+<p>
+If <code>ui_in</code> and <code>ui_out</code> are used to form a UI sequencing chain,
+then execution order along that chain is guaranteed.
+</p>
+
+<p>
+Conceptually:
+</p>
+
+<pre><code>A.ui_out → B.ui_in</code></pre>
+
+<p>
+means that <code>B</code> cannot perform its UI-visible effect before <code>A</code> has completed its own effect or observation according to the primitive semantics.
+</p>
+
+<h3>14.3 Observable guarantees</h3>
+
+<ul>
+  <li>a sequenced property read observes widget state after prior sequenced UI interactions in the same chain,</li>
+  <li>a sequenced property write produces <code>ui_out</code> only after the mutation has been applied,</li>
+  <li>a sequenced method invoke produces <code>ui_out</code> only after the method action has been applied and its returns are stable.</li>
+</ul>
+
+<p>
+Implementations MAY restrict certain widget interactions in headless runtimes or non-interactive profiles.
+Such restrictions belong to the active runtime profile and do not alter the canonical source meaning of the node.
 </p>
 
 <hr/>
@@ -1023,6 +1079,93 @@ For ordinary primary value wiring, the following representation is generally pre
   }
 ]</code></pre>
 
+<h3>15.8 Sequenced UI writes</h3>
+
+<pre><code>"nodes": [
+  {
+    "id": "ctrl_gain_ref",
+    "kind": "widget_reference",
+    "widget": "ctrl_gain"
+  },
+  {
+    "id": "write_visible",
+    "kind": "primitive",
+    "type": "frog.ui.property_write",
+    "widget_member": {
+      "member": "visible"
+    }
+  },
+  {
+    "id": "write_label_text",
+    "kind": "primitive",
+    "type": "frog.ui.property_write",
+    "widget_member": {
+      "part": "label",
+      "member": "text"
+    }
+  }
+],
+"edges": [
+  {
+    "id": "e_ref_1",
+    "from": { "node": "ctrl_gain_ref", "port": "ref" },
+    "to": { "node": "write_visible", "port": "ref" }
+  },
+  {
+    "id": "e_ref_2",
+    "from": { "node": "ctrl_gain_ref", "port": "ref" },
+    "to": { "node": "write_label_text", "port": "ref" }
+  },
+  {
+    "id": "e_ui_1",
+    "from": { "node": "write_visible", "port": "ui_out" },
+    "to": { "node": "write_label_text", "port": "ui_in" }
+  }
+]</code></pre>
+
+<h3>15.9 Sequenced method then read</h3>
+
+<pre><code>"nodes": [
+  {
+    "id": "ctrl_gain_ref",
+    "kind": "widget_reference",
+    "widget": "ctrl_gain"
+  },
+  {
+    "id": "invoke_reset",
+    "kind": "primitive",
+    "type": "frog.ui.method_invoke",
+    "widget_method": {
+      "name": "reset_to_default"
+    }
+  },
+  {
+    "id": "read_value",
+    "kind": "primitive",
+    "type": "frog.ui.property_read",
+    "widget_member": {
+      "member": "value"
+    }
+  }
+],
+"edges": [
+  {
+    "id": "e_ref_1",
+    "from": { "node": "ctrl_gain_ref", "port": "ref" },
+    "to": { "node": "invoke_reset", "port": "ref" }
+  },
+  {
+    "id": "e_ref_2",
+    "from": { "node": "ctrl_gain_ref", "port": "ref" },
+    "to": { "node": "read_value", "port": "ref" }
+  },
+  {
+    "id": "e_ui_1",
+    "from": { "node": "invoke_reset", "port": "ui_out" },
+    "to": { "node": "read_value", "port": "ui_in" }
+  }
+]</code></pre>
+
 <hr/>
 
 <h2 id="out-of-scope">16. Out of Scope for v0.1</h2>
@@ -1038,7 +1181,7 @@ The following are outside the scope of this specification version:
   <li>general-purpose widget references as a standard FROG value type,</li>
   <li>dynamic reflective member enumeration APIs,</li>
   <li>threading guarantees for UI mutation in every runtime profile,</li>
-  <li>fully standardized sequencing rules for independent UI side effects.</li>
+  <li>a full standardized global effect system for all runtime side effects.</li>
 </ul>
 
 <hr/>
@@ -1059,7 +1202,8 @@ FROG v0.1 standardizes:
   <li>property read nodes,</li>
   <li>property write nodes,</li>
   <li>method invoke nodes,</li>
-  <li>their relationship to widget references.</li>
+  <li>their relationship to widget references,</li>
+  <li>their optional sequencing ports.</li>
 </ul>
 
 <p>
@@ -1074,6 +1218,8 @@ The primary widget value remains special:
 <p>
 These interactions are serialized as standardized primitive nodes
 and validated against the widget object model and the FROG type system.
+Optional <code>ui_in</code> and <code>ui_out</code> ports provide explicit ordering
+when deterministic UI side-effect sequencing is required.
 </p>
 
 <p>
