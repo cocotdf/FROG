@@ -1,0 +1,691 @@
+<h1 align="center">🐸 FROG Specification</h1>
+
+<p align="center">
+  <strong>FROG - Free Open Graphical Language</strong><br/>
+  Official Language and File Format Specification (v0.1 draft)
+</p>
+
+<hr/>
+
+<h2>Contents</h2>
+
+<ul>
+  <li><a href="#overview">Overview</a></li>
+  <li><a href="#spec-documents">Specification documents</a></li>
+  <li><a href="#what-a-frog-describes">What a <code>.frog</code> describes</a></li>
+  <li><a href="#frog-file-tree">FROG file tree</a></li>
+  <li><a href="#file-types-source-cache-distribution">File types: source, cache, distribution</a></li>
+  <li><a href="#frog-json-top-level">FROG JSON top-level structure</a></li>
+  <li><a href="#section-presence-rules">Section presence rules</a></li>
+  <li><a href="#sections">Sections overview</a></li>
+  <li><a href="#type-system">Type system</a></li>
+  <li><a href="#widget-model">Widget model</a></li>
+  <li><a href="#widget-interaction-model">Widget interaction model</a></li>
+  <li><a href="#interface-connector-and-front-panel">Interface, connector, and front panel</a></li>
+  <li><a href="#program-representation-model">Program representation model</a></li>
+  <li><a href="#execution-model">Execution model</a></li>
+  <li><a href="#validation-rules">Validation rules</a></li>
+  <li><a href="#json-ordering">JSON ordering and canonical formatting</a></li>
+  <li><a href="#normative-terminology">Normative terminology</a></li>
+  <li><a href="#status">Status</a></li>
+  <li><a href="#license">License</a></li>
+</ul>
+
+<hr/>
+
+<h2 id="overview">Overview</h2>
+
+<p>
+This repository defines the official specification of <strong>FROG - Free Open Graphical Language</strong>.
+</p>
+
+<p>
+FROG is an open, hardware-agnostic graphical dataflow language designed to provide a durable and independent foundation for graphical programming.
+</p>
+
+<p>
+The fundamental executable unit of the language is called a <strong>Frog</strong>.
+A Frog is a self-contained graphical program represented as a structured JSON source file (<code>.frog</code>).
+</p>
+
+<p>
+The <code>.frog</code> file is the canonical source representation of a Frog program.
+It is called the <strong>FROG Expression</strong>.
+</p>
+
+<p>
+The FROG specification covers both:
+</p>
+
+<ul>
+  <li>the top-level source structure stored in a <code>.frog</code> file, and</li>
+  <li>the cross-cutting rules that apply to typed values, widgets, widget interactions, interfaces, diagrams, front panels, and tool-related metadata.</li>
+</ul>
+
+<hr/>
+
+<h2 id="spec-documents">Specification documents</h2>
+
+<p>
+Each section below has its own detailed specification document:
+</p>
+
+<ul>
+  <li><a href="./Metadata.md"><strong>Metadata.md</strong></a></li>
+  <li><a href="./Type.md"><strong>Type.md</strong></a></li>
+  <li><a href="./Widget.md"><strong>Widget.md</strong></a></li>
+  <li><a href="./Widget%20interaction.md"><strong>Widget interaction.md</strong></a></li>
+  <li><a href="./Interface.md"><strong>Interface.md</strong></a></li>
+  <li><a href="./Connector.md"><strong>Connector.md</strong></a></li>
+  <li><a href="./Diagram.md"><strong>Diagram.md</strong></a></li>
+  <li><a href="./Front%20panel.md"><strong>Front panel.md</strong></a></li>
+  <li><a href="./Icon.md"><strong>Icon.md</strong></a></li>
+  <li><a href="./IDE%20preferences.md"><strong>IDE preferences.md</strong></a></li>
+  <li><a href="./Cache.md"><strong>Cache.md</strong></a></li>
+</ul>
+
+<p>
+Unlike section-specific documents such as <strong>Interface.md</strong>, <strong>Diagram.md</strong>, or <strong>Front panel.md</strong>, <strong>Type.md</strong>, <strong>Widget.md</strong>, and <strong>Widget interaction.md</strong> define cross-cutting language subsystems rather than dedicated required top-level JSON sections.
+</p>
+
+<p>
+<strong>Type.md</strong> specifies canonical type expressions, built-in types, compatibility, and coercion rules used throughout the FROG Expression.
+</p>
+
+<p>
+<strong>Widget.md</strong> specifies the object model of front panel widgets, including widget classes, roles, value-carrying behavior, attached parts, and the conceptual property/method/event surface used by front panel elements.
+</p>
+
+<p>
+<strong>Widget interaction.md</strong> specifies how diagrams interact with front panel widgets through standardized property-read, property-write, and method-invocation mechanisms.
+</p>
+
+<hr/>
+
+<h2 id="what-a-frog-describes">What a <code>.frog</code> describes</h2>
+
+<p>
+A canonical <code>.frog</code> source file describes a complete Frog program through the following required sections:
+</p>
+
+<ul>
+  <li><strong>Metadata</strong>: identity, documentation, versioning</li>
+  <li><strong>Interface</strong>: public typed inputs and outputs</li>
+  <li><strong>Diagram</strong>: executable dataflow graph (nodes, edges, layout, dependencies)</li>
+  <li><strong>Front panel</strong>: interaction layer composed of widgets, layout, and bindings</li>
+</ul>
+
+<p>
+A canonical <code>.frog</code> source file MAY also contain optional sections:
+</p>
+
+<ul>
+  <li><strong>Connector</strong>: graphical mapping of interface ports when the Frog is reused as a node</li>
+  <li><strong>Icon</strong>: graphical icon used by tools and editors</li>
+  <li><strong>IDE preferences</strong>: tool-specific editing preferences</li>
+  <li><strong>Cache</strong>: optional derived non-authoritative cache data</li>
+</ul>
+
+<p>
+In addition to these sections, all typed values contained in a <code>.frog</code> file are governed by the FROG type system defined in <a href="./Type.md"><strong>Type.md</strong></a>, all front panel UI objects are governed by the widget model defined in <a href="./Widget.md"><strong>Widget.md</strong></a>, and all diagram-level interaction with widgets is governed by <a href="./Widget%20interaction.md"><strong>Widget interaction.md</strong></a>.
+</p>
+
+<p>
+A <code>.frog</code> file MUST NOT contain hidden compiled binaries.
+It is a transparent source representation.
+</p>
+
+<hr/>
+
+<h2 id="frog-file-tree">FROG file tree</h2>
+
+<pre>
+FROG
+│
+├─ Source (canonical)
+│   └─ example.frog
+│
+├─ Optional build/cache artifacts
+│   └─ example.frog.cache
+│
+└─ Optional distribution artifact
+    └─ example.frogbin
+</pre>
+
+<p>
+The <code>.frog</code> file is the canonical source representation.
+Cache and distribution artifacts are optional and generated by tools.
+</p>
+
+<hr/>
+
+<h2 id="file-types-source-cache-distribution">File types: source, cache, distribution</h2>
+
+<h3>1) <code>.frog</code> - Source (canonical)</h3>
+
+<ul>
+  <li>Human-readable JSON</li>
+  <li>Version-control friendly</li>
+  <li>Contains all required source sections</li>
+  <li>May include optional sections</li>
+  <li>Represents the canonical <strong>FROG Expression</strong></li>
+</ul>
+
+<h3>2) <code>.frog.cache</code> - Cache (optional)</h3>
+
+<ul>
+  <li>Optional artifact generated by tools</li>
+  <li>May contain cached <strong>FROG Execution IR</strong> and other derived analysis data</li>
+  <li>Used to accelerate loading, validation, and compilation workflows</li>
+  <li>Safe to delete and regenerate</li>
+  <li>Non-authoritative with respect to program meaning</li>
+</ul>
+
+<p>
+See: <a href="./Cache.md"><strong>Cache.md</strong></a>
+</p>
+
+<h3>3) <code>.frogbin</code> - Distribution (optional)</h3>
+
+<ul>
+  <li>Optional artifact intended for distribution</li>
+  <li>May omit non-essential source details</li>
+  <li>May contain execution-oriented or compiled payloads</li>
+  <li>Is not the canonical editable source format</li>
+</ul>
+
+<hr/>
+
+<h2 id="frog-json-top-level">FROG JSON top-level structure</h2>
+
+<pre>
+{
+  "spec_version": "0.1",
+
+  "metadata": {},
+  "interface": {},
+  "connector": {},
+
+  "diagram": {},
+  "front_panel": {},
+
+  "icon": {},
+  "ide": {},
+
+  "cache": {}
+}
+</pre>
+
+<p>
+The canonical top-level object is composed of required and optional sections.
+Required and optional status is defined below.
+Optional sections MUST NOT affect execution semantics.
+</p>
+
+<p>
+FROG v0.1 does not define a mandatory top-level <code>types</code> section.
+Type information is embedded directly in typed elements through canonical type expressions defined in <a href="./Type.md"><strong>Type.md</strong></a>.
+</p>
+
+<p>
+FROG v0.1 does not define a mandatory top-level <code>widgets</code> section either.
+Widget instances are embedded directly inside the <code>front_panel</code> section according to <a href="./Front%20panel.md"><strong>Front panel.md</strong></a> and <a href="./Widget.md"><strong>Widget.md</strong></a>.
+</p>
+
+<p>
+FROG v0.1 also does not define a mandatory top-level <code>widget_interactions</code> section.
+Widget interactions are represented inside the executable diagram according to <a href="./Widget%20interaction.md"><strong>Widget interaction.md</strong></a>.
+</p>
+
+<hr/>
+
+<h2 id="section-presence-rules">Section presence rules</h2>
+
+<p>
+A canonical <code>.frog</code> source file MUST contain the following sections:
+</p>
+
+<ul>
+  <li><code>spec_version</code></li>
+  <li><code>metadata</code></li>
+  <li><code>interface</code></li>
+  <li><code>diagram</code></li>
+  <li><code>front_panel</code></li>
+</ul>
+
+<p>
+A canonical <code>.frog</code> source file MAY contain the following optional sections:
+</p>
+
+<ul>
+  <li><code>connector</code></li>
+  <li><code>icon</code></li>
+  <li><code>ide</code></li>
+  <li><code>cache</code></li>
+</ul>
+
+<p>
+The presence of <code>front_panel</code> is required in the source format even when a program is executed in a headless or non-interactive context.
+In such cases, runtimes MAY ignore the interaction layer, but the source section still remains part of the canonical program description.
+</p>
+
+<p>
+The <code>connector</code> section is optional.
+It SHOULD be present when the Frog is intended to be instantiated as a reusable graphical node inside another Frog.
+</p>
+
+<p>
+Optional sections are non-authoritative with respect to execution and MUST NOT modify program semantics, scheduling, typing, or observable runtime behavior.
+</p>
+
+<hr/>
+
+<h2 id="sections">Sections overview</h2>
+
+<h3>Metadata</h3>
+
+<p>
+Required section defining the identity and documentation of the Frog.
+</p>
+
+<p>
+Detailed spec: <a href="./Metadata.md"><strong>Metadata.md</strong></a>
+</p>
+
+<h3>Interface</h3>
+
+<p>
+Required section defining the public typed inputs and outputs of the Frog.
+Type expressions used by interface ports MUST follow the FROG type system.
+</p>
+
+<p>
+Detailed specs:
+<a href="./Interface.md"><strong>Interface.md</strong></a>,
+<a href="./Type.md"><strong>Type.md</strong></a>
+</p>
+
+<h3>Connector</h3>
+
+<p>
+Optional section defining the graphical mapping of interface ports when a Frog is used as a node inside another diagram.
+</p>
+
+<p>
+Detailed spec: <a href="./Connector.md"><strong>Connector.md</strong></a>
+</p>
+
+<h3>Diagram</h3>
+
+<p>
+Required section defining the executable dataflow graph.
+Typed values and compatible connections within the diagram MUST follow the FROG type system.
+Diagram-level interaction with front panel widgets MUST follow the widget interaction model.
+</p>
+
+<p>
+Detailed specs:
+<a href="./Diagram.md"><strong>Diagram.md</strong></a>,
+<a href="./Type.md"><strong>Type.md</strong></a>,
+<a href="./Widget%20interaction.md"><strong>Widget interaction.md</strong></a>
+</p>
+
+<h3>Front panel</h3>
+
+<p>
+Required source section defining the interaction layer including widgets, layout, and bindings.
+This section is part of the canonical program description even when execution does not require a user interface.
+</p>
+
+<p>
+Detailed specs:
+<a href="./Front%20panel.md"><strong>Front panel.md</strong></a>,
+<a href="./Widget.md"><strong>Widget.md</strong></a>
+</p>
+
+<h3>Icon</h3>
+
+<p>
+Optional section containing a 40×40 SVG icon representing the Frog when embedded as a node.
+</p>
+
+<p>
+Detailed spec: <a href="./Icon.md"><strong>Icon.md</strong></a>
+</p>
+
+<h3>IDE preferences</h3>
+
+<p>
+Optional section containing tool preferences interpreted by development environments.
+Runtimes MUST ignore this section.
+</p>
+
+<p>
+Detailed spec: <a href="./IDE%20preferences.md"><strong>IDE preferences.md</strong></a>
+</p>
+
+<h3>Cache</h3>
+
+<p>
+Optional section used to accelerate tooling workflows.
+It contains derived, non-authoritative data and is safe to discard.
+</p>
+
+<p>
+Detailed spec: <a href="./Cache.md"><strong>Cache.md</strong></a>
+</p>
+
+<hr/>
+
+<h2 id="type-system">Type system</h2>
+
+<p>
+FROG v0.1 defines a normative built-in type system described in <a href="./Type.md"><strong>Type.md</strong></a>.
+</p>
+
+<p>
+This type system is cross-cutting and applies wherever values are declared, constrained, connected, or converted, including:
+</p>
+
+<ul>
+  <li>interface ports,</li>
+  <li>diagram node ports,</li>
+  <li>wires and edge validation,</li>
+  <li>front panel bindings involving typed values,</li>
+  <li>widget interaction node ports,</li>
+  <li>constants and other typed elements defined by section-specific specifications.</li>
+</ul>
+
+<p>
+The type system is not represented as a dedicated required top-level section in v0.1.
+Instead, type information is embedded directly using canonical textual type expressions.
+</p>
+
+<p>
+FROG v0.1 standardizes:
+</p>
+
+<ul>
+  <li>built-in primitive types,</li>
+  <li>built-in array types,</li>
+  <li>type identity rules,</li>
+  <li>type compatibility rules,</li>
+  <li>implicit numeric coercion rules.</li>
+</ul>
+
+<p>
+User-defined named types, library-defined custom types, and more advanced structured types are outside the scope of v0.1 unless and until they are standardized in a future specification revision.
+</p>
+
+<hr/>
+
+<h2 id="widget-model">Widget model</h2>
+
+<p>
+FROG v0.1 defines a normative widget object model described in <a href="./Widget.md"><strong>Widget.md</strong></a>.
+</p>
+
+<p>
+This model is cross-cutting and applies to the UI objects contained in the <code>front_panel</code> section.
+</p>
+
+<p>
+In FROG, a widget is not merely a visual drawing.
+It is a structured UI object with identity, class, role, optional typed value, properties, methods, and optional attached parts.
+</p>
+
+<p>
+The widget model standardizes:
+</p>
+
+<ul>
+  <li>the distinction between widget class and value type,</li>
+  <li>common widget roles such as control, indicator, container, and decoration,</li>
+  <li>the concept of attached widget parts such as labels or captions,</li>
+  <li>the distinction between serialized source properties and runtime reflection metadata,</li>
+  <li>a minimal standard built-in widget vocabulary for v0.1.</li>
+</ul>
+
+<p>
+The widget model is not represented as a dedicated required top-level section in v0.1.
+Instead, widget instances are serialized inside the <code>front_panel</code> section.
+</p>
+
+<hr/>
+
+<h2 id="widget-interaction-model">Widget interaction model</h2>
+
+<p>
+FROG v0.1 defines a normative widget interaction model described in <a href="./Widget%20interaction.md"><strong>Widget interaction.md</strong></a>.
+</p>
+
+<p>
+This model is cross-cutting and applies to diagram-level interaction with front panel widgets.
+</p>
+
+<p>
+It standardizes:
+</p>
+
+<ul>
+  <li>widget member addressing,</li>
+  <li>property read interactions,</li>
+  <li>property write interactions,</li>
+  <li>method invocation interactions.</li>
+</ul>
+
+<p>
+In v0.1, these interactions are represented inside the executable diagram rather than as a dedicated top-level source section.
+</p>
+
+<p>
+Widget interaction nodes MUST remain consistent with both the widget object model defined in <a href="./Widget.md"><strong>Widget.md</strong></a> and the FROG type system defined in <a href="./Type.md"><strong>Type.md</strong></a>.
+</p>
+
+<hr/>
+
+<h2 id="interface-connector-and-front-panel">Interface, connector, and front panel</h2>
+
+<p>
+FROG explicitly distinguishes three different concepts that may appear related but serve different purposes:
+</p>
+
+<ul>
+  <li><strong>Interface</strong> defines the public logical contract of the Frog</li>
+  <li><strong>Connector</strong> defines the graphical projection of that public contract when the Frog is reused as a node</li>
+  <li><strong>Front panel</strong> defines the user interaction layer of the Frog through widget instances and bindings</li>
+</ul>
+
+<p>
+The <strong>interface</strong> describes what the Frog exposes to the outside world:
+public inputs, public outputs, types, and related port semantics.
+</p>
+
+<p>
+The <strong>connector</strong> does not define new ports.
+It only determines where public interface ports appear on the perimeter of the reusable node.
+</p>
+
+<p>
+The <strong>front panel</strong> does not define the public contract of the Frog.
+Instead, it describes widgets, controls, indicators, layout, and user-facing interaction bindings.
+</p>
+
+<p>
+Therefore:
+</p>
+
+<ul>
+  <li>a Frog MAY have an interface without a connector</li>
+  <li>a Frog MAY be executable without a connector</li>
+  <li>a Frog MUST NOT define a connector without an interface</li>
+  <li>the front panel MUST NOT be interpreted as the definition of the public program contract</li>
+</ul>
+
+<p>
+In short:
+</p>
+
+<ul>
+  <li><strong>interface</strong> = what the Frog exposes</li>
+  <li><strong>connector</strong> = how that interface appears when reused as a node</li>
+  <li><strong>front_panel</strong> = how users interact with the Frog through widgets</li>
+</ul>
+
+<hr/>
+
+<h2 id="program-representation-model">Program representation model</h2>
+
+<p>
+FROG distinguishes three representation levels:
+</p>
+
+<ul>
+  <li><strong>FROG Expression</strong> - the serialized source representation stored in a <code>.frog</code> file</li>
+  <li><strong>FROG Program Model</strong> - the canonical editable in-memory representation used by development tools</li>
+  <li><strong>FROG Execution IR</strong> - the canonical execution-oriented representation derived from the validated Program Model</li>
+</ul>
+
+<p>
+The specification defined in this directory primarily describes the <strong>FROG Expression</strong>, which is the authoritative source form of a program.
+</p>
+
+<p>
+Tool implementations MAY reconstruct a Program Model from the Expression, and MAY derive an Execution IR from the validated Program Model for compilation and execution.
+</p>
+
+<p>
+Type parsing, type identity, type compatibility, and implicit coercion behavior belong to the validated semantics of the Program Model and are defined normatively by <a href="./Type.md"><strong>Type.md</strong></a>.
+</p>
+
+<p>
+Widget reconstruction, widget class interpretation, and widget property validation belong to the validated semantics of the front panel portion of the Program Model and are defined normatively by <a href="./Widget.md"><strong>Widget.md</strong></a> and <a href="./Front%20panel.md"><strong>Front panel.md</strong></a>.
+</p>
+
+<p>
+Widget member resolution, widget interaction node validation, and widget interaction port typing belong to the validated semantics of the diagram/front-panel bridge and are defined normatively by <a href="./Widget%20interaction.md"><strong>Widget interaction.md</strong></a>.
+</p>
+
+<hr/>
+
+<h2 id="execution-model">Execution model</h2>
+
+<p>
+Execution follows a pure dataflow model:
+</p>
+
+<ul>
+  <li>A node becomes executable when all required inputs are available.</li>
+  <li>Execution order derives solely from data dependencies.</li>
+  <li>Nodes MAY execute in parallel.</li>
+</ul>
+
+<p>
+A <code>.frog</code> source file MUST be validated before execution.
+Execution MUST proceed from a validated, source-derived execution representation rather than directly from unvalidated source text.
+</p>
+
+<p>
+In a typical architecture, tools reconstruct a <strong>FROG Program Model</strong> from the source Expression, validate it, and derive a <strong>FROG Execution IR</strong> for compilation and execution.
+</p>
+
+<p>
+Optional sections such as <code>connector</code>, <code>icon</code>, <code>ide</code>, and <code>cache</code> MUST NOT influence execution behavior directly.
+The connector is a graphical reuse description, not an execution-semantic structure.
+</p>
+
+<p>
+The front panel may participate in interaction, presentation, and widget state exposure, but it MUST NOT redefine the executable semantics already established by the validated interface, diagram, and type system.
+</p>
+
+<p>
+Widget interaction nodes participate in execution as validated diagram nodes, but they MUST NOT redefine the public interface contract of the Frog.
+</p>
+
+<hr/>
+
+<h2 id="validation-rules">Validation rules</h2>
+
+<ul>
+  <li>All required top-level sections MUST be present in a canonical <code>.frog</code> file.</li>
+  <li>All type expressions MUST parse according to <a href="./Type.md"><strong>Type.md</strong></a>.</li>
+  <li>All widget instances MUST be valid according to <a href="./Widget.md"><strong>Widget.md</strong></a> and the front panel specification.</li>
+  <li>All widget interaction nodes MUST be valid according to <a href="./Widget%20interaction.md"><strong>Widget interaction.md</strong></a>.</li>
+  <li>Node identifiers MUST be unique within a diagram.</li>
+  <li>Edge identifiers MUST be unique within a diagram.</li>
+  <li>All edges MUST reference existing nodes and ports.</li>
+  <li>Connected ports MUST be type-compatible.</li>
+  <li>Any implicit coercion MUST follow the rules defined in <a href="./Type.md"><strong>Type.md</strong></a>.</li>
+  <li>Connector ports MUST reference existing interface ports.</li>
+  <li>Front panel bindings MUST reference valid targets as defined by the front panel specification.</li>
+</ul>
+
+<hr/>
+
+<h2 id="json-ordering">JSON ordering and canonical formatting</h2>
+
+<p>
+JSON key ordering MUST NOT affect semantics.
+</p>
+
+<p>
+Recommended canonical ordering:
+</p>
+
+<pre>
+spec_version
+metadata
+interface
+connector
+diagram
+front_panel
+icon
+ide
+cache
+</pre>
+
+<p>
+Type expressions embedded inside JSON values SHOULD use the canonical serialized form defined in <a href="./Type.md"><strong>Type.md</strong></a>.
+</p>
+
+<p>
+Widget instances embedded inside <code>front_panel</code> SHOULD use the canonical field and class conventions defined in <a href="./Widget.md"><strong>Widget.md</strong></a>.
+</p>
+
+<p>
+Widget interaction nodes embedded inside <code>diagram</code> SHOULD use the canonical interaction forms defined in <a href="./Widget%20interaction.md"><strong>Widget interaction.md</strong></a>.
+</p>
+
+<hr/>
+
+<h2 id="normative-terminology">Normative terminology</h2>
+
+<ul>
+  <li><strong>MUST</strong> - required</li>
+  <li><strong>SHOULD</strong> - recommended</li>
+  <li><strong>MAY</strong> - optional</li>
+  <li><strong>MUST NOT</strong> - prohibited</li>
+</ul>
+
+<hr/>
+
+<h2 id="status">Status</h2>
+
+<p>
+FROG Specification v0.1 - Draft.
+</p>
+
+<hr/>
+
+<h2 id="license">License</h2>
+
+<p>
+This specification is released under the Apache License 2.0.
+</p>
+
+<hr/>
+
+<p align="center">
+<strong>FROG - Free Open Graphical Language</strong><br/>
+An open foundation for graphical programming.
+</p>
