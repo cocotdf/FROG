@@ -6,11 +6,12 @@
 
 <p align="center">
   <strong>Free Open Graphical Dataflow Programming Language</strong><br/>
-  An open, hardware-agnostic graphical dataflow language designed for rapid prototyping, deterministic execution, and scalable deployment across heterogeneous hardware.
+  Positioned in the upper-right corner of engineering languages, FROG is an open, hardware-agnostic graphical dataflow language designed to combine rapid prototyping, accessibility, deterministic execution, and scalable deployment across heterogeneous hardware.
 </p>
 
 <p align="center">
   <a href="#what-is-frog">What is FROG?</a> •
+  <a href="#positioning">Positioning</a> •
   <a href="#why-frog-exists">Why FROG exists</a> •
   <a href="#dataflow-programming">Dataflow programming</a> •
   <a href="#from-prototyping-to-critical-systems">From prototyping to critical systems</a> •
@@ -38,7 +39,7 @@ designed to describe computation through explicit dataflow graphs.
 <p>
 Instead of expressing programs as ordered sequences of instructions,
 FROG represents programs as <strong>graphs of operations connected by data</strong>.
-Execution emerges from the availability and movement of data through the system.
+Execution emerges from data availability and data dependencies rather than from manually sequenced control flow.
 </p>
 
 <p>
@@ -48,7 +49,7 @@ types, interfaces, interaction layers, and execution-oriented lowering rules.
 </p>
 
 <p>
-The language is designed to remain independent from any particular
+The language is designed to remain independent from any specific
 IDE, compiler, runtime, operating system, or vendor ecosystem.
 </p>
 
@@ -56,6 +57,34 @@ IDE, compiler, runtime, operating system, or vendor ecosystem.
 This separation enables long-term stability, interoperability,
 multiple independent implementations, and a durable foundation
 for industrial graphical programming.
+</p>
+
+<hr/>
+
+<h2 id="positioning">Positioning</h2>
+
+<p>
+FROG is designed to occupy the upper-right corner of engineering languages:
+combining the accessibility of graphical programming with the execution depth
+required for deterministic, industrial, embedded, and high-performance systems.
+</p>
+
+<p>
+Many languages force a trade-off between ease of use and system-level capability.
+FROG is designed to reduce that gap through visual dataflow programming,
+an open execution architecture, hardware-agnostic design,
+and a path that scales from rapid prototyping to deployment.
+</p>
+
+<p align="center">
+  <img src="orville-chart.png" alt="FROG positioning chart" width="640" />
+</p>
+
+<p align="center">
+  <em>
+    FROG aims to unite accessibility, visual dataflow programming,
+    and system-grade execution in a single open language model.
+  </em>
 </p>
 
 <hr/>
@@ -72,7 +101,7 @@ for building complex systems:
   <li>deterministic execution</li>
   <li>intuitive system orchestration</li>
   <li>strong mapping between software and hardware behavior</li>
-  <li>high productivity for engineers and scientists</li>
+  <li>high productivity for engineers, scientists, and domain experts</li>
 </ul>
 
 <p>
@@ -89,7 +118,7 @@ and often locks users into a single vendor boundary.
 
 <p>
 FROG addresses this limitation by defining an <strong>open language specification</strong>
-separate from any single tool, runtime, compiler, or hardware manufacturer.
+that remains separate from any single tool, runtime, compiler, or hardware manufacturer.
 </p>
 
 <p>
@@ -165,7 +194,7 @@ in programming languages.
 <p>
 Graphical programming lowers the barrier to entry by allowing systems
 to be expressed visually as dataflow graphs,
-reducing the cognitive overhead of syntax-driven programming.
+reducing the cognitive overhead of syntax-heavy programming.
 </p>
 
 <p>
@@ -579,7 +608,7 @@ The specification defines the language, not a specific product or implementation
 <p>
 FROG is currently in early development.
 The language specification, program representation model,
-execution architecture, widget model, diagram/front-panel semantics,
+execution architecture, widget model, diagram and front-panel semantics,
 and reference tooling are under active design.
 </p>
 
@@ -597,7 +626,7 @@ See <code>LICENSE</code> for details.
 </p>
 
 <p align="center">
-<a href="https://cla-assistant.io/Graiphic/FROG">
-<img src="https://cla-assistant.io/readme/badge/Graiphic/FROG" alt="CLA Assistant"/>
-</a>
+  <a href="https://cla-assistant.io/Graiphic/FROG">
+    <img src="https://cla-assistant.io/readme/badge/Graiphic/FROG" alt="CLA Assistant" />
+  </a>
 </p>
