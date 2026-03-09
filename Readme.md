@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="FROG logo.png" alt="FROG logo" width="400" />
+  <img src="FROG logo.svg" alt="FROG logo" width="150" />
 </p>
 
 <h1 align="center">🐸 FROG — Free Open Graphical Language</h1>
