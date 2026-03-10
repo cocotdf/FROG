@@ -15,22 +15,23 @@ Definition of executable graphs in <strong>.frog</strong> programs<br/>
   <li><a href="#relation-with-other-specifications">3. Relation with Other Specifications</a></li>
   <li><a href="#location">4. Location in a <code>.frog</code> File</a></li>
   <li><a href="#structure">5. Diagram Structure</a></li>
-  <li><a href="#node-model">6. Node Model</a></li>
-  <li><a href="#standard-node-kinds">7. Standard Node Kinds for v0.1</a></li>
-  <li><a href="#port-resolution-model">8. Port Resolution Model</a></li>
-  <li><a href="#edge-model">9. Edge Model</a></li>
-  <li><a href="#diagram-annotations">10. Diagram Annotations</a></li>
-  <li><a href="#documentation-and-tags">11. Documentation and Tags</a></li>
-  <li><a href="#layout-information">12. Layout Information</a></li>
-  <li><a href="#frog-dependencies">13. Frog Dependencies</a></li>
-  <li><a href="#subfrog-invocation">14. Sub-Frog Invocation</a></li>
-  <li><a href="#interface-widget-and-structure-boundaries">15. Interface, Widget, and Structure Boundaries</a></li>
-  <li><a href="#widget-interaction-model">16. Widget Interaction Model</a></li>
-  <li><a href="#cycles-and-local-state">17. Cycles and Local State</a></li>
-  <li><a href="#graph-validation">18. Graph Validation</a></li>
-  <li><a href="#execution-semantics">19. Execution Semantics</a></li>
-  <li><a href="#examples">20. Examples</a></li>
-  <li><a href="#summary">21. Summary</a></li>
+  <li><a href="#diagram-scopes">6. Diagram Scopes</a></li>
+  <li><a href="#node-model">7. Node Model</a></li>
+  <li><a href="#standard-node-kinds">8. Standard Node Kinds for v0.1</a></li>
+  <li><a href="#port-resolution-model">9. Port Resolution Model</a></li>
+  <li><a href="#edge-model">10. Edge Model</a></li>
+  <li><a href="#diagram-annotations">11. Diagram Annotations</a></li>
+  <li><a href="#documentation-and-tags">12. Documentation and Tags</a></li>
+  <li><a href="#layout-information">13. Layout Information</a></li>
+  <li><a href="#frog-dependencies">14. Frog Dependencies</a></li>
+  <li><a href="#subfrog-invocation">15. Sub-Frog Invocation</a></li>
+  <li><a href="#interface-widget-and-structure-boundaries">16. Interface, Widget, and Structure Boundaries</a></li>
+  <li><a href="#widget-interaction-model">17. Widget Interaction Model</a></li>
+  <li><a href="#cycles-and-local-state">18. Cycles and Local State</a></li>
+  <li><a href="#graph-validation">19. Graph Validation</a></li>
+  <li><a href="#execution-semantics">20. Execution Semantics</a></li>
+  <li><a href="#examples">21. Examples</a></li>
+  <li><a href="#summary">22. Summary</a></li>
 </ul>
 
 <hr/>
@@ -65,6 +66,10 @@ Execution semantics are derived from the validated graph together with:
   <li>the local-state and cycle rules,</li>
   <li>and any active primitive catalog or stricter execution profile.</li>
 </ul>
+
+<p>
+The diagram is the canonical structural definition of execution in a FROG.
+</p>
 
 <hr/>
 
@@ -112,11 +117,12 @@ This document depends on the following FROG specifications:
 
 <p>
 This document defines the graph-level representation and validation rules that tie these subsystems together.
+It does not redefine the semantics already owned by those dedicated specifications.
 </p>
 
 <hr/>
 
-<h2 id="location">4. Location in a <code>.frog</code> File</a></h2>
+<h2 id="location">4. Location in a <code>.frog</code> File</h2>
 
 <p>
 The diagram appears as a top-level object in the canonical <code>.frog</code> source file.
@@ -173,7 +179,37 @@ It does not affect execution semantics.
 
 <hr/>
 
-<h2 id="node-model">6. Node Model</h2>
+<h2 id="diagram-scopes">6. Diagram Scopes</h2>
+
+<p>
+FROG diagrams are recursive.
+</p>
+
+<p>
+The top-level <code>diagram</code> object defines the outer executable graph of the FROG.
+Control structures MAY own internal executable regions, and each such region contains its own local diagram.
+</p>
+
+<p>
+Therefore, FROG distinguishes:
+</p>
+
+<ul>
+  <li><strong>top-level diagram scope</strong> — the root executable graph of the FROG,</li>
+  <li><strong>region-local diagram scope</strong> — a nested executable graph owned by a structure region.</li>
+</ul>
+
+<p>
+Each diagram scope has its own local node identifier space, edge identifier space, and annotation identifier space.
+</p>
+
+<p>
+Rules defined in this document apply both to the top-level diagram and to region-local diagrams unless a structure-specific rule explicitly states otherwise.
+</p>
+
+<hr/>
+
+<h2 id="node-model">7. Node Model</h2>
 
 <p>
 A node represents an executable or structurally meaningful element of the graph.
@@ -184,7 +220,7 @@ Every node <strong>MUST</strong> define:
 </p>
 
 <ul>
-  <li><strong>id</strong> — unique node identifier,</li>
+  <li><strong>id</strong> — unique node identifier within its owning diagram scope,</li>
   <li><strong>kind</strong> — node category.</li>
 </ul>
 
@@ -199,7 +235,7 @@ A node MAY also define:
   <li>kind-specific fields defined below.</li>
 </ul>
 
-<h3>6.1 Common node shape</h3>
+<h3>7.1 Common node shape</h3>
 
 <pre><code>{
   "id": "node_1",
@@ -218,7 +254,7 @@ Their valid ports are resolved from their kind and from the metadata required by
 
 <hr/>
 
-<h2 id="standard-node-kinds">7. Standard Node Kinds for v0.1</h2>
+<h2 id="standard-node-kinds">8. Standard Node Kinds for v0.1</h2>
 
 <p>
 FROG v0.1 defines the following standard node kinds:
@@ -234,7 +270,7 @@ FROG v0.1 defines the following standard node kinds:
   <li><code>widget_reference</code></li>
 </ul>
 
-<h3>7.1 <code>primitive</code></h3>
+<h3>8.1 <code>primitive</code></h3>
 
 <p>
 A <code>primitive</code> node represents a built-in or profile-defined function.
@@ -264,16 +300,22 @@ Rules:
 Primitive nodes include ordinary computational functions such as arithmetic operations, but may also include widget interaction primitives and local-state functions such as <code>frog.core.delay</code>.
 </p>
 
-<h3>7.2 <code>structure</code></h3>
+<h3>8.2 <code>structure</code></h3>
 
 <p>
-A <code>structure</code> node represents a control-structure construct whose detailed semantics are defined by <code>Language/Control structures.md</code>.
+A <code>structure</code> node represents a language-level control structure whose semantics are defined by <code>Language/Control structures.md</code>.
 </p>
 
 <pre><code>{
   "id": "case_1",
   "kind": "structure",
-  "structure_type": "frog.control.case",
+  "structure_type": "case",
+  "boundary": {
+    "inputs": [],
+    "outputs": []
+  },
+  "structure_terminals": {},
+  "regions": [],
   "layout": {
     "x": 300,
     "y": 120,
@@ -289,10 +331,12 @@ Rules:
 <ul>
   <li><code>structure_type</code> <strong>MUST</strong> exist,</li>
   <li><code>structure_type</code> <strong>MUST</strong> identify a valid standardized or profile-defined structure family,</li>
+  <li>the canonical standardized structure types for v0.1 are <code>case</code>, <code>for_loop</code>, and <code>while_loop</code>,</li>
+  <li><code>boundary</code>, <code>structure_terminals</code>, and <code>regions</code> MUST be valid for the chosen structure type,</li>
   <li>structure internals, tunnels, regions, and execution rules are defined by the control-structure specification rather than redefined here.</li>
 </ul>
 
-<h3>7.3 <code>subfrog</code></h3>
+<h3>8.3 <code>subfrog</code></h3>
 
 <p>
 A <code>subfrog</code> node represents an invocation of another FROG.
@@ -318,7 +362,7 @@ Rules:
   <li>the input and output ports of the node are derived from the referenced FROG interface.</li>
 </ul>
 
-<h3>7.4 <code>interface_input</code></h3>
+<h3>8.4 <code>interface_input</code></h3>
 
 <p>
 An <code>interface_input</code> node represents the entry point of a declared public interface input inside the executable graph.
@@ -343,7 +387,7 @@ Rules:
   <li><code>interface_port</code> <strong>MUST</strong> reference an existing input declared in the <code>interface</code> section.</li>
 </ul>
 
-<h3>7.5 <code>interface_output</code></h3>
+<h3>8.5 <code>interface_output</code></h3>
 
 <p>
 An <code>interface_output</code> node represents the exit point used to drive a declared public interface output from the executable graph.
@@ -368,7 +412,7 @@ Rules:
   <li><code>interface_port</code> <strong>MUST</strong> reference an existing output declared in the <code>interface</code> section.</li>
 </ul>
 
-<h3>7.6 <code>widget_value</code></h3>
+<h3>8.6 <code>widget_value</code></h3>
 
 <p>
 A <code>widget_value</code> node represents the primary value participation of a front panel widget in the executable graph.
@@ -395,7 +439,7 @@ Rules:
   <li>the referenced widget <strong>MUST</strong> be value-carrying.</li>
 </ul>
 
-<h3>7.7 <code>widget_reference</code></h3>
+<h3>8.7 <code>widget_reference</code></h3>
 
 <p>
 A <code>widget_reference</code> node represents an explicit object-style reference to a widget.
@@ -423,14 +467,14 @@ Rules:
 
 <hr/>
 
-<h2 id="port-resolution-model">8. Port Resolution Model</h2>
+<h2 id="port-resolution-model">9. Port Resolution Model</h2>
 
 <p>
 FROG v0.1 does not require every node to declare an explicit <code>ports</code> array inside the diagram source.
 Instead, valid ports are resolved from the node kind and its definition source.
 </p>
 
-<h3>8.1 Port resolution by node kind</h3>
+<h3>9.1 Port resolution by node kind</h3>
 
 <ul>
   <li><strong>primitive</strong> — ports are defined by the primitive function signature,</li>
@@ -442,7 +486,7 @@ Instead, valid ports are resolved from the node kind and its definition source.
   <li><strong>widget_reference</strong> — exactly one output port named <code>ref</code>.</li>
 </ul>
 
-<h3>8.2 Primitive node ports</h3>
+<h3>9.2 Primitive node ports</h3>
 
 <p>
 For a <code>primitive</code> node, port names, directions, arity, and types are defined by the active primitive catalog or profile.
@@ -462,13 +506,13 @@ However, the following widget interaction primitive families are standardized co
 Their signatures <strong>MUST</strong> be interpreted consistently with <code>Widget interaction.md</code>.
 </p>
 
-<h3>8.3 Standard widget interaction primitive signatures</h3>
+<h3>9.3 Standard widget interaction primitive signatures</h3>
 
 <p>
 The following signatures apply in the base v0.1 model:
 </p>
 
-<h4>8.3.1 <code>frog.ui.property_read</code></h4>
+<h4>9.3.1 <code>frog.ui.property_read</code></h4>
 
 <ul>
   <li>required input port: <code>ref</code>,</li>
@@ -483,7 +527,7 @@ The <code>ref</code> port is an opaque widget reference token.
 The optional <code>ui_in</code> and <code>ui_out</code> ports are opaque UI sequencing ports.
 </p>
 
-<h4>8.3.2 <code>frog.ui.property_write</code></h4>
+<h4>9.3.2 <code>frog.ui.property_write</code></h4>
 
 <ul>
   <li>required input port: <code>ref</code>,</li>
@@ -498,7 +542,7 @@ The <code>ref</code> port is an opaque widget reference token.
 The optional <code>ui_in</code> and <code>ui_out</code> ports are opaque UI sequencing ports.
 </p>
 
-<h4>8.3.3 <code>frog.ui.method_invoke</code></h4>
+<h4>9.3.3 <code>frog.ui.method_invoke</code></h4>
 
 <ul>
   <li>required input port: <code>ref</code>,</li>
@@ -514,19 +558,33 @@ The <code>ref</code> port is an opaque widget reference token.
 The optional <code>ui_in</code> and <code>ui_out</code> ports are opaque UI sequencing ports.
 </p>
 
-<h3>8.4 Structure node ports</h3>
+<h3>9.4 Structure node ports</h3>
 
 <p>
-For a <code>structure</code> node, ports are resolved according to the structure family definition.
-This includes external structure terminals, tunnel behavior, and any required control terminals.
+For a <code>structure</code> node, external ports are resolved from:
 </p>
+
+<ul>
+  <li>the structure <code>boundary.inputs</code>,</li>
+  <li>the structure <code>boundary.outputs</code>,</li>
+  <li>and any outer-visible structure terminals required by the structure family.</li>
+</ul>
 
 <p>
-This document does not redefine the internal structure-port model.
-It delegates that responsibility to <code>Language/Control structures.md</code>.
+Examples:
 </p>
 
-<h3>8.5 Sub-FROG node ports</h3>
+<ul>
+  <li>a <code>case</code> structure typically exposes a selector input plus its boundary tunnels,</li>
+  <li>a <code>for_loop</code> structure typically exposes a count input plus its boundary tunnels,</li>
+  <li>a <code>while_loop</code> structure exposes its boundary tunnels and any explicitly defined outer-visible control terminals required by the active profile.</li>
+</ul>
+
+<p>
+Internal region-level access to structure terminals such as selector, count, condition, or index is governed by the structure definition in <code>Language/Control structures.md</code>.
+</p>
+
+<h3>9.5 Sub-FROG node ports</h3>
 
 <p>
 For a <code>subfrog</code> node:
@@ -541,7 +599,7 @@ For a <code>subfrog</code> node:
 The types of these ports are exactly the types declared by the referenced FROG interface.
 </p>
 
-<h3>8.6 Interface boundary node ports</h3>
+<h3>9.6 Interface boundary node ports</h3>
 
 <p>
 For interface boundary nodes, the following fixed port model applies:
@@ -556,7 +614,7 @@ For interface boundary nodes, the following fixed port model applies:
 The type of that <code>value</code> port is the type of the referenced interface port.
 </p>
 
-<h3>8.7 Widget value node ports</h3>
+<h3>9.7 Widget value node ports</h3>
 
 <p>
 For a <code>widget_value</code> node:
@@ -575,7 +633,7 @@ The type of the <code>value</code> port is the widget <code>value_type</code>.
 For v0.1, standard <code>container</code> and <code>decoration</code> widgets are not value-carrying and therefore cannot be used by <code>widget_value</code> nodes.
 </p>
 
-<h3>8.8 Widget reference node ports</h3>
+<h3>9.8 Widget reference node ports</h3>
 
 <p>
 A <code>widget_reference</code> node exposes exactly one output port named <code>ref</code>.
@@ -586,7 +644,7 @@ This port represents an opaque widget reference token suitable for widget intera
 It is not a general-purpose user-visible data value in v0.1.
 </p>
 
-<h3>8.9 UI sequencing ports</h3>
+<h3>9.9 UI sequencing ports</h3>
 
 <p>
 The optional <code>ui_in</code> and <code>ui_out</code> ports used by widget interaction primitives are opaque sequencing ports.
@@ -597,7 +655,7 @@ They do not represent ordinary user-level FROG data values.
 They exist only to express explicit ordering constraints between UI interactions.
 </p>
 
-<h3>8.10 Port validation consequence</h3>
+<h3>9.10 Port validation consequence</h3>
 
 <p>
 Any edge endpoint referencing a node port is valid only if that port exists after resolution under the rules above.
@@ -605,7 +663,7 @@ Any edge endpoint referencing a node port is valid only if that port exists afte
 
 <hr/>
 
-<h2 id="edge-model">9. Edge Model</h2>
+<h2 id="edge-model">10. Edge Model</h2>
 
 <p>
 Edges define directional connections between node ports.
@@ -628,7 +686,7 @@ Fields:
 </p>
 
 <ul>
-  <li><strong>id</strong> — unique edge identifier,</li>
+  <li><strong>id</strong> — unique edge identifier within its owning diagram scope,</li>
   <li><strong>from</strong> — source node and source output port,</li>
   <li><strong>to</strong> — destination node and destination input port.</li>
 </ul>
@@ -651,14 +709,14 @@ Most edges represent ordinary data flow.
 Some edges may represent UI sequencing flow when they connect <code>ui_out</code> to <code>ui_in</code>.
 </p>
 
-<h3>9.1 Ordinary data edges</h3>
+<h3>10.1 Ordinary data edges</h3>
 
 <p>
 Ordinary data edges connect ordinary typed value ports.
 They obey standard type compatibility rules from <code>Type.md</code>.
 </p>
 
-<h3>9.2 UI sequencing edges</h3>
+<h3>10.2 UI sequencing edges</h3>
 
 <p>
 A UI sequencing edge connects:
@@ -676,7 +734,7 @@ It does not represent an ordinary user-level data value.
 
 <hr/>
 
-<h2 id="diagram-annotations">10. Diagram Annotations</h2>
+<h2 id="diagram-annotations">11. Diagram Annotations</h2>
 
 <p>
 The <code>annotations</code> array contains visible, non-executable source annotations created by the author to document, organize, or label the diagram.
@@ -687,7 +745,7 @@ Annotations are part of the canonical expression when they represent intended so
 They <strong>MUST NOT</strong> alter execution semantics.
 </p>
 
-<h3>10.1 Purpose of annotations</h3>
+<h3>11.1 Purpose of annotations</h3>
 
 <p>
 Annotations may be used for:
@@ -701,7 +759,7 @@ Annotations may be used for:
   <li>other visible note forms standardized by an active profile.</li>
 </ul>
 
-<h3>10.2 Annotation structure</h3>
+<h3>11.2 Annotation structure</h3>
 
 <p>
 Recommended annotation shape:
@@ -735,7 +793,7 @@ Common annotation fields:
   <li><code>tags</code> — optional structured tags.</li>
 </ul>
 
-<h3>10.3 Standard annotation kinds for v0.1</h3>
+<h3>11.3 Standard annotation kinds for v0.1</h3>
 
 <ul>
   <li><code>free_label</code></li>
@@ -744,32 +802,32 @@ Common annotation fields:
   <li><code>region</code></li>
 </ul>
 
-<h3>10.4 Free label</h3>
+<h3>11.4 Free label</h3>
 
 <p>
 A <code>free_label</code> is free-standing visible text placed on the diagram.
 </p>
 
-<h3>10.5 Comment</h3>
+<h3>11.5 Comment</h3>
 
 <p>
 A <code>comment</code> is a textual annotation that may optionally target a node or an edge.
 </p>
 
-<h3>10.6 Wire label</h3>
+<h3>11.6 Wire label</h3>
 
 <p>
 A <code>wire_label</code> is a textual annotation attached to an edge.
 </p>
 
-<h3>10.7 Region</h3>
+<h3>11.7 Region</h3>
 
 <p>
 A <code>region</code> groups or frames a functional portion of the diagram visually.
 It may optionally reference nodes.
 </p>
 
-<h3>10.8 Annotation targets</h3>
+<h3>11.8 Annotation targets</h3>
 
 <p>
 When <code>target</code> is present, it SHOULD follow one of these forms:
@@ -780,7 +838,7 @@ When <code>target</code> is present, it SHOULD follow one of these forms:
   <li><code>{ "scope": "edge", "id": "edge_id" }</code></li>
 </ul>
 
-<h3>10.9 Execution neutrality</h3>
+<h3>11.9 Execution neutrality</h3>
 
 <p>
 Annotations are source documentation and visual structure only.
@@ -797,7 +855,7 @@ They <strong>MUST NOT</strong> alter:
 
 <hr/>
 
-<h2 id="documentation-and-tags">11. Documentation and Tags</h2>
+<h2 id="documentation-and-tags">12. Documentation and Tags</h2>
 
 <p>
 FROG v0.1 distinguishes between:
@@ -809,7 +867,7 @@ FROG v0.1 distinguishes between:
   <li><strong>editor-only navigation state</strong> that belongs to IDE-specific data rather than the canonical diagram expression.</li>
 </ul>
 
-<h3>11.1 Structured documentation</h3>
+<h3>12.1 Structured documentation</h3>
 
 <p>
 A node, edge, or annotation MAY define a <code>doc</code> object.
@@ -824,7 +882,7 @@ Recommended shape:
   "description": "Longer structured explanation."
 }</code></pre>
 
-<h3>11.2 Structured tags</h3>
+<h3>12.2 Structured tags</h3>
 
 <p>
 A node, edge, or annotation MAY define a <code>tags</code> array.
@@ -836,7 +894,7 @@ A node, edge, or annotation MAY define a <code>tags</code> array.
 This document does not impose a closed vocabulary for tags in v0.1.
 </p>
 
-<h3>11.3 Source documentation vs IDE-only state</h3>
+<h3>12.3 Source documentation vs IDE-only state</h3>
 
 <p>
 The following belong in canonical source when author-intended:
@@ -865,7 +923,7 @@ The following do <strong>not</strong> belong in the canonical diagram source and
 
 <hr/>
 
-<h2 id="layout-information">12. Layout Information</h2>
+<h2 id="layout-information">13. Layout Information</h2>
 
 <p>
 Nodes and annotations MAY include layout information for graphical editors.
@@ -895,7 +953,7 @@ It <strong>MUST NOT</strong> influence execution semantics, scheduling, typing, 
 
 <hr/>
 
-<h2 id="frog-dependencies">13. Frog Dependencies</h2>
+<h2 id="frog-dependencies">14. Frog Dependencies</h2>
 
 <p>
 When a diagram uses nodes implemented by other FROGs, those FROGs <strong>MUST</strong> be referenced in <code>dependencies</code>.
@@ -933,7 +991,7 @@ This document does not standardize packaging, search paths, remote resolution, o
 
 <hr/>
 
-<h2 id="subfrog-invocation">14. Sub-Frog Invocation</h2>
+<h2 id="subfrog-invocation">15. Sub-Frog Invocation</h2>
 
 <p>
 Sub-FROG invocation enables hierarchical program composition.
@@ -952,7 +1010,7 @@ Conceptually:
 
 <hr/>
 
-<h2 id="interface-widget-and-structure-boundaries">15. Interface, Widget, and Structure Boundaries</h2>
+<h2 id="interface-widget-and-structure-boundaries">16. Interface, Widget, and Structure Boundaries</h2>
 
 <p>
 The executable graph <strong>MUST</strong> be consistent with:
@@ -992,7 +1050,7 @@ The diagram is where both become structurally connected to executable logic.
 
 <hr/>
 
-<h2 id="widget-interaction-model">16. Widget Interaction Model</h2>
+<h2 id="widget-interaction-model">17. Widget Interaction Model</h2>
 
 <p>
 FROG distinguishes two interaction paths for widgets:
@@ -1003,14 +1061,14 @@ FROG distinguishes two interaction paths for widgets:
   <li><strong>object-style interaction</strong> — handled through <code>widget_reference</code> nodes and widget interaction primitives.</li>
 </ul>
 
-<h3>16.1 Primary value interaction</h3>
+<h3>17.1 Primary value interaction</h3>
 
 <p>
 Primary value interaction uses the implicit <code>widget.value</code> terminal materialized by <code>widget_value</code>.
 This is the normal path for dataflow wiring of controls and indicators.
 </p>
 
-<h3>16.2 Object-style interaction</h3>
+<h3>17.2 Object-style interaction</h3>
 
 <p>
 Object-style interaction is used when the diagram needs to:
@@ -1028,7 +1086,7 @@ Object-style interaction is used when the diagram needs to:
 This path requires a <code>widget_reference</code> node.
 </p>
 
-<h3>16.3 Widget interaction primitive families</h3>
+<h3>17.3 Widget interaction primitive families</h3>
 
 <p>
 The base v0.1 model recognizes the following primitive families:
@@ -1052,7 +1110,7 @@ They are validated using:
   <li>the property or method being addressed.</li>
 </ul>
 
-<h3>16.4 Member descriptors</h3>
+<h3>17.4 Member descriptors</h3>
 
 <p>
 A widget interaction primitive MAY declare a property target description such as:
@@ -1100,7 +1158,7 @@ or, for a widget part method:
 The exact field naming MAY be profile-defined, but the addressed member <strong>MUST</strong> be valid for the widget or addressed widget part.
 </p>
 
-<h3>16.5 Special status of <code>value</code></h3>
+<h3>17.5 Special status of <code>value</code></h3>
 
 <p>
 The primary widget value has special status.
@@ -1111,7 +1169,7 @@ Using <code>frog.ui.property_read</code> or <code>frog.ui.property_write</code> 
 However, when a <code>widget_value</code> node can express the same intent more directly, tools SHOULD prefer <code>widget_value</code> for ordinary primary value wiring and MAY warn when value interaction is modeled indirectly through property primitives.
 </p>
 
-<h3>16.6 UI sequencing</h3>
+<h3>17.6 UI sequencing</h3>
 
 <p>
 Widget interaction primitives MAY use the optional <code>ui_in</code> and <code>ui_out</code> ports to form explicit ordering chains between UI side effects or UI observations.
@@ -1129,7 +1187,7 @@ means that <code>B</code> cannot perform its UI-visible action or UI-visible obs
 
 <hr/>
 
-<h2 id="cycles-and-local-state">17. Cycles and Local State</h2>
+<h2 id="cycles-and-local-state">18. Cycles and Local State</h2>
 
 <p>
 FROG allows cycles in executable graphs only under the rules defined by <code>Language/State and cycles.md</code>.
@@ -1154,11 +1212,12 @@ This means that the diagram is not restricted to acyclic graphs, but feedback mu
 
 <p>
 Cycle validity is therefore part of diagram validation, even though the detailed local-state semantics are defined by the language-level state specification.
+A validator MAY implement this rule through strongly connected component analysis or any equivalent graph-theoretic method.
 </p>
 
 <hr/>
 
-<h2 id="graph-validation">18. Graph Validation</h2>
+<h2 id="graph-validation">19. Graph Validation</h2>
 
 <p>
 Implementations <strong>MUST</strong> enforce the following rules:
@@ -1167,9 +1226,9 @@ Implementations <strong>MUST</strong> enforce the following rules:
 <ul>
   <li>the <code>diagram</code> section <strong>MUST</strong> exist,</li>
   <li><code>nodes</code> and <code>edges</code> <strong>MUST</strong> exist and <strong>MUST</strong> be arrays,</li>
-  <li>node identifiers <strong>MUST</strong> be unique within the diagram,</li>
-  <li>edge identifiers <strong>MUST</strong> be unique within the diagram,</li>
-  <li>every edge endpoint <strong>MUST</strong> reference an existing node,</li>
+  <li>node identifiers <strong>MUST</strong> be unique within each owning diagram scope,</li>
+  <li>edge identifiers <strong>MUST</strong> be unique within each owning diagram scope,</li>
+  <li>every edge endpoint <strong>MUST</strong> reference an existing node in the same owning diagram scope,</li>
   <li>every referenced port <strong>MUST</strong> exist after port resolution,</li>
   <li>edge direction <strong>MUST</strong> match the direction of the referenced ports,</li>
   <li>connected ordinary value ports <strong>MUST</strong> be type-compatible according to <code>Type.md</code>,</li>
@@ -1185,7 +1244,9 @@ Additional structure-related rules:
 
 <ul>
   <li>every <code>structure</code> node <strong>MUST</strong> use a valid <code>structure_type</code>,</li>
-  <li>structure tunnels, regions, and control semantics <strong>MUST</strong> be valid according to <code>Language/Control structures.md</code>.</li>
+  <li><code>boundary</code>, <code>structure_terminals</code>, and <code>regions</code> <strong>MUST</strong> be valid for that structure type,</li>
+  <li>structure regions <strong>MUST</strong> contain valid local diagrams,</li>
+  <li>structure tunnels, control terminals, region coverage, and execution semantics <strong>MUST</strong> be valid according to <code>Language/Control structures.md</code>.</li>
 </ul>
 
 <p>
@@ -1240,7 +1301,7 @@ For annotations and source documentation:
 
 <ul>
   <li>if present, <code>annotations</code> <strong>MUST</strong> be an array,</li>
-  <li>annotation identifiers <strong>MUST</strong> be unique within the diagram,</li>
+  <li>annotation identifiers <strong>MUST</strong> be unique within the owning diagram scope,</li>
   <li>annotation targets <strong>MUST</strong> reference existing nodes or edges when specified,</li>
   <li><code>doc</code> fields <strong>MUST</strong> be objects when present,</li>
   <li><code>tags</code> fields <strong>MUST</strong> be arrays of strings when present,</li>
@@ -1253,7 +1314,7 @@ Unknown node or annotation properties MAY be ignored unless a stricter active pr
 
 <hr/>
 
-<h2 id="execution-semantics">19. Execution Semantics</h2>
+<h2 id="execution-semantics">20. Execution Semantics</h2>
 
 <p>
 Execution follows a dataflow model.
@@ -1294,7 +1355,18 @@ When widget-related nodes are present:
   <li>none of these redefine the public interface contract.</li>
 </ul>
 
-<h3>19.1 Unsequenced UI interaction</h3>
+<p>
+When structure nodes are present:
+</p>
+
+<ul>
+  <li>a structure node executes according to its standardized structure semantics,</li>
+  <li>its owned regions are local executable subgraphs,</li>
+  <li>its external behavior is observed through its resolved boundary ports and structure terminals,</li>
+  <li>its internal execution MUST remain equivalent to the meaning defined by <code>Language/Control structures.md</code>.</li>
+</ul>
+
+<h3>20.1 Unsequenced UI interaction</h3>
 
 <p>
 If <code>ui_in</code> and <code>ui_out</code> are not used, a widget interaction primitive executes when its required ordinary inputs are available, including <code>ref</code> and any required ordinary value inputs.
@@ -1304,7 +1376,7 @@ If <code>ui_in</code> and <code>ui_out</code> are not used, a widget interaction
 In that case, the relative ordering between independent UI interactions is not guaranteed unless already implied by ordinary dataflow dependencies.
 </p>
 
-<h3>19.2 Sequenced UI interaction</h3>
+<h3>20.2 Sequenced UI interaction</h3>
 
 <p>
 If <code>ui_in</code> and <code>ui_out</code> are used to form a sequencing chain, then execution order along that chain is guaranteed.
@@ -1320,7 +1392,7 @@ Conceptually:
 means that <code>B</code> cannot perform its UI-visible effect or UI-visible observation before <code>A</code> has completed according to the semantics of the corresponding primitive.
 </p>
 
-<h3>19.3 Observable sequencing guarantees</h3>
+<h3>20.3 Observable sequencing guarantees</h3>
 
 <ul>
   <li>a sequenced property read observes widget state after prior sequenced UI interactions in the same chain,</li>
@@ -1340,9 +1412,9 @@ This keeps:
 
 <hr/>
 
-<h2 id="examples">20. Examples</h2>
+<h2 id="examples">21. Examples</h2>
 
-<h3>20.1 Minimal arithmetic diagram</h3>
+<h3>21.1 Minimal arithmetic diagram</h3>
 
 <pre><code>"diagram": {
   "dependencies": [
@@ -1392,7 +1464,7 @@ This keeps:
   ]
 }</code></pre>
 
-<h3>20.2 Diagram using widget value terminals</h3>
+<h3>21.2 Diagram using widget value terminals</h3>
 
 <pre><code>"diagram": {
   "nodes": [
@@ -1436,7 +1508,51 @@ This keeps:
   ]
 }</code></pre>
 
-<h3>20.3 Diagram using a widget reference and property write</h3>
+<h3>21.3 Diagram using a structure node</h3>
+
+<pre><code>"diagram": {
+  "nodes": [
+    {
+      "id": "case_1",
+      "kind": "structure",
+      "structure_type": "case",
+      "boundary": {
+        "inputs": [
+          { "id": "x", "type": "f64" }
+        ],
+        "outputs": [
+          { "id": "y", "type": "f64" }
+        ]
+      },
+      "structure_terminals": {
+        "selector": {
+          "type": "bool"
+        }
+      },
+      "regions": [
+        {
+          "id": "true_case",
+          "match": true,
+          "diagram": {
+            "nodes": [],
+            "edges": []
+          }
+        },
+        {
+          "id": "false_case",
+          "match": false,
+          "diagram": {
+            "nodes": [],
+            "edges": []
+          }
+        }
+      ]
+    }
+  ],
+  "edges": []
+}</code></pre>
+
+<h3>21.4 Diagram using a widget reference and property write</h3>
 
 <pre><code>"diagram": {
   "nodes": [
@@ -1474,7 +1590,7 @@ This keeps:
   ]
 }</code></pre>
 
-<h3>20.4 Diagram invoking a widget method</h3>
+<h3>21.5 Diagram invoking a widget method</h3>
 
 <pre><code>"diagram": {
   "nodes": [
@@ -1501,7 +1617,7 @@ This keeps:
   ]
 }</code></pre>
 
-<h3>20.5 Sequenced widget interactions</h3>
+<h3>21.6 Sequenced widget interactions</h3>
 
 <pre><code>"diagram": {
   "nodes": [
@@ -1547,7 +1663,7 @@ This keeps:
   ]
 }</code></pre>
 
-<h3>20.6 Valid feedback using local state</h3>
+<h3>21.7 Valid feedback using local state</h3>
 
 <pre><code>"diagram": {
   "nodes": [
@@ -1597,7 +1713,7 @@ This keeps:
   ]
 }</code></pre>
 
-<h3>20.7 Primitive-based diagram with annotations</h3>
+<h3>21.8 Primitive-based diagram with annotations</h3>
 
 <pre><code>"diagram": {
   "nodes": [
@@ -1654,7 +1770,7 @@ This keeps:
   ]
 }</code></pre>
 
-<h3>20.8 Node documentation and tags</h3>
+<h3>21.9 Node documentation and tags</h3>
 
 <pre><code>{
   "id": "kalman_1",
@@ -1667,7 +1783,7 @@ This keeps:
   "tags": ["algorithm:kalman", "performance", "rt-safe"]
 }</code></pre>
 
-<h3>20.9 Comment attached to a node</h3>
+<h3>21.10 Comment attached to a node</h3>
 
 <pre><code>{
   "id": "ann_todo_1",
@@ -1682,7 +1798,7 @@ This keeps:
 
 <hr/>
 
-<h2 id="summary">21. Summary</h2>
+<h2 id="summary">22. Summary</h2>
 
 <p>
 The diagram defines the executable structure of a FROG.
