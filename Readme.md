@@ -6,7 +6,7 @@
 
 <p align="center">
   <strong>Free Open Graphical Dataflow Programming Language</strong><br/>
-  Designed to move engineering and software design beyond the syntax-first bottleneck, FROG is an open, hardware-agnostic graphical dataflow language intended to combine rapid prototyping, accessibility, deterministic execution, and scalable deployment across heterogeneous hardware.
+  Designed to move engineering and software design beyond the syntax-first bottleneck, FROG is an open, hardware-agnostic graphical dataflow language intended to combine rapid prototyping, accessibility, deterministic execution, and scalable deployment across heterogeneous hardware, while enabling open and deeply integrated hardware-software ecosystems around a shared graphical standard.
 </p>
 
 <p align="center">
@@ -114,7 +114,7 @@ This is a hidden bottleneck for innovation, maintainability, and rapid prototypi
 
 <p>
 Textual languages can lower that barrier to different degrees.
-For example, Python significantly reduced syntactic friction and helped broaden access to software development,
+For example, Python significantly reduced syntactic friction and broadened access to software development,
 scientific computing, and rapid experimentation.
 However, lowering syntax friction is not the same as removing the architectural bottleneck.
 As systems grow in size, structure, determinism, safety requirements, deployment complexity,
@@ -126,7 +126,7 @@ FROG is designed to reduce that gap further by shifting expression toward
 <strong>visual dataflow, explicit system structure, typed interfaces, and execution-aware graphs</strong>.
 The objective is not to remove complexity from software engineering,
 but to move more of the developer’s cognitive effort toward architecture, data movement,
-behavior, interfaces, and execution semantics rather than syntax-heavy coding.
+behavior, interfaces, orchestration, and execution semantics rather than syntax-heavy coding.
 </p>
 
 <p>
@@ -159,13 +159,22 @@ making advanced system design accessible without forcing users to cross a large 
 
 <p>
 However, most historical graphical dataflow environments have been tightly coupled to proprietary ecosystems
-where the language, runtime, hardware support, and development environment are inseparable.
+where the language, runtime, hardware support, deployment model, and development environment are inseparable.
 </p>
 
 <p>
 This limits portability, slows innovation,
 prevents independent implementations of the same language,
 and often locks users into a single vendor boundary.
+</p>
+
+<p>
+This limitation is not only about portability.
+It also prevents hardware vendors, industrial platform builders, embedded system providers,
+and specialized software companies from building deeply integrated orchestration ecosystems
+on top of a shared open graphical language.
+As a result, the ability to create complete language-to-runtime-to-hardware stacks
+has historically remained concentrated inside closed environments.
 </p>
 
 <p>
@@ -273,6 +282,7 @@ The same programming model can therefore support:
   <li>rapid experimentation</li>
   <li>scientific computing</li>
   <li>industrial automation</li>
+  <li>measurement and control systems</li>
   <li>embedded systems</li>
   <li>microcontroller-based systems</li>
   <li>real-time control</li>
@@ -502,7 +512,7 @@ Representative target classes include:
   <li><strong>GPUs</strong> — parallel and accelerated compute targets</li>
   <li><strong>FPGAs</strong> — programmable logic targets</li>
   <li><strong>Microcontrollers</strong> — resource-constrained embedded execution</li>
-  <li><strong>Industrial edge controllers</strong> — vendor-specific acquisition, control, and automation platforms</li>
+  <li><strong>Industrial edge controllers</strong> — vendor-specific acquisition, control, automation, and orchestration platforms</li>
 </ul>
 
 <p>
@@ -529,11 +539,24 @@ What changes is the runtime profile, compilation strategy, backend capabilities,
 
 <p>
 FROG is intended to be more than a language that happens to support multiple targets.
-Its long-term goal is to provide an <strong>open industrial graphical programming standard</strong>.
+Its long-term goal is to provide an <strong>open industrial graphical programming standard</strong>
+that enables deeply integrated hardware and software ecosystems without requiring a proprietary language boundary.
 </p>
 
 <p>
-This means that any hardware manufacturer should be able to implement support for FROG on its own platforms without requiring permission from a single controlling vendor.
+Historically, highly integrated orchestration environments for control, acquisition,
+deterministic execution, programmable logic, deployment, and hardware abstraction
+have mostly existed inside closed vendor ecosystems.
+FROG aims to make that level of integration possible through an open language model.
+</p>
+
+<p>
+This means that hardware manufacturers, embedded platform vendors,
+industrial control providers, instrumentation companies, automation vendors,
+edge compute platform builders, and specialized toolchain developers
+should be able to implement support for FROG on their own platforms
+while preserving their own runtime strategies, deployment models, validation rules,
+hardware services, libraries, and ecosystem-specific capabilities.
 </p>
 
 <p>
@@ -543,18 +566,18 @@ In practical terms, this may include:
 <ul>
   <li>FROG-compatible runtimes</li>
   <li>target-specific compilers or backends</li>
+  <li>deployment and orchestration environments built around vendor hardware</li>
   <li>driver-backed hardware libraries exposed as FROG nodes</li>
-  <li>platform profiles for determinism, memory, timing, and deployment constraints</li>
-  <li>vendor-certified toolchains and support layers</li>
+  <li>platform profiles for determinism, memory, timing, safety, and deployment constraints</li>
+  <li>vendor-specific optimization layers built on top of the same core language</li>
+  <li>integrated engineering ecosystems spanning design, validation, execution, and deployment</li>
 </ul>
 
 <p>
-The goal is to make it possible for ecosystems built around NVIDIA Jetson, industrial ARM systems, microcontrollers, FPGA-based platforms, or hardware vendors such as UEI, ADLINK, Gantner, Advantech, and others to support the same core graphical language model.
-</p>
-
-<p>
-FROG therefore aims to do in an open way what proprietary ecosystems only achieved within their own hardware boundaries:
-provide a common programming model across heterogeneous industrial targets without locking users into a single manufacturer.
+FROG therefore aims to make possible, in an open and interoperable way,
+what has historically been locked behind vertically integrated proprietary environments:
+a common graphical programming model that can power complete hardware-software ecosystems
+across heterogeneous industrial targets.
 </p>
 
 <hr/>
@@ -611,14 +634,14 @@ while preserving type safety and execution guarantees.
 
 <p>
 This interoperability is also essential for hardware support,
-because vendor-specific drivers, low-level APIs, RT frameworks,
-FPGA toolflows, and embedded SDKs can be integrated through open bindings
-rather than through a closed monolithic environment.
+because vendor-specific drivers, low-level APIs, real-time frameworks,
+FPGA toolflows, deployment stacks, and embedded SDKs can be integrated
+through open bindings rather than through a closed monolithic environment.
 </p>
 
 <hr/>
 
-<h2 id="separation-of-language-and-tooling">Separation of language and tooling</h2>
+<h2 id="separation-of-language-and-tooling">Language separation</h2>
 
 <p>
 FROG explicitly separates:
@@ -634,6 +657,7 @@ FROG explicitly separates:
   <li>runtime implementations</li>
   <li>development environments</li>
   <li>hardware adaptation layers</li>
+  <li>deployment and orchestration layers</li>
 </ul>
 
 <p>
@@ -645,7 +669,8 @@ This architecture enables:
   <li>multiple compilers</li>
   <li>multiple backends</li>
   <li>multiple runtimes</li>
-  <li>multiple hardware vendors to support the same language</li>
+  <li>multiple orchestration ecosystems built on the same language</li>
+  <li>multiple hardware vendors supporting the same graphical model</li>
   <li>independent ecosystem evolution</li>
 </ul>
 
@@ -662,6 +687,12 @@ FROG is currently in early development.
 The language specification, program representation model,
 execution architecture, widget model, diagram and front-panel semantics,
 and reference tooling are under active design.
+</p>
+
+<p>
+The long-term ambition is not only to define a language,
+but to establish the foundation for an open graphical programming ecosystem
+that can scale from experimentation to deeply integrated industrial deployment.
 </p>
 
 <p>
