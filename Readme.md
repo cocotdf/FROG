@@ -6,12 +6,13 @@
 
 <p align="center">
   <strong>Free Open Graphical Dataflow Programming Language</strong><br/>
-  Positioned in the upper-right corner of engineering languages, FROG is an open, hardware-agnostic graphical dataflow language designed to combine rapid prototyping, accessibility, deterministic execution, and scalable deployment across heterogeneous hardware.
+  Designed to move engineering and software design beyond the syntax-first bottleneck, FROG is an open, hardware-agnostic graphical dataflow language intended to combine rapid prototyping, accessibility, deterministic execution, and scalable deployment across heterogeneous hardware.
 </p>
 
 <p align="center">
   <a href="#what-is-frog">What is FROG?</a> •
   <a href="#positioning">Positioning</a> •
+  <a href="#breaking-the-syntax-first-bottleneck">Breaking the syntax-first bottleneck</a> •
   <a href="#why-frog-exists">Why FROG exists</a> •
   <a href="#dataflow-programming">Dataflow programming</a> •
   <a href="#from-prototyping-to-critical-systems">From prototyping to critical systems</a> •
@@ -70,21 +71,68 @@ required for deterministic, industrial, embedded, and high-performance systems.
 </p>
 
 <p>
-Many languages force a trade-off between ease of use and system-level capability.
-FROG is designed to reduce that gap through visual dataflow programming,
-an open execution architecture, hardware-agnostic design,
-and a path that scales from rapid prototyping to deployment.
+The goal is not merely to be easier to use, and not merely to be more powerful.
+The goal is to reduce the historical trade-off between ease of expression and system-grade execution.
+FROG aims to reach the execution depth expected from serious systems programming environments
+while remaining far more accessible to engineers, scientists, researchers, and domain experts.
 </p>
 
 <p align="center">
-  <img src="orville-chart.png" alt="FROG positioning chart" width="640" />
+  <img src="frog-orville-chart.png" alt="FROG positioning chart" width="640" />
 </p>
 
 <p align="center">
   <em>
-    FROG aims to unite accessibility, visual dataflow programming,
+    FROG aims to unite visual dataflow programming, accessibility,
     and system-grade execution in a single open language model.
   </em>
+</p>
+
+<hr/>
+
+<h2 id="breaking-the-syntax-first-bottleneck">Breaking the syntax-first bottleneck</h2>
+
+<p>
+A major barrier in traditional programming is that real system thinking often comes
+only <em>after</em> a long period of language learning, syntax mastery, structural conventions,
+and implementation mechanics.
+</p>
+
+<p>
+In many environments, people do not begin by asking:
+<strong>“How can I quickly test the system I imagine?”</strong>
+They begin by asking:
+<strong>“What can I realistically build with the syntax, patterns, and implementation techniques I already master?”</strong>
+</p>
+
+<p>
+That inversion matters.
+It limits ambition, slows experimentation, and pushes engineers, researchers, and students
+to think in terms of implementation comfort rather than system intent.
+This is a hidden bottleneck for innovation, maintainability, and rapid prototyping.
+</p>
+
+<p>
+Textual languages can lower that barrier to different degrees.
+For example, Python significantly reduced syntactic friction and helped broaden access to software development,
+scientific computing, and rapid experimentation.
+However, lowering syntax friction is not the same as removing the architectural bottleneck.
+As systems grow in size, structure, determinism, safety requirements, deployment complexity,
+or hardware constraints, the gap between the original idea and its maintainable implementation often widens again.
+</p>
+
+<p>
+FROG is designed to reduce that gap further by shifting expression toward
+<strong>visual dataflow, explicit system structure, typed interfaces, and execution-aware graphs</strong>.
+The objective is not to remove complexity from software engineering,
+but to move more of the developer’s cognitive effort toward architecture, data movement,
+behavior, interfaces, and execution semantics rather than syntax-heavy coding.
+</p>
+
+<p>
+This is one of the central ambitions of FROG:
+to help people think first in terms of the system they want to build,
+prototype it quickly, and then scale that same model toward serious execution targets.
 </p>
 
 <hr/>
@@ -92,7 +140,7 @@ and a path that scales from rapid prototyping to deployment.
 <h2 id="why-frog-exists">Why FROG exists</h2>
 
 <p>
-Graphical dataflow programming has demonstrated major advantages
+Graphical dataflow programming has already demonstrated major advantages
 for building complex systems:
 </p>
 
@@ -105,9 +153,13 @@ for building complex systems:
 </ul>
 
 <p>
-However, most graphical dataflow environments have historically been
-tightly coupled to proprietary ecosystems where the language,
-runtime, hardware support, and development environment are inseparable.
+It also addresses a problem that many syntax-driven environments do not solve well:
+making advanced system design accessible without forcing users to cross a large textual and structural barrier before meaningful experimentation can begin.
+</p>
+
+<p>
+However, most historical graphical dataflow environments have been tightly coupled to proprietary ecosystems
+where the language, runtime, hardware support, and development environment are inseparable.
 </p>
 
 <p>
