@@ -13,22 +13,21 @@ Definition of control structures in FROG programs<br/>
   <li><a href="#overview">1. Overview</a></li>
   <li><a href="#goals">2. Goals</a></li>
   <li><a href="#relation-with-other-specifications">3. Relation with Other Specifications</a></li>
-  <li><a href="#functions-vs-structures">4. Functions vs Control Structures</a></li>
+  <li><a href="#functions-vs-control-structures">4. Functions vs Control Structures</a></li>
   <li><a href="#role-of-control-structures">5. Role of Control Structures</a></li>
   <li><a href="#scope-for-v01">6. Scope for v0.1</a></li>
   <li><a href="#standard-control-structures-for-v01">7. Standard Control Structures for v0.1</a></li>
   <li><a href="#case-structure">8. Case Structure</a></li>
-  <li><a href="#loop-structure">9. Loop Structure</a></li>
-  <li><a href="#counted-loop-profile">10. Counted Loop Profile</a></li>
-  <li><a href="#conditional-loop-profile">11. Conditional Loop Profile</a></li>
-  <li><a href="#tunnels-and-boundary-semantics">12. Tunnels and Boundary Semantics</a></li>
-  <li><a href="#iteration-and-local-state">13. Iteration and Local State</a></li>
-  <li><a href="#execution-model">14. Execution Model</a></li>
-  <li><a href="#diagram-representation">15. Diagram Representation</a></li>
-  <li><a href="#validation-rules">16. Validation Rules</a></li>
-  <li><a href="#examples">17. Examples</a></li>
-  <li><a href="#out-of-scope">18. Out of Scope for v0.1</a></li>
-  <li><a href="#summary">19. Summary</a></li>
+  <li><a href="#for-loop-structure">9. For Loop Structure</a></li>
+  <li><a href="#while-loop-structure">10. While Loop Structure</a></li>
+  <li><a href="#structural-boundaries-and-tunnels">11. Structural Boundaries and Tunnels</a></li>
+  <li><a href="#iteration-semantics-and-local-state">12. Iteration Semantics and Local State</a></li>
+  <li><a href="#execution-model">13. Execution Model</a></li>
+  <li><a href="#diagram-representation">14. Diagram Representation</a></li>
+  <li><a href="#validation-rules">15. Validation Rules</a></li>
+  <li><a href="#examples">16. Examples</a></li>
+  <li><a href="#out-of-scope-for-v01">17. Out of Scope for v0.1</a></li>
+  <li><a href="#summary">18. Summary</a></li>
 </ul>
 
 <hr/>
@@ -50,6 +49,11 @@ It is a structural region of the diagram with its own internal graph, boundary s
 This document defines the role of control structures in FROG and standardizes the minimal structure set for v0.1.
 </p>
 
+<p>
+For clarity and graphical readability, FROG v0.1 distinguishes concrete loop forms directly.
+Therefore, the language standardizes <strong>case</strong>, <strong>for_loop</strong>, and <strong>while_loop</strong> as explicit control structures rather than exposing only a generic loop form at the language surface.
+</p>
+
 <hr/>
 
 <h2 id="goals">2. Goals</h2>
@@ -58,8 +62,9 @@ This document defines the role of control structures in FROG and standardizes th
   <li><strong>Separation of concerns</strong> — distinguish ordinary functions from structural language constructs.</li>
   <li><strong>Clarity</strong> — give control structures explicit graphical and semantic meaning.</li>
   <li><strong>Determinism</strong> — define how structural control affects execution without weakening the dataflow model.</li>
+  <li><strong>Readability</strong> — make the intent of a structure immediately visible in the diagram.</li>
   <li><strong>Extensibility</strong> — provide a stable base for richer structures in future revisions.</li>
-  <li><strong>Usability</strong> — keep the model compatible with graphical programming expectations, including the intuition familiar from LabVIEW-style structures.</li>
+  <li><strong>Usability</strong> — remain compatible with graphical programming expectations, including the intuition familiar from LabVIEW-style structures and the semantic distinction commonly found in textual languages such as C, C++, Python, or Rust.</li>
 </ul>
 
 <hr/>
@@ -82,9 +87,14 @@ This document defines control structures as language constructs.
 It does not redefine the general notion of function libraries.
 </p>
 
+<p>
+This document also defines structure semantics independently from any final low-level JSON encoding.
+In other words, the semantic meaning of <code>case</code>, <code>for_loop</code>, and <code>while_loop</code> is standardized here even if the exact serialized internal representation remains flexible in v0.1.
+</p>
+
 <hr/>
 
-<h2 id="functions-vs-structures">4. Functions vs Control Structures</h2>
+<h2 id="functions-vs-control-structures">4. Functions vs Control Structures</h2>
 
 <p>
 FROG distinguishes between:
@@ -92,7 +102,7 @@ FROG distinguishes between:
 
 <ul>
   <li><strong>functions</strong> — callable operations such as <code>frog.core.add</code> or <code>frog.core.delay</code>,</li>
-  <li><strong>control structures</strong> — structural regions of the diagram such as a case structure or a loop structure.</li>
+  <li><strong>control structures</strong> — structural regions of the diagram such as a case structure, a for loop, or a while loop.</li>
 </ul>
 
 <p>
@@ -139,21 +149,32 @@ In FROG, control structures remain part of the graphical language itself.
 They are not hidden compiler transformations.
 </p>
 
+<p>
+This is especially important for loop constructs.
+A counted loop and a conditional loop may both belong to the broader conceptual family of iterative structures, but they do not communicate the same intent to the programmer.
+For that reason, the canonical language surface keeps them distinct.
+</p>
+
 <hr/>
 
 <h2 id="scope-for-v01">6. Scope for v0.1</h2>
 
 <p>
-FROG v0.1 standardizes the following minimal control structure families:
+FROG v0.1 standardizes the following minimal control structures:
 </p>
 
 <ul>
-  <li><strong>case structure</strong></li>
-  <li><strong>loop structure</strong></li>
+  <li><strong>case</strong></li>
+  <li><strong>for_loop</strong></li>
+  <li><strong>while_loop</strong></li>
 </ul>
 
 <p>
 FROG v0.1 does not yet attempt to standardize the full catalog of future structures such as event structures, parallel region structures, timed structures, pattern-match structures, or exception-handling structures.
+</p>
+
+<p>
+The notion of a broader <strong>loop family</strong> remains conceptually useful, but canonical source and IDE-facing structure kinds in v0.1 use the explicit concrete forms <code>for_loop</code> and <code>while_loop</code>.
 </p>
 
 <hr/>
@@ -161,17 +182,22 @@ FROG v0.1 does not yet attempt to standardize the full catalog of future structu
 <h2 id="standard-control-structures-for-v01">7. Standard Control Structures for v0.1</h2>
 
 <p>
-The minimal standard control structures for FROG v0.1 are:
+The standard control structures for FROG v0.1 are:
 </p>
 
 <ul>
   <li><code>case</code></li>
-  <li><code>loop</code></li>
+  <li><code>for_loop</code></li>
+  <li><code>while_loop</code></li>
 </ul>
 
 <p>
 These are language structures, not library functions.
 They SHOULD appear in the IDE as structural diagram elements rather than as ordinary function nodes.
+</p>
+
+<p>
+They SHOULD also be presented in the IDE with their own graphical identity, because their role is structural and not merely computational.
 </p>
 
 <hr/>
@@ -217,10 +243,8 @@ A case structure has:
 The simplest form is a two-branch boolean case:
 </p>
 
-<pre>
-selector = true  → execute true case
-selector = false → execute false case
-</pre>
+<pre><code>selector = true  → execute true case
+selector = false → execute false case</code></pre>
 
 <h3>8.4 Multi-case form</h3>
 
@@ -238,16 +262,16 @@ Other case bodies are not executed for that activation.
 
 <hr/>
 
-<h2 id="loop-structure">9. Loop Structure</h2>
+<h2 id="for-loop-structure">9. For Loop Structure</h2>
 
 <p>
-A <strong>loop structure</strong> executes an internal subgraph repeatedly according to explicit iteration rules.
+A <strong>for loop</strong> executes an internal body graph a predetermined number of times.
 </p>
 
 <h3>9.1 Purpose</h3>
 
 <p>
-A loop structure is used when repeated execution must be expressed structurally rather than through a single feedback cycle alone.
+A for loop is used when iteration count is explicit and bounded by a count value.
 </p>
 
 <p>
@@ -256,106 +280,125 @@ Typical uses:
 
 <ul>
   <li>counted repetition,</li>
-  <li>conditional repetition,</li>
-  <li>iterative algorithms,</li>
-  <li>explicit iteration spaces.</li>
+  <li>index-based algorithms,</li>
+  <li>fixed iteration spaces,</li>
+  <li>collection traversal profiles standardized later by stricter specifications.</li>
 </ul>
 
 <h3>9.2 Conceptual model</h3>
 
 <p>
-A loop structure has:
+A for loop has:
+</p>
+
+<ul>
+  <li>a required <strong>count</strong> input or equivalent structural count definition,</li>
+  <li>an internal body graph,</li>
+  <li>boundary inputs and outputs,</li>
+  <li>an optional zero-based iteration index exposed inside the body.</li>
+</ul>
+
+<h3>9.3 Iteration count</h3>
+
+<p>
+The body executes exactly <code>N</code> times when the count is <code>N</code>, subject to successful validation of the structure and its body.
+</p>
+
+<h3>9.4 Iteration index</h3>
+
+<p>
+A for loop MAY expose a zero-based iteration index inside the body.
+If exposed, that index is read-only for the body logic.
+</p>
+
+<h3>9.5 Zero iterations</h3>
+
+<p>
+If the count is zero, the body is not executed.
+In that case, outputs must still be well-defined according to the output rules of the structure and the active profile.
+</p>
+
+<h3>9.6 Distinction from ordinary functions</h3>
+
+<p>
+A for loop is not reducible to an ordinary function call because it governs repeated execution of a whole structural region, not just the evaluation of a single node.
+</p>
+
+<hr/>
+
+<h2 id="while-loop-structure">10. While Loop Structure</h2>
+
+<p>
+A <strong>while loop</strong> executes an internal body graph repeatedly according to an explicit loop condition.
+</p>
+
+<h3>10.1 Purpose</h3>
+
+<p>
+A while loop is used when repetition is condition-driven rather than count-driven.
+</p>
+
+<p>
+Typical uses:
+</p>
+
+<ul>
+  <li>condition-based repetition,</li>
+  <li>iterative convergence algorithms,</li>
+  <li>polling or wait-until-ready logic under a runtime profile,</li>
+  <li>repetition whose final number of iterations is not known in advance.</li>
+</ul>
+
+<h3>10.2 Canonical condition rule</h3>
+
+<p>
+To avoid ambiguity, the canonical v0.1 meaning of <code>while_loop</code> is:
+</p>
+
+<pre><code>continue while condition is true</code></pre>
+
+<p>
+This means that the structure repeats as long as the loop condition remains true according to the validated body and boundary semantics.
+</p>
+
+<h3>10.3 Conceptual model</h3>
+
+<p>
+A while loop has:
 </p>
 
 <ul>
   <li>an internal body graph,</li>
+  <li>a loop condition defined by the body or by an explicit structure condition terminal,</li>
   <li>boundary inputs and outputs,</li>
-  <li>iteration semantics,</li>
-  <li>optional iteration index exposure,</li>
-  <li>optional local-state usage inside the loop body.</li>
+  <li>optional iteration index exposure inside the body.</li>
 </ul>
 
+<h3>10.4 Termination semantics</h3>
+
 <p>
-A loop structure is not equivalent to a single <code>frog.core.delay</code>.
-The delay function provides local memory.
-The loop structure provides repeated structural execution.
+A while loop MUST have explicit and deterministic termination meaning.
+The condition that governs repetition MUST be inspectable and unambiguous in the validated program model.
+</p>
+
+<h3>10.5 Initial evaluation model</h3>
+
+<p>
+The base v0.1 model does not require this document to freeze every possible low-level scheduler detail, but the observable structure meaning MUST remain equivalent to repeated body execution under the canonical continue-while-true rule.
+</p>
+
+<h3>10.6 Distinction from for loop</h3>
+
+<p>
+A while loop is semantically distinct from a for loop.
+A for loop communicates bounded counted iteration.
+A while loop communicates condition-governed iteration.
+Both belong to the broader conceptual family of iterative structures, but they remain distinct language structures in FROG v0.1.
 </p>
 
 <hr/>
 
-<h2 id="counted-loop-profile">10. Counted Loop Profile</h2>
-
-<p>
-One important loop form is a <strong>counted loop</strong>.
-In this form, the structure executes its body a specified number of times.
-</p>
-
-<h3>10.1 Conceptual inputs</h3>
-
-<p>
-A counted loop conceptually uses:
-</p>
-
-<ul>
-  <li>a <strong>count</strong> value indicating how many iterations must occur,</li>
-  <li>optional boundary values entering the loop body,</li>
-  <li>optional iteration index visibility inside the body.</li>
-</ul>
-
-<h3>10.2 Iteration index</h3>
-
-<p>
-A counted loop MAY expose a zero-based iteration index inside the body.
-If exposed, that index is read-only for the body logic.
-</p>
-
-<h3>10.3 Zero iterations</h3>
-
-<p>
-If the loop count is zero, the body is not executed.
-In that case, outputs must still be well-defined according to the structure output rules and the active profile.
-</p>
-
-<hr/>
-
-<h2 id="conditional-loop-profile">11. Conditional Loop Profile</h2>
-
-<p>
-Another important loop form is a <strong>conditional loop</strong>.
-In this form, the structure executes repeatedly until a condition indicates termination.
-</p>
-
-<h3>11.1 Conceptual behavior</h3>
-
-<p>
-A conditional loop MAY be viewed as:
-</p>
-
-<ul>
-  <li>execute body,</li>
-  <li>evaluate loop continuation or stop condition,</li>
-  <li>repeat or terminate.</li>
-</ul>
-
-<h3>11.2 Stop rule</h3>
-
-<p>
-The exact condition convention used by a conditional loop MUST be explicit in the structure definition or active profile.
-For example:
-</p>
-
-<ul>
-  <li>stop if condition becomes true,</li>
-  <li>continue while condition remains true.</li>
-</ul>
-
-<p>
-FROG v0.1 acknowledges both conceptual models, but a stricter active profile SHOULD choose one canonical convention for editor consistency.
-</p>
-
-<hr/>
-
-<h2 id="tunnels-and-boundary-semantics">12. Tunnels and Boundary Semantics</h2>
+<h2 id="structural-boundaries-and-tunnels">11. Structural Boundaries and Tunnels</h2>
 
 <p>
 Control structures define a graph region boundary.
@@ -366,36 +409,37 @@ Values cross this boundary through explicit structure inputs and outputs.
 Conceptually, these boundary crossings behave like <strong>tunnels</strong>.
 </p>
 
-<h3>12.1 Input tunnels</h3>
+<h3>11.1 Input tunnels</h3>
 
 <p>
 An input tunnel carries a value from outside the structure into the active internal subgraph region.
 </p>
 
-<h3>12.2 Output tunnels</h3>
+<h3>11.2 Output tunnels</h3>
 
 <p>
 An output tunnel carries a value from the executed internal region back to the outer graph.
 </p>
 
-<h3>12.3 Case output completeness</h3>
+<h3>11.3 Case output completeness</h3>
 
 <p>
 For a case structure, every required output tunnel MUST be defined for every executable branch.
 Otherwise validation MUST fail unless a stricter profile defines an explicit fallback rule.
 </p>
 
-<h3>12.4 Loop output meaning</h3>
+<h3>11.4 Loop output meaning</h3>
 
 <p>
-For a loop structure, output tunnels conceptually expose values derived from loop completion.
+For loop structures, output tunnels conceptually expose values derived from loop completion.
 The exact mapping may depend on whether the output represents:
 </p>
 
 <ul>
   <li>the last produced value,</li>
   <li>a collected sequence,</li>
-  <li>a state-carried value.</li>
+  <li>a state-carried value,</li>
+  <li>another explicitly standardized loop output mode.</li>
 </ul>
 
 <p>
@@ -405,7 +449,7 @@ More advanced output tunnel modes may be standardized later.
 
 <hr/>
 
-<h2 id="iteration-and-local-state">13. Iteration and Local State</h2>
+<h2 id="iteration-semantics-and-local-state">12. Iteration Semantics and Local State</h2>
 
 <p>
 Local-state functions such as <code>frog.core.delay</code> MAY appear inside loop bodies.
@@ -429,23 +473,28 @@ The two concepts are related but distinct:
 </p>
 
 <ul>
-  <li><strong>loop</strong> = repeated execution structure,</li>
-  <li><strong>delay</strong> = explicit local memory function.</li>
+  <li><strong>for_loop</strong> or <strong>while_loop</strong> = repeated execution structure,</li>
+  <li><strong>frog.core.delay</strong> = explicit local memory function.</li>
 </ul>
 
 <p>
 A loop does not automatically imply hidden memory for arbitrary values unless the structure semantics explicitly define such behavior.
 </p>
 
+<p>
+Any cycles inside a loop body remain subject to the rules defined by <strong>Language/State and cycles.md</strong>.
+A loop body does not relax the validity rule for cyclic graphs.
+</p>
+
 <hr/>
 
-<h2 id="execution-model">14. Execution Model</h2>
+<h2 id="execution-model">13. Execution Model</h2>
 
 <p>
 Control structures participate in execution as structural regions of the dataflow graph.
 </p>
 
-<h3>14.1 Case execution</h3>
+<h3>13.1 Case execution</h3>
 
 <p>
 For a case structure:
@@ -458,28 +507,41 @@ For a case structure:
   <li>its outputs define the structure outputs.</li>
 </ul>
 
-<h3>14.2 Loop execution</h3>
+<h3>13.2 For loop execution</h3>
 
 <p>
-For a loop structure:
+For a for loop:
 </p>
 
 <ul>
-  <li>the body is executed according to the loop iteration rule,</li>
-  <li>iteration continues until the loop termination semantics are satisfied,</li>
+  <li>the iteration count is resolved,</li>
+  <li>the body executes the required number of times,</li>
+  <li>the optional iteration index, if present, changes deterministically from <code>0</code> to <code>N-1</code>,</li>
   <li>the structure outputs are produced according to the loop output semantics.</li>
 </ul>
 
-<h3>14.3 Determinism</h3>
+<h3>13.3 While loop execution</h3>
+
+<p>
+For a while loop:
+</p>
+
+<ul>
+  <li>the body executes under the canonical continue-while-true rule,</li>
+  <li>repetition continues until termination semantics are satisfied,</li>
+  <li>the structure outputs are produced according to the loop output semantics.</li>
+</ul>
+
+<h3>13.4 Determinism</h3>
 
 <p>
 A control structure MUST have deterministic execution meaning under a given validated program and runtime profile.
-The structure wall, case selection rule, and loop termination rule MUST remain explicit and inspectable.
+The structure wall, case selection rule, loop condition rule, and loop output meaning MUST remain explicit and inspectable.
 </p>
 
 <hr/>
 
-<h2 id="diagram-representation">15. Diagram Representation</h2>
+<h2 id="diagram-representation">14. Diagram Representation</h2>
 
 <p>
 Control structures are language structures, not ordinary <code>frog.core</code> functions.
@@ -504,9 +566,23 @@ FROG v0.1 leaves the exact serialized JSON representation of control structures 
 This deliberate flexibility allows the language to stabilize control structure semantics before freezing a final low-level source encoding.
 </p>
 
+<p>
+However, at the semantic level, the canonical visible structure kinds in v0.1 are:
+</p>
+
+<ul>
+  <li><code>case</code></li>
+  <li><code>for_loop</code></li>
+  <li><code>while_loop</code></li>
+</ul>
+
+<p>
+A future event structure, if standardized, SHOULD also appear as its own dedicated structural kind rather than being treated as a mere alias or profile of a case or loop structure.
+</p>
+
 <hr/>
 
-<h2 id="validation-rules">16. Validation Rules</h2>
+<h2 id="validation-rules">15. Validation Rules</h2>
 
 <p>
 Implementations MUST enforce the following rules:
@@ -517,7 +593,8 @@ Implementations MUST enforce the following rules:
   <li>every structure boundary input and output MUST be explicitly defined,</li>
   <li>all values crossing structure boundaries MUST be type-compatible,</li>
   <li>a case structure MUST define all required outputs for every executable branch,</li>
-  <li>a loop structure MUST define deterministic completion and deterministic output meaning,</li>
+  <li>a for loop MUST define deterministic iteration count meaning and deterministic output meaning,</li>
+  <li>a while loop MUST define deterministic condition semantics and deterministic output meaning,</li>
   <li>any cycles inside structure bodies MUST still obey <strong>Language/State and cycles.md</strong>.</li>
 </ul>
 
@@ -527,26 +604,25 @@ Additionally:
 
 <ul>
   <li>a case structure MUST execute exactly one branch per activation,</li>
-  <li>a loop structure MUST NOT have undefined termination semantics,</li>
+  <li>a for loop MUST NOT have undefined count semantics,</li>
+  <li>a while loop MUST NOT have undefined termination semantics,</li>
   <li>structure-local ports, indices, or selectors MUST NOT conflict ambiguously with outer graph ports.</li>
 </ul>
 
 <hr/>
 
-<h2 id="examples">17. Examples</h2>
+<h2 id="examples">16. Examples</h2>
 
-<h3>17.1 Boolean case structure</h3>
+<h3>16.1 Boolean case structure</h3>
 
 <p>
 Conceptually:
 </p>
 
-<pre>
-if enabled
+<pre><code>if enabled
   execute true branch
 else
-  execute false branch
-</pre>
+  execute false branch</code></pre>
 
 <p>
 Graphically, this is a structure with:
@@ -559,34 +635,41 @@ Graphically, this is a structure with:
   <li>shared output tunnels.</li>
 </ul>
 
-<h3>17.2 Counted loop</h3>
+<h3>16.2 For loop</h3>
 
 <p>
 Conceptually:
 </p>
 
-<pre>
-repeat body N times
-</pre>
+<pre><code>repeat body N times</code></pre>
 
 <p>
 Optionally, the body may see an iteration index:
 </p>
 
-<pre>
-i = 0, 1, 2, ..., N-1
-</pre>
+<pre><code>i = 0, 1, 2, ..., N-1</code></pre>
 
-<h3>17.3 Loop with explicit local memory</h3>
+<h3>16.3 While loop</h3>
+
+<p>
+Conceptually:
+</p>
+
+<pre><code>while condition is true
+  execute body</code></pre>
+
+<p>
+This is the canonical v0.1 semantic rule for <code>while_loop</code>.
+</p>
+
+<h3>16.4 Loop with explicit local memory</h3>
 
 <p>
 A loop body may contain <code>frog.core.delay</code>:
 </p>
 
-<pre>
-Loop body:
-  input → add → delay → add
-</pre>
+<pre><code>Loop body:
+  input → add → delay → add</code></pre>
 
 <p>
 In this case:
@@ -597,23 +680,19 @@ In this case:
   <li>the delay provides local memory across iterations.</li>
 </ul>
 
-<h3>17.4 Function vs structure</h3>
+<h3>16.5 Function vs structure</h3>
 
 <p>
 The following are not equivalent:
 </p>
 
-<pre>
-frog.core.select
-</pre>
+<pre><code>frog.core.select</code></pre>
 
 <p>
 and:
 </p>
 
-<pre>
-case structure
-</pre>
+<pre><code>case structure</code></pre>
 
 <p>
 The first selects one of two values.
@@ -622,14 +701,14 @@ The second selects one executable subgraph region.
 
 <hr/>
 
-<h2 id="out-of-scope">18. Out of Scope for v0.1</h2>
+<h2 id="out-of-scope-for-v01">17. Out of Scope for v0.1</h2>
 
 <p>
 The following topics are outside the strict scope of this document in v0.1:
 </p>
 
 <ul>
-  <li>event structures,</li>
+  <li><code>event_structure</code>,</li>
   <li>parallel for structures,</li>
   <li>timed loop structures,</li>
   <li>exception-handling structures,</li>
@@ -638,9 +717,13 @@ The following topics are outside the strict scope of this document in v0.1:
   <li>advanced tunnel modes such as auto-indexing, reduction tunnels, or collected-output policies.</li>
 </ul>
 
+<p>
+If an event structure is standardized later, it SHOULD be defined as a dedicated control structure with its own semantics rather than being reduced to a mere combination of more primitive visible structures.
+</p>
+
 <hr/>
 
-<h2 id="summary">19. Summary</h2>
+<h2 id="summary">18. Summary</h2>
 
 <p>
 FROG distinguishes ordinary functions from control structures.
@@ -652,15 +735,16 @@ This specification establishes that:
 
 <ul>
   <li><strong>functions</strong> are callable operations such as <code>frog.core.add</code> or <code>frog.core.delay</code>,</li>
-  <li><strong>control structures</strong> are structural execution regions such as <code>case</code> and <code>loop</code>,</li>
+  <li><strong>control structures</strong> are structural execution regions such as <code>case</code>, <code>for_loop</code>, and <code>while_loop</code>,</li>
   <li>a case structure selects one executable branch,</li>
-  <li>a loop structure repeats an executable region according to explicit iteration semantics,</li>
+  <li>a for loop repeats an executable region according to explicit counted iteration semantics,</li>
+  <li>a while loop repeats an executable region according to explicit conditional iteration semantics,</li>
   <li>structure boundaries and outputs must remain explicit and type-safe,</li>
   <li>local-state functions may appear inside structures but do not replace them.</li>
 </ul>
 
 <p>
-This provides the semantic foundation needed to model conditional execution and iterative execution in a way that remains graphical, explicit, and compatible with the FROG dataflow model.
+This provides the semantic foundation needed to model conditional execution and iterative execution in a way that remains graphical, explicit, readable, and compatible with the FROG dataflow model.
 </p>
 
 <hr/>
