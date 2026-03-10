@@ -60,6 +60,11 @@ FROG v0.1 keeps concrete loop forms explicit.
 Therefore, the language standardizes <code>case</code>, <code>for_loop</code>, and <code>while_loop</code> as distinct visible structures rather than collapsing them into one generic hidden form.
 </p>
 
+<p>
+In FROG, boolean conditional branching and multi-branch textual selection are both represented canonically by the same <code>case</code> structure family.
+A boolean <code>case</code> is the canonical source-level equivalent of a traditional <code>if / else</code>.
+</p>
+
 <hr/>
 
 <h2 id="goals">2. Goals</h2>
@@ -68,7 +73,7 @@ Therefore, the language standardizes <code>case</code>, <code>for_loop</code>, a
   <li><strong>Clarity</strong> — distinguish ordinary computation from language-level structural control.</li>
   <li><strong>Determinism</strong> — define structural execution without weakening the dataflow model.</li>
   <li><strong>Canonical source stability</strong> — provide one durable source shape for structure nodes.</li>
-  <li><strong>Readability</strong> — keep case selection and loop intent visually explicit.</li>
+  <li><strong>Readability</strong> — keep branch selection and loop intent visually explicit.</li>
   <li><strong>Extensibility</strong> — allow future structure families without redefining the foundations.</li>
   <li><strong>Compatibility with graphical practice</strong> — remain understandable to users familiar with established graphical dataflow environments.</li>
 </ul>
@@ -168,6 +173,11 @@ These are language structures, not library functions.
 Tools SHOULD present them as dedicated structural elements in the diagram editor rather than as ordinary primitive nodes.
 </p>
 
+<p>
+For usability, tools MAY present a boolean <code>case</code> as <strong>If / Else</strong> in the UI.
+However, the canonical source structure kind remains <code>case</code>.
+</p>
+
 <hr/>
 
 <h2 id="canonical-structure-node-model">7. Canonical Structure Node Model</h2>
@@ -248,10 +258,6 @@ Conceptually, these crossings behave like explicit tunnels.
 A boundary input carries a value from the outer graph into the active internal region of the structure.
 </p>
 
-<p>
-Rules:
-</p>
-
 <ul>
   <li><code>boundary.inputs</code> MUST exist and MUST be an array.</li>
   <li>Each input entry MUST define <code>id</code> and <code>type</code>.</li>
@@ -262,10 +268,6 @@ Rules:
 
 <p>
 A boundary output carries a value from an executed internal region back to the outer graph.
-</p>
-
-<p>
-Rules:
 </p>
 
 <ul>
@@ -424,7 +426,7 @@ A structure MAY own one region or multiple regions depending on its family:
 <h2 id="case-structure">11. Case Structure</h2>
 
 <p>
-A <code>case</code> structure selects exactly one executable branch among multiple internal regions.
+A <code>case</code> structure selects exactly one executable branch among several internal regions.
 </p>
 
 <h3>11.1 Purpose</h3>
@@ -433,24 +435,29 @@ A <code>case</code> structure selects exactly one executable branch among multip
 A case structure is used when different executable regions must be selected according to a selector value.
 </p>
 
-<h3>11.2 v0.1 minimal canonical form</h3>
-
 <p>
-The minimal required canonical case form in v0.1 is a boolean two-branch case.
-</p>
-
-<p>
-Therefore, a canonical v0.1 <code>case</code> MUST define:
+In base v0.1, the standardized selector categories are:
 </p>
 
 <ul>
-  <li>one selector terminal named <code>selector</code>,</li>
-  <li>exactly two regions,</li>
-  <li>one region matching <code>true</code>,</li>
-  <li>one region matching <code>false</code>.</li>
+  <li><code>bool</code></li>
+  <li><code>string</code></li>
 </ul>
 
-<h3>11.3 Selector terminal</h3>
+<p>
+This means that a <code>case</code> structure in v0.1 supports:
+</p>
+
+<ul>
+  <li>boolean conditional execution,</li>
+  <li>string-based branch selection.</li>
+</ul>
+
+<h3>11.2 Canonical selector terminal</h3>
+
+<p>
+A canonical <code>case</code> MUST define one selector terminal named <code>selector</code>.
+</p>
 
 <pre>
 "structure_terminals": {
@@ -470,15 +477,60 @@ Rules:
 
 <ul>
   <li><code>selector</code> MUST exist.</li>
-  <li><code>selector.type</code> MUST be <code>bool</code> in base v0.1.</li>
+  <li><code>selector.type</code> MUST be either <code>bool</code> or <code>string</code> in base v0.1.</li>
   <li><code>selector.outer_visible</code> MUST be <code>true</code>.</li>
+  <li><code>selector.exposed_in_body</code> SHOULD be <code>false</code>.</li>
+  <li><code>selector.read_only</code> SHOULD be <code>true</code>.</li>
 </ul>
 
-<h3>11.4 Regions</h3>
+<h3>11.3 Boolean case</h3>
 
 <p>
-Each case region MUST define a <code>match</code> value.
+A boolean case is the canonical source-level equivalent of a classic <code>if / else</code>.
 </p>
+
+<p>
+If <code>selector.type</code> is <code>bool</code>:
+</p>
+
+<ul>
+  <li>the structure MUST define exactly two executable regions,</li>
+  <li>exactly one region MUST have <code>match: true</code>,</li>
+  <li>exactly one region MUST have <code>match: false</code>,</li>
+  <li>no default region is required or expected.</li>
+</ul>
+
+<p>
+Conceptually:
+</p>
+
+<pre>
+selector = true  → execute true branch
+selector = false → execute false branch
+</pre>
+
+<p>
+Tools MAY present this form as an <strong>If / Else</strong> structure in the UI.
+The canonical source remains <code>case</code>.
+</p>
+
+<h3>11.4 String case</h3>
+
+<p>
+If <code>selector.type</code> is <code>string</code>, the structure performs multi-branch selection using string literals.
+</p>
+
+<p>
+Rules:
+</p>
+
+<ul>
+  <li>one or more regions MAY define a string <code>match</code> value,</li>
+  <li>every explicit string <code>match</code> value MUST be unique within the structure,</li>
+  <li>a string case MUST define exactly one default region,</li>
+  <li>if the selector value matches one explicit string literal, the corresponding region executes,</li>
+  <li>otherwise the default region executes.</li>
+</ul>
 
 <p>
 Canonical shape:
@@ -487,16 +539,24 @@ Canonical shape:
 <pre>
 "regions": [
   {
-    "id": "true_case",
-    "match": true,
+    "id": "case_start",
+    "match": "start",
     "diagram": {
       "nodes": [],
       "edges": []
     }
   },
   {
-    "id": "false_case",
-    "match": false,
+    "id": "case_stop",
+    "match": "stop",
+    "diagram": {
+      "nodes": [],
+      "edges": []
+    }
+  },
+  {
+    "id": "default_case",
+    "default": true,
     "diagram": {
       "nodes": [],
       "edges": []
@@ -505,27 +565,24 @@ Canonical shape:
 ]
 </pre>
 
+<h3>11.5 Branch exclusivity</h3>
+
 <p>
-Rules:
+At a given activation, exactly one case region executes.
+Other case regions do not execute for that activation.
 </p>
 
-<ul>
-  <li>exactly one region MUST have <code>match: true</code>,</li>
-  <li>exactly one region MUST have <code>match: false</code>,</li>
-  <li>at a given activation, exactly one case region executes.</li>
-</ul>
-
-<h3>11.5 Output completeness</h3>
+<h3>11.6 Output completeness</h3>
 
 <p>
 Every required case output MUST be defined for every executable branch.
 If a required boundary output is missing from any reachable branch, validation MUST fail.
 </p>
 
-<h3>11.6 Future extensibility</h3>
+<h3>11.7 Future extensibility</h3>
 
 <p>
-Future revisions or stricter profiles MAY add integer, enum, or pattern-like selectors.
+Future revisions or stricter profiles MAY add selector categories such as integers, enums, or pattern-oriented matching.
 Such extensions MUST preserve the principle that one activation executes exactly one selected region.
 </p>
 
@@ -580,10 +637,6 @@ Rules:
 
 <p>
 If the resolved count value is <code>N</code>, the body executes exactly <code>N</code> times.
-</p>
-
-<p>
-Rules:
 </p>
 
 <ul>
@@ -705,10 +758,6 @@ Rules:
 The loop body MUST define the continuation condition in a visible and deterministic way according to the active validated program model.
 </p>
 
-<p>
-The meaning of the condition role in base v0.1 is:
-</p>
-
 <ul>
   <li><code>true</code> — another iteration MUST occur,</li>
   <li><code>false</code> — the loop MUST terminate after the current iteration.</li>
@@ -764,6 +813,11 @@ For a <code>case</code> structure:
   <li>only that chosen region executes for the activation,</li>
   <li>the structure outputs are derived from the chosen region.</li>
 </ul>
+
+<p>
+For a boolean case, matching is exact on <code>true</code> or <code>false</code>.
+For a string case, matching is exact on the string literal values declared by branch regions; otherwise the default region executes.
+</p>
 
 <h3>14.2 For-loop execution</h3>
 
@@ -883,7 +937,10 @@ Implementations MUST enforce the following rules:
   <li>every structure node MUST define valid <code>boundary</code>, <code>structure_terminals</code>, and <code>regions</code>,</li>
   <li>all structure boundary crossings MUST be type-compatible,</li>
   <li>every region-local diagram MUST be valid as a local diagram scope,</li>
-  <li>a <code>case</code> structure MUST define exactly one <code>true</code> region and exactly one <code>false</code> region in base v0.1,</li>
+  <li>a <code>case</code> selector MUST use <code>bool</code> or <code>string</code> in base v0.1,</li>
+  <li>if a <code>case</code> selector uses <code>bool</code>, exactly one region MUST match <code>true</code> and exactly one region MUST match <code>false</code>,</li>
+  <li>if a <code>case</code> selector uses <code>string</code>, each explicit string <code>match</code> value MUST be unique,</li>
+  <li>if a <code>case</code> selector uses <code>string</code>, exactly one region MUST define <code>default: true</code>,</li>
   <li>a <code>case</code> structure MUST define every required output for every executable branch,</li>
   <li>a <code>for_loop</code> MUST define a valid count terminal,</li>
   <li>a <code>for_loop</code> count MUST not resolve to a negative iteration count,</li>
@@ -908,7 +965,7 @@ Tools SHOULD additionally warn when:
 
 <h2 id="examples">18. Examples</h2>
 
-<h3>18.1 Canonical boolean case</h3>
+<h3>18.1 Boolean case (canonical if / else)</h3>
 
 <pre>
 {
@@ -953,7 +1010,58 @@ Tools SHOULD additionally warn when:
 }
 </pre>
 
-<h3>18.2 Canonical for loop</h3>
+<h3>18.2 String case</h3>
+
+<pre>
+{
+  "id": "case_mode",
+  "kind": "structure",
+  "structure_type": "case",
+  "boundary": {
+    "inputs": [],
+    "outputs": [
+      { "id": "status", "type": "string" }
+    ]
+  },
+  "structure_terminals": {
+    "selector": {
+      "type": "string",
+      "outer_visible": true,
+      "exposed_in_body": false,
+      "read_only": true,
+      "role": "selector"
+    }
+  },
+  "regions": [
+    {
+      "id": "case_start",
+      "match": "start",
+      "diagram": {
+        "nodes": [],
+        "edges": []
+      }
+    },
+    {
+      "id": "case_stop",
+      "match": "stop",
+      "diagram": {
+        "nodes": [],
+        "edges": []
+      }
+    },
+    {
+      "id": "default_case",
+      "default": true,
+      "diagram": {
+        "nodes": [],
+        "edges": []
+      }
+    }
+  ]
+}
+</pre>
+
+<h3>18.3 Canonical for loop</h3>
 
 <pre>
 {
@@ -994,7 +1102,7 @@ Tools SHOULD additionally warn when:
 }
 </pre>
 
-<h3>18.3 Canonical while loop</h3>
+<h3>18.4 Canonical while loop</h3>
 
 <pre>
 {
@@ -1035,16 +1143,6 @@ Tools SHOULD additionally warn when:
 }
 </pre>
 
-<h3>18.4 Conceptual while-loop meaning</h3>
-
-<pre>
-execute body
-if condition == true:
-  repeat
-else:
-  stop
-</pre>
-
 <hr/>
 
 <h2 id="out-of-scope-for-v01">19. Out of Scope for v0.1</h2>
@@ -1057,7 +1155,7 @@ else:
   <li>collection and reduction loop-output modes beyond <code>last_value</code>,</li>
   <li>one universal low-level nested-region terminal encoding,</li>
   <li>hidden or implicit memory semantics attached to loops,</li>
-  <li>pre-test loop forms distinct from the canonical v0.1 <code>while_loop</code>.</li>
+  <li>selector categories beyond <code>bool</code> and <code>string</code> in base v0.1.</li>
 </ul>
 
 <hr/>
@@ -1071,7 +1169,8 @@ FROG v0.1 standardizes control structures as explicit language-level structural 
 <ul>
   <li><code>case</code>, <code>for_loop</code>, and <code>while_loop</code> are standardized structure families.</li>
   <li>The canonical structure source form uses <code>kind</code>, <code>structure_type</code>, <code>boundary</code>, <code>structure_terminals</code>, and <code>regions</code>.</li>
-  <li>A <code>case</code> selects one executable region.</li>
+  <li>A boolean <code>case</code> is the canonical source-level equivalent of <code>if / else</code>.</li>
+  <li>A string <code>case</code> performs exact string-literal branch selection with a required default region.</li>
   <li>A <code>for_loop</code> repeats a body region according to an explicit count.</li>
   <li>A <code>while_loop</code> repeats a body region according to the canonical continue-while-true post-test rule.</li>
   <li>Looping does not introduce hidden memory.</li>
