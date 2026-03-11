@@ -18,7 +18,7 @@
   <li><a href="#goals-of-the-type-system">2. Goals of the Type System</a></li>
   <li><a href="#scope-for-v01">3. Scope for v0.1</a></li>
   <li><a href="#relation-with-other-specifications">4. Relation with Other Specifications</a></li>
-  <li><a href="#where-types-appear-in-source">5. Where Types Appear in Source</a></li>
+  <li><a href="#location-in-a-frog-file">5. Location in a <code>.frog</code> File</a></li>
   <li><a href="#canonical-type-expressions">6. Canonical Type Expressions</a></li>
   <li><a href="#built-in-primitive-types">7. Built-in Primitive Types</a></li>
   <li><a href="#built-in-array-types">8. Built-in Array Types</a></li>
@@ -39,9 +39,20 @@
 <h2 id="overview">1. Overview</h2>
 
 <p>
-The FROG type system defines how value types are represented, compared, validated, and connected in canonical
-<code>.frog</code> source.
+The FROG type system defines how values are described, represented, validated, connected, and converted inside a
+<code>.frog</code> program.
 </p>
+
+<p>
+For v0.1, the type system is intentionally small and explicit. It provides:
+</p>
+
+<ul>
+  <li>a fixed set of built-in primitive types,</li>
+  <li>a minimal set of built-in composite types,</li>
+  <li>a canonical textual type syntax for use in <code>.frog</code> files,</li>
+  <li>deterministic type identity, compatibility, and coercion rules.</li>
+</ul>
 
 <p>
 The type system applies to value-carrying elements such as:
@@ -52,28 +63,14 @@ The type system applies to value-carrying elements such as:
   <li>diagram ports and edges,</li>
   <li>structure boundaries,</li>
   <li>widget primary values,</li>
-  <li>typed property values when a widget member is typed,</li>
+  <li>typed widget properties or method values when such members are typed,</li>
   <li>typed configuration values such as <code>default</code> or <code>initial</code>.</li>
 </ul>
 
 <p>
-The type system does not define widget identity, widget references, UI object semantics, public API structure,
-or execution ordering.
-It defines the meaning and compatibility of values.
+The type system does not define widget classes, widget object references, public interface structure, or execution ordering.
+It defines value types and compatibility rules.
 </p>
-
-<p>
-FROG v0.1 uses a deliberately small and explicit type system.
-It provides:
-</p>
-
-<ul>
-  <li>a fixed set of built-in primitive types,</li>
-  <li>a minimal built-in array type family,</li>
-  <li>a canonical textual syntax for type expressions,</li>
-  <li>deterministic type identity rules,</li>
-  <li>deterministic compatibility and coercion rules.</li>
-</ul>
 
 <hr/>
 
@@ -84,10 +81,11 @@ The FROG type system is designed to satisfy the following goals:
 </p>
 
 <ul>
-  <li><strong>Clarity</strong> — type expressions MUST be readable and unambiguous in canonical source.</li>
+  <li><strong>Clarity</strong> — types MUST be readable and unambiguous in source form.</li>
   <li><strong>Determinism</strong> — type identity, compatibility, and coercion behavior MUST be explicitly defined.</li>
-  <li><strong>Portability</strong> — type meaning MUST NOT depend on host-language aliases or platform-specific compiler defaults.</li>
-  <li><strong>Graph usability</strong> — the language SHOULD support practical graphical programming with limited but useful implicit coercions.</li>
+  <li><strong>Portability</strong> — type meaning MUST NOT depend on platform-specific compiler behavior.</li>
+  <li><strong>Efficiency</strong> — types SHOULD map cleanly to compiled and runtime representations.</li>
+  <li><strong>Graph usability</strong> — the system SHOULD support practical graphical programming with limited but useful implicit coercions.</li>
   <li><strong>Durability</strong> — canonical type expressions SHOULD remain stable across editors, validators, and runtimes.</li>
   <li><strong>Separation of concerns</strong> — value typing MUST remain distinct from widget object models, public interface structure, and execution scheduling.</li>
 </ul>
@@ -97,17 +95,17 @@ The FROG type system is designed to satisfy the following goals:
 <h2 id="scope-for-v01">3. Scope for v0.1</h2>
 
 <p>
-FROG v0.1 standardizes:
+FROG v0.1 specifies a minimal built-in type system consisting of:
 </p>
 
 <ul>
-  <li>built-in primitive scalar types,</li>
-  <li>built-in array type expressions,</li>
+  <li>primitive scalar types,</li>
+  <li>array types,</li>
   <li>canonical type-expression syntax,</li>
   <li>type identity rules,</li>
-  <li>type compatibility categories,</li>
-  <li>implicit numeric coercions,</li>
-  <li>implicit array coercions based on element coercion and shape preservation.</li>
+  <li>type compatibility rules,</li>
+  <li>implicit numeric coercion rules,</li>
+  <li>implicit array coercion rules based on element coercion and shape preservation.</li>
 </ul>
 
 <p>
@@ -121,7 +119,7 @@ FROG v0.1 does not yet standardize:
   <li>enums,</li>
   <li>class types,</li>
   <li>sum or variant types,</li>
-  <li>generic declarations beyond arrays,</li>
+  <li>generic type declarations beyond arrays,</li>
   <li>units-of-measure type systems.</li>
 </ul>
 
@@ -130,55 +128,40 @@ FROG v0.1 does not yet standardize:
 <h2 id="relation-with-other-specifications">4. Relation with Other Specifications</h2>
 
 <p>
-This document defines the value type system used by the rest of the FROG specification.
+This document defines the value type system used by other parts of the FROG specification.
 </p>
 
 <ul>
   <li><code>Interface.md</code> uses the type system for public input and output ports.</li>
-  <li><code>Diagram.md</code> uses the type system for graph ports, edge validation, structure boundaries, and typed configuration fields.</li>
+  <li><code>Diagram.md</code> uses the type system for graph ports, edges, structure boundaries, and typed configuration fields.</li>
   <li><code>Widget.md</code> uses the type system for the <code>value_type</code> of value-carrying widgets.</li>
-  <li><code>Front panel.md</code> serializes widgets that may declare a <code>value_type</code>, but does not redefine type meaning.</li>
+  <li><code>Front panel.md</code> serializes widgets that may declare a <code>value_type</code>, but does not redefine the type system.</li>
   <li><code>Widget interaction.md</code> may reference typed widget members, but does not redefine type identity or coercion behavior.</li>
-  <li><code>Libraries/Core.md</code> relies on this document for primitive port typing, implicit coercions, and configuration compatibility such as <code>frog.core.delay.initial</code>.</li>
+  <li><code>Libraries/Core.md</code> relies on this document for primitive port typing and typed configuration compatibility such as <code>frog.core.delay.initial</code>.</li>
 </ul>
 
 <p>
 This document defines value types only.
-It does not define widget references, widget classes, or UI object semantics.
+It does not define widget identity, widget references, or UI object semantics.
 </p>
 
 <hr/>
 
-<h2 id="where-types-appear-in-source">5. Where Types Appear in Source</h2>
+<h2 id="location-in-a-frog-file">5. Location in a <code>.frog</code> File</h2>
 
 <p>
-FROG v0.1 does not require a separate top-level <code>types</code> section.
-Instead, types appear directly where values are declared or constrained.
-</p>
-
-<p>
-Examples include:
-</p>
-
-<ul>
-  <li>interface ports,</li>
-  <li>widget <code>value_type</code>,</li>
-  <li>structure boundary terminals,</li>
-  <li>primitive port signatures defined by libraries,</li>
-  <li>typed configuration values such as interface <code>default</code> or delay <code>initial</code>.</li>
-</ul>
-
-<p>
-Example:
+Types are represented directly where values are declared or constrained.
+For example, interface ports and other typed elements use canonical textual type expressions such as:
 </p>
 
 <pre><code>{
-  "id": "signal",
-  "type": "array&lt;f64&gt;"
+  "id": "input_signal",
+  "type": "f64"
 }</code></pre>
 
 <p>
-The type system therefore works by reference through canonical textual type expressions embedded in source objects.
+The top-level <code>.frog</code> file does not require a separate mandatory <code>types</code> section in v0.1.
+Type definitions are embedded by reference through canonical type expressions.
 </p>
 
 <hr/>
@@ -186,7 +169,7 @@ The type system therefore works by reference through canonical textual type expr
 <h2 id="canonical-type-expressions">6. Canonical Type Expressions</h2>
 
 <p>
-FROG v0.1 uses a canonical textual syntax to represent value types in source files.
+FROG v0.1 uses a canonical textual syntax to represent types in source files.
 This syntax is normative.
 </p>
 
@@ -294,7 +277,7 @@ array&lt;array&lt;i16, 8&gt;, 4&gt;</code></pre>
 
 <p>
 The exact internal encoding and memory representation of <code>string</code> are not further standardized in v0.1.
-Only its identity as a distinct built-in value type is specified here.
+Only its identity as a distinct built-in type is specified here.
 </p>
 
 <hr/>
@@ -378,7 +361,7 @@ Two types are identical if and only if their canonical meaning is exactly the sa
 
 <p>
 Type identity is based on canonical meaning, not on author formatting choices.
-For example, whitespace differences that do not change parsing do not change identity.
+Whitespace differences that do not change parsing do not change identity.
 </p>
 
 <hr/>
@@ -397,7 +380,7 @@ Type compatibility in FROG v0.1 is defined by the following categories:
 </ul>
 
 <p>
-Unless otherwise defined by a stricter profile, a typed connection or assignment context is valid when:
+Unless otherwise defined, a typed connection or assignment context is valid when:
 </p>
 
 <ul>
@@ -407,8 +390,8 @@ Unless otherwise defined by a stricter profile, a typed connection or assignment
 </ul>
 
 <p>
-This document defines the compatibility of value types only.
-It does not define UI sequencing compatibility, widget-reference compatibility, or execution ordering semantics.
+This document defines value-type compatibility only.
+It does not define widget-reference compatibility, UI sequencing compatibility, or execution ordering semantics.
 </p>
 
 <hr/>
@@ -417,12 +400,12 @@ It does not define UI sequencing compatibility, widget-reference compatibility, 
 
 <p>
 FROG v0.1 allows implicit coercions between numeric scalar types.
-These coercions are part of language semantics.
-They are not user-authored diagram nodes in canonical source form.
+These coercions are part of the language semantics.
+They are not user-authored diagram nodes in source form.
 </p>
 
 <p>
-An IDE MAY visually indicate an implicit coercion, for example through a coercion marker on the target terminal.
+An IDE MAY visually indicate an implicit coercion, for example by displaying a coercion marker on the target terminal.
 Such visualization is an IDE concern and does not require an explicit source node.
 </p>
 
@@ -730,7 +713,7 @@ Validators SHOULD diagnose at least the following error classes:
   <li>enums,</li>
   <li>class types,</li>
   <li>sum or variant types,</li>
-  <li>generic declarations beyond arrays,</li>
+  <li>generic type declarations beyond arrays,</li>
   <li>standardized custom type registries,</li>
   <li>ownership and borrowing systems,</li>
   <li>units-of-measure type systems,</li>
@@ -833,7 +816,7 @@ The FROG type system provides the canonical value-type foundation for v0.1.
   <li>It defines canonical textual type expressions.</li>
   <li>It defines exact type identity and deterministic compatibility rules.</li>
   <li>It allows limited implicit coercions for numeric and shape-preserving array cases.</li>
-  <li>It rejects implicit coercion for non-numeric scalar mixes and for dynamic/fixed array shape changes.</li>
+  <li>It rejects implicit coercion for non-numeric scalar mixes and for dynamic/fixed array mismatches.</li>
   <li>It remains separate from widget identity, widget references, and UI object semantics.</li>
 </ul>
 
