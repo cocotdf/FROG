@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="../FROG logo.svg" alt="FROG logo" width="150" />
-</p>
-
 <h1 align="center">🐸 FROG Widget Interaction Specification</h1>
 
 <p align="center">
@@ -152,7 +148,8 @@ This document complements, but does not redefine, the following canonical diagra
 <p>
 This document also does not redefine public interface semantics.
 A front-panel widget does not create a public interface port by itself.
-Public interface behavior remains represented canonically through <code>interface_input</code> and <code>interface_output</code> in the diagram.
+Public interface behavior remains represented canonically through
+<code>interface_input</code> and <code>interface_output</code> in the diagram.
 </p>
 
 <hr/>
@@ -195,8 +192,8 @@ It operates on an already-declared widget instance from the <code>front_panel</c
 </p>
 
 <p>
-When explicit ordering of UI side effects is required, widget interaction nodes MAY participate in a sequencing chain through
-<code>ui_in</code> and <code>ui_out</code>.
+When explicit ordering of UI side effects is required,
+widget interaction nodes MAY participate in a sequencing chain through <code>ui_in</code> and <code>ui_out</code>.
 These sequencing ports are separate from ordinary dataflow values.
 </p>
 
@@ -239,7 +236,8 @@ For methods:
 <h3>6.2 Primitive-local member descriptor</h3>
 
 <p>
-In the canonical v0.1 diagram model, widget identity is carried by the incoming <code>ref</code> port, not embedded directly in the primitive node.
+In the canonical v0.1 diagram model, widget identity is carried by the incoming <code>ref</code> port,
+not embedded directly in the primitive node.
 Accordingly:
 </p>
 
@@ -268,7 +266,9 @@ Canonical method descriptors:
 If <code>part</code> is omitted, the addressed member belongs to the widget itself.
 </p>
 
-<p>Examples:</p>
+<p>
+Examples:
+</p>
 
 <pre><code>{ "member": "value" }
 { "member": "visible" }
@@ -280,7 +280,9 @@ If <code>part</code> is omitted, the addressed member belongs to the widget itse
 If <code>part</code> is present, the addressed member belongs to the named widget part.
 </p>
 
-<p>Examples:</p>
+<p>
+Examples:
+</p>
 
 <pre><code>{ "part": "label", "member": "text" }
 { "part": "label", "member": "visible" }
@@ -452,7 +454,8 @@ The <code>ref</code> port carries an opaque widget reference token compatible wi
 <p>
 Writing <code>{ "member": "value" }</code> through <code>frog.ui.property_write</code> is valid when the widget class exposes
 <code>value</code> as a writable property.
-This object-style write MUST remain semantically distinct from the natural primary value path represented by <code>widget_value</code>.
+This object-style write MUST remain semantically distinct from the natural primary value path represented by
+<code>widget_value</code>.
 For ordinary widget value participation in dataflow, tools SHOULD prefer <code>widget_value</code>.
 </p>
 
@@ -625,7 +628,7 @@ Canonical representation rules:
 <h2 id="validation-rules">13. Validation Rules</h2>
 
 <p>
-A diagram using widget interaction is valid only if all of the following hold:
+A validator MUST reject a widget interaction when any of the following conditions fails:
 </p>
 
 <ul>
@@ -672,8 +675,9 @@ A validator SHOULD diagnose at least the following error classes:
 <h3>14.1 General model</h3>
 
 <p>
-Widget interaction nodes participate in normal graph execution like other diagram nodes, subject to their data dependencies,
-their optional UI sequencing dependencies, and the active runtime profile.
+Widget interaction nodes participate in normal graph execution like other diagram nodes,
+subject to their data dependencies, their optional UI sequencing dependencies,
+and the active runtime profile.
 </p>
 
 <h3>14.2 Property read</h3>
@@ -724,8 +728,8 @@ but tools SHOULD preserve the distinction rather than collapsing them into one u
     "widgets": [
       {
         "id": "ctrl_gain",
-        "class": "frog.ui.numeric",
         "role": "control",
+        "widget": "frog.ui.standard.numeric_control",
         "value_type": "f64"
       }
     ]
@@ -757,7 +761,7 @@ but tools SHOULD preserve the distinction rather than collapsing them into one u
   }
 }</code></pre>
 
-<h3>15.2 Write to a label text property from a public input</h3>
+<h3>15.2 Write a widget-part property</h3>
 
 <pre><code>{
   "diagram": {
@@ -833,45 +837,47 @@ Natural value path:
 </p>
 
 <pre><code>{
-  "nodes": [
-    {
-      "id": "ctrl_gain_value",
-      "kind": "widget_value",
-      "widget": "ctrl_gain"
-    },
-    {
-      "id": "input_signal",
-      "kind": "interface_input",
-      "interface_port": "signal"
-    },
-    {
-      "id": "mul_1",
-      "kind": "primitive",
-      "type": "frog.core.mul"
-    },
-    {
-      "id": "ind_result_value",
-      "kind": "widget_value",
-      "widget": "ind_result"
-    }
-  ],
-  "edges": [
-    {
-      "id": "e1",
-      "from": { "node": "input_signal", "port": "value" },
-      "to":   { "node": "mul_1", "port": "a" }
-    },
-    {
-      "id": "e2",
-      "from": { "node": "ctrl_gain_value", "port": "value" },
-      "to":   { "node": "mul_1", "port": "b" }
-    },
-    {
-      "id": "e3",
-      "from": { "node": "mul_1", "port": "result" },
-      "to":   { "node": "ind_result_value", "port": "value" }
-    }
-  ]
+  "diagram": {
+    "nodes": [
+      {
+        "id": "input_signal",
+        "kind": "interface_input",
+        "interface_port": "signal"
+      },
+      {
+        "id": "ctrl_gain_value",
+        "kind": "widget_value",
+        "widget": "ctrl_gain"
+      },
+      {
+        "id": "mul_1",
+        "kind": "primitive",
+        "type": "frog.core.multiply"
+      },
+      {
+        "id": "ind_result_value",
+        "kind": "widget_value",
+        "widget": "ind_result"
+      }
+    ],
+    "edges": [
+      {
+        "id": "e1",
+        "from": { "node": "input_signal", "port": "value" },
+        "to":   { "node": "mul_1", "port": "a" }
+      },
+      {
+        "id": "e2",
+        "from": { "node": "ctrl_gain_value", "port": "value" },
+        "to":   { "node": "mul_1", "port": "b" }
+      },
+      {
+        "id": "e3",
+        "from": { "node": "mul_1", "port": "result" },
+        "to":   { "node": "ind_result_value", "port": "value" }
+      }
+    ]
+  }
 }</code></pre>
 
 <p>
@@ -879,73 +885,77 @@ Object-style access to the same widget primary value:
 </p>
 
 <pre><code>{
-  "nodes": [
-    {
-      "id": "ctrl_gain_ref",
-      "kind": "widget_reference",
-      "widget": "ctrl_gain"
-    },
-    {
-      "id": "read_gain_value",
-      "kind": "primitive",
-      "type": "frog.ui.property_read",
-      "widget_member": {
-        "member": "value"
+  "diagram": {
+    "nodes": [
+      {
+        "id": "ctrl_gain_ref",
+        "kind": "widget_reference",
+        "widget": "ctrl_gain"
+      },
+      {
+        "id": "read_gain_value",
+        "kind": "primitive",
+        "type": "frog.ui.property_read",
+        "widget_member": {
+          "member": "value"
+        }
       }
-    }
-  ],
-  "edges": [
-    {
-      "id": "e1",
-      "from": { "node": "ctrl_gain_ref", "port": "ref" },
-      "to":   { "node": "read_gain_value", "port": "ref" }
-    }
-  ]
+    ],
+    "edges": [
+      {
+        "id": "e1",
+        "from": { "node": "ctrl_gain_ref", "port": "ref" },
+        "to":   { "node": "read_gain_value", "port": "ref" }
+      }
+    ]
+  }
 }</code></pre>
 
 <h3>15.5 Sequenced UI side effects</h3>
 
 <pre><code>{
-  "nodes": [
-    {
-      "id": "ctrl_gain_ref",
-      "kind": "widget_reference",
-      "widget": "ctrl_gain"
-    },
-    {
-      "id": "write_visible",
-      "kind": "primitive",
-      "type": "frog.ui.property_write",
-      "widget_member": {
-        "member": "visible"
+  "diagram": {
+    "nodes": [
+      {
+        "id": "ctrl_gain_ref",
+        "kind": "widget_reference",
+        "widget": "ctrl_gain"
+      },
+      {
+        "id": "write_visible",
+        "kind": "primitive",
+        "type": "frog.ui.property_write",
+        "widget_member": {
+          "member": "visible"
+        }
+      },
+      {
+        "id": "invoke_focus",
+        "kind": "primitive",
+        "type": "frog.ui.method_invoke",
+        "widget_method": {
+          "name": "focus"
+        }
       }
-    },
-    {
-      "id": "invoke_focus",
-      "kind": "primitive",
-      "type": "frog.ui.method_invoke",
-      "widget_method": {
-        "name": "focus"
+    ],
+    "edges": [
+      {
+        "id": "e1",
+        "from": { "node": "ctrl_gain_ref", "port": "ref" },
+        "to":   { "node": "write_visible", "port": "ref" }
+      },
+      {
+        "id": "e2",
+        "from": { "node": "ctrl_gain_ref", "port": "ref" },
+        "to":   { "node": "invoke_focus", "port": "ref" }
+      },
+      {
+        "id": "e3",
+        "from": { "node": "write_visible", "port": "ui_out" },
+        "to":   { "node": "invoke_focus", "port": "ui_in" }
       }
-    }
-  ],
-  "edges": [
-    {
-      "id": "e1",
-      "from": { "node": "ctrl_gain_ref", "port": "ref" },
-      "to":   { "node": "write_visible", "port": "ref" }
-    },
-    {
-      "id": "e2",
-      "from": { "node": "ctrl_gain_ref", "port": "ref" },
-      "to":   { "node": "invoke_focus", "port": "ref" }
-    },
-    {
-      "id": "e3",
-      "from": { "node": "write_visible", "port": "ui_out" },
-      "to":   { "node": "invoke_focus", "port": "ui_in" }
-    }
-  ]
+    ]
+  }
 }</code></pre>
 
 <hr/>
@@ -972,13 +982,13 @@ ordinary widget value flow and object-style widget access are different mechanis
 </p>
 
 <ul>
-  <li><code>widget_value</code> is the canonical natural path for a widget primary value.</li>
-  <li><code>widget_reference</code> is the canonical anchor for object-style access.</li>
-  <li><code>frog.ui.property_read</code>, <code>frog.ui.property_write</code>, and <code>frog.ui.method_invoke</code> are the standardized interaction primitives.</li>
-  <li><code>widget_member</code> and <code>widget_method</code> are the canonical primitive-local descriptors.</li>
-  <li><code>ui_in</code> / <code>ui_out</code> provide optional explicit ordering for UI side effects.</li>
+  <li><code>widget_value</code> is the natural primary-value path.</li>
+  <li><code>widget_reference</code> plus <code>frog.ui.property_read</code>, <code>frog.ui.property_write</code>, and <code>frog.ui.method_invoke</code> is the object-style path.</li>
+  <li>Property descriptors use <code>widget_member</code>.</li>
+  <li>Method descriptors use <code>widget_method</code>.</li>
+  <li>Optional <code>ui_in</code> / <code>ui_out</code> ports provide explicit ordering for UI side effects when needed.</li>
 </ul>
 
 <p>
-This keeps the language understandable for graphical dataflow users while preserving a clean long-term object model for UI interaction.
+This gives FROG a clean and durable interaction model for front-panel widgets without collapsing UI objects into ordinary value wires.
 </p>
