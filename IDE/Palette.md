@@ -22,12 +22,12 @@ Definition of the function and structure palette for the FROG IDE<br/>
   <li><a href="#function-vs-structure-presentation">10. Function vs Structure Presentation</a></li>
   <li><a href="#palette-categories-for-v01">11. Palette Categories for v0.1</a></li>
   <li><a href="#entry-metadata">12. Entry Metadata</a></li>
-  <li><a href="#favorites-recent-and-suggested">13. Favorites, Recent, and Suggested Entries</a></li>
+  <li><a href="#favorites-recent-and-suggested-entries">13. Favorites, Recent, and Suggested Entries</a></li>
   <li><a href="#stability-and-filtering">14. Stability and Filtering</a></li>
   <li><a href="#extensibility-and-third-party-libraries">15. Extensibility and Third-Party Libraries</a></li>
   <li><a href="#validation-and-consistency">16. Validation and Consistency</a></li>
   <li><a href="#examples">17. Examples</a></li>
-  <li><a href="#out-of-scope">18. Out of Scope for v0.1</a></li>
+  <li><a href="#out-of-scope-for-v01">18. Out of Scope for v0.1</a></li>
   <li><a href="#summary">19. Summary</a></li>
 </ul>
 
@@ -54,7 +54,7 @@ The palette therefore serves three complementary roles:
 </ul>
 
 <p>
-The FROG palette is intentionally designed to do better than traditional historical palettes that grew from implementation history rather than from user intent.
+The FROG palette is intentionally designed to avoid the historical drift of palettes that became implementation-driven rather than intent-driven.
 </p>
 
 <hr/>
@@ -62,12 +62,12 @@ The FROG palette is intentionally designed to do better than traditional histori
 <h2 id="goals">2. Goals</h2>
 
 <ul>
-  <li><strong>Intent-first navigation</strong> — users should be able to find what they want by purpose, not only by internal implementation category.</li>
-  <li><strong>Namespace consistency</strong> — the palette should still reflect the actual language namespace model.</li>
-  <li><strong>Fast insertion</strong> — search and contextual suggestions should reduce friction.</li>
-  <li><strong>Clarity</strong> — functions, structures, UI operations, and runtime tools should not be visually conflated.</li>
-  <li><strong>Scalability</strong> — the model must remain usable as FROG grows from a minimal core to richer libraries.</li>
-  <li><strong>Extensibility</strong> — third-party libraries must integrate cleanly without breaking the palette model.</li>
+  <li><strong>Intent-first navigation</strong> — users SHOULD be able to find what they want by purpose, not only by internal implementation category.</li>
+  <li><strong>Namespace consistency</strong> — the palette SHOULD still reflect the actual language namespace model.</li>
+  <li><strong>Fast insertion</strong> — search and contextual suggestions SHOULD reduce friction.</li>
+  <li><strong>Clarity</strong> — functions, structures, UI operations, and runtime tools MUST NOT be visually conflated.</li>
+  <li><strong>Scalability</strong> — the model MUST remain usable as FROG grows from a minimal core to richer libraries.</li>
+  <li><strong>Extensibility</strong> — third-party libraries MUST integrate cleanly without breaking the palette model.</li>
 </ul>
 
 <hr/>
@@ -79,10 +79,10 @@ This document complements the following specifications:
 </p>
 
 <ul>
-  <li><strong>Libraries/Core.md</strong> — defines the minimal built-in function catalog such as <code>frog.core.add</code> and <code>frog.core.delay</code>.</li>
-  <li><strong>Language/Control structures.md</strong> — defines structures such as <code>case</code> and <code>loop</code>.</li>
-  <li><strong>Expression/Diagram.md</strong> — defines how inserted functions and structures appear in the program source and diagram model.</li>
-  <li><strong>Expression/Widget interaction.md</strong> — defines UI interaction functions such as widget property access and method invocation.</li>
+  <li><code>Libraries/Core.md</code> — defines the minimal built-in function catalog such as <code>frog.core.add</code> and <code>frog.core.delay</code>.</li>
+  <li><code>Language/Control structures.md</code> — defines structures such as <code>case</code>, <code>for_loop</code>, and <code>while_loop</code>.</li>
+  <li><code>Expression/Diagram.md</code> — defines how inserted functions and structures appear in the program source and diagram model.</li>
+  <li><code>Expression/Widget interaction.md</code> — defines UI interaction functions such as widget property access and method invocation.</li>
 </ul>
 
 <p>
@@ -94,19 +94,16 @@ It does not define the language semantics of those constructs.
 
 <h2 id="design-principles">4. Design Principles</h2>
 
-<p>
-The FROG palette follows the following principles:
-</p>
-
 <h3>4.1 Intent before implementation</h3>
 
 <p>
-The primary palette should be organized according to user intent such as:
+The primary palette SHOULD be organized according to user intent such as:
 </p>
 
 <ul>
   <li>do arithmetic,</li>
   <li>compare values,</li>
+  <li>branch execution,</li>
   <li>repeat execution,</li>
   <li>interact with a widget,</li>
   <li>read a file,</li>
@@ -124,19 +121,26 @@ The IDE MUST therefore also provide a namespace-oriented view.
 
 <p>
 The palette is not only a tree.
-Search is a primary insertion path and must be treated as a first-class mechanism.
+Search is a primary insertion path and MUST be treated as a first-class mechanism.
 </p>
 
 <h3>4.4 Functions and structures are distinct</h3>
 
 <p>
-Ordinary functions such as <code>frog.core.add</code> and structural constructs such as <code>loop</code> must remain visibly distinct in the palette and in search results.
+Ordinary functions such as <code>frog.core.add</code> and structural constructs such as <code>case</code>, <code>for_loop</code>, and <code>while_loop</code> MUST remain visibly distinct in the palette and in search results.
 </p>
 
 <h3>4.5 Context improves speed</h3>
 
 <p>
 The IDE SHOULD use type context, wire context, and insertion context to improve suggestions without changing language semantics.
+</p>
+
+<h3>4.6 Canonical identity remains singular</h3>
+
+<p>
+A language construct MAY appear in multiple discovery paths, but it MUST keep one canonical identity.
+A search alias or palette shortcut MUST NOT create a second semantic construct.
 </p>
 
 <hr/>
@@ -192,8 +196,8 @@ External
 </pre>
 
 <p>
-This structure is deliberately task-oriented rather than history-oriented.
-It should remain compact enough for browsing while still scaling as new libraries are introduced.
+This structure is deliberately task-oriented rather than implementation-history-oriented.
+It SHOULD remain compact enough for browsing while still scaling as new libraries are introduced.
 </p>
 
 <hr/>
@@ -258,11 +262,15 @@ Examples:
 </p>
 
 <ul>
-  <li>searching <code>add</code> should find <code>frog.core.add</code>,</li>
-  <li>searching <code>+</code> should also find <code>frog.core.add</code>,</li>
-  <li>searching <code>if</code> should find the case structure or equivalent conditional structure,</li>
-  <li>searching <code>property write</code> should find the relevant widget interaction entry,</li>
-  <li>searching <code>relu</code> should find the corresponding ONNX or tensor entry when available.</li>
+  <li>searching <code>add</code> SHOULD find <code>frog.core.add</code>,</li>
+  <li>searching <code>+</code> SHOULD also find <code>frog.core.add</code>,</li>
+  <li>searching <code>if</code> SHOULD find the canonical boolean <code>case</code> structure,</li>
+  <li>searching <code>else</code> SHOULD also help surface the canonical boolean <code>case</code> structure,</li>
+  <li>searching <code>case</code> SHOULD find the canonical <code>case</code> structure,</li>
+  <li>searching <code>for</code> SHOULD find <code>for_loop</code>,</li>
+  <li>searching <code>while</code> SHOULD find <code>while_loop</code>,</li>
+  <li>searching <code>property write</code> SHOULD find the relevant widget interaction entry,</li>
+  <li>searching <code>relu</code> SHOULD find the corresponding ONNX or tensor entry when available.</li>
 </ul>
 
 <p>
@@ -276,6 +284,11 @@ Search SHOULD rank results using at least:
   <li>contextual relevance,</li>
   <li>recent usage.</li>
 </ul>
+
+<p>
+The canonical identity of the returned entry MUST remain unchanged.
+For example, a search for <code>if</code> returns the canonical <code>case</code> structure rather than a separate language construct named <code>if</code>.
+</p>
 
 <hr/>
 
@@ -303,6 +316,7 @@ Examples:
 <ul>
   <li>from a <code>bool</code> wire, prefer logic and conditional suggestions,</li>
   <li>from a numeric wire, prefer arithmetic and comparison suggestions,</li>
+  <li>from a <code>string</code> wire, prefer text operations and string-based <code>case</code> suggestions,</li>
   <li>from a widget reference, prefer property and method interaction suggestions,</li>
   <li>from a value feedback path, prefer <code>frog.core.delay</code>,</li>
   <li>from a tensor wire, prefer tensor and ONNX suggestions.</li>
@@ -334,7 +348,8 @@ Examples:
   <li><code>frog.core.add</code> is a function,</li>
   <li><code>frog.core.delay</code> is a stateful function,</li>
   <li><code>case</code> is a structure,</li>
-  <li><code>loop</code> is a structure.</li>
+  <li><code>for_loop</code> is a structure,</li>
+  <li><code>while_loop</code> is a structure.</li>
 </ul>
 
 <p>
@@ -363,7 +378,8 @@ The following palette layout is recommended for FROG v0.1.
 
 <ul>
   <li>Case structure</li>
-  <li>Loop structure</li>
+  <li>For loop structure</li>
+  <li>While loop structure</li>
 </ul>
 
 <h3>11.3 State &amp; Timing</h3>
@@ -419,7 +435,7 @@ Text-related entries MAY remain minimal in v0.1 if not yet standardized.
 <h3>11.8 Tensor &amp; ONNX</h3>
 
 <p>
-This group is intended for future tensor and ONNX-related functions and should remain separate from <code>frog.core</code>.
+This group is intended for future tensor and ONNX-related functions and SHOULD remain separate from <code>frog.core</code>.
 </p>
 
 <h3>11.9 UI</h3>
@@ -463,14 +479,14 @@ Recommended metadata includes:
 </p>
 
 <ul>
-  <li><strong>display name</strong></li>
-  <li><strong>namespace-qualified name</strong></li>
-  <li><strong>entry kind</strong> — function or structure</li>
-  <li><strong>short description</strong></li>
-  <li><strong>type family</strong></li>
-  <li><strong>statefulness</strong></li>
-  <li><strong>stability level</strong></li>
-  <li><strong>library origin</strong></li>
+  <li>display name,</li>
+  <li>namespace-qualified name,</li>
+  <li>entry kind — function or structure,</li>
+  <li>short description,</li>
+  <li>type family,</li>
+  <li>statefulness,</li>
+  <li>stability level,</li>
+  <li>library origin.</li>
 </ul>
 
 <p>
@@ -478,17 +494,17 @@ Examples of useful badges:
 </p>
 
 <ul>
-  <li><strong>Pure</strong></li>
-  <li><strong>Stateful</strong></li>
-  <li><strong>UI</strong></li>
-  <li><strong>ONNX</strong></li>
-  <li><strong>Experimental</strong></li>
-  <li><strong>Third-party</strong></li>
+  <li>Pure</li>
+  <li>Stateful</li>
+  <li>UI</li>
+  <li>ONNX</li>
+  <li>Experimental</li>
+  <li>Third-party</li>
 </ul>
 
 <hr/>
 
-<h2 id="favorites-recent-and-suggested">13. Favorites, Recent, and Suggested Entries</h2>
+<h2 id="favorites-recent-and-suggested-entries">13. Favorites, Recent, and Suggested Entries</h2>
 
 <p>
 The palette SHOULD support the following convenience groups:
@@ -527,9 +543,9 @@ Recommended levels include:
 </p>
 
 <ul>
-  <li><strong>Stable</strong></li>
-  <li><strong>Advanced</strong></li>
-  <li><strong>Experimental</strong></li>
+  <li>Stable</li>
+  <li>Advanced</li>
+  <li>Experimental</li>
 </ul>
 
 <p>
@@ -577,8 +593,8 @@ vendor.ai.*
 </pre>
 
 <p>
-A single function SHOULD have one canonical identity even if the IDE allows multiple discovery paths.
-The same function must not become semantically duplicated just because it appears in multiple palette views.
+A single function or structure SHOULD have one canonical identity even if the IDE allows multiple discovery paths.
+The same construct MUST NOT become semantically duplicated just because it appears in multiple palette views.
 </p>
 
 <hr/>
@@ -609,80 +625,53 @@ It MUST NOT change the source semantics of the inserted construct.
 
 <h2 id="examples">17. Examples</h2>
 
-<h3>17.1 Finding addition</h3>
-
-<p>
-A user may find addition through:
-</p>
+<h3>17.1 Search aliases</h3>
 
 <ul>
-  <li>Primary palette → <strong>Math &amp; Logic</strong> → <code>frog.core.add</code></li>
-  <li>Namespace view → <strong>frog.core.*</strong> → <code>frog.core.add</code></li>
-  <li>Search → <code>add</code></li>
-  <li>Search → <code>+</code></li>
+  <li><code>if</code> → canonical <code>case</code> structure with boolean selector</li>
+  <li><code>else</code> → canonical <code>case</code> structure with boolean selector</li>
+  <li><code>for</code> → canonical <code>for_loop</code> structure</li>
+  <li><code>while</code> → canonical <code>while_loop</code> structure</li>
+  <li><code>+</code> → canonical <code>frog.core.add</code></li>
 </ul>
 
-<p>
-All of these paths must lead to the same canonical function.
-</p>
-
-<h3>17.2 Finding delayed feedback</h3>
-
-<p>
-A user may find delayed feedback through:
-</p>
+<h3>17.2 Contextual suggestions from a <code>bool</code> wire</h3>
 
 <ul>
-  <li>Primary palette → <strong>State &amp; Timing</strong> → <code>frog.core.delay</code></li>
-  <li>Namespace view → <strong>frog.core.*</strong> → <code>frog.core.delay</code></li>
-  <li>Contextual insertion from a feedback wire suggestion</li>
+  <li><code>case</code> (boolean conditional view)</li>
+  <li><code>frog.core.and</code></li>
+  <li><code>frog.core.or</code></li>
+  <li><code>frog.core.not</code></li>
+  <li><code>frog.core.select</code></li>
 </ul>
 
-<h3>17.3 Finding a loop</h3>
-
-<p>
-A user may find a loop through:
-</p>
+<h3>17.3 Contextual suggestions from a <code>string</code> wire</h3>
 
 <ul>
-  <li>Primary palette → <strong>Flow Control</strong> → <code>loop</code></li>
-  <li>Search → <code>loop</code></li>
-  <li>Search → <code>for</code> or <code>while</code> when the IDE supports those aliases or profile-specific forms</li>
+  <li><code>case</code> (string selector view)</li>
+  <li>text comparison entries</li>
+  <li>future string manipulation entries</li>
 </ul>
 
-<p>
-The IDE must present it as a structure, not as an ordinary function.
-</p>
-
-<h3>17.4 Widget property access</h3>
-
-<p>
-A user may find widget interaction through:
-</p>
+<h3>17.4 Contextual suggestions from a widget reference</h3>
 
 <ul>
-  <li>Primary palette → <strong>UI</strong> → <code>property read</code></li>
-  <li>Primary palette → <strong>UI</strong> → <code>property write</code></li>
-  <li>Contextual insertion from a widget reference</li>
-  <li>Search → <code>property write</code></li>
+  <li><code>frog.ui.property_read</code></li>
+  <li><code>frog.ui.property_write</code></li>
+  <li><code>frog.ui.method_invoke</code></li>
 </ul>
 
 <hr/>
 
-<h2 id="out-of-scope">18. Out of Scope for v0.1</h2>
-
-<p>
-The following topics are outside the strict scope of this document in v0.1:
-</p>
+<h2 id="out-of-scope-for-v01">18. Out of Scope for v0.1</h2>
 
 <ul>
-  <li>precise visual styling of every palette widget,</li>
-  <li>full adaptive ranking algorithms for search results,</li>
-  <li>AI-assisted palette recommendations,</li>
-  <li>full plugin marketplace integration,</li>
-  <li>full localization rules for every language,</li>
-  <li>exact drag-and-drop animation behavior,</li>
-  <li>exact touch-optimized mobile palette interactions.</li>
+  <li>full personalization of ranking algorithms,</li>
+  <li>remote cloud palette federation,</li>
+  <li>marketplace-style commercial discovery UX,</li>
+  <li>cross-project recommendation systems,</li>
+  <li>automatic insertion of profile-specific hidden helper nodes,</li>
+  <li>semantic transformation of one canonical structure into another language construct.</li>
 </ul>
 
 <hr/>
@@ -690,28 +679,18 @@ The following topics are outside the strict scope of this document in v0.1:
 <h2 id="summary">19. Summary</h2>
 
 <p>
-The FROG IDE palette is designed to expose the language in a way that is both scalable and intuitive.
-</p>
-
-<p>
-This specification establishes that:
+The FROG IDE palette is the primary discovery and insertion mechanism for language constructs.
 </p>
 
 <ul>
-  <li>the primary palette is organized by user intent,</li>
-  <li>a namespace view exposes the true language library organization,</li>
-  <li>search is a first-class insertion path,</li>
-  <li>context-aware insertion improves speed without changing semantics,</li>
-  <li>functions and structures remain clearly distinct,</li>
-  <li>third-party libraries integrate through the same model.</li>
+  <li>It provides intent-first browsing, namespace browsing, search, and contextual insertion.</li>
+  <li>It MUST distinguish functions from structures.</li>
+  <li>It MUST preserve one canonical identity per language construct.</li>
+  <li>It SHOULD support aliases such as <code>if</code> for boolean <code>case</code>.</li>
+  <li>It SHOULD expose <code>case</code>, <code>for_loop</code>, and <code>while_loop</code> as the standard control structures of v0.1.</li>
+  <li>It MUST remain semantically consistent with the active language specification and profile.</li>
 </ul>
 
 <p>
-This gives FROG a palette architecture that remains more coherent, more discoverable, and more extensible than historically grown palettes, while still feeling natural to users of graphical programming environments.
-</p>
-
-<hr/>
-
-<p align="center">
-End of FROG IDE Palette Specification
+This gives FROG a palette model that is both scalable for experts and intuitive for users working from intent.
 </p>
