@@ -1,8 +1,12 @@
+<p align="center">
+  <img src="../FROG logo.svg" alt="FROG logo" width="150" />
+</p>
+
 <h1 align="center">🐸 FROG Type Specification</h1>
 
 <p align="center">
-Definition of the FROG type system for <strong>.frog</strong> files<br/>
-<em>FROG — Free Open Graphical Language</em>
+  Definition of the FROG value type system for <strong>.frog</strong> programs<br/>
+  <em>FROG — Free Open Graphical Language</em>
 </p>
 
 <hr/>
@@ -14,19 +18,20 @@ Definition of the FROG type system for <strong>.frog</strong> files<br/>
   <li><a href="#goals-of-the-type-system">2. Goals of the Type System</a></li>
   <li><a href="#scope-for-v01">3. Scope for v0.1</a></li>
   <li><a href="#relation-with-other-specifications">4. Relation with Other Specifications</a></li>
-  <li><a href="#location-in-a-frog-file">5. Location in a <code>.frog</code> File</a></li>
+  <li><a href="#where-types-appear-in-source">5. Where Types Appear in Source</a></li>
   <li><a href="#canonical-type-expressions">6. Canonical Type Expressions</a></li>
   <li><a href="#built-in-primitive-types">7. Built-in Primitive Types</a></li>
   <li><a href="#built-in-array-types">8. Built-in Array Types</a></li>
   <li><a href="#type-identity">9. Type Identity</a></li>
   <li><a href="#type-compatibility">10. Type Compatibility</a></li>
   <li><a href="#implicit-numeric-coercions">11. Implicit Numeric Coercions</a></li>
-  <li><a href="#array-coercions">12. Array Coercions</a></li>
-  <li><a href="#explicit-conversion-nodes">13. Explicit Conversion Nodes</a></li>
-  <li><a href="#validation-rules">14. Validation Rules</a></li>
-  <li><a href="#out-of-scope-for-v01">15. Out of Scope for v0.1</a></li>
-  <li><a href="#examples">16. Examples</a></li>
-  <li><a href="#summary">17. Summary</a></li>
+  <li><a href="#implicit-array-coercions">12. Implicit Array Coercions</a></li>
+  <li><a href="#typed-value-compatibility-contexts">13. Typed Value Compatibility Contexts</a></li>
+  <li><a href="#explicit-conversion-nodes">14. Explicit Conversion Nodes</a></li>
+  <li><a href="#validation-rules">15. Validation Rules</a></li>
+  <li><a href="#out-of-scope-for-v01">16. Out of Scope for v0.1</a></li>
+  <li><a href="#examples">17. Examples</a></li>
+  <li><a href="#summary">18. Summary</a></li>
 </ul>
 
 <hr/>
@@ -34,29 +39,41 @@ Definition of the FROG type system for <strong>.frog</strong> files<br/>
 <h2 id="overview">1. Overview</h2>
 
 <p>
-The FROG type system defines how values are described, validated, connected, and converted inside a <code>.frog</code> program.
+The FROG type system defines how value types are represented, compared, validated, and connected in canonical
+<code>.frog</code> source.
 </p>
 
 <p>
-For v0.1, the type system is intentionally small and explicit.
+The type system applies to value-carrying elements such as:
+</p>
+
+<ul>
+  <li>public interface ports,</li>
+  <li>diagram ports and edges,</li>
+  <li>structure boundaries,</li>
+  <li>widget primary values,</li>
+  <li>typed property values when a widget member is typed,</li>
+  <li>typed configuration values such as <code>default</code> or <code>initial</code>.</li>
+</ul>
+
+<p>
+The type system does not define widget identity, widget references, UI object semantics, public API structure,
+or execution ordering.
+It defines the meaning and compatibility of values.
+</p>
+
+<p>
+FROG v0.1 uses a deliberately small and explicit type system.
 It provides:
 </p>
 
 <ul>
   <li>a fixed set of built-in primitive types,</li>
-  <li>a minimal set of built-in composite types,</li>
-  <li>a canonical textual type syntax for use in <code>.frog</code> files,</li>
+  <li>a minimal built-in array type family,</li>
+  <li>a canonical textual syntax for type expressions,</li>
+  <li>deterministic type identity rules,</li>
   <li>deterministic compatibility and coercion rules.</li>
 </ul>
-
-<p>
-The type system applies to interface ports, diagram ports, structure boundaries, widget primary values, constants, and any other value-carrying element defined by the FROG expression format.
-</p>
-
-<p>
-The type system does not define widget classes, widget object references, or execution ordering.
-It defines value types and compatibility rules.
-</p>
 
 <hr/>
 
@@ -67,11 +84,12 @@ The FROG type system is designed to satisfy the following goals:
 </p>
 
 <ul>
-  <li><strong>Clarity</strong> — types MUST be readable and unambiguous in source form.</li>
-  <li><strong>Determinism</strong> — type compatibility and coercion behavior MUST be fully specified.</li>
-  <li><strong>Portability</strong> — type meaning MUST NOT depend on platform-specific compiler behavior.</li>
-  <li><strong>Efficiency</strong> — types SHOULD map cleanly to compiled and runtime representations.</li>
-  <li><strong>Graph usability</strong> — the system SHOULD support practical graphical programming with limited but useful implicit coercions.</li>
+  <li><strong>Clarity</strong> — type expressions MUST be readable and unambiguous in canonical source.</li>
+  <li><strong>Determinism</strong> — type identity, compatibility, and coercion behavior MUST be explicitly defined.</li>
+  <li><strong>Portability</strong> — type meaning MUST NOT depend on host-language aliases or platform-specific compiler defaults.</li>
+  <li><strong>Graph usability</strong> — the language SHOULD support practical graphical programming with limited but useful implicit coercions.</li>
+  <li><strong>Durability</strong> — canonical type expressions SHOULD remain stable across editors, validators, and runtimes.</li>
+  <li><strong>Separation of concerns</strong> — value typing MUST remain distinct from widget object models, public interface structure, and execution scheduling.</li>
 </ul>
 
 <hr/>
@@ -79,16 +97,17 @@ The FROG type system is designed to satisfy the following goals:
 <h2 id="scope-for-v01">3. Scope for v0.1</h2>
 
 <p>
-FROG v0.1 specifies a minimal built-in type system consisting of:
+FROG v0.1 standardizes:
 </p>
 
 <ul>
-  <li>primitive scalar types,</li>
-  <li>array types,</li>
+  <li>built-in primitive scalar types,</li>
+  <li>built-in array type expressions,</li>
+  <li>canonical type-expression syntax,</li>
   <li>type identity rules,</li>
-  <li>type compatibility rules,</li>
-  <li>implicit numeric coercion rules,</li>
-  <li>implicit array coercion rules based on element coercion and shape preservation.</li>
+  <li>type compatibility categories,</li>
+  <li>implicit numeric coercions,</li>
+  <li>implicit array coercions based on element coercion and shape preservation.</li>
 </ul>
 
 <p>
@@ -101,7 +120,9 @@ FROG v0.1 does not yet standardize:
   <li>records or structs,</li>
   <li>enums,</li>
   <li>class types,</li>
-  <li>generic type declarations beyond arrays.</li>
+  <li>sum or variant types,</li>
+  <li>generic declarations beyond arrays,</li>
+  <li>units-of-measure type systems.</li>
 </ul>
 
 <hr/>
@@ -109,41 +130,55 @@ FROG v0.1 does not yet standardize:
 <h2 id="relation-with-other-specifications">4. Relation with Other Specifications</h2>
 
 <p>
-This document defines the type system used by other parts of the FROG specification.
+This document defines the value type system used by the rest of the FROG specification.
 </p>
 
 <ul>
   <li><code>Interface.md</code> uses the type system for public input and output ports.</li>
-  <li><code>Diagram.md</code> uses the type system for graph ports, wires, structure boundaries, and primitive signatures.</li>
+  <li><code>Diagram.md</code> uses the type system for graph ports, edge validation, structure boundaries, and typed configuration fields.</li>
   <li><code>Widget.md</code> uses the type system for the <code>value_type</code> of value-carrying widgets.</li>
-  <li><code>Front panel.md</code> serializes widgets that may declare a <code>value_type</code>, but does not redefine the type system.</li>
+  <li><code>Front panel.md</code> serializes widgets that may declare a <code>value_type</code>, but does not redefine type meaning.</li>
   <li><code>Widget interaction.md</code> may reference typed widget members, but does not redefine type identity or coercion behavior.</li>
+  <li><code>Libraries/Core.md</code> relies on this document for primitive port typing, implicit coercions, and configuration compatibility such as <code>frog.core.delay.initial</code>.</li>
 </ul>
 
 <p>
-This document defines value types.
-It does not define widget identity, widget references, or UI object semantics.
+This document defines value types only.
+It does not define widget references, widget classes, or UI object semantics.
 </p>
 
 <hr/>
 
-<h2 id="location-in-a-frog-file">5. Location in a <code>.frog</code> File</h2>
+<h2 id="where-types-appear-in-source">5. Where Types Appear in Source</h2>
 
 <p>
-Types are represented directly where values are declared or constrained.
-For example, interface ports and other typed elements use canonical textual type expressions such as:
+FROG v0.1 does not require a separate top-level <code>types</code> section.
+Instead, types appear directly where values are declared or constrained.
 </p>
 
-<pre>
-{
-  "id": "input_signal",
-  "type": "f64"
-}
-</pre>
+<p>
+Examples include:
+</p>
+
+<ul>
+  <li>interface ports,</li>
+  <li>widget <code>value_type</code>,</li>
+  <li>structure boundary terminals,</li>
+  <li>primitive port signatures defined by libraries,</li>
+  <li>typed configuration values such as interface <code>default</code> or delay <code>initial</code>.</li>
+</ul>
 
 <p>
-The top-level <code>.frog</code> file does not require a separate mandatory <code>types</code> section in v0.1.
-Type definitions are embedded by reference through canonical type expressions.
+Example:
+</p>
+
+<pre><code>{
+  "id": "signal",
+  "type": "array&lt;f64&gt;"
+}</code></pre>
+
+<p>
+The type system therefore works by reference through canonical textual type expressions embedded in source objects.
 </p>
 
 <hr/>
@@ -151,7 +186,7 @@ Type definitions are embedded by reference through canonical type expressions.
 <h2 id="canonical-type-expressions">6. Canonical Type Expressions</h2>
 
 <p>
-FROG v0.1 uses a canonical textual syntax to represent types in source files.
+FROG v0.1 uses a canonical textual syntax to represent value types in source files.
 This syntax is normative.
 </p>
 
@@ -161,8 +196,7 @@ This syntax is normative.
 Primitive types are written as a single identifier:
 </p>
 
-<pre>
-bool
+<pre><code>bool
 i8
 i16
 i32
@@ -173,8 +207,7 @@ u32
 u64
 f32
 f64
-string
-</pre>
+string</code></pre>
 
 <h3>6.2 Array type syntax</h3>
 
@@ -182,13 +215,13 @@ string
 Dynamic-size arrays are written as:
 </p>
 
-<pre>array&lt;T&gt;</pre>
+<pre><code>array&lt;T&gt;</code></pre>
 
 <p>
 Fixed-size arrays are written as:
 </p>
 
-<pre>array&lt;T, N&gt;</pre>
+<pre><code>array&lt;T, N&gt;</code></pre>
 
 <p>
 Where:
@@ -212,13 +245,11 @@ Where:
 Examples of canonical form:
 </p>
 
-<pre>
-i32
+<pre><code>i32
 f64
 array&lt;u8&gt;
 array&lt;f32, 256&gt;
-array&lt;array&lt;i16, 8&gt;, 4&gt;
-</pre>
+array&lt;array&lt;i16, 8&gt;, 4&gt;</code></pre>
 
 <hr/>
 
@@ -262,8 +293,8 @@ array&lt;array&lt;i16, 8&gt;, 4&gt;
 </ul>
 
 <p>
-The exact internal encoding of <code>string</code> is not further standardized in v0.1.
-Only its identity as a distinct built-in type is specified here.
+The exact internal encoding and memory representation of <code>string</code> are not further standardized in v0.1.
+Only its identity as a distinct built-in value type is specified here.
 </p>
 
 <hr/>
@@ -285,11 +316,9 @@ FROG v0.1 defines two built-in array forms:
 A dynamic array has a known element type but no compile-time fixed length in the type expression itself.
 </p>
 
-<p>
-Example:
-</p>
+<p>Example:</p>
 
-<pre>array&lt;f64&gt;</pre>
+<pre><code>array&lt;f64&gt;</code></pre>
 
 <h3>8.2 Fixed-size arrays</h3>
 
@@ -297,23 +326,26 @@ Example:
 A fixed-size array includes both its element type and its size in the type identity.
 </p>
 
-<p>
-Example:
-</p>
+<p>Example:</p>
 
-<pre>array&lt;u8, 1024&gt;</pre>
+<pre><code>array&lt;u8, 1024&gt;</code></pre>
 
 <h3>8.3 Nested arrays</h3>
 
 <p>
-Arrays may be nested.
+Arrays MAY be nested.
 </p>
+
+<p>Example:</p>
+
+<pre><code>array&lt;array&lt;f32, 16&gt;, 8&gt;</code></pre>
+
+<h3>8.4 Array meaning</h3>
 
 <p>
-Example:
+In v0.1, arrays are homogeneous:
+all elements of an array share the same declared element type.
 </p>
-
-<pre>array&lt;array&lt;f32, 16&gt;, 8&gt;</pre>
 
 <hr/>
 
@@ -342,6 +374,13 @@ Two types are identical if and only if their canonical meaning is exactly the sa
   <li><code>array&lt;i32&gt;</code> is not identical to <code>array&lt;u32&gt;</code></li>
 </ul>
 
+<h3>9.3 Canonical equality of type expressions</h3>
+
+<p>
+Type identity is based on canonical meaning, not on author formatting choices.
+For example, whitespace differences that do not change parsing do not change identity.
+</p>
+
 <hr/>
 
 <h2 id="type-compatibility">10. Type Compatibility</h2>
@@ -358,7 +397,7 @@ Type compatibility in FROG v0.1 is defined by the following categories:
 </ul>
 
 <p>
-Unless otherwise defined, a connection is valid when:
+Unless otherwise defined by a stricter profile, a typed connection or assignment context is valid when:
 </p>
 
 <ul>
@@ -367,22 +406,27 @@ Unless otherwise defined, a connection is valid when:
   <li>an explicit conversion node is inserted by the author.</li>
 </ul>
 
+<p>
+This document defines the compatibility of value types only.
+It does not define UI sequencing compatibility, widget-reference compatibility, or execution ordering semantics.
+</p>
+
 <hr/>
 
 <h2 id="implicit-numeric-coercions">11. Implicit Numeric Coercions</h2>
 
 <p>
-FROG v0.1 allows implicit coercions between numeric types.
-These coercions are part of the language semantics.
-They are not user-authored diagram nodes in source form.
+FROG v0.1 allows implicit coercions between numeric scalar types.
+These coercions are part of language semantics.
+They are not user-authored diagram nodes in canonical source form.
 </p>
 
 <p>
-An IDE MAY visually indicate an implicit coercion, for example by displaying a coercion marker on the target terminal.
+An IDE MAY visually indicate an implicit coercion, for example through a coercion marker on the target terminal.
 Such visualization is an IDE concern and does not require an explicit source node.
 </p>
 
-<h3>11.1 Numeric types</h3>
+<h3>11.1 Numeric built-in types</h3>
 
 <p>
 For the purpose of implicit coercion, the numeric built-in types are:
@@ -406,7 +450,7 @@ The following built-in types are not numeric:
 <h3>11.2 General rule</h3>
 
 <p>
-Any numeric scalar type may be implicitly coerced to any other numeric scalar type.
+Any numeric scalar type MAY be implicitly coerced to any other numeric scalar type.
 The conversion result MUST follow the rules below.
 </p>
 
@@ -479,11 +523,16 @@ No implicit coercion is defined in v0.1 for:
 
 <hr/>
 
-<h2 id="array-coercions">12. Array Coercions</h2>
+<h2 id="implicit-array-coercions">12. Implicit Array Coercions</h2>
 
 <p>
-FROG v0.1 allows implicit coercion between array types when coercion is valid for the array element type and the array shape remains compatible.
+FROG v0.1 allows implicit coercion between array types when:
 </p>
+
+<ul>
+  <li>coercion is valid for the array element type, and</li>
+  <li>array shape remains compatible.</li>
+</ul>
 
 <h3>12.1 Element-wise coercion</h3>
 
@@ -492,8 +541,8 @@ If <code>T</code> may be implicitly coerced to <code>U</code>, then:
 </p>
 
 <ul>
-  <li><code>array&lt;T&gt;</code> may be implicitly coerced to <code>array&lt;U&gt;</code>,</li>
-  <li><code>array&lt;T, N&gt;</code> may be implicitly coerced to <code>array&lt;U, N&gt;</code>.</li>
+  <li><code>array&lt;T&gt;</code> MAY be implicitly coerced to <code>array&lt;U&gt;</code>,</li>
+  <li><code>array&lt;T, N&gt;</code> MAY be implicitly coerced to <code>array&lt;U, N&gt;</code>.</li>
 </ul>
 
 <p>
@@ -513,19 +562,98 @@ Implicit array coercion never changes array shape.
   <li><code>array&lt;i32&gt;</code> to <code>i32</code> is not allowed.</li>
 </ul>
 
-<h3>12.3 Nested arrays</h3>
+<h3>12.3 Dynamic versus fixed-size arrays</h3>
+
+<p>
+Dynamic and fixed-size arrays are distinct types.
+No implicit coercion is defined in base v0.1 between:
+</p>
+
+<ul>
+  <li><code>array&lt;T&gt;</code> and <code>array&lt;T, N&gt;</code>,</li>
+  <li><code>array&lt;T, N&gt;</code> and <code>array&lt;T&gt;</code>.</li>
+</ul>
+
+<p>
+A stricter profile MAY define explicit conversion mechanisms for such cases, but they are not implicit in v0.1.
+</p>
+
+<h3>12.4 Nested arrays</h3>
 
 <p>
 Nested arrays follow the same rule recursively.
-If the inner element type coercion is valid and shape is preserved at each fixed-size level, the nested array coercion is valid.
+If the inner element-type coercion is valid and shape is preserved at each fixed-size level, the nested array coercion is valid.
 </p>
 
 <hr/>
 
-<h2 id="explicit-conversion-nodes">13. Explicit Conversion Nodes</h2>
+<h2 id="typed-value-compatibility-contexts">13. Typed Value Compatibility Contexts</h2>
 
 <p>
-FROG implementations MAY define explicit conversion nodes such as numeric conversion, cast, or type adaptation nodes.
+The following source contexts rely on type compatibility in v0.1:
+</p>
+
+<h3>13.1 Diagram edges</h3>
+
+<p>
+A diagram edge connecting a source output port to a destination input port is type-valid only if:
+</p>
+
+<ul>
+  <li>the source and destination value types are identical, or</li>
+  <li>an implicit coercion is defined by this document, or</li>
+  <li>an explicit conversion node is inserted.</li>
+</ul>
+
+<h3>13.2 Interface defaults</h3>
+
+<p>
+An interface input <code>default</code> value, when present, MUST be compatible with the declared port type.
+This document defines that compatibility.
+</p>
+
+<h3>13.3 Widget primary values</h3>
+
+<p>
+A value-carrying widget <code>value_type</code> MUST be a valid canonical FROG type expression.
+When the widget participates naturally in the diagram through <code>widget_value</code>,
+the carried value MUST follow that declared type.
+</p>
+
+<h3>13.4 Widget properties and methods</h3>
+
+<p>
+When widget properties or method parameters/results are typed, those types MUST also use valid FROG type expressions or profile-defined extensions compatible with this document.
+</p>
+
+<h3>13.5 Local-memory configuration</h3>
+
+<p>
+For typed stateful primitives such as <code>frog.core.delay</code>:
+</p>
+
+<ul>
+  <li>the carried input and output value type MUST be well-defined,</li>
+  <li>the <code>initial</code> value MUST be compatible with that carried type.</li>
+</ul>
+
+<p>
+This document defines compatibility.
+The state semantics themselves are defined elsewhere.
+</p>
+
+<h3>13.6 Structure boundaries</h3>
+
+<p>
+When a structure boundary declares a value type, all boundary crossings MUST satisfy the same compatibility rules defined here.
+</p>
+
+<hr/>
+
+<h2 id="explicit-conversion-nodes">14. Explicit Conversion Nodes</h2>
+
+<p>
+FROG implementations MAY define explicit conversion nodes such as numeric conversion, cast, or type-adaptation nodes.
 These nodes are distinct from implicit coercions.
 </p>
 
@@ -536,17 +664,27 @@ An explicit conversion node:
 <ul>
   <li>is authored intentionally in the diagram,</li>
   <li>is represented as a real node in source form,</li>
-  <li>may be used when no implicit coercion is defined,</li>
-  <li>may also be used to make intent explicit even when an implicit coercion would be legal.</li>
+  <li>MAY be used when no implicit coercion is defined,</li>
+  <li>MAY also be used to make intent explicit even when an implicit coercion would be legal.</li>
 </ul>
 
 <p>
-The exact standard library of explicit conversion nodes is outside the scope of this document, but the distinction between implicit coercion and explicit conversion is normative.
+The exact standardized library of explicit conversion nodes is outside the scope of this document in base v0.1.
+However, the distinction between:
+</p>
+
+<ul>
+  <li>implicit language-defined coercion, and</li>
+  <li>explicit authored conversion</li>
+</ul>
+
+<p>
+is normative.
 </p>
 
 <hr/>
 
-<h2 id="validation-rules">14. Validation Rules</h2>
+<h2 id="validation-rules">15. Validation Rules</h2>
 
 <p>
 A FROG validator MUST apply the following rules:
@@ -557,17 +695,34 @@ A FROG validator MUST apply the following rules:
   <li>every referenced built-in type name MUST be valid,</li>
   <li>every fixed array size <code>N</code> MUST be a positive integer literal,</li>
   <li>connections between typed ports MUST be accepted only if they are exact matches, implicitly coercible, or explicitly converted through a node,</li>
-  <li>implicit coercions MUST follow the deterministic rules defined in this document,</li>
-  <li>shape-changing implicit array coercions MUST be rejected.</li>
+  <li>implicit numeric coercions MUST follow the deterministic rules defined in this document,</li>
+  <li>implicit array coercions MUST preserve shape,</li>
+  <li>implicit coercion between dynamic and fixed-size arrays MUST be rejected in base v0.1,</li>
+  <li>typed configuration values such as <code>default</code> or <code>initial</code> MUST be compatible with their declared type.</li>
 </ul>
 
 <p>
-A validator MAY report warnings or informational diagnostics for implicit coercions, but if a coercion is defined by this specification, the connection is valid.
+A validator MAY report warnings or informational diagnostics for implicit coercions, but if a coercion is defined by this specification, the typed connection is valid.
 </p>
+
+<p>
+Validators SHOULD diagnose at least the following error classes:
+</p>
+
+<ul>
+  <li>invalid canonical type expression,</li>
+  <li>unknown built-in type name,</li>
+  <li>invalid fixed array size,</li>
+  <li>shape-changing implicit array coercion,</li>
+  <li>attempted implicit dynamic/fixed array coercion,</li>
+  <li>disallowed implicit coercion between non-numeric scalar types,</li>
+  <li>type-incompatible <code>default</code> value,</li>
+  <li>type-incompatible <code>initial</code> value.</li>
+</ul>
 
 <hr/>
 
-<h2 id="out-of-scope-for-v01">15. Out of Scope for v0.1</h2>
+<h2 id="out-of-scope-for-v01">16. Out of Scope for v0.1</h2>
 
 <ul>
   <li>user-defined named types,</li>
@@ -578,85 +733,96 @@ A validator MAY report warnings or informational diagnostics for implicit coerci
   <li>generic declarations beyond arrays,</li>
   <li>standardized custom type registries,</li>
   <li>ownership and borrowing systems,</li>
-  <li>units-of-measure type systems.</li>
+  <li>units-of-measure type systems,</li>
+  <li>implicit coercion between dynamic and fixed-size arrays.</li>
 </ul>
 
 <hr/>
 
-<h2 id="examples">16. Examples</h2>
+<h2 id="examples">17. Examples</h2>
 
-<h3>16.1 Valid primitive type expressions</h3>
+<h3>17.1 Valid primitive type expressions</h3>
 
-<pre>
-bool
+<pre><code>bool
 i32
 f64
-string
-</pre>
+string</code></pre>
 
-<h3>16.2 Valid array type expressions</h3>
+<h3>17.2 Valid array type expressions</h3>
 
-<pre>
-array&lt;f64&gt;
+<pre><code>array&lt;f64&gt;
 array&lt;u8, 1024&gt;
-array&lt;array&lt;i16, 8&gt;, 4&gt;
-</pre>
+array&lt;array&lt;i16, 8&gt;, 4&gt;</code></pre>
 
-<h3>16.3 Identity examples</h3>
+<h3>17.3 Identity examples</h3>
 
 <ul>
-  <li><code>i32</code> and <code>i32</code> are identical</li>
-  <li><code>i32</code> and <code>u32</code> are not identical</li>
-  <li><code>array&lt;f64, 16&gt;</code> and <code>array&lt;f64, 16&gt;</code> are identical</li>
-  <li><code>array&lt;f64, 16&gt;</code> and <code>array&lt;f64, 32&gt;</code> are not identical</li>
+  <li><code>i32</code> and <code>i32</code> are identical.</li>
+  <li><code>i32</code> and <code>u32</code> are not identical.</li>
+  <li><code>array&lt;f64, 16&gt;</code> and <code>array&lt;f64, 16&gt;</code> are identical.</li>
+  <li><code>array&lt;f64, 16&gt;</code> and <code>array&lt;f64, 32&gt;</code> are not identical.</li>
+  <li><code>array&lt;f64&gt;</code> and <code>array&lt;f64, 16&gt;</code> are not identical.</li>
 </ul>
 
-<h3>16.4 Valid implicit coercions</h3>
+<h3>17.4 Valid implicit coercions</h3>
 
 <ul>
   <li><code>i32</code> → <code>f64</code></li>
   <li><code>u8</code> → <code>i16</code></li>
   <li><code>f64</code> → <code>i32</code></li>
   <li><code>array&lt;i32, 16&gt;</code> → <code>array&lt;f64, 16&gt;</code></li>
+  <li><code>array&lt;i32&gt;</code> → <code>array&lt;f64&gt;</code></li>
 </ul>
 
-<h3>16.5 Invalid implicit coercions</h3>
+<h3>17.5 Invalid implicit coercions</h3>
 
 <ul>
   <li><code>bool</code> → <code>i32</code></li>
   <li><code>string</code> → <code>f64</code></li>
   <li><code>array&lt;i32, 16&gt;</code> → <code>array&lt;f64, 32&gt;</code></li>
   <li><code>array&lt;i32&gt;</code> → <code>i32</code></li>
+  <li><code>array&lt;f64&gt;</code> → <code>array&lt;f64, 16&gt;</code></li>
+  <li><code>array&lt;u8, 16&gt;</code> → <code>array&lt;u8&gt;</code></li>
 </ul>
 
-<h3>16.6 Interface example</h3>
+<h3>17.6 Interface example</h3>
 
-<pre>
-"interface": {
+<pre><code>"interface": {
   "inputs": [
     { "id": "signal", "type": "array&lt;f64&gt;" },
-    { "id": "gain", "type": "f64" }
+    { "id": "gain", "type": "f64" },
+    { "id": "enable", "type": "bool", "connection": "optional", "default": true }
   ],
   "outputs": [
     { "id": "scaled", "type": "array&lt;f64&gt;" }
   ]
-}
-</pre>
+}</code></pre>
 
-<h3>16.7 Widget example</h3>
+<h3>17.7 Widget example</h3>
 
-<pre>
-{
+<pre><code>{
   "id": "ctrl_gain",
   "role": "control",
   "widget": "frog.ui.standard.numeric_control",
   "value_type": "f64"
-}
-</pre>
+}</code></pre>
+
+<h3>17.8 Delay example</h3>
+
+<pre><code>{
+  "id": "delay_1",
+  "kind": "primitive",
+  "type": "frog.core.delay",
+  "initial": 0.0
+}</code></pre>
+
+<p>
+In this example, the <code>initial</code> value is compatible with a floating-point carried value type.
+</p>
 
 <hr/>
 
-<h2 id="summary">17. Summary</h2>
+<h2 id="summary">18. Summary</h2>
 
 <p>
 The FROG type system provides the canonical value-type foundation for v0.1.
@@ -667,9 +833,11 @@ The FROG type system provides the canonical value-type foundation for v0.1.
   <li>It defines canonical textual type expressions.</li>
   <li>It defines exact type identity and deterministic compatibility rules.</li>
   <li>It allows limited implicit coercions for numeric and shape-preserving array cases.</li>
+  <li>It rejects implicit coercion for non-numeric scalar mixes and for dynamic/fixed array shape changes.</li>
   <li>It remains separate from widget identity, widget references, and UI object semantics.</li>
 </ul>
 
 <p>
-This gives FROG a simple, explicit, and portable type foundation suitable for graphical programming, validation, and execution-oriented lowering.
+This gives FROG a simple, explicit, portable, and durable type foundation suitable for graphical programming,
+validation, and execution-oriented lowering.
 </p>
