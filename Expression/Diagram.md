@@ -568,7 +568,45 @@ The <code>ref</code> port is an opaque widget reference token.
 The optional <code>ui_in</code> and <code>ui_out</code> ports are opaque UI sequencing ports.
 </p>
 
-<h3>9.4 Structure node ports</h3>
+<h3>9.4 Primitive-local member descriptors</h3>
+
+<p>
+Widget interaction primitives carry widget member metadata locally on the primitive node.
+In base v0.1, the widget identity itself is carried by the incoming <code>ref</code> edge.
+</p>
+
+<p>
+Canonical property descriptor:
+</p>
+
+<pre>
+"widget_member": {
+  "member": "visible"
+}
+</pre>
+
+<p>
+Canonical property descriptor for a widget part:
+</p>
+
+<pre>
+"widget_member": {
+  "part": "label",
+  "member": "text"
+}
+</pre>
+
+<p>
+Canonical method descriptor:
+</p>
+
+<pre>
+"widget_method": {
+  "name": "focus"
+}
+</pre>
+
+<h3>9.5 Structure node ports</h3>
 
 <p>
 For a <code>structure</code> node, external ports are resolved from:
@@ -591,7 +629,7 @@ This means, for example:
   <li>a <code>while_loop</code> does not expose its continuation terminal externally in base v0.1.</li>
 </ul>
 
-<h3>9.5 Sub-FROG node ports</h3>
+<h3>9.6 Sub-FROG node ports</h3>
 
 <p>
 A <code>subfrog</code> node resolves its ports from the public interface of the referenced FROG.
@@ -965,45 +1003,7 @@ This path is used for:
   <li>addressing widget parts.</li>
 </ul>
 
-<h3>17.3 Primitive-local member descriptors</h3>
-
-<p>
-In the base diagram model of v0.1, widget identity is carried by the incoming reference edge.
-Therefore, property and method primitives describe only the targeted member.
-</p>
-
-<p>
-Canonical property member descriptor:
-</p>
-
-<pre>
-{
-  "member": "text"
-}
-</pre>
-
-<p>
-Canonical property member descriptor for a widget part:
-</p>
-
-<pre>
-{
-  "part": "label",
-  "member": "text"
-}
-</pre>
-
-<p>
-Canonical method descriptor:
-</p>
-
-<pre>
-{
-  "name": "focus"
-}
-</pre>
-
-<h3>17.4 UI sequencing ports</h3>
+<h3>17.3 UI sequencing ports</h3>
 
 <p>
 The optional <code>ui_in</code> and <code>ui_out</code> ports MAY be used to make ordering of UI side effects explicit.
@@ -1244,7 +1244,7 @@ Under a validated program and a compatible runtime profile, the observable execu
       "id": "read_label_text",
       "kind": "primitive",
       "type": "frog.ui.property_read",
-      "widget_property": {
+      "widget_member": {
         "part": "label",
         "member": "text"
       }
@@ -1279,7 +1279,7 @@ Under a validated program and a compatible runtime profile, the observable execu
       "id": "write_label_text",
       "kind": "primitive",
       "type": "frog.ui.property_write",
-      "widget_property": {
+      "widget_member": {
         "part": "label",
         "member": "text"
       }
@@ -1470,13 +1470,13 @@ Under a validated program and a compatible runtime profile, the observable execu
     },
     {
       "id": "e2",
-      "from": { "node": "delay_1", "port": "value" },
+      "from": { "node": "delay_1", "port": "out" },
       "to": { "node": "add_1", "port": "b" }
     },
     {
       "id": "e3",
       "from": { "node": "add_1", "port": "result" },
-      "to": { "node": "delay_1", "port": "next" }
+      "to": { "node": "delay_1", "port": "in" }
     },
     {
       "id": "e4",
