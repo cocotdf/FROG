@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="../FROG logo.svg" alt="FROG logo" width="150" />
-</p>
-
 <h1 align="center">🐸 FROG Front Panel Specification</h1>
 
 <p align="center">
@@ -17,7 +13,7 @@
   <li><a href="#overview">1. Overview</a></li>
   <li><a href="#design-goals">2. Design Goals</a></li>
   <li><a href="#relation-with-other-specifications">3. Relation with Other Specifications</a></li>
-  <li><a href="#location-in-a-frog-file">4. Location in a .frog File</a></li>
+  <li><a href="#location-in-a-frog-file">4. Location in a <code>.frog</code> File</a></li>
   <li><a href="#front-panel-structure">5. Front Panel Structure</a></li>
   <li><a href="#canvas-and-coordinate-system">6. Canvas and Coordinate System</a></li>
   <li><a href="#widget-instances">7. Widget Instances</a></li>
@@ -131,7 +127,7 @@ It declares widget instances and presentation-related information only.
 
 <hr/>
 
-<h2 id="location-in-a-frog-file">4. Location in a .frog File</h2>
+<h2 id="location-in-a-frog-file">4. Location in a <code>.frog</code> File</h2>
 
 <p>
 The <code>front_panel</code> section appears as a top-level object in the canonical <code>.frog</code> source file.
@@ -301,8 +297,7 @@ A front panel MAY contain:
 </ul>
 
 <p>
-Canonical source serialization SHOULD store design-time configuration and optional default state,
-not arbitrary runtime state snapshots.
+Canonical source serialization SHOULD store design-time configuration and optional default state, not arbitrary runtime state snapshots.
 </p>
 
 <hr/>
@@ -928,20 +923,17 @@ Validators SHOULD diagnose at least the following error classes:
 <h2 id="summary">18. Summary</h2>
 
 <p>
-The front panel defines the interaction layer of a FROG through a structured widget-based model.
+The <code>front_panel</code> section is the canonical source-level description of user-facing UI composition in FROG.
 </p>
 
 <ul>
-  <li>Widgets are declared as widget instances defined by <code>Widget.md</code>.</li>
-  <li>Composition is expressed through top-level widgets and container-owned children.</li>
-  <li>Layout defines geometry and visual ordering only.</li>
-  <li>Style defines themes, fonts, colors, variables, shared styles, and overrides.</li>
-  <li>UI libraries allow reusable widget vocabularies beyond the minimal built-in set.</li>
+  <li>It declares widget instances, their composition, their layout, and their visual styling.</li>
+  <li>It remains distinct from the public logical interface and from the executable diagram.</li>
   <li>Ordinary widget value participation is represented canonically in the diagram through <code>widget_value</code>.</li>
-  <li>Object-style widget access is represented canonically in the diagram through <code>widget_reference</code> and <code>frog.ui.*</code> primitives.</li>
-  <li>The front panel does not define the public API and does not define executable bindings.</li>
+  <li>Object-style widget interaction is represented canonically in the diagram through <code>widget_reference</code> and <code>frog.ui.*</code> primitives.</li>
+  <li>Layout and style remain visual concerns and MUST NOT alter program semantics.</li>
 </ul>
 
 <p>
-This keeps the UI model explicit, durable, and editor-friendly while preserving a clean separation from interface semantics and execution semantics.
+This gives FROG a durable, explicit, and tool-agnostic source model for front-panel composition without collapsing UI declaration into executable graph semantics.
 </p>
