@@ -17,7 +17,7 @@
   <li><a href="#overview">1. Overview</a></li>
   <li><a href="#scope-of-this-directory">2. Scope of this Directory</a></li>
   <li><a href="#specification-documents">3. Specification Documents</a></li>
-  <li><a href="#what-a-frog-file-describes">4. What a .frog File Describes</a></li>
+  <li><a href="#what-a-frog-file-describes">4. What a <code>.frog</code> File Describes</a></li>
   <li><a href="#representation-levels">5. Representation Levels</a></li>
   <li><a href="#file-tree-and-artifact-families">6. File Tree and Artifact Families</a></li>
   <li><a href="#file-types">7. File Types</a></li>
@@ -42,9 +42,8 @@ This directory defines the canonical source specification of FROG — Free Open 
 </p>
 
 <p>
-The fundamental executable unit of the language is a <strong>FROG</strong>.
-A FROG is a complete graphical dataflow program represented by a structured JSON source file with the
-<code>.frog</code> extension.
+The fundamental executable unit of the language is a FROG.
+A FROG is a complete graphical dataflow program represented by a structured JSON source file with the <code>.frog</code> extension.
 </p>
 
 <p>
@@ -99,7 +98,7 @@ This directory focuses on the authoritative source form.
 <h2 id="specification-documents">3. Specification Documents</h2>
 
 <p>
-The FROG Expression is defined through the following documents:
+The FROG Expression is defined through the following documents in this directory:
 </p>
 
 <ul>
@@ -142,9 +141,23 @@ In particular:
   <li><code>Widget interaction.md</code> defines how executable diagrams may interact with widgets through standardized diagram-level interaction mechanisms.</li>
 </ul>
 
+<p>
+The current source specification also depends on a small set of normative documents currently located outside this directory:
+</p>
+
+<ul>
+  <li><code>Language/Control structures.md</code> — structure families such as <code>case</code>, <code>for_loop</code>, and <code>while_loop</code>,</li>
+  <li><code>Language/State and cycles.md</code> — local memory and cycle validity,</li>
+  <li><code>Libraries/Core.md</code> — standard primitive definitions such as <code>frog.core.add</code>, <code>frog.core.mul</code>, and <code>frog.core.delay</code>.</li>
+</ul>
+
+<p>
+Accordingly, <code>Expression/</code> is the canonical home of the source-format specification, while some execution-related normative dependencies are still referenced from other repository directories in the current repository layout.
+</p>
+
 <hr/>
 
-<h2 id="what-a-frog-file-describes">4. What a .frog File Describes</h2>
+<h2 id="what-a-frog-file-describes">4. What a <code>.frog</code> File Describes</h2>
 
 <p>
 A canonical <code>.frog</code> source file describes a complete FROG program.
@@ -193,9 +206,6 @@ FROG distinguishes three conceptual representation levels:
 
 <p>
 This directory primarily specifies the FROG Expression.
-</p>
-
-<p>
 Tooling MAY reconstruct a Program Model from the Expression and MAY derive an Execution IR from the validated Program Model.
 However, the canonical editable source of a FROG remains the <code>.frog</code> file itself.
 </p>
@@ -336,8 +346,7 @@ A canonical <code>.frog</code> source file MAY additionally contain:
 
 <p>
 The <code>front_panel</code> section is required even for programs that may execute in a headless context.
-A runtime MAY ignore the interaction layer at execution time when appropriate,
-but the section remains part of the canonical source description.
+A runtime MAY ignore the interaction layer at execution time when appropriate, but the section remains part of the canonical source description.
 </p>
 
 <p>
@@ -394,14 +403,13 @@ It is the authoritative source-level execution structure of the program.
 </p>
 
 <p>
-Detailed specifications: <code>Diagram.md</code>, <code>Type.md</code>, <code>Widget interaction.md</code>
+Detailed specifications: <code>Diagram.md</code>, <code>Type.md</code>, <code>Widget interaction.md</code>, <code>Language/Control structures.md</code>, <code>Language/State and cycles.md</code>, <code>Libraries/Core.md</code>
 </p>
 
 <h3>10.5 Front Panel</h3>
 
 <p>
-Required section defining the user interaction layer of the FROG through widget instances,
-layout, style, and related UI composition data.
+Required section defining the user interaction layer of the FROG through widget instances, layout, style, and related UI composition data.
 </p>
 
 <p>
@@ -422,8 +430,7 @@ Detailed specification: <code>Icon.md</code>
 
 <p>
 Optional section containing IDE-facing preferences serialized with the FROG itself.
-This section belongs to the FROG Expression because a FROG behaves as a durable editable program unit
-and may embed source-level IDE interpretation preferences.
+This section belongs to the FROG Expression because a FROG behaves as a durable editable program unit and may embed source-level IDE interpretation preferences.
 </p>
 
 <p>
@@ -506,6 +513,22 @@ This model governs diagram-level interaction with widgets through standardized m
 
 <p>
 These interactions are represented inside the executable diagram rather than as a dedicated top-level source section.
+</p>
+
+<h3>11.4 Structural Execution and Local Memory</h3>
+
+<p>
+The current source specification also depends on normative execution subsystems that are not yet physically colocated in this directory:
+</p>
+
+<ul>
+  <li><code>Language/Control structures.md</code> defines structure families and region-owned execution semantics,</li>
+  <li><code>Language/State and cycles.md</code> defines local memory and cycle validity,</li>
+  <li><code>Libraries/Core.md</code> defines the standard primitive catalog used by executable diagrams.</li>
+</ul>
+
+<p>
+These subsystems are still cross-cutting with respect to the FROG Expression because they directly constrain what a valid <code>diagram</code> means.
 </p>
 
 <hr/>
@@ -591,6 +614,7 @@ Validation includes, as applicable:
   <li>diagram graph validation,</li>
   <li>widget and front-panel validation,</li>
   <li>widget interaction validation,</li>
+  <li>control-structure validation,</li>
   <li>cycle and local-memory validation.</li>
 </ul>
 
@@ -670,14 +694,13 @@ However, tools SHOULD avoid needless churn in emitted source.
 <h2 id="normative-terminology">15. Normative Terminology</h2>
 
 <p>
-The key words <strong>MUST</strong>, <strong>MUST NOT</strong>, <strong>SHOULD</strong>, <strong>SHOULD NOT</strong>, and <strong>MAY</strong>
-in this specification are to be interpreted in their ordinary normative sense:
+The key words MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY in this specification are to be interpreted in their ordinary normative sense:
 </p>
 
 <ul>
-  <li><strong>MUST</strong> / <strong>MUST NOT</strong> — absolute requirement or prohibition,</li>
-  <li><strong>SHOULD</strong> / <strong>SHOULD NOT</strong> — strong recommendation that may be overridden only with good reason,</li>
-  <li><strong>MAY</strong> — permitted option.</li>
+  <li>MUST / MUST NOT — absolute requirement or prohibition,</li>
+  <li>SHOULD / SHOULD NOT — strong recommendation that may be overridden only with good reason,</li>
+  <li>MAY — permitted option.</li>
 </ul>
 
 <hr/>
