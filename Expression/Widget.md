@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="../FROG logo.svg" alt="FROG logo" width="150" />
-</p>
-
 <h1 align="center">🐸 FROG Widget Specification</h1>
 
 <p align="center">
@@ -43,8 +39,7 @@
 
 <p>
 The FROG front panel is composed of widgets.
-A widget is a structured UI object with stable source identity, declared class, declared role,
-configurable properties, and defined interaction semantics.
+A widget is a structured UI object with stable source identity, declared class, declared role, configurable properties, and defined interaction semantics.
 </p>
 
 <p>
@@ -65,8 +60,7 @@ It is a source-level UI object that MAY:
 
 <p>
 This document defines the widget object model used by canonical FROG source.
-It standardizes widget roles, widget classes, primary value semantics, widget parts,
-and source-level serialization rules.
+It standardizes widget roles, widget classes, primary value semantics, widget parts, and source-level serialization rules.
 </p>
 
 <p>
@@ -81,8 +75,7 @@ FROG distinguishes two interaction paths for widgets:
 <p>
 These two paths are related but distinct.
 The natural value path is the canonical representation for ordinary value flow.
-The object-style path is the canonical representation for properties, methods, parts,
-and other explicit widget-object interactions.
+The object-style path is the canonical representation for properties, methods, parts, and other explicit widget-object interactions.
 </p>
 
 <hr/>
@@ -168,8 +161,7 @@ A widget is an instance of a widget class.
 
 <p>
 A widget instance MUST have stable source identity.
-Different tools MAY render the same widget differently,
-but they MUST preserve its semantic meaning.
+Different tools MAY render the same widget differently, but they MUST preserve its semantic meaning.
 </p>
 
 <p>
@@ -194,8 +186,7 @@ It MUST NOT depend on arbitrary runtime-only state.
 <p>
 A widget is not a public interface port.
 A widget is not an executable node.
-A widget is a source-level UI object that may participate in execution through the diagram,
-but is defined independently from the graph itself.
+A widget is a source-level UI object that may participate in execution through the diagram, but is defined independently from the graph itself.
 </p>
 
 <hr/>
@@ -319,9 +310,9 @@ FROG distinguishes three conceptual levels:
 </p>
 
 <ul>
-  <li><strong>widget class</strong> — the category definition,</li>
-  <li><strong>widget instance</strong> — the serialized source instance in the front panel,</li>
-  <li><strong>runtime widget instance</strong> — the live object created by an editor or runtime.</li>
+  <li>widget class — the category definition,</li>
+  <li>widget instance — the serialized source instance in the front panel,</li>
+  <li>runtime widget instance — the live object created by an editor or runtime.</li>
 </ul>
 
 <p>
@@ -560,7 +551,7 @@ It complements it.
 
 <p>
 In v0.1, the widget reference token is opaque and interaction-oriented.
-It is not standardized here as a general-purpose first-class value type for arbitrary storage, transport, or computation.
+It is not standardized here as a general-purpose first-class value for arbitrary storage, transport, or computation.
 </p>
 
 <hr/>
@@ -711,8 +702,7 @@ It does not require identical visual rendering across implementations.
 </p>
 
 <p>
-Behavior compatibility across tools MUST be evaluated at the semantic level defined by the widget class and active profile,
-not at the pixel-perfect rendering level.
+Behavior compatibility across tools MUST be evaluated at the semantic level defined by the widget class and active profile, not at the pixel-perfect rendering level.
 </p>
 
 <hr/>
@@ -767,9 +757,9 @@ A live widget instance MAY maintain several conceptual categories of state:
 </p>
 
 <ul>
-  <li><strong>primary value</strong> — the typed program-facing value,</li>
-  <li><strong>internal UI state</strong> — edit state, selection, cursor state, hover state, and similar logic state,</li>
-  <li><strong>rendering state</strong> — layout caches, invalidation state, dirty flags, and similar renderer-oriented data.</li>
+  <li>primary value — the typed program-facing value,</li>
+  <li>internal UI state — edit state, selection, cursor state, hover state, and similar logic state,</li>
+  <li>rendering state — layout caches, invalidation state, dirty flags, and similar renderer-oriented data.</li>
 </ul>
 
 <p>
@@ -817,9 +807,9 @@ Common standard parts include:
 <h3>16.5 Type constraints</h3>
 
 <ul>
-  <li><code>numeric_control</code> and <code>numeric_indicator</code> MUST use numeric FROG types only,</li>
-  <li><code>boolean_control</code> and <code>boolean_indicator</code> MUST use <code>bool</code>,</li>
-  <li><code>string_control</code> and <code>string_indicator</code> MUST use <code>string</code>.</li>
+  <li><code>frog.ui.standard.numeric_control</code> and <code>frog.ui.standard.numeric_indicator</code> MUST use numeric FROG types only,</li>
+  <li><code>frog.ui.standard.boolean_control</code> and <code>frog.ui.standard.boolean_indicator</code> MUST use <code>bool</code>,</li>
+  <li><code>frog.ui.standard.string_control</code> and <code>frog.ui.standard.string_indicator</code> MUST use <code>string</code>.</li>
 </ul>
 
 <p>
@@ -896,9 +886,9 @@ For standard widget classes:
 </p>
 
 <ul>
-  <li><code>numeric_control</code> and <code>numeric_indicator</code> MUST use numeric value types only,</li>
-  <li><code>boolean_control</code> and <code>boolean_indicator</code> MUST use <code>bool</code>,</li>
-  <li><code>string_control</code> and <code>string_indicator</code> MUST use <code>string</code>.</li>
+  <li><code>frog.ui.standard.numeric_control</code> and <code>frog.ui.standard.numeric_indicator</code> MUST use numeric value types only,</li>
+  <li><code>frog.ui.standard.boolean_control</code> and <code>frog.ui.standard.boolean_indicator</code> MUST use <code>bool</code>,</li>
+  <li><code>frog.ui.standard.string_control</code> and <code>frog.ui.standard.string_indicator</code> MUST use <code>string</code>.</li>
 </ul>
 
 <p>
@@ -1015,27 +1005,27 @@ Validators SHOULD diagnose at least the following error classes:
     "label": {
       "class": "frog.ui.standard.label_part",
       "props": {
-        "text": "Operator",
+        "text": "Name",
         "visible": true
       }
     }
   }
 }</code></pre>
 
-<h3>19.4 Static text label</h3>
+<h3>19.4 Text label decoration</h3>
 
 <pre><code>{
-  "id": "title_1",
+  "id": "title_label",
   "role": "decoration",
   "widget": "frog.ui.standard.text_label",
   "layout": {
     "x": 20,
     "y": 120,
-    "width": 180,
+    "width": 240,
     "height": 24
   },
   "props": {
-    "text": "System Status",
+    "text": "System status",
     "visible": true
   }
 }</code></pre>
@@ -1107,38 +1097,35 @@ ctrl_name.reset_to_default()</code></pre>
 <h2 id="out-of-scope-for-v01">20. Out of Scope for v0.1</h2>
 
 <ul>
-  <li>complete industrial UI toolkit standardization,</li>
-  <li>advanced graph and chart semantics,</li>
-  <li>full event-structure standardization,</li>
-  <li>runtime object-handle representations,</li>
-  <li>advanced animation systems and visual effects,</li>
-  <li>full accessibility metadata,</li>
-  <li>container layout engines and automatic layout policies.</li>
+  <li>a full industrial UI widget catalog,</li>
+  <li>pixel-perfect cross-runtime rendering equivalence,</li>
+  <li>a standardized first-class event structure for executable event handling,</li>
+  <li>a generalized widget reference value type for arbitrary storage or transport,</li>
+  <li>complete theme and style systems,</li>
+  <li>advanced accessibility semantics,</li>
+  <li>advanced responsive layout behavior,</li>
+  <li>editor-private runtime reflection models.</li>
 </ul>
-
-<p>
-In particular, v0.1 recognizes widget events as part of the object model but does not yet standardize a complete event-driven executable structure for them.
-</p>
 
 <hr/>
 
 <h2 id="summary">21. Summary</h2>
 
 <p>
-The FROG widget model defines structured UI objects for the front panel.
+The FROG widget model defines widgets as structured source-level UI objects with stable identity, declared class, declared role, optional typed primary value, named parts, properties, methods, and runtime behavior categories.
+</p>
+
+<p>
+For v0.1:
 </p>
 
 <ul>
-  <li>Widgets have stable identity, declared role, and declared class.</li>
-  <li>Widget classes and value types are distinct concepts.</li>
-  <li>Value-carrying widgets expose a primary <code>value</code> semantic.</li>
-  <li>The natural primary-value path is represented in the diagram through <code>widget_value</code>.</li>
-  <li>Richer object-style access is represented through <code>widget_reference</code> and widget interaction primitives.</li>
-  <li>Widgets may own parts, properties, methods, and runtime events.</li>
-  <li>Canonical source stores durable design-time information, not arbitrary runtime state.</li>
-  <li>A minimal standard widget vocabulary exists for v0.1.</li>
+  <li>the natural primary-value path is represented by <code>widget_value</code>,</li>
+  <li>the object-style path is represented by <code>widget_reference</code> plus diagram-side widget interaction primitives,</li>
+  <li>widgets remain distinct from public interface ports and from executable nodes,</li>
+  <li>canonical source stores design-time widget meaning, not runtime-only implementation state.</li>
 </ul>
 
 <p>
-This model provides a clean and durable foundation for front-panel UI objects while preserving the separation between UI composition, executable logic, and public program interfaces.
+This gives FROG a durable and explicit widget foundation suitable for long-term graphical language specification.
 </p>
