@@ -1,8 +1,12 @@
+<p align="center">
+  <img src="../FROG logo.svg" alt="FROG logo" width="150" />
+</p>
+
 <h1 align="center">🐸 FROG Front Panel Specification</h1>
 
 <p align="center">
-Definition of the front panel (interaction layer) for <strong>.frog</strong> programs<br/>
-<em>FROG — Free Open Graphical Language</em>
+  Definition of the front panel for <strong>.frog</strong> programs<br/>
+  <em>FROG — Free Open Graphical Language</em>
 </p>
 
 <hr/>
@@ -13,7 +17,7 @@ Definition of the front panel (interaction layer) for <strong>.frog</strong> pro
   <li><a href="#overview">1. Overview</a></li>
   <li><a href="#design-goals">2. Design Goals</a></li>
   <li><a href="#relation-with-other-specifications">3. Relation with Other Specifications</a></li>
-  <li><a href="#location-in-a-frog-file">4. Location in a <code>.frog</code> File</a></li>
+  <li><a href="#location-in-a-frog-file">4. Location in a .frog File</a></li>
   <li><a href="#front-panel-structure">5. Front Panel Structure</a></li>
   <li><a href="#canvas-and-coordinate-system">6. Canvas and Coordinate System</a></li>
   <li><a href="#widget-instances">7. Widget Instances</a></li>
@@ -35,18 +39,18 @@ Definition of the front panel (interaction layer) for <strong>.frog</strong> pro
 <h2 id="overview">1. Overview</h2>
 
 <p>
-The <code>front_panel</code> section defines the graphical interaction layer of a FROG program.
+The <code>front_panel</code> section defines the graphical interaction layer of a FROG.
 It describes the user-facing composition of widgets, their layout, and their visual presentation.
 </p>
 
 <p>
 The front panel is composed of widget instances.
-These widgets may:
+These widgets MAY:
 </p>
 
 <ul>
   <li>provide user input,</li>
-  <li>display program state,</li>
+  <li>display values or program state,</li>
   <li>organize visual composition,</li>
   <li>provide purely decorative or informational UI elements.</li>
 </ul>
@@ -54,6 +58,7 @@ These widgets may:
 <p>
 The <code>front_panel</code> section is part of the canonical <code>.frog</code> source format.
 It MUST exist, even when a FROG is executed in a headless or non-interactive context.
+It MAY be empty.
 </p>
 
 <p>
@@ -108,10 +113,10 @@ Therefore:
 </p>
 
 <ul>
-  <li><strong>interface</strong> = what the FROG exposes publicly,</li>
-  <li><strong>diagram</strong> = how the FROG executes,</li>
-  <li><strong>widget model</strong> = what UI objects are,</li>
-  <li><strong>front_panel</strong> = how those UI objects are declared, composed, and presented.</li>
+  <li><code>interface</code> = what the FROG exposes publicly,</li>
+  <li><code>diagram</code> = how the FROG executes,</li>
+  <li><code>widget model</code> = what UI objects are,</li>
+  <li><code>front_panel</code> = how those UI objects are declared, composed, and presented.</li>
 </ul>
 
 <p>
@@ -126,22 +131,20 @@ It declares widget instances and presentation-related information only.
 
 <hr/>
 
-<h2 id="location-in-a-frog-file">4. Location in a <code>.frog</code> File</h2>
+<h2 id="location-in-a-frog-file">4. Location in a .frog File</h2>
 
 <p>
 The <code>front_panel</code> section appears as a top-level object in the canonical <code>.frog</code> source file.
 </p>
 
-<pre>
-{
+<pre><code>{
   "spec_version": "0.1",
   "metadata": {},
   "interface": {},
   "connector": {},
   "diagram": {},
   "front_panel": {}
-}
-</pre>
+}</code></pre>
 
 <p>
 The <code>front_panel</code> section MUST exist in a canonical <code>.frog</code> source file.
@@ -153,17 +156,15 @@ It MAY be empty.
 <h2 id="front-panel-structure">5. Front Panel Structure</h2>
 
 <p>
-The canonical front panel object SHOULD use the following structure:
+The canonical front-panel object SHOULD use the following structure:
 </p>
 
-<pre>
-"front_panel": {
+<pre><code>"front_panel": {
   "canvas": {},
   "widgets": [],
   "style": {},
   "ui_libraries": []
-}
-</pre>
+}</code></pre>
 
 <p>
 Field meaning:
@@ -201,16 +202,14 @@ Nested widgets, when used, are owned through the <code>children</code> field of 
 The <code>canvas</code> object defines the design-time coordinate space used by top-level widgets.
 </p>
 
-<pre>
-"canvas": {
+<pre><code>"canvas": {
   "units": "px",
   "width": 900,
   "height": 600,
   "background": {
     "color": "#FFFFFF"
   }
-}
-</pre>
+}</code></pre>
 
 <p>
 Rules:
@@ -253,15 +252,16 @@ A widget instance typically defines:
   <li><code>layout</code>,</li>
   <li><code>props</code>,</li>
   <li><code>parts</code> when applicable,</li>
-  <li><code>children</code> when applicable.</li>
+  <li><code>children</code> when applicable,</li>
+  <li><code>style_ref</code> when applicable,</li>
+  <li><code>style_override</code> when applicable.</li>
 </ul>
 
 <p>
 Example:
 </p>
 
-<pre>
-{
+<pre><code>{
   "id": "ctrl_gain",
   "role": "control",
   "widget": "frog.ui.standard.numeric_control",
@@ -287,8 +287,7 @@ Example:
       }
     }
   }
-}
-</pre>
+}</code></pre>
 
 <p>
 A front panel MAY contain:
@@ -302,7 +301,8 @@ A front panel MAY contain:
 </ul>
 
 <p>
-Canonical source serialization SHOULD store design-time configuration and optional default state, not arbitrary runtime state snapshots.
+Canonical source serialization SHOULD store design-time configuration and optional default state,
+not arbitrary runtime state snapshots.
 </p>
 
 <hr/>
@@ -322,8 +322,7 @@ Container widgets MAY own child widgets through a <code>children</code> array.
 Example:
 </p>
 
-<pre>
-{
+<pre><code>{
   "id": "main_panel",
   "role": "container",
   "widget": "frog.ui.standard.panel",
@@ -353,8 +352,7 @@ Example:
       }
     }
   ]
-}
-</pre>
+}</code></pre>
 
 <p>
 Rules:
@@ -390,8 +388,7 @@ For ordinary primary-value wiring:
 Conceptually:
 </p>
 
-<pre>
-Front panel widget
+<pre><code>Front panel widget
         │
         ▼
 widget.value
@@ -400,8 +397,7 @@ widget.value
 widget_value node
         │
         ▼
-diagram dataflow
-</pre>
+diagram dataflow</code></pre>
 
 <p>
 Therefore:
@@ -477,16 +473,14 @@ Typical layout fields include:
 Example:
 </p>
 
-<pre>
-"layout": {
+<pre><code>"layout": {
   "x": 20,
   "y": 20,
   "width": 120,
   "height": 28,
   "z": 10,
   "anchor": "top_left"
-}
-</pre>
+}</code></pre>
 
 <p>
 Rules:
@@ -527,11 +521,9 @@ The <code>style</code> object MAY define:
 
 <h3>12.1 Theme</h3>
 
-<pre>
-"style": {
+<pre><code>"style": {
   "theme": "default"
-}
-</pre>
+}</code></pre>
 
 <p>
 A theme identifies a coherent visual preset.
@@ -540,14 +532,12 @@ Theme selection is visual only.
 
 <h3>12.2 Fonts</h3>
 
-<pre>
-"style": {
+<pre><code>"style": {
   "fonts": {
     "default": { "family": "Inter", "size": 12, "weight": 400 },
     "title": { "family": "Inter", "size": 20, "weight": 700 }
   }
-}
-</pre>
+}</code></pre>
 
 <p>
 Fonts define reusable typography presets for front-panel rendering.
@@ -555,8 +545,7 @@ Fonts define reusable typography presets for front-panel rendering.
 
 <h3>12.3 Colors and Variables</h3>
 
-<pre>
-"style": {
+<pre><code>"style": {
   "colors": {
     "bg": "#FFFFFF",
     "fg": "#111111",
@@ -566,8 +555,7 @@ Fonts define reusable typography presets for front-panel rendering.
     "corner_radius": 4,
     "control_height": 28
   }
-}
-</pre>
+}</code></pre>
 
 <p>
 Implementations MAY support additional style variables or token systems under stricter profiles.
@@ -580,8 +568,7 @@ The <code>style</code> object MAY define reusable named styles.
 Widget instances MAY reference shared style definitions and MAY override them locally.
 </p>
 
-<pre>
-"style": {
+<pre><code>"style": {
   "theme": "default",
   "styles": {
     "default.control": {
@@ -593,15 +580,13 @@ Widget instances MAY reference shared style definitions and MAY override them lo
       "font": "title"
     }
   }
-}
-</pre>
+}</code></pre>
 
 <p>
 Example widget using a shared style:
 </p>
 
-<pre>
-{
+<pre><code>{
   "id": "ctrl_gain",
   "role": "control",
   "widget": "frog.ui.standard.numeric_control",
@@ -616,8 +601,7 @@ Example widget using a shared style:
       "accent": "#FF6600"
     }
   }
-}
-</pre>
+}</code></pre>
 
 <p>
 Rules:
@@ -642,14 +626,12 @@ This enables modular widget vocabularies beyond the minimal built-in set.
 Example:
 </p>
 
-<pre>
-"ui_libraries": [
+<pre><code>"ui_libraries": [
   {
     "name": "frog.ui.standard",
     "version": "0.1.0"
   }
-]
-</pre>
+]</code></pre>
 
 <p>
 Rules:
@@ -736,19 +718,28 @@ Implementations MUST enforce the following base rules:
   <li>if present, <code>style</code> MUST be an object,</li>
   <li>if present, <code>ui_libraries</code> MUST be an array,</li>
   <li>widget layouts MUST contain valid numeric coordinates when layout is present,</li>
-  <li>unknown front-panel properties MUST NOT affect execution semantics.</li>
+  <li>child widgets MUST appear only under valid container ownership unless a stricter profile explicitly allows otherwise,</li>
+  <li>serialized parts MUST use valid part names and valid part classes for the owning widget class or active profile,</li>
+  <li><code>style_ref</code> MUST reference an existing named style when present,</li>
+  <li><code>style_override</code> MUST remain visual only,</li>
+  <li>front-panel serialization MUST NOT be used to redefine public interface semantics, diagram semantics, or widget interaction semantics.</li>
 </ul>
 
 <p>
-Additionally:
+Validators SHOULD diagnose at least the following error classes:
 </p>
 
 <ul>
-  <li>an empty <code>front_panel</code> section is valid,</li>
-  <li>style and UI-library information MUST remain non-authoritative for execution,</li>
-  <li>a value-carrying widget MAY exist in the front panel even if it is not wired in the diagram, subject to tool diagnostics,</li>
-  <li>tools MAY warn when a control or indicator appears unused in the diagram,</li>
-  <li>tools MAY warn when a decoration widget carries unexpected value-related fields.</li>
+  <li>duplicate widget identifier,</li>
+  <li>unknown widget class,</li>
+  <li>invalid role for widget class,</li>
+  <li>missing <code>value_type</code> on a value-carrying widget,</li>
+  <li>invalid child ownership,</li>
+  <li>unknown part name,</li>
+  <li>invalid part class,</li>
+  <li>invalid layout geometry,</li>
+  <li>unknown style reference,</li>
+  <li>invalid non-object <code>props</code>, <code>parts</code>, or <code>style_override</code>.</li>
 </ul>
 
 <hr/>
@@ -757,8 +748,7 @@ Additionally:
 
 <h3>17.1 Minimal front panel</h3>
 
-<pre>
-"front_panel": {
+<pre><code>"front_panel": {
   "canvas": {
     "units": "px",
     "width": 600,
@@ -768,13 +758,11 @@ Additionally:
   "widgets": [],
   "style": {},
   "ui_libraries": []
-}
-</pre>
+}</code></pre>
 
 <h3>17.2 Front panel with control, indicator, and decoration widgets</h3>
 
-<pre>
-"front_panel": {
+<pre><code>"front_panel": {
   "canvas": {
     "units": "px",
     "width": 900,
@@ -857,13 +845,11 @@ Additionally:
   "ui_libraries": [
     { "name": "frog.ui.standard", "version": "0.1.0" }
   ]
-}
-</pre>
+}</code></pre>
 
 <h3>17.3 Container widget with child widgets</h3>
 
-<pre>
-"front_panel": {
+<pre><code>"front_panel": {
   "widgets": [
     {
       "id": "main_panel",
@@ -896,33 +882,46 @@ Additionally:
       ]
     }
   ]
-}
-</pre>
+}</code></pre>
 
-<h3>17.4 Note about diagram participation</h3>
+<h3>17.4 Specialized widget from an external UI library</h3>
 
-<p>
-The following relationships are not serialized in <code>front_panel</code> itself.
-They are expressed in the diagram:
-</p>
-
-<pre>
-widget_value(ctrl_gain)  → internal node input
-internal result          → widget_value(ind_result)
-widget_value(ctrl_gain)  → interface path
-interface path           → widget_value(ind_result)
-</pre>
-
-<h3>17.5 Note about object-style interaction</h3>
-
-<p>
-The following relationships are also expressed in the diagram, not in <code>front_panel</code>:
-</p>
-
-<pre>
-widget_reference(ctrl_gain) → frog.ui.property_write(label.text)
-widget_reference(ctrl_gain) → frog.ui.method_invoke(reset_to_default)
-</pre>
+<pre><code>"front_panel": {
+  "widgets": [
+    {
+      "id": "graph_1",
+      "role": "indicator",
+      "widget": "frog.ui.extended.waveform_graph",
+      "value_type": "array&lt;f64&gt;",
+      "layout": { "x": 20, "y": 160, "width": 420, "height": 240 },
+      "parts": {
+        "label": {
+          "class": "frog.ui.standard.label_part",
+          "props": {
+            "text": "Signal",
+            "visible": true
+          }
+        },
+        "x_scale": {
+          "class": "frog.ui.extended.scale_part",
+          "props": {
+            "visible": true
+          }
+        },
+        "y_scale": {
+          "class": "frog.ui.extended.scale_part",
+          "props": {
+            "visible": true
+          }
+        }
+      }
+    }
+  ],
+  "ui_libraries": [
+    { "name": "frog.ui.standard", "version": "0.1.0" },
+    { "name": "frog.ui.extended", "version": "0.1.0" }
+  ]
+}</code></pre>
 
 <hr/>
 
@@ -938,19 +937,11 @@ The front panel defines the interaction layer of a FROG through a structured wid
   <li>Layout defines geometry and visual ordering only.</li>
   <li>Style defines themes, fonts, colors, variables, shared styles, and overrides.</li>
   <li>UI libraries allow reusable widget vocabularies beyond the minimal built-in set.</li>
+  <li>Ordinary widget value participation is represented canonically in the diagram through <code>widget_value</code>.</li>
+  <li>Object-style widget access is represented canonically in the diagram through <code>widget_reference</code> and <code>frog.ui.*</code> primitives.</li>
+  <li>The front panel does not define the public API and does not define executable bindings.</li>
 </ul>
 
 <p>
-The front panel is part of the canonical source format, but it is not the public contract and not the execution logic of the FROG.
-It defines how users see and interact with a FROG while remaining cleanly separated from interface semantics, widget semantics, and dataflow execution.
+This keeps the UI model explicit, durable, and editor-friendly while preserving a clean separation from interface semantics and execution semantics.
 </p>
-
-<p>
-In the base model:
-</p>
-
-<ul>
-  <li>primary widget-value participation is achieved through the diagram model and <code>widget_value</code>,</li>
-  <li>explicit object-style interaction is achieved through the diagram model and <code>widget_reference</code>,</li>
-  <li>the <code>front_panel</code> section itself remains focused on declaration, layout, composition, and presentation.</li>
-</ul>
