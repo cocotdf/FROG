@@ -1,8 +1,8 @@
 <h1 align="center">🐸 FROG Control Structures Specification</h1>
 
 <p align="center">
-Definition of control structures in FROG programs<br/>
-<em>FROG — Free Open Graphical Language</em>
+  Definition of control structures in FROG programs<br/>
+  <em>FROG — Free Open Graphical Language</em>
 </p>
 
 <hr/>
@@ -10,17 +10,13 @@ Definition of control structures in FROG programs<br/>
 <h2>Contents</h2>
 
 <ul>
-  <li><a href="#overview">1. Overview</a></li>
-  <li><a href="#goals">2. Goals</a></li>
-  <li><a href="#relation-with-other-specifications">3. Relation with Other Specifications</a></li>
+  <li><a href="#overview">1.:contentReference[oaicite:0]{index=0}ref="#relation-with-other-specifications">3. Relation with Other Specifications</a></li>
   <li><a href="#functions-vs-control-structures">4. Functions vs Control Structures</a></li>
   <li><a href="#scope-for-v01">5. Scope for v0.1</a></li>
   <li><a href="#standard-control-structures-for-v01">6. Standard Control Structures for v0.1</a></li>
   <li><a href="#canonical-structure-node-model">7. Canonical Structure Node Model</a></li>
   <li><a href="#boundary-model">8. Boundary Model</a></li>
-  <li><a href="#structure-terminals">9. Structure Terminals</a></li>
-  <li><a href="#regions">10. Regions</a></li>
-  <li><a href="#case-structure">11. Case Structure</a></li>
+  <li><a href="#structure-terminals">9. Structure Terminals</a></:contentReference[oaicite:1]{index=1}i><a href="#case-structure">11. Case Structure</a></li>
   <li><a href="#for-loop-structure">12. For Loop Structure</a></li>
   <li><a href="#while-loop-structure">13. While Loop Structure</a></li>
   <li><a href="#execution-model">14. Execution Model</a></li>
@@ -39,7 +35,7 @@ Definition of control structures in FROG programs<br/>
 <p>
 FROG is a graphical dataflow language, but not every program behavior should be represented as an ordinary function call.
 Some behaviors are inherently structural: they select one executable region among several, or they repeat execution according to explicit structural rules.
-These behaviors are represented by <strong>control structures</strong>.
+These behaviors are represented by control structures.
 </p>
 
 <p>
@@ -63,6 +59,7 @@ Therefore, the language standardizes <code>case</code>, <code>for_loop</code>, a
 <p>
 In FROG, boolean conditional branching and multi-branch textual selection are both represented canonically by the same <code>case</code> structure family.
 A boolean <code>case</code> is the canonical source-level equivalent of a traditional <code>if / else</code>.
+There is no separate canonical <code>if</code> structure in base v0.1.
 </p>
 
 <hr/>
@@ -174,7 +171,7 @@ Tools SHOULD present them as dedicated structural elements in the diagram editor
 </p>
 
 <p>
-For usability, tools MAY present a boolean <code>case</code> as <strong>If / Else</strong> in the UI.
+For usability, tools MAY present a boolean <code>case</code> as <em>If / Else</em> in the UI.
 However, the canonical source structure kind remains <code>case</code>.
 </p>
 
@@ -186,8 +183,7 @@ However, the canonical source structure kind remains <code>case</code>.
 Every control structure in canonical source MUST use the following general model:
 </p>
 
-<pre>
-{
+<pre><code>{
   "id": "struct_1",
   "kind": "structure",
   "structure_type": "case",
@@ -200,8 +196,7 @@ Every control structure in canonical source MUST use the following general model
   "layout": {},
   "doc": {},
   "tags": []
-}
-</pre>
+}</code></pre>
 
 <p>
 Field meaning:
@@ -241,16 +236,14 @@ The <code>boundary</code> object defines the values that cross the structure wal
 Conceptually, these crossings behave like explicit tunnels.
 </p>
 
-<pre>
-"boundary": {
+<pre><code>"boundary": {
   "inputs": [
     { "id": "x", "type": "f64" }
   ],
   "outputs": [
     { "id": "y", "type": "f64" }
   ]
-}
-</pre>
+}</code></pre>
 
 <h3>8.1 Boundary inputs</h3>
 
@@ -291,9 +284,7 @@ The only standardized loop-output mode in v0.1 is:
 Example:
 </p>
 
-<pre>
-{ "id": "sum_out", "type": "f64", "mode": "last_value", "zero_iteration_value": 0.0 }
-</pre>
+<pre><code>{ "id": "sum_out", "type": "f64", "mode": "last_value", "zero_iteration_value": 0.0 }</code></pre>
 
 <p>
 Rules for <code>mode: "last_value"</code>:
@@ -306,7 +297,7 @@ Rules for <code>mode: "last_value"</code>:
 </ul>
 
 <p>
-More advanced loop-output modes such as collection, reduction, or profile-specific accumulation are out of scope for base v0.1.
+More advanced loop-output modes such as collection, reduction, or profile-defined accumulation are out of scope for base v0.1.
 </p>
 
 <h3>8.4 Boundary semantics are explicit</h3>
@@ -339,15 +330,13 @@ Examples include:
 A canonical terminal object SHOULD use the following fields when relevant:
 </p>
 
-<pre>
-{
+<pre><code>{
   "type": "bool",
   "outer_visible": true,
   "exposed_in_body": false,
   "read_only": true,
   "role": "selector"
-}
-</pre>
+}</code></pre>
 
 <p>
 Field meaning:
@@ -389,15 +378,13 @@ Each region contains a local diagram scope.
 General region shape:
 </p>
 
-<pre>
-{
+<pre><code>{
   "id": "body",
   "diagram": {
     "nodes": [],
     "edges": []
   }
-}
-</pre>
+}</code></pre>
 
 <p>
 Rules:
@@ -459,8 +446,7 @@ This means that a <code>case</code> structure in v0.1 supports:
 A canonical <code>case</code> MUST define one selector terminal named <code>selector</code>.
 </p>
 
-<pre>
-"structure_terminals": {
+<pre><code>"structure_terminals": {
   "selector": {
     "type": "bool",
     "outer_visible": true,
@@ -468,8 +454,7 @@ A canonical <code>case</code> MUST define one selector terminal named <code>sele
     "read_only": true,
     "role": "selector"
   }
-}
-</pre>
+}</code></pre>
 
 <p>
 Rules:
@@ -504,13 +489,11 @@ If <code>selector.type</code> is <code>bool</code>:
 Conceptually:
 </p>
 
-<pre>
-selector = true  → execute true branch
-selector = false → execute false branch
-</pre>
+<pre><code>selector = true  → execute true branch
+selector = false → execute false branch</code></pre>
 
 <p>
-Tools MAY present this form as an <strong>If / Else</strong> structure in the UI.
+Tools MAY present this form as an If / Else structure in the UI.
 The canonical source remains <code>case</code>.
 </p>
 
@@ -536,8 +519,7 @@ Rules:
 Canonical shape:
 </p>
 
-<pre>
-"regions": [
+<pre><code>"regions": [
   {
     "id": "case_start",
     "match": "start",
@@ -562,22 +544,25 @@ Canonical shape:
       "edges": []
     }
   }
-]
-</pre>
+]</code></pre>
 
-<h3>11.5 Branch exclusivity</h3>
-
-<p>
-At a given activation, exactly one case region executes.
-Other case regions do not execute for that activation.
-</p>
-
-<h3>11.6 Output completeness</h3>
+<h3>11.5 Outputs</h3>
 
 <p>
-Every required case output MUST be defined for every executable branch.
-If a required boundary output is missing from any reachable branch, validation MUST fail.
+Every executable branch of a <code>case</code> structure MUST define the meaning of every required boundary output.
+The structure output is the output produced by the selected region for that activation.
 </p>
+
+<h3>11.6 Region count</h3>
+
+<p>
+A <code>case</code> MUST own at least one region, and in practice MUST own:
+</p>
+
+<ul>
+  <li>exactly two regions for a boolean case,</li>
+  <li>one or more matched regions plus exactly one default region for a string case.</li>
+</ul>
 
 <h3>11.7 Future extensibility</h3>
 
@@ -602,8 +587,7 @@ A for loop is used when the iteration count is explicit and bounded by a count v
 
 <h3>12.2 Canonical terminals</h3>
 
-<pre>
-"structure_terminals": {
+<pre><code>"structure_terminals": {
   "count": {
     "type": "i64",
     "outer_visible": true,
@@ -618,8 +602,7 @@ A for loop is used when the iteration count is explicit and bounded by a count v
     "read_only": true,
     "role": "index"
   }
-}
-</pre>
+}</code></pre>
 
 <p>
 Rules:
@@ -629,32 +612,31 @@ Rules:
   <li><code>count</code> MUST exist.</li>
   <li><code>count.type</code> MUST be <code>i64</code> in base v0.1.</li>
   <li><code>count.outer_visible</code> MUST be <code>true</code>.</li>
-  <li><code>index</code> MAY exist.</li>
-  <li>if <code>index</code> exists, it MUST be read-only and body-visible.</li>
+  <li><code>index</code> MUST exist.</li>
+  <li><code>index.type</code> MUST be <code>i64</code> in base v0.1.</li>
+  <li><code>index.exposed_in_body</code> MUST be <code>true</code>.</li>
+  <li><code>index.read_only</code> SHOULD be <code>true</code>.</li>
 </ul>
 
-<h3>12.3 Count semantics</h3>
+<h3>12.3 Count meaning</h3>
 
 <p>
-If the resolved count value is <code>N</code>, the body executes exactly <code>N</code> times.
+The loop executes a finite number of times determined by terminal <code>count</code>.
+If <code>N</code> is the resolved count value, the loop body executes exactly <code>N</code> times.
 </p>
-
-<ul>
-  <li><code>N</code> MUST be interpreted as a non-negative iteration count,</li>
-  <li>a negative resolved count is invalid at execution time,</li>
-  <li>if the count is statically known to be negative, validation MUST fail.</li>
-</ul>
-
-<h3>12.4 Iteration index</h3>
 
 <p>
-If exposed, the iteration index is zero-based.
-Therefore, successive iterations observe:
+The canonical iteration index values are:
 </p>
 
-<pre>
-0, 1, 2, ..., N - 1
-</pre>
+<pre><code>0, 1, 2, ..., N - 1</code></pre>
+
+<h3>12.4 Negative counts</h3>
+
+<p>
+A negative iteration count is invalid in base v0.1.
+Validation MUST reject a <code>for_loop</code> whose resolved count is negative.
+</p>
 
 <h3>12.5 Zero iterations</h3>
 
@@ -670,8 +652,7 @@ If a loop output uses <code>mode: "last_value"</code> and zero iterations are po
 A canonical <code>for_loop</code> MUST define exactly one region with <code>id: "body"</code>.
 </p>
 
-<pre>
-"regions": [
+<pre><code>"regions": [
   {
     "id": "body",
     "diagram": {
@@ -679,8 +660,7 @@ A canonical <code>for_loop</code> MUST define exactly one region with <code>id: 
       "edges": []
     }
   }
-]
-</pre>
+]</code></pre>
 
 <h3>12.7 Distinction from ordinary functions</h3>
 
@@ -709,20 +689,17 @@ A while loop is used when repetition is condition-driven rather than count-drive
 The canonical v0.1 meaning of <code>while_loop</code> is:
 </p>
 
-<pre>
-execute body once
-continue while condition is true
-</pre>
+<pre><code>execute body once
+continue while condition is true</code></pre>
 
 <p>
-Therefore, the base v0.1 <code>while_loop</code> is a <strong>post-test loop</strong>.
+Therefore, the base v0.1 <code>while_loop</code> is a post-test loop.
 The body executes, then the continuation condition determines whether another iteration occurs.
 </p>
 
 <h3>13.3 Canonical terminals</h3>
 
-<pre>
-"structure_terminals": {
+<pre><code>"structure_terminals": {
   "condition": {
     "type": "bool",
     "outer_visible": false,
@@ -737,8 +714,7 @@ The body executes, then the continuation condition determines whether another it
     "read_only": true,
     "role": "index"
   }
-}
-</pre>
+}</code></pre>
 
 <p>
 Rules:
@@ -747,21 +723,20 @@ Rules:
 <ul>
   <li><code>condition</code> MUST exist.</li>
   <li><code>condition.type</code> MUST be <code>bool</code>.</li>
-  <li><code>condition.outer_visible</code> MUST be <code>false</code> in base v0.1.</li>
   <li><code>condition.exposed_in_body</code> MUST be <code>true</code>.</li>
-  <li><code>index</code> MAY exist.</li>
+  <li><code>condition.outer_visible</code> SHOULD be <code>false</code> in base v0.1.</li>
+  <li><code>index</code> MUST exist.</li>
+  <li><code>index.type</code> MUST be <code>i64</code> in base v0.1.</li>
+  <li><code>index.exposed_in_body</code> MUST be <code>true</code>.</li>
 </ul>
 
-<h3>13.4 Condition semantics</h3>
+<h3>13.4 Continuation meaning</h3>
 
 <p>
-The loop body MUST define the continuation condition in a visible and deterministic way according to the active validated program model.
+After each completed body activation, the continuation condition is resolved from terminal <code>condition</code>.
+If it is <code>true</code>, another iteration occurs.
+If it is <code>false</code>, the loop terminates.
 </p>
-
-<ul>
-  <li><code>true</code> — another iteration MUST occur,</li>
-  <li><code>false</code> — the loop MUST terminate after the current iteration.</li>
-</ul>
 
 <h3>13.5 Regions</h3>
 
@@ -769,8 +744,7 @@ The loop body MUST define the continuation condition in a visible and determinis
 A canonical <code>while_loop</code> MUST define exactly one region with <code>id: "body"</code>.
 </p>
 
-<pre>
-"regions": [
+<pre><code>"regions": [
   {
     "id": "body",
     "diagram": {
@@ -778,8 +752,7 @@ A canonical <code>while_loop</code> MUST define exactly one region with <code>id
       "edges": []
     }
   }
-]
-</pre>
+]</code></pre>
 
 <h3>13.6 Loop outputs</h3>
 
@@ -845,11 +818,12 @@ For a <code>while_loop</code>:
   <li>the structure outputs are produced according to their declared output mode after termination.</li>
 </ul>
 
-<h3>14.4 Determinism</h3>
+<h3>14.4 Dataflow and structure interaction</h3>
 
 <p>
-A control structure MUST have deterministic observable meaning under a validated program and active runtime profile.
-The structure wall, branch selection rule, iteration rule, and output meaning MUST remain inspectable and unambiguous.
+A structure remains part of the dataflow graph.
+Its external activations and observable outputs remain constrained by the graph and by the structure family semantics.
+A structure does not introduce arbitrary instruction ordering outside the standardized rules defined here.
 </p>
 
 <hr/>
@@ -857,27 +831,25 @@ The structure wall, branch selection rule, iteration rule, and output meaning MU
 <h2 id="interaction-with-local-state-and-cycles">15. Interaction with Local State and Cycles</h2>
 
 <p>
-Loops provide repeated execution.
-They do not automatically provide hidden memory.
+Control structures do not weaken the general cycle-validity rule of FROG.
+A directed cycle is valid only when explicit local memory exists in that cycle.
 </p>
 
 <p>
-Local memory across activations remains the responsibility of local-state primitives such as <code>frog.core.delay</code>.
-</p>
-
-<p>
-Therefore:
+Accordingly:
 </p>
 
 <ul>
-  <li><code>for_loop</code> and <code>while_loop</code> define repetition,</li>
-  <li><code>frog.core.delay</code> defines explicit local memory,</li>
-  <li>a loop body does not relax the cycle-validity rule of FROG.</li>
+  <li>a cycle in the outer graph remains subject to the normal explicit-local-memory rule,</li>
+  <li>a cycle inside a structure region remains subject to the same explicit-local-memory rule,</li>
+  <li>loop repetition by itself is not equivalent to a valid dataflow cycle,</li>
+  <li>control structures do not implicitly create hidden memory for graph cycles.</li>
 </ul>
 
 <p>
 Any directed cycle inside a loop body remains subject to the same rule as any other diagram:
-every directed cycle MUST contain at least one explicit local-state function.
+every directed cycle MUST contain at least one explicit local-memory function.
+In base v0.1, <code>frog.core.delay</code> is the minimal standard primitive used to make such feedback explicit and deterministic.
 </p>
 
 <hr/>
@@ -888,17 +860,13 @@ every directed cycle MUST contain at least one explicit local-state function.
 Control structures are represented in the diagram as nodes of:
 </p>
 
-<pre>
-kind = "structure"
-</pre>
+<pre><code>kind = "structure"</code></pre>
 
 <p>
 with a valid:
 </p>
 
-<pre>
-structure_type = "case" | "for_loop" | "while_loop"
-</pre>
+<pre><code>structure_type = "case" | "for_loop" | "while_loop"</code></pre>
 
 <p>
 Their external ports are resolved from:
@@ -948,7 +916,7 @@ Implementations MUST enforce the following rules:
   <li>a <code>while_loop</code> MUST use the standardized continue-while-true rule,</li>
   <li>every loop output MUST have deterministic meaning,</li>
   <li>if <code>mode: "last_value"</code> is used and zero iterations are possible, <code>zero_iteration_value</code> MUST be present and type-compatible,</li>
-  <li>cycles inside structure regions MUST obey the global local-state validity rule.</li>
+  <li>cycles inside structure regions MUST obey the global local-memory validity rule.</li>
 </ul>
 
 <p>
@@ -957,7 +925,7 @@ Tools SHOULD additionally warn when:
 
 <ul>
   <li>loop output meaning is technically valid but visually unclear,</li>
-  <li>the use of local state inside a loop is valid but hard to inspect,</li>
+  <li>the use of local memory inside a loop is valid but hard to inspect,</li>
   <li>structure behavior becomes unnecessarily difficult to understand.</li>
 </ul>
 
@@ -967,8 +935,7 @@ Tools SHOULD additionally warn when:
 
 <h3>18.1 Boolean case (canonical if / else)</h3>
 
-<pre>
-{
+<pre><code>{
   "id": "case_1",
   "kind": "structure",
   "structure_type": "case",
@@ -1007,21 +974,17 @@ Tools SHOULD additionally warn when:
       }
     }
   ]
-}
-</pre>
+}</code></pre>
 
 <h3>18.2 String case</h3>
 
-<pre>
-{
-  "id": "case_mode",
+<pre><code>{
+  "id": "case_2",
   "kind": "structure",
   "structure_type": "case",
   "boundary": {
     "inputs": [],
-    "outputs": [
-      { "id": "status", "type": "string" }
-    ]
+    "outputs": []
   },
   "structure_terminals": {
     "selector": {
@@ -1058,18 +1021,18 @@ Tools SHOULD additionally warn when:
       }
     }
   ]
-}
-</pre>
+}</code></pre>
 
-<h3>18.3 Canonical for loop</h3>
+<h3>18.3 For loop</h3>
 
-<pre>
-{
-  "id": "for_1",
+<pre><code>{
+  "id": "loop_1",
   "kind": "structure",
   "structure_type": "for_loop",
   "boundary": {
-    "inputs": [],
+    "inputs": [
+      { "id": "x", "type": "f64" }
+    ],
     "outputs": [
       { "id": "sum_out", "type": "f64", "mode": "last_value", "zero_iteration_value": 0.0 }
     ]
@@ -1099,20 +1062,20 @@ Tools SHOULD additionally warn when:
       }
     }
   ]
-}
-</pre>
+}</code></pre>
 
-<h3>18.4 Canonical while loop</h3>
+<h3>18.4 While loop</h3>
 
-<pre>
-{
-  "id": "while_1",
+<pre><code>{
+  "id": "loop_2",
   "kind": "structure",
   "structure_type": "while_loop",
   "boundary": {
-    "inputs": [],
+    "inputs": [
+      { "id": "x", "type": "f64" }
+    ],
     "outputs": [
-      { "id": "state_out", "type": "f64", "mode": "last_value" }
+      { "id": "y", "type": "f64", "mode": "last_value" }
     ]
   },
   "structure_terminals": {
@@ -1140,8 +1103,7 @@ Tools SHOULD additionally warn when:
       }
     }
   ]
-}
-</pre>
+}</code></pre>
 
 <hr/>
 
@@ -1149,13 +1111,12 @@ Tools SHOULD additionally warn when:
 
 <ul>
   <li>event structures,</li>
-  <li>timed structures,</li>
-  <li>parallel-region structures,</li>
+  <li>timed or clock-driven structures,</li>
+  <li>parallel-region control structures,</li>
+  <li>pattern-matching structures beyond the standardized boolean and string case forms,</li>
   <li>exception-handling structures,</li>
-  <li>collection and reduction loop-output modes beyond <code>last_value</code>,</li>
-  <li>one universal low-level nested-region terminal encoding,</li>
-  <li>hidden or implicit memory semantics attached to loops,</li>
-  <li>selector categories beyond <code>bool</code> and <code>string</code> in base v0.1.</li>
+  <li>advanced loop output modes such as implicit collection or generalized reduction,</li>
+  <li>hidden automatic memory insertion inside structures.</li>
 </ul>
 
 <hr/>
@@ -1163,20 +1124,18 @@ Tools SHOULD additionally warn when:
 <h2 id="summary">20. Summary</h2>
 
 <p>
-FROG v0.1 standardizes control structures as explicit language-level structural nodes.
+FROG treats structural control as an explicit language-level concept, not as a disguised library call.
 </p>
 
 <ul>
-  <li><code>case</code>, <code>for_loop</code>, and <code>while_loop</code> are standardized structure families.</li>
-  <li>The canonical structure source form uses <code>kind</code>, <code>structure_type</code>, <code>boundary</code>, <code>structure_terminals</code>, and <code>regions</code>.</li>
+  <li><code>case</code>, <code>for_loop</code>, and <code>while_loop</code> are the standardized control structures of base v0.1.</li>
   <li>A boolean <code>case</code> is the canonical source-level equivalent of <code>if / else</code>.</li>
-  <li>A string <code>case</code> performs exact string-literal branch selection with a required default region.</li>
-  <li>A <code>for_loop</code> repeats a body region according to an explicit count.</li>
-  <li>A <code>while_loop</code> repeats a body region according to the canonical continue-while-true post-test rule.</li>
-  <li>Looping does not introduce hidden memory.</li>
-  <li>Any memory across activations remains explicit through local-state primitives such as <code>frog.core.delay</code>.</li>
+  <li>A string <code>case</code> provides canonical multi-branch selection with an explicit required default region.</li>
+  <li>Loop structures remain semantically distinct from ordinary functions.</li>
+  <li>Structure boundaries, structure terminals, and owned regions are explicit parts of source meaning.</li>
+  <li>Control structures do not weaken the explicit-local-memory rule for cycles.</li>
 </ul>
 
 <p>
-This provides a clear, durable, and extensible structural foundation for FROG execution graphs.
+This gives FROG a clear, durable, and visually explicit foundation for structural program control.
 </p>
