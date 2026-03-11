@@ -1,8 +1,12 @@
+<p align="center">
+  <img src="../FROG logo.svg" alt="FROG logo" width="150" />
+</p>
+
 <h1 align="center">🐸 FROG Widget Specification</h1>
 
 <p align="center">
-Definition of front panel widgets for <strong>.frog</strong> programs<br/>
-<em>FROG — Free Open Graphical Language</em>
+  Definition of front-panel widgets for <strong>.frog</strong> programs<br/>
+  <em>FROG — Free Open Graphical Language</em>
 </p>
 
 <hr/>
@@ -17,13 +21,13 @@ Definition of front panel widgets for <strong>.frog</strong> programs<br/>
   <li><a href="#what-a-widget-is">5. What a Widget Is</a></li>
   <li><a href="#widget-class-vs-value-type">6. Widget Class vs Value Type</a></li>
   <li><a href="#widget-roles">7. Widget Roles</a></li>
-  <li><a href="#widget-lifecycle-and-identity">8. Widget Lifecycle and Identity</a></li>
+  <li><a href="#widget-identity-and-lifecycle">8. Widget Identity and Lifecycle</a></li>
   <li><a href="#canonical-widget-instance-shape">9. Canonical Widget Instance Shape</a></li>
   <li><a href="#value-carrying-widgets">10. Value-Carrying Widgets</a></li>
   <li><a href="#widget-reference-model">11. Widget Reference Model</a></li>
   <li><a href="#widget-parts">12. Widget Parts</a></li>
   <li><a href="#properties-methods-and-events">13. Properties, Methods, and Events</a></li>
-  <li><a href="#widget-behaviour-model">14. Widget Behaviour Model</a></li>
+  <li><a href="#widget-behavior-model">14. Widget Behavior Model</a></li>
   <li><a href="#serialization-vs-runtime-state">15. Serialization vs Runtime State</a></li>
   <li><a href="#standard-widget-classes-for-v01">16. Standard Widget Classes for v0.1</a></li>
   <li><a href="#addressing-model">17. Addressing Model</a></li>
@@ -39,27 +43,30 @@ Definition of front panel widgets for <strong>.frog</strong> programs<br/>
 
 <p>
 The FROG front panel is composed of widgets.
-A widget is a structured UI object with stable source identity, declared class, declared role, configurable properties, and defined interaction semantics.
+A widget is a structured UI object with stable source identity, declared class, declared role,
+configurable properties, and defined interaction semantics.
 </p>
 
 <p>
 A widget is not merely a graphical shape.
-It is a source-level UI object that may:
+It is a source-level UI object that MAY:
 </p>
 
 <ul>
   <li>carry a typed primary value,</li>
-  <li>display program state,</li>
   <li>accept user input,</li>
-  <li>own attached parts,</li>
+  <li>display program state,</li>
+  <li>own named parts,</li>
+  <li>own child widgets when it is a container,</li>
   <li>expose properties,</li>
   <li>expose methods,</li>
-  <li>emit events.</li>
+  <li>emit runtime events.</li>
 </ul>
 
 <p>
-This document defines the widget object model used by FROG source files.
-It standardizes widget roles, widget classes, value semantics, widget parts, and source-level serialization rules.
+This document defines the widget object model used by canonical FROG source.
+It standardizes widget roles, widget classes, primary value semantics, widget parts,
+and source-level serialization rules.
 </p>
 
 <p>
@@ -67,9 +74,16 @@ FROG distinguishes two interaction paths for widgets:
 </p>
 
 <ul>
-  <li><strong>primary value interaction</strong> — the natural dataflow path of a value-carrying widget,</li>
-  <li><strong>object-style interaction</strong> — explicit access to widget members through a widget reference.</li>
+  <li><strong>Natural value path</strong> — the primary value of a value-carrying widget participates in diagram dataflow through <code>widget_value</code>.</li>
+  <li><strong>Object-style path</strong> — explicit widget-member access occurs through <code>widget_reference</code> plus widget interaction primitives.</li>
 </ul>
+
+<p>
+These two paths are related but distinct.
+The natural value path is the canonical representation for ordinary value flow.
+The object-style path is the canonical representation for properties, methods, parts,
+and other explicit widget-object interactions.
+</p>
 
 <hr/>
 
@@ -80,11 +94,12 @@ The widget model is designed to provide:
 </p>
 
 <ul>
-  <li><strong>object consistency</strong> — widgets behave as structured UI objects rather than ad hoc visual fragments,</li>
-  <li><strong>separation of concerns</strong> — UI composition, value typing, executable logic, and runtime rendering remain distinct,</li>
-  <li><strong>stable serialization</strong> — canonical source stores durable design-time information only,</li>
-  <li><strong>tool interoperability</strong> — multiple editors and runtimes can reconstruct equivalent widget meaning,</li>
-  <li><strong>extensibility</strong> — specialized widget libraries may extend the model without redefining its foundations.</li>
+  <li><strong>Object consistency</strong> — widgets behave as structured UI objects rather than ad hoc visual fragments.</li>
+  <li><strong>Separation of concerns</strong> — UI composition, value typing, executable logic, public interface semantics, and runtime rendering remain distinct.</li>
+  <li><strong>Stable serialization</strong> — canonical source stores durable design-time information only.</li>
+  <li><strong>Tool interoperability</strong> — multiple editors and runtimes can reconstruct equivalent widget meaning.</li>
+  <li><strong>Extensibility</strong> — specialized widget libraries MAY extend the model without redefining its foundations.</li>
+  <li><strong>Graphical durability</strong> — widget declarations remain explicit and specifiable as long-term source objects.</li>
 </ul>
 
 <hr/>
@@ -102,7 +117,7 @@ FROG v0.1 standardizes:
   <li>value-carrying widgets,</li>
   <li>widget references,</li>
   <li>widget parts,</li>
-  <li>basic properties and methods,</li>
+  <li>basic property and method concepts,</li>
   <li>a minimal standard widget vocabulary.</li>
 </ul>
 
@@ -117,7 +132,7 @@ Its purpose is to define a durable common baseline.
 
 <ul>
   <li><code>Type.md</code> defines the type system used by value-carrying widgets.</li>
-  <li><code>Front panel.md</code> defines how widget instances are placed, composed, and styled in the <code>front_panel</code> section.</li>
+  <li><code>Front panel.md</code> defines how widget instances are placed, composed, styled, and serialized in the <code>front_panel</code> section.</li>
   <li><code>Diagram.md</code> defines the executable graph and the node kinds that materialize widget participation in that graph.</li>
   <li><code>Widget interaction.md</code> defines the explicit diagram-side interaction model for widget references, property reads and writes, method invocation, and optional UI sequencing.</li>
   <li><code>Interface.md</code> defines the public program contract and remains distinct from the front panel.</li>
@@ -140,7 +155,7 @@ Richer access to a widget object is represented through a <code>widget_reference
 
 <p>
 This document defines what widgets are.
-It does not redefine the executable diagram rules already standardized by the diagram and widget interaction specifications.
+It does not redefine the executable graph rules, public interface rules, or front-panel composition rules already owned by the dedicated specifications above.
 </p>
 
 <hr/>
@@ -153,7 +168,8 @@ A widget is an instance of a widget class.
 
 <p>
 A widget instance MUST have stable source identity.
-Different tools MAY render the same widget differently, but they MUST preserve its semantic meaning.
+Different tools MAY render the same widget differently,
+but they MUST preserve its semantic meaning.
 </p>
 
 <p>
@@ -167,12 +183,19 @@ A widget MAY:
   <li>own named parts,</li>
   <li>expose configurable properties,</li>
   <li>expose callable methods,</li>
-  <li>emit events at runtime.</li>
+  <li>emit runtime events.</li>
 </ul>
 
 <p>
 Canonical source serialization stores source-relevant widget configuration.
 It MUST NOT depend on arbitrary runtime-only state.
+</p>
+
+<p>
+A widget is not a public interface port.
+A widget is not an executable node.
+A widget is a source-level UI object that may participate in execution through the diagram,
+but is defined independently from the graph itself.
 </p>
 
 <hr/>
@@ -186,25 +209,23 @@ A widget class identifies the UI category of the widget.
 Examples:
 </p>
 
-<pre>
-frog.ui.standard.numeric_control
+<pre><code>frog.ui.standard.numeric_control
 frog.ui.standard.boolean_indicator
 frog.ui.standard.string_control
-frog.ui.standard.panel
-</pre>
+frog.ui.standard.panel</code></pre>
 
 <p>
 A widget class determines:
 </p>
 
 <ul>
-  <li>the widget role,</li>
+  <li>the allowed widget roles,</li>
   <li>whether the widget carries a primary value,</li>
   <li>which value types are allowed,</li>
   <li>which properties are available,</li>
   <li>which methods are available,</li>
   <li>which parts are available,</li>
-  <li>which runtime behaviour model applies.</li>
+  <li>which behavior model applies.</li>
 </ul>
 
 <h3>6.2 Value type</h3>
@@ -214,13 +235,11 @@ A value type identifies the FROG data type carried by a value-carrying widget.
 Examples:
 </p>
 
-<pre>
-bool
+<pre><code>bool
 i32
 f64
 string
-array&lt;f64&gt;
-</pre>
+array&lt;f64&gt;</code></pre>
 
 <p>
 Value types are defined normatively by <code>Type.md</code>.
@@ -284,9 +303,16 @@ In v0.1, standard containers are non-value widgets unless a stricter active prof
 A <code>decoration</code> is used primarily for presentation rather than primary program value exchange.
 </p>
 
+<h3>7.5 Role compatibility</h3>
+
+<p>
+The declared role MUST be compatible with the declared widget class.
+A tool MUST NOT accept an arbitrary role/class combination unless the active profile explicitly defines it as valid.
+</p>
+
 <hr/>
 
-<h2 id="widget-lifecycle-and-identity">8. Widget Lifecycle and Identity</h2>
+<h2 id="widget-identity-and-lifecycle">8. Widget Identity and Lifecycle</h2>
 
 <p>
 FROG distinguishes three conceptual levels:
@@ -302,13 +328,11 @@ FROG distinguishes three conceptual levels:
 Conceptually:
 </p>
 
-<pre>
-Widget Class
+<pre><code>Widget Class
     ↓ instantiates
 Widget Instance (source)
     ↓ realizes
-Runtime Widget Instance
-</pre>
+Runtime Widget Instance</code></pre>
 
 <p>
 The source instance defines design-time configuration.
@@ -320,6 +344,18 @@ Widget identifiers MUST remain unique across the entire recursive front-panel wi
 This guarantees that diagram-level widget references remain unambiguous.
 </p>
 
+<p>
+The source identity of a widget MUST remain stable enough to support:
+</p>
+
+<ul>
+  <li>diagram-side <code>widget_value</code> references,</li>
+  <li>diagram-side <code>widget_reference</code> references,</li>
+  <li>editor tracking,</li>
+  <li>tool interoperability,</li>
+  <li>canonical source diffs and merges.</li>
+</ul>
+
 <hr/>
 
 <h2 id="canonical-widget-instance-shape">9. Canonical Widget Instance Shape</h2>
@@ -328,8 +364,7 @@ This guarantees that diagram-level widget references remain unambiguous.
 A canonical widget instance in source form SHOULD follow this general structure:
 </p>
 
-<pre>
-{
+<pre><code>{
   "id": "ctrl_gain",
   "role": "control",
   "widget": "frog.ui.standard.numeric_control",
@@ -342,8 +377,7 @@ A canonical widget instance in source form SHOULD follow this general structure:
   },
   "props": {},
   "parts": {}
-}
-</pre>
+}</code></pre>
 
 <p>
 Common fields are defined below.
@@ -387,7 +421,7 @@ For standard built-in widgets defined by this document, identifiers SHOULD use t
 
 <p>
 <code>layout</code> stores design-time placement and size information.
-Its detailed interpretation belongs to <code>Front panel.md</code>.
+Its detailed interpretation belongs normatively to <code>Front panel.md</code>.
 </p>
 
 <h3>9.6 <code>props</code></h3>
@@ -418,6 +452,13 @@ Its detailed interpretation belongs to <code>Front panel.md</code>.
 Ownership, nesting, and composition rules belong normatively to <code>Front panel.md</code>.
 </p>
 
+<h3>9.9 <code>style_ref</code> and <code>style_override</code></h3>
+
+<p>
+Widget instances MAY include visual style references and visual style overrides.
+These fields remain presentation-related and MUST NOT alter widget semantics, public interface semantics, or executable graph semantics.
+</p>
+
 <hr/>
 
 <h2 id="value-carrying-widgets">10. Value-Carrying Widgets</h2>
@@ -441,15 +482,13 @@ Every value-carrying widget conceptually exposes a primary <code>value</code> me
 That primary value is the natural dataflow path between the front panel and the diagram.
 </p>
 
-<pre>
-Front Panel Widget
+<pre><code>Front Panel Widget
         │
         ▼
 widget.value
         │
         ▼
-widget_value.value
-</pre>
+widget_value.value</code></pre>
 
 <p>
 In diagram source, this participation is represented by a <code>widget_value</code> node.
@@ -477,6 +516,13 @@ The primary value MAY also be read or written through the object-style interacti
 However, when the intent is ordinary primary-value wiring, tools SHOULD prefer the natural <code>widget_value</code> representation.
 </p>
 
+<h3>10.5 Non-value widgets</h3>
+
+<p>
+Container and decoration widgets are normally non-value widgets in base v0.1.
+They do not expose a natural <code>widget_value</code> path unless a stricter active profile explicitly defines otherwise.
+</p>
+
 <hr/>
 
 <h2 id="widget-reference-model">11. Widget Reference Model</h2>
@@ -493,16 +539,14 @@ This path is used when the diagram needs access to widget members beyond ordinar
   <li>non-primary properties,</li>
   <li>methods,</li>
   <li>attached parts,</li>
-  <li>other object-level behaviour supported by the active profile.</li>
+  <li>other object-level behavior supported by the active profile.</li>
 </ul>
 
 <p>
 Conceptually:
 </p>
 
-<pre>
-widget instance → widget reference → widget member access
-</pre>
+<pre><code>widget instance → widget reference → widget member access</code></pre>
 
 <p>
 In diagram source, the reference is represented by a <code>widget_reference</code> node.
@@ -512,6 +556,11 @@ That reference is then consumed by widget interaction primitives.
 <p>
 The widget reference model does not replace the primary value path.
 It complements it.
+</p>
+
+<p>
+In v0.1, the widget reference token is opaque and interaction-oriented.
+It is not standardized here as a general-purpose first-class value type for arbitrary storage, transport, or computation.
 </p>
 
 <hr/>
@@ -541,22 +590,18 @@ Examples of parts include:
 
 <h3>12.1 Example conceptual addressing</h3>
 
-<pre>
-ctrl_gain.label.text
-</pre>
+<pre><code>ctrl_gain.label.text</code></pre>
 
 <h3>12.2 Example serialization</h3>
 
-<pre>
-"parts": {
+<pre><code>"parts": {
   "label": {
     "class": "frog.ui.standard.label_part",
     "props": {
       "text": "Gain"
     }
   }
-}
-</pre>
+}</code></pre>
 
 <h3>12.3 Ownership rules</h3>
 
@@ -565,6 +610,13 @@ ctrl_gain.label.text
   <li>A part MUST NOT be serialized as an independent top-level widget.</li>
   <li>A part name MUST be valid for the owning widget class or active profile.</li>
 </ul>
+
+<h3>12.4 Part identity</h3>
+
+<p>
+A part is identified locally by its owning widget plus its stable part name.
+It does not require a separate top-level widget identifier in canonical v0.1 source.
+</p>
 
 <hr/>
 
@@ -619,7 +671,7 @@ However, event-specific executable interaction is not standardized as a first-cl
 <h3>13.4 Diagram-side standardization</h3>
 
 <p>
-In v0.1, explicit property reads, property writes, and method invocation are already standardized in diagram-related specifications through:
+In v0.1, explicit property reads, property writes, and method invocation are standardized in diagram-related specifications through:
 </p>
 
 <ul>
@@ -635,27 +687,32 @@ It defines the widget-side object model to which they apply.
 
 <hr/>
 
-<h2 id="widget-behaviour-model">14. Widget Behaviour Model</h2>
+<h2 id="widget-behavior-model">14. Widget Behavior Model</h2>
 
 <p>
-A widget class may define both design-time configuration and runtime behaviour.
+A widget class MAY define both design-time configuration and runtime behavior.
 </p>
 
 <p>
-Examples of behaviour differences include:
+Examples of behavior differences include:
 </p>
 
 <ul>
   <li>a numeric control may validate edits against numeric constraints,</li>
   <li>a string control may support multiline editing,</li>
   <li>a boolean indicator may render state without accepting user edits,</li>
-  <li>a container may propagate visibility or clipping behaviour to children,</li>
+  <li>a container may propagate visibility or clipping behavior to children,</li>
   <li>a decoration widget may affect presentation only.</li>
 </ul>
 
 <p>
 This specification standardizes semantic categories and source structure.
 It does not require identical visual rendering across implementations.
+</p>
+
+<p>
+Behavior compatibility across tools MUST be evaluated at the semantic level defined by the widget class and active profile,
+not at the pixel-perfect rendering level.
 </p>
 
 <hr/>
@@ -731,26 +788,20 @@ These classes form the recommended built-in baseline.
 
 <h3>16.1 Containers</h3>
 
-<pre>
-frog.ui.standard.panel
-</pre>
+<pre><code>frog.ui.standard.panel</code></pre>
 
 <h3>16.2 Decoration widgets</h3>
 
-<pre>
-frog.ui.standard.text_label
-</pre>
+<pre><code>frog.ui.standard.text_label</code></pre>
 
 <h3>16.3 Value widgets</h3>
 
-<pre>
-frog.ui.standard.numeric_control
+<pre><code>frog.ui.standard.numeric_control
 frog.ui.standard.numeric_indicator
 frog.ui.standard.boolean_control
 frog.ui.standard.boolean_indicator
 frog.ui.standard.string_control
-frog.ui.standard.string_indicator
-</pre>
+frog.ui.standard.string_indicator</code></pre>
 
 <h3>16.4 Common parts</h3>
 
@@ -792,17 +843,30 @@ Widget member access MUST be able to target:
 Examples:
 </p>
 
-<pre>
-ctrl_gain.value
+<pre><code>ctrl_gain.value
 ctrl_gain.visible
 ctrl_gain.label.text
 ctrl_gain.focus()
-ctrl_gain.reset_to_default()
-</pre>
+ctrl_gain.reset_to_default()</code></pre>
 
 <p>
 The <code>value</code> member has special semantics because it also participates in diagram dataflow through the <code>widget_value</code> path.
 Other properties, methods, and parts normally use the widget-reference path.
+</p>
+
+<p>
+In canonical diagram representation:
+</p>
+
+<ul>
+  <li>the target widget identity is carried by <code>widget_reference</code>,</li>
+  <li>property descriptors are represented by <code>widget_member</code>,</li>
+  <li>method descriptors are represented by <code>widget_method</code>.</li>
+</ul>
+
+<p>
+This document defines the object model behind such addressing.
+The executable node forms themselves are standardized by <code>Widget interaction.md</code>.
 </p>
 
 <hr/>
@@ -848,14 +912,29 @@ For interaction consistency:
   <li>reading or writing <code>value</code> through the object model remains valid only when the widget class exposes that member with the required access mode.</li>
 </ul>
 
+<p>
+Validators SHOULD diagnose at least the following error classes:
+</p>
+
+<ul>
+  <li>unknown widget class,</li>
+  <li>unknown widget role,</li>
+  <li>role/class incompatibility,</li>
+  <li>missing <code>value_type</code> on a value-carrying widget,</li>
+  <li>invalid value type for widget class,</li>
+  <li>duplicate widget identifier,</li>
+  <li>unknown part name,</li>
+  <li>invalid part class,</li>
+  <li>invalid source-only versus runtime-only property usage.</li>
+</ul>
+
 <hr/>
 
 <h2 id="examples">19. Examples</h2>
 
 <h3>19.1 Numeric control</h3>
 
-<pre>
-{
+<pre><code>{
   "id": "ctrl_gain",
   "role": "control",
   "widget": "frog.ui.standard.numeric_control",
@@ -869,10 +948,10 @@ For interaction consistency:
   "props": {
     "visible": true,
     "enabled": true,
-    "default_value": 1.0,
     "minimum": 0.0,
     "maximum": 10.0,
-    "step": 0.1
+    "step": 0.1,
+    "default_value": 1.0
   },
   "parts": {
     "label": {
@@ -883,13 +962,11 @@ For interaction consistency:
       }
     }
   }
-}
-</pre>
+}</code></pre>
 
 <h3>19.2 Boolean indicator</h3>
 
-<pre>
-{
+<pre><code>{
   "id": "led_ready",
   "role": "indicator",
   "widget": "frog.ui.standard.boolean_indicator",
@@ -913,13 +990,11 @@ For interaction consistency:
       }
     }
   }
-}
-</pre>
+}</code></pre>
 
 <h3>19.3 String control</h3>
 
-<pre>
-{
+<pre><code>{
   "id": "ctrl_name",
   "role": "control",
   "widget": "frog.ui.standard.string_control",
@@ -945,13 +1020,11 @@ For interaction consistency:
       }
     }
   }
-}
-</pre>
+}</code></pre>
 
 <h3>19.4 Static text label</h3>
 
-<pre>
-{
+<pre><code>{
   "id": "title_1",
   "role": "decoration",
   "widget": "frog.ui.standard.text_label",
@@ -965,13 +1038,11 @@ For interaction consistency:
     "text": "System Status",
     "visible": true
   }
-}
-</pre>
+}</code></pre>
 
 <h3>19.5 Panel container</h3>
 
-<pre>
-{
+<pre><code>{
   "id": "main_panel",
   "role": "container",
   "widget": "frog.ui.standard.panel",
@@ -984,24 +1055,20 @@ For interaction consistency:
   "props": {
     "visible": true
   }
-}
-</pre>
+}</code></pre>
 
 <h3>19.6 Conceptual access examples</h3>
 
-<pre>
-ctrl_gain.value
+<pre><code>ctrl_gain.value
 ctrl_gain.visible
 ctrl_gain.label.text
 led_ready.value
 ctrl_name.focus()
-ctrl_name.reset_to_default()
-</pre>
+ctrl_name.reset_to_default()</code></pre>
 
 <h3>19.7 Extended widget example</h3>
 
-<pre>
-{
+<pre><code>{
   "id": "graph_1",
   "role": "indicator",
   "widget": "frog.ui.extended.waveform_graph",
@@ -1031,16 +1098,9 @@ ctrl_name.reset_to_default()
       "props": {
         "visible": true
       }
-    },
-    "plot_area": {
-      "class": "frog.ui.extended.plot_area_part",
-      "props": {
-        "visible": true
-      }
     }
   }
-}
-</pre>
+}</code></pre>
 
 <hr/>
 
@@ -1050,7 +1110,7 @@ ctrl_name.reset_to_default()
   <li>complete industrial UI toolkit standardization,</li>
   <li>advanced graph and chart semantics,</li>
   <li>full event-structure standardization,</li>
-  <li>runtime object handle representations,</li>
+  <li>runtime object-handle representations,</li>
   <li>advanced animation systems and visual effects,</li>
   <li>full accessibility metadata,</li>
   <li>container layout engines and automatic layout policies.</li>
