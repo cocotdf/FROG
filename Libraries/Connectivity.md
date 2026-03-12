@@ -19,7 +19,7 @@ Definition of the minimal standard <strong>frog.connectivity</strong> library fo
   <li><a href="#connectivity-model">7. Connectivity Model</a></li>
   <li><a href="#payload-model">8. Payload Model</a></li>
   <li><a href="#python-primitives">9. Python Primitives</a></li>
-  <li><a href="#ffi-primitives">10. FFI and Native Library Primitives</a></li>
+  <li><a href="#native-primitives">10. Native and Shared Library Primitives</a></li>
   <li><a href="#dotnet-primitives">11. .NET Primitives</a></li>
   <li><a href="#sql-primitives">12. SQL Primitives</a></li>
   <li><a href="#diagram-representation">13. Diagram Representation</a></li>
@@ -38,7 +38,7 @@ This document defines the minimal standard <code>frog.connectivity</code> librar
 </p>
 
 <p>
-The <code>frog.connectivity</code> library contains a first standard set of primitives for interoperating with external runtimes, native libraries, managed platforms, and SQL-capable data sources.
+The <code>frog.connectivity</code> library contains a first standard set of primitives for interoperating with external runtimes, native or shared libraries, managed platforms, and SQL-capable data sources.
 </p>
 
 <p>
@@ -58,6 +58,7 @@ In v0.1, the standardized connectivity model is intentionally limited to synchro
   <li><strong>Portability</strong> — keep primitive identity and purpose stable across conforming implementations.</li>
   <li><strong>Conservatism</strong> — standardize only the connectivity primitives that fit within the current FROG source and type model.</li>
   <li><strong>Clarity</strong> — define stable names, stable port models, and explicit success signaling.</li>
+  <li><strong>Separation of concerns</strong> — keep foreign-runtime interoperability distinct from file/path/resource I/O and distinct from widget interaction.</li>
   <li><strong>Extensibility</strong> — leave room for later revisions covering sessions, handles, callbacks, transactions, richer marshaling, and asynchronous integration.</li>
 </ul>
 
@@ -74,7 +75,8 @@ This document complements the following specifications:
   <li><code>Expression/Type.md</code> — defines the built-in scalar and array types used by connectivity primitives.</li>
   <li><code>Expression/Control structures.md</code> — defines structures that MAY be used to branch on success or failure results from connectivity primitives.</li>
   <li><code>Libraries/Core.md</code> — defines the minimal core primitive library, which remains distinct from connectivity functionality.</li>
-  <li><code>Libraries/IO.md</code> — defines file and resource access primitives, which remain distinct from foreign-runtime and SQL interoperability.</li>
+  <li><code>Libraries/IO.md</code> — defines file/path/resource I/O primitives, which remain distinct from foreign-runtime, managed-platform, native-library, and SQL interoperability.</li>
+  <li><code>Libraries/UI.md</code> — defines widget interaction primitives, which remain distinct from connectivity primitives.</li>
 </ul>
 
 <p>
@@ -99,7 +101,7 @@ Examples:
 
 <pre>
 frog.connectivity.python_call_text
-frog.connectivity.ffi_call_bytes
+frog.connectivity.native_call_bytes
 frog.connectivity.dotnet_call_text
 frog.connectivity.sql_query_text
 frog.connectivity.sql_execute
@@ -111,10 +113,15 @@ The <code>frog.connectivity</code> library is distinct from:
 
 <ul>
   <li><code>frog.core</code>, which contains the minimal always-available computational primitives,</li>
-  <li><code>frog.io</code>, which covers path and resource access,</li>
-  <li><code>frog.ui</code>, which covers widget interaction,</li>
+  <li><code>frog.io</code>, which covers file, path, and resource I/O only,</li>
+  <li><code>frog.ui</code>, which covers widget interaction only,</li>
   <li>future libraries for networking, hardware access, runtime coordination, or richer serialization systems.</li>
 </ul>
+
+<p>
+The <code>frog.connectivity</code> namespace also owns future standardized bindings for external runtimes and external services.
+However, those broader binding families are not standardized in v0.1 unless explicitly defined by this document.
+</p>
 
 <hr/>
 
@@ -145,7 +152,7 @@ Examples:
 <pre>
 frog.connectivity.python_call_text
 frog.connectivity.python_call_bytes
-frog.connectivity.ffi_call_bytes
+frog.connectivity.native_call_bytes
 frog.connectivity.dotnet_call_text
 frog.connectivity.sql_query_text
 frog.connectivity.sql_execute
@@ -165,9 +172,20 @@ FROG v0.1 standardizes the following minimal <code>frog.connectivity</code> prim
 
 <ul>
   <li>Python request/response invocation primitives,</li>
-  <li>native-library request/response invocation primitives,</li>
+  <li>native or shared library request/response invocation primitives,</li>
   <li>.NET request/response invocation primitives,</li>
   <li>SQL query and statement execution primitives.</li>
+</ul>
+
+<p>
+These primitives provide a first portable interoperability layer for:
+</p>
+
+<ul>
+  <li>Python modules and functions,</li>
+  <li>native/shared library entry points, including C or C++ compatible host-call surfaces exposed through the active execution profile,</li>
+  <li>.NET assemblies, types, and methods,</li>
+  <li>SQL-capable data sources addressed through the active execution profile.</li>
 </ul>
 
 <p>
@@ -181,8 +199,8 @@ FROG v0.1 does not attempt to define:
   <li>object-graph reflection as a standard source-level mechanism,</li>
   <li>prepared statements, transactions, cursors, or connection pooling as source-level standard objects,</li>
   <li>automatic marshaling of arbitrary FROG values into foreign object systems,</li>
-  <li>COM, ActiveX, Java, gRPC, REST, or message-bus primitives,</li>
-  <li>network transport primitives, which remain outside this library in v0.1.</li>
+  <li>COM, ActiveX, Java, gRPC, REST, message-bus, or general network transport primitives,</li>
+  <li>generic external-runtime or external-service bindings beyond the explicit primitive families standardized here.</li>
 </ul>
 
 <hr/>
@@ -212,7 +230,7 @@ Accordingly:
 </ul>
 
 <p>
-Binding resolution, host process model, security policy, timeout policy, execution environment, and foreign runtime availability are defined by the active execution profile.
+Binding resolution, host process model, security policy, timeout policy, execution environment, foreign runtime availability, and foreign platform availability are defined by the active execution profile.
 </p>
 
 <hr/>
@@ -339,12 +357,12 @@ Rules:
 
 <hr/>
 
-<h2 id="ffi-primitives">10. FFI and Native Library Primitives</h2>
+<h2 id="native-primitives">10. Native and Shared Library Primitives</h2>
 
-<h3>10.1 <code>frog.connectivity.ffi_call_bytes</code></h3>
+<h3>10.1 <code>frog.connectivity.native_call_bytes</code></h3>
 
 <p>
-Invokes a symbol from a native library using a byte request payload and returns a byte response payload.
+Invokes an entry point from a native or shared library using a byte request payload and returns a byte response payload.
 </p>
 
 <ul>
@@ -369,7 +387,7 @@ Rules:
 </p>
 
 <ul>
-  <li>if <code>success = true</code>, <code>response</code> contains the byte result produced by the addressed native entry point under the active execution profile,</li>
+  <li>if <code>success = true</code>, <code>response</code> contains the byte result produced by the addressed native/shared-library entry point under the active execution profile,</li>
   <li>if <code>success = false</code>, <code>response</code> MUST be the empty byte array,</li>
   <li>library resolution, calling convention, symbol visibility, ABI compatibility, and memory ownership rules are profile-defined.</li>
 </ul>
@@ -509,9 +527,9 @@ Examples:
 
 <pre>
 {
-  "id": "ffi_call_1",
+  "id": "native_call_1",
   "kind": "primitive",
-  "type": "frog.connectivity.ffi_call_bytes"
+  "type": "frog.connectivity.native_call_bytes"
 }
 </pre>
 
@@ -583,13 +601,13 @@ Conceptual ports:
 module, function, request → response, success
 </pre>
 
-<h3>15.2 Call a native library symbol with a byte payload</h3>
+<h3>15.2 Call a native/shared library entry point with a byte payload</h3>
 
 <pre>
 {
-  "id": "ffi_call_1",
+  "id": "native_call_1",
   "kind": "primitive",
-  "type": "frog.connectivity.ffi_call_bytes"
+  "type": "frog.connectivity.native_call_bytes"
 }
 </pre>
 
@@ -625,13 +643,14 @@ connection, query, parameters → rows, success
 
 <ul>
   <li>persistent foreign handles or object references as source-level standardized values,</li>
-  <li>standardized reflection over Python objects, .NET objects, or C ABI structures,</li>
+  <li>standardized reflection over Python objects, .NET objects, or native ABI structures,</li>
   <li>automatic bidirectional mapping between arbitrary FROG values and foreign structured types,</li>
   <li>callbacks and re-entrant invocation into FROG graphs,</li>
   <li>transaction control primitives such as begin, commit, and rollback,</li>
   <li>prepared statements, cursors, and row-by-row iteration,</li>
   <li>network protocols such as HTTP, TCP, UDP, WebSocket, MQTT, or gRPC,</li>
   <li>COM, ActiveX, Java, or other non-listed foreign platforms,</li>
+  <li>generic external-runtime or external-service primitives beyond the explicit families standardized here,</li>
   <li>async execution, futures, promises, channels, or runtime scheduling primitives.</li>
 </ul>
 
@@ -644,7 +663,7 @@ The <code>frog.connectivity</code> library defines a minimal standard interopera
 </p>
 
 <p>
-It standardizes conservative request/response primitives for Python, native libraries, .NET, and SQL while remaining compatible with the current FROG source and type model.
+It standardizes conservative request/response primitives for Python, native/shared libraries, .NET, and SQL while remaining compatible with the current FROG source and type model.
 </p>
 
 <p>
@@ -652,7 +671,8 @@ In short:
 </p>
 
 <ul>
-  <li><code>frog.io</code> covers resource access,</li>
-  <li><code>frog.connectivity</code> covers foreign-runtime and SQL interoperability,</li>
-  <li>richer sessions, handles, callbacks, and async coordination remain for later revisions.</li>
+  <li><code>frog.io</code> covers file, path, and resource I/O,</li>
+  <li><code>frog.ui</code> covers widget interaction,</li>
+  <li><code>frog.connectivity</code> covers foreign-runtime, native/shared-library, managed-platform, and SQL interoperability,</li>
+  <li>richer sessions, handles, callbacks, broader service bindings, and async coordination remain for later revisions.</li>
 </ul>
