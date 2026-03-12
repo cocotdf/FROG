@@ -105,7 +105,7 @@ This separation is important because it keeps:
 <ul>
   <li>graph structure,</li>
   <li>type rules,</li>
-  <li>widget/front-panel models,</li>
+  <li>widget and front-panel models,</li>
   <li>library semantics</li>
 </ul>
 
@@ -122,19 +122,21 @@ This directory currently contains the following standard library specifications:
 </p>
 
 <ul>
-  <li><code>Core.md</code> — the minimal standard <code>frog.core</code> library for FROG v0.1.</li>
-  <li><code>UI.md</code> — the standard <code>frog.ui</code> primitive library for widget object interaction in FROG v0.1.</li>
-  <li><code>IO.md</code> — the standard <code>frog.io</code> primitive library for file, path, resource, and related I/O in FROG v0.1.</li>
-  <li><code>Connectivity.md</code> — the standard <code>frog.connectivity</code> primitive library for external language, runtime, library, service, and database bindings in FROG v0.1.</li>
+  <li><code>Core.md</code> — the minimal standard <code>frog.core</code> library for foundational primitive behavior in FROG v0.1.</li>
+  <li><code>Math.md</code> — the standard <code>frog.math</code> library for numeric scalar operations beyond the minimal core.</li>
+  <li><code>Collections.md</code> — the standard <code>frog.collections</code> library for array-oriented collection primitives in FROG v0.1.</li>
+  <li><code>Text.md</code> — the standard <code>frog.text</code> library for text-processing primitives in FROG v0.1.</li>
+  <li><code>IO.md</code> — the standard <code>frog.io</code> library for file, path, byte, and related I/O primitives in FROG v0.1.</li>
+  <li><code>Signal.md</code> — the standard <code>frog.signal</code> library for first-wave 1D signal-processing primitives in FROG v0.1.</li>
 </ul>
 
 <p>
-Together, these documents define the initial standard primitive taxonomy of the language.
+Together, these documents define the current standard primitive taxonomy of the language at the repository stage represented by this file.
 </p>
 
 <p>
 The <code>frog.core</code> library provides the foundational built-in primitive set.
-The other libraries define standardized families beyond the minimal core, while remaining part of the same overall primitive-library layer.
+The sibling libraries extend the standard primitive layer without changing the canonical source structure of FROG itself.
 </p>
 
 <hr/>
@@ -147,9 +149,11 @@ At the current repository stage, the standard primitive taxonomy is organized as
 
 <ul>
   <li><strong><code>frog.core.*</code></strong> — minimal foundational language primitives</li>
-  <li><strong><code>frog.ui.*</code></strong> — widget object interaction primitives</li>
-  <li><strong><code>frog.io.*</code></strong> — file/path/resource I/O primitives</li>
-  <li><strong><code>frog.connectivity.*</code></strong> — external binding and interoperability primitives</li>
+  <li><strong><code>frog.math.*</code></strong> — numeric scalar functions beyond the minimal core</li>
+  <li><strong><code>frog.collections.*</code></strong> — array-oriented collection primitives</li>
+  <li><strong><code>frog.text.*</code></strong> — text-processing primitives</li>
+  <li><strong><code>frog.io.*</code></strong> — file/path/resource and byte-oriented I/O primitives</li>
+  <li><strong><code>frog.signal.*</code></strong> — first-wave 1D signal-processing primitives</li>
 </ul>
 
 <p>
@@ -158,14 +162,20 @@ It separates:
 </p>
 
 <ul>
-  <li>core language functionality,</li>
-  <li>UI object interaction,</li>
+  <li>foundational language behavior,</li>
+  <li>numeric computation,</li>
+  <li>collection manipulation,</li>
+  <li>text handling,</li>
   <li>I/O concerns,</li>
-  <li>external interoperability and bindings</li>
+  <li>signal-processing concerns</li>
 </ul>
 
 <p>
 into distinct normative library families.
+</p>
+
+<p>
+Additional families MAY be standardized later, but they are not considered current library documents unless they exist as specifications in this directory.
 </p>
 
 <hr/>
@@ -182,7 +192,7 @@ In particular:
   <li><code>Expression/Type.md</code> defines type syntax, compatibility, and coercion rules used by primitive ports,</li>
   <li><code>Expression/Control structures.md</code> defines language structures, which remain distinct from ordinary primitive functions,</li>
   <li><code>Expression/State and cycles.md</code> defines explicit local memory and cycle-validity rules that constrain stateful primitives such as <code>frog.core.delay</code>,</li>
-  <li><code>Expression/Widget interaction.md</code> defines the canonical source-level interaction model used by <code>frog.ui.*</code> primitives,</li>
+  <li><code>Expression/Widget interaction.md</code> defines the canonical source-level UI interaction model that future standardized <code>frog.ui.*</code> libraries MUST respect,</li>
   <li><code>Expression/Front panel.md</code> defines widget instances and <code>ui_libraries</code>, which remain distinct from executable primitive libraries,</li>
   <li><code>IDE/Palette.md</code> defines palette organization and discovery, but does not replace library specifications.</li>
 </ul>
@@ -209,10 +219,11 @@ Examples:
 
 <ul>
   <li><code>frog.core.add</code></li>
-  <li><code>frog.core.delay</code></li>
-  <li><code>frog.ui.property_read</code></li>
+  <li><code>frog.math.sqrt</code></li>
+  <li><code>frog.collections.length</code></li>
+  <li><code>frog.text.concat</code></li>
   <li><code>frog.io.read_text</code></li>
-  <li><code>frog.connectivity.python.call</code></li>
+  <li><code>frog.signal.moving_average</code></li>
 </ul>
 
 <p>
@@ -220,7 +231,8 @@ This naming model keeps primitive identity explicit and portable across tools, r
 </p>
 
 <p>
-Library specifications MAY define deeper hierarchical namespaces when needed, for example:
+Library specifications MAY define deeper hierarchical namespaces when needed.
+For example, a future interoperability family might use names such as:
 </p>
 
 <ul>
@@ -247,9 +259,12 @@ The following boundaries apply:
 </p>
 
 <ul>
-  <li><strong><code>frog.ui.*</code></strong> owns widget object interaction only, including standardized primitives such as <code>property_read</code>, <code>property_write</code>, and <code>method_invoke</code>.</li>
-  <li><strong><code>frog.io.*</code></strong> owns file/path/resource I/O only.</li>
-  <li><strong><code>frog.connectivity.*</code></strong> owns Python, native/shared library, C/C++, .NET, SQL, and external runtime/service bindings.</li>
+  <li><strong><code>frog.core.*</code></strong> owns only the minimal foundational primitive set required by the language baseline.</li>
+  <li><strong><code>frog.math.*</code></strong> owns numeric scalar functions beyond the core.</li>
+  <li><strong><code>frog.collections.*</code></strong> owns array-oriented collection manipulation primitives.</li>
+  <li><strong><code>frog.text.*</code></strong> owns text-processing primitives.</li>
+  <li><strong><code>frog.io.*</code></strong> owns file/path/resource and byte-oriented I/O primitives.</li>
+  <li><strong><code>frog.signal.*</code></strong> owns signal-processing primitives as standardized by the current repository stage.</li>
 </ul>
 
 <p>
@@ -257,9 +272,11 @@ Therefore:
 </p>
 
 <ul>
-  <li><code>frog.ui.*</code> MUST NOT absorb general file I/O or external-language binding responsibilities,</li>
-  <li><code>frog.io.*</code> MUST NOT absorb Python, .NET, SQL, or foreign-library interoperability,</li>
-  <li><code>frog.connectivity.*</code> MUST NOT be used as a generic replacement for ordinary file/path/resource I/O.</li>
+  <li><code>frog.core.*</code> MUST NOT be treated as a generic bucket for all future functionality,</li>
+  <li><code>frog.io.*</code> MUST NOT absorb unrelated external-language or foreign-runtime binding responsibilities,</li>
+  <li><code>frog.text.*</code> MUST NOT absorb path semantics, file semantics, or network I/O semantics,</li>
+  <li><code>frog.collections.*</code> MUST remain distinct from future map/dictionary or record-oriented libraries unless those are explicitly standardized,</li>
+  <li><code>frog.signal.*</code> MUST remain distinct from future tensor, waveform, or hardware-acquisition libraries unless those are explicitly standardized.</li>
 </ul>
 
 <p>
@@ -281,8 +298,8 @@ Future library families MAY be added later for domains such as:
 </p>
 
 <ul>
-  <li>mathematics,</li>
-  <li>signal processing,</li>
+  <li>UI object interaction,</li>
+  <li>external interoperability and connectivity,</li>
   <li>tensor computation,</li>
   <li>ONNX-oriented operators,</li>
   <li>runtime coordination and scheduling,</li>
@@ -294,12 +311,16 @@ Such additions SHOULD preserve the same overall architectural principle:
 library catalogs define reusable primitive vocabularies without changing the canonical source structure of the language itself.
 </p>
 
+<p>
+When a new library family is introduced, it SHOULD be added as a sibling specification in this directory and SHOULD be reflected in the root repository documentation and relevant IDE palette documentation.
+</p>
+
 <hr/>
 
 <h2 id="status">10. Status</h2>
 
 <p>
-At the current repository stage, <code>Libraries/</code> defines the initial standard primitive taxonomy used by the rest of the specification.
+At the current repository stage, <code>Libraries/</code> defines a growing but still intentionally controlled standard primitive taxonomy used by the rest of the specification.
 </p>
 
 <p>
@@ -313,5 +334,5 @@ Its immediate role is to anchor the normative primitive vocabulary consumed by e
 </ul>
 
 <p>
-This directory is expected to grow as the language matures, but its growth SHOULD preserve explicit namespace ownership and clear library boundaries.
+This directory is expected to grow as the language matures, but its growth SHOULD preserve explicit namespace ownership, clear library boundaries, and conservative integration with the rest of the specification.
 </p>
