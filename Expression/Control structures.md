@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="../FROG logo.svg" alt="FROG logo" width="150" />
-</p>
-
 <h1 align="center">🐸 FROG Control Structures Specification</h1>
 
 <p align="center">
@@ -92,6 +88,8 @@ This document complements the following specifications:
 </p>
 
 <ul>
+  <li><code>Language/Readme.md</code> — defines the role of this directory as a semantic continuity layer inside the current repository organization.</li>
+  <li><code>Expression/Control structures.md</code> — is the primary canonical source-spec reference for control structures.</li>
   <li><code>Expression/Diagram.md</code> — defines the executable graph, diagram scopes, node kinds, and structure-node placement in diagrams.</li>
   <li><code>Expression/Type.md</code> — defines type syntax and compatibility.</li>
   <li><code>Expression/State and cycles.md</code> — defines local memory and the validity rule for cyclic graphs.</li>
@@ -99,13 +97,14 @@ This document complements the following specifications:
 </ul>
 
 <p>
-This document defines the semantics of control structures.
-It does not redefine ordinary function libraries, and it does not redefine the general diagram node model already defined in <code>Diagram.md</code>.
+This document defines and clarifies the semantics of control structures within the current <code>Language/</code> continuity layer.
+It does not redefine ordinary function libraries, and it does not redefine the general diagram node model already defined in <code>Expression/Diagram.md</code>.
 </p>
 
 <p>
-In v0.1, the canonical source form of control structures is standardized here normatively.
-It is not merely illustrative.
+At the current repository stage, canonical source-spec reading is centered in <code>Expression/</code>.
+Accordingly, <code>Expression/Control structures.md</code> is the primary reference for the canonical source-level representation of control structures.
+This document remains aligned companion material in <code>Language/</code> for semantic continuity inside the repository.
 </p>
 
 <hr/>
@@ -856,7 +855,7 @@ Accordingly:
 
 <p>
 Any directed cycle inside a loop body remains subject to the same rule as any other diagram:
-every directed cycle MUST contain at least one explicit local-memory primitive.
+every directed cycle MUST contain at least one explicit local-memory function.
 In base v0.1, <code>frog.core.delay</code> is the minimal standard primitive used to make such feedback explicit and deterministic.
 </p>
 
