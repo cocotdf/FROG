@@ -22,7 +22,7 @@ Definition of the minimal standard <strong>frog.core</strong> library for FROG v
   <li><a href="#comparison-functions">10. Comparison Functions</a></li>
   <li><a href="#logical-functions">11. Logical Functions</a></li>
   <li><a href="#selection-function">12. Selection Function</a></li>
-  <li><a href="#local-state-function">13. Local-State Function</a></li>
+  <li><a href="#local-memory-function">13. Local-Memory Function</a></li>
   <li><a href="#diagram-representation">14. Diagram Representation</a></li>
   <li><a href="#validation-rules">15. Validation Rules</a></li>
   <li><a href="#examples">16. Examples</a></li>
@@ -78,12 +78,13 @@ This document complements the following specifications:
 <ul>
   <li><strong>Expression/Diagram.md</strong> — defines how built-in functions are serialized as diagram nodes.</li>
   <li><strong>Expression/Type.md</strong> — defines built-in types, type compatibility, and implicit coercion rules.</li>
-  <li><strong>Language/State and cycles.md</strong> — defines the semantics of local state and the validity of cycles, including the role of <code>frog.core.delay</code>.</li>
+  <li><strong>Expression/Control structures.md</strong> — defines standardized language structures, which remain distinct from ordinary primitive functions.</li>
+  <li><strong>Expression/State and cycles.md</strong> — defines explicit local memory and cycle-validity rules that constrain stateful primitives such as <code>frog.core.delay</code>.</li>
 </ul>
 
 <p>
 This document defines the standard built-in core function set.
-It does not redefine the graph structure or the type system.
+It does not redefine the graph structure, the type system, or the cycle-validity rules.
 </p>
 
 <hr/>
@@ -159,7 +160,7 @@ FROG v0.1 standardizes the following minimal core functions:
   <li>comparison functions,</li>
   <li>boolean logic functions,</li>
   <li>a simple selection function,</li>
-  <li>a single explicit local-state function: <code>frog.core.delay</code>.</li>
+  <li>a single explicit local-memory function: <code>frog.core.delay</code>.</li>
 </ul>
 
 <p>
@@ -179,7 +180,7 @@ The minimal <code>frog.core</code> library is organized into the following categ
   <li><strong>Comparison</strong></li>
   <li><strong>Logic</strong></li>
   <li><strong>Selection</strong></li>
-  <li><strong>State</strong></li>
+  <li><strong>Local Memory</strong></li>
 </ul>
 
 <p>
@@ -212,7 +213,7 @@ In v0.1:
 
 <ul>
   <li>all functions in this document are stateless and side-effect-free, except <code>frog.core.delay</code>,</li>
-  <li><code>frog.core.delay</code> is stateful and follows <strong>Language/State and cycles.md</strong>.</li>
+  <li><code>frog.core.delay</code> is stateful and MUST be treated as a local-memory primitive constrained by <strong>Expression/State and cycles.md</strong>.</li>
 </ul>
 
 <hr/>
@@ -461,23 +462,24 @@ Rules:
 </ul>
 
 <p>
-This function is a data selection function.
+This function is a data-selection function.
 It is not a general control-flow structure.
 </p>
 
 <hr/>
 
-<h2 id="local-state-function">13. Local-State Function</h2>
+<h2 id="local-memory-function">13. Local-Memory Function</h2>
 
 <h3>13.1 <code>frog.core.delay</code></h3>
 
 <p>
-<code>frog.core.delay</code> is the minimal standard local-state function for FROG v0.1.
+<code>frog.core.delay</code> is the minimal standard local-memory function for FROG v0.1.
 </p>
 
 <p>
 It is the only stateful function defined in this document.
-Its semantics are defined jointly by this document and <strong>Language/State and cycles.md</strong>.
+Its cycle-validity constraints and local-memory semantics are defined by <strong>Expression/State and cycles.md</strong>.
+This document defines its standardized function identity, port model, and required configuration surface in the core library.
 </p>
 
 <ul>
@@ -565,7 +567,8 @@ For <code>frog.core.delay</code> specifically:
 <ul>
   <li>the node MUST define <code>initial</code>,</li>
   <li><code>initial</code> MUST be type-compatible with the delay state type,</li>
-  <li>the function MUST be treated as a local-state function for cycle validation.</li>
+  <li><code>in</code> and <code>out</code> MUST have the same type,</li>
+  <li>the function MUST be treated as a local-memory primitive for cycle validation.</li>
 </ul>
 
 <p>
@@ -692,7 +695,7 @@ It provides:
   <li>basic comparison,</li>
   <li>basic boolean logic,</li>
   <li>simple value selection,</li>
-  <li>explicit local-state feedback through <code>frog.core.delay</code>.</li>
+  <li>explicit local-memory feedback through <code>frog.core.delay</code>.</li>
 </ul>
 
 <p>
