@@ -1,7 +1,7 @@
 <h1 align="center">🐸 FROG IDE Palette Specification</h1>
 
 <p align="center">
-Definition of the function and structure palette for the FROG IDE<br/>
+Definition of the function, structure, and library palette for the FROG IDE<br/>
 <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -36,7 +36,7 @@ Definition of the function and structure palette for the FROG IDE<br/>
 <h2 id="overview">1. Overview</h2>
 
 <p>
-The FROG IDE palette is the primary user-facing mechanism used to discover, search, understand, and insert functions and structures into a diagram.
+The FROG IDE palette is the primary user-facing mechanism used to discover, search, understand, and insert functions, structures, and related language entries into a diagram.
 </p>
 
 <p>
@@ -65,7 +65,8 @@ The FROG palette is intentionally designed to avoid the historical drift of pale
   <li><strong>Intent-first navigation</strong> — users SHOULD be able to find what they want by purpose, not only by internal implementation category.</li>
   <li><strong>Namespace consistency</strong> — the palette SHOULD still reflect the actual language namespace model.</li>
   <li><strong>Fast insertion</strong> — search and contextual suggestions SHOULD reduce friction.</li>
-  <li><strong>Clarity</strong> — functions, structures, UI operations, and runtime tools MUST NOT be visually conflated.</li>
+  <li><strong>Clarity</strong> — functions, structures, UI operations, I/O operations, connectivity operations, and runtime tools MUST NOT be visually conflated.</li>
+  <li><strong>Explicit taxonomy boundaries</strong> — UI, I/O, Connectivity, and Runtime families MUST remain conceptually distinct.</li>
   <li><strong>Scalability</strong> — the model MUST remain usable as FROG grows from a minimal core to richer libraries.</li>
   <li><strong>Extensibility</strong> — third-party libraries MUST integrate cleanly without breaking the palette model.</li>
 </ul>
@@ -79,15 +80,20 @@ This document complements the following specifications:
 </p>
 
 <ul>
-  <li><code>Libraries/Core.md</code> — defines the minimal built-in function catalog such as <code>frog.core.add</code> and <code>frog.core.delay</code>.</li>
-  <li><code>Language/Control structures.md</code> — defines structures such as <code>case</code>, <code>for_loop</code>, and <code>while_loop</code>.</li>
-  <li><code>Expression/Diagram.md</code> — defines how inserted functions and structures appear in the program source and diagram model.</li>
-  <li><code>Expression/Widget interaction.md</code> — defines UI interaction functions such as widget property access and method invocation.</li>
+  <li><code>Libraries/Core.md</code> — defines the minimal built-in primitive catalog such as <code>frog.core.add</code> and <code>frog.core.delay</code>.</li>
+  <li><code>Expression/Control structures.md</code> — defines structures such as <code>case</code>, <code>for_loop</code>, and <code>while_loop</code>.</li>
+  <li><code>Expression/Diagram.md</code> — defines how inserted functions, structures, and related nodes appear in the program source and diagram model.</li>
+  <li><code>Expression/Widget interaction.md</code> — defines canonical UI interaction primitives such as widget property access and method invocation.</li>
+  <li><code>Expression/Front panel.md</code> and <code>Expression/Widget.md</code> — define the front-panel and widget model that inform UI-related palette entries.</li>
 </ul>
 
 <p>
 This document defines how the IDE presents language constructs to the user.
 It does not define the language semantics of those constructs.
+</p>
+
+<p>
+When additional standard library documents exist for namespaces such as <code>frog.ui.*</code>, <code>frog.io.*</code>, or <code>frog.connectivity.*</code>, the palette MUST remain consistent with those library specifications.
 </p>
 
 <hr/>
@@ -107,6 +113,7 @@ The primary palette SHOULD be organized according to user intent such as:
   <li>repeat execution,</li>
   <li>interact with a widget,</li>
   <li>read a file,</li>
+  <li>connect to Python or SQL,</li>
   <li>use ONNX operators.</li>
 </ul>
 
@@ -130,13 +137,30 @@ Search is a primary insertion path and MUST be treated as a first-class mechanis
 Ordinary functions such as <code>frog.core.add</code> and structural constructs such as <code>case</code>, <code>for_loop</code>, and <code>while_loop</code> MUST remain visibly distinct in the palette and in search results.
 </p>
 
-<h3>4.5 Context improves speed</h3>
+<h3>4.5 Taxonomy boundaries remain explicit</h3>
+
+<p>
+The palette MUST keep the following boundaries explicit:
+</p>
+
+<ul>
+  <li><strong>UI</strong> — widget-facing interaction and UI-related insertion paths,</li>
+  <li><strong>I/O</strong> — file, path, resource, serialization, network, and hardware I/O,</li>
+  <li><strong>Connectivity</strong> — Python, native/shared library, C/C++, .NET, SQL, and external runtime/service bindings,</li>
+  <li><strong>Concurrency &amp; Runtime</strong> — runtime coordination and execution tools.</li>
+</ul>
+
+<p>
+These groups MAY interact in real programs, but the palette SHOULD present them as distinct conceptual families.
+</p>
+
+<h3>4.6 Context improves speed</h3>
 
 <p>
 The IDE SHOULD use type context, wire context, and insertion context to improve suggestions without changing language semantics.
 </p>
 
-<h3>4.6 Canonical identity remains singular</h3>
+<h3>4.7 Canonical identity remains singular</h3>
 
 <p>
 A language construct MAY appear in multiple discovery paths, but it MUST keep one canonical identity.
@@ -191,8 +215,8 @@ Text
 Tensor &amp; ONNX
 UI
 I/O
+Connectivity
 Concurrency &amp; Runtime
-External
 </pre>
 
 <p>
@@ -219,6 +243,7 @@ frog.tensor.*
 frog.signal.*
 frog.ui.*
 frog.io.*
+frog.connectivity.*
 frog.runtime.*
 frog.onnx.*
 </pre>
@@ -270,6 +295,8 @@ Examples:
   <li>searching <code>for</code> SHOULD find <code>for_loop</code>,</li>
   <li>searching <code>while</code> SHOULD find <code>while_loop</code>,</li>
   <li>searching <code>property write</code> SHOULD find the relevant widget interaction entry,</li>
+  <li>searching <code>python</code> SHOULD find the relevant connectivity entry when available,</li>
+  <li>searching <code>sql</code> SHOULD find the relevant connectivity entry when available,</li>
   <li>searching <code>relu</code> SHOULD find the corresponding ONNX or tensor entry when available.</li>
 </ul>
 
@@ -319,6 +346,8 @@ Examples:
   <li>from a <code>string</code> wire, prefer text operations and string-based <code>case</code> suggestions,</li>
   <li>from a widget reference, prefer property and method interaction suggestions,</li>
   <li>from a value feedback path, prefer <code>frog.core.delay</code>,</li>
+  <li>from a path-like or file-related context, prefer I/O suggestions,</li>
+  <li>from a connectivity-related insertion path, prefer Python, native binding, .NET, or SQL suggestions,</li>
   <li>from a tensor wire, prefer tensor and ONNX suggestions.</li>
 </ul>
 
@@ -443,27 +472,50 @@ This group is intended for future tensor and ONNX-related functions and SHOULD r
 <ul>
   <li>widget value insertion</li>
   <li>widget reference insertion</li>
-  <li>property read</li>
-  <li>property write</li>
-  <li>method invoke</li>
+  <li><code>frog.ui.property_read</code></li>
+  <li><code>frog.ui.property_write</code></li>
+  <li><code>frog.ui.method_invoke</code></li>
 </ul>
+
+<p>
+This group is intended for widget-facing interaction and UI-related insertion paths.
+It SHOULD NOT absorb file I/O, database access, Python bindings, or general external interop.
+</p>
 
 <h3>11.10 I/O</h3>
 
 <p>
-This group is intended for file, path, serialization, network, and hardware I/O families defined later.
+This group is intended for file, path, resource, serialization, network, and hardware I/O families defined later.
 </p>
 
-<h3>11.11 Concurrency &amp; Runtime</h3>
-
 <p>
-This group is intended for future runtime coordination mechanisms such as queues, channels, tasks, and system-level execution tools.
+It SHOULD cover operations whose primary role is reading from, writing to, opening, closing, or transforming an I/O resource.
+It SHOULD NOT absorb Python, native/shared library, .NET, SQL, or general external service bindings.
 </p>
 
-<h3>11.12 External</h3>
+<h3>11.11 Connectivity</h3>
 
 <p>
-This group is intended for future integrations such as Python, C/C++, .NET, or external runtime bindings.
+This group is intended for future integrations such as:
+</p>
+
+<ul>
+  <li>Python bindings,</li>
+  <li>native/shared library bindings,</li>
+  <li>C/C++ bindings,</li>
+  <li>.NET bindings,</li>
+  <li>SQL and database connectivity,</li>
+  <li>external runtime or service bindings.</li>
+</ul>
+
+<p>
+This group exists to keep interop and external binding workflows explicit instead of collapsing them into a generic and ambiguous external bucket.
+</p>
+
+<h3>11.12 Concurrency &amp; Runtime</h3>
+
+<p>
+This group is intended for future runtime coordination mechanisms such as queues, channels, tasks, schedulers, synchronization tools, and system-level execution utilities.
 </p>
 
 <hr/>
@@ -497,6 +549,8 @@ Examples of useful badges:
   <li>Pure</li>
   <li>Stateful</li>
   <li>UI</li>
+  <li>I/O</li>
+  <li>Connectivity</li>
   <li>ONNX</li>
   <li>Experimental</li>
   <li>Third-party</li>
@@ -611,9 +665,10 @@ In particular:
 
 <ul>
   <li>the primary palette view, namespace view, and search results MUST refer to the same canonical language entries,</li>
-  <li>every palette entry MUST resolve to a valid function or structure definition known to the active language profile,</li>
+  <li>every palette entry MUST resolve to a valid function or structure definition known to the active language specification and profile,</li>
   <li>search aliases MUST map back to a canonical entry identity,</li>
-  <li>contextual suggestions MUST NOT invent non-existent constructs.</li>
+  <li>contextual suggestions MUST NOT invent non-existent constructs,</li>
+  <li>UI, I/O, Connectivity, and Runtime entries MUST remain consistently classified across palette views.</li>
 </ul>
 
 <p>
@@ -661,6 +716,15 @@ It MUST NOT change the source semantics of the inserted construct.
   <li><code>frog.ui.method_invoke</code></li>
 </ul>
 
+<h3>17.5 Connectivity discovery examples</h3>
+
+<ul>
+  <li><code>python</code> → relevant <code>frog.connectivity.*</code> entry when available</li>
+  <li><code>dll</code> → relevant native/shared library binding entry when available</li>
+  <li><code>sql</code> → relevant database connectivity entry when available</li>
+  <li><code>.net</code> → relevant .NET connectivity entry when available</li>
+</ul>
+
 <hr/>
 
 <h2 id="out-of-scope-for-v01">18. Out of Scope for v0.1</h2>
@@ -671,7 +735,8 @@ It MUST NOT change the source semantics of the inserted construct.
   <li>marketplace-style commercial discovery UX,</li>
   <li>cross-project recommendation systems,</li>
   <li>automatic insertion of profile-specific hidden helper nodes,</li>
-  <li>semantic transformation of one canonical structure into another language construct.</li>
+  <li>semantic transformation of one canonical structure into another language construct,</li>
+  <li>a requirement that every future palette family already be fully standardized in v0.1.</li>
 </ul>
 
 <hr/>
@@ -688,6 +753,7 @@ The FROG IDE palette is the primary discovery and insertion mechanism for langua
   <li>It MUST preserve one canonical identity per language construct.</li>
   <li>It SHOULD support aliases such as <code>if</code> for boolean <code>case</code>.</li>
   <li>It SHOULD expose <code>case</code>, <code>for_loop</code>, and <code>while_loop</code> as the standard control structures of v0.1.</li>
+  <li>It SHOULD expose UI, I/O, Connectivity, and Concurrency &amp; Runtime as distinct palette families.</li>
   <li>It MUST remain semantically consistent with the active language specification and profile.</li>
 </ul>
 
