@@ -37,7 +37,7 @@ This document defines the minimal standard <strong>frog.io</strong> library for 
 </p>
 
 <p>
-The <code>frog.io</code> library contains a first standard set of primitives for:
+The <code>frog.io</code> library provides a first standardized set of primitives for:
 </p>
 
 <ul>
@@ -49,7 +49,11 @@ The <code>frog.io</code> library contains a first standard set of primitives for
 </ul>
 
 <p>
-The goal of this first version is to provide immediately useful I/O primitives without requiring a broader standardized model for generic external side-effect sequencing, stream handles, or advanced structured error transport.
+The goal of this first version is to provide immediately useful file- and path-oriented I/O primitives without requiring a broader standardized model for generic side-effect sequencing, stream handles, mutation, or structured error transport.
+</p>
+
+<p>
+For FROG v0.1, <code>frog.io</code> is intentionally conservative and primarily read-oriented.
 </p>
 
 <hr/>
@@ -60,8 +64,8 @@ The goal of this first version is to provide immediately useful I/O primitives w
   <li><strong>Usefulness</strong> — provide a practical first standard I/O surface for ordinary programs.</li>
   <li><strong>Portability</strong> — keep primitive identity and purpose stable across conforming implementations.</li>
   <li><strong>Conservatism</strong> — standardize only the I/O primitives that fit cleanly within the current FROG source and type model.</li>
-  <li><strong>Clarity</strong> — define stable names, stable port models, and explicit success signaling.</li>
-  <li><strong>Extensibility</strong> — leave room for later libraries or later revisions covering streams, mutation, networking, and hardware I/O.</li>
+  <li><strong>Clarity</strong> — define stable names, stable port models, and explicit success signaling where failure is possible.</li>
+  <li><strong>Extensibility</strong> — leave room for later libraries or later revisions covering mutation, streams, networking, hardware I/O, and richer transport semantics.</li>
 </ul>
 
 <hr/>
@@ -84,12 +88,17 @@ This document defines the standardized primitive catalog for <code>frog.io</code
 It does not redefine the graph model, the type system, or general execution semantics.
 </p>
 
+<p>
+This document also does not define a general cross-library sequencing model for external effects.
+Where a primitive can fail, v0.1 standardizes explicit success signaling at the value level instead.
+</p>
+
 <hr/>
 
 <h2 id="role-of-frog-io">4. Role of <code>frog.io</code></h2>
 
 <p>
-The <code>frog.io</code> library provides standardized primitives for interacting with external resource identifiers and reading external resource content into ordinary FROG values.
+The <code>frog.io</code> library provides standardized primitives for interacting with path-identified external resources and for reading external resource content into ordinary FROG values.
 </p>
 
 <p>
@@ -112,10 +121,15 @@ The <code>frog.io</code> library is distinct from:
 </p>
 
 <ul>
-  <li><code>frog.core</code>, which contains the minimal always-available computational primitives,</li>
+  <li><code>frog.core</code>, which contains minimal always-available computational primitives,</li>
   <li><code>frog.ui</code>, which covers widget interaction,</li>
+  <li><code>frog.connectivity</code>, which is the appropriate family for language interop, runtime bindings, database access, or external service integration,</li>
   <li>future libraries for networking, hardware access, serialization formats, or runtime coordination.</li>
 </ul>
+
+<p>
+In other words, <code>frog.io</code> covers foundational file- and path-oriented resource access in v0.1, not general interop or connectivity.
+</p>
 
 <hr/>
 
@@ -176,9 +190,12 @@ FROG v0.1 does <strong>not</strong> attempt to define:
 
 <ul>
   <li>file mutation primitives such as write, copy, move, rename, or delete,</li>
-  <li>stream or handle-based I/O,</li>
-  <li>network sockets or HTTP primitives,</li>
+  <li>stream- or handle-based I/O,</li>
+  <li>partial reads, buffered readers, or cursor-based access,</li>
+  <li>network sockets, HTTP primitives, or remote transport protocols,</li>
   <li>hardware I/O primitives,</li>
+  <li>language interop primitives such as Python, C/C++, or .NET calls,</li>
+  <li>database access primitives such as SQL queries, connections, or transactions,</li>
   <li>structured path types distinct from <code>string</code>,</li>
   <li>advanced structured error objects or exception transport.</li>
 </ul>
@@ -253,7 +270,7 @@ Fallback values in this document are standardized as follows:
 <h3>9.1 <code>frog.io.path_join</code></h3>
 
 <p>
-Combines a base path and a child path fragment into a normalized combined path string according to the active execution profile.
+Combines a base path and a child path fragment into a combined path string according to the active execution profile.
 </p>
 
 <ul>
@@ -276,6 +293,10 @@ Normalizes a path string according to the active execution profile.
   <li>output port: <code>result</code></li>
 </ul>
 
+<p>
+Both the input and the output are of type <code>string</code>.
+</p>
+
 <h3>9.3 <code>frog.io.path_parent</code></h3>
 
 <p>
@@ -287,6 +308,10 @@ Returns the parent path of the given path string according to the active executi
   <li>output port: <code>result</code></li>
 </ul>
 
+<p>
+Both the input and the output are of type <code>string</code>.
+</p>
+
 <h3>9.4 <code>frog.io.path_name</code></h3>
 
 <p>
@@ -297,6 +322,10 @@ Returns the final name component of the given path string.
   <li>input port: <code>path</code></li>
   <li>output port: <code>result</code></li>
 </ul>
+
+<p>
+Both the input and the output are of type <code>string</code>.
+</p>
 
 <hr/>
 
@@ -314,7 +343,7 @@ Returns whether the given path currently resolves to an existing filesystem entr
 </ul>
 
 <p>
-The input and output types are:
+Types:
 </p>
 
 <ul>
@@ -333,6 +362,15 @@ Returns whether the given path currently resolves to a regular file under the ac
   <li>output port: <code>result</code></li>
 </ul>
 
+<p>
+Types:
+</p>
+
+<ul>
+  <li><code>path: string</code></li>
+  <li><code>result: bool</code></li>
+</ul>
+
 <h3>10.3 <code>frog.io.is_directory</code></h3>
 
 <p>
@@ -342,6 +380,15 @@ Returns whether the given path currently resolves to a directory under the activ
 <ul>
   <li>input port: <code>path</code></li>
   <li>output port: <code>result</code></li>
+</ul>
+
+<p>
+Types:
+</p>
+
+<ul>
+  <li><code>path: string</code></li>
+  <li><code>result: bool</code></li>
 </ul>
 
 <h3>10.4 <code>frog.io.list_directory</code></h3>
@@ -603,6 +650,8 @@ The following are outside the strict scope of <code>frog.io</code> in v0.1:
   <li>network I/O, HTTP, sockets, or remote resource transports,</li>
   <li>hardware I/O, DAQ, serial, fieldbus, or instrument drivers,</li>
   <li>watchers, notifications, or asynchronous event-driven resource monitoring,</li>
+  <li>language interop such as Python, C/C++, .NET, or foreign-function calls,</li>
+  <li>database connectivity such as SQL connections, queries, or transactions,</li>
   <li>structured error objects, error codes, or exception payload types,</li>
   <li>a dedicated built-in <code>path</code> type distinct from <code>string</code>.</li>
 </ul>
@@ -629,7 +678,7 @@ It provides:
 
 <p>
 This first version is intentionally conservative.
-Its purpose is to establish a useful and portable initial I/O vocabulary while leaving more advanced side-effectful, streaming, networked, and hardware-oriented I/O to later standardization work.
+Its purpose is to establish a useful and portable initial I/O vocabulary while leaving mutation, streams, network transports, hardware access, interop, database access, and richer error transport to later standardization work.
 </p>
 
 <hr/>
