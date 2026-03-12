@@ -59,7 +59,7 @@ The purpose of this directory is to define:
   <li>the canonical top-level structure of a <code>.frog</code> file,</li>
   <li>the required and optional source sections of that file,</li>
   <li>the source-level meaning of those sections,</li>
-  <li>the cross-cutting subsystems that apply across those sections, including the type system, the widget model, and the widget interaction model.</li>
+  <li>the cross-cutting subsystems that apply across those sections, including the type system, the widget model, the widget interaction model, structural execution, and local memory.</li>
 </ul>
 
 <p>
@@ -110,6 +110,8 @@ The FROG Expression is defined through the following documents in this directory
   <li><code>Front panel.md</code></li>
   <li><code>Widget.md</code></li>
   <li><code>Widget interaction.md</code></li>
+  <li><code>Control structures.md</code></li>
+  <li><code>State and cycles.md</code></li>
   <li><code>Icon.md</code></li>
   <li><code>IDE preferences.md</code></li>
   <li><code>Cache.md</code></li>
@@ -139,20 +141,20 @@ In particular:
   <li><code>Type.md</code> defines canonical value type expressions, built-in types, compatibility rules, and coercion rules.</li>
   <li><code>Widget.md</code> defines the widget object model, including classes, roles, value behavior, parts, properties, methods, and events.</li>
   <li><code>Widget interaction.md</code> defines how executable diagrams may interact with widgets through standardized diagram-level interaction mechanisms.</li>
+  <li><code>Control structures.md</code> defines language structures such as <code>case</code>, <code>for_loop</code>, and <code>while_loop</code>.</li>
+  <li><code>State and cycles.md</code> defines local memory and cycle validity.</li>
 </ul>
 
 <p>
-The current source specification also depends on a small set of normative documents currently located outside this directory:
+The current source specification also depends on the normative core primitive catalog:
 </p>
 
 <ul>
-  <li><code>Language/Control structures.md</code> — structure families such as <code>case</code>, <code>for_loop</code>, and <code>while_loop</code>,</li>
-  <li><code>Language/State and cycles.md</code> — local memory and cycle validity,</li>
   <li><code>Libraries/Core.md</code> — standard primitive definitions such as <code>frog.core.add</code>, <code>frog.core.mul</code>, and <code>frog.core.delay</code>.</li>
 </ul>
 
 <p>
-Accordingly, <code>Expression/</code> is the canonical home of the source-format specification, while some execution-related normative dependencies are still referenced from other repository directories in the current repository layout.
+Accordingly, <code>Expression/</code> is now the canonical home of the source-format specification, while <code>Libraries/Core.md</code> remains a normative external dependency for standard primitive definitions.
 </p>
 
 <hr/>
@@ -403,7 +405,7 @@ It is the authoritative source-level execution structure of the program.
 </p>
 
 <p>
-Detailed specifications: <code>Diagram.md</code>, <code>Type.md</code>, <code>Widget interaction.md</code>, <code>Language/Control structures.md</code>, <code>Language/State and cycles.md</code>, <code>Libraries/Core.md</code>
+Detailed specifications: <code>Diagram.md</code>, <code>Type.md</code>, <code>Widget interaction.md</code>, <code>Control structures.md</code>, <code>State and cycles.md</code>, <code>Libraries/Core.md</code>
 </p>
 
 <h3>10.5 Front Panel</h3>
@@ -518,17 +520,17 @@ These interactions are represented inside the executable diagram rather than as 
 <h3>11.4 Structural Execution and Local Memory</h3>
 
 <p>
-The current source specification also depends on normative execution subsystems that are not yet physically colocated in this directory:
+FROG v0.1 also defines normative execution subsystems directly within this directory:
 </p>
 
 <ul>
-  <li><code>Language/Control structures.md</code> defines structure families and region-owned execution semantics,</li>
-  <li><code>Language/State and cycles.md</code> defines local memory and cycle validity,</li>
-  <li><code>Libraries/Core.md</code> defines the standard primitive catalog used by executable diagrams.</li>
+  <li><code>Control structures.md</code> defines structure families and region-owned execution semantics,</li>
+  <li><code>State and cycles.md</code> defines local memory and cycle validity.</li>
 </ul>
 
 <p>
-These subsystems are still cross-cutting with respect to the FROG Expression because they directly constrain what a valid <code>diagram</code> means.
+These subsystems are cross-cutting with respect to the FROG Expression because they directly constrain what a valid <code>diagram</code> means.
+The standard primitive catalog used by executable diagrams remains defined by <code>Libraries/Core.md</code>.
 </p>
 
 <hr/>
