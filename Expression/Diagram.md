@@ -32,7 +32,7 @@
   <li><a href="#sub-frog-invocation">16. Sub-FROG Invocation</a></li>
   <li><a href="#interface-widget-and-structure-boundaries">17. Interface, Widget, and Structure Boundaries</a></li>
   <li><a href="#widget-interaction-model">18. Widget Interaction Model</a></li>
-  <li><a href="#cycles-and-local-state">19. Cycles and Local State</a></li>
+  <li><a href="#cycles-and-local-memory">19. Cycles and Local Memory</a></li>
   <li><a href="#graph-validation">20. Graph Validation</a></li>
   <li><a href="#execution-semantics">21. Execution Semantics</a></li>
   <li><a href="#examples">22. Examples</a></li>
@@ -243,7 +243,7 @@ The graph is structural and executable:
 
 <ul>
   <li>structural, because it explicitly defines graph boundaries and nesting,</li>
-  <li>executable, because value availability, structure rules, and explicit local state determine run-time behavior.</li>
+  <li>executable, because value availability, structure rules, and explicit local memory determine run-time behavior.</li>
 </ul>
 
 <p>
@@ -1006,7 +1006,7 @@ These sequencing ports are opaque and MUST NOT be interpreted as ordinary value 
 
 <hr/>
 
-<h2 id="cycles-and-local-state">19. Cycles and Local State</h2>
+<h2 id="cycles-and-local-memory">19. Cycles and Local Memory</h2>
 
 <p>
 Cycles are allowed only when broken by explicit local memory.
