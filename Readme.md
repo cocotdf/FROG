@@ -14,13 +14,19 @@
   <a href="#what-is-frog">What is FROG?</a> •
   <a href="#why-frog-exists">Why FROG exists</a> •
   <a href="#positioning">Positioning</a> •
+  <a href="#breaking-the-syntax-first-bottleneck">Breaking the syntax-first bottleneck</a> •
   <a href="#dataflow-programming">Dataflow programming</a> •
+  <a href="#from-prototyping-to-critical-systems">From prototyping to critical systems</a> •
   <a href="#core-concept">Core concept</a> •
   <a href="#repository-structure">Repository structure</a> •
   <a href="#specification-architecture">Specification architecture</a> •
+  <a href="#program-representation">Program representation</a> •
   <a href="#execution-architecture">Execution architecture</a> •
   <a href="#execution-targets">Execution targets</a> •
+  <a href="#open-industrial-hardware-standard">Open industrial hardware standard</a> •
+  <a href="#security-and-optimization">Security &amp; optimization</a> •
   <a href="#interoperability">Interoperability</a> •
+  <a href="#language-separation">Language separation</a> •
   <a href="#status">Status</a> •
   <a href="#license">License</a>
 </p>
@@ -48,7 +54,7 @@ Instead of describing a program primarily through ordered text, FROG describes a
 </ul>
 
 <p>
-Execution emerges from data availability, structural rules, explicit control structures, and explicit local-state semantics
+Execution emerges from data availability, structural rules, explicit control structures, and explicit local-memory semantics
 rather than from manually authored instruction order.
 </p>
 
@@ -266,7 +272,7 @@ The diagram expresses:
   <li>public interface participation through <code>interface_input</code> and <code>interface_output</code>,</li>
   <li>front-panel value participation through <code>widget_value</code>,</li>
   <li>object-style widget interaction through <code>widget_reference</code> and <code>frog.ui.*</code> primitives,</li>
-  <li>explicit local state and valid cycles.</li>
+  <li>explicit local memory and valid cycles.</li>
 </ul>
 
 <h3>Front Panel — the interaction layer</h3>
@@ -346,6 +352,8 @@ It currently contains:
   <li><code>Front panel.md</code> — UI composition and front-panel structure,</li>
   <li><code>Widget.md</code> — widget object model,</li>
   <li><code>Widget interaction.md</code> — diagram-side widget interaction model,</li>
+  <li><code>Control structures.md</code> — language structures such as <code>case</code>, <code>for_loop</code>, and <code>while_loop</code>,</li>
+  <li><code>State and cycles.md</code> — local memory and cycle validity,</li>
   <li><code>Icon.md</code> — reusable-node icon representation,</li>
   <li><code>IDE preferences.md</code> — IDE-facing source-level preferences,</li>
   <li><code>Cache.md</code> — optional non-authoritative cache data,</li>
@@ -356,10 +364,10 @@ It currently contains:
 In short, <code>Expression/</code> defines the canonical source language representation.
 </p>
 
-<h3><code>Language/</code> — language semantics beyond a single source section</h3>
+<h3><code>Language/</code> — repository transition and semantic continuity</h3>
 
 <p>
-This directory defines semantic language rules that apply across the executable model rather than belonging to one isolated top-level JSON section.
+This directory remains present in the repository and still contains language-semantic documents related to structural execution and cycles.
 </p>
 
 <p>
@@ -372,7 +380,8 @@ It currently contains:
 </ul>
 
 <p>
-In short, <code>Language/</code> defines the execution semantics of core language constructs.
+For canonical source-spec reading, the corresponding documents in <code>Expression/</code> are now the primary reference.
+The presence of <code>Language/</code> reflects the current repository organization rather than a separate canonical source layer.
 </p>
 
 <h3><code>Libraries/</code> — standard primitive libraries</h3>
@@ -433,11 +442,14 @@ The repository is intentionally split into distinct architectural layers:
 </p>
 
 <ul>
-  <li><strong>Expression</strong> — canonical source representation,</li>
-  <li><strong>Language</strong> — semantic language rules,</li>
+  <li><strong>Expression</strong> — canonical source representation and source-level semantics,</li>
   <li><strong>Libraries</strong> — standardized primitive vocabularies,</li>
   <li><strong>IDE</strong> — authoring architecture and editor-facing models.</li>
 </ul>
+
+<p>
+The repository also currently retains a <strong>Language</strong> directory containing semantic companion documents during the present repository organization.
+</p>
 
 <p>
 This separation is deliberate.
@@ -550,7 +562,7 @@ It is also open language interoperability:
 <h2 id="security-and-optimization">Security &amp; optimization</h2>
 
 <p>
-Because FROG defines explicit graphs, explicit interfaces, and explicit state semantics,
+Because FROG defines explicit graphs, explicit interfaces, and explicit local-memory semantics,
 it provides a good basis for:
 </p>
 
