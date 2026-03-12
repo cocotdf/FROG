@@ -34,25 +34,25 @@
 <h2 id="overview">1. Overview</h2>
 
 <p>
-FROG widgets are structured UI objects declared in the <code>front_panel</code> section and described by
+FROG widgets are structured UI objects declared in the <code>front_panel</code> section and defined by
 <code>Widget.md</code> and <code>Front panel.md</code>.
-This document defines how the executable <code>diagram</code> may interact with those widget instances through
+This document specifies how the executable <code>diagram</code> may interact with those widget instances through
 explicit object-style interaction nodes.
 </p>
 
 <p>
-FROG distinguishes two different paths for widget participation in a diagram:
+FROG distinguishes two different diagram-side paths for widget participation:
 </p>
 
 <ul>
   <li><strong>Natural value path</strong> — through <code>widget_value</code>, which materializes the primary widget value in ordinary dataflow.</li>
-  <li><strong>Object-style path</strong> — through <code>widget_reference</code> plus explicit widget interaction primitives.</li>
+  <li><strong>Object-style path</strong> — through <code>widget_reference</code> together with explicit widget interaction primitives.</li>
 </ul>
 
 <p>
 These two paths serve different purposes and MUST remain semantically distinct.
-The natural value path is the canonical representation for ordinary value flow.
-The object-style path is the canonical representation for reading properties, writing properties, and invoking widget methods.
+The natural value path is the canonical representation for ordinary widget value flow.
+The object-style path is the canonical representation for property reads, property writes, and method invocation.
 </p>
 
 <p>
@@ -82,7 +82,7 @@ The widget interaction model is designed to satisfy the following goals:
 </p>
 
 <ul>
-  <li><strong>Object consistency</strong> — widget interaction MUST follow the widget object model rather than ad hoc UI-specific exceptions.</li>
+  <li><strong>Object consistency</strong> — widget interaction MUST follow the widget object model rather than introduce ad hoc UI-specific exceptions.</li>
   <li><strong>Dataflow clarity</strong> — ordinary value flow and explicit object access MUST remain distinct.</li>
   <li><strong>Type safety</strong> — widget member types and method signatures MUST remain compatible with the FROG type system.</li>
   <li><strong>Deterministic ordering when needed</strong> — UI side effects MAY be ordered explicitly through <code>ui_in</code> / <code>ui_out</code>.</li>
@@ -130,10 +130,10 @@ This document depends on the following specifications:
 </p>
 
 <ul>
-  <li><code>Type.md</code> — ordinary value types, compatibility, and coercion rules,</li>
-  <li><code>Widget.md</code> — widget classes, roles, parts, properties, methods, and member availability,</li>
+  <li><code>Type.md</code> — ordinary value types, compatibility rules, and implicit coercion rules,</li>
+  <li><code>Widget.md</code> — widget classes, widget roles, widget parts, properties, methods, and member availability,</li>
   <li><code>Front panel.md</code> — declaration and serialization of widget instances,</li>
-  <li><code>Diagram.md</code> — executable graph structure and node categories.</li>
+  <li><code>Diagram.md</code> — executable graph structure, node categories, and standard port behavior.</li>
 </ul>
 
 <p>
@@ -141,7 +141,7 @@ This document complements, but does not redefine, the following canonical diagra
 </p>
 
 <ul>
-  <li><code>widget_value</code> — natural primary value participation,</li>
+  <li><code>widget_value</code> — natural primary-value participation,</li>
   <li><code>widget_reference</code> — object-style widget access anchor.</li>
 </ul>
 
@@ -676,7 +676,7 @@ A validator SHOULD diagnose at least the following error classes:
 
 <p>
 Widget interaction nodes participate in normal graph execution like other diagram nodes,
-subject to their data dependencies, their optional UI sequencing dependencies,
+subject to their ordinary data dependencies, their optional UI sequencing dependencies,
 and the active runtime profile.
 </p>
 
@@ -852,7 +852,7 @@ Natural value path:
       {
         "id": "mul_1",
         "kind": "primitive",
-        "type": "frog.core.multiply"
+        "type": "frog.core.mul"
       },
       {
         "id": "ind_result_value",
@@ -963,13 +963,13 @@ Object-style access to the same widget primary value:
 <h2 id="out-of-scope-for-v01">16. Out of Scope for v0.1</h2>
 
 <ul>
-  <li>event structures and event case dispatch,</li>
+  <li>event structures and event-case dispatch,</li>
   <li>registration-based UI event nodes,</li>
   <li>asynchronous callback delivery,</li>
   <li>general widget reference storage and transport semantics,</li>
   <li>cross-thread UI affinity rules beyond what an active runtime profile defines,</li>
   <li>automatic inference of UI sequencing in all cases,</li>
-  <li>full standardization of every possible widget library member set.</li>
+  <li>full standardization of every possible widget-library member set.</li>
 </ul>
 
 <hr/>
