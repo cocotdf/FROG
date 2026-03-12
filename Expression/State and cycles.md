@@ -22,7 +22,7 @@
   <li><a href="#state-ownership-and-scope">6. State Ownership and Scope</a></li>
   <li><a href="#cycles-in-dataflow-graphs">7. Cycles in Dataflow Graphs</a></li>
   <li><a href="#cycle-validity-rule">8. Cycle Validity Rule</a></li>
-  <li><a href="#frogcoredelay"><code>9. frog.core.delay</code></a></li>
+  <li><a href="#frogcoredelay">9. <code>frog.core.delay</code></a></li>
   <li><a href="#initial-state">10. Initial State</a></li>
   <li><a href="#execution-semantics">11. Execution Semantics</a></li>
   <li><a href="#validation-rules">12. Validation Rules</a></li>
