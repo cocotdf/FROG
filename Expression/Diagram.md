@@ -78,7 +78,7 @@ Execution semantics are derived from the validated graph together with:
   <li>the widget model,</li>
   <li>the widget interaction model,</li>
   <li>the control-structure model,</li>
-  <li>the local-state and cycle rules,</li>
+  <li>the local-memory and cycle rules,</li>
   <li>the active primitive catalog or stricter execution profile.</li>
 </ul>
 
@@ -119,8 +119,8 @@ This document depends on the following FROG specifications:
   <li><code>Expression/Front panel.md</code> — serialized UI composition and widget declarations,</li>
   <li><code>Expression/Widget.md</code> — widget classes, primary value model, and widget parts,</li>
   <li><code>Expression/Widget interaction.md</code> — object-style widget interaction primitives and optional UI sequencing,</li>
-  <li><code>Language/Control structures.md</code> — structure families such as <code>case</code>, <code>for_loop</code>, and <code>while_loop</code>,</li>
-  <li><code>Language/State and cycles.md</code> — local memory and cycle validity,</li>
+  <li><code>Expression/Control structures.md</code> — structure families such as <code>case</code>, <code>for_loop</code>, and <code>while_loop</code>,</li>
+  <li><code>Expression/State and cycles.md</code> — local memory and cycle validity,</li>
   <li><code>Libraries/Core.md</code> — standard primitive definitions such as <code>frog.core.add</code>, <code>frog.core.mul</code>, and <code>frog.core.delay</code>.</li>
 </ul>
 
@@ -382,7 +382,7 @@ and local-memory primitives such as <code>frog.core.delay</code>.
 
 <p>
 A <code>structure</code> node represents a language-level control structure.
-Its semantics are defined by <code>Language/Control structures.md</code>.
+Its semantics are defined by <code>Expression/Control structures.md</code>.
 </p>
 
 <pre><code>{
@@ -671,7 +671,7 @@ The optional <code>ui_in</code> and <code>ui_out</code> ports are opaque UI sequ
 
 <p>
 The minimal standard local-memory primitive for v0.1 is <code>frog.core.delay</code>.
-Its canonical signature is defined by <code>Libraries/Core.md</code> and constrained by <code>Language/State and cycles.md</code>.
+Its canonical signature is defined by <code>Libraries/Core.md</code> and constrained by <code>Expression/State and cycles.md</code>.
 </p>
 
 <p>
@@ -948,7 +948,7 @@ Boundary values crossing the structure wall MUST be represented explicitly accor
 
 <p>
 This document does not redefine structure boundary internals.
-They are owned by <code>Language/Control structures.md</code>.
+They are owned by <code>Expression/Control structures.md</code>.
 </p>
 
 <hr/>
@@ -1025,7 +1025,7 @@ Rules:
 </ul>
 
 <p>
-Cycle validity and local-memory semantics are defined normatively by <code>Language/State and cycles.md</code>.
+Cycle validity and local-memory semantics are defined normatively by <code>Expression/State and cycles.md</code>.
 This document defines only their graph-level participation.
 </p>
 
@@ -1144,7 +1144,7 @@ but tools SHOULD preserve the distinction rather than collapsing both forms into
 <h3>21.5 Structure execution</h3>
 
 <p>
-Structure execution semantics are owned by <code>Language/Control structures.md</code>.
+Structure execution semantics are owned by <code>Expression/Control structures.md</code>.
 This document only requires that structure participation in the graph be explicit, valid, and canonical.
 </p>
 
@@ -1424,8 +1424,8 @@ For <code>frog.core.delay</code>, the observed output is the stored previous val
           }
         },
         "regions": [
-          { "id": "true_case" },
-          { "id": "false_case" }
+          { "id": "true_region" },
+          { "id": "false_region" }
         ]
       }
     ],
