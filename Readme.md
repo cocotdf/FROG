@@ -367,7 +367,8 @@ In short, <code>Expression/</code> defines the canonical source language represe
 <h3><code>Language/</code> — repository transition and semantic continuity</h3>
 
 <p>
-This directory remains present in the repository and still contains language-semantic documents related to structural execution and cycles.
+This directory remains present in the repository as a transition and continuity layer.
+It retains language-semantic documents related to structural execution and cycles while the repository architecture remains split across layers.
 </p>
 
 <p>
@@ -375,13 +376,14 @@ It currently contains:
 </p>
 
 <ul>
+  <li><code>Readme.md</code> — overview of the Language directory and its current transitional role,</li>
   <li><code>Control structures.md</code> — language structures such as <code>case</code>, <code>for_loop</code>, and <code>while_loop</code>,</li>
   <li><code>State and cycles.md</code> — explicit local memory and rules for valid feedback cycles.</li>
 </ul>
 
 <p>
 For canonical source-spec reading, the corresponding documents in <code>Expression/</code> are now the primary reference.
-The presence of <code>Language/</code> reflects the current repository organization rather than a separate canonical source layer.
+The presence of <code>Language/</code> reflects repository continuity and semantic organization rather than a separate canonical source layer.
 </p>
 
 <h3><code>Libraries/</code> — standard primitive libraries</h3>
@@ -395,6 +397,7 @@ It currently contains:
 </p>
 
 <ul>
+  <li><code>Readme.md</code> — overview of the standard library layer and how primitive namespaces relate to the rest of the specification,</li>
   <li><code>Core.md</code> — the base primitive library, including canonical <code>frog.core.*</code> primitives.</li>
 </ul>
 
@@ -448,7 +451,7 @@ The repository is intentionally split into distinct architectural layers:
 </ul>
 
 <p>
-The repository also currently retains a <strong>Language</strong> directory containing semantic companion documents during the present repository organization.
+The repository also currently retains a <strong>Language</strong> directory as a transition and semantic-continuity layer.
 </p>
 
 <p>
