@@ -21,6 +21,7 @@
   <a href="#specification-architecture">Specification architecture</a> •
   <a href="#program-representation">Program representation</a> •
   <a href="#execution-architecture">Execution architecture</a> •
+  <a href="#execution-observability-and-debugging">Execution observability &amp; debugging</a> •
   <a href="#execution-targets">Execution targets</a> •
   <a href="#open-industrial-hardware-standard">Open industrial hardware standard</a> •
   <a href="#security-and-optimization">Security &amp; Optimization</a> •
@@ -431,7 +432,7 @@ In short, <code>Libraries/</code> defines what standard primitives exist and wha
 
 <p>
 This directory defines the architecture and responsibilities of a FROG development environment.
-It explains how editing relates to the Program Model, the serialized Expression, validation, lowering, and runtime independence.
+It explains how editing relates to the Program Model, the serialized Expression, validation, lowering, live execution observability, debugging, and runtime independence.
 </p>
 
 <p>
@@ -440,7 +441,9 @@ It currently contains:
 
 <ul>
   <li><code>Readme.md</code> — overall IDE architecture,</li>
-  <li><code>Palette.md</code> — palette model for surfacing functions, structures, and reusable authoring elements.</li>
+  <li><code>Palette.md</code> — palette model for surfacing functions, structures, and reusable authoring elements,</li>
+  <li><code>Execution observability.md</code> — source-aligned live execution observability for IDE tooling,</li>
+  <li><code>Debugging.md</code> — interactive debugging semantics for FROG IDEs.</li>
 </ul>
 
 <p>
@@ -469,7 +472,7 @@ The repository is intentionally split into distinct architectural layers:
 <ul>
   <li><strong>Expression</strong> — canonical source representation and source-level semantics,</li>
   <li><strong>Libraries</strong> — standardized primitive vocabularies,</li>
-  <li><strong>IDE</strong> — authoring architecture and editor-facing models.</li>
+  <li><strong>IDE</strong> — authoring architecture, editor-facing models, execution observability, and debugging semantics.</li>
 </ul>
 
 <p>
@@ -566,6 +569,11 @@ Programs are not executed directly from raw source serialization.
 Execution occurs from validated execution-oriented representations derived from source.
 </p>
 
+<p>
+Execution observability and interactive debugging are layered on top of live execution derived from the validated Program Model and its execution-oriented form.
+They do not replace these three core representation levels.
+</p>
+
 <hr/>
 
 <h2 id="execution-architecture">Execution architecture</h2>
@@ -598,8 +606,18 @@ A conforming ecosystem may conceptually follow the architecture below:
                                  v
                            Target Runtime
                                  |
-                                 v
-       CPU / RT / GPU / FPGA / Embedded / MCU / Industrial Edge
+                  +--------------+--------------+
+                  |                             |
+                  v                             v
+       Execution observability          Target execution
+      (source-aligned live view)        (platform runtime)
+                  |
+                  v
+               Debugging
+      (pause / resume / break / step)
+                  |
+                  v
+            IDE inspection views
 </pre>
 
 <p>
@@ -617,9 +635,55 @@ This architecture enforces a clean separation between:
   <li>source serialization,</li>
   <li>editable in-memory representation,</li>
   <li>execution-oriented lowering,</li>
+  <li>live execution observability,</li>
+  <li>interactive debugging control,</li>
   <li>compilation and backend processing,</li>
   <li>runtime execution.</li>
 </ul>
+
+<hr/>
+
+<h2 id="execution-observability-and-debugging">Execution observability and debugging</h2>
+
+<p>
+Interactive inspection and debugging are not performed directly on raw serialized source.
+They are performed on a live execution derived from the validated Program Model and its execution-oriented form.
+</p>
+
+<p>
+<strong>Execution observability</strong> is the source-aligned live view that allows runtime activity to be projected back onto source-visible objects such as:
+</p>
+
+<ul>
+  <li>node activations,</li>
+  <li>edge-level value availability,</li>
+  <li>structure entry and region selection,</li>
+  <li>loop iteration progression,</li>
+  <li>local-memory state activity,</li>
+  <li>pause-consistent execution snapshots.</li>
+</ul>
+
+<p>
+<strong>Debugging</strong> is the interactive control layer built on top of that observability.
+It allows an IDE to inspect and guide execution through source-level concepts such as:
+</p>
+
+<ul>
+  <li>execution highlighting,</li>
+  <li>manual pause and resume,</li>
+  <li>breakpoints,</li>
+  <li>single-step controls,</li>
+  <li>fault-directed source localization.</li>
+</ul>
+
+<p>
+In FROG, debugging is dataflow-first rather than line-oriented.
+It operates on observable graph activity, structures, sub-FROG scopes, and explicit UI-related execution objects rather than on a fictional sequential instruction list.
+</p>
+
+<p>
+This keeps the debugging model consistent with the language itself while allowing IDEs to deliver a modern interactive development experience.
+</p>
 
 <hr/>
 
@@ -777,6 +841,8 @@ FROG explicitly separates:
   <li>the canonical source representation,</li>
   <li>the editable program model,</li>
   <li>the execution-oriented representation,</li>
+  <li>execution observability,</li>
+  <li>interactive debugging semantics,</li>
   <li>compiler implementations,</li>
   <li>backend implementations,</li>
   <li>runtime implementations,</li>
@@ -833,6 +899,8 @@ Current repository direction includes:
   <li>clarifying language semantics and execution semantics,</li>
   <li>growing the standard primitive libraries beyond the minimal core,</li>
   <li>defining IDE responsibilities without coupling the language to one implementation,</li>
+  <li>defining source-aligned execution observability for live execution,</li>
+  <li>defining dataflow-native debugging semantics for FROG IDEs,</li>
   <li>preparing the transition toward a more fully specified execution-oriented layer.</li>
 </ul>
 
