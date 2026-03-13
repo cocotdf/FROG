@@ -46,6 +46,7 @@ In other words:
 
 <ul>
   <li><code>Expression/</code> defines the canonical source structure of a FROG,</li>
+  <li><code>Language/</code> defines cross-cutting normative execution semantics,</li>
   <li><code>Libraries/</code> defines the standardized primitive vocabularies used inside executable diagrams.</li>
 </ul>
 
@@ -68,6 +69,7 @@ This directory does not redefine:
   <li>the type system,</li>
   <li>the widget object model,</li>
   <li>the front-panel serialization model,</li>
+  <li>the cross-cutting execution semantics of language structures and valid cycles,</li>
   <li>the IDE architecture or palette UX model.</li>
 </ul>
 
@@ -106,6 +108,7 @@ This separation is important because it keeps:
   <li>graph structure,</li>
   <li>type rules,</li>
   <li>widget and front-panel models,</li>
+  <li>cross-cutting language semantics,</li>
   <li>library semantics</li>
 </ul>
 
@@ -196,8 +199,10 @@ In particular:
 <ul>
   <li><code>Expression/Diagram.md</code> defines how primitives appear as executable graph nodes,</li>
   <li><code>Expression/Type.md</code> defines type syntax, compatibility, and coercion rules used by primitive ports,</li>
-  <li><code>Expression/Control structures.md</code> defines language structures, which remain distinct from ordinary primitive functions,</li>
-  <li><code>Expression/State and cycles.md</code> defines explicit local memory and cycle-validity rules that constrain stateful primitives such as <code>frog.core.delay</code>,</li>
+  <li><code>Language/Control structures.md</code> defines language structures as execution-semantic constructs, which remain distinct from ordinary primitive functions,</li>
+  <li><code>Expression/Control structures.md</code> defines the canonical source-facing representation of structure nodes,</li>
+  <li><code>Language/State and cycles.md</code> defines explicit local memory and cycle-validity rules that constrain stateful primitives such as <code>frog.core.delay</code>,</li>
+  <li><code>Expression/State and cycles.md</code> defines the canonical source-facing representation of local-memory constructs and cycle-facing source constraints,</li>
   <li><code>Expression/Widget interaction.md</code> defines the canonical source-level UI interaction model used by <code>frog.ui.*</code> primitives,</li>
   <li><code>Expression/Front panel.md</code> defines widget instances and <code>ui_libraries</code>, which remain distinct from executable primitive libraries,</li>
   <li><code>Libraries/UI.md</code> defines executable widget interaction primitives,</li>
@@ -206,7 +211,7 @@ In particular:
 </ul>
 
 <p>
-Accordingly, a primitive library specification is not a replacement for the diagram specification, the widget model, the front-panel model, or the IDE model.
+Accordingly, a primitive library specification is not a replacement for the diagram specification, the language semantics, the widget model, the front-panel model, or the IDE model.
 It is one normative input used to interpret primitive nodes inside a validated executable graph.
 </p>
 
@@ -349,6 +354,7 @@ Its immediate role is to anchor the normative primitive vocabulary consumed by e
 
 <ul>
   <li>source-format structure in <code>Expression/</code>,</li>
+  <li>cross-cutting execution semantics in <code>Language/</code>,</li>
   <li>widget and front-panel models,</li>
   <li>IDE palette organization and authoring workflows.</li>
 </ul>
