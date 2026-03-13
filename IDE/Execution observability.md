@@ -126,18 +126,26 @@ This document depends on the following specifications:
 <ul>
   <li><code>IDE/Readme.md</code> for the architectural separation between FROG Expression, FROG Program Model, and FROG Execution IR,</li>
   <li><code>Expression/Diagram.md</code> for the validated executable graph and its node and edge model,</li>
-  <li><code>Expression/Control structures.md</code> for structure families, structure boundaries, terminals, and regions,</li>
-  <li><code>Expression/State and cycles.md</code> for local-memory semantics and valid feedback,</li>
+  <li><code>Expression/Control structures.md</code> for the canonical source-facing representation of structure families, structure boundaries, terminals, and regions,</li>
+  <li><code>Language/Control structures.md</code> for the normative execution semantics of structure families,</li>
+  <li><code>Expression/State and cycles.md</code> for the canonical source-facing representation of local-memory constructs and cycle-facing source constraints,</li>
+  <li><code>Language/State and cycles.md</code> for the normative execution semantics of local memory and valid feedback,</li>
   <li><code>Expression/Widget interaction.md</code> for explicit UI-effect sequencing through <code>ui_in</code> and <code>ui_out</code>.</li>
 </ul>
 
 <p>
 This document MUST NOT contradict those specifications.
-If a conflict appears, the source execution semantics defined by the relevant Expression specification remain authoritative.
+If a conflict appears:
 </p>
 
+<ul>
+  <li><code>Expression/</code> remains authoritative for canonical source identity and source-visible representation,</li>
+  <li><code>Language/</code> remains authoritative for normative execution semantics,</li>
+  <li><code>IDE/</code> remains authoritative only for the observability contract exposed to tools.</li>
+</ul>
+
 <p>
-This document is intentionally placed in <code>IDE/</code> because it specifies what the IDE may observe and project, not the canonical source representation itself.
+This document is intentionally placed in <code>IDE/</code> because it specifies what the IDE may observe and project, not the canonical source representation itself and not the execution semantics themselves.
 </p>
 
 <hr/>
@@ -500,7 +508,7 @@ This node activation model applies uniformly to standard node kinds where releva
 </ul>
 
 <p>
-The exact meaning of their ports remains defined by the corresponding Expression specifications.
+The exact meaning of their ports remains defined by the corresponding source and language specifications.
 This document defines only their observability behavior.
 </p>
 
@@ -659,10 +667,10 @@ The canonical local-memory events are:
 These events apply to the local-memory slot owned by the node instance in the current live execution instance.
 </p>
 
-<h3>14.3 `frog.core.delay`</h3>
+<h3>14.3 <code>frog.core.delay</code></h3>
 
 <p>
-For <code>frog.core.delay</code>, the execution specification already defines the intended observable meaning:
+For <code>frog.core.delay</code>, the execution specifications already define the intended observable meaning:
 </p>
 
 <pre><code>out(t) = state(t)
@@ -696,7 +704,7 @@ An implementation MAY merge or reorder internal operations provided that the exp
 <p>
 A stricter profile MAY expose the initial state of a local-memory node before first activation.
 Such visibility is optional in v0.1.
-However, if shown, it MUST match the deterministic semantics already defined by source.
+However, if shown, it MUST match the deterministic semantics already defined by source and language semantics.
 </p>
 
 <hr/>
@@ -968,7 +976,7 @@ They are not a required transport format.
   }
 }</code></pre>
 
-<h3>20.4 Local-memory update for `frog.core.delay`</h3>
+<h3>20.4 Local-memory update for <code>frog.core.delay</code></h3>
 
 <pre><code>{
   "event": "state_updated",
