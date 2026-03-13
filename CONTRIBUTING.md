@@ -1,7 +1,7 @@
 <h1 align="center">🐸 Contributing to FROG</h1>
 
 <p align="center">
-FROG is an open-source initiative exploring a modern graphical dataflow language
+FROG is an open-source initiative defining a modern graphical dataflow language
 and its related specification layers.
 </p>
 
@@ -120,6 +120,20 @@ clarity, precision, and long-term coherence.
 <li>Prefer explicit and durable wording</li>
 <li>Call out cross-document conflicts when you find them</li>
 </ul>
+
+<hr/>
+
+<h2>Governance</h2>
+
+<p>
+FROG is an open specification project governed at the repository level.
+Contributors should remain consistent with the repository governance model and
+the current architectural direction of the specification.
+</p>
+
+<p>
+See: <strong>GOVERNANCE.md</strong>
+</p>
 
 <hr/>
 
