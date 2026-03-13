@@ -418,7 +418,9 @@ It currently contains:
   <li><code>Collections.md</code> — the standard <code>frog.collections</code> library for array-oriented collection primitives,</li>
   <li><code>Text.md</code> — the standard <code>frog.text</code> library for text-processing primitives,</li>
   <li><code>IO.md</code> — the standard <code>frog.io</code> library for file, path, byte, and related I/O primitives,</li>
-  <li><code>Signal.md</code> — the standard <code>frog.signal</code> library for first-wave signal-processing primitives.</li>
+  <li><code>Signal.md</code> — the standard <code>frog.signal</code> library for first-wave signal-processing primitives,</li>
+  <li><code>UI.md</code> — the standard <code>frog.ui</code> library for executable widget interaction primitives,</li>
+  <li><code>Connectivity.md</code> — the standard <code>frog.connectivity</code> library for Python, native/shared-library, .NET, SQL, and related interoperability primitives.</li>
 </ul>
 
 <p>
