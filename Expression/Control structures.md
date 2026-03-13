@@ -1,7 +1,7 @@
 <h1 align="center">🐸 FROG Control Structures Specification</h1>
 
 <p align="center">
-  Definition of control structures in FROG programs<br/>
+  Source-facing representation of control structures in FROG programs<br/>
   <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -52,7 +52,7 @@ It is a structural region of the diagram with:
   <li>an explicit boundary,</li>
   <li>explicit structure terminals when required,</li>
   <li>one or more owned executable regions,</li>
-  <li>standardized execution semantics.</li>
+  <li>a canonical source representation that maps to standardized execution semantics.</li>
 </ul>
 
 <p>
@@ -72,9 +72,9 @@ There is no separate canonical <code>if</code> structure in base v0.1.
 
 <ul>
   <li><strong>Clarity</strong> — distinguish ordinary computation from language-level structural control.</li>
-  <li><strong>Determinism</strong> — define structural execution without weakening the dataflow model.</li>
   <li><strong>Canonical source stability</strong> — provide one durable source shape for structure nodes.</li>
   <li><strong>Readability</strong> — keep branch selection and loop intent visually explicit.</li>
+  <li><strong>Structural explicitness</strong> — make structure boundaries, terminals, and regions first-class in canonical source.</li>
   <li><strong>Extensibility</strong> — allow future structure families without redefining the foundations.</li>
   <li><strong>Compatibility with graphical practice</strong> — remain understandable to users familiar with established graphical dataflow environments.</li>
 </ul>
@@ -88,23 +88,33 @@ This document complements the following specifications:
 </p>
 
 <ul>
-  <li><code>Language/Readme.md</code> — defines the role of this directory as a semantic continuity layer inside the current repository organization.</li>
-  <li><code>Expression/Control structures.md</code> — is the primary canonical source-spec reference for control structures.</li>
+  <li><code>Expression/Readme.md</code> — defines the role of <code>Expression/</code> as the canonical source-specification layer.</li>
+  <li><code>Language/Readme.md</code> — defines the role of <code>Language/</code> as the normative execution-semantics layer.</li>
+  <li><code>Language/Control structures.md</code> — defines the normative execution semantics of control structures.</li>
   <li><code>Expression/Diagram.md</code> — defines the executable graph, diagram scopes, node kinds, and structure-node placement in diagrams.</li>
   <li><code>Expression/Type.md</code> — defines type syntax and compatibility.</li>
-  <li><code>Expression/State and cycles.md</code> — defines local memory and the validity rule for cyclic graphs.</li>
+  <li><code>Expression/State and cycles.md</code> — defines the source-facing representation of explicit local memory and feedback-cycle formation constraints.</li>
+  <li><code>Language/State and cycles.md</code> — defines the normative validity rule for cyclic graphs and local memory.</li>
   <li><code>Libraries/Core.md</code> — defines ordinary built-in functions such as <code>frog.core.add</code> and <code>frog.core.delay</code>.</li>
 </ul>
 
 <p>
-This document defines and clarifies the semantics of control structures within the current <code>Language/</code> continuity layer.
+This document defines the canonical source-level representation of control structures.
 It does not redefine ordinary function libraries, and it does not redefine the general diagram node model already defined in <code>Expression/Diagram.md</code>.
 </p>
 
 <p>
-At the current repository stage, canonical source-spec reading is centered in <code>Expression/</code>.
-Accordingly, <code>Expression/Control structures.md</code> is the primary reference for the canonical source-level representation of control structures.
-This document remains aligned companion material in <code>Language/</code> for semantic continuity inside the repository.
+Accordingly:
+</p>
+
+<ul>
+  <li><code>Expression/Control structures.md</code> owns the canonical source representation of structure nodes,</li>
+  <li><code>Language/Control structures.md</code> owns the normative execution meaning of those structures.</li>
+</ul>
+
+<p>
+When both documents discuss the same structure family, they MUST remain aligned.
+However, ownership remains separated between source representation and execution semantics.
 </p>
 
 <hr/>
@@ -136,7 +146,7 @@ Example:
 
 <p>
 This distinction is fundamental.
-A control structure is part of the language execution model itself.
+A control structure is part of the language model itself and has a dedicated canonical source representation.
 </p>
 
 <hr/>
@@ -310,7 +320,7 @@ More advanced loop-output modes such as collection, reduction, or profile-define
 <h3>8.4 Boundary semantics are explicit</h3>
 
 <p>
-A structure boundary is part of the executable meaning of the program.
+A structure boundary is part of canonical executable-graph representation.
 The structure wall MUST NOT be treated as a purely visual editor artifact.
 </p>
 
@@ -368,7 +378,7 @@ Rules:
 </ul>
 
 <p>
-This document standardizes terminal availability and semantics.
+This document standardizes terminal availability and source representation.
 It does not require v0.1 to freeze one universal low-level nested-region reference encoding for consuming those terminals inside region-local diagrams.
 </p>
 
@@ -556,8 +566,8 @@ Canonical shape:
 <h3>11.5 Outputs</h3>
 
 <p>
-Every executable branch of a <code>case</code> structure MUST define the meaning of every required boundary output.
-The structure output is the output produced by the selected region for that activation.
+Every executable branch of a <code>case</code> structure MUST define the source representation of every required boundary output.
+Normative branch-selection and output-production semantics are defined by <code>Language/Control structures.md</code>.
 </p>
 
 <h3>11.6 Region count</h3>
@@ -628,8 +638,7 @@ Rules:
 <h3>12.3 Count meaning</h3>
 
 <p>
-The loop executes a finite number of times determined by terminal <code>count</code>.
-If <code>N</code> is the resolved count value, the loop body executes exactly <code>N</code> times.
+The canonical source representation of <code>for_loop</code> includes an explicit count terminal whose validated value governs iteration count under the normative execution semantics defined in <code>Language/Control structures.md</code>.
 </p>
 
 <p>
@@ -649,7 +658,7 @@ Validation MUST reject a <code>for_loop</code> whose resolved count is negative.
 
 <p>
 If <code>N = 0</code>, the body region is not executed.
-In that case, every loop output MUST still have deterministic meaning.
+In that case, every loop output MUST still have deterministic meaning under the normative loop semantics.
 If a loop output uses <code>mode: "last_value"</code> and zero iterations are possible, it MUST define a valid <code>zero_iteration_value</code>.
 </p>
 
@@ -693,7 +702,7 @@ A while loop is used when repetition is condition-driven rather than count-drive
 <h3>13.2 Canonical continuation rule</h3>
 
 <p>
-The canonical v0.1 meaning of <code>while_loop</code> is:
+The canonical v0.1 source model of <code>while_loop</code> assumes the standardized continue-while-true semantics defined by <code>Language/Control structures.md</code>.
 </p>
 
 <pre><code>execute body once
@@ -781,6 +790,11 @@ Both remain distinct structure families in v0.1.
 
 <h2 id="execution-model">14. Execution Model</h2>
 
+<p>
+The normative execution semantics of control structures are defined by <code>Language/Control structures.md</code>.
+This section summarizes the execution interpretation assumed by the canonical source representation defined here.
+</p>
+
 <h3>14.1 Case execution</h3>
 
 <p>
@@ -830,7 +844,7 @@ For a <code>while_loop</code>:
 <p>
 A structure remains part of the dataflow graph.
 Its external activations and observable outputs remain constrained by the graph and by the structure family semantics.
-A structure does not introduce arbitrary instruction ordering outside the standardized rules defined here.
+A structure does not introduce arbitrary instruction ordering outside the standardized rules defined for the language.
 </p>
 
 <hr/>
@@ -855,8 +869,13 @@ Accordingly:
 
 <p>
 Any directed cycle inside a loop body remains subject to the same rule as any other diagram:
-every directed cycle MUST contain at least one explicit local-memory function.
+every directed cycle MUST contain at least one explicit local-memory primitive.
 In base v0.1, <code>frog.core.delay</code> is the minimal standard primitive used to make such feedback explicit and deterministic.
+</p>
+
+<p>
+The canonical source-facing representation of such constructs is defined here and in <code>Expression/State and cycles.md</code>.
+Their normative execution meaning is defined by <code>Language/State and cycles.md</code>.
 </p>
 
 <hr/>
@@ -892,7 +911,7 @@ Their internal region-local semantics are resolved from:
 <ul>
   <li>their owned regions,</li>
   <li>their structure-terminal definitions,</li>
-  <li>their family-specific execution rules.</li>
+  <li>their family-specific structure model.</li>
 </ul>
 
 <p>
@@ -1139,10 +1158,10 @@ FROG treats structural control as an explicit language-level concept, not as a d
   <li>A boolean <code>case</code> is the canonical source-level equivalent of <code>if / else</code>.</li>
   <li>A string <code>case</code> provides canonical multi-branch selection with an explicit required default region.</li>
   <li>Loop structures remain semantically distinct from ordinary functions.</li>
-  <li>Structure boundaries, structure terminals, and owned regions are explicit parts of source meaning.</li>
+  <li>Structure boundaries, structure terminals, and owned regions are explicit parts of canonical source meaning.</li>
   <li>Control structures do not weaken the explicit-local-memory rule for cycles.</li>
 </ul>
 
 <p>
-This gives FROG a clear, durable, and visually explicit foundation for structural program control.
+This gives FROG a clear, durable, and visually explicit foundation for structural program control at the source-representation level.
 </p>
