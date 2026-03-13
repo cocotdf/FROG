@@ -80,7 +80,8 @@ This document complements the following specifications:
 </ul>
 
 <p>
-This document defines the standardized primitive catalog for <code>frog.connectivity</code>. It does not redefine the graph model, the type system, general execution semantics, or the widget interaction model.
+This document defines the standardized primitive catalog for <code>frog.connectivity</code>.
+It does not redefine the graph model, the type system, general execution semantics, or the widget interaction model.
 </p>
 
 <hr/>
@@ -100,11 +101,11 @@ Examples:
 </p>
 
 <pre>
-frog.connectivity.python_call_text
-frog.connectivity.native_call_bytes
-frog.connectivity.dotnet_call_text
-frog.connectivity.sql_query_text
-frog.connectivity.sql_execute
+frog.connectivity.python.call_text
+frog.connectivity.native.call_bytes
+frog.connectivity.dotnet.call_text
+frog.connectivity.sql.query_text
+frog.connectivity.sql.execute
 </pre>
 
 <p>
@@ -132,7 +133,7 @@ FROG library primitives use namespace-qualified identifiers:
 </p>
 
 <pre>
-frog.&lt;library&gt;.&lt;primitive&gt;
+frog.&lt;library&gt;.&lt;family&gt;.&lt;primitive&gt;
 </pre>
 
 <p>
@@ -142,6 +143,7 @@ For this document:
 <ul>
   <li><code>frog</code> identifies the language namespace,</li>
   <li><code>connectivity</code> identifies the standard connectivity library namespace,</li>
+  <li>the third segment identifies a standardized connectivity family,</li>
   <li>the final segment identifies the primitive name.</li>
 </ul>
 
@@ -150,16 +152,16 @@ Examples:
 </p>
 
 <pre>
-frog.connectivity.python_call_text
-frog.connectivity.python_call_bytes
-frog.connectivity.native_call_bytes
-frog.connectivity.dotnet_call_text
-frog.connectivity.sql_query_text
-frog.connectivity.sql_execute
+frog.connectivity.python.call_text
+frog.connectivity.python.call_bytes
+frog.connectivity.native.call_bytes
+frog.connectivity.dotnet.call_text
+frog.connectivity.sql.query_text
+frog.connectivity.sql.execute
 </pre>
 
 <p>
-Primitive names in <code>frog.connectivity</code> SHOULD use lowercase snake_case where multiple words are needed.
+Primitive and family names in <code>frog.connectivity</code> SHOULD use lowercase snake_case where multiple words are needed.
 </p>
 
 <hr/>
@@ -290,7 +292,7 @@ When a primitive uses a byte payload, the semantic meaning of that payload is li
 
 <h2 id="python-primitives">9. Python Primitives</h2>
 
-<h3>9.1 <code>frog.connectivity.python_call_text</code></h3>
+<h3>9.1 <code>frog.connectivity.python.call_text</code></h3>
 
 <p>
 Invokes a Python function using a textual request payload and returns a textual response payload.
@@ -323,7 +325,7 @@ Rules:
   <li>Python environment resolution, import rules, and function dispatch are profile-defined.</li>
 </ul>
 
-<h3>9.2 <code>frog.connectivity.python_call_bytes</code></h3>
+<h3>9.2 <code>frog.connectivity.python.call_bytes</code></h3>
 
 <p>
 Invokes a Python function using a byte request payload and returns a byte response payload.
@@ -359,7 +361,7 @@ Rules:
 
 <h2 id="native-primitives">10. Native and Shared Library Primitives</h2>
 
-<h3>10.1 <code>frog.connectivity.native_call_bytes</code></h3>
+<h3>10.1 <code>frog.connectivity.native.call_bytes</code></h3>
 
 <p>
 Invokes an entry point from a native or shared library using a byte request payload and returns a byte response payload.
@@ -396,7 +398,7 @@ Rules:
 
 <h2 id="dotnet-primitives">11. .NET Primitives</h2>
 
-<h3>11.1 <code>frog.connectivity.dotnet_call_text</code></h3>
+<h3>11.1 <code>frog.connectivity.dotnet.call_text</code></h3>
 
 <p>
 Invokes a .NET method using a textual request payload and returns a textual response payload.
@@ -434,7 +436,7 @@ Rules:
 
 <h2 id="sql-primitives">12. SQL Primitives</h2>
 
-<h3>12.1 <code>frog.connectivity.sql_query_text</code></h3>
+<h3>12.1 <code>frog.connectivity.sql.query_text</code></h3>
 
 <p>
 Executes a SQL query and returns a textual result document.
@@ -468,7 +470,7 @@ Rules:
   <li>connection-string interpretation, driver selection, dialect behavior, and result encoding are profile-defined.</li>
 </ul>
 
-<h3>12.2 <code>frog.connectivity.sql_execute</code></h3>
+<h3>12.2 <code>frog.connectivity.sql.execute</code></h3>
 
 <p>
 Executes a non-query SQL statement and returns an affected-row count.
@@ -521,7 +523,7 @@ Examples:
 {
   "id": "py_eval_1",
   "kind": "primitive",
-  "type": "frog.connectivity.python_call_text"
+  "type": "frog.connectivity.python.call_text"
 }
 </pre>
 
@@ -529,7 +531,7 @@ Examples:
 {
   "id": "native_call_1",
   "kind": "primitive",
-  "type": "frog.connectivity.native_call_bytes"
+  "type": "frog.connectivity.native.call_bytes"
 }
 </pre>
 
@@ -537,7 +539,7 @@ Examples:
 {
   "id": "sql_query_1",
   "kind": "primitive",
-  "type": "frog.connectivity.sql_query_text"
+  "type": "frog.connectivity.sql.query_text"
 }
 </pre>
 
@@ -572,7 +574,7 @@ For result-bearing primitives:
 </ul>
 
 <p>
-For <code>frog.connectivity.sql_execute</code>:
+For <code>frog.connectivity.sql.execute</code>:
 </p>
 
 <ul>
@@ -589,7 +591,7 @@ For <code>frog.connectivity.sql_execute</code>:
 {
   "id": "py_eval_1",
   "kind": "primitive",
-  "type": "frog.connectivity.python_call_text"
+  "type": "frog.connectivity.python.call_text"
 }
 </pre>
 
@@ -607,7 +609,7 @@ module, function, request → response, success
 {
   "id": "native_call_1",
   "kind": "primitive",
-  "type": "frog.connectivity.native_call_bytes"
+  "type": "frog.connectivity.native.call_bytes"
 }
 </pre>
 
@@ -625,7 +627,7 @@ library, symbol, request → response, success
 {
   "id": "sql_query_1",
   "kind": "primitive",
-  "type": "frog.connectivity.sql_query_text"
+  "type": "frog.connectivity.sql.query_text"
 }
 </pre>
 
