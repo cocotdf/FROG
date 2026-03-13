@@ -25,11 +25,13 @@ Definition of the architecture and responsibilities of a FROG development enviro
   <li><a href="#runtime">13. Runtime</a></li>
   <li><a href="#execution-observability">14. Execution Observability</a></li>
   <li><a href="#debugging">15. Debugging</a></li>
-  <li><a href="#execution-flow">16. Execution Flow</a></li>
-  <li><a href="#design-principles">17. Design Principles</a></li>
-  <li><a href="#repository-direction">18. Repository Direction</a></li>
-  <li><a href="#summary">19. Summary</a></li>
-  <li><a href="#license">20. License</a></li>
+  <li><a href="#probes">16. Probes</a></li>
+  <li><a href="#snippets">17. Snippets</a></li>
+  <li><a href="#execution-flow">18. Execution Flow</a></li>
+  <li><a href="#design-principles">19. Design Principles</a></li>
+  <li><a href="#repository-direction">20. Repository Direction</a></li>
+  <li><a href="#summary">21. Summary</a></li>
+  <li><a href="#license">22. License</a></li>
 </ul>
 
 <hr/>
@@ -66,12 +68,14 @@ This architecture separates:
   <li>execution-oriented representation,</li>
   <li>runtime observability,</li>
   <li>interactive debugging control,</li>
+  <li>probe-based live inspection,</li>
+  <li>snippet-based authoring transport,</li>
   <li>compiler toolchains,</li>
   <li>runtime systems.</li>
 </ul>
 
 <p>
-This separation allows the FROG language to remain independent from any specific IDE implementation while preserving a clean boundary between editing, storage, execution preparation, interactive inspection, compilation, and runtime execution.
+This separation allows the FROG language to remain independent from any specific IDE implementation while preserving a clean boundary between editing, storage, execution preparation, interactive inspection, reuse workflows, compilation, and runtime execution.
 </p>
 
 <hr/>
@@ -119,8 +123,8 @@ prepared for execution
 </pre>
 
 <p>
-Execution observability and debugging are layered on top of live execution derived from the validated Program Model and its execution-oriented form.
-They do not replace these three core representation levels.
+Execution observability, debugging, probes, and snippets are layered around these core representation levels.
+They do not replace them.
 </p>
 
 <hr/>
@@ -175,8 +179,15 @@ They do not replace these three core representation levels.
               Debugging
       (pause / resume / break / step)
                   |
-                  v
-               IDE Views
+        +---------+---------+
+        |                   |
+        v                   v
+     Probes              IDE Views
+ (live value/state
+   inspection)
+
+Program Model ↔ Snippets
+(fragment capture / paste / transport)
 </pre>
 
 <hr/>
@@ -197,7 +208,9 @@ A FROG IDE typically includes the following architectural components:
   <li>compiler integration,</li>
   <li>runtime integration,</li>
   <li>execution observability integration,</li>
-  <li>debugging services.</li>
+  <li>debugging services,</li>
+  <li>probe services,</li>
+  <li>snippet services.</li>
 </ul>
 
 <p>
@@ -223,7 +236,7 @@ Typical responsibilities include:
   <li>project and file navigation,</li>
   <li>document lifecycle management,</li>
   <li>plugin and extension loading,</li>
-  <li>integration between editors, validation services, compiler services, runtime tools, and debugging tools.</li>
+  <li>integration between editors, validation services, compiler services, runtime tools, debugging tools, probe tools, and snippet tools.</li>
 </ul>
 
 <p>
@@ -265,7 +278,9 @@ Key capabilities typically include:
   <li>incremental validation feedback,</li>
   <li>large-graph navigation,</li>
   <li>execution observability overlays,</li>
-  <li>debugging overlays and source-level pause localization.</li>
+  <li>debugging overlays and source-level pause localization,</li>
+  <li>probe placement and probe visualization,</li>
+  <li>snippet capture, paste, and insertion workflows.</li>
 </ul>
 
 <p>
@@ -311,7 +326,7 @@ Object-style widget interaction is expressed through <code>widget_reference</cod
 
 <p>
 The front panel editor therefore manages widget declaration and presentation, while executable interaction remains diagram-driven.
-A debugging-capable IDE MAY additionally reflect source-meaningful execution state on the front panel, but the canonical pause and stepping model remains diagram-based.
+A debugging-capable IDE MAY additionally reflect source-meaningful execution state on the front panel, and a snippet-capable IDE MAY support front-panel or composite snippet workflows, but the canonical pause and stepping model remains diagram-based.
 </p>
 
 <hr/>
@@ -358,7 +373,8 @@ The Program Model is designed for:
   <li>incremental validation,</li>
   <li>synchronization between views,</li>
   <li>preparation for execution-oriented lowering,</li>
-  <li>source-level mapping between editable objects and runtime-observable objects.</li>
+  <li>source-level mapping between editable objects and runtime-observable objects,</li>
+  <li>snippet capture and deterministic paste insertion.</li>
 </ul>
 
 <hr/>
@@ -407,7 +423,7 @@ The Expression is designed to be:
 </ul>
 
 <p>
-The Expression is the authoritative source-level description of program meaning, but live execution, observability, and debugging operate on validated execution derived from that source rather than on raw text alone.
+The Expression is the authoritative source-level description of program meaning, but live execution, observability, debugging, and snippet transport operate on validated or IDE-managed structures derived from that source rather than on raw text alone.
 </p>
 
 <hr/>
@@ -579,7 +595,67 @@ The detailed source-level behavior of these controls SHOULD be defined in a dedi
 
 <hr/>
 
-<h2 id="execution-flow">16. Execution Flow</h2>
+<h2 id="probes">16. Probes</h2>
+
+<p>
+Probes are source-aligned live inspection tools built on top of execution observability and used together with debugging.
+They allow an IDE to observe values or source-level execution state associated with objects such as:
+</p>
+
+<ul>
+  <li>edges,</li>
+  <li>node ports,</li>
+  <li>local-memory state,</li>
+  <li>selected UI-related execution objects in stricter profiles.</li>
+</ul>
+
+<p>
+For FROG v0.1, the canonical probe model is centered on edge-oriented inspection, because ordinary dataflow is most naturally observed at the level of value availability on edges.
+</p>
+
+<p>
+Probes belong to the inspection and debugging layer.
+They do not alter program semantics, and they are not part of the canonical <code>.frog</code> source representation.
+</p>
+
+<p>
+The detailed source-level behavior of probes SHOULD be defined in a dedicated probe specification within <code>IDE/</code>.
+</p>
+
+<hr/>
+
+<h2 id="snippets">17. Snippets</h2>
+
+<p>
+Snippets are portable IDE artifacts used to capture, transport, and reinsert reusable authoring fragments.
+They support workflows such as:
+</p>
+
+<ul>
+  <li>copy and paste,</li>
+  <li>drag-and-drop reuse,</li>
+  <li>sharing diagram fragments,</li>
+  <li>sharing front-panel fragments,</li>
+  <li>sharing composite reusable patterns.</li>
+</ul>
+
+<p>
+A snippet is not a full FROG program.
+It is a source-aligned fragment of IDE-managed content derived from the Program Model.
+</p>
+
+<p>
+Snippet workflows operate at the authoring layer rather than the execution layer.
+They therefore complement the FROG Program Model and the editing experience without changing the canonical source-program model itself.
+</p>
+
+<p>
+The detailed snippet transport and insertion model SHOULD be defined in a dedicated snippet specification within <code>IDE/</code>.
+</p>
+
+<hr/>
+
+<h2 id="execution-flow">18. Execution Flow</h2>
 
 <pre>
 User edits diagram or front panel
@@ -600,12 +676,12 @@ Runtime executes the program
               ↓
 Execution observability projects live activity
               ↓
-IDE inspection and debugging features consume that view
+IDE debugging and probe features consume that view
 </pre>
 
 <hr/>
 
-<h2 id="design-principles">17. Design Principles</h2>
+<h2 id="design-principles">19. Design Principles</h2>
 
 <ul>
   <li>Clear separation of source, model, and execution</li>
@@ -619,11 +695,13 @@ IDE inspection and debugging features consume that view
   <li>Explicit separation between interface, front panel, and diagram</li>
   <li>Source-aligned execution observability</li>
   <li>Dataflow-native debugging semantics</li>
+  <li>Non-intrusive live inspection through probes</li>
+  <li>Portable authoring-fragment transport through snippets</li>
 </ul>
 
 <hr/>
 
-<h2 id="repository-direction">18. Repository Direction</h2>
+<h2 id="repository-direction">20. Repository Direction</h2>
 
 <p>
 A full FROG ecosystem may be organized into distinct components such as:
@@ -637,7 +715,9 @@ FROG/
 │   ├── Readme.md
 │   ├── Palette.md
 │   ├── Execution observability.md
-│   └── Debugging.md
+│   ├── Debugging.md
+│   ├── Probes.md
+│   └── Snippet.md
 │
 ├── Language/
 ├── Libraries/
@@ -648,12 +728,12 @@ FROG/
 
 <p>
 The exact repository layout may evolve over time.
-What matters architecturally is the separation between canonical source specification, language semantics, editing, execution observability, interactive debugging, compilation, and execution.
+What matters architecturally is the separation between canonical source specification, language semantics, editing, execution observability, interactive debugging, live inspection, reusable authoring transport, compilation, and execution.
 </p>
 
 <hr/>
 
-<h2 id="summary">19. Summary</h2>
+<h2 id="summary">21. Summary</h2>
 
 <p>
 The FROG IDE is an authoring environment built around a three-layer representation model:
@@ -671,7 +751,9 @@ On top of that execution path, a FROG IDE may provide:
 
 <ul>
   <li><strong>Execution observability</strong> — source-aligned live execution visibility,</li>
-  <li><strong>Debugging</strong> — interactive pause, break, step, and inspection control.</li>
+  <li><strong>Debugging</strong> — interactive pause, break, step, and inspection control,</li>
+  <li><strong>Probes</strong> — non-intrusive live inspection of values and selected execution state,</li>
+  <li><strong>Snippets</strong> — portable authoring fragments for reuse and transport.</li>
 </ul>
 
 <p>
@@ -683,7 +765,8 @@ This architecture ensures that:
   <li>editing remains distinct from execution,</li>
   <li>front-panel composition remains distinct from executable graph semantics,</li>
   <li>validation and lowering remain explicit architectural phases,</li>
-  <li>interactive inspection and debugging remain source-aligned rather than runtime-private.</li>
+  <li>interactive inspection and debugging remain source-aligned rather than runtime-private,</li>
+  <li>reuse workflows remain IDE-layer artifacts rather than hidden source-language variations.</li>
 </ul>
 
 <p>
@@ -692,7 +775,7 @@ It provides a clean foundation for multiple IDEs, compilers, runtimes, and debug
 
 <hr/>
 
-<h2 id="license">20. License</h2>
+<h2 id="license">22. License</h2>
 
 <p>
 FROG is distributed under the Apache 2.0 license and uses a Contributor License Agreement (CLA) for external contributions.
