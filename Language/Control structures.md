@@ -1,7 +1,7 @@
 <h1 align="center">🐸 FROG Control Structures Specification</h1>
 
 <p align="center">
-  Definition of control structures in FROG programs<br/>
+  Normative execution semantics for control structures in FROG programs<br/>
   <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -62,7 +62,7 @@ Therefore, the language standardizes <code>case</code>, <code>for_loop</code>, a
 
 <p>
 In FROG, boolean conditional branching and multi-branch textual selection are both represented canonically by the same <code>case</code> structure family.
-A boolean <code>case</code> is the canonical source-level equivalent of a traditional <code>if / else</code>.
+A boolean <code>case</code> is the canonical equivalent of a traditional <code>if / else</code>.
 There is no separate canonical <code>if</code> structure in base v0.1.
 </p>
 
@@ -73,7 +73,7 @@ There is no separate canonical <code>if</code> structure in base v0.1.
 <ul>
   <li><strong>Clarity</strong> — distinguish ordinary computation from language-level structural control.</li>
   <li><strong>Determinism</strong> — define structural execution without weakening the dataflow model.</li>
-  <li><strong>Canonical source stability</strong> — provide one durable source shape for structure nodes.</li>
+  <li><strong>Normative stability</strong> — provide one durable semantic model for standardized structure families.</li>
   <li><strong>Readability</strong> — keep branch selection and loop intent visually explicit.</li>
   <li><strong>Extensibility</strong> — allow future structure families without redefining the foundations.</li>
   <li><strong>Compatibility with graphical practice</strong> — remain understandable to users familiar with established graphical dataflow environments.</li>
@@ -88,23 +88,30 @@ This document complements the following specifications:
 </p>
 
 <ul>
-  <li><code>Language/Readme.md</code> — defines the role of this directory as a semantic continuity layer inside the current repository organization.</li>
-  <li><code>Expression/Control structures.md</code> — is the primary canonical source-spec reference for control structures.</li>
+  <li><code>Language/Readme.md</code> — defines the role of <code>Language/</code> as the normative execution-semantics layer of the repository.</li>
+  <li><code>Expression/Control structures.md</code> — defines the source-facing representation of control structures in canonical <code>.frog</code> content.</li>
   <li><code>Expression/Diagram.md</code> — defines the executable graph, diagram scopes, node kinds, and structure-node placement in diagrams.</li>
   <li><code>Expression/Type.md</code> — defines type syntax and compatibility.</li>
-  <li><code>Expression/State and cycles.md</code> — defines local memory and the validity rule for cyclic graphs.</li>
+  <li><code>Language/State and cycles.md</code> — defines local memory and the validity rule for cyclic graphs.</li>
   <li><code>Libraries/Core.md</code> — defines ordinary built-in functions such as <code>frog.core.add</code> and <code>frog.core.delay</code>.</li>
 </ul>
 
 <p>
-This document defines and clarifies the semantics of control structures within the current <code>Language/</code> continuity layer.
+This document defines the normative execution semantics of control structures.
 It does not redefine ordinary function libraries, and it does not redefine the general diagram node model already defined in <code>Expression/Diagram.md</code>.
 </p>
 
 <p>
-At the current repository stage, canonical source-spec reading is centered in <code>Expression/</code>.
-Accordingly, <code>Expression/Control structures.md</code> is the primary reference for the canonical source-level representation of control structures.
-This document remains aligned companion material in <code>Language/</code> for semantic continuity inside the repository.
+Accordingly:
+</p>
+
+<ul>
+  <li><code>Expression/</code> owns the canonical source representation of structure nodes,</li>
+  <li><code>Language/</code> owns the normative execution meaning of those structures.</li>
+</ul>
+
+<p>
+When both documents discuss the same structure family, they MUST remain aligned, but semantic ownership belongs to this document.
 </p>
 
 <hr/>
@@ -179,7 +186,7 @@ Tools SHOULD present them as dedicated structural elements in the diagram editor
 
 <p>
 For usability, tools MAY present a boolean <code>case</code> as <em>If / Else</em> in the UI.
-However, the canonical source structure kind remains <code>case</code>.
+However, the canonical structure kind remains <code>case</code>.
 </p>
 
 <hr/>
@@ -187,7 +194,7 @@ However, the canonical source structure kind remains <code>case</code>.
 <h2 id="canonical-structure-node-model">7. Canonical Structure Node Model</h2>
 
 <p>
-Every control structure in canonical source MUST use the following general model:
+This document assumes the following validated structure-node model for standardized control structures:
 </p>
 
 <pre><code>{
@@ -233,6 +240,11 @@ Rules:
   <li><code>structure_terminals</code> MUST exist and MUST be valid for the selected structure type.</li>
   <li><code>regions</code> MUST exist and MUST be valid for the selected structure type.</li>
 </ul>
+
+<p>
+Canonical source serialization of this model belongs to <code>Expression/</code>.
+Normative interpretation of the model belongs to this document.
+</p>
 
 <hr/>
 
@@ -478,7 +490,7 @@ Rules:
 <h3>11.3 Boolean case</h3>
 
 <p>
-A boolean case is the canonical source-level equivalent of a classic <code>if / else</code>.
+A boolean case is the canonical equivalent of a classic <code>if / else</code>.
 </p>
 
 <p>
@@ -501,7 +513,7 @@ selector = false → execute false branch</code></pre>
 
 <p>
 Tools MAY present this form as an If / Else structure in the UI.
-The canonical source remains <code>case</code>.
+The canonical structure kind remains <code>case</code>.
 </p>
 
 <h3>11.4 String case</h3>
@@ -855,7 +867,7 @@ Accordingly:
 
 <p>
 Any directed cycle inside a loop body remains subject to the same rule as any other diagram:
-every directed cycle MUST contain at least one explicit local-memory function.
+every directed cycle MUST contain at least one explicit local-memory primitive.
 In base v0.1, <code>frog.core.delay</code> is the minimal standard primitive used to make such feedback explicit and deterministic.
 </p>
 
@@ -1136,10 +1148,10 @@ FROG treats structural control as an explicit language-level concept, not as a d
 
 <ul>
   <li><code>case</code>, <code>for_loop</code>, and <code>while_loop</code> are the standardized control structures of base v0.1.</li>
-  <li>A boolean <code>case</code> is the canonical source-level equivalent of <code>if / else</code>.</li>
+  <li>A boolean <code>case</code> is the canonical equivalent of <code>if / else</code>.</li>
   <li>A string <code>case</code> provides canonical multi-branch selection with an explicit required default region.</li>
   <li>Loop structures remain semantically distinct from ordinary functions.</li>
-  <li>Structure boundaries, structure terminals, and owned regions are explicit parts of source meaning.</li>
+  <li>Structure boundaries, structure terminals, and owned regions are explicit parts of structure meaning.</li>
   <li>Control structures do not weaken the explicit-local-memory rule for cycles.</li>
 </ul>
 
