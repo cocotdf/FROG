@@ -84,8 +84,8 @@ This specification does not attempt to fully define:
   <li>the complete runtime architecture,</li>
   <li>the complete in-memory editable program model used by IDE implementations,</li>
   <li>the complete execution-oriented IR used by compilers or runtimes,</li>
-  <li>the complete standard library of FROG functions,</li>
-  <li>the complete standard library of FROG UI widgets.</li>
+  <li>the complete standard library surface of FROG primitives,</li>
+  <li>the complete standard library surface of FROG UI widgets.</li>
 </ul>
 
 <p>
@@ -146,15 +146,21 @@ In particular:
 </ul>
 
 <p>
-The current source specification also depends on the normative core primitive catalog:
+The current source specification also depends on the normative standard primitive catalogs defined in <code>Libraries/</code>.
+At the current repository stage, that includes:
 </p>
 
 <ul>
-  <li><code>Libraries/Core.md</code> — standard primitive definitions such as <code>frog.core.add</code>, <code>frog.core.mul</code>, and <code>frog.core.delay</code>.</li>
+  <li><code>Libraries/Core.md</code> — foundational primitive definitions such as <code>frog.core.add</code>, <code>frog.core.mul</code>, and <code>frog.core.delay</code>,</li>
+  <li><code>Libraries/Math.md</code> — numeric scalar primitives beyond the minimal core,</li>
+  <li><code>Libraries/Collections.md</code> — array-oriented collection primitives,</li>
+  <li><code>Libraries/Text.md</code> — text-processing primitives,</li>
+  <li><code>Libraries/IO.md</code> — file, path, byte, and related I/O primitives,</li>
+  <li><code>Libraries/Signal.md</code> — first-wave signal-processing primitives.</li>
 </ul>
 
 <p>
-Accordingly, <code>Expression/</code> is now the canonical home of the source-format specification, while <code>Libraries/Core.md</code> remains a normative external dependency for standard primitive definitions.
+Accordingly, <code>Expression/</code> is the canonical home of the source-format specification, while <code>Libraries/</code> remains a normative external dependency for standardized primitive definitions used inside executable diagrams.
 </p>
 
 <hr/>
@@ -405,7 +411,13 @@ It is the authoritative source-level execution structure of the program.
 </p>
 
 <p>
-Detailed specifications: <code>Diagram.md</code>, <code>Type.md</code>, <code>Widget interaction.md</code>, <code>Control structures.md</code>, <code>State and cycles.md</code>, <code>Libraries/Core.md</code>
+Detailed specifications:
+<code>Diagram.md</code>,
+<code>Type.md</code>,
+<code>Widget interaction.md</code>,
+<code>Control structures.md</code>,
+<code>State and cycles.md</code>,
+and the relevant primitive-library specifications in <code>Libraries/</code>.
 </p>
 
 <h3>10.5 Front Panel</h3>
@@ -517,6 +529,11 @@ This model governs diagram-level interaction with widgets through standardized m
 These interactions are represented inside the executable diagram rather than as a dedicated top-level source section.
 </p>
 
+<p>
+The current source-level widget interaction model already uses standardized primitive identifiers in the <code>frog.ui.*</code> namespace.
+Future standardized UI primitive-library specifications MUST remain consistent with that source-level interaction model.
+</p>
+
 <h3>11.4 Structural Execution and Local Memory</h3>
 
 <p>
@@ -530,7 +547,7 @@ FROG v0.1 also defines normative execution subsystems directly within this direc
 
 <p>
 These subsystems are cross-cutting with respect to the FROG Expression because they directly constrain what a valid <code>diagram</code> means.
-The standard primitive catalog used by executable diagrams remains defined by <code>Libraries/Core.md</code>.
+The standardized primitive catalogs consumed by executable diagrams remain defined in <code>Libraries/</code>.
 </p>
 
 <hr/>
@@ -617,7 +634,8 @@ Validation includes, as applicable:
   <li>widget and front-panel validation,</li>
   <li>widget interaction validation,</li>
   <li>control-structure validation,</li>
-  <li>cycle and local-memory validation.</li>
+  <li>cycle and local-memory validation,</li>
+  <li>primitive reference validation against the relevant standardized library catalogs.</li>
 </ul>
 
 <p>
@@ -719,7 +737,12 @@ It prioritizes explicit canonical source semantics, long-term durability, and to
 </p>
 
 <p>
-Future revisions MAY extend the specification, but they SHOULD preserve the core architectural distinctions already established here:
+At the current repository stage, the standard primitive-library layer already extends beyond the minimal core.
+Future revisions MAY continue to expand those external library catalogs while preserving the architectural role of <code>Expression/</code> as the canonical source-specification layer.
+</p>
+
+<p>
+Future revisions SHOULD also preserve the core architectural distinctions already established here:
 </p>
 
 <ul>
