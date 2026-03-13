@@ -55,7 +55,7 @@ FROG describes a program through:
 </ul>
 
 <p>
-Execution emerges from data availability, structural rules, explicit control structures, and explicit local-memory semantics rather than from manually authored instruction order.
+Execution emerges from data availability, structural rules, explicit control structures, standardized primitive behavior, and explicit local-memory semantics rather than from manually authored instruction order.
 </p>
 
 <p>
@@ -352,7 +352,7 @@ FROG/
 
 <p>
 This directory defines the canonical <code>.frog</code> source format.
-It describes what a FROG source file contains and how its source sections are interpreted.
+It describes what a FROG source file contains, how source sections are represented, and how source-visible program objects are serialized.
 </p>
 
 <p>
@@ -361,15 +361,15 @@ It currently contains:
 
 <ul>
   <li><code>Metadata.md</code> — metadata and descriptive program information,</li>
-  <li><code>Type.md</code> — canonical type expressions and type compatibility rules,</li>
+  <li><code>Type.md</code> — canonical type expressions and source-level type representation,</li>
   <li><code>Interface.md</code> — public typed inputs and outputs,</li>
   <li><code>Connector.md</code> — graphical mapping of public ports when reused as a node,</li>
-  <li><code>Diagram.md</code> — authoritative executable graph,</li>
+  <li><code>Diagram.md</code> — authoritative executable graph as canonical source representation,</li>
   <li><code>Front panel.md</code> — UI composition and front-panel structure,</li>
   <li><code>Widget.md</code> — widget object model,</li>
   <li><code>Widget interaction.md</code> — diagram-side widget interaction model,</li>
-  <li><code>Control structures.md</code> — language structures such as <code>case</code>, <code>for_loop</code>, and <code>while_loop</code>,</li>
-  <li><code>State and cycles.md</code> — local memory and cycle validity,</li>
+  <li><code>Control structures.md</code> — source-facing representation of standard control structures,</li>
+  <li><code>State and cycles.md</code> — source-facing representation of explicit local memory and feedback-cycle constraints,</li>
   <li><code>Icon.md</code> — reusable-node icon representation,</li>
   <li><code>IDE preferences.md</code> — IDE-facing source-level preferences,</li>
   <li><code>Cache.md</code> — optional non-authoritative cache data,</li>
@@ -380,11 +380,11 @@ It currently contains:
 In short, <code>Expression/</code> defines the canonical source language representation.
 </p>
 
-<h3><code>Language/</code> — repository transition and semantic continuity</h3>
+<h3><code>Language/</code> — normative execution semantics</h3>
 
 <p>
-This directory remains present in the repository as a transition and continuity layer.
-It retains language-semantic documents related to structural execution and cycles while the repository architecture remains split across layers.
+This directory defines cross-cutting execution semantics for FROG.
+It is the normative home of language meaning when that meaning cannot be owned by one isolated source section or one primitive-library document alone.
 </p>
 
 <p>
@@ -392,14 +392,13 @@ It currently contains:
 </p>
 
 <ul>
-  <li><code>Readme.md</code> — overview of the Language directory and its current transitional role,</li>
-  <li><code>Control structures.md</code> — language structures such as <code>case</code>, <code>for_loop</code>, and <code>while_loop</code>,</li>
-  <li><code>State and cycles.md</code> — explicit local memory and rules for valid feedback cycles.</li>
+  <li><code>Readme.md</code> — overview of the Language directory and its normative role,</li>
+  <li><code>Control structures.md</code> — normative execution semantics for structures such as <code>case</code>, <code>for_loop</code>, and <code>while_loop</code>,</li>
+  <li><code>State and cycles.md</code> — normative semantics for explicit local memory and valid feedback cycles.</li>
 </ul>
 
 <p>
-For canonical source-spec reading, the corresponding documents in <code>Expression/</code> are now the primary reference.
-The presence of <code>Language/</code> reflects repository continuity and semantic organization rather than a separate canonical source layer.
+In short, <code>Language/</code> defines what a validated FROG means when it executes.
 </p>
 
 <h3><code>Libraries/</code> — standard primitive libraries</h3>
@@ -473,14 +472,11 @@ The repository is intentionally split into distinct architectural layers:
 </p>
 
 <ul>
-  <li><strong>Expression</strong> — canonical source representation and source-level semantics,</li>
+  <li><strong>Expression</strong> — canonical source representation, source sections, and source serialization rules,</li>
+  <li><strong>Language</strong> — normative execution semantics for validated programs,</li>
   <li><strong>Libraries</strong> — standardized primitive vocabularies,</li>
   <li><strong>IDE</strong> — authoring architecture, editor-facing models, execution observability, debugging semantics, live inspection, persistent watch-based monitoring, and reusable authoring transport.</li>
 </ul>
-
-<p>
-The repository also currently retains a <strong>Language</strong> directory as a transition and semantic-continuity layer.
-</p>
 
 <p>
 This separation is deliberate.
@@ -539,6 +535,10 @@ The Expression is designed for:
   <li>tool interoperability,</li>
   <li>long-term durability.</li>
 </ul>
+
+<p>
+The Expression is the authoritative source artifact of a FROG program, but cross-cutting execution meaning is defined by the language semantics and standardized primitive specifications applied to validated program content rather than by raw serialization alone.
+</p>
 
 <h3>FROG Program Model</h3>
 
@@ -925,6 +925,7 @@ Current repository direction includes:
 
 <ul>
   <li>stabilizing the canonical source specification,</li>
+  <li>stabilizing the separation between canonical source representation and normative execution semantics,</li>
   <li>clarifying language semantics and execution behavior,</li>
   <li>growing the standard primitive libraries beyond the minimal core,</li>
   <li>defining IDE responsibilities without coupling the language to one implementation,</li>
@@ -932,8 +933,7 @@ Current repository direction includes:
   <li>defining dataflow-native debugging semantics for FROG IDEs,</li>
   <li>defining source-aligned live inspection through probes,</li>
   <li>defining persistent centralized watch-based inspection for FROG IDEs,</li>
-  <li>defining snippet-based reusable authoring transport,</li>
-  <li>preparing the transition toward a more fully specified execution-oriented layer.</li>
+  <li>defining snippet-based reusable authoring transport.</li>
 </ul>
 
 <p>
