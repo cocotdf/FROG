@@ -5,7 +5,7 @@
 <h1 align="center">🐸 FROG State and Cycles Specification</h1>
 
 <p align="center">
-  Definition of local memory and cycle validity in FROG programs<br/>
+  Source-facing representation of local memory and cycle validity in FROG programs<br/>
   <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -42,7 +42,7 @@ However, many useful programs require feedback paths, accumulation, filtering, i
 </p>
 
 <p>
-This document defines the notion of local memory in FROG and the rules that govern the validity of cycles in executable diagrams.
+This document defines the source-facing representation of local memory in FROG and the source-level rules that govern how cycle-valid constructs are represented in executable diagrams.
 In FROG, a directed cycle is valid only when its meaning is made explicit through at least one primitive whose node instance stores a value between activations.
 Such a primitive is called a <strong>local-memory primitive</strong>.
 </p>
@@ -53,8 +53,8 @@ The preferred normative wording in this specification is <strong>local memory</s
 </p>
 
 <p>
-This document defines the language-level semantics required for explicit local memory and cyclic dataflow.
-It does not attempt to define the full standard library of FROG.
+This document defines how explicit local memory and cyclic dataflow are represented in canonical source.
+Normative execution semantics are defined by <code>Language/State and cycles.md</code>.
 </p>
 
 <hr/>
@@ -62,11 +62,11 @@ It does not attempt to define the full standard library of FROG.
 <h2 id="goals">2. Goals</h2>
 
 <ul>
-  <li><strong>Clarity</strong> — define what local memory means in FROG.</li>
-  <li><strong>Safety</strong> — reject invalid cycles that contain no explicit memory.</li>
-  <li><strong>Determinism</strong> — require explicit and deterministic initialization of local memory.</li>
+  <li><strong>Clarity</strong> — define how local memory is represented in canonical FROG source.</li>
+  <li><strong>Source explicitness</strong> — require that valid feedback be represented through explicit local-memory constructs.</li>
+  <li><strong>Deterministic initialization</strong> — require explicit and deterministic source-level initialization of local memory.</li>
   <li><strong>Separation of concerns</strong> — keep local memory distinct from global state, shared state, and runtime services.</li>
-  <li><strong>Compatibility with dataflow</strong> — allow feedback while preserving an explicit and verifiable execution model.</li>
+  <li><strong>Compatibility with dataflow</strong> — allow feedback while preserving an explicit and verifiable source model.</li>
 </ul>
 
 <hr/>
@@ -78,16 +78,28 @@ This document complements the following specifications:
 </p>
 
 <ul>
+  <li><code>Expression/Readme.md</code> — defines the role of <code>Expression/</code> as the canonical source-specification layer.</li>
+  <li><code>Language/Readme.md</code> — defines the role of <code>Language/</code> as the normative execution-semantics layer.</li>
   <li><code>Expression/Diagram.md</code> — defines the executable graph structure, node kinds, edges, and graph-level validation.</li>
   <li><code>Expression/Type.md</code> — defines type compatibility for values carried through local-memory primitives.</li>
-  <li><code>Expression/Control structures.md</code> — defines structure-owned nested executable regions, which remain subject to the same cycle-validity rule.</li>
+  <li><code>Expression/Control structures.md</code> — defines structure-owned nested executable regions, which remain subject to the same cycle-validity rule at source level.</li>
+  <li><code>Language/State and cycles.md</code> — defines the normative execution semantics of local memory and cycle validity.</li>
   <li><code>Libraries/Core.md</code> — defines standard library primitives, including <code>frog.core.delay</code>.</li>
 </ul>
 
 <p>
-This document defines semantic rules for local memory and cycle validity.
-It does not redefine the serialized graph structure already specified by <code>Diagram.md</code>.
+This document defines the canonical source-level representation of local memory and cycle-valid graph constructs.
+It does not redefine the serialized graph structure already specified by <code>Expression/Diagram.md</code>, and it does not own the normative execution semantics of local memory.
 </p>
+
+<p>
+Accordingly:
+</p>
+
+<ul>
+  <li><code>Expression/State and cycles.md</code> owns the canonical source representation of local-memory constructs and cycle-facing source constraints,</li>
+  <li><code>Language/State and cycles.md</code> owns the normative execution meaning of local memory and valid cycles.</li>
+</ul>
 
 <hr/>
 
@@ -118,6 +130,11 @@ That local memory is:
   <li>not implicitly shared with other nodes,</li>
   <li>not a general-purpose shared reference mechanism.</li>
 </ul>
+
+<p>
+This document defines how such local memory is represented and constrained in canonical source.
+Normative observable behavior is defined by <code>Language/State and cycles.md</code>.
+</p>
 
 <hr/>
 
@@ -256,6 +273,11 @@ This rule applies to:
 A validator MAY enforce this rule using strongly connected component analysis or any equivalent graph-theoretic method.
 </p>
 
+<p>
+The rule itself is normative at language level and is owned by <code>Language/State and cycles.md</code>.
+This document defines how that rule is reflected in canonical source and source validation.
+</p>
+
 <hr/>
 
 <h2 id="frogcoredelay">9. <code>frog.core.delay</code></h2>
@@ -295,6 +317,11 @@ At the beginning of execution:
 
 <p>
 This primitive is sufficient to make a feedback path explicit, deterministic, and valid.
+</p>
+
+<p>
+Its canonical source representation is defined here and its standardized primitive identity belongs to <code>Libraries/Core.md</code>.
+Its normative observable semantics belong to <code>Language/State and cycles.md</code>.
 </p>
 
 <hr/>
@@ -337,6 +364,11 @@ FROG v0.1 does not permit undefined initial state for <code>frog.core.delay</cod
 <hr/>
 
 <h2 id="execution-semantics">11. Execution Semantics</h2>
+
+<p>
+The normative execution semantics of local memory are defined by <code>Language/State and cycles.md</code>.
+This section summarizes the execution interpretation assumed by the canonical source representation defined here.
+</p>
 
 <p>
 A local-memory primitive participates in the diagram as an ordinary executable node, but with additional state-update semantics.
@@ -519,15 +551,19 @@ FROG allows feedback in executable graphs, but only through explicit local memor
 </p>
 
 <p>
-This specification establishes that:
+This specification establishes, at the canonical source-representation level, that:
 </p>
 
 <ul>
   <li>some primitives are local-memory primitives,</li>
   <li>local memory belongs to a node instance,</li>
-  <li>cycles are valid only when they include explicit local memory,</li>
+  <li>cycles are represented as valid only when they include explicit local memory,</li>
   <li><code>frog.core.delay</code> is the minimal standard local-memory primitive for v0.1,</li>
   <li><code>frog.core.delay</code> uses <code>in</code> and <code>out</code> ports,</li>
   <li><code>frog.core.delay</code> requires an explicit <code>initial</code> value in v0.1,</li>
   <li>local-memory initialization and behavior MUST remain deterministic.</li>
 </ul>
+
+<p>
+This gives FROG a clear, durable, and explicit source-level foundation for representing memory and feedback in graphical dataflow programs.
+</p>
