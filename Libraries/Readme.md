@@ -128,6 +128,8 @@ This directory currently contains the following standard library specifications:
   <li><code>Text.md</code> — the standard <code>frog.text</code> library for text-processing primitives in FROG v0.1.</li>
   <li><code>IO.md</code> — the standard <code>frog.io</code> library for file, path, byte, and related I/O primitives in FROG v0.1.</li>
   <li><code>Signal.md</code> — the standard <code>frog.signal</code> library for first-wave 1D signal-processing primitives in FROG v0.1.</li>
+  <li><code>UI.md</code> — the standard <code>frog.ui</code> library for executable widget interaction primitives in FROG v0.1.</li>
+  <li><code>Connectivity.md</code> — the standard <code>frog.connectivity</code> library for Python, native/shared-library, .NET, SQL, and related interoperability primitives in FROG v0.1.</li>
 </ul>
 
 <p>
@@ -152,8 +154,10 @@ At the current repository stage, the standard primitive taxonomy is organized as
   <li><strong><code>frog.math.*</code></strong> — numeric scalar functions beyond the minimal core</li>
   <li><strong><code>frog.collections.*</code></strong> — array-oriented collection primitives</li>
   <li><strong><code>frog.text.*</code></strong> — text-processing primitives</li>
-  <li><strong><code>frog.io.*</code></strong> — file/path/resource and byte-oriented I/O primitives</li>
+  <li><strong><code>frog.io.*</code></strong> — file, path, resource, and byte-oriented I/O primitives</li>
   <li><strong><code>frog.signal.*</code></strong> — first-wave 1D signal-processing primitives</li>
+  <li><strong><code>frog.ui.*</code></strong> — executable object-style widget interaction primitives</li>
+  <li><strong><code>frog.connectivity.*</code></strong> — standardized foreign-runtime, native/shared-library, managed-platform, and SQL interoperability primitives</li>
 </ul>
 
 <p>
@@ -167,7 +171,9 @@ It separates:
   <li>collection manipulation,</li>
   <li>text handling,</li>
   <li>I/O concerns,</li>
-  <li>signal-processing concerns</li>
+  <li>signal-processing concerns,</li>
+  <li>widget interaction concerns,</li>
+  <li>external interoperability concerns</li>
 </ul>
 
 <p>
@@ -192,13 +198,15 @@ In particular:
   <li><code>Expression/Type.md</code> defines type syntax, compatibility, and coercion rules used by primitive ports,</li>
   <li><code>Expression/Control structures.md</code> defines language structures, which remain distinct from ordinary primitive functions,</li>
   <li><code>Expression/State and cycles.md</code> defines explicit local memory and cycle-validity rules that constrain stateful primitives such as <code>frog.core.delay</code>,</li>
-  <li><code>Expression/Widget interaction.md</code> defines the canonical source-level UI interaction model that future standardized <code>frog.ui.*</code> libraries MUST respect,</li>
+  <li><code>Expression/Widget interaction.md</code> defines the canonical source-level UI interaction model used by <code>frog.ui.*</code> primitives,</li>
   <li><code>Expression/Front panel.md</code> defines widget instances and <code>ui_libraries</code>, which remain distinct from executable primitive libraries,</li>
+  <li><code>Libraries/UI.md</code> defines executable widget interaction primitives,</li>
+  <li><code>Libraries/Connectivity.md</code> defines standardized interoperability primitives,</li>
   <li><code>IDE/Palette.md</code> defines palette organization and discovery, but does not replace library specifications.</li>
 </ul>
 
 <p>
-Accordingly, a primitive library specification is not a replacement for the diagram specification, the widget model, or the IDE model.
+Accordingly, a primitive library specification is not a replacement for the diagram specification, the widget model, the front-panel model, or the IDE model.
 It is one normative input used to interpret primitive nodes inside a validated executable graph.
 </p>
 
@@ -208,10 +216,11 @@ It is one normative input used to interpret primitive nodes inside a validated e
 
 <p>
 FROG library primitives use stable namespace-qualified identifiers.
-The general naming pattern is:
+The general naming patterns are:
 </p>
 
-<pre><code>frog.&lt;library&gt;.&lt;primitive&gt;</code></pre>
+<pre><code>frog.&lt;library&gt;.&lt;primitive&gt;
+frog.&lt;library&gt;.&lt;family&gt;.&lt;primitive&gt;</code></pre>
 
 <p>
 Examples:
@@ -224,6 +233,9 @@ Examples:
   <li><code>frog.text.concat</code></li>
   <li><code>frog.io.read_text</code></li>
   <li><code>frog.signal.moving_average</code></li>
+  <li><code>frog.ui.property_read</code></li>
+  <li><code>frog.connectivity.python.call_text</code></li>
+  <li><code>frog.connectivity.sql.query_text</code></li>
 </ul>
 
 <p>
@@ -231,19 +243,8 @@ This naming model keeps primitive identity explicit and portable across tools, r
 </p>
 
 <p>
-Library specifications MAY define deeper hierarchical namespaces when needed.
-For example, a future interoperability family might use names such as:
-</p>
-
-<ul>
-  <li><code>frog.connectivity.python.*</code></li>
-  <li><code>frog.connectivity.sql.*</code></li>
-  <li><code>frog.connectivity.dotnet.*</code></li>
-  <li><code>frog.connectivity.native.*</code></li>
-</ul>
-
-<p>
-Such deeper namespaces remain subject to the same stability and clarity requirements as top-level library families.
+Deeper hierarchical namespaces MAY be used when a library family requires an explicit sub-namespace.
+At the current repository stage, <code>frog.connectivity.*</code> already uses such a family-based namespace structure for standardized interoperability families.
 </p>
 
 <hr/>
@@ -263,8 +264,10 @@ The following boundaries apply:
   <li><strong><code>frog.math.*</code></strong> owns numeric scalar functions beyond the core.</li>
   <li><strong><code>frog.collections.*</code></strong> owns array-oriented collection manipulation primitives.</li>
   <li><strong><code>frog.text.*</code></strong> owns text-processing primitives.</li>
-  <li><strong><code>frog.io.*</code></strong> owns file/path/resource and byte-oriented I/O primitives.</li>
+  <li><strong><code>frog.io.*</code></strong> owns file, path, resource, and byte-oriented I/O primitives.</li>
   <li><strong><code>frog.signal.*</code></strong> owns signal-processing primitives as standardized by the current repository stage.</li>
+  <li><strong><code>frog.ui.*</code></strong> owns widget object interaction only.</li>
+  <li><strong><code>frog.connectivity.*</code></strong> owns Python, native/shared-library, .NET, SQL, and related external-runtime or external-service binding primitives.</li>
 </ul>
 
 <p>
@@ -274,9 +277,11 @@ Therefore:
 <ul>
   <li><code>frog.core.*</code> MUST NOT be treated as a generic bucket for all future functionality,</li>
   <li><code>frog.io.*</code> MUST NOT absorb unrelated external-language or foreign-runtime binding responsibilities,</li>
+  <li><code>frog.ui.*</code> MUST remain limited to executable widget interaction rather than front-panel serialization or widget catalog definition,</li>
   <li><code>frog.text.*</code> MUST NOT absorb path semantics, file semantics, or network I/O semantics,</li>
   <li><code>frog.collections.*</code> MUST remain distinct from future map/dictionary or record-oriented libraries unless those are explicitly standardized,</li>
-  <li><code>frog.signal.*</code> MUST remain distinct from future tensor, waveform, or hardware-acquisition libraries unless those are explicitly standardized.</li>
+  <li><code>frog.signal.*</code> MUST remain distinct from future tensor, waveform, or hardware-acquisition libraries unless those are explicitly standardized,</li>
+  <li><code>frog.connectivity.*</code> MUST remain distinct from ordinary file/path I/O, widget interaction, and future networking or hardware-access libraries unless those are explicitly standardized within that namespace.</li>
 </ul>
 
 <p>
@@ -294,15 +299,30 @@ This is intentional.
 
 <p>
 FROG v0.1 prioritizes a durable base vocabulary before broader expansion.
-Future library families MAY be added later for domains such as:
+At the current repository stage, the standard library surface already includes:
 </p>
 
 <ul>
-  <li>UI object interaction,</li>
-  <li>external interoperability and connectivity,</li>
+  <li>foundational computation,</li>
+  <li>numeric functions,</li>
+  <li>collections,</li>
+  <li>text processing,</li>
+  <li>file- and resource-oriented I/O,</li>
+  <li>signal processing,</li>
+  <li>widget object interaction,</li>
+  <li>external interoperability and connectivity.</li>
+</ul>
+
+<p>
+Additional families MAY be added later for domains such as:
+</p>
+
+<ul>
   <li>tensor computation,</li>
   <li>ONNX-oriented operators,</li>
   <li>runtime coordination and scheduling,</li>
+  <li>networking,</li>
+  <li>hardware acquisition and control,</li>
   <li>domain-specific industrial and embedded primitives.</li>
 </ul>
 
