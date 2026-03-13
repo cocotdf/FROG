@@ -67,12 +67,12 @@ This library defines:
 </p>
 
 <ul>
-  <li>their stable primitive identifiers</li>
-  <li>their required structural metadata</li>
-  <li>their canonical port signatures</li>
-  <li>their typing constraints</li>
-  <li>their sequencing semantics</li>
-  <li>their validation requirements</li>
+  <li>their stable primitive identifiers,</li>
+  <li>their required structural metadata,</li>
+  <li>their canonical port signatures,</li>
+  <li>their typing constraints,</li>
+  <li>their sequencing semantics,</li>
+  <li>their validation requirements.</li>
 </ul>
 
 <p>
@@ -80,12 +80,12 @@ This library does <strong>not</strong> define:
 </p>
 
 <ul>
-  <li>the full widget class catalog</li>
-  <li>front-panel widget serialization</li>
-  <li>the natural <code>widget_value</code> model</li>
-  <li>the <code>widget_reference</code> node kind itself</li>
-  <li>a first-class event-execution model</li>
-  <li>a generalized widget-reference value type for arbitrary storage or transport</li>
+  <li>the full widget class catalog,</li>
+  <li>front-panel widget serialization,</li>
+  <li>the natural <code>widget_value</code> model,</li>
+  <li>the <code>widget_reference</code> node kind itself,</li>
+  <li>a first-class event-execution model,</li>
+  <li>a generalized widget-reference value type for arbitrary storage or transport.</li>
 </ul>
 
 <hr/>
@@ -98,11 +98,11 @@ In particular:
 </p>
 
 <ul>
-  <li><strong><code>Expression/Diagram.md</code></strong> defines how UI interaction primitives appear as executable graph nodes inside a validated diagram</li>
-  <li><strong><code>Expression/Type.md</code></strong> defines the type syntax, compatibility rules, and coercion rules used by primitive ports</li>
-  <li><strong><code>Expression/Front panel.md</code></strong> defines front-panel serialization, including widget instances and <code>ui_libraries</code></li>
-  <li><strong><code>Expression/Widget.md</code></strong> defines the widget object model, widget classes, properties, methods, parts, and roles</li>
-  <li><strong><code>Expression/Widget interaction.md</code></strong> defines the canonical source-level interaction model used by these primitives</li>
+  <li><strong><code>Expression/Diagram.md</code></strong> defines how UI interaction primitives appear as executable graph nodes inside a validated diagram,</li>
+  <li><strong><code>Expression/Type.md</code></strong> defines the type syntax, compatibility rules, and coercion rules used by primitive ports,</li>
+  <li><strong><code>Expression/Front panel.md</code></strong> defines front-panel serialization, including widget instances and <code>ui_libraries</code>,</li>
+  <li><strong><code>Expression/Widget.md</code></strong> defines the widget object model, widget classes, properties, methods, parts, and roles,</li>
+  <li><strong><code>Expression/Widget interaction.md</code></strong> defines the canonical source-level interaction model used by these primitives.</li>
 </ul>
 
 <p>
@@ -112,15 +112,13 @@ It defines the standard primitive catalog for UI interaction, while the rest of 
 
 <hr/>
 
-<h2 id="namespace-and-role">4. Namespace and Role of <code>frog.ui</code></h2>
+<h2 id="namespace-and-role">4. Namespace and Role of <code>frog.ui</code></a></h2>
 
 <p>
 The namespace defined by this library is:
 </p>
 
-<pre>
-frog.ui.*
-</pre>
+<pre><code>frog.ui.*</code></pre>
 
 <p>
 This namespace is reserved for standardized executable UI interaction primitives.
@@ -131,8 +129,8 @@ It is important to distinguish:
 </p>
 
 <ul>
-  <li><code>frog.ui.*</code> — executable primitive nodes used inside diagrams</li>
-  <li><code>frog.ui.standard.*</code> — widget classes or widget-library identifiers used by the front panel and widget model</li>
+  <li><code>frog.ui.*</code> — executable primitive nodes used inside diagrams,</li>
+  <li><code>frog.ui.standard.*</code> — widget classes or widget-library identifiers used by the front panel and widget model.</li>
 </ul>
 
 <p>
@@ -140,8 +138,8 @@ Therefore:
 </p>
 
 <ul>
-  <li><code>frog.ui.property_read</code>, <code>frog.ui.property_write</code>, and <code>frog.ui.method_invoke</code> are primitive identifiers</li>
-  <li><code>frog.ui.standard.numeric_control</code> or similar identifiers are widget-class identifiers, not primitive identifiers</li>
+  <li><code>frog.ui.property_read</code>, <code>frog.ui.property_write</code>, and <code>frog.ui.method_invoke</code> are primitive identifiers,</li>
+  <li><code>frog.ui.standard.numeric_control</code> or similar identifiers are widget-class identifiers, not primitive identifiers.</li>
 </ul>
 
 <p>
@@ -167,9 +165,9 @@ FROG v0.1 standardizes the following <code>frog.ui</code> primitives:
 </p>
 
 <ul>
-  <li><code>frog.ui.property_read</code> — reads a property from a widget or widget part</li>
-  <li><code>frog.ui.property_write</code> — writes a property of a widget or widget part</li>
-  <li><code>frog.ui.method_invoke</code> — invokes a method on a widget or widget part</li>
+  <li><code>frog.ui.property_read</code> — reads a property from a widget or widget part,</li>
+  <li><code>frog.ui.property_write</code> — writes a property of a widget or widget part,</li>
+  <li><code>frog.ui.method_invoke</code> — invokes a method on a widget or widget part.</li>
 </ul>
 
 <p>
@@ -177,10 +175,10 @@ All three primitives:
 </p>
 
 <ul>
-  <li>MUST appear as diagram nodes of kind <code>primitive</code></li>
-  <li>MUST consume a compatible widget reference through required input port <code>ref</code></li>
-  <li>MAY expose optional sequencing ports <code>ui_in</code> and <code>ui_out</code></li>
-  <li>MUST use widget metadata declared through <code>widget_member</code> or <code>widget_method</code> as appropriate</li>
+  <li>MUST appear as diagram nodes of kind <code>primitive</code>,</li>
+  <li>MUST consume a compatible widget reference through required input port <code>ref</code>,</li>
+  <li>MAY expose optional sequencing ports <code>ui_in</code> and <code>ui_out</code>,</li>
+  <li>MUST use widget metadata declared through <code>widget_member</code> or <code>widget_method</code> as appropriate.</li>
 </ul>
 
 <p>
@@ -196,9 +194,7 @@ They do not replace the natural primary-value path represented by <code>widget_v
 The primitive identifier is:
 </p>
 
-<pre>
-frog.ui.property_read
-</pre>
+<pre><code>frog.ui.property_read</code></pre>
 
 <p>
 A property read node reads a property value from a widget or widget part and exposes that value to the diagram.
@@ -208,26 +204,24 @@ A property read node reads a property value from a widget or widget part and exp
 Required structural fields:
 </p>
 
-<pre>
-{
+<pre><code>{
   "id": "read_gain_visible",
   "kind": "primitive",
   "type": "frog.ui.property_read",
   "widget_member": {
     "member": "visible"
   }
-}
-</pre>
+}</code></pre>
 
 <p>
 Canonical port signature:
 </p>
 
 <ul>
-  <li>required input port <code>ref</code></li>
-  <li>optional input port <code>ui_in</code></li>
-  <li>required output port <code>value</code></li>
-  <li>optional output port <code>ui_out</code></li>
+  <li>required input port <code>ref</code>,</li>
+  <li>optional input port <code>ui_in</code>,</li>
+  <li>required output port <code>value</code>,</li>
+  <li>optional output port <code>ui_out</code>.</li>
 </ul>
 
 <p>
@@ -235,9 +229,9 @@ Rules:
 </p>
 
 <ul>
-  <li>the output port <code>value</code> MUST have the type of the addressed property</li>
-  <li>the addressed property MUST be readable under the active widget profile</li>
-  <li>the <code>ref</code> port MUST carry a widget reference compatible with the addressed widget</li>
+  <li>the output port <code>value</code> MUST have the type of the addressed property,</li>
+  <li>the addressed property MUST be readable under the active widget profile,</li>
+  <li>the <code>ref</code> port MUST carry a widget reference compatible with the addressed widget.</li>
 </ul>
 
 <p>
@@ -250,9 +244,9 @@ Semantics:
 </p>
 
 <ul>
-  <li>the read observes the current property value at execution time</li>
-  <li>if <code>ui_in</code> is connected, the read MUST occur only after the preceding sequencing token becomes available</li>
-  <li>if <code>ui_out</code> is connected, it MUST become available only after the read has completed</li>
+  <li>the read observes the current property value at execution time,</li>
+  <li>if <code>ui_in</code> is connected, the read MUST occur only after the preceding sequencing token becomes available,</li>
+  <li>if <code>ui_out</code> is connected, it MUST become available only after the read has completed.</li>
 </ul>
 
 <hr/>
@@ -263,9 +257,7 @@ Semantics:
 The primitive identifier is:
 </p>
 
-<pre>
-frog.ui.property_write
-</pre>
+<pre><code>frog.ui.property_write</code></pre>
 
 <p>
 A property write node writes a diagram value into a writable property of a widget or widget part.
@@ -275,8 +267,7 @@ A property write node writes a diagram value into a writable property of a widge
 Required structural fields:
 </p>
 
-<pre>
-{
+<pre><code>{
   "id": "write_gain_label",
   "kind": "primitive",
   "type": "frog.ui.property_write",
@@ -284,18 +275,17 @@ Required structural fields:
     "part": "label",
     "member": "text"
   }
-}
-</pre>
+}</code></pre>
 
 <p>
 Canonical port signature:
 </p>
 
 <ul>
-  <li>required input port <code>ref</code></li>
-  <li>required input port <code>value</code></li>
-  <li>optional input port <code>ui_in</code></li>
-  <li>optional output port <code>ui_out</code></li>
+  <li>required input port <code>ref</code>,</li>
+  <li>required input port <code>value</code>,</li>
+  <li>optional input port <code>ui_in</code>,</li>
+  <li>optional output port <code>ui_out</code>.</li>
 </ul>
 
 <p>
@@ -303,9 +293,9 @@ Rules:
 </p>
 
 <ul>
-  <li>the input port <code>value</code> MUST be type-compatible with the addressed property type</li>
-  <li>the addressed property MUST be writable under the active widget profile</li>
-  <li>the <code>ref</code> port MUST carry a widget reference compatible with the addressed widget</li>
+  <li>the input port <code>value</code> MUST be type-compatible with the addressed property type,</li>
+  <li>the addressed property MUST be writable under the active widget profile,</li>
+  <li>the <code>ref</code> port MUST carry a widget reference compatible with the addressed widget.</li>
 </ul>
 
 <p>
@@ -319,9 +309,9 @@ Semantics:
 </p>
 
 <ul>
-  <li>a property write applies a UI side effect to the addressed widget member</li>
-  <li>if <code>ui_in</code> is connected, the write MUST occur only after the preceding sequencing token becomes available</li>
-  <li>if <code>ui_out</code> is connected, it MUST become available only after the write has completed according to the active runtime profile</li>
+  <li>a property write applies a UI side effect to the addressed widget member,</li>
+  <li>if <code>ui_in</code> is connected, the write MUST occur only after the preceding sequencing token becomes available,</li>
+  <li>if <code>ui_out</code> is connected, it MUST become available only after the write has completed according to the active runtime profile.</li>
 </ul>
 
 <hr/>
@@ -332,9 +322,7 @@ Semantics:
 The primitive identifier is:
 </p>
 
-<pre>
-frog.ui.method_invoke
-</pre>
+<pre><code>frog.ui.method_invoke</code></pre>
 
 <p>
 A method invoke node calls a method on a widget or widget part.
@@ -344,27 +332,25 @@ A method invoke node calls a method on a widget or widget part.
 Required structural fields:
 </p>
 
-<pre>
-{
+<pre><code>{
   "id": "invoke_reset",
   "kind": "primitive",
   "type": "frog.ui.method_invoke",
   "widget_method": {
     "name": "reset_to_default"
   }
-}
-</pre>
+}</code></pre>
 
 <p>
 Canonical port signature:
 </p>
 
 <ul>
-  <li>required input port <code>ref</code></li>
-  <li>zero or more method argument input ports, in canonical method order</li>
-  <li>optional input port <code>ui_in</code></li>
-  <li>zero or more method result output ports, in canonical method order</li>
-  <li>optional output port <code>ui_out</code></li>
+  <li>required input port <code>ref</code>,</li>
+  <li>zero or more method argument input ports, in canonical method order,</li>
+  <li>optional input port <code>ui_in</code>,</li>
+  <li>zero or more method result output ports, in canonical method order,</li>
+  <li>optional output port <code>ui_out</code>.</li>
 </ul>
 
 <p>
@@ -372,11 +358,11 @@ Rules:
 </p>
 
 <ul>
-  <li>method argument input port names MUST match the canonical method signature of the addressed method</li>
-  <li>method result output port names MUST match the canonical method signature of the addressed method</li>
-  <li>each method argument input MUST be type-compatible with the declared parameter type</li>
-  <li>each method result output MUST have the declared result type</li>
-  <li>the addressed method MUST exist for the addressed widget member under the active widget profile</li>
+  <li>method argument input port names MUST match the canonical method signature of the addressed method,</li>
+  <li>method result output port names MUST match the canonical method signature of the addressed method,</li>
+  <li>each method argument input MUST be type-compatible with the declared parameter type,</li>
+  <li>each method result output MUST have the declared result type,</li>
+  <li>the addressed method MUST exist for the addressed widget member under the active widget profile.</li>
 </ul>
 
 <p>
@@ -384,9 +370,9 @@ Semantics:
 </p>
 
 <ul>
-  <li>a method invocation MAY produce UI side effects, ordinary return values, or both</li>
-  <li>if <code>ui_in</code> is connected, the invocation MUST occur only after the preceding sequencing token becomes available</li>
-  <li>if <code>ui_out</code> is connected, it MUST become available only after invocation has completed according to the active runtime profile</li>
+  <li>a method invocation MAY produce UI side effects, ordinary return values, or both,</li>
+  <li>if <code>ui_in</code> is connected, the invocation MUST occur only after the preceding sequencing token becomes available,</li>
+  <li>if <code>ui_out</code> is connected, it MUST become available only after invocation has completed according to the active runtime profile.</li>
 </ul>
 
 <hr/>
@@ -423,10 +409,10 @@ These ports:
 </p>
 
 <ul>
-  <li>MUST NOT be interpreted as ordinary data values</li>
-  <li>MUST NOT redefine ordinary data dependency typing</li>
-  <li>MAY be omitted when no explicit UI ordering is required</li>
-  <li>SHOULD be used when deterministic ordering of UI side effects matters</li>
+  <li>MUST NOT be interpreted as ordinary data values,</li>
+  <li>MUST NOT redefine ordinary data dependency typing,</li>
+  <li>MAY be omitted when no explicit UI ordering is required,</li>
+  <li>SHOULD be used when deterministic ordering of UI side effects matters.</li>
 </ul>
 
 <p>
@@ -443,14 +429,14 @@ Implementations MUST enforce the following rules:
 </p>
 
 <ul>
-  <li>a <code>frog.ui.*</code> primitive MUST appear as a node of kind <code>primitive</code></li>
-  <li>the primitive identifier MUST be one of the standardized identifiers defined by this document</li>
-  <li>the node MUST consume a compatible widget reference through required input port <code>ref</code></li>
-  <li>a property node MUST declare <code>widget_member</code></li>
-  <li>a method node MUST declare <code>widget_method</code></li>
-  <li>a widget interaction node MUST NOT identify its target only through ad hoc local string fields unrelated to the widget reference model</li>
-  <li>ordinary value ports MUST be represented through ordinary diagram edges</li>
-  <li>explicit UI ordering, when used, MUST be represented through <code>ui_in</code> / <code>ui_out</code> edges</li>
+  <li>a <code>frog.ui.*</code> primitive MUST appear as a node of kind <code>primitive</code>,</li>
+  <li>the primitive identifier MUST be one of the standardized identifiers defined by this document,</li>
+  <li>the node MUST consume a compatible widget reference through required input port <code>ref</code>,</li>
+  <li>a property node MUST declare <code>widget_member</code>,</li>
+  <li>a method node MUST declare <code>widget_method</code>,</li>
+  <li>a widget interaction node MUST NOT identify its target only through ad hoc local string fields unrelated to the widget reference model,</li>
+  <li>ordinary value ports MUST be represented through ordinary diagram edges,</li>
+  <li>explicit UI ordering, when used, MUST be represented through <code>ui_in</code> / <code>ui_out</code> edges.</li>
 </ul>
 
 <p>
@@ -458,10 +444,10 @@ Additionally:
 </p>
 
 <ul>
-  <li><code>frog.ui.property_read</code> MUST address a readable property</li>
-  <li><code>frog.ui.property_write</code> MUST address a writable property</li>
-  <li><code>frog.ui.method_invoke</code> MUST address a valid method</li>
-  <li>part names, member names, and method names MUST be valid for the addressed widget class or active profile</li>
+  <li><code>frog.ui.property_read</code> MUST address a readable property,</li>
+  <li><code>frog.ui.property_write</code> MUST address a writable property,</li>
+  <li><code>frog.ui.method_invoke</code> MUST address a valid method,</li>
+  <li>part names, member names, and method names MUST be valid for the addressed widget class or active profile.</li>
 </ul>
 
 <p>
@@ -474,8 +460,7 @@ Invalid widget interaction primitives MUST trigger validation errors.
 
 <h3>11.1 Property read</h3>
 
-<pre>
-{
+<pre><code>{
   "id": "read_label_text",
   "kind": "primitive",
   "type": "frog.ui.property_read",
@@ -483,39 +468,33 @@ Invalid widget interaction primitives MUST trigger validation errors.
     "part": "label",
     "member": "text"
   }
-}
-</pre>
+}</code></pre>
 
 <h3>11.2 Property write</h3>
 
-<pre>
-{
+<pre><code>{
   "id": "write_visible",
   "kind": "primitive",
   "type": "frog.ui.property_write",
   "widget_member": {
     "member": "visible"
   }
-}
-</pre>
+}</code></pre>
 
 <h3>11.3 Method invoke</h3>
 
-<pre>
-{
+<pre><code>{
   "id": "invoke_focus",
   "kind": "primitive",
   "type": "frog.ui.method_invoke",
   "widget_method": {
     "name": "focus"
   }
-}
-</pre>
+}</code></pre>
 
 <h3>11.4 Example diagram fragment</h3>
 
-<pre>
-{
+<pre><code>{
   "nodes": [
     {
       "id": "ctrl_gain_ref",
@@ -551,23 +530,22 @@ Invalid widget interaction primitives MUST trigger validation errors.
       "to":   { "node": "write_visible", "port": "ref" }
     }
   ]
-}
-</pre>
+}</code></pre>
 
 <hr/>
 
 <h2 id="out-of-scope">12. Out of Scope for v0.1</h2>
 
 <ul>
-  <li>a full industrial UI widget catalog</li>
-  <li>pixel-perfect cross-runtime rendering equivalence</li>
-  <li>a standardized first-class event structure for executable event handling</li>
-  <li>registration-based event nodes</li>
-  <li>asynchronous callback delivery</li>
-  <li>a generalized widget reference value type for arbitrary storage or transport</li>
-  <li>complete theme and style systems</li>
-  <li>automatic inference of UI sequencing in all cases</li>
-  <li>full standardization of every possible widget-library member set</li>
+  <li>a full industrial UI widget catalog,</li>
+  <li>pixel-perfect cross-runtime rendering equivalence,</li>
+  <li>a standardized first-class event structure for executable event handling,</li>
+  <li>registration-based event nodes,</li>
+  <li>asynchronous callback delivery,</li>
+  <li>a generalized widget reference value type for arbitrary storage or transport,</li>
+  <li>complete theme and style systems,</li>
+  <li>automatic inference of UI sequencing in all cases,</li>
+  <li>full standardization of every possible widget-library member set.</li>
 </ul>
 
 <hr/>
@@ -593,10 +571,10 @@ These primitives:
 </p>
 
 <ul>
-  <li>operate on widget references</li>
-  <li>use <code>widget_member</code> or <code>widget_method</code> metadata</li>
-  <li>support optional explicit UI sequencing through <code>ui_in</code> / <code>ui_out</code></li>
-  <li>complement, but do not replace, the natural <code>widget_value</code> path</li>
+  <li>operate on widget references,</li>
+  <li>use <code>widget_member</code> or <code>widget_method</code> metadata,</li>
+  <li>support optional explicit UI sequencing through <code>ui_in</code> / <code>ui_out</code>,</li>
+  <li>complement, but do not replace, the natural <code>widget_value</code> path.</li>
 </ul>
 
 <p>
@@ -604,7 +582,7 @@ In short:
 </p>
 
 <ul>
-  <li><strong><code>widget_value</code></strong> is the natural primary-value path</li>
-  <li><strong><code>widget_reference</code></strong> is the object-style widget reference path</li>
-  <li><strong><code>frog.ui.*</code></strong> defines the standardized primitive interaction vocabulary that consumes those references</li>
+  <li><strong><code>widget_value</code></strong> is the natural primary-value path,</li>
+  <li><strong><code>widget_reference</code></strong> is the object-style widget reference path,</li>
+  <li><strong><code>frog.ui.*</code></strong> defines the standardized primitive interaction vocabulary that consumes those references.</li>
 </ul>
