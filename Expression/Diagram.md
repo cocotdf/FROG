@@ -45,7 +45,7 @@
 
 <p>
 The <code>diagram</code> section defines the executable graph of a FROG.
-It is the authoritative structural definition of execution.
+It is the authoritative structural definition of execution in canonical source form.
 </p>
 
 <p>
@@ -77,8 +77,8 @@ Execution semantics are derived from the validated graph together with:
   <li>the FROG type system,</li>
   <li>the widget model,</li>
   <li>the widget interaction model,</li>
-  <li>the control-structure model,</li>
-  <li>the local-memory and cycle rules,</li>
+  <li>the normative control-structure semantics,</li>
+  <li>the normative local-memory and cycle-validity rules,</li>
   <li>the active primitive catalog or stricter execution profile.</li>
 </ul>
 
@@ -96,7 +96,7 @@ The diagram provides:
   <li>the canonical link between public interface ports and internal execution logic,</li>
   <li>the canonical link between front-panel widget participation and internal execution logic,</li>
   <li>the hierarchical composition mechanism used to invoke other FROGs,</li>
-  <li>the canonical place where valid feedback loops and local memory are expressed,</li>
+  <li>the canonical place where valid feedback loops and local memory are expressed in source form,</li>
   <li>the canonical source-level space for diagram annotations and organization.</li>
 </ul>
 
@@ -119,14 +119,16 @@ This document depends on the following FROG specifications:
   <li><code>Expression/Front panel.md</code> — serialized UI composition and widget declarations,</li>
   <li><code>Expression/Widget.md</code> — widget classes, primary value model, and widget parts,</li>
   <li><code>Expression/Widget interaction.md</code> — object-style widget interaction primitives and optional UI sequencing,</li>
-  <li><code>Expression/Control structures.md</code> — structure families such as <code>case</code>, <code>for_loop</code>, and <code>while_loop</code>,</li>
-  <li><code>Expression/State and cycles.md</code> — local memory and cycle validity,</li>
+  <li><code>Expression/Control structures.md</code> — source-facing representation of structure nodes and their serialized form,</li>
+  <li><code>Expression/State and cycles.md</code> — source-facing representation of explicit local-memory elements and feedback-cycle formation constraints,</li>
+  <li><code>Language/Control structures.md</code> — normative execution semantics for structure families such as <code>case</code>, <code>for_loop</code>, and <code>while_loop</code>,</li>
+  <li><code>Language/State and cycles.md</code> — normative semantics for local memory and cycle validity,</li>
   <li><code>Libraries/Core.md</code> — standard primitive definitions such as <code>frog.core.add</code>, <code>frog.core.mul</code>, and <code>frog.core.delay</code>.</li>
 </ul>
 
 <p>
 This document defines graph-level representation and validation rules.
-It does not redefine semantics already owned by the dedicated specifications above.
+It does not redefine source ownership or execution semantics already owned by the dedicated specifications above.
 </p>
 
 <hr/>
@@ -382,7 +384,8 @@ and local-memory primitives such as <code>frog.core.delay</code>.
 
 <p>
 A <code>structure</code> node represents a language-level control structure.
-Its semantics are defined by <code>Expression/Control structures.md</code>.
+Its canonical source representation is defined by <code>Expression/Control structures.md</code>.
+Its normative execution semantics are defined by <code>Language/Control structures.md</code>.
 </p>
 
 <pre><code>{
@@ -412,7 +415,7 @@ Rules:
   <li><code>structure_type</code> MUST identify a valid standardized or profile-defined structure family.</li>
   <li>The canonical standardized structure types for v0.1 are <code>case</code>, <code>for_loop</code>, and <code>while_loop</code>.</li>
   <li><code>boundary</code>, <code>structure_terminals</code>, and <code>regions</code> MUST be valid for the chosen structure type.</li>
-  <li>Structure internals and region semantics are defined by the control-structure specification and MUST NOT be redefined ad hoc by tools.</li>
+  <li>Structure internals and region semantics MUST remain aligned with the control-structure specifications and MUST NOT be redefined ad hoc by tools.</li>
 </ul>
 
 <p>
@@ -671,7 +674,7 @@ The optional <code>ui_in</code> and <code>ui_out</code> ports are opaque UI sequ
 
 <p>
 The minimal standard local-memory primitive for v0.1 is <code>frog.core.delay</code>.
-Its canonical signature is defined by <code>Libraries/Core.md</code> and constrained by <code>Expression/State and cycles.md</code>.
+Its canonical signature is defined by <code>Libraries/Core.md</code>, its source-facing constraints are defined by <code>Expression/State and cycles.md</code>, and its normative execution semantics are defined by <code>Language/State and cycles.md</code>.
 </p>
 
 <p>
@@ -947,8 +950,9 @@ Boundary values crossing the structure wall MUST be represented explicitly accor
 </p>
 
 <p>
-This document does not redefine structure boundary internals.
-They are owned by <code>Expression/Control structures.md</code>.
+This document does not redefine structure-boundary internals.
+Their canonical source representation is defined by <code>Expression/Control structures.md</code>,
+and their normative execution meaning is defined by <code>Language/Control structures.md</code>.
 </p>
 
 <hr/>
@@ -1025,7 +1029,8 @@ Rules:
 </ul>
 
 <p>
-Cycle validity and local-memory semantics are defined normatively by <code>Expression/State and cycles.md</code>.
+Cycle validity and local-memory semantics are defined normatively by <code>Language/State and cycles.md</code>.
+The source-facing representation of those constructs in canonical <code>.frog</code> content is defined by <code>Expression/State and cycles.md</code>.
 This document defines only their graph-level participation.
 </p>
 
@@ -1049,7 +1054,7 @@ A diagram is valid only if all of the following hold:
   <li>every source and destination port resolves successfully,</li>
   <li>every connected value edge is type-compatible,</li>
   <li>every input port has at most one incoming edge unless explicitly allowed by another specification,</li>
-  <li>every structure boundary is valid under the control-structure specification,</li>
+  <li>every structure boundary is valid under the control-structure specifications,</li>
   <li>every widget interaction node is valid under the widget interaction specification,</li>
   <li>every feedback cycle satisfies the local-memory rules,</li>
   <li>layout, documentation, tags, and annotations do not conflict with executable fields.</li>
@@ -1144,8 +1149,8 @@ but tools SHOULD preserve the distinction rather than collapsing both forms into
 <h3>21.5 Structure execution</h3>
 
 <p>
-Structure execution semantics are owned by <code>Expression/Control structures.md</code>.
-This document only requires that structure participation in the graph be explicit, valid, and canonical.
+Structure execution semantics are owned by <code>Language/Control structures.md</code>.
+This document only requires that structure participation in the graph be explicit, valid, and canonical in source form.
 </p>
 
 <h3>21.6 Local memory and cycles</h3>
@@ -1448,7 +1453,7 @@ This illustrates the canonical source-level replacement for a traditional <code>
 <h2 id="summary">23. Summary</h2>
 
 <p>
-The FROG <code>diagram</code> is the authoritative executable graph of a FROG.
+The FROG <code>diagram</code> is the authoritative executable graph of a FROG in canonical source form.
 It is the canonical place where public interface participation, widget participation, structure participation,
 sub-FROG invocation, explicit local memory, and graph-level documentation are represented.
 </p>
@@ -1459,7 +1464,7 @@ sub-FROG invocation, explicit local memory, and graph-level documentation are re
   <li>Object-style widget access is represented canonically by <code>widget_reference</code> plus <code>frog.ui.*</code> primitives.</li>
   <li>Language structures are explicit graph nodes, not hidden function expansions.</li>
   <li>Cycles are valid only when broken by explicit local memory.</li>
-  <li>The diagram owns execution structure; annotations and layout do not change execution semantics.</li>
+  <li>The diagram owns execution structure representation; annotations and layout do not change execution semantics.</li>
 </ul>
 
 <p>
