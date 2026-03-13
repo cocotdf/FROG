@@ -2,7 +2,7 @@
 
 <p align="center">
 FROG is an open-source initiative exploring a modern graphical dataflow language
-and development environment.
+and its related specification layers.
 </p>
 
 <hr/>
@@ -10,24 +10,26 @@ and development environment.
 <h2>Project Status</h2>
 
 <p>
-FROG is a very early-stage project. The repository currently contains the first
-draft specifications and architectural ideas.
+FROG is still an early-stage specification project.
+The repository currently contains draft specifications, architectural foundations,
+and evolving language-definition documents.
 </p>
 
 <p>
-Many parts of the system are still being defined. Contributions in the form of
-ideas, discussions, issues, documentation improvements, and specifications are
-highly welcome.
+Many parts of the system are still being defined, clarified, or stabilized.
+Contributions in the form of ideas, discussions, issues, documentation
+improvements, corrections, and specification proposals are highly welcome.
 </p>
 
 <hr/>
 
 <h2>How You Can Contribute</h2>
 
-<p>There are several ways to contribute to the project:</p>
+<p>There are several useful ways to contribute to the project:</p>
 
 <ul>
 <li>Improve documentation</li>
+<li>Clarify ambiguous or inconsistent specification wording</li>
 <li>Propose specification improvements</li>
 <li>Open issues to discuss design ideas</li>
 <li>Submit pull requests</li>
@@ -60,8 +62,8 @@ Graiphic / FROG main repository
 </pre>
 
 <p>
-This workflow allows maintainers to review contributions and maintain the
-coherence of the project architecture.
+This workflow allows maintainers to review contributions and preserve the
+architectural coherence of the repository.
 </p>
 
 <hr/>
@@ -83,15 +85,41 @@ coherence of the project architecture.
 <p>You may want to begin by reading:</p>
 
 <ul>
-<li><code>README.md</code></li>
-<li>The <code>/Spec</code> directory</li>
+<li><code>Readme.md</code></li>
+<li>The relevant top-level directory for your topic:
+  <ul>
+    <li><code>Expression/</code> for canonical source specification</li>
+    <li><code>Libraries/</code> for standard primitive-library specifications</li>
+    <li><code>IDE/</code> for IDE architecture and editing model</li>
+    <li><code>Language/</code> for transition and semantic continuity documents</li>
+  </ul>
+</li>
+<li>The exact file you intend to modify</li>
+<li>Related specification files in the same semantic area</li>
 <li>Existing issues and discussions</li>
 </ul>
 
 <p>
-Early contributions are especially useful in specification discussions and
-conceptual design.
+Early contributions are especially useful in specification discussions,
+cross-document consistency, and conceptual design.
 </p>
+
+<hr/>
+
+<h2>Contribution Expectations</h2>
+
+<p>
+Because FROG is a specification repository, contributions should aim for
+clarity, precision, and long-term coherence.
+</p>
+
+<ul>
+<li>Start from the current version of the document you want to improve</li>
+<li>Cross-check directly related files before proposing changes</li>
+<li>Preserve useful existing content when possible</li>
+<li>Prefer explicit and durable wording</li>
+<li>Call out cross-document conflicts when you find them</li>
+</ul>
 
 <hr/>
 
@@ -107,13 +135,29 @@ See: <strong>CLA.md</strong>
 
 <hr/>
 
-<h2>Community and Collaboration</h2>
+<h2>Licensing</h2>
 
 <p>
-FROG aims to build an open ecosystem around graphical programming.
-Constructive discussions, design proposals, and experimentation are encouraged.
+Repository content is governed by the repository license.
+Contributors are responsible for ensuring that they have the right to submit
+their work under the licensing terms used by this repository.
 </p>
 
 <p>
-We believe innovation emerges from collaboration.
+See: <strong>LICENSE</strong>
+</p>
+
+<hr/>
+
+<h2>Community and Collaboration</h2>
+
+<p>
+FROG aims to build an open ecosystem around graphical dataflow programming.
+Constructive discussions, design proposals, editorial cleanup, and careful
+architectural reasoning are encouraged.
+</p>
+
+<p>
+The goal is not only to add more content, but to build a coherent, durable,
+and implementable specification.
 </p>
