@@ -87,9 +87,11 @@ This document complements the following specifications:
   <li><code>Libraries/Text.md</code> — defines text-processing primitives in the <code>frog.text</code> namespace.</li>
   <li><code>Libraries/IO.md</code> — defines file, path, byte, and related I/O primitives in the <code>frog.io</code> namespace.</li>
   <li><code>Libraries/Signal.md</code> — defines first-wave signal-processing primitives in the <code>frog.signal</code> namespace.</li>
+  <li><code>Libraries/UI.md</code> — defines executable widget interaction primitives in the <code>frog.ui</code> namespace.</li>
+  <li><code>Libraries/Connectivity.md</code> — defines interoperability primitives in the <code>frog.connectivity</code> namespace.</li>
   <li><code>Expression/Control structures.md</code> — defines structures such as <code>case</code>, <code>for_loop</code>, and <code>while_loop</code>.</li>
   <li><code>Expression/Diagram.md</code> — defines how inserted functions, structures, and related nodes appear in the program source and diagram model.</li>
-  <li><code>Expression/Widget interaction.md</code> — defines canonical UI interaction primitives such as widget property access and method invocation.</li>
+  <li><code>Expression/Widget interaction.md</code> — defines canonical source-level widget interaction paths such as <code>widget_value</code>, <code>widget_reference</code>, property access, and method invocation.</li>
   <li><code>Expression/Front panel.md</code> and <code>Expression/Widget.md</code> — define the front-panel and widget model that inform UI-related palette entries.</li>
 </ul>
 
@@ -99,7 +101,7 @@ It does not define the language semantics of those constructs.
 </p>
 
 <p>
-When additional standard library documents are later introduced for namespaces such as <code>frog.ui.*</code>, <code>frog.connectivity.*</code>, <code>frog.tensor.*</code>, <code>frog.onnx.*</code>, or <code>frog.runtime.*</code>, the palette MUST remain consistent with those library specifications.
+When additional standard library documents are later introduced for namespaces such as <code>frog.tensor.*</code>, <code>frog.onnx.*</code>, or <code>frog.runtime.*</code>, the palette MUST remain consistent with those library specifications.
 </p>
 
 <hr/>
@@ -153,7 +155,7 @@ The palette MUST keep the following boundaries explicit:
 
 <ul>
   <li><strong>UI</strong> — widget-facing interaction and UI-related insertion paths,</li>
-  <li><strong>I/O</strong> — file, path, resource, serialization, network, and hardware I/O,</li>
+  <li><strong>I/O</strong> — file, path, resource, and byte-oriented I/O,</li>
   <li><strong>Connectivity</strong> — Python, native/shared library, C/C++, .NET, SQL, and external runtime or service bindings,</li>
   <li><strong>Concurrency &amp; Runtime</strong> — runtime coordination and execution tools.</li>
 </ul>
@@ -251,6 +253,8 @@ frog.collections.*
 frog.text.*
 frog.io.*
 frog.signal.*
+frog.ui.*
+frog.connectivity.*
 </pre>
 
 <p>
@@ -258,8 +262,6 @@ The namespace view MAY also expose reserved or future families when the active I
 </p>
 
 <pre>
-frog.ui.*
-frog.connectivity.*
 frog.tensor.*
 frog.onnx.*
 frog.runtime.*
@@ -508,7 +510,7 @@ It SHOULD NOT absorb file I/O, database access, Python bindings, or general exte
 </p>
 
 <p>
-At the current repository stage, this category is driven primarily by the source-level widget interaction model defined in <code>Expression/Widget interaction.md</code>.
+At the current repository stage, this category is grounded both in the source-level widget interaction model and in the standardized <code>frog.ui.*</code> primitive library.
 </p>
 
 <h3>11.10 I/O</h3>
@@ -521,27 +523,25 @@ At the current repository stage, this category is driven primarily by the source
 </ul>
 
 <p>
-This group SHOULD cover operations whose primary role is reading from, writing to, opening, closing, or transforming an I/O resource.
+This group SHOULD cover operations whose primary role is reading from, writing to, opening, closing, or transforming a file, path, resource, or byte-oriented I/O value.
 It SHOULD NOT absorb Python, native/shared library, .NET, SQL, or general external service bindings.
 </p>
 
 <h3>11.11 Connectivity</h3>
 
-<p>
-This group is intended for future integrations such as:
-</p>
-
 <ul>
-  <li>Python bindings,</li>
-  <li>native/shared library bindings,</li>
-  <li>C/C++ bindings,</li>
-  <li>.NET bindings,</li>
-  <li>SQL and database connectivity,</li>
-  <li>external runtime or service bindings.</li>
+  <li>standardized <code>frog.connectivity.python.*</code> entries</li>
+  <li>standardized <code>frog.connectivity.native.*</code> entries</li>
+  <li>standardized <code>frog.connectivity.dotnet.*</code> entries</li>
+  <li>standardized <code>frog.connectivity.sql.*</code> entries</li>
 </ul>
 
 <p>
 This group exists to keep interop and external binding workflows explicit instead of collapsing them into a generic and ambiguous external bucket.
+</p>
+
+<p>
+It SHOULD cover Python bindings, native/shared-library bindings, .NET bindings, SQL and database connectivity, and related external runtime or service bindings standardized by the active library and profile set.
 </p>
 
 <h3>11.12 Concurrency &amp; Runtime</h3>
@@ -752,7 +752,7 @@ It MUST NOT change the source semantics of the inserted construct.
 
 <ul>
   <li><code>python</code> → relevant <code>frog.connectivity.*</code> entry when available</li>
-  <li><code>dll</code> → relevant native/shared library binding entry when available</li>
+  <li><code>dll</code> → relevant native/shared-library binding entry when available</li>
   <li><code>sql</code> → relevant database connectivity entry when available</li>
   <li><code>.net</code> → relevant .NET connectivity entry when available</li>
 </ul>
