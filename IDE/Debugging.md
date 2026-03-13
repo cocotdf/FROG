@@ -121,16 +121,25 @@ This document depends on the following specifications:
 
 <ul>
   <li><code>IDE/Readme.md</code> for the architectural separation between source editing, execution preparation, and runtime execution,</li>
+  <li><code>IDE/Execution observability.md</code> for the source-aligned observability model on which interactive debugging builds,</li>
   <li><code>Expression/Diagram.md</code> for the canonical node, edge, and executable-graph model,</li>
-  <li><code>Expression/Control structures.md</code> for structure kinds, regions, and execution semantics,</li>
-  <li><code>Expression/State and cycles.md</code> for local-memory semantics and valid feedback behavior,</li>
-  <li><code>Expression/Widget interaction.md</code> for widget-related execution and explicit UI sequencing.</li>
+  <li><code>Expression/Control structures.md</code> for the canonical source-facing representation of structure kinds, regions, boundaries, and terminals,</li>
+  <li><code>Language/Control structures.md</code> for the normative execution semantics of structures,</li>
+  <li><code>Expression/State and cycles.md</code> for the canonical source-facing representation of local-memory constructs and cycle-facing source constraints,</li>
+  <li><code>Language/State and cycles.md</code> for the normative execution semantics of local memory and valid feedback behavior,</li>
+  <li><code>Expression/Widget interaction.md</code> for widget-related execution objects and explicit UI sequencing.</li>
 </ul>
 
 <p>
 This document MUST NOT contradict those specifications.
-If a conflict appears, the relevant source-level execution semantics defined by the Expression layer remain authoritative.
+If a conflict appears:
 </p>
+
+<ul>
+  <li><code>Expression/</code> remains authoritative for canonical source identity and source-visible representation,</li>
+  <li><code>Language/</code> remains authoritative for normative execution semantics,</li>
+  <li><code>IDE/</code> remains authoritative only for debugging behavior and IDE-facing control meaning.</li>
+</ul>
 
 <hr/>
 
@@ -459,14 +468,14 @@ The canonical step commands for FROG v0.1 are:
   <li><code>step_out</code>.</li>
 </ul>
 
-<h3>11.3 `step_into`</h3>
+<h3>11.3 <code>step_into</code></h3>
 
 <p>
 <code>step_into</code> resumes execution until the next debuggable source-level activation or event that belongs to the current causally reachable execution path.
 When the current paused object is a sub-FROG call or a structure activation, <code>step_into</code> MAY stop inside that nested execution context.
 </p>
 
-<h3>11.4 `step_over`</h3>
+<h3>11.4 <code>step_over</code></h3>
 
 <p>
 <code>step_over</code> treats the current selected source-level activation as one unit for debugging purposes.
@@ -479,7 +488,7 @@ If the current paused object is:
   <li>a structure activation, <code>step_over</code> runs through the selected structure activity and stops at the next debuggable stop after that structure activation completes in the current parent scope.</li>
 </ul>
 
-<h3>11.5 `step_out`</h3>
+<h3>11.5 <code>step_out</code></h3>
 
 <p>
 <code>step_out</code> is valid only when the current paused location is inside a nested debug scope such as:
@@ -563,7 +572,7 @@ The same source node MAY therefore appear repeatedly under different iteration c
 The IDE SHOULD preserve iteration identity while debugging.
 </p>
 
-<h3>13.2 `for_loop`</h3>
+<h3>13.2 <code>for_loop</code></h3>
 
 <p>
 For a <code>for_loop</code>:
@@ -579,7 +588,7 @@ For a <code>for_loop</code>:
 A stricter profile MAY support iteration-specific debug commands, but those commands are not part of v0.1.
 </p>
 
-<h3>13.3 `while_loop`</h3>
+<h3>13.3 <code>while_loop</code></h3>
 
 <p>
 For a <code>while_loop</code>:
@@ -658,7 +667,7 @@ Widget participation in debugging occurs through the diagram-level node forms al
 </ul>
 
 <p>
-These nodes are debuggable like other diagram nodes, subject to their source semantics and explicit UI sequencing rules.
+These nodes are debuggable like other diagram nodes, subject to their source representation, execution semantics, and explicit UI sequencing rules.
 </p>
 
 <h3>15.2 Front panel reflection</h3>
