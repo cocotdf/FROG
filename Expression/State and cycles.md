@@ -80,7 +80,7 @@ This document complements the following specifications:
 <ul>
   <li><code>Expression/Diagram.md</code> — defines the executable graph structure, node kinds, edges, and graph-level validation.</li>
   <li><code>Expression/Type.md</code> — defines type compatibility for values carried through local-memory primitives.</li>
-  <li><code>Language/Control structures.md</code> — defines structure-owned nested executable regions, which remain subject to the same cycle-validity rule.</li>
+  <li><code>Expression/Control structures.md</code> — defines structure-owned nested executable regions, which remain subject to the same cycle-validity rule.</li>
   <li><code>Libraries/Core.md</code> — defines standard library primitives, including <code>frog.core.delay</code>.</li>
 </ul>
 
@@ -218,7 +218,7 @@ Therefore, FROG distinguishes between:
 </ul>
 
 <p>
-This rule applies both to the top-level diagram and to region-local diagrams owned by language structures.
+This rule applies both to the top-level diagram and to region-local diagrams owned by control structures.
 </p>
 
 <hr/>
