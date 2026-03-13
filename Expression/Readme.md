@@ -58,13 +58,17 @@ The purpose of this directory is to define:
 <ul>
   <li>the canonical top-level structure of a <code>.frog</code> file,</li>
   <li>the required and optional source sections of that file,</li>
-  <li>the source-level meaning of those sections,</li>
-  <li>the cross-cutting subsystems that apply across those sections, including the type system, the widget model, the widget interaction model, structural execution, and local memory.</li>
+  <li>the source-level meaning and representation of those sections,</li>
+  <li>the cross-cutting source subsystems that apply across those sections, including the type system, the widget model, the widget interaction model, and the source-facing representation of structures and local-memory constructs.</li>
 </ul>
 
 <p>
 This directory is about the authoritative source form of a FROG.
 It is not the complete runtime architecture, not the complete IDE implementation model, and not the complete execution IR.
+</p>
+
+<p>
+Cross-cutting execution semantics are related to this source specification but are not owned here when they belong to the normative execution meaning of the language itself.
 </p>
 
 <hr/>
@@ -73,7 +77,7 @@ It is not the complete runtime architecture, not the complete IDE implementation
 
 <p>
 This directory specifies the source expression of a FROG program.
-It defines what is serialized in the canonical <code>.frog</code> file and how that source MUST be interpreted structurally.
+It defines what is serialized in the canonical <code>.frog</code> file and how that source MUST be interpreted structurally as source.
 </p>
 
 <p>
@@ -84,12 +88,13 @@ This specification does not attempt to fully define:
   <li>the complete runtime architecture,</li>
   <li>the complete in-memory editable program model used by IDE implementations,</li>
   <li>the complete execution-oriented IR used by compilers or runtimes,</li>
+  <li>the complete cross-cutting execution semantics of the language,</li>
   <li>the complete standard library surface of FROG primitives,</li>
   <li>the complete standard library surface of FROG UI widgets.</li>
 </ul>
 
 <p>
-Those concerns MAY be specified elsewhere.
+Those concerns are specified elsewhere in the repository.
 This directory focuses on the authoritative source form.
 </p>
 
@@ -133,34 +138,38 @@ Some of these documents define dedicated top-level source sections such as:
 </ul>
 
 <p>
-Other documents define cross-cutting subsystems used throughout the source format.
+Other documents define cross-cutting source subsystems used throughout the source format.
 In particular:
 </p>
 
 <ul>
-  <li><code>Type.md</code> defines canonical value type expressions, built-in types, compatibility rules, and coercion rules.</li>
+  <li><code>Type.md</code> defines canonical value type expressions and source-level type rules used throughout the source format.</li>
   <li><code>Widget.md</code> defines the widget object model, including classes, roles, value behavior, parts, properties, methods, and events.</li>
   <li><code>Widget interaction.md</code> defines how executable diagrams may interact with widgets through standardized diagram-level interaction mechanisms.</li>
-  <li><code>Control structures.md</code> defines language structures such as <code>case</code>, <code>for_loop</code>, and <code>while_loop</code>.</li>
-  <li><code>State and cycles.md</code> defines local memory and cycle validity.</li>
+  <li><code>Control structures.md</code> defines the source-facing representation of language structures such as <code>case</code>, <code>for_loop</code>, and <code>while_loop</code>.</li>
+  <li><code>State and cycles.md</code> defines the source-facing representation of explicit local memory and feedback-cycle formation constraints.</li>
 </ul>
 
 <p>
-The current source specification also depends on the normative standard primitive catalogs defined in <code>Libraries/</code>.
+The current source specification also depends on normative specifications defined outside this directory.
 At the current repository stage, that includes:
 </p>
 
 <ul>
+  <li><code>Language/Control structures.md</code> — normative execution semantics for standard control structures,</li>
+  <li><code>Language/State and cycles.md</code> — normative execution semantics for local memory and valid feedback cycles,</li>
   <li><code>Libraries/Core.md</code> — foundational primitive definitions such as <code>frog.core.add</code>, <code>frog.core.mul</code>, and <code>frog.core.delay</code>,</li>
   <li><code>Libraries/Math.md</code> — numeric scalar primitives beyond the minimal core,</li>
   <li><code>Libraries/Collections.md</code> — array-oriented collection primitives,</li>
   <li><code>Libraries/Text.md</code> — text-processing primitives,</li>
   <li><code>Libraries/IO.md</code> — file, path, byte, and related I/O primitives,</li>
-  <li><code>Libraries/Signal.md</code> — first-wave signal-processing primitives.</li>
+  <li><code>Libraries/Signal.md</code> — first-wave signal-processing primitives,</li>
+  <li><code>Libraries/UI.md</code> — standardized executable widget-interaction primitives,</li>
+  <li><code>Libraries/Connectivity.md</code> — standardized interoperability primitives.</li>
 </ul>
 
 <p>
-Accordingly, <code>Expression/</code> is the canonical home of the source-format specification, while <code>Libraries/</code> remains a normative external dependency for standardized primitive definitions used inside executable diagrams.
+Accordingly, <code>Expression/</code> is the canonical home of the source-format specification, while <code>Language/</code> and <code>Libraries/</code> are normative external dependencies for execution meaning used by validated executable diagrams.
 </p>
 
 <hr/>
@@ -178,7 +187,7 @@ Its required source sections define:
 <ul>
   <li><code>metadata</code> — identity, documentation, authorship, and versioning information,</li>
   <li><code>interface</code> — the public typed inputs and outputs of the program,</li>
-  <li><code>diagram</code> — the executable dataflow graph,</li>
+  <li><code>diagram</code> — the executable dataflow graph as canonical source representation,</li>
   <li><code>front_panel</code> — the user-facing interaction layer and widget composition.</li>
 </ul>
 
@@ -195,7 +204,7 @@ Its optional source sections MAY define:
 
 <p>
 A <code>.frog</code> file is a transparent source representation.
-It MUST NOT require hidden compiled payloads in order to define program meaning.
+It MUST NOT require hidden compiled payloads in order to define the program as canonical source.
 </p>
 
 <hr/>
@@ -415,8 +424,8 @@ Detailed specifications:
 <code>Diagram.md</code>,
 <code>Type.md</code>,
 <code>Widget interaction.md</code>,
-<code>Control structures.md</code>,
-<code>State and cycles.md</code>,
+the source-facing companion documents <code>Control structures.md</code> and <code>State and cycles.md</code>,
+the normative execution-semantics documents in <code>Language/</code>,
 and the relevant primitive-library specifications in <code>Libraries/</code>.
 </p>
 
@@ -534,19 +543,28 @@ The current source-level widget interaction model already uses standardized prim
 Future standardized UI primitive-library specifications MUST remain consistent with that source-level interaction model.
 </p>
 
-<h3>11.4 Structural Execution and Local Memory</h3>
+<h3>11.4 Control-Structure and Local-Memory Source Dependencies</h3>
 
 <p>
-FROG v0.1 also defines normative execution subsystems directly within this directory:
+FROG v0.1 includes source-facing representation rules for structures, explicit local memory, and feedback-cycle formation inside this directory:
 </p>
 
 <ul>
-  <li><code>Control structures.md</code> defines structure families and region-owned execution semantics,</li>
-  <li><code>State and cycles.md</code> defines local memory and cycle validity.</li>
+  <li><code>Control structures.md</code> defines the source-facing representation of structure families and their serialized form,</li>
+  <li><code>State and cycles.md</code> defines the source-facing representation of explicit local-memory elements and feedback-cycle constraints.</li>
 </ul>
 
 <p>
-These subsystems are cross-cutting with respect to the FROG Expression because they directly constrain what a valid <code>diagram</code> means.
+However, the normative execution semantics for these topics are owned by <code>Language/</code>.
+</p>
+
+<ul>
+  <li><code>Language/Control structures.md</code> defines the normative execution meaning of standard language structures,</li>
+  <li><code>Language/State and cycles.md</code> defines the normative execution meaning of local memory and valid cycles.</li>
+</ul>
+
+<p>
+This separation allows <code>Expression/</code> to remain the canonical source-specification layer while <code>Language/</code> remains the normative execution-semantics layer.
 The standardized primitive catalogs consumed by executable diagrams remain defined in <code>Libraries/</code>.
 </p>
 
@@ -604,7 +622,7 @@ Any relationship between public interface behavior and front-panel behavior MUST
 <h2 id="execution-and-validation">13. Execution and Validation</h2>
 
 <p>
-The canonical <code>.frog</code> source file is the authoritative source of program meaning.
+The canonical <code>.frog</code> source file is the authoritative source artifact of the program.
 However, execution is not performed directly from unvalidated raw text.
 </p>
 
@@ -633,13 +651,13 @@ Validation includes, as applicable:
   <li>diagram graph validation,</li>
   <li>widget and front-panel validation,</li>
   <li>widget interaction validation,</li>
-  <li>control-structure validation,</li>
-  <li>cycle and local-memory validation,</li>
+  <li>control-structure source validation,</li>
+  <li>cycle and local-memory source validation,</li>
   <li>primitive reference validation against the relevant standardized library catalogs.</li>
 </ul>
 
 <p>
-Execution semantics are derived from the validated program representation.
+Normative execution meaning is derived from the validated program representation interpreted against the relevant language semantics and primitive specifications.
 Optional sections such as <code>icon</code>, <code>ide</code>, and <code>cache</code> MUST NOT redefine executable semantics.
 </p>
 
@@ -747,6 +765,7 @@ Future revisions SHOULD also preserve the core architectural distinctions alread
 
 <ul>
   <li>source expression versus program model versus execution IR,</li>
+  <li>canonical source representation versus normative execution semantics,</li>
   <li>public interface versus connector versus front panel,</li>
   <li>natural widget value flow versus object-style widget interaction,</li>
   <li>authoritative source sections versus non-authoritative optional artifacts.</li>
@@ -763,4 +782,3 @@ This specification is part of the FROG repository and follows the repository lic
 <p>
 See the repository root and associated licensing documents for the governing license terms of the specification text and related assets.
 </p>
-::contentReference[oaicite:3]{index=3}
