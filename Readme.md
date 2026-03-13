@@ -21,7 +21,7 @@
   <a href="#specification-architecture">Specification architecture</a> •
   <a href="#program-representation">Program representation</a> •
   <a href="#execution-architecture">Execution architecture</a> •
-  <a href="#execution-observability-and-debugging">Execution observability, debugging, and inspection</a> •
+  <a href="#execution-observability-debugging-and-inspection">Execution observability, debugging, and inspection</a> •
   <a href="#execution-targets">Execution targets</a> •
   <a href="#open-industrial-hardware-standard">Open industrial hardware standard</a> •
   <a href="#security-and-optimization">Security &amp; Optimization</a> •
@@ -432,7 +432,7 @@ In short, <code>Libraries/</code> defines what standard primitives exist and wha
 
 <p>
 This directory defines the architecture and responsibilities of a FROG development environment.
-It explains how editing relates to the Program Model, the serialized Expression, validation, lowering, live execution observability, debugging, probes, snippets, and runtime independence.
+It explains how editing relates to the Program Model, the serialized Expression, validation, lowering, live execution observability, debugging, probes, watch views, snippets, and runtime independence.
 </p>
 
 <p>
@@ -445,6 +445,7 @@ It currently contains:
   <li><code>Execution observability.md</code> — source-aligned live execution observability for IDE tooling,</li>
   <li><code>Debugging.md</code> — interactive debugging semantics for FROG IDEs,</li>
   <li><code>Probes.md</code> — source-aligned live inspection probes for values and execution state,</li>
+  <li><code>Watch.md</code> — persistent centralized watch views for selected observations,</li>
   <li><code>Snippet.md</code> — portable IDE snippets for fragment capture, paste, and reuse.</li>
 </ul>
 
@@ -474,7 +475,7 @@ The repository is intentionally split into distinct architectural layers:
 <ul>
   <li><strong>Expression</strong> — canonical source representation and source-level semantics,</li>
   <li><strong>Libraries</strong> — standardized primitive vocabularies,</li>
-  <li><strong>IDE</strong> — authoring architecture, editor-facing models, execution observability, debugging semantics, live inspection, and reusable authoring transport.</li>
+  <li><strong>IDE</strong> — authoring architecture, editor-facing models, execution observability, debugging semantics, live inspection, persistent watch-based monitoring, and reusable authoring transport.</li>
 </ul>
 
 <p>
@@ -572,7 +573,7 @@ Execution occurs from validated execution-oriented representations derived from 
 </p>
 
 <p>
-Execution observability, interactive debugging, live inspection, and probe-based observation are layered on top of live execution derived from the validated Program Model and its execution-oriented form.
+Execution observability, interactive debugging, live inspection, probe-based observation, and watch-based persistent inspection are layered on top of live execution derived from the validated Program Model and its execution-oriented form.
 Snippet transport remains an IDE-layer authoring artifact and does not replace these three core representation levels.
 </p>
 
@@ -621,7 +622,9 @@ A conforming ecosystem may conceptually follow the architecture below:
         +---------+---------+
         |                   |
         v                   v
-      Probes         IDE inspection views
+      Probes              Watch
+ (local inspection)   (persistent inspection)
+
 </pre>
 
 <p>
@@ -642,13 +645,14 @@ This architecture enforces a clean separation between:
   <li>live execution observability,</li>
   <li>interactive debugging control,</li>
   <li>live inspection through probes,</li>
+  <li>persistent inspection through watch views,</li>
   <li>compilation and backend processing,</li>
   <li>runtime execution.</li>
 </ul>
 
 <hr/>
 
-<h2 id="execution-observability-and-debugging">Execution observability, debugging, and inspection</h2>
+<h2 id="execution-observability-debugging-and-inspection">Execution observability, debugging, and inspection</h2>
 
 <p>
 Interactive inspection and debugging are not performed directly on raw serialized source.
@@ -694,8 +698,13 @@ They allow an IDE to inspect values or selected execution state associated with 
 </ul>
 
 <p>
+<strong>Watch</strong> provides persistent centralized inspection of selected source-visible targets during or after live execution.
+Unlike probes, which are primarily local inspection objects, watches are intended to remain visible in a managed watch list or equivalent watch view.
+</p>
+
+<p>
 In FROG, debugging and inspection are dataflow-first rather than line-oriented.
-They operate on observable graph activity, structures, sub-FROG scopes, value flow, and explicit UI-related execution objects rather than on a fictional sequential instruction list.
+They operate on observable graph activity, structures, sub-FROG scopes, value flow, local memory, and explicit UI-related execution objects rather than on a fictional sequential instruction list.
 </p>
 
 <p>
@@ -861,6 +870,7 @@ FROG explicitly separates:
   <li>execution observability,</li>
   <li>interactive debugging semantics,</li>
   <li>live inspection through probes,</li>
+  <li>persistent watch-based inspection,</li>
   <li>snippet-based authoring transport,</li>
   <li>compiler implementations,</li>
   <li>backend implementations,</li>
@@ -921,6 +931,7 @@ Current repository direction includes:
   <li>defining source-aligned execution observability for live execution,</li>
   <li>defining dataflow-native debugging semantics for FROG IDEs,</li>
   <li>defining source-aligned live inspection through probes,</li>
+  <li>defining persistent centralized watch-based inspection for FROG IDEs,</li>
   <li>defining snippet-based reusable authoring transport,</li>
   <li>preparing the transition toward a more fully specified execution-oriented layer.</li>
 </ul>
