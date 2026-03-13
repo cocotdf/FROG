@@ -80,7 +80,13 @@ This document complements the following specifications:
 </p>
 
 <ul>
-  <li><code>Libraries/Core.md</code> — defines the minimal built-in primitive catalog such as <code>frog.core.add</code> and <code>frog.core.delay</code>.</li>
+  <li><code>Libraries/Readme.md</code> — defines the current standard primitive-library taxonomy.</li>
+  <li><code>Libraries/Core.md</code> — defines foundational built-in primitives such as <code>frog.core.add</code> and <code>frog.core.delay</code>.</li>
+  <li><code>Libraries/Math.md</code> — defines numeric scalar primitives in the <code>frog.math</code> namespace.</li>
+  <li><code>Libraries/Collections.md</code> — defines array-oriented collection primitives in the <code>frog.collections</code> namespace.</li>
+  <li><code>Libraries/Text.md</code> — defines text-processing primitives in the <code>frog.text</code> namespace.</li>
+  <li><code>Libraries/IO.md</code> — defines file, path, byte, and related I/O primitives in the <code>frog.io</code> namespace.</li>
+  <li><code>Libraries/Signal.md</code> — defines first-wave signal-processing primitives in the <code>frog.signal</code> namespace.</li>
   <li><code>Expression/Control structures.md</code> — defines structures such as <code>case</code>, <code>for_loop</code>, and <code>while_loop</code>.</li>
   <li><code>Expression/Diagram.md</code> — defines how inserted functions, structures, and related nodes appear in the program source and diagram model.</li>
   <li><code>Expression/Widget interaction.md</code> — defines canonical UI interaction primitives such as widget property access and method invocation.</li>
@@ -93,7 +99,7 @@ It does not define the language semantics of those constructs.
 </p>
 
 <p>
-When additional standard library documents exist for namespaces such as <code>frog.ui.*</code>, <code>frog.io.*</code>, or <code>frog.connectivity.*</code>, the palette MUST remain consistent with those library specifications.
+When additional standard library documents are later introduced for namespaces such as <code>frog.ui.*</code>, <code>frog.connectivity.*</code>, <code>frog.tensor.*</code>, <code>frog.onnx.*</code>, or <code>frog.runtime.*</code>, the palette MUST remain consistent with those library specifications.
 </p>
 
 <hr/>
@@ -111,6 +117,8 @@ The primary palette SHOULD be organized according to user intent such as:
   <li>compare values,</li>
   <li>branch execution,</li>
   <li>repeat execution,</li>
+  <li>work with arrays,</li>
+  <li>process text,</li>
   <li>interact with a widget,</li>
   <li>read a file,</li>
   <li>connect to Python or SQL,</li>
@@ -233,19 +241,28 @@ The namespace view exposes the actual library organization of the language.
 </p>
 
 <p>
-In this view, entries are grouped by namespace such as:
+At the current repository stage, the standardized namespaces include:
 </p>
 
 <pre>
 frog.core.*
 frog.math.*
-frog.tensor.*
-frog.signal.*
-frog.ui.*
+frog.collections.*
+frog.text.*
 frog.io.*
+frog.signal.*
+</pre>
+
+<p>
+The namespace view MAY also expose reserved or future families when the active IDE profile chooses to surface them, for example:
+</p>
+
+<pre>
+frog.ui.*
 frog.connectivity.*
-frog.runtime.*
+frog.tensor.*
 frog.onnx.*
+frog.runtime.*
 </pre>
 
 <p>
@@ -289,6 +306,9 @@ Examples:
 <ul>
   <li>searching <code>add</code> SHOULD find <code>frog.core.add</code>,</li>
   <li>searching <code>+</code> SHOULD also find <code>frog.core.add</code>,</li>
+  <li>searching <code>sqrt</code> SHOULD find the relevant <code>frog.math.*</code> entry,</li>
+  <li>searching <code>length</code> SHOULD find the relevant <code>frog.collections.*</code> entry,</li>
+  <li>searching <code>read text</code> SHOULD find the relevant <code>frog.io.*</code> entry,</li>
   <li>searching <code>if</code> SHOULD find the canonical boolean <code>case</code> structure,</li>
   <li>searching <code>else</code> SHOULD also help surface the canonical boolean <code>case</code> structure,</li>
   <li>searching <code>case</code> SHOULD find the canonical <code>case</code> structure,</li>
@@ -342,7 +362,8 @@ Examples:
 
 <ul>
   <li>from a <code>bool</code> wire, prefer logic and conditional suggestions,</li>
-  <li>from a numeric wire, prefer arithmetic and comparison suggestions,</li>
+  <li>from a numeric wire, prefer arithmetic, comparison, and numeric-function suggestions,</li>
+  <li>from an array wire, prefer collection and signal-related suggestions when type-compatible,</li>
   <li>from a <code>string</code> wire, prefer text operations and string-based <code>case</code> suggestions,</li>
   <li>from a widget reference, prefer property and method interaction suggestions,</li>
   <li>from a value feedback path, prefer <code>frog.core.delay</code>,</li>
@@ -438,33 +459,37 @@ The following palette layout is recommended for FROG v0.1.
   <li><code>frog.core.not</code></li>
   <li><code>frog.core.xor</code></li>
   <li><code>frog.core.select</code></li>
+  <li>standardized <code>frog.math.*</code> numeric entries</li>
 </ul>
 
 <h3>11.5 Data &amp; Types</h3>
 
 <ul>
-  <li>type conversion entries</li>
-  <li>cast entries</li>
+  <li>type conversion entries when standardized by the active library/profile set</li>
+  <li>cast entries when standardized by the active library/profile set</li>
   <li>future optional/value wrappers</li>
 </ul>
 
 <h3>11.6 Collections</h3>
 
-<p>
-Collection-oriented entries MAY remain minimal in v0.1 if not yet standardized.
-This group is included to preserve long-term palette coherence.
-</p>
+<ul>
+  <li>standardized <code>frog.collections.*</code> entries</li>
+  <li>array construction helpers when standardized</li>
+  <li>array indexing and slicing helpers when standardized</li>
+</ul>
 
 <h3>11.7 Text</h3>
 
-<p>
-Text-related entries MAY remain minimal in v0.1 if not yet standardized.
-</p>
+<ul>
+  <li>standardized <code>frog.text.*</code> entries</li>
+  <li>text comparison entries</li>
+  <li>text transformation entries</li>
+</ul>
 
 <h3>11.8 Tensor &amp; ONNX</h3>
 
 <p>
-This group is intended for future tensor and ONNX-related functions and SHOULD remain separate from <code>frog.core</code>.
+This group is intended for future tensor and ONNX-related functions and SHOULD remain separate from <code>frog.core</code>, <code>frog.math</code>, and <code>frog.signal</code>.
 </p>
 
 <h3>11.9 UI</h3>
@@ -482,14 +507,21 @@ This group is intended for widget-facing interaction and UI-related insertion pa
 It SHOULD NOT absorb file I/O, database access, Python bindings, or general external interop.
 </p>
 
-<h3>11.10 I/O</h3>
-
 <p>
-This group is intended for file, path, resource, serialization, network, and hardware I/O families defined later.
+At the current repository stage, this category is driven primarily by the source-level widget interaction model defined in <code>Expression/Widget interaction.md</code>.
 </p>
 
+<h3>11.10 I/O</h3>
+
+<ul>
+  <li>standardized <code>frog.io.*</code> entries</li>
+  <li>file read and write entries</li>
+  <li>path and resource entries</li>
+  <li>byte-oriented I/O entries</li>
+</ul>
+
 <p>
-It SHOULD cover operations whose primary role is reading from, writing to, opening, closing, or transforming an I/O resource.
+This group SHOULD cover operations whose primary role is reading from, writing to, opening, closing, or transforming an I/O resource.
 It SHOULD NOT absorb Python, native/shared library, .NET, SQL, or general external service bindings.
 </p>
 
@@ -551,7 +583,7 @@ Examples of useful badges:
   <li>UI</li>
   <li>I/O</li>
   <li>Connectivity</li>
-  <li>ONNX</li>
+  <li>Signal</li>
   <li>Experimental</li>
   <li>Third-party</li>
 </ul>
@@ -704,8 +736,8 @@ It MUST NOT change the source semantics of the inserted construct.
 
 <ul>
   <li><code>case</code> (string selector view)</li>
+  <li>standardized <code>frog.text.*</code> entries</li>
   <li>text comparison entries</li>
-  <li>future string manipulation entries</li>
 </ul>
 
 <h3>17.4 Contextual suggestions from a widget reference</h3>
@@ -753,6 +785,7 @@ The FROG IDE palette is the primary discovery and insertion mechanism for langua
   <li>It MUST preserve one canonical identity per language construct.</li>
   <li>It SHOULD support aliases such as <code>if</code> for boolean <code>case</code>.</li>
   <li>It SHOULD expose <code>case</code>, <code>for_loop</code>, and <code>while_loop</code> as the standard control structures of v0.1.</li>
+  <li>It SHOULD expose current standardized library families and keep future families clearly marked when they are not yet standardized.</li>
   <li>It SHOULD expose UI, I/O, Connectivity, and Concurrency &amp; Runtime as distinct palette families.</li>
   <li>It MUST remain semantically consistent with the active language specification and profile.</li>
 </ul>
