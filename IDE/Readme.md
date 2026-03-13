@@ -26,12 +26,13 @@ Definition of the architecture and responsibilities of a FROG development enviro
   <li><a href="#execution-observability">14. Execution Observability</a></li>
   <li><a href="#debugging">15. Debugging</a></li>
   <li><a href="#probes">16. Probes</a></li>
-  <li><a href="#snippets">17. Snippets</a></li>
-  <li><a href="#execution-flow">18. Execution Flow</a></li>
-  <li><a href="#design-principles">19. Design Principles</a></li>
-  <li><a href="#repository-direction">20. Repository Direction</a></li>
-  <li><a href="#summary">21. Summary</a></li>
-  <li><a href="#license">22. License</a></li>
+  <li><a href="#watch">17. Watch</a></li>
+  <li><a href="#snippets">18. Snippets</a></li>
+  <li><a href="#execution-flow">19. Execution Flow</a></li>
+  <li><a href="#design-principles">20. Design Principles</a></li>
+  <li><a href="#repository-direction">21. Repository Direction</a></li>
+  <li><a href="#summary">22. Summary</a></li>
+  <li><a href="#license">23. License</a></li>
 </ul>
 
 <hr/>
@@ -69,6 +70,7 @@ This architecture separates:
   <li>runtime observability,</li>
   <li>interactive debugging control,</li>
   <li>probe-based live inspection,</li>
+  <li>watch-based persistent inspection,</li>
   <li>snippet-based authoring transport,</li>
   <li>compiler toolchains,</li>
   <li>runtime systems.</li>
@@ -123,7 +125,7 @@ prepared for execution
 </pre>
 
 <p>
-Execution observability, debugging, probes, and snippets are layered around these core representation levels.
+Execution observability, debugging, probes, watch views, and snippets are layered around these core representation levels.
 They do not replace them.
 </p>
 
@@ -179,12 +181,12 @@ They do not replace them.
               Debugging
       (pause / resume / break / step)
                   |
-        +---------+---------+
-        |                   |
-        v                   v
-     Probes              IDE Views
- (live value/state
-   inspection)
+        +---------+---------+-------------------+
+        |                   |                   |
+        v                   v                   v
+     Probes              Watch              IDE Views
+ (live value/state   (persistent
+   inspection)       inspection list)
 
 Program Model ↔ Snippets
 (fragment capture / paste / transport)
@@ -210,6 +212,7 @@ A FROG IDE typically includes the following architectural components:
   <li>execution observability integration,</li>
   <li>debugging services,</li>
   <li>probe services,</li>
+  <li>watch services,</li>
   <li>snippet services.</li>
 </ul>
 
@@ -236,7 +239,7 @@ Typical responsibilities include:
   <li>project and file navigation,</li>
   <li>document lifecycle management,</li>
   <li>plugin and extension loading,</li>
-  <li>integration between editors, validation services, compiler services, runtime tools, debugging tools, probe tools, and snippet tools.</li>
+  <li>integration between editors, validation services, compiler services, runtime tools, debugging tools, probe tools, watch tools, and snippet tools.</li>
 </ul>
 
 <p>
@@ -280,6 +283,7 @@ Key capabilities typically include:
   <li>execution observability overlays,</li>
   <li>debugging overlays and source-level pause localization,</li>
   <li>probe placement and probe visualization,</li>
+  <li>watch creation and watch/source navigation workflows,</li>
   <li>snippet capture, paste, and insertion workflows.</li>
 </ul>
 
@@ -423,7 +427,7 @@ The Expression is designed to be:
 </ul>
 
 <p>
-The Expression is the authoritative source-level description of program meaning, but live execution, observability, debugging, and snippet transport operate on validated or IDE-managed structures derived from that source rather than on raw text alone.
+The Expression is the authoritative source-level description of program meaning, but live execution, observability, debugging, inspection, and snippet transport operate on validated or IDE-managed structures derived from that source rather than on raw text alone.
 </p>
 
 <hr/>
@@ -624,7 +628,35 @@ The detailed source-level behavior of probes SHOULD be defined in a dedicated pr
 
 <hr/>
 
-<h2 id="snippets">17. Snippets</h2>
+<h2 id="watch">17. Watch</h2>
+
+<p>
+Watch functionality provides persistent centralized inspection of selected source-visible targets during or after live execution.
+Unlike probes, which are primarily local inspection objects, watches are intended to remain visible in a managed watch list or equivalent watch view.
+</p>
+
+<p>
+Watch entries are built on top of the same source-aligned execution observability used by debugging and probes.
+They allow an IDE to keep selected observations visible across navigation, pause, resume, and stepping workflows.
+</p>
+
+<p>
+For FROG v0.1, the canonical watch model is centered on persistent surveillance of targets such as:
+</p>
+
+<ul>
+  <li>edges,</li>
+  <li>node ports,</li>
+  <li>local-memory state.</li>
+</ul>
+
+<p>
+The detailed source-level behavior of watches SHOULD be defined in a dedicated watch specification within <code>IDE/</code>.
+</p>
+
+<hr/>
+
+<h2 id="snippets">18. Snippets</h2>
 
 <p>
 Snippets are portable IDE artifacts used to capture, transport, and reinsert reusable authoring fragments.
@@ -655,7 +687,7 @@ The detailed snippet transport and insertion model SHOULD be defined in a dedica
 
 <hr/>
 
-<h2 id="execution-flow">18. Execution Flow</h2>
+<h2 id="execution-flow">19. Execution Flow</h2>
 
 <pre>
 User edits diagram or front panel
@@ -676,12 +708,12 @@ Runtime executes the program
               ↓
 Execution observability projects live activity
               ↓
-IDE debugging and probe features consume that view
+IDE debugging, probe, and watch features consume that view
 </pre>
 
 <hr/>
 
-<h2 id="design-principles">19. Design Principles</h2>
+<h2 id="design-principles">20. Design Principles</h2>
 
 <ul>
   <li>Clear separation of source, model, and execution</li>
@@ -696,12 +728,13 @@ IDE debugging and probe features consume that view
   <li>Source-aligned execution observability</li>
   <li>Dataflow-native debugging semantics</li>
   <li>Non-intrusive live inspection through probes</li>
+  <li>Persistent centralized inspection through watch views</li>
   <li>Portable authoring-fragment transport through snippets</li>
 </ul>
 
 <hr/>
 
-<h2 id="repository-direction">20. Repository Direction</h2>
+<h2 id="repository-direction">21. Repository Direction</h2>
 
 <p>
 A full FROG ecosystem may be organized into distinct components such as:
@@ -717,6 +750,7 @@ FROG/
 │   ├── Execution observability.md
 │   ├── Debugging.md
 │   ├── Probes.md
+│   ├── Watch.md
 │   └── Snippet.md
 │
 ├── Language/
@@ -728,12 +762,12 @@ FROG/
 
 <p>
 The exact repository layout may evolve over time.
-What matters architecturally is the separation between canonical source specification, language semantics, editing, execution observability, interactive debugging, live inspection, reusable authoring transport, compilation, and execution.
+What matters architecturally is the separation between canonical source specification, language semantics, editing, execution observability, interactive debugging, live inspection, persistent watch-based monitoring, reusable authoring transport, compilation, and execution.
 </p>
 
 <hr/>
 
-<h2 id="summary">21. Summary</h2>
+<h2 id="summary">22. Summary</h2>
 
 <p>
 The FROG IDE is an authoring environment built around a three-layer representation model:
@@ -753,6 +787,7 @@ On top of that execution path, a FROG IDE may provide:
   <li><strong>Execution observability</strong> — source-aligned live execution visibility,</li>
   <li><strong>Debugging</strong> — interactive pause, break, step, and inspection control,</li>
   <li><strong>Probes</strong> — non-intrusive live inspection of values and selected execution state,</li>
+  <li><strong>Watch</strong> — persistent centralized inspection of selected observations,</li>
   <li><strong>Snippets</strong> — portable authoring fragments for reuse and transport.</li>
 </ul>
 
@@ -775,7 +810,7 @@ It provides a clean foundation for multiple IDEs, compilers, runtimes, and debug
 
 <hr/>
 
-<h2 id="license">22. License</h2>
+<h2 id="license">23. License</h2>
 
 <p>
 FROG is distributed under the Apache 2.0 license and uses a Contributor License Agreement (CLA) for external contributions.
