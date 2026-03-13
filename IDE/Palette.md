@@ -154,7 +154,7 @@ The palette MUST keep the following boundaries explicit:
 <ul>
   <li><strong>UI</strong> — widget-facing interaction and UI-related insertion paths,</li>
   <li><strong>I/O</strong> — file, path, resource, serialization, network, and hardware I/O,</li>
-  <li><strong>Connectivity</strong> — Python, native/shared library, C/C++, .NET, SQL, and external runtime/service bindings,</li>
+  <li><strong>Connectivity</strong> — Python, native/shared library, C/C++, .NET, SQL, and external runtime or service bindings,</li>
   <li><strong>Concurrency &amp; Runtime</strong> — runtime coordination and execution tools.</li>
 </ul>
 
