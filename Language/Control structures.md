@@ -10,17 +10,21 @@
 <h2>Contents</h2>
 
 <ul>
-  <li><a href="#overview">1.:contentReference[oaicite:0]{index=0}ref="#relation-with-other-specifications">3. Relation with Other Specifications</a></li>
+  <li><a href="#overview">1. Overview</a></li>
+  <li><a href="#goals">2. Goals</a></li>
+  <li><a href="#relation-with-other-specifications">3. Relation with Other Specifications</a></li>
   <li><a href="#functions-vs-control-structures">4. Functions vs Control Structures</a></li>
   <li><a href="#scope-for-v01">5. Scope for v0.1</a></li>
   <li><a href="#standard-control-structures-for-v01">6. Standard Control Structures for v0.1</a></li>
   <li><a href="#canonical-structure-node-model">7. Canonical Structure Node Model</a></li>
   <li><a href="#boundary-model">8. Boundary Model</a></li>
-  <li><a href="#structure-terminals">9. Structure Terminals</a></:contentReference[oaicite:1]{index=1}i><a href="#case-structure">11. Case Structure</a></li>
+  <li><a href="#structure-terminals">9. Structure Terminals</a></li>
+  <li><a href="#regions">10. Regions</a></li>
+  <li><a href="#case-structure">11. Case Structure</a></li>
   <li><a href="#for-loop-structure">12. For Loop Structure</a></li>
   <li><a href="#while-loop-structure">13. While Loop Structure</a></li>
   <li><a href="#execution-model">14. Execution Model</a></li>
-  <li><a href="#interaction-with-local-state-and-cycles">15. Interaction with Local State and Cycles</a></li>
+  <li><a href="#interaction-with-local-memory-and-cycles">15. Interaction with Local Memory and Cycles</a></li>
   <li><a href="#diagram-representation">16. Diagram Representation</a></li>
   <li><a href="#validation-rules">17. Validation Rules</a></li>
   <li><a href="#examples">18. Examples</a></li>
@@ -84,20 +88,23 @@ This document complements the following specifications:
 </p>
 
 <ul>
+  <li><code>Language/Readme.md</code> — defines the role of this directory as a semantic continuity layer inside the current repository organization.</li>
+  <li><code>Expression/Control structures.md</code> — is the primary canonical source-spec reference for control structures.</li>
   <li><code>Expression/Diagram.md</code> — defines the executable graph, diagram scopes, node kinds, and structure-node placement in diagrams.</li>
   <li><code>Expression/Type.md</code> — defines type syntax and compatibility.</li>
-  <li><code>Language/State and cycles.md</code> — defines local memory and the validity rule for cyclic graphs.</li>
+  <li><code>Expression/State and cycles.md</code> — defines local memory and the validity rule for cyclic graphs.</li>
   <li><code>Libraries/Core.md</code> — defines ordinary built-in functions such as <code>frog.core.add</code> and <code>frog.core.delay</code>.</li>
 </ul>
 
 <p>
-This document defines the semantics of control structures.
-It does not redefine ordinary function libraries, and it does not redefine the general diagram node model already defined in <code>Diagram.md</code>.
+This document defines and clarifies the semantics of control structures within the current <code>Language/</code> continuity layer.
+It does not redefine ordinary function libraries, and it does not redefine the general diagram node model already defined in <code>Expression/Diagram.md</code>.
 </p>
 
 <p>
-In v0.1, the canonical source form of control structures is standardized here normatively.
-It is not merely illustrative.
+At the current repository stage, canonical source-spec reading is centered in <code>Expression/</code>.
+Accordingly, <code>Expression/Control structures.md</code> is the primary reference for the canonical source-level representation of control structures.
+This document remains aligned companion material in <code>Language/</code> for semantic continuity inside the repository.
 </p>
 
 <hr/>
@@ -828,7 +835,7 @@ A structure does not introduce arbitrary instruction ordering outside the standa
 
 <hr/>
 
-<h2 id="interaction-with-local-state-and-cycles">15. Interaction with Local State and Cycles</h2>
+<h2 id="interaction-with-local-memory-and-cycles">15. Interaction with Local Memory and Cycles</h2>
 
 <p>
 Control structures do not weaken the general cycle-validity rule of FROG.
