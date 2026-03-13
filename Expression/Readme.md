@@ -763,3 +763,4 @@ This specification is part of the FROG repository and follows the repository lic
 <p>
 See the repository root and associated licensing documents for the governing license terms of the specification text and related assets.
 </p>
+::contentReference[oaicite:3]{index=3}
