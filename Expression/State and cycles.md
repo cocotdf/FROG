@@ -5,7 +5,7 @@
 <h1 align="center">🐸 FROG State and Cycles Specification</h1>
 
 <p align="center">
-Source-facing representation of local memory and cycle-valid graph constructs in FROG programs<br/>
+Source-facing representation of local memory and cycle-facing graph constraints in FROG programs<br/>
 <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -43,12 +43,12 @@ values, or other forms of memory.
 
 <p>
 This document defines the source-facing representation of local memory in FROG and the source-level rules that govern how
-cycle-valid constructs are represented in executable diagrams.
+cycle-facing constructs are represented in executable diagrams.
 </p>
 
 <p>
-In FROG, a directed cycle is valid only when its meaning is made explicit through at least one primitive whose node
-instance stores a value between activations. Such a primitive is called a local-memory primitive.
+In FROG, a directed cycle is only representable as a valid executable construct when its meaning is made explicit through at
+least one primitive whose node instance stores a value between activations. Such a primitive is called a local-memory primitive.
 </p>
 
 <p>
@@ -92,9 +92,10 @@ This document complements the following specifications:
 </ul>
 
 <p>
-This document defines the canonical source-level representation of local memory and cycle-valid graph constructs.
-It does not redefine the serialized graph structure already specified by <code>Expression/Diagram.md</code>, and it does not own
-the normative execution semantics of local memory.
+This document defines the canonical source-level representation of local memory and cycle-facing graph constraints.
+It does not redefine the serialized graph structure already specified by <code>Expression/Diagram.md</code>, it does not own
+the normative execution semantics of local memory, and it does not own the primitive-local delayed-value behavior of
+<code>frog.core.delay</code>.
 </p>
 
 <table>
@@ -112,7 +113,7 @@ the normative execution semantics of local memory.
   </tr>
   <tr>
     <td><code>Libraries/</code></td>
-    <td>Standardized primitive identity, ports, metadata, and primitive-local semantics for <code>frog.core.delay</code></td>
+    <td>Standardized primitive identity, ports, required metadata, and primitive-local delayed-value behavior for <code>frog.core.delay</code></td>
   </tr>
   <tr>
     <td><code>IDE/</code></td>
@@ -127,7 +128,7 @@ Accordingly:
 <ul>
   <li><code>Expression/State and cycles.md</code> owns the canonical source representation of local-memory constructs and cycle-facing source constraints,</li>
   <li><code>Language/State and cycles.md</code> owns the normative execution meaning of local memory and valid cycles,</li>
-  <li><code>Libraries/Core.md</code> owns the standardized primitive identity of <code>frog.core.delay</code>.</li>
+  <li><code>Libraries/Core.md</code> owns the standardized primitive identity and primitive-local delayed-value behavior of <code>frog.core.delay</code>.</li>
 </ul>
 
 <hr/>
@@ -140,14 +141,9 @@ FROG instance.
 </p>
 
 <p>
-Conceptually, a local-memory primitive has:
+In canonical source, local memory is represented explicitly through primitive instances whose standardized identity and required
+configuration indicate local-memory behavior.
 </p>
-
-<ul>
-  <li>a current internal state value,</li>
-  <li>a rule for producing outputs from that current state and the current inputs,</li>
-  <li>a rule for updating the stored state for a later activation.</li>
-</ul>
 
 <p>
 That local memory is:
@@ -207,21 +203,21 @@ Its outputs may depend on that preserved value in addition to its current inputs
 <h2 id="state-ownership-and-scope">6. State Ownership and Scope</h2>
 
 <p>
-Local memory belongs to a specific node instance inside a specific live FROG instance.
+In canonical source, local memory is represented as belonging to a specific node instance inside a specific live FROG instance.
 </p>
 
-<p>Therefore:</p>
+<p>Therefore, the source model MUST remain compatible with the following constraints:</p>
 
 <ul>
   <li>two different local-memory nodes do not share state implicitly,</li>
   <li>two different sub-FROG instances do not share local memory implicitly,</li>
-  <li>duplicating a node duplicates its local memory,</li>
-  <li>instantiating the same sub-FROG multiple times creates distinct local memory for each instantiated graph.</li>
+  <li>duplicating a node duplicates its local-memory representation,</li>
+  <li>instantiating the same sub-FROG multiple times yields distinct local-memory instances for each instantiated graph.</li>
 </ul>
 
 <p>
-The exact lifetime of a live FROG instance may depend on the active runtime profile.
-However, within one live instance, the source model MUST remain compatible with stable and deterministic local-memory behavior.
+The exact runtime lifetime of a live FROG instance may depend on the active runtime profile.
+This document only constrains the canonical source model so that local memory remains explicit, instance-scoped, and non-shared by default.
 </p>
 
 <hr/>
@@ -263,7 +259,7 @@ This distinction applies both to the top-level diagram and to region-local diagr
 <h2 id="cycle-validity-in-source-form">8. Cycle Validity in Source Form</h2>
 
 <p>
-The base rule of FROG v0.1 is:
+The base rule of FROG v0.1 is reflected in source form as follows:
 </p>
 
 <pre><code>A diagram MAY contain directed cycles.
@@ -271,12 +267,12 @@ The base rule of FROG v0.1 is:
 Every directed cycle MUST contain at least one local-memory primitive.</code></pre>
 
 <p>
-Equivalent interpretation:
+Equivalent source-facing interpretation:
 </p>
 
 <ul>
   <li>a cycle without local memory is invalid,</li>
-  <li>a cycle containing at least one local-memory primitive is valid in principle, subject to ordinary graph and type validation.</li>
+  <li>a cycle containing at least one local-memory primitive is representable as valid in principle, subject to ordinary graph and type validation.</li>
 </ul>
 
 <p>
@@ -314,25 +310,25 @@ The minimal standard local-memory primitive for FROG v0.1 is:
 <pre><code>frog.core.delay</code></pre>
 
 <p>
-Its purpose is to make delayed feedback explicit.
-It stores one value and exposes that stored value on the next activation.
+Its source-facing role is to make delayed feedback explicit in canonical graph form.
 </p>
 
-<h3>9.1 Ports</h3>
-
-<p>The canonical ports of <code>frog.core.delay</code> are:</p>
-
-<ul>
-  <li>input port: <code>in</code></li>
-  <li>output port: <code>out</code></li>
-</ul>
-
-<h3>9.2 Canonical node shape</h3>
+<h3>9.1 Ports and required metadata</h3>
 
 <p>
 A canonical source node using <code>frog.core.delay</code> MUST remain compatible with the primitive identity defined by
 <code>Libraries/Core.md</code>.
 </p>
+
+<p>The required surface for base v0.1 includes:</p>
+
+<ul>
+  <li>input port: <code>in</code></li>
+  <li>output port: <code>out</code></li>
+  <li>required metadata: <code>initial</code></li>
+</ul>
+
+<h3>9.2 Canonical node shape</h3>
 
 <pre><code class="language-json">{
   "id": "delay_1",
@@ -340,18 +336,6 @@ A canonical source node using <code>frog.core.delay</code> MUST remain compatibl
   "type": "frog.core.delay",
   "initial": 0.0
 }</code></pre>
-
-<h3>9.3 Conceptual state equation</h3>
-
-<pre><code>out(t) = state(t)
-state(t + 1) = in(t)
-
-state(0) = initial</code></pre>
-
-<p>
-This equation is included here as the conceptual interpretation assumed by the canonical source representation.
-It does not transfer ownership of normative execution semantics away from <code>Language/State and cycles.md</code>.
-</p>
 
 <p>
 This primitive is sufficient to make a feedback path explicit, deterministic, and valid in principle.
@@ -435,11 +419,12 @@ This document MUST NOT be interpreted as redefining:
   <li>runtime scheduling strategy,</li>
   <li>the precise runtime activation model of local-memory primitives,</li>
   <li>the language-level ownership of cycle validity,</li>
-  <li>the general observable semantics of delayed state across activations.</li>
+  <li>the general observable semantics of delayed state across activations,</li>
+  <li>the primitive-local delayed-value behavior owned by <code>Libraries/Core.md</code>.</li>
 </ul>
 
 <p>
-Those topics are owned normatively by <code>Language/State and cycles.md</code>.
+Those topics are owned normatively by <code>Language/State and cycles.md</code> and, for primitive-local <code>frog.core.delay</code> behavior, by <code>Libraries/Core.md</code>.
 </p>
 
 <hr/>
@@ -609,7 +594,7 @@ The presence of the loop structure does not replace the need for explicit local 
 
 <p>
 FROG allows feedback in executable diagrams, but only when memory is made explicit.
-This document defines how that explicit memory and the resulting cycle-valid graph forms are represented in canonical source.
+This document defines how that explicit memory and the resulting cycle-facing graph forms are represented in canonical source.
 </p>
 
 <ul>
