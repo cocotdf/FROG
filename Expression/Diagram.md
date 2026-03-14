@@ -32,9 +32,9 @@
   <li><a href="#sub-frog-invocation">16. Sub-FROG Invocation</a></li>
   <li><a href="#interface-widget-and-structure-boundaries">17. Interface, Widget, and Structure Boundaries</a></li>
   <li><a href="#widget-interaction-model">18. Widget Interaction Model</a></li>
-  <li><a href="#cycles-and-local-memory">19. Cycles and Local Memory</a></li>
+  <li><a href="#graph-level-participation-of-cycles-and-local-memory">19. Graph-Level Participation of Cycles and Local Memory</a></li>
   <li><a href="#graph-validation">20. Graph Validation</a></li>
-  <li><a href="#execution-semantics">21. Execution Semantics</a></li>
+  <li><a href="#relation-with-execution-semantics">21. Relation with Execution Semantics</a></li>
   <li><a href="#examples">22. Examples</a></li>
   <li><a href="#summary">23. Summary</a></li>
 </ul>
@@ -45,7 +45,7 @@
 
 <p>
 The <code>diagram</code> section defines the executable graph of a FROG.
-It is the authoritative structural definition of execution in canonical source form.
+It is the authoritative structural representation of that graph in canonical source form.
 </p>
 
 <p>
@@ -69,7 +69,7 @@ The diagram contains:
 </ul>
 
 <p>
-Execution semantics are derived from the validated graph together with:
+Interpretation of a validated diagram depends on additional specifications, including:
 </p>
 
 <ul>
@@ -82,6 +82,11 @@ Execution semantics are derived from the validated graph together with:
   <li>the active primitive catalog or stricter execution profile.</li>
 </ul>
 
+<p>
+This document defines the graph-level source representation itself.
+It does not own the full execution semantics of every graph element.
+</p>
+
 <hr/>
 
 <h2 id="purpose">2. Purpose of the Diagram</h2>
@@ -91,12 +96,12 @@ The diagram provides:
 </p>
 
 <ul>
-  <li>the executable logic of the FROG,</li>
+  <li>the executable logic graph of the FROG,</li>
   <li>the canonical dependency graph of values and explicit effects,</li>
   <li>the canonical link between public interface ports and internal execution logic,</li>
   <li>the canonical link between front-panel widget participation and internal execution logic,</li>
   <li>the hierarchical composition mechanism used to invoke other FROGs,</li>
-  <li>the canonical place where valid feedback loops and local memory are expressed in source form,</li>
+  <li>the canonical place where valid feedback loops and explicit local memory are represented in source form,</li>
   <li>the canonical source-level space for diagram annotations and organization.</li>
 </ul>
 
@@ -114,6 +119,7 @@ This document depends on the following FROG specifications:
 </p>
 
 <ul>
+  <li><code>Expression/Readme.md</code> — defines the role of <code>Expression/</code> as the canonical source-specification layer,</li>
   <li><code>Expression/Type.md</code> — ordinary value typing and compatibility rules,</li>
   <li><code>Expression/Interface.md</code> — public interface declaration and public boundary semantics,</li>
   <li><code>Expression/Front panel.md</code> — serialized UI composition and widget declarations,</li>
@@ -121,9 +127,11 @@ This document depends on the following FROG specifications:
   <li><code>Expression/Widget interaction.md</code> — object-style widget interaction primitives and optional UI sequencing,</li>
   <li><code>Expression/Control structures.md</code> — source-facing representation of structure nodes and their serialized form,</li>
   <li><code>Expression/State and cycles.md</code> — source-facing representation of explicit local-memory elements and feedback-cycle formation constraints,</li>
+  <li><code>Language/Readme.md</code> — defines the role of <code>Language/</code> as the normative execution-semantics layer,</li>
   <li><code>Language/Control structures.md</code> — normative execution semantics for structure families such as <code>case</code>, <code>for_loop</code>, and <code>while_loop</code>,</li>
   <li><code>Language/State and cycles.md</code> — normative semantics for local memory and cycle validity,</li>
-  <li><code>Libraries/Core.md</code> — standard primitive definitions such as <code>frog.core.add</code>, <code>frog.core.mul</code>, and <code>frog.core.delay</code>.</li>
+  <li><code>Libraries/Core.md</code> — standard primitive definitions such as <code>frog.core.add</code>, <code>frog.core.mul</code>, and <code>frog.core.delay</code>,</li>
+  <li><code>Libraries/UI.md</code> — standard executable UI primitive definitions such as <code>frog.ui.property_read</code>, <code>frog.ui.property_write</code>, and <code>frog.ui.method_invoke</code>.</li>
 </ul>
 
 <p>
@@ -240,12 +248,12 @@ Cross-scope communication MUST occur only through the explicit mechanisms define
 
 <p>
 A validated diagram defines a directed graph whose nodes expose typed ports and whose edges connect compatible ports.
-The graph is structural and executable:
+The graph is structural and execution-relevant:
 </p>
 
 <ul>
   <li>structural, because it explicitly defines graph boundaries and nesting,</li>
-  <li>executable, because value availability, structure rules, and explicit local memory determine run-time behavior.</li>
+  <li>execution-relevant, because it provides the graph form consumed by the language, primitive, and widget-interaction semantics defined elsewhere.</li>
 </ul>
 
 <p>
@@ -261,7 +269,7 @@ At conceptual level:
 
 <p>
 The diagram itself does not impose a textual instruction order.
-Ordinary execution follows dataflow readiness, structure semantics, explicit UI sequencing where used, and explicit local-memory rules where required by cycles.
+The validated graph participates in execution according to dataflow, structure, local-memory, and widget-interaction semantics owned by other specifications.
 </p>
 
 <hr/>
@@ -415,7 +423,7 @@ Rules:
   <li><code>structure_type</code> MUST identify a valid standardized or profile-defined structure family.</li>
   <li>The canonical standardized structure types for v0.1 are <code>case</code>, <code>for_loop</code>, and <code>while_loop</code>.</li>
   <li><code>boundary</code>, <code>structure_terminals</code>, and <code>regions</code> MUST be valid for the chosen structure type.</li>
-  <li>Structure internals and region semantics MUST remain aligned with the control-structure specifications and MUST NOT be redefined ad hoc by tools.</li>
+  <li>Structure internals and region representation MUST remain aligned with the control-structure specifications and MUST NOT be redefined ad hoc by tools.</li>
 </ul>
 
 <p>
@@ -610,7 +618,7 @@ Port resolution rules are:
 
 <ul>
   <li><strong>primitive</strong> — ports are defined by the primitive function signature,</li>
-  <li><strong>structure</strong> — ports are defined by the structure family, its boundary, and its outer-visible terminals,</li>
+  <li><strong>structure</strong> — ports are defined by the structure family source model, its boundary, and its outer-visible terminals,</li>
   <li><strong>subfrog</strong> — ports are derived from the referenced FROG interface,</li>
   <li><strong>interface_input</strong> — exactly one output port named <code>value</code>,</li>
   <li><strong>interface_output</strong> — exactly one input port named <code>value</code>,</li>
@@ -621,7 +629,8 @@ Port resolution rules are:
 <h3>11.1 Primitive port resolution for widget interaction</h3>
 
 <p>
-The following standardized primitive families have additional port rules in v0.1:
+For canonical diagram port resolution in v0.1, the standardized <code>frog.ui.*</code> primitive signatures align with
+<code>Libraries/UI.md</code> and <code>Expression/Widget interaction.md</code> as follows:
 </p>
 
 <h4>11.1.1 <code>frog.ui.property_read</code></h4>
@@ -674,11 +683,13 @@ The optional <code>ui_in</code> and <code>ui_out</code> ports are opaque UI sequ
 
 <p>
 The minimal standard local-memory primitive for v0.1 is <code>frog.core.delay</code>.
-Its canonical signature is defined by <code>Libraries/Core.md</code>, its source-facing constraints are defined by <code>Expression/State and cycles.md</code>, and its normative execution semantics are defined by <code>Language/State and cycles.md</code>.
+Its canonical signature is defined by <code>Libraries/Core.md</code>, its source-facing constraints are defined by
+<code>Expression/State and cycles.md</code>, and its normative execution semantics are defined by
+<code>Language/State and cycles.md</code>.
 </p>
 
 <p>
-In v0.1:
+For canonical diagram validation in v0.1:
 </p>
 
 <ul>
@@ -690,9 +701,9 @@ In v0.1:
 <h3>11.3 Structure port resolution</h3>
 
 <p>
-For a <code>structure</code> node, visible ports are derived from the semantics of the referenced structure family.
+For a <code>structure</code> node, visible ports are derived from the canonical source form of the referenced structure family.
 This includes boundary inputs, boundary outputs, selector terminals, loop count terminals, continuation terminals,
-loop index terminals, and other structure-defined terminals where applicable.
+loop index terminals, and other outer-visible structure-defined terminals where applicable.
 </p>
 
 <h3>11.4 Sub-FROG port resolution</h3>
@@ -945,7 +956,7 @@ These two paths MUST remain semantically distinct.
 <h3>17.3 Structure boundary</h3>
 
 <p>
-A structure boundary is part of the executable meaning of the program.
+A structure boundary is part of the executable graph representation of the program.
 Boundary values crossing the structure wall MUST be represented explicitly according to the control-structure model.
 </p>
 
@@ -1010,27 +1021,28 @@ These sequencing ports are opaque and MUST NOT be interpreted as ordinary value 
 
 <hr/>
 
-<h2 id="cycles-and-local-memory">19. Cycles and Local Memory</h2>
+<h2 id="graph-level-participation-of-cycles-and-local-memory">19. Graph-Level Participation of Cycles and Local Memory</h2>
 
 <p>
-Cycles are allowed only when broken by explicit local memory.
-In v0.1, the minimal standard local-memory primitive is <code>frog.core.delay</code>.
+Cycles and explicit local memory participate in the diagram as graph-level elements.
+This document defines only that participation in canonical source form.
 </p>
 
 <p>
-Rules:
+In particular:
 </p>
 
 <ul>
-  <li>A feedback cycle without explicit local memory is invalid.</li>
-  <li>A cycle containing <code>frog.core.delay</code> MAY be valid if all typing and connectivity rules hold.</li>
-  <li>The <code>initial</code> field of <code>frog.core.delay</code> is mandatory in v0.1.</li>
-  <li>State is attached to node instances in a live FROG instance, not to source text alone.</li>
+  <li>directed cycles appear through ordinary graph connectivity inside a diagram scope,</li>
+  <li>explicit local memory appears through local-memory primitive nodes such as <code>frog.core.delay</code>,</li>
+  <li>graph-level validation of feedback paths MUST remain aligned with <code>Expression/State and cycles.md</code>,</li>
+  <li>primitive identity, required ports, and required metadata for <code>frog.core.delay</code> MUST remain aligned with <code>Libraries/Core.md</code>.</li>
 </ul>
 
 <p>
 Cycle validity and local-memory semantics are defined normatively by <code>Language/State and cycles.md</code>.
-The source-facing representation of those constructs in canonical <code>.frog</code> content is defined by <code>Expression/State and cycles.md</code>.
+The source-facing representation of those constructs in canonical <code>.frog</code> content is defined by
+<code>Expression/State and cycles.md</code>.
 This document defines only their graph-level participation.
 </p>
 
@@ -1055,8 +1067,8 @@ A diagram is valid only if all of the following hold:
   <li>every connected value edge is type-compatible,</li>
   <li>every input port has at most one incoming edge unless explicitly allowed by another specification,</li>
   <li>every structure boundary is valid under the control-structure specifications,</li>
-  <li>every widget interaction node is valid under the widget interaction specification,</li>
-  <li>every feedback cycle satisfies the local-memory rules,</li>
+  <li>every widget interaction node is valid under the widget interaction and UI library specifications,</li>
+  <li>every feedback cycle satisfies the local-memory source rules defined by <code>Expression/State and cycles.md</code>,</li>
   <li>layout, documentation, tags, and annotations do not conflict with executable fields.</li>
 </ul>
 
@@ -1100,37 +1112,24 @@ Validators SHOULD diagnose at least the following error classes:
 
 <hr/>
 
-<h2 id="execution-semantics">21. Execution Semantics</h2>
+<h2 id="relation-with-execution-semantics">21. Relation with Execution Semantics</h2>
 
-<h3>21.1 General model</h3>
-
-<p>
-The validated diagram defines a directed executable graph.
-Node execution is constrained by:
-</p>
-
-<ul>
-  <li>ordinary data dependencies,</li>
-  <li>structure semantics,</li>
-  <li>optional explicit UI sequencing dependencies,</li>
-  <li>local-memory semantics where present.</li>
-</ul>
-
-<h3>21.2 Ordinary value propagation</h3>
+<h3>21.1 General principle</h3>
 
 <p>
-Ordinary value ports participate in normal dataflow.
-A consumer may execute only when the required input values defined by the active profile are available.
+A validated diagram is the graph-level source form consumed by execution-facing layers.
+This document defines that source form.
+It does not define the full runtime behavior of every graph element.
 </p>
 
-<h3>21.3 Interface boundary semantics</h3>
+<h3>21.2 Interface participation</h3>
 
 <p>
-An <code>interface_input</code> node exposes an external public input value to the internal graph.
-An <code>interface_output</code> node commits an internal graph value to the corresponding external public output.
+An <code>interface_input</code> node is the canonical graph-level representation of a public input entering the internal graph.
+An <code>interface_output</code> node is the canonical graph-level representation of a public output driven from the internal graph.
 </p>
 
-<h3>21.4 Widget semantics in the diagram</h3>
+<h3>21.3 Widget participation</h3>
 
 <p>
 The natural widget path and the object-style widget path are distinct:
@@ -1146,19 +1145,35 @@ A widget primary value MAY be accessible through both mechanisms when the widget
 but tools SHOULD preserve the distinction rather than collapsing both forms into one undifferentiated mechanism.
 </p>
 
-<h3>21.5 Structure execution</h3>
+<h3>21.4 Structure participation</h3>
 
 <p>
-Structure execution semantics are owned by <code>Language/Control structures.md</code>.
-This document only requires that structure participation in the graph be explicit, valid, and canonical in source form.
+Structure nodes participate in the diagram as explicit graph objects with boundaries, terminals, and owned regions.
+Their runtime execution semantics are owned by <code>Language/Control structures.md</code>.
 </p>
 
-<h3>21.6 Local memory and cycles</h3>
+<h3>21.5 Local-memory participation</h3>
 
 <p>
-A cycle becomes executable only when the graph contains valid local memory according to the cycle rules.
-For <code>frog.core.delay</code>, the observed output is the stored previous value, and the current input becomes the next stored value.
+Local-memory nodes participate in the diagram as explicit primitive nodes in feedback-capable graph paths.
+Their source-facing representation is owned by <code>Expression/State and cycles.md</code>.
+Their normative execution semantics are owned by <code>Language/State and cycles.md</code>.
+Primitive-local delayed-value behavior for <code>frog.core.delay</code> is owned by <code>Libraries/Core.md</code>.
 </p>
+
+<h3>21.6 No semantic ownership in this document</h3>
+
+<p>
+This document MUST NOT be interpreted as redefining:
+</p>
+
+<ul>
+  <li>general execution readiness rules,</li>
+  <li>structure branch-selection or loop-iteration semantics,</li>
+  <li>primitive-local runtime behavior,</li>
+  <li>cycle-validity semantics,</li>
+  <li>runtime scheduling policy.</li>
+</ul>
 
 <hr/>
 
@@ -1425,12 +1440,30 @@ For <code>frog.core.delay</code>, the observed output is the stored previous val
         },
         "structure_terminals": {
           "selector": {
-            "type": "bool"
+            "type": "bool",
+            "outer_visible": true,
+            "exposed_in_body": false,
+            "read_only": true,
+            "role": "selector"
           }
         },
         "regions": [
-          { "id": "true_region" },
-          { "id": "false_region" }
+          {
+            "id": "true_case",
+            "match": true,
+            "diagram": {
+              "nodes": [],
+              "edges": []
+            }
+          },
+          {
+            "id": "false_case",
+            "match": false,
+            "diagram": {
+              "nodes": [],
+              "edges": []
+            }
+          }
         ]
       }
     ],
@@ -1463,8 +1496,8 @@ sub-FROG invocation, explicit local memory, and graph-level documentation are re
   <li>Natural widget value participation is represented canonically by <code>widget_value</code>.</li>
   <li>Object-style widget access is represented canonically by <code>widget_reference</code> plus <code>frog.ui.*</code> primitives.</li>
   <li>Language structures are explicit graph nodes, not hidden function expansions.</li>
-  <li>Cycles are valid only when broken by explicit local memory.</li>
-  <li>The diagram owns execution structure representation; annotations and layout do not change execution semantics.</li>
+  <li>Cycles and explicit local memory participate directly in the diagram graph.</li>
+  <li>The diagram owns graph structure representation; annotations and layout do not change execution semantics.</li>
 </ul>
 
 <p>
