@@ -26,7 +26,7 @@ Definition of the minimal standard <code>frog.core</code> library for FROG v0.1<
   <li><a href="#comparison-functions">10. Comparison Functions</a></li>
   <li><a href="#logical-functions">11. Logical Functions</a></li>
   <li><a href="#selection-function">12. Selection Function</a></li>
-  <li><a href="#local-memory-function">13. Local-Memory Function</a></li>
+  <li><a href="#local-memory-primitive">13. Local-Memory Primitive</a></li>
   <li><a href="#diagram-representation">14. Diagram Representation</a></li>
   <li><a href="#validation-rules">15. Validation Rules</a></li>
   <li><a href="#examples">16. Examples</a></li>
@@ -255,7 +255,7 @@ In v0.1:
 <ul>
   <li>all functions in this document are stateless and side-effect-free, except <code>frog.core.delay</code>,</li>
   <li><code>frog.core.delay</code> is stateful and MUST be treated as a local-memory primitive,</li>
-  <li>the primitive-local state behavior of <code>frog.core.delay</code> is standardized here,</li>
+  <li>the primitive-local delayed-value behavior of <code>frog.core.delay</code> is standardized here,</li>
   <li>the general validity of cycles containing <code>frog.core.delay</code> is governed normatively by <code>Language/State and cycles.md</code>.</li>
 </ul>
 
@@ -306,7 +306,7 @@ The output type is the resolved numeric result type.
 
 <p>
 Division by zero behavior MUST be defined by the active execution profile for each supported numeric type family.
-The standardized primitive identity and source meaning of the function remain the same.
+The standardized primitive identity and primitive meaning of the function remain the same.
 </p>
 
 <h3>9.5 <code>frog.core.neg</code></h3>
@@ -470,7 +470,7 @@ Structural branching remains owned by the standardized <code>case</code> structu
 
 <hr/>
 
-<h2 id="local-memory-function">13. Local-Memory Function</h2>
+<h2 id="local-memory-primitive">13. Local-Memory Primitive</h2>
 
 <h3>13.1 <code>frog.core.delay</code></h3>
 
@@ -512,7 +512,7 @@ state(t + 1) = in(t)
 state(0) = initial</code></pre>
 
 <p>
-This function enables deterministic and explicit delayed feedback in dataflow graphs.
+This primitive enables deterministic and explicit delayed feedback in dataflow graphs.
 However, the presence of a <code>frog.core.delay</code> node inside a graph does not, by itself, redefine the general language rule for cycles.
 Whether a specific cycle is valid remains governed by <code>Language/State and cycles.md</code>.
 </p>
