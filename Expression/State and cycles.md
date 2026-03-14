@@ -24,7 +24,7 @@ Source-facing representation of local memory and cycle-facing graph constraints 
   <li><a href="#cycle-validity-in-source-form">8. Cycle Validity in Source Form</a></li>
   <li><a href="#frog-core-delay">9. <code>frog.core.delay</code></a></li>
   <li><a href="#initial-state">10. Initial State</a></li>
-  <li><a href="#source-to-semantics-mapping">11. Source-to-Semantics Mapping</a></li>
+  <li><a href="#source-to-language-alignment">11. Source-to-Language Alignment</a></li>
   <li><a href="#validation-rules">12. Validation Rules</a></li>
   <li><a href="#examples">13. Examples</a></li>
   <li><a href="#out-of-scope-for-v01">14. Out of Scope for v0.1</a></li>
@@ -47,8 +47,8 @@ cycle-facing constructs are represented in executable diagrams.
 </p>
 
 <p>
-In FROG, a directed cycle is only representable as a valid executable construct when its meaning is made explicit through at
-least one primitive whose node instance stores a value between activations. Such a primitive is called a local-memory primitive.
+In FROG, directed feedback is only representable in canonical executable source when explicit local memory is present in the
+graph. A primitive whose node instance stores a value between activations is called a local-memory primitive.
 </p>
 
 <p>
@@ -67,7 +67,7 @@ Normative execution semantics are defined by <code>Language/State and cycles.md<
 
 <ul>
   <li><strong>Clarity</strong> — define how local memory is represented in canonical FROG source.</li>
-  <li><strong>Source explicitness</strong> — require that valid feedback be represented through explicit local-memory constructs.</li>
+  <li><strong>Source explicitness</strong> — require that feedback be represented through explicit local-memory constructs.</li>
   <li><strong>Deterministic initialization</strong> — require explicit and deterministic source-level initialization of local memory.</li>
   <li><strong>Separation of concerns</strong> — keep local memory distinct from global state, shared state, and runtime services.</li>
   <li><strong>Compatibility with dataflow</strong> — allow feedback while preserving an explicit and verifiable source model.</li>
@@ -94,8 +94,8 @@ This document complements the following specifications:
 <p>
 This document defines the canonical source-level representation of local memory and cycle-facing graph constraints.
 It does not redefine the serialized graph structure already specified by <code>Expression/Diagram.md</code>, it does not own
-the normative execution semantics of local memory, and it does not own the primitive-local delayed-value behavior of
-<code>frog.core.delay</code>.
+the normative execution semantics of local memory, and it does not own the standardized primitive identity or primitive-local
+delayed-value behavior of <code>frog.core.delay</code>.
 </p>
 
 <table>
@@ -128,7 +128,7 @@ Accordingly:
 <ul>
   <li><code>Expression/State and cycles.md</code> owns the canonical source representation of local-memory constructs and cycle-facing source constraints,</li>
   <li><code>Language/State and cycles.md</code> owns the normative execution meaning of local memory and valid cycles,</li>
-  <li><code>Libraries/Core.md</code> owns the standardized primitive identity and primitive-local delayed-value behavior of <code>frog.core.delay</code>.</li>
+  <li><code>Libraries/Core.md</code> owns the standardized primitive identity, required ports, required metadata, and primitive-local delayed-value behavior of <code>frog.core.delay</code>.</li>
 </ul>
 
 <hr/>
@@ -247,7 +247,7 @@ Therefore, FROG distinguishes between:
 
 <ul>
   <li><strong>invalid combinational cycles</strong> — cycles containing no local memory,</li>
-  <li><strong>valid stateful cycles</strong> — cycles containing at least one explicit local-memory primitive.</li>
+  <li><strong>stateful feedback cycles</strong> — cycles containing at least one explicit local-memory primitive.</li>
 </ul>
 
 <p>
@@ -271,7 +271,7 @@ Equivalent source-facing interpretation:
 </p>
 
 <ul>
-  <li>a cycle without local memory is invalid,</li>
+  <li>a cycle without local memory is invalid in source validation,</li>
   <li>a cycle containing at least one local-memory primitive is representable as valid in principle, subject to ordinary graph and type validation.</li>
 </ul>
 
@@ -313,14 +313,14 @@ The minimal standard local-memory primitive for FROG v0.1 is:
 Its source-facing role is to make delayed feedback explicit in canonical graph form.
 </p>
 
-<h3>9.1 Ports and required metadata</h3>
+<h3>9.1 Standardized identity and required surface</h3>
 
 <p>
-A canonical source node using <code>frog.core.delay</code> MUST remain compatible with the primitive identity defined by
+A canonical source node using <code>frog.core.delay</code> MUST remain compatible with the primitive definition in
 <code>Libraries/Core.md</code>.
 </p>
 
-<p>The required surface for base v0.1 includes:</p>
+<p>The required standardized surface for base v0.1 includes:</p>
 
 <ul>
   <li>input port: <code>in</code></li>
@@ -338,8 +338,8 @@ A canonical source node using <code>frog.core.delay</code> MUST remain compatibl
 }</code></pre>
 
 <p>
-This primitive is sufficient to make a feedback path explicit, deterministic, and valid in principle.
-Its canonical source representation is defined here, its standardized primitive identity belongs to
+This primitive is sufficient to make a feedback path explicit and deterministic in canonical source.
+Its canonical node representation is described here, its standardized primitive identity belongs to
 <code>Libraries/Core.md</code>, and its normative observable semantics belong to <code>Language/State and cycles.md</code>.
 </p>
 
@@ -378,30 +378,30 @@ FROG v0.1 does not permit undefined initial state for <code>frog.core.delay</cod
 
 <hr/>
 
-<h2 id="source-to-semantics-mapping">11. Source-to-Semantics Mapping</h2>
+<h2 id="source-to-language-alignment">11. Source-to-Language Alignment</h2>
 
 <p>
 Canonical source representation and normative execution semantics are intentionally separated in FROG.
-This section defines how the source form declared here maps to the semantic layer owned by <code>Language/</code>.
+This section defines the source-level alignment points between the forms declared here and the execution-semantics layer owned by <code>Language/</code>.
 </p>
 
-<h3>11.1 Local-memory primitive mapping</h3>
+<h3>11.1 Local-memory primitive alignment</h3>
 
 <ul>
-  <li>a node with <code>kind: "primitive"</code> and <code>type: "frog.core.delay"</code> maps to the minimal standardized local-memory primitive,</li>
-  <li>its required source field <code>initial</code> maps to the primitive's deterministic initial stored value,</li>
-  <li>its incoming and outgoing edges determine how explicit delayed feedback is represented in the graph.</li>
+  <li>a node with <code>kind: "primitive"</code> and <code>type: "frog.core.delay"</code> aligns with the minimal standardized local-memory primitive,</li>
+  <li>its required source field <code>initial</code> provides the source-level initialization data associated with that primitive,</li>
+  <li>its incoming and outgoing edges make delayed feedback explicit in the graph.</li>
 </ul>
 
-<h3>11.2 Cycle mapping</h3>
+<h3>11.2 Cycle alignment</h3>
 
 <ul>
-  <li>a directed cycle identified in canonical source maps to a language-level feedback construct,</li>
-  <li>the presence of at least one explicit local-memory primitive in that directed cycle maps to stateful feedback,</li>
-  <li>the absence of such a primitive maps to an invalid combinational cycle.</li>
+  <li>a directed cycle identified in canonical source aligns with a language-level feedback construct,</li>
+  <li>the presence of at least one explicit local-memory primitive in that directed cycle provides the required source evidence of explicit memory,</li>
+  <li>the absence of such a primitive leaves the cycle invalid at source-validation level.</li>
 </ul>
 
-<h3>11.3 Region-local mapping</h3>
+<h3>11.3 Region-local alignment</h3>
 
 <ul>
   <li>the same source-level cycle analysis applies inside structure-owned regions,</li>
