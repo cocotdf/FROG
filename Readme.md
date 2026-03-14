@@ -10,6 +10,10 @@
 </p>
 
 <p align="center">
+  Specification work initiated: <strong>8 March 2026</strong>
+</p>
+
+<p align="center">
   <a href="#what-is-frog">What is FROG?</a> •
   <a href="#positioning">Positioning</a> •
   <a href="#breaking-the-syntax-first-bottleneck">Breaking the syntax-first bottleneck</a> •
@@ -342,21 +346,20 @@ This repository is organized by architectural responsibility.
 Each top-level directory has a specific role in the specification.
 </p>
 
-<pre>
-FROG/
+<pre><code>FROG/
 │
-├── Expression/
-├── IDE/
-├── Language/
-├── Libraries/
+├── Expression/        Canonical source specification for .frog programs
+├── Language/          Normative execution semantics for validated programs
+├── Libraries/         Standard primitive-library specifications
+├── IDE/               IDE architecture, observability, debugging, inspection, snippets
 │
-├── CLA.md
-├── CONTRIBUTING.md
-├── FROG logo.svg
-├── LICENSE
-├── Readme.md
+├── CLA.md             Contributor license agreement requirements
+├── CONTRIBUTING.md    Contribution process and contribution rules
+├── FROG logo.svg      Official logo asset
+├── LICENSE            Repository license
+├── Readme.md          Repository landing page and architectural overview
 └── frog-orville-chart.png
-</pre>
+                       Positioning illustration used by the repository</code></pre>
 
 <h3><code>Expression/</code> — canonical source specification</h3>
 
