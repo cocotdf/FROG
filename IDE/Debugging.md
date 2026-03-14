@@ -43,7 +43,7 @@ It specifies how an IDE may pause, resume, inspect, and step through a live exec
 
 <p>
 The purpose of debugging is not to redefine execution semantics.
-Execution semantics remain defined by the validated executable graph and the related language specifications.
+Execution semantics remain defined by the validated executable graph and the related language and library specifications.
 This document defines the minimal debugging controls and their source-level meaning for:
 </p>
 
@@ -58,7 +58,7 @@ This document defines the minimal debugging controls and their source-level mean
 <p>
 This document is IDE-facing.
 It describes the behavior of interactive debugging as seen by the user and by source-aligned IDE tooling.
-It does not standardize the internal runtime scheduler or transport protocol used to implement that behavior.
+It does not standardize the internal runtime scheduler, transport protocol, or execution engine used to implement that behavior.
 </p>
 
 <hr/>
@@ -73,7 +73,7 @@ It does not standardize the internal runtime scheduler or transport protocol use
   <li>keep debugging semantics aligned with dataflow execution rather than sequential source-code assumptions,</li>
   <li>define canonical meanings for pause, resume, breakpoints, and stepping,</li>
   <li>make debugging compatible with structures, loops, local memory, sub-FROGs, and widget interaction,</li>
-  <li>provide a stable base for later specifications such as probes, watch windows, and richer execution instrumentation.</li>
+  <li>provide a stable base for probes, watches, and richer execution instrumentation without redefining those topics here.</li>
 </ul>
 
 <hr/>
@@ -89,9 +89,9 @@ For FROG v0.1, this document standardizes the source-level meaning of:
   <li>execution highlighting,</li>
   <li>pause and resume,</li>
   <li>breakpoint kinds and activation rules,</li>
-  <li>step into,</li>
-  <li>step over,</li>
-  <li>step out,</li>
+  <li><code>step_into</code>,</li>
+  <li><code>step_over</code>,</li>
+  <li><code>step_out</code>,</li>
   <li>fault-directed pause and localization.</li>
 </ul>
 
@@ -102,8 +102,8 @@ This document does <strong>not</strong> standardize:
 <ul>
   <li>the transport protocol between IDE and runtime,</li>
   <li>the exact rendering style of overlays,</li>
-  <li>probe windows,</li>
-  <li>watch-expression syntax,</li>
+  <li>probe behavior,</li>
+  <li>watch-list behavior,</li>
   <li>reverse execution,</li>
   <li>timeline scrubbing,</li>
   <li>deterministic replay,</li>
@@ -120,14 +120,17 @@ This document depends on the following specifications:
 </p>
 
 <ul>
-  <li><code>IDE/Readme.md</code> for the architectural separation between source editing, execution preparation, and runtime execution,</li>
+  <li><code>IDE/Readme.md</code> for the IDE-facing separation between authoring, source identity, execution integration, and interactive tooling,</li>
   <li><code>IDE/Execution observability.md</code> for the source-aligned observability model on which interactive debugging builds,</li>
+  <li><code>IDE/Probes.md</code> for source-aligned probe behavior that may be consumed together with debugging,</li>
+  <li><code>IDE/Watch.md</code> for persistent watch behavior that may be consumed together with debugging,</li>
   <li><code>Expression/Diagram.md</code> for the canonical node, edge, and executable-graph model,</li>
   <li><code>Expression/Control structures.md</code> for the canonical source-facing representation of structure kinds, regions, boundaries, and terminals,</li>
   <li><code>Language/Control structures.md</code> for the normative execution semantics of structures,</li>
   <li><code>Expression/State and cycles.md</code> for the canonical source-facing representation of local-memory constructs and cycle-facing source constraints,</li>
   <li><code>Language/State and cycles.md</code> for the normative execution semantics of local memory and valid feedback behavior,</li>
-  <li><code>Expression/Widget interaction.md</code> for widget-related execution objects and explicit UI sequencing.</li>
+  <li><code>Expression/Widget interaction.md</code> for widget-related execution objects and explicit UI sequencing,</li>
+  <li><code>Libraries/UI.md</code> for standardized executable widget-interaction primitives.</li>
 </ul>
 
 <p>
@@ -138,6 +141,7 @@ If a conflict appears:
 <ul>
   <li><code>Expression/</code> remains authoritative for canonical source identity and source-visible representation,</li>
   <li><code>Language/</code> remains authoritative for normative execution semantics,</li>
+  <li><code>Libraries/</code> remains authoritative for primitive identity and primitive-local behavior,</li>
   <li><code>IDE/</code> remains authoritative only for debugging behavior and IDE-facing control meaning.</li>
 </ul>
 
@@ -198,9 +202,9 @@ At minimum, a debugging-capable execution instance supports:
 
 <ul>
   <li>starting under debug control,</li>
-  <li>pausing at safe observation points,</li>
+  <li>pausing at safe debug stops defined consistently with execution observability,</li>
   <li>resuming execution,</li>
-  <li>stopping execution,</li>
+  <li>aborting execution under user control,</li>
   <li>source-level breakpoint activation,</li>
   <li>single-step commands,</li>
   <li>fault-directed pause when debugging is active.</li>
@@ -247,7 +251,7 @@ A debug session MUST expose one of the following high-level states:
   <li><code>paused</code> — the instance is suspended at a safe debug stop,</li>
   <li><code>completed</code> — the instance finished normally,</li>
   <li><code>faulted</code> — the instance terminated because of an execution fault,</li>
-  <li><code>aborted</code> — the instance was stopped externally or by user abort.</li>
+  <li><code>aborted</code> — the instance was terminated by user abort or an equivalent external stop action.</li>
 </ul>
 
 <h3>7.3 Pause reasons</h3>
@@ -344,11 +348,11 @@ Unless a stepping command is active, execution continues freely until:
   <li>the instance is aborted.</li>
 </ul>
 
-<h3>9.3 Stop and abort</h3>
+<h3>9.3 User stop and abort</h3>
 
 <p>
-A stop or abort request terminates the live execution instance.
-The exact cleanup strategy MAY depend on the active runtime profile, but the IDE MUST clearly distinguish normal completion from fault and user abort.
+A user-facing stop action terminates the live execution instance.
+At the observability and debug-state level, that termination MUST be represented consistently with the instance becoming <code>aborted</code>, unless a stricter runtime profile defines an explicitly different but equivalent user-stop state.
 </p>
 
 <hr/>
@@ -667,7 +671,7 @@ Widget participation in debugging occurs through the diagram-level node forms al
 </ul>
 
 <p>
-These nodes are debuggable like other diagram nodes, subject to their source representation, execution semantics, and explicit UI sequencing rules.
+These nodes are debuggable like other diagram nodes, subject to their source representation, execution semantics, library-defined primitive behavior, and explicit UI sequencing rules.
 </p>
 
 <h3>15.2 Front panel reflection</h3>
@@ -719,7 +723,8 @@ An IDE MAY additionally provide:
   <li>sub-FROG call breakpoints,</li>
   <li>front-panel debug reflection,</li>
   <li>execution traces,</li>
-  <li>later probe and watch integrations.</li>
+  <li>probe integrations defined by <code>IDE/Probes.md</code>,</li>
+  <li>watch integrations defined by <code>IDE/Watch.md</code>.</li>
 </ul>
 
 <p>
@@ -806,8 +811,8 @@ The following topics are intentionally out of scope for this document:
 </p>
 
 <ul>
-  <li>probe window behavior,</li>
-  <li>watch lists and watch expressions,</li>
+  <li>probe behavior,</li>
+  <li>watch-list behavior and watch expressions,</li>
   <li>conditional breakpoints,</li>
   <li>break-on-value-change semantics,</li>
   <li>break-on-fault filters,</li>
@@ -849,7 +854,7 @@ For FROG v0.1, this specification standardizes:
 </ul>
 
 <p>
-This debugging layer provides the foundation for later specifications covering probes, watch windows, richer instrumentation, and advanced debugging profiles.
+This debugging layer provides the foundation for probes, watches, richer instrumentation, and advanced debugging profiles without confusing IDE-facing control with normative language or primitive semantics.
 </p>
 
 <hr/>
