@@ -1,7 +1,11 @@
+<p align="center">
+  <img src="../FROG logo.svg" alt="FROG logo" width="150" />
+</p>
+
 <h1 align="center">🐸 FROG IDE Snippet Specification</h1>
 
 <p align="center">
-Definition of portable IDE snippet fragments for FROG authoring workflows<br/>
+Definition of image-backed IDE snippet artifacts for FROG authoring workflows<br/>
 <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -22,17 +26,17 @@ Definition of portable IDE snippet fragments for FROG authoring workflows<br/>
   <li><a href="#diagram-snippet-content">10. Diagram Snippet Content</a></li>
   <li><a href="#front-panel-snippet-content">11. Front Panel Snippet Content</a></li>
   <li><a href="#composite-snippets">12. Composite Snippets</a></li>
-  <li><a href="#boundary-endpoints-and-open-connections">13. Boundary Endpoints and Open Connections</a></li>
-  <li><a href="#reference-closure-and-dependencies">14. Reference Closure and Dependencies</a></li>
-  <li><a href="#layout-and-identity-rules">15. Layout and Identity Rules</a></li>
-  <li><a href="#serialization-model">16. Serialization Model</a></li>
-  <li><a href="#transport-and-container-profiles">17. Transport and Container Profiles</a></li>
-  <li><a href="#paste-and-insertion-semantics">18. Paste and Insertion Semantics</a></li>
-  <li><a href="#validation-and-safety-rules">19. Validation and Safety Rules</a></li>
-  <li><a href="#illustrative-examples">20. Illustrative Examples</a></li>
-  <li><a href="#out-of-scope-for-v01">21. Out of Scope for v0.1</a></li>
-  <li><a href="#summary">22. Summary</a></li>
-  <li><a href="#license">23. License</a></li>
+  <li><a href="#image-backed-snippet-model">13. Image-Backed Snippet Model</a></li>
+  <li><a href="#embedded-payload-model">14. Embedded Payload Model</a></li>
+  <li><a href="#boundary-endpoints-and-open-connections">15. Boundary Endpoints and Open Connections</a></li>
+  <li><a href="#reference-closure-and-dependencies">16. Reference Closure and Dependencies</a></li>
+  <li><a href="#preview-and-presentation">17. Preview and Presentation</a></li>
+  <li><a href="#export-semantics">18. Export Semantics</a></li>
+  <li><a href="#import-paste-and-drag-and-drop-semantics">19. Import, Paste, and Drag-and-Drop Semantics</a></li>
+  <li><a href="#validation-and-safety-rules">20. Validation and Safety Rules</a></li>
+  <li><a href="#illustrative-examples">21. Illustrative Examples</a></li>
+  <li><a href="#out-of-scope-for-v01">22. Out of Scope for v0.1</a></li>
+  <li><a href="#summary">23. Summary</a></li>
 </ul>
 
 <hr/>
@@ -41,26 +45,28 @@ Definition of portable IDE snippet fragments for FROG authoring workflows<br/>
 
 <p>
 This document defines the snippet model of a FROG IDE.
-A snippet is a portable IDE artifact that captures a reusable fragment of authoring content so that it can be copied, shared, pasted, or inserted into another editing context.
+A snippet is a portable, image-backed IDE artifact that captures a reusable fragment of authoring content so that it may be
+copied, shared, previewed as an ordinary image, dragged into a FROG IDE, or inserted into another editing context.
 </p>
 
 <p>
 A snippet is not a full FROG program.
-It is a source-aligned fragment of IDE-managed content derived from the FROG Program Model.
-It is intended for reuse workflows such as:
+It is a source-aligned fragment of IDE-managed content derived from the FROG Program Model and packaged inside an image
+carrier that remains visually meaningful outside the IDE.
+</p>
+
+<p>
+The core intent of a FROG snippet is therefore dual:
 </p>
 
 <ul>
-  <li>clipboard copy and paste,</li>
-  <li>drag-and-drop insertion,</li>
-  <li>sharing small reusable fragments,</li>
-  <li>storing reusable authoring patterns,</li>
-  <li>transporting a graph fragment with its visual layout and related metadata.</li>
+  <li><strong>human-visible artifact</strong> — the snippet is viewable as an image in generic tools, file browsers, documentation, chat systems, and websites,</li>
+  <li><strong>IDE-readable artifact</strong> — the same image contains structured embedded snippet data that a conforming FROG IDE can decode and insert through import, paste, or drag-and-drop.</li>
 </ul>
 
 <p>
-For v0.1, a snippet is defined as an IDE-layer artifact rather than as a new canonical source-program form.
-Its purpose is reuse and transport of authoring fragments, not full-program storage.
+This makes the snippet concept intentionally equivalent in workflow spirit to image-backed graphical-language snippet sharing:
+a user can see the snippet as an image everywhere, while a FROG IDE can recover the actual structured reusable content from it.
 </p>
 
 <hr/>
@@ -68,11 +74,13 @@ Its purpose is reuse and transport of authoring fragments, not full-program stor
 <h2 id="goals">2. Goals</h2>
 
 <ul>
+  <li><strong>LabVIEW-like workflow equivalence</strong> — support image-based snippet sharing and drag-and-drop authoring reuse.</li>
   <li><strong>Portability</strong> — allow small reusable authoring fragments to move across IDE sessions and tools.</li>
+  <li><strong>Human previewability</strong> — ensure a snippet remains meaningful as a normal image outside the IDE.</li>
   <li><strong>Source alignment</strong> — preserve source-level meaning, layout, and object relationships.</li>
-  <li><strong>Deterministic insertion</strong> — define how pasted content is integrated into a target Program Model without ambiguity.</li>
+  <li><strong>Deterministic insertion</strong> — define how imported content is integrated into a target Program Model without ambiguity.</li>
   <li><strong>Non-confusion with full programs</strong> — clearly distinguish snippets from full <code>.frog</code> source files.</li>
-  <li><strong>Extensibility</strong> — allow richer transport containers or preview formats later without changing the core snippet semantics.</li>
+  <li><strong>Extensibility</strong> — allow stricter carrier profiles and richer preview metadata later without changing the core snippet semantics.</li>
 </ul>
 
 <hr/>
@@ -88,21 +96,28 @@ For FROG v0.1, this document standardizes:
   <li>which kinds of authoring fragments may be captured,</li>
   <li>how snippet boundaries are represented,</li>
   <li>how references and required supporting objects are carried,</li>
-  <li>how paste and insertion should behave at the source-model level.</li>
+  <li>that a standalone snippet artifact MUST be image-backed,</li>
+  <li>that the image carrier MUST contain structured embedded snippet payload data readable by a conforming FROG IDE,</li>
+  <li>how import, paste, and drag-and-drop SHOULD behave at the source-model level.</li>
 </ul>
 
 <p>
-FROG v0.1 does <strong>not</strong> standardize:
+FROG v0.1 does not standardize:
 </p>
 
 <ul>
-  <li>a mandatory file extension for snippet files,</li>
   <li>a mandatory clipboard MIME type,</li>
-  <li>a mandatory embedded-image snippet container,</li>
-  <li>a marketplace or package manager for snippet libraries,</li>
+  <li>a mandatory operating-system drag-and-drop protocol,</li>
+  <li>a mandatory online marketplace or package manager for snippet libraries,</li>
   <li>execution directly from a snippet,</li>
-  <li>automatic semantic repair of invalid pasted fragments beyond defined validation rules.</li>
+  <li>automatic semantic repair of invalid pasted fragments beyond defined validation rules,</li>
+  <li>one universal binary embedding mechanism that every image technology must share.</li>
 </ul>
+
+<p>
+Base v0.1 standardizes the <strong>image-backed requirement</strong> and the <strong>logical embedded payload model</strong>.
+Stricter transport profiles MAY further freeze exact carrier encodings, chunk conventions, metadata slots, or file-extension rules.
+</p>
 
 <hr/>
 
@@ -115,6 +130,7 @@ This document complements the following specifications:
 <ul>
   <li><code>IDE/Readme.md</code> — defines the role of the Program Model and the distinction between IDE artifacts and canonical source.</li>
   <li><code>IDE/Palette.md</code> — defines reusable authoring elements surfaced by the IDE.</li>
+  <li><code>IDE/Execution observability.md</code> — defines IDE-facing runtime observability concepts that remain distinct from snippet transport.</li>
   <li><code>Expression/Diagram.md</code> — defines executable graph objects, layout metadata, annotations, and dependencies.</li>
   <li><code>Expression/Front panel.md</code> — defines front-panel composition and widget-tree structure.</li>
   <li><code>Expression/Widget.md</code> — defines widget identity and widget object structure.</li>
@@ -123,7 +139,8 @@ This document complements the following specifications:
 
 <p>
 This document does not redefine the canonical <code>.frog</code> source format.
-It defines how the IDE may serialize, transport, and reinsert fragments of source-aligned authoring content.
+It defines how the IDE may serialize, embed, transport, preview, and reinsert fragments of source-aligned authoring content
+through an image-backed snippet artifact.
 </p>
 
 <hr/>
@@ -140,7 +157,8 @@ It is not the canonical persisted form of a full FROG program.
 <h3>5.2 Snippets are source-aligned</h3>
 
 <p>
-Although snippets are IDE artifacts, their contents MUST remain expressible in terms of source-level objects already defined elsewhere, such as:
+Although snippets are IDE artifacts, their embedded contents MUST remain expressible in terms of source-level objects already
+defined elsewhere, such as:
 </p>
 
 <ul>
@@ -151,7 +169,25 @@ Although snippets are IDE artifacts, their contents MUST remain expressible in t
   <li>documentation metadata.</li>
 </ul>
 
-<h3>5.3 Snippets must be paste-safe</h3>
+<h3>5.3 Snippets must be image-backed</h3>
+
+<p>
+A standalone snippet artifact MUST be an image that:
+</p>
+
+<ul>
+  <li>can be rendered by generic image-capable tools, and</li>
+  <li>contains embedded structured snippet payload data readable by a conforming FROG IDE.</li>
+</ul>
+
+<h3>5.4 The embedded payload is authoritative</h3>
+
+<p>
+The visible image is essential for human workflow and browsing, but the IDE-authoritative meaning of a snippet is defined by
+its embedded structured payload, not by pixel interpretation alone.
+</p>
+
+<h3>5.5 Snippets must be paste-safe</h3>
 
 <p>
 A snippet MUST carry enough information for a target IDE to either:
@@ -162,18 +198,19 @@ A snippet MUST carry enough information for a target IDE to either:
   <li>or reject it deterministically with an explicit reason.</li>
 </ul>
 
-<h3>5.4 Snippets do not invent semantics</h3>
+<h3>5.6 Snippets do not invent semantics</h3>
 
 <p>
 A snippet MUST NOT introduce ad hoc execution semantics that do not already exist in the FROG language or Program Model.
 It transports content; it does not redefine the language.
 </p>
 
-<h3>5.5 Minimal but extensible</h3>
+<h3>5.7 Minimal but extensible</h3>
 
 <p>
 FROG v0.1 defines a minimal snippet core.
-Stricter profiles MAY define richer transport containers, previews, sharing conventions, or snippet-library mechanisms.
+Stricter profiles MAY define richer carrier encodings, previews, galleries, library conventions, signing models, or
+cross-tool interchange standards.
 </p>
 
 <hr/>
@@ -181,7 +218,8 @@ Stricter profiles MAY define richer transport containers, previews, sharing conv
 <h2 id="what-a-snippet-is">6. What a Snippet Is</h2>
 
 <p>
-A snippet is a serialized authoring fragment captured from one editing context so that it may be inserted into another editing context.
+A snippet is a serialized authoring fragment captured from one editing context so that it may be inserted into another
+editing context through an image-backed transport artifact.
 </p>
 
 <p>
@@ -192,11 +230,13 @@ Conceptually, a snippet contains:
   <li>a snippet kind,</li>
   <li>a payload containing source-aligned fragment content,</li>
   <li>boundary information for open connections or incomplete surroundings,</li>
-  <li>optional presentation metadata for transport or preview.</li>
+  <li>presentation metadata used to render the snippet as an image,</li>
+  <li>an image carrier that embeds the structured snippet payload.</li>
 </ul>
 
 <p>
-A snippet is usually derived from a user selection, but the exact UI gesture used to create that selection is outside the scope of this document.
+A snippet is usually derived from a user selection, but the exact UI gesture used to create that selection is outside the
+scope of this document.
 </p>
 
 <hr/>
@@ -283,14 +323,15 @@ inside one flat diagram payload.
 <h3>9.3 Whole-structure capture</h3>
 
 <p>
-If a selection includes a structure node as a selected object, the snippet MUST carry that structure node together with its owned regions and their source-aligned content.
+If a selection includes a structure node as a selected object, the snippet MUST carry that structure node together with its
+owned regions and their source-aligned content.
 </p>
 
 <h3>9.4 Region-local snippet</h3>
 
 <p>
-A stricter profile MAY allow creating a snippet from content inside one structure-owned region without selecting the containing structure itself.
-In that case, the snippet root is that region-local diagram scope rather than the parent scope.
+A stricter profile MAY allow creating a snippet from content inside one structure-owned region without selecting the containing
+structure itself. In that case, the snippet root is that region-local diagram scope rather than the parent scope.
 </p>
 
 <hr/>
@@ -380,21 +421,129 @@ This is especially useful when the diagram fragment contains:
 </ul>
 
 <p>
-If a snippet carries widget-related diagram nodes and is intended to be portable across documents, it SHOULD include the required referenced widget definitions in a front-panel fragment rather than assuming they already exist in the target FROG.
+If a snippet carries widget-related diagram nodes and is intended to be portable across documents, it SHOULD include the
+required referenced widget definitions in a front-panel fragment rather than assuming they already exist in the target FROG.
 </p>
 
 <hr/>
 
-<h2 id="boundary-endpoints-and-open-connections">13. Boundary Endpoints and Open Connections</h2>
+<h2 id="image-backed-snippet-model">13. Image-Backed Snippet Model</h2>
 
-<h3>13.1 Purpose</h3>
+<h3>13.1 General rule</h3>
+
+<p>
+A standalone FROG snippet artifact MUST be image-backed.
+The image carrier is not optional in the base standalone workflow.
+</p>
+
+<h3>13.2 Required dual nature</h3>
+
+<p>
+The snippet image carrier MUST satisfy both of the following:
+</p>
+
+<ul>
+  <li><strong>generic visibility</strong> — it MUST be displayable as an image outside the FROG IDE,</li>
+  <li><strong>structured recoverability</strong> — it MUST contain embedded snippet payload data that a conforming FROG IDE can recover without relying on manual visual interpretation.</li>
+</ul>
+
+<h3>13.3 Authoritative meaning</h3>
+
+<p>
+The embedded structured payload is authoritative for import, drag-and-drop insertion, validation, and reconstruction.
+The rendered image is authoritative for visual presentation only.
+</p>
+
+<h3>13.4 Image-carrier intent</h3>
+
+<p>
+The image carrier exists so that a snippet can be:
+</p>
+
+<ul>
+  <li>dropped into chats, emails, wikis, presentations, and documents as an image,</li>
+  <li>browsed visually in folders and asset collections,</li>
+  <li>dragged from a generic image-aware environment into a FROG IDE,</li>
+  <li>decoded by the IDE into structured reusable authoring content.</li>
+</ul>
+
+<h3>13.5 Carrier profile freedom</h3>
+
+<p>
+Base v0.1 requires an image-backed carrier but does not require one unique binary embedding technique across all environments.
+A stricter transport profile MAY freeze:
+</p>
+
+<ul>
+  <li>the exact raster format,</li>
+  <li>the exact file extension convention,</li>
+  <li>the exact metadata or chunk location for embedded payloads,</li>
+  <li>signature or integrity metadata.</li>
+</ul>
+
+<hr/>
+
+<h2 id="embedded-payload-model">14. Embedded Payload Model</h2>
+
+<h3>14.1 Conceptual top-level payload</h3>
+
+<p>
+The embedded payload of a snippet image is conceptually:
+</p>
+
+<pre><code class="language-json">{
+  "kind": "frog_snippet",
+  "version": "0.1",
+  "snippet_kind": "diagram_snippet | front_panel_snippet | composite_snippet",
+  "diagram_fragment": { },
+  "front_panel_fragment": { },
+  "boundaries": { },
+  "dependencies": { },
+  "preview": { },
+  "metadata": { }
+}</code></pre>
+
+<h3>14.2 Rules</h3>
+
+<ul>
+  <li><code>kind</code> MUST be <code>"frog_snippet"</code>,</li>
+  <li><code>version</code> MUST identify the snippet-format version,</li>
+  <li><code>snippet_kind</code> MUST identify the snippet category,</li>
+  <li><code>diagram_fragment</code> MUST be present for <code>diagram_snippet</code> and <code>composite_snippet</code>,</li>
+  <li><code>front_panel_fragment</code> MUST be present for <code>front_panel_snippet</code> and <code>composite_snippet</code>.</li>
+</ul>
+
+<p>
+Auxiliary sections such as <code>preview</code>, <code>metadata</code>, and implementation-private editor hints MAY be present
+provided that they remain non-authoritative with respect to source-aligned snippet meaning.
+</p>
+
+<h3>14.3 Embedded payload requirement</h3>
+
+<p>
+A conforming standalone snippet image MUST embed a recoverable payload equivalent in information content to the logical model above.
+An image that merely resembles a snippet visually but lacks recoverable structured payload is not a valid standalone FROG snippet artifact.
+</p>
+
+<h3>14.4 Payload vs rendered image</h3>
+
+<p>
+The rendered image MAY be regenerated from the payload.
+The payload MUST NOT be reconstructed by lossy visual analysis of the rendered image.
+</p>
+
+<hr/>
+
+<h2 id="boundary-endpoints-and-open-connections">15. Boundary Endpoints and Open Connections</h2>
+
+<h3>15.1 Purpose</h3>
 
 <p>
 A snippet is often created from a larger graph fragment that was connected to surrounding content.
 Those external relationships must be represented without pretending that the snippet is a full closed diagram.
 </p>
 
-<h3>13.2 Boundary endpoints</h3>
+<h3>15.2 Boundary endpoints</h3>
 
 <p>
 FROG v0.1 defines conceptual snippet boundary endpoints:
@@ -410,56 +559,59 @@ These are snippet-level transport concepts, not canonical node kinds of the FROG
 They exist only inside the snippet payload model.
 </p>
 
-<h3>13.3 Meaning</h3>
+<h3>15.3 Meaning</h3>
 
 <p>
-A snippet boundary endpoint represents an open connection between the carried fragment and content that was not included in the snippet.
-When the snippet is pasted, the IDE MAY:
+A snippet boundary endpoint represents an open connection between the carried fragment and content that was not included in
+the snippet. When the snippet is imported or dropped, the IDE MAY:
 </p>
 
 <ul>
   <li>leave the corresponding boundary as an unwired open endpoint,</li>
   <li>offer reconnection assistance,</li>
-  <li>or map it to a suitable target connection if the paste operation explicitly defines one.</li>
+  <li>or map it to a suitable target connection if the insertion operation explicitly defines one.</li>
 </ul>
 
-<h3>13.4 Type information</h3>
+<h3>15.4 Type information</h3>
 
 <p>
-When type information is resolvable from the source fragment, a snippet boundary endpoint SHOULD carry that type information so that paste validation can remain deterministic.
+When type information is resolvable from the source fragment, a snippet boundary endpoint SHOULD carry that type information
+so that insertion validation can remain deterministic.
 </p>
 
 <hr/>
 
-<h2 id="reference-closure-and-dependencies">14. Reference Closure and Dependencies</h2>
+<h2 id="reference-closure-and-dependencies">16. Reference Closure and Dependencies</h2>
 
-<h3>14.1 General rule</h3>
+<h3>16.1 General rule</h3>
 
 <p>
 A snippet SHOULD carry the minimum supporting information needed to remain meaningful after transport.
 </p>
 
-<h3>14.2 Primitive references</h3>
+<h3>16.2 Primitive references</h3>
 
 <p>
-Primitive nodes are carried by their canonical type identifiers such as <code>frog.core.add</code> or <code>frog.ui.property_read</code>.
-A snippet does not inline primitive-library definitions.
+Primitive nodes are carried by their canonical type identifiers such as <code>frog.core.add</code> or
+<code>frog.ui.property_read</code>. A snippet does not inline primitive-library definitions.
 </p>
 
-<h3>14.3 Sub-FROG dependencies</h3>
+<h3>16.3 Sub-FROG dependencies</h3>
 
 <p>
-If a snippet contains <code>subfrog</code> nodes, it SHOULD carry the relevant dependency references needed to keep those <code>subfrog.ref</code> identifiers meaningful at paste time.
+If a snippet contains <code>subfrog</code> nodes, it SHOULD carry the relevant dependency references needed to keep those
+<code>subfrog.ref</code> identifiers meaningful at insertion time.
 A snippet does not inline the full referenced dependent FROGs.
 </p>
 
-<h3>14.4 Widget references</h3>
+<h3>16.4 Widget references</h3>
 
 <p>
-If a snippet contains <code>widget_value</code> or <code>widget_reference</code> nodes and is intended to remain portable across documents, it SHOULD carry the required widget definitions through a front-panel fragment or equivalent widget payload.
+If a snippet contains <code>widget_value</code> or <code>widget_reference</code> nodes and is intended to remain portable across
+documents, it SHOULD carry the required widget definitions through a front-panel fragment or equivalent widget payload.
 </p>
 
-<h3>14.5 No unrelated closure</h3>
+<h3>16.5 No unrelated closure</h3>
 
 <p>
 A snippet SHOULD NOT capture unrelated surrounding program content merely to avoid open boundaries.
@@ -468,239 +620,301 @@ Closure should be minimal and semantically relevant.
 
 <hr/>
 
-<h2 id="layout-and-identity-rules">15. Layout and Identity Rules</h2>
+<h2 id="preview-and-presentation">17. Preview and Presentation</h2>
 
-<h3>15.1 Layout preservation</h3>
+<h3>17.1 Preview role</h3>
 
 <p>
-Because FROG is a graphical language, snippet payloads SHOULD preserve layout metadata relevant to visual reinsertion.
+Because the snippet itself is image-backed, preview is not an optional afterthought.
+The visible image is a first-class workflow surface of the snippet artifact.
 </p>
 
-<h3>15.2 Relative positioning</h3>
+<h3>17.2 Visible image expectations</h3>
 
 <p>
-A snippet SHOULD preserve relative geometry between carried objects.
-A transport profile MAY normalize coordinates so that the snippet has a local origin, provided that relative placement remains preserved.
+The rendered snippet image SHOULD make the snippet identifiable to a human viewer.
+Depending on snippet kind, this MAY include:
 </p>
 
-<h3>15.3 Identifier preservation in payload</h3>
+<ul>
+  <li>a diagram thumbnail or cropped fragment view,</li>
+  <li>a front-panel thumbnail,</li>
+  <li>a composite preview of diagram and front panel,</li>
+  <li>a compact title or label,</li>
+  <li>lightweight visual hints for open boundaries.</li>
+</ul>
+
+<h3>17.3 Human-visible but non-authoritative rendering</h3>
 
 <p>
-A snippet MAY preserve original source identifiers inside its payload for traceability.
-However, on paste into a target Program Model, the IDE MUST resolve identifier collisions deterministically.
+The rendered image SHOULD be visually useful and SHOULD correspond to the embedded payload.
+However, if any conflict exists between the visible rendering and the embedded payload, the embedded payload remains authoritative.
 </p>
 
-<h3>15.4 Identifier remapping on paste</h3>
+<h3>17.4 No semantic dependence on OCR or computer vision</h3>
 
 <p>
-If the target FROG already contains an identifier used by the snippet payload, the IDE MUST rename or remap the inserted objects so that identifier uniqueness rules remain valid in the target scope.
+A conforming IDE MUST NOT require OCR, image understanding, or manual tracing to recover snippet meaning from a valid snippet image.
+The structured embedded payload is mandatory precisely to avoid that ambiguity.
 </p>
 
 <hr/>
 
-<h2 id="serialization-model">16. Serialization Model</h2>
+<h2 id="export-semantics">18. Export Semantics</h2>
+
+<h3>18.1 Export operation</h3>
 
 <p>
-FROG v0.1 defines a logical snippet payload model.
-A snippet payload is a structured serialization of snippet content and its snippet-specific transport metadata.
-</p>
-
-<p>
-Conceptually, a snippet payload includes:
+When an IDE exports a snippet, it MUST:
 </p>
 
 <ul>
-  <li>format version,</li>
-  <li>snippet kind,</li>
-  <li>content payload,</li>
-  <li>boundary endpoints,</li>
-  <li>optional transport metadata.</li>
+  <li>capture the selected source-aligned fragment,</li>
+  <li>normalize it into one of the canonical snippet kinds,</li>
+  <li>compute boundary endpoints for cut external connections,</li>
+  <li>attach minimal required dependencies,</li>
+  <li>generate a human-visible rendered image,</li>
+  <li>embed the structured snippet payload into that image-backed carrier.</li>
 </ul>
 
+<h3>18.2 Stable rendering intent</h3>
+
 <p>
-Illustrative high-level shape:
+The visible rendering SHOULD remain stable enough that repeated exports of the same snippet produce recognizably similar images,
+subject to profile-defined rendering policies.
 </p>
 
-<pre><code>{
-  "snippet_version": "0.1",
-  "kind": "diagram_snippet",
-  "payload": { ... },
-  "boundary": { ... },
-  "transport": { ... }
-}</code></pre>
+<h3>18.3 Export safety</h3>
 
 <p>
-This document defines the logical content model, not one mandatory concrete file or clipboard encoding.
-</p>
-
-<hr/>
-
-<h2 id="transport-and-container-profiles">17. Transport and Container Profiles</h2>
-
-<h3>17.1 Transport independence</h3>
-
-<p>
-A snippet MAY be transported through different containers, including:
+An IDE MUST NOT export an image as a valid snippet artifact if:
 </p>
 
 <ul>
-  <li>clipboard transfer,</li>
-  <li>a dedicated snippet file,</li>
-  <li>drag-and-drop payloads,</li>
-  <li>a preview-carrying container defined by a stricter profile.</li>
-</ul>
-
-<h3>17.2 Preview-carrying containers</h3>
-
-<p>
-A stricter profile MAY define a transport container that includes both:
-</p>
-
-<ul>
-  <li>a human-visible preview image, and</li>
-  <li>an embedded machine-readable snippet payload.</li>
-</ul>
-
-<p>
-Such a profile is compatible with this specification provided that the embedded snippet payload remains semantically equivalent to the logical snippet model defined here.
-</p>
-
-<h3>17.3 No mandatory container in v0.1</h3>
-
-<p>
-FROG v0.1 intentionally does not require one mandatory transport container.
-The semantic content of the snippet matters more than the transport wrapper.
-</p>
-
-<hr/>
-
-<h2 id="paste-and-insertion-semantics">18. Paste and Insertion Semantics</h2>
-
-<h3>18.1 General rule</h3>
-
-<p>
-Pasting a snippet means inserting its carried fragment into a target editing context and integrating it into the target Program Model.
-</p>
-
-<h3>18.2 Valid insertion target</h3>
-
-<p>
-A snippet MAY be pasted only into a target context compatible with its snippet kind.
-For example:
-</p>
-
-<ul>
-  <li>a <code>diagram_snippet</code> must be pasted into a compatible diagram scope,</li>
-  <li>a <code>front_panel_snippet</code> must be pasted into a compatible widget-tree context,</li>
-  <li>a <code>composite_snippet</code> requires the IDE to handle both diagram-side and front-panel-side insertion.</li>
-</ul>
-
-<h3>18.3 Paste result</h3>
-
-<p>
-A successful paste operation MUST produce:
-</p>
-
-<ul>
-  <li>valid inserted source objects,</li>
-  <li>collision-free identifiers,</li>
-  <li>preserved relative layout,</li>
-  <li>preserved internal snippet relationships,</li>
-  <li>explicitly represented open boundaries where external reconnection is still required.</li>
-</ul>
-
-<h3>18.4 Reconnection behavior</h3>
-
-<p>
-This document does not require automatic reconnection of open boundaries.
-An IDE MAY provide assisted reconnection or matching heuristics, but if such heuristics are used they MUST remain explicit and reversible from the user’s point of view.
-</p>
-
-<h3>18.5 Validation after paste</h3>
-
-<p>
-The inserted result MUST be validated under the same Program Model and source-validation rules as any other edited content.
-If the pasted result is invalid in the target context, the IDE MUST report that invalidity clearly.
-</p>
-
-<hr/>
-
-<h2 id="validation-and-safety-rules">19. Validation and Safety Rules</h2>
-
-<ul>
-  <li>A snippet MUST declare its snippet kind.</li>
-  <li>A snippet MUST carry only source-aligned objects valid for that snippet kind.</li>
-  <li>A diagram snippet MUST preserve internal source-level relationships among carried nodes, edges, and annotations.</li>
-  <li>A front-panel snippet MUST preserve carried widget-tree relationships.</li>
-  <li>A composite snippet carrying widget-related diagram nodes SHOULD carry the required widget definitions needed for portability.</li>
-  <li>Snippet boundary endpoints MUST NOT be misrepresented as canonical FROG node kinds.</li>
-  <li>Pasting MUST preserve target-scope identifier uniqueness.</li>
-  <li>Pasting MUST NOT silently change carried execution semantics.</li>
-  <li>A snippet MUST NOT be treated as a full executable FROG unless it is explicitly wrapped into one by a stricter profile or tool action.</li>
+  <li>the structured payload is missing,</li>
+  <li>the payload is incomplete for the chosen snippet kind,</li>
+  <li>required dependencies are intentionally omitted in a way that makes deterministic import impossible.</li>
 </ul>
 
 <hr/>
 
-<h2 id="illustrative-examples">20. Illustrative Examples</h2>
+<h2 id="import-paste-and-drag-and-drop-semantics">19. Import, Paste, and Drag-and-Drop Semantics</h2>
 
-<h3>20.1 Minimal diagram snippet</h3>
+<h3>19.1 General rule</h3>
 
-<pre><code>{
-  "snippet_version": "0.1",
-  "kind": "diagram_snippet",
-  "payload": {
+<p>
+A conforming FROG IDE SHOULD treat a dropped or imported image as a candidate snippet artifact when the environment supplies
+an image object or file.
+</p>
+
+<h3>19.2 Decode-first behavior</h3>
+
+<p>
+On snippet import, paste, or drag-and-drop, the IDE MUST first attempt to decode embedded structured snippet payload from the
+image-backed carrier.
+</p>
+
+<p>
+If decoding succeeds and validation succeeds, the IDE SHOULD proceed with snippet insertion semantics.
+If decoding fails, the IDE MUST NOT pretend that the image is a valid snippet.
+It MAY instead:
+</p>
+
+<ul>
+  <li>reject the operation,</li>
+  <li>treat the dropped object as an ordinary image asset if the editor context supports that,</li>
+  <li>report that the image is viewable but not a valid FROG snippet.</li>
+</ul>
+
+<h3>19.3 Insertion semantics</h3>
+
+<p>
+When inserting a valid snippet payload, the IDE SHOULD:
+</p>
+
+<ul>
+  <li>regenerate local identifiers as required to avoid collisions,</li>
+  <li>preserve internal connectivity and internal ownership relationships,</li>
+  <li>preserve carried layout relationships as far as practical,</li>
+  <li>leave external boundaries open unless the insertion operation provides an explicit reconnection rule,</li>
+  <li>preserve semantic distinction between diagram content, front-panel content, and dependencies.</li>
+</ul>
+
+<h3>19.4 Drag-and-drop equivalence</h3>
+
+<p>
+A drag-and-drop workflow using a snippet image SHOULD be semantically equivalent to explicit snippet import from the same carrier.
+The gesture differs; the recovered payload meaning does not.
+</p>
+
+<h3>19.5 Paste from clipboard</h3>
+
+<p>
+If a clipboard operation carries an image-backed snippet artifact or equivalent embedded-payload image data, the IDE SHOULD
+decode and treat it using the same rules as file import or drag-and-drop.
+</p>
+
+<hr/>
+
+<h2 id="validation-and-safety-rules">20. Validation and Safety Rules</h2>
+
+<p>
+A snippet payload MUST be rejected if any of the following is true:
+</p>
+
+<ul>
+  <li>the image carrier does not contain recoverable embedded payload data,</li>
+  <li>the payload kind is missing or invalid,</li>
+  <li>required fragment sections are missing for the declared snippet kind,</li>
+  <li>internal references are inconsistent,</li>
+  <li>the payload violates source-level invariants of the carried content family,</li>
+  <li>the payload depends on unsupported required features of the target profile.</li>
+</ul>
+
+<p>
+A target IDE SHOULD additionally warn when:
+</p>
+
+<ul>
+  <li>the snippet is valid but requires external dependencies that are unavailable,</li>
+  <li>the snippet is structurally valid but contains unresolved boundary endpoints,</li>
+  <li>the visible image appears stale relative to regenerated preview expectations,</li>
+  <li>the snippet was produced by a newer incompatible snippet-profile revision.</li>
+</ul>
+
+<p>
+A snippet image MUST NOT be trusted merely because it looks correct visually.
+Validation MUST be performed on the embedded structured payload.
+</p>
+
+<hr/>
+
+<h2 id="illustrative-examples">21. Illustrative Examples</h2>
+
+<h3>21.1 Diagram snippet payload</h3>
+
+<pre><code class="language-json">{
+  "kind": "frog_snippet",
+  "version": "0.1",
+  "snippet_kind": "diagram_snippet",
+  "diagram_fragment": {
     "nodes": [
-      {
-        "id": "add_1",
-        "kind": "primitive",
-        "type": "frog.core.add",
-        "layout": { "x": 120, "y": 80 }
-      }
+      { "id": "add_1", "kind": "primitive", "type": "frog.core.add" }
     ],
-    "edges": [],
-    "annotations": []
+    "edges": []
   },
-  "boundary": {
+  "boundaries": {
     "inputs": [
-      { "id": "in_a", "port": "a" },
-      { "id": "in_b", "port": "b" }
+      { "id": "b_in_1", "kind": "snippet_input", "type": "f64" }
     ],
     "outputs": [
-      { "id": "out_result", "port": "result" }
+      { "id": "b_out_1", "kind": "snippet_output", "type": "f64" }
     ]
+  },
+  "metadata": {
+    "title": "Adder fragment"
   }
 }</code></pre>
 
-<h3>20.2 Diagram snippet with internal edge and annotation</h3>
+<h3>21.2 Composite snippet payload</h3>
 
-<pre><code>{
-  "snippet_version": "0.1",
-  "kind": "diagram_snippet",
-  "payload": {
+<pre><code class="language-json">{
+  "kind": "frog_snippet",
+  "version": "0.1",
+  "snippet_kind": "composite_snippet",
+  "diagram_fragment": {
     "nodes": [
-      {
-        "id": "mul_1",
-        "kind": "primitive",
-        "type": "frog.core.mul",
-        "layout": { "x": 80, "y": 120 }
-      },
-      {
-        "id": "add_1",
-        "kind": "primitive",
-        "type": "frog.core.add",
-        "layout": { "x": 260, "y": 120 }
-      }
+      { "id": "widget_temp", "kind": "widget_value", "widget_id": "temperature_numeric" }
     ],
-    "edges": [
+    "edges": []
+  },
+  "front_panel_fragment": {
+    "widgets": [
       {
-        "id": "e1",
-        "from": { "node": "mul_1", "port": "result" },
-        "to": { "node": "add_1", "port": "a" }
+        "id": "temperature_numeric",
+        "class": "numeric_indicator",
+        "label": "Temperature",
+        "children": []
       }
-    ],
-    "annotations": [
-      {
-        "id": "ann_1",
-        "kind": "text",
-        "text": "Reusable numeric fragment",
-        "layout": { "x": 80, "
+    ]
+  },
+  "boundaries": {
+    "inputs": [],
+    "outputs": []
+  },
+  "metadata": {
+    "title": "Temperature indicator snippet"
+  }
+}</code></pre>
+
+<h3>21.3 Conceptual image-backed artifact</h3>
+
+<pre><code>+---------------------------------------------+
+| visible snippet image                       |
+|  - diagram or panel preview                 |
+|  - optional title or label                  |
+|  - optional boundary hints                  |
++---------------------------------------------+
+| embedded structured payload                 |
+|  kind = frog_snippet                        |
+|  version = 0.1                              |
+|  snippet_kind = diagram/front_panel/...     |
+|  source-aligned fragment content            |
++---------------------------------------------+</code></pre>
+
+<h3>21.4 Drag-and-drop behavior</h3>
+
+<pre><code>user drags snippet image into FROG IDE
+            │
+            ▼
+IDE detects image-backed candidate artifact
+            │
+            ▼
+IDE decodes embedded structured snippet payload
+            │
+      ┌─────┴─────┐
+      ▼           ▼
+   success      failure
+      │           │
+      ▼           ▼
+validate     reject as snippet
+      │
+      ▼
+insert fragment deterministically</code></pre>
+
+<hr/>
+
+<h2 id="out-of-scope-for-v01">22. Out of Scope for v0.1</h2>
+
+<ul>
+  <li>automatic semantic adaptation across incompatible language profiles,</li>
+  <li>execution directly from snippet images,</li>
+  <li>a mandatory cross-platform clipboard MIME registry,</li>
+  <li>a mandatory OS-level drag-and-drop binary protocol,</li>
+  <li>online snippet marketplaces,</li>
+  <li>cryptographic signing requirements for snippet images,</li>
+  <li>pixel-only recovery of snippet semantics without embedded structured payload.</li>
+</ul>
+
+<hr/>
+
+<h2 id="summary">23. Summary</h2>
+
+<p>
+A FROG snippet is an IDE-layer reusable fragment artifact, but unlike an ordinary detached fragment file, it is intentionally
+defined as an <strong>image-backed snippet carrier</strong>.
+</p>
+
+<ul>
+  <li>it is viewable as an ordinary image outside the IDE,</li>
+  <li>it contains embedded structured snippet payload data,</li>
+  <li>a conforming FROG IDE can recover that payload during import, paste, or drag-and-drop,</li>
+  <li>the embedded payload is authoritative for snippet meaning,</li>
+  <li>the visible image is authoritative for presentation only,</li>
+  <li>the snippet remains a fragment, not a full canonical <code>.frog</code> program.</li>
+</ul>
+
+<p>
+This gives FROG a modern, portable, and visually shareable snippet model that preserves the usability advantage of
+image-based graphical-language reuse while remaining structurally rigorous.
+</p>
