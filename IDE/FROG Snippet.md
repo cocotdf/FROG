@@ -15,7 +15,7 @@ Legacy redirect for the deprecated duplicate snippet specification file<br/>
 
 <p>
 This file is deprecated.
-The canonical FROG snippet specification is:
+The single canonical FROG snippet specification is:
 </p>
 
 <p>
@@ -23,7 +23,7 @@ The canonical FROG snippet specification is:
 </p>
 
 <p>
-This legacy file is retained temporarily only to avoid broken references during repository cleanup and transition.
+This file is retained temporarily only to avoid broken references during repository cleanup and transition.
 It MUST NOT be treated as an independent normative specification.
 </p>
 
@@ -34,23 +34,9 @@ It MUST NOT be treated as an independent normative specification.
 <ul>
   <li><code>IDE/Snippet.md</code> is the single canonical specification for FROG IDE snippets.</li>
   <li>This file is a legacy redirect only.</li>
-  <li>This file MUST NOT define, override, or extend snippet semantics independently.</li>
+  <li>This file MUST NOT define, override, interpret, or extend snippet semantics independently.</li>
   <li>If any conflict appears between this file and <code>IDE/Snippet.md</code>, <code>IDE/Snippet.md</code> always takes precedence.</li>
 </ul>
-
-<hr/>
-
-<h2>Reason for Deprecation</h2>
-
-<p>
-This file duplicated the snippet topic under a competing document name and created unnecessary ambiguity in repository ownership.
-The repository architecture now uses a single canonical snippet specification located at <code>IDE/Snippet.md</code>.
-</p>
-
-<p>
-The canonical specification defines the FROG snippet as an image-backed IDE artifact whose embedded structured payload can be
-decoded by a conforming FROG IDE during import, paste, or drag-and-drop.
-</p>
 
 <hr/>
 
@@ -61,7 +47,7 @@ Any existing internal or external reference to:
 </p>
 
 <p>
-<code>IDE/FROG Snippet.md.</code>
+<code>IDE/FROG Snippet.md</code>
 </p>
 
 <p>
