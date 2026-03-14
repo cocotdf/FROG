@@ -187,8 +187,7 @@ Its required source sections define:
 <ul>
   <li><code>metadata</code> — identity, documentation, authorship, and versioning information,</li>
   <li><code>interface</code> — the public typed inputs and outputs of the program,</li>
-  <li><code>diagram</code> — the executable dataflow graph as canonical source representation,</li>
-  <li><code>front_panel</code> — the user-facing interaction layer and widget composition.</li>
+  <li><code>diagram</code> — the executable dataflow graph as canonical source representation.</li>
 </ul>
 
 <p>
@@ -196,11 +195,17 @@ Its optional source sections MAY define:
 </p>
 
 <ul>
+  <li><code>front_panel</code> — the user-facing interaction layer and widget composition,</li>
   <li><code>connector</code> — the graphical projection of the public interface when the FROG is reused as a node,</li>
   <li><code>icon</code> — the graphical icon associated with the FROG,</li>
   <li><code>ide</code> — IDE-facing editing preferences serialized with the FROG itself,</li>
   <li><code>cache</code> — optional non-authoritative derived data used to accelerate tooling workflows.</li>
 </ul>
+
+<p>
+A FROG MAY therefore be diagram-only.
+A conforming canonical source file does not require a user-facing interaction layer unless such a layer is intentionally part of the program description.
+</p>
 
 <p>
 A <code>.frog</code> file is a transparent source representation.
@@ -330,7 +335,7 @@ Instead:
 
 <ul>
   <li>type information is embedded locally through canonical type expressions,</li>
-  <li>widget instances are embedded inside <code>front_panel</code>,</li>
+  <li>widget instances are embedded inside <code>front_panel</code> when a front panel is present,</li>
   <li>widget interactions are expressed inside <code>diagram</code>.</li>
 </ul>
 
@@ -347,7 +352,6 @@ A canonical <code>.frog</code> source file MUST contain:
   <li><code>metadata</code></li>
   <li><code>interface</code></li>
   <li><code>diagram</code></li>
-  <li><code>front_panel</code></li>
 </ul>
 
 <p>
@@ -355,6 +359,7 @@ A canonical <code>.frog</code> source file MAY additionally contain:
 </p>
 
 <ul>
+  <li><code>front_panel</code></li>
   <li><code>connector</code></li>
   <li><code>icon</code></li>
   <li><code>ide</code></li>
@@ -362,8 +367,9 @@ A canonical <code>.frog</code> source file MAY additionally contain:
 </ul>
 
 <p>
-The <code>front_panel</code> section is required even for programs that may execute in a headless context.
-A runtime MAY ignore the interaction layer at execution time when appropriate, but the section remains part of the canonical source description.
+The <code>front_panel</code> section is optional.
+It SHOULD be present when the FROG intentionally includes a user-facing interaction layer.
+When absent, the FROG is interpreted as a diagram-only program with no serialized front-panel composition.
 </p>
 
 <p>
@@ -432,7 +438,11 @@ and the relevant primitive-library specifications in <code>Libraries/</code>.
 <h3>10.5 Front Panel</h3>
 
 <p>
-Required section defining the user interaction layer of the FROG through widget instances, layout, style, and related UI composition data.
+Optional section defining the user interaction layer of the FROG through widget instances, layout, style, and related UI composition data.
+</p>
+
+<p>
+When absent, the canonical source defines no serialized front-panel composition for that FROG.
 </p>
 
 <p>
@@ -515,7 +525,7 @@ It is a structured UI object with identity, class, role, optional typed value, p
 
 <p>
 The widget model is cross-cutting.
-It governs widget instances contained inside <code>front_panel</code>.
+It governs widget instances contained inside <code>front_panel</code> when that section is present.
 </p>
 
 <h3>11.3 Widget Interaction Model</h3>
@@ -579,7 +589,7 @@ FROG explicitly distinguishes three concepts that may appear related but serve d
 <ul>
   <li><code>interface</code> — the public logical contract of the FROG,</li>
   <li><code>connector</code> — the graphical projection of that public contract when the FROG is reused as a node,</li>
-  <li><code>front_panel</code> — the user-facing interaction layer of the FROG itself.</li>
+  <li><code>front_panel</code> — the optional user-facing interaction layer of the FROG itself.</li>
 </ul>
 
 <h3>12.1 Interface</h3>
@@ -599,7 +609,7 @@ It is graphical mapping, not logical contract.
 <h3>12.3 Front Panel</h3>
 
 <p>
-The front panel defines widgets, layout, and visual interaction for the FROG itself.
+When present, the front panel defines widgets, layout, and visual interaction for the FROG itself.
 It does not define the public API.
 </p>
 
@@ -649,7 +659,7 @@ Validation includes, as applicable:
   <li>interface consistency checks,</li>
   <li>connector consistency checks,</li>
   <li>diagram graph validation,</li>
-  <li>widget and front-panel validation,</li>
+  <li>front-panel and widget validation when <code>front_panel</code> is present,</li>
   <li>widget interaction validation,</li>
   <li>control-structure source validation,</li>
   <li>cycle and local-memory source validation,</li>
@@ -658,7 +668,7 @@ Validation includes, as applicable:
 
 <p>
 Normative execution meaning is derived from the validated program representation interpreted against the relevant language semantics and primitive specifications.
-Optional sections such as <code>icon</code>, <code>ide</code>, and <code>cache</code> MUST NOT redefine executable semantics.
+Optional sections such as <code>front_panel</code>, <code>icon</code>, <code>ide</code>, and <code>cache</code> MUST NOT redefine executable semantics.
 </p>
 
 <hr/>
@@ -692,6 +702,11 @@ When tools emit canonical source, they SHOULD preserve this top-level order:
   "cache": {}
 }</code></pre>
 
+<p>
+That ordering recommendation applies whether optional sections are present or absent.
+Omitted optional sections SHOULD simply be omitted without changing the relative ordering of the remaining emitted sections.
+</p>
+
 <h3>14.2 Stable identifiers</h3>
 
 <p>
@@ -702,7 +717,7 @@ Tools SHOULD preserve stable identifiers for:
   <li>interface ports,</li>
   <li>diagram nodes,</li>
   <li>diagram edges,</li>
-  <li>widget instances,</li>
+  <li>widget instances where a front panel is present,</li>
   <li>annotations where relevant.</li>
 </ul>
 
@@ -766,7 +781,7 @@ Future revisions SHOULD also preserve the core architectural distinctions alread
 <ul>
   <li>source expression versus program model versus execution IR,</li>
   <li>canonical source representation versus normative execution semantics,</li>
-  <li>public interface versus connector versus front panel,</li>
+  <li>public interface versus connector versus optional front panel,</li>
   <li>natural widget value flow versus object-style widget interaction,</li>
   <li>authoritative source sections versus non-authoritative optional artifacts.</li>
 </ul>
