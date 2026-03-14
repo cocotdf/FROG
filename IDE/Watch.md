@@ -72,6 +72,7 @@ Typical watch workflows include:
   <li><strong>Source alignment</strong> — keep watch entries attached to source-visible targets rather than runtime-private implementation objects.</li>
   <li><strong>Debugging support</strong> — make watch entries usable together with pause, resume, stepping, and breakpoints.</li>
   <li><strong>Non-intrusiveness</strong> — ensure that watches do not alter graph execution semantics.</li>
+  <li><strong>Clear layering</strong> — keep watch behavior distinct from probe behavior and from execution semantics themselves.</li>
 </ul>
 
 <hr/>
@@ -113,19 +114,35 @@ This document complements the following specifications:
 </p>
 
 <ul>
-  <li><code>IDE/Readme.md</code> — defines the role of execution observability and debugging in the FROG IDE architecture.</li>
+  <li><code>IDE/Readme.md</code> — defines the role of execution observability, debugging, probes, and watches in the FROG IDE architecture.</li>
   <li><code>IDE/Execution observability.md</code> — defines the source-aligned observable execution events from which watch values are derived.</li>
   <li><code>IDE/Debugging.md</code> — defines pause, resume, stepping, and breakpoint behavior used together with watches.</li>
-  <li><code>IDE/Probes.md</code> — defines local inspection probes and their target semantics.</li>
+  <li><code>IDE/Probes.md</code> — defines local source-attached probes and the distinction between probes and watches.</li>
   <li><code>Expression/Diagram.md</code> — defines source-visible edges, ports, nodes, and annotations.</li>
-  <li><code>Expression/State and cycles.md</code> — defines local-memory semantics, especially for <code>frog.core.delay</code>.</li>
+  <li><code>Expression/State and cycles.md</code> — defines the source-facing representation of local-memory constructs and cycle-facing source constraints.</li>
+  <li><code>Language/State and cycles.md</code> — defines the normative execution semantics of local memory and valid feedback behavior.</li>
   <li><code>Expression/Widget interaction.md</code> — defines explicit UI sequencing through <code>ui_in</code> and <code>ui_out</code>.</li>
+  <li><code>Libraries/Core.md</code> — defines the standardized primitive identity and primitive-local behavior of <code>frog.core.delay</code>.</li>
+  <li><code>Libraries/UI.md</code> — defines standardized executable UI interaction primitives.</li>
 </ul>
 
 <p>
-This document does not redefine execution semantics, breakpoint semantics, or probe semantics.
+This document does not redefine execution semantics, primitive-local behavior, breakpoint semantics, or probe semantics.
 It defines how persistent watch entries consume and present source-aligned observations.
 </p>
+
+<p>
+Accordingly:
+</p>
+
+<ul>
+  <li><code>Expression/</code> remains authoritative for source-visible targets and source identity,</li>
+  <li><code>Language/</code> remains authoritative for normative execution semantics,</li>
+  <li><code>Libraries/</code> remains authoritative for primitive identity, ports, required metadata, and primitive-local behavior,</li>
+  <li><code>IDE/Debugging.md</code> remains authoritative for pause, resume, breakpoint, and stepping controls,</li>
+  <li><code>IDE/Probes.md</code> remains authoritative for local source-attached probe behavior,</li>
+  <li><code>IDE/Watch.md</code> remains authoritative only for persistent centralized watch behavior and meaning.</li>
+</ul>
 
 <hr/>
 
@@ -134,7 +151,7 @@ It defines how persistent watch entries consume and present source-aligned obser
 <h3>5.1 Source-visible targets only</h3>
 
 <p>
-A watch MUST track a source-visible target or a probe-derived source-visible target.
+A watch MUST track a source-visible target.
 It MUST NOT require the user to reason about runtime-private buffers, queues, or scheduler internals.
 </p>
 
@@ -516,6 +533,13 @@ A local-memory watch MUST respect node-instance-local scope.
 It MUST NOT imply shared state across unrelated node instances or across unrelated live FROG instances.
 </p>
 
+<h3>16.4 Meaning</h3>
+
+<p>
+A local-memory watch observes source-aligned local-memory activity associated with the node instance.
+It does not redefine the primitive-local behavior of <code>frog.core.delay</code> or the language-level semantics of local memory.
+</p>
+
 <hr/>
 
 <h2 id="ui-related-watches">17. UI-Related Watches</h2>
@@ -542,6 +566,10 @@ Object-style widget interaction through <code>widget_reference</code>, <code>fro
 <p>
 The <code>ui_in</code> / <code>ui_out</code> sequencing edges are not ordinary data-value edges.
 A stricter profile MAY allow watching such sequencing activity, but it MUST be interpreted as effect-order observation rather than ordinary value observation.
+</p>
+
+<p>
+When such watches are supported, they MUST remain aligned both with the source-facing widget interaction model and with the standardized <code>frog.ui.*</code> primitive definitions.
 </p>
 
 <hr/>
@@ -648,6 +676,7 @@ This expansion behavior is optional in v0.1.
   <li>A watch MUST NOT misrepresent a sequencing observation as an ordinary data value.</li>
   <li>A local-memory watch MUST respect node-instance-local scope.</li>
   <li>A watch MUST NOT imply arbitrary user-defined watch expressions unless a later stricter specification defines them.</li>
+  <li>A watch MUST NOT be presented as a probe unless the IDE explicitly re-exposes the same target through the probe model defined elsewhere.</li>
 </ul>
 
 <hr/>
