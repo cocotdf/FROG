@@ -45,7 +45,7 @@ Object-style interaction beyond the natural primary-value path is represented th
 
 <p>
 Accordingly, this library defines the executable primitive vocabulary for reading properties, writing properties, and invoking methods on widgets.
-It does not redefine the widget object model, the front-panel serialization model, or the general diagram graph structure.
+It does not redefine the widget object model, the front-panel serialization model, the canonical source interaction model, or the general diagram graph structure.
 </p>
 
 <hr/>
@@ -68,11 +68,11 @@ This library defines:
 
 <ul>
   <li>their stable primitive identifiers,</li>
-  <li>their required structural metadata,</li>
+  <li>their required primitive-local metadata,</li>
   <li>their canonical port signatures,</li>
   <li>their typing constraints,</li>
   <li>their sequencing semantics,</li>
-  <li>their validation requirements.</li>
+  <li>their primitive-level validation requirements.</li>
 </ul>
 
 <p>
@@ -84,6 +84,8 @@ This library does <strong>not</strong> define:
   <li>front-panel widget serialization,</li>
   <li>the natural <code>widget_value</code> model,</li>
   <li>the <code>widget_reference</code> node kind itself,</li>
+  <li>the canonical source-level interaction model of widget access,</li>
+  <li>the general primitive-node port-resolution rules of the diagram,</li>
   <li>a first-class event-execution model,</li>
   <li>a generalized widget-reference value type for arbitrary storage or transport.</li>
 </ul>
@@ -98,21 +100,33 @@ In particular:
 </p>
 
 <ul>
-  <li><strong><code>Expression/Diagram.md</code></strong> defines how UI interaction primitives appear as executable graph nodes inside a validated diagram,</li>
+  <li><strong><code>Libraries/Readme.md</code></strong> defines the role of <code>Libraries/</code> as the standard primitive-library layer,</li>
+  <li><strong><code>Expression/Diagram.md</code></strong> defines how UI interaction primitives appear as executable graph nodes inside a validated diagram and how primitive-node ports are resolved,</li>
   <li><strong><code>Expression/Type.md</code></strong> defines the type syntax, compatibility rules, and coercion rules used by primitive ports,</li>
   <li><strong><code>Expression/Front panel.md</code></strong> defines front-panel serialization, including widget instances and <code>ui_libraries</code>,</li>
   <li><strong><code>Expression/Widget.md</code></strong> defines the widget object model, widget classes, properties, methods, parts, and roles,</li>
-  <li><strong><code>Expression/Widget interaction.md</code></strong> defines the canonical source-level interaction model used by these primitives.</li>
+  <li><strong><code>Expression/Widget interaction.md</code></strong> defines the canonical source-facing interaction model used by these primitives.</li>
 </ul>
 
 <p>
 Accordingly, this document does not stand alone.
-It defines the standard primitive catalog for UI interaction, while the rest of the repository defines the source structure and the widget semantics on which this catalog depends.
+It defines the standard primitive catalog for UI interaction, while the rest of the repository defines the source structure and widget semantics on which this catalog depends.
 </p>
+
+<p>
+Ownership is intentionally split as follows:
+</p>
+
+<ul>
+  <li><code>Libraries/UI.md</code> owns the standardized <code>frog.ui.*</code> primitive identities, signatures, primitive typing, sequencing behavior, and primitive-local interaction semantics,</li>
+  <li><code>Expression/Widget interaction.md</code> owns the source-facing interaction model and canonical representation constraints,</li>
+  <li><code>Expression/Diagram.md</code> owns the general primitive-node and widget-node graph representation rules,</li>
+  <li><code>Expression/Widget.md</code> owns widget member availability and widget object structure.</li>
+</ul>
 
 <hr/>
 
-<h2 id="namespace-and-role">4. Namespace and Role of <code>frog.ui</code></a></h2>
+<h2 id="namespace-and-role">4. Namespace and Role of <code>frog.ui</code></h2>
 
 <p>
 The namespace defined by this library is:
@@ -175,7 +189,7 @@ All three primitives:
 </p>
 
 <ul>
-  <li>MUST appear as diagram nodes of kind <code>primitive</code>,</li>
+  <li>MUST be valid primitive identifiers in the active catalog,</li>
   <li>MUST consume a compatible widget reference through required input port <code>ref</code>,</li>
   <li>MAY expose optional sequencing ports <code>ui_in</code> and <code>ui_out</code>,</li>
   <li>MUST use widget metadata declared through <code>widget_member</code> or <code>widget_method</code> as appropriate.</li>
@@ -197,17 +211,14 @@ The primitive identifier is:
 <pre><code>frog.ui.property_read</code></pre>
 
 <p>
-A property read node reads a property value from a widget or widget part and exposes that value to the diagram.
+A property read primitive reads a property value from a widget or widget part and exposes that value to the diagram.
 </p>
 
 <p>
-Required structural fields:
+Required primitive-local metadata:
 </p>
 
 <pre><code>{
-  "id": "read_gain_visible",
-  "kind": "primitive",
-  "type": "frog.ui.property_read",
   "widget_member": {
     "member": "visible"
   }
@@ -240,7 +251,7 @@ However, when the intent is ordinary primary-value dataflow, tools SHOULD prefer
 </p>
 
 <p>
-Semantics:
+Primitive-local semantics:
 </p>
 
 <ul>
@@ -260,17 +271,14 @@ The primitive identifier is:
 <pre><code>frog.ui.property_write</code></pre>
 
 <p>
-A property write node writes a diagram value into a writable property of a widget or widget part.
+A property write primitive writes a diagram value into a writable property of a widget or widget part.
 </p>
 
 <p>
-Required structural fields:
+Required primitive-local metadata:
 </p>
 
 <pre><code>{
-  "id": "write_gain_label",
-  "kind": "primitive",
-  "type": "frog.ui.property_write",
   "widget_member": {
     "part": "label",
     "member": "text"
@@ -305,7 +313,7 @@ For ordinary widget value participation in dataflow, tools SHOULD prefer the nat
 </p>
 
 <p>
-Semantics:
+Primitive-local semantics:
 </p>
 
 <ul>
@@ -325,17 +333,14 @@ The primitive identifier is:
 <pre><code>frog.ui.method_invoke</code></pre>
 
 <p>
-A method invoke node calls a method on a widget or widget part.
+A method invoke primitive calls a method on a widget or widget part.
 </p>
 
 <p>
-Required structural fields:
+Required primitive-local metadata:
 </p>
 
 <pre><code>{
-  "id": "invoke_reset",
-  "kind": "primitive",
-  "type": "frog.ui.method_invoke",
   "widget_method": {
     "name": "reset_to_default"
   }
@@ -366,7 +371,7 @@ Rules:
 </ul>
 
 <p>
-Semantics:
+Primitive-local semantics:
 </p>
 
 <ul>
@@ -417,7 +422,7 @@ These ports:
 
 <p>
 In v0.1, the sequencing token carried by <code>ui_in</code> / <code>ui_out</code> is opaque.
-Its internal runtime representation is implementation-defined, but its ordering meaning in the graph is standardized by this document.
+Its internal runtime representation is implementation-defined, but its ordering meaning between interaction primitives is standardized by this document.
 </p>
 
 <hr/>
@@ -425,18 +430,16 @@ Its internal runtime representation is implementation-defined, but its ordering 
 <h2 id="validation-rules">10. Validation Rules</h2>
 
 <p>
-Implementations MUST enforce the following rules:
+Implementations MUST enforce the following primitive-level rules:
 </p>
 
 <ul>
-  <li>a <code>frog.ui.*</code> primitive MUST appear as a node of kind <code>primitive</code>,</li>
   <li>the primitive identifier MUST be one of the standardized identifiers defined by this document,</li>
-  <li>the node MUST consume a compatible widget reference through required input port <code>ref</code>,</li>
-  <li>a property node MUST declare <code>widget_member</code>,</li>
-  <li>a method node MUST declare <code>widget_method</code>,</li>
-  <li>a widget interaction node MUST NOT identify its target only through ad hoc local string fields unrelated to the widget reference model,</li>
-  <li>ordinary value ports MUST be represented through ordinary diagram edges,</li>
-  <li>explicit UI ordering, when used, MUST be represented through <code>ui_in</code> / <code>ui_out</code> edges.</li>
+  <li>a widget interaction primitive MUST consume a compatible widget reference through required input port <code>ref</code>,</li>
+  <li>a property primitive MUST declare <code>widget_member</code>,</li>
+  <li>a method primitive MUST declare <code>widget_method</code>,</li>
+  <li>primitive-local required ports and optional ports MUST match the standardized signature,</li>
+  <li>primitive-local typing MUST remain valid under the ordinary FROG type rules.</li>
 </ul>
 
 <p>
@@ -452,6 +455,10 @@ Additionally:
 
 <p>
 Invalid widget interaction primitives MUST trigger validation errors.
+</p>
+
+<p>
+Source-level graph-shape constraints such as canonical target representation, widget-reference node shape, and diagram-edge representation remain owned by <code>Expression/Widget interaction.md</code> and <code>Expression/Diagram.md</code>.
 </p>
 
 <hr/>
@@ -571,7 +578,7 @@ These primitives:
 </p>
 
 <ul>
-  <li>operate on widget references,</li>
+  <li>consume widget references,</li>
   <li>use <code>widget_member</code> or <code>widget_method</code> metadata,</li>
   <li>support optional explicit UI sequencing through <code>ui_in</code> / <code>ui_out</code>,</li>
   <li>complement, but do not replace, the natural <code>widget_value</code> path.</li>
