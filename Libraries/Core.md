@@ -1,7 +1,11 @@
+<p align="center">
+  <img src="../FROG logo.svg" alt="FROG logo" width="150" />
+</p>
+
 <h1 align="center">🐸 FROG Core Library Specification</h1>
 
 <p align="center">
-Definition of the minimal standard <strong>frog.core</strong> library for FROG v0.1<br/>
+Definition of the minimal standard <code>frog.core</code> library for FROG v0.1<br/>
 <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -26,7 +30,7 @@ Definition of the minimal standard <strong>frog.core</strong> library for FROG v
   <li><a href="#diagram-representation">14. Diagram Representation</a></li>
   <li><a href="#validation-rules">15. Validation Rules</a></li>
   <li><a href="#examples">16. Examples</a></li>
-  <li><a href="#out-of-scope">17. Out of Scope for v0.1</a></li>
+  <li><a href="#out-of-scope-for-v01">17. Out of Scope for v0.1</a></li>
   <li><a href="#summary">18. Summary</a></li>
 </ul>
 
@@ -35,7 +39,7 @@ Definition of the minimal standard <strong>frog.core</strong> library for FROG v
 <h2 id="overview">1. Overview</h2>
 
 <p>
-This document defines the minimal standard <strong>frog.core</strong> library for FROG v0.1.
+This document defines the minimal standard <code>frog.core</code> library for FROG v0.1.
 </p>
 
 <p>
@@ -76,16 +80,52 @@ This document complements the following specifications:
 </p>
 
 <ul>
-  <li><strong>Expression/Diagram.md</strong> — defines how built-in functions are serialized as diagram nodes.</li>
-  <li><strong>Expression/Type.md</strong> — defines built-in types, type compatibility, and implicit coercion rules.</li>
-  <li><strong>Expression/Control structures.md</strong> — defines standardized language structures, which remain distinct from ordinary primitive functions.</li>
-  <li><strong>Expression/State and cycles.md</strong> — defines explicit local memory and cycle-validity rules that constrain stateful primitives such as <code>frog.core.delay</code>.</li>
+  <li><code>Libraries/Readme.md</code> — defines the role of <code>Libraries/</code> as the standard primitive-library layer.</li>
+  <li><code>Expression/Diagram.md</code> — defines how built-in functions are serialized as diagram nodes.</li>
+  <li><code>Expression/Type.md</code> — defines built-in types, type compatibility, and implicit coercion rules.</li>
+  <li><code>Expression/Control structures.md</code> — defines standardized source-facing language structures, which remain distinct from ordinary primitive functions.</li>
+  <li><code>Expression/State and cycles.md</code> — defines the source-facing representation of explicit local memory and feedback-cycle construction.</li>
+  <li><code>Language/State and cycles.md</code> — defines the normative semantics of local memory and the validity rule for directed cycles.</li>
+  <li><code>IDE/Palette.md</code> — defines how core primitives may be exposed in authoring tools.</li>
 </ul>
 
 <p>
 This document defines the standard built-in core function set.
-It does not redefine the graph structure, the type system, or the cycle-validity rules.
+It does not redefine the graph structure, the type system, the canonical source model, or the cross-cutting semantic rules for valid cycles.
 </p>
+
+<table>
+  <tr>
+    <th align="left">Layer</th>
+    <th align="left">Primary ownership for this topic</th>
+  </tr>
+  <tr>
+    <td><code>Expression/</code></td>
+    <td>Canonical source representation of primitive nodes and local-memory source form</td>
+  </tr>
+  <tr>
+    <td><code>Language/</code></td>
+    <td>Normative execution semantics for local memory and valid cycles</td>
+  </tr>
+  <tr>
+    <td><code>Libraries/</code></td>
+    <td>Standardized primitive identities, ports, metadata, and primitive-local semantics</td>
+  </tr>
+  <tr>
+    <td><code>IDE/</code></td>
+    <td>Palette, authoring, observability, and debugging exposure</td>
+  </tr>
+</table>
+
+<p>
+Accordingly:
+</p>
+
+<ul>
+  <li><code>Libraries/Core.md</code> owns the standardized identity and primitive surface of <code>frog.core.*</code> functions,</li>
+  <li><code>Language/State and cycles.md</code> owns the normative cross-cutting rules that make cyclic graphs valid or invalid,</li>
+  <li><code>Expression/State and cycles.md</code> owns the source-facing representation of that explicit memory in canonical program form.</li>
+</ul>
 
 <hr/>
 
@@ -97,7 +137,7 @@ It contains fundamental built-in functions that do not require user-defined depe
 </p>
 
 <p>
-In language terms, these are called <strong>functions</strong>.
+In language terms, these are called functions.
 In the serialized diagram representation defined by <code>Expression/Diagram.md</code>, calls to these built-in functions are represented as <code>primitive</code> nodes.
 </p>
 
@@ -110,6 +150,11 @@ Therefore:
   <li>in a diagram, that function call appears as a <code>primitive</code> node with <code>type = "frog.core.add"</code>.</li>
 </ul>
 
+<p>
+The role of <code>frog.core</code> is to define the minimal standardized primitive vocabulary required by essentially all FROG programs.
+It is not the place where structural control, widget object modeling, or IDE interaction models are defined.
+</p>
+
 <hr/>
 
 <h2 id="naming-and-namespace">5. Naming and Namespace</h2>
@@ -118,9 +163,7 @@ Therefore:
 FROG uses the following general namespace pattern for built-in and library-defined functions:
 </p>
 
-<pre>
-frog.&lt;library&gt;.&lt;function&gt;
-</pre>
+<pre><code>frog.&lt;library&gt;.&lt;function&gt;</code></pre>
 
 <p>
 For this document:
@@ -136,12 +179,10 @@ For this document:
 Examples:
 </p>
 
-<pre>
-frog.core.add
+<pre><code>frog.core.add
 frog.core.equal
 frog.core.select
-frog.core.delay
-</pre>
+frog.core.delay</code></pre>
 
 <p>
 Function names in <code>frog.core</code> SHOULD use lowercase snake_case where multiple words are needed.
@@ -164,7 +205,7 @@ FROG v0.1 standardizes the following minimal core functions:
 </ul>
 
 <p>
-FROG v0.1 does <strong>not</strong> attempt to define a full mathematical library, tensor library, signal-processing library, control-flow structure catalog, or ONNX operator mapping in this document.
+FROG v0.1 does not attempt to define a full mathematical library, tensor library, signal-processing library, control-flow structure catalog, or ONNX operator mapping in this document.
 </p>
 
 <hr/>
@@ -176,11 +217,11 @@ The minimal <code>frog.core</code> library is organized into the following categ
 </p>
 
 <ul>
-  <li><strong>Arithmetic</strong></li>
-  <li><strong>Comparison</strong></li>
-  <li><strong>Logic</strong></li>
-  <li><strong>Selection</strong></li>
-  <li><strong>Local Memory</strong></li>
+  <li>Arithmetic</li>
+  <li>Comparison</li>
+  <li>Logic</li>
+  <li>Selection</li>
+  <li>Local Memory</li>
 </ul>
 
 <p>
@@ -193,7 +234,7 @@ It does not impose a mandatory palette layout, but it provides a stable foundati
 <h2 id="typing-model">8. Typing Model</h2>
 
 <p>
-All <code>frog.core</code> functions are typed according to <strong>Expression/Type.md</strong>.
+All <code>frog.core</code> functions are typed according to <code>Expression/Type.md</code>.
 </p>
 
 <p>
@@ -213,7 +254,9 @@ In v0.1:
 
 <ul>
   <li>all functions in this document are stateless and side-effect-free, except <code>frog.core.delay</code>,</li>
-  <li><code>frog.core.delay</code> is stateful and MUST be treated as a local-memory primitive constrained by <strong>Expression/State and cycles.md</strong>.</li>
+  <li><code>frog.core.delay</code> is stateful and MUST be treated as a local-memory primitive,</li>
+  <li>the primitive-local state behavior of <code>frog.core.delay</code> is standardized here,</li>
+  <li>the general validity of cycles containing <code>frog.core.delay</code> is governed normatively by <code>Language/State and cycles.md</code>.</li>
 </ul>
 
 <hr/>
@@ -222,9 +265,7 @@ In v0.1:
 
 <h3>9.1 <code>frog.core.add</code></h3>
 
-<p>
-Adds two numeric values.
-</p>
+<p>Adds two numeric values.</p>
 
 <ul>
   <li>input ports: <code>a</code>, <code>b</code></li>
@@ -238,9 +279,7 @@ The output type is the resolved numeric result type.
 
 <h3>9.2 <code>frog.core.sub</code></h3>
 
-<p>
-Subtracts <code>b</code> from <code>a</code>.
-</p>
+<p>Subtracts <code>b</code> from <code>a</code>.</p>
 
 <ul>
   <li>input ports: <code>a</code>, <code>b</code></li>
@@ -249,9 +288,7 @@ Subtracts <code>b</code> from <code>a</code>.
 
 <h3>9.3 <code>frog.core.mul</code></h3>
 
-<p>
-Multiplies two numeric values.
-</p>
+<p>Multiplies two numeric values.</p>
 
 <ul>
   <li>input ports: <code>a</code>, <code>b</code></li>
@@ -260,9 +297,7 @@ Multiplies two numeric values.
 
 <h3>9.4 <code>frog.core.div</code></h3>
 
-<p>
-Divides <code>a</code> by <code>b</code>.
-</p>
+<p>Divides <code>a</code> by <code>b</code>.</p>
 
 <ul>
   <li>input ports: <code>a</code>, <code>b</code></li>
@@ -271,14 +306,12 @@ Divides <code>a</code> by <code>b</code>.
 
 <p>
 Division by zero behavior MUST be defined by the active execution profile for each supported numeric type family.
-The serialized source meaning of the function remains the same.
+The standardized primitive identity and source meaning of the function remain the same.
 </p>
 
 <h3>9.5 <code>frog.core.neg</code></h3>
 
-<p>
-Arithmetic negation of a numeric value.
-</p>
+<p>Arithmetic negation of a numeric value.</p>
 
 <ul>
   <li>input port: <code>in</code></li>
@@ -287,9 +320,7 @@ Arithmetic negation of a numeric value.
 
 <h3>9.6 <code>frog.core.abs</code></h3>
 
-<p>
-Absolute value of a numeric input.
-</p>
+<p>Absolute value of a numeric input.</p>
 
 <ul>
   <li>input port: <code>in</code></li>
@@ -302,9 +333,7 @@ Absolute value of a numeric input.
 
 <h3>10.1 <code>frog.core.equal</code></h3>
 
-<p>
-Returns whether two values are equal.
-</p>
+<p>Returns whether two values are equal.</p>
 
 <ul>
   <li>input ports: <code>a</code>, <code>b</code></li>
@@ -313,32 +342,23 @@ Returns whether two values are equal.
 
 <p>
 The output type is <code>bool</code>.
-</p>
-
-<p>
 In v0.1, equality MUST be supported for built-in scalar types and any other value categories explicitly supported by the active profile.
 </p>
 
 <h3>10.2 <code>frog.core.not_equal</code></h3>
 
-<p>
-Returns whether two values are not equal.
-</p>
+<p>Returns whether two values are not equal.</p>
 
 <ul>
   <li>input ports: <code>a</code>, <code>b</code></li>
   <li>output port: <code>result</code></li>
 </ul>
 
-<p>
-The output type is <code>bool</code>.
-</p>
+<p>The output type is <code>bool</code>.</p>
 
 <h3>10.3 <code>frog.core.less</code></h3>
 
-<p>
-Returns whether <code>a &lt; b</code>.
-</p>
+<p>Returns whether <code>a &lt; b</code>.</p>
 
 <ul>
   <li>input ports: <code>a</code>, <code>b</code></li>
@@ -352,9 +372,7 @@ In v0.1, this function is defined for numeric operands.
 
 <h3>10.4 <code>frog.core.less_or_equal</code></h3>
 
-<p>
-Returns whether <code>a &lt;= b</code>.
-</p>
+<p>Returns whether <code>a &lt;= b</code>.</p>
 
 <ul>
   <li>input ports: <code>a</code>, <code>b</code></li>
@@ -363,9 +381,7 @@ Returns whether <code>a &lt;= b</code>.
 
 <h3>10.5 <code>frog.core.greater</code></h3>
 
-<p>
-Returns whether <code>a &gt; b</code>.
-</p>
+<p>Returns whether <code>a &gt; b</code>.</p>
 
 <ul>
   <li>input ports: <code>a</code>, <code>b</code></li>
@@ -374,9 +390,7 @@ Returns whether <code>a &gt; b</code>.
 
 <h3>10.6 <code>frog.core.greater_or_equal</code></h3>
 
-<p>
-Returns whether <code>a &gt;= b</code>.
-</p>
+<p>Returns whether <code>a &gt;= b</code>.</p>
 
 <ul>
   <li>input ports: <code>a</code>, <code>b</code></li>
@@ -389,25 +403,18 @@ Returns whether <code>a &gt;= b</code>.
 
 <h3>11.1 <code>frog.core.and</code></h3>
 
-<p>
-Boolean conjunction.
-</p>
+<p>Boolean conjunction.</p>
 
 <ul>
   <li>input ports: <code>a</code>, <code>b</code></li>
   <li>output port: <code>result</code></li>
 </ul>
 
-<p>
-Both inputs MUST be <code>bool</code>.
-The output type is <code>bool</code>.
-</p>
+<p>Both inputs MUST be <code>bool</code>. The output type is <code>bool</code>.</p>
 
 <h3>11.2 <code>frog.core.or</code></h3>
 
-<p>
-Boolean disjunction.
-</p>
+<p>Boolean disjunction.</p>
 
 <ul>
   <li>input ports: <code>a</code>, <code>b</code></li>
@@ -416,9 +423,7 @@ Boolean disjunction.
 
 <h3>11.3 <code>frog.core.not</code></h3>
 
-<p>
-Boolean negation.
-</p>
+<p>Boolean negation.</p>
 
 <ul>
   <li>input port: <code>in</code></li>
@@ -427,9 +432,7 @@ Boolean negation.
 
 <h3>11.4 <code>frog.core.xor</code></h3>
 
-<p>
-Boolean exclusive OR.
-</p>
+<p>Boolean exclusive OR.</p>
 
 <ul>
   <li>input ports: <code>a</code>, <code>b</code></li>
@@ -451,9 +454,7 @@ Selects one of two input values based on a boolean condition.
   <li>output port: <code>result</code></li>
 </ul>
 
-<p>
-Rules:
-</p>
+<p>Rules:</p>
 
 <ul>
   <li><code>condition</code> MUST be of type <code>bool</code>,</li>
@@ -464,6 +465,7 @@ Rules:
 <p>
 This function is a data-selection function.
 It is not a general control-flow structure.
+Structural branching remains owned by the standardized <code>case</code> structure family.
 </p>
 
 <hr/>
@@ -478,8 +480,8 @@ It is not a general control-flow structure.
 
 <p>
 It is the only stateful function defined in this document.
-Its cycle-validity constraints and local-memory semantics are defined by <strong>Expression/State and cycles.md</strong>.
-This document defines its standardized function identity, port model, and required configuration surface in the core library.
+This document defines its standardized primitive identity, port model, required configuration surface, and primitive-local delayed-value behavior.
+The normative semantics of local memory as a language concept, and the rule that determines whether a directed cycle is valid, are defined by <code>Language/State and cycles.md</code>.
 </p>
 
 <ul>
@@ -487,9 +489,13 @@ This document defines its standardized function identity, port model, and requir
   <li>output port: <code>out</code></li>
 </ul>
 
-<p>
-Rules:
-</p>
+<p>Required metadata:</p>
+
+<ul>
+  <li><code>initial</code></li>
+</ul>
+
+<p>Rules:</p>
 
 <ul>
   <li><code>in</code> and <code>out</code> MUST have the same type,</li>
@@ -498,18 +504,37 @@ Rules:
 </ul>
 
 <p>
-Conceptual semantics:
+Primitive-local delayed-value model:
 </p>
 
-<pre>
-out(t) = state(t)
+<pre><code>out(t) = state(t)
 state(t + 1) = in(t)
-state(0) = initial
-</pre>
+state(0) = initial</code></pre>
 
 <p>
-This function enables deterministic and explicit feedback in dataflow graphs.
+This function enables deterministic and explicit delayed feedback in dataflow graphs.
+However, the presence of a <code>frog.core.delay</code> node inside a graph does not, by itself, redefine the general language rule for cycles.
+Whether a specific cycle is valid remains governed by <code>Language/State and cycles.md</code>.
 </p>
+
+<h3>13.2 Role of <code>initial</code></h3>
+
+<p>
+The <code>initial</code> field defines the primitive's initial stored value for the first activation.
+In v0.1, this field is mandatory to ensure deterministic initialization of explicit local memory.
+</p>
+
+<h3>13.3 Scope of ownership</h3>
+
+<p>
+For <code>frog.core.delay</code>, ownership is intentionally split as follows:
+</p>
+
+<ul>
+  <li><code>Libraries/Core.md</code> owns the primitive name, required ports, required metadata, and primitive-local delayed-value behavior,</li>
+  <li><code>Expression/State and cycles.md</code> owns the source-facing representation of explicit local memory in canonical graph form,</li>
+  <li><code>Language/State and cycles.md</code> owns the cross-cutting semantic rule that makes a directed cycle valid only when explicit local memory is present.</li>
+</ul>
 
 <hr/>
 
@@ -519,21 +544,17 @@ This function enables deterministic and explicit feedback in dataflow graphs.
 Calls to <code>frog.core</code> functions are serialized as <code>primitive</code> nodes in the diagram.
 </p>
 
-<p>
-Example:
-</p>
+<p>Example:</p>
 
-<pre><code>{
+<pre><code class="language-json">{
   "id": "add_1",
   "kind": "primitive",
   "type": "frog.core.add"
 }</code></pre>
 
-<p>
-Stateful example:
-</p>
+<p>Stateful example:</p>
 
-<pre><code>{
+<pre><code class="language-json">{
   "id": "delay_1",
   "kind": "primitive",
   "type": "frog.core.delay",
@@ -543,6 +564,17 @@ Stateful example:
 <p>
 The exact port existence, direction, and typing of these nodes are resolved from this specification together with the type system and the graph rules.
 </p>
+
+<p>
+Conceptually:
+</p>
+
+<pre><code>primitive node
+   │
+   ├── type = frog.core.&lt;function&gt;
+   ├── standardized ports
+   ├── optional or required metadata
+   └── library-defined primitive meaning</code></pre>
 
 <hr/>
 
@@ -556,126 +588,90 @@ Implementations MUST enforce the following rules:
   <li>every <code>frog.core</code> function reference MUST identify a valid standardized core function name,</li>
   <li>all required input ports for the referenced function MUST exist and be type-compatible,</li>
   <li>all produced output ports MUST match the function definition,</li>
-  <li>all implicit coercions MUST follow <strong>Expression/Type.md</strong>,</li>
+  <li>all implicit coercions MUST follow <code>Expression/Type.md</code>,</li>
   <li>all functions in this document MUST be treated as stateless unless explicitly defined as stateful.</li>
 </ul>
 
-<p>
-For <code>frog.core.delay</code> specifically:
-</p>
+<p>For <code>frog.core.delay</code> specifically:</p>
 
 <ul>
   <li>the node MUST define <code>initial</code>,</li>
   <li><code>initial</code> MUST be type-compatible with the delay state type,</li>
   <li><code>in</code> and <code>out</code> MUST have the same type,</li>
-  <li>the function MUST be treated as a local-memory primitive for cycle validation.</li>
+  <li>the primitive MUST be treated as a local-memory primitive,</li>
+  <li>the graph-level validity of any cycle using that primitive MUST be evaluated according to <code>Language/State and cycles.md</code>.</li>
 </ul>
 
-<p>
-For boolean logic functions:
-</p>
+<p>For boolean logic functions:</p>
 
 <ul>
   <li><code>and</code>, <code>or</code>, <code>not</code>, and <code>xor</code> MUST operate on <code>bool</code> values in v0.1.</li>
 </ul>
 
-<p>
-For comparison functions:
-</p>
+<p>For comparison functions:</p>
 
 <ul>
-  <li><code>less</code>, <code>less_or_equal</code>, <code>greater</code>, and <code>greater_or_equal</code> MUST operate on supported ordered types,</li>
-  <li>in v0.1, numeric support is required.</li>
+  <li><code>less</code>, <code>less_or_equal</code>, <code>greater</code>, and <code>greater_or_equal</code> MUST operate on supported comparable operands, and in base v0.1 they are defined for numeric operands.</li>
 </ul>
 
 <hr/>
 
 <h2 id="examples">16. Examples</h2>
 
-<h3>16.1 Addition</h3>
+<h3>16.1 Arithmetic primitive</h3>
 
-<pre><code>{
+<pre><code class="language-json">{
   "id": "add_1",
   "kind": "primitive",
   "type": "frog.core.add"
 }</code></pre>
 
-<p>
-Conceptual ports:
-</p>
+<h3>16.2 Selection primitive</h3>
 
-<pre>
-a, b → result
-</pre>
-
-<h3>16.2 Boolean selection</h3>
-
-<pre><code>{
+<pre><code class="language-json">{
   "id": "select_1",
   "kind": "primitive",
   "type": "frog.core.select"
 }</code></pre>
 
-<p>
-Conceptual ports:
-</p>
+<h3>16.3 Local-memory primitive</h3>
 
-<pre>
-condition, true_value, false_value → result
-</pre>
-
-<h3>16.3 Delay</h3>
-
-<pre><code>{
+<pre><code class="language-json">{
   "id": "delay_1",
   "kind": "primitive",
   "type": "frog.core.delay",
-  "initial": 0
+  "initial": 0.0
 }</code></pre>
+
+<h3>16.4 Delay used in explicit feedback</h3>
+
+<pre><code>value ───────┐
+             ▼
+        [ frog.core.add ] ───► next_value
+             ▲
+             │
+   [ frog.core.delay ]
+             ▲
+             │
+          feedback</code></pre>
 
 <p>
-Conceptual ports:
+The exact validity of the feedback cycle is not determined by this sketch alone.
+It depends on the language-level cycle-validity rule defined in <code>Language/State and cycles.md</code>.
 </p>
-
-<pre>
-in → out
-</pre>
-
-<h3>16.4 Feedback with delay</h3>
-
-<pre><code>"diagram": {
-  "nodes": [
-    { "id": "input_x", "kind": "interface_input", "interface_port": "x" },
-    { "id": "add_1", "kind": "primitive", "type": "frog.core.add" },
-    { "id": "delay_1", "kind": "primitive", "type": "frog.core.delay", "initial": 0.0 },
-    { "id": "output_y", "kind": "interface_output", "interface_port": "y" }
-  ],
-  "edges": [
-    { "id": "e1", "from": { "node": "input_x", "port": "value" }, "to": { "node": "add_1", "port": "a" } },
-    { "id": "e2", "from": { "node": "delay_1", "port": "out" }, "to": { "node": "add_1", "port": "b" } },
-    { "id": "e3", "from": { "node": "add_1", "port": "result" }, "to": { "node": "delay_1", "port": "in" } },
-    { "id": "e4", "from": { "node": "add_1", "port": "result" }, "to": { "node": "output_y", "port": "value" } }
-  ]
-}</code></pre>
 
 <hr/>
 
-<h2 id="out-of-scope">17. Out of Scope for v0.1</h2>
-
-<p>
-The following are outside the strict scope of <code>frog.core</code> in v0.1:
-</p>
+<h2 id="out-of-scope-for-v01">17. Out of Scope for v0.1</h2>
 
 <ul>
-  <li>advanced mathematics such as trigonometry, exponentials, logarithms, or special functions,</li>
-  <li>tensor-oriented operators,</li>
+  <li>a full mathematical standard library,</li>
+  <li>tensor operators,</li>
   <li>signal-processing operators,</li>
-  <li>ONNX operator compatibility catalogs,</li>
-  <li>bitwise operators,</li>
-  <li>string manipulation functions,</li>
-  <li>array, map, or collection transformation libraries,</li>
-  <li>control-flow structures such as <code>if</code>, <code>for</code>, <code>while</code>, or <code>loop</code>,</li>
-  <li>shared mutable reference models or global-state mechanisms.</li>
+  <li>domain-specific operator packs,</li>
+  <li>implicit memory insertion,</li>
+  <li>hidden stateful primitives beyond the standardized <code>frog.core.delay</code>,</li>
+  <li>redefinition of structural control through primitive functions.</li>
 </ul>
 
 <hr/>
@@ -683,28 +679,18 @@ The following are outside the strict scope of <code>frog.core</code> in v0.1:
 <h2 id="summary">18. Summary</h2>
 
 <p>
-The <code>frog.core</code> library defines the minimal standard built-in function set of FROG v0.1.
-</p>
-
-<p>
-It provides:
+The <code>frog.core</code> library defines the minimal standard built-in primitive vocabulary of FROG.
 </p>
 
 <ul>
-  <li>basic arithmetic,</li>
-  <li>basic comparison,</li>
-  <li>basic boolean logic,</li>
-  <li>simple value selection,</li>
-  <li>explicit local-memory feedback through <code>frog.core.delay</code>.</li>
+  <li>it provides arithmetic, comparison, logical, and simple selection primitives,</li>
+  <li>it also defines the minimal explicit local-memory primitive <code>frog.core.delay</code>,</li>
+  <li>all primitives in this document are standardized as <code>primitive</code> nodes in diagrams,</li>
+  <li><code>frog.core.delay</code> is the only stateful core primitive in base v0.1,</li>
+  <li>primitive identity and required configuration are owned here,</li>
+  <li>graph-wide local-memory and cycle-validity semantics remain owned by <code>Language/State and cycles.md</code>.</li>
 </ul>
 
 <p>
-This library is intentionally small.
-Its purpose is to provide a durable and universal foundation for the language, on top of which richer libraries and higher-level structures may be defined.
-</p>
-
-<hr/>
-
-<p align="center">
-End of FROG Core Library Specification
+This gives FROG a compact, durable, and implementation-portable built-in primitive foundation for v0.1.
 </p>
