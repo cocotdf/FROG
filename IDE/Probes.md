@@ -64,6 +64,7 @@ For v0.1, the canonical probe model is centered on values flowing through edges,
   <li><strong>Source alignment</strong> — keep probes attached to source-visible objects rather than runtime-private artifacts.</li>
   <li><strong>Debugging support</strong> — make probes usable together with pause, resume, breakpoints, and stepping.</li>
   <li><strong>Deterministic meaning</strong> — ensure that probed values correspond to causally committed source-level execution state.</li>
+  <li><strong>Clear layering</strong> — keep probes distinct from centralized watch entries and from execution semantics themselves.</li>
   <li><strong>Extensibility</strong> — allow richer type-specific or custom probes later without changing the base semantics.</li>
 </ul>
 
@@ -107,18 +108,35 @@ This document complements the following specifications:
 </p>
 
 <ul>
-  <li><code>IDE/Readme.md</code> — defines the role of execution observability and debugging within the IDE architecture.</li>
+  <li><code>IDE/Readme.md</code> — defines the role of execution observability, debugging, probes, and watches within the IDE architecture.</li>
   <li><code>IDE/Execution observability.md</code> — defines source-aligned observable execution events such as <code>edge_value_available</code>, <code>state_read</code>, and <code>state_updated</code>.</li>
-  <li><code>IDE/Debugging.md</code> — defines pause, resume, breakpoints, and stepping behavior.</li>
+  <li><code>IDE/Debugging.md</code> — defines pause, resume, breakpoints, and stepping behavior used together with probes.</li>
+  <li><code>IDE/Watch.md</code> — defines persistent centralized inspection and the distinction between watches and probes.</li>
   <li><code>Expression/Diagram.md</code> — defines nodes, ports, edges, and executable graph structure.</li>
-  <li><code>Expression/State and cycles.md</code> — defines local-memory semantics, especially <code>frog.core.delay</code>.</li>
+  <li><code>Expression/State and cycles.md</code> — defines the source-facing representation of local-memory constructs and cycle-facing source constraints.</li>
+  <li><code>Language/State and cycles.md</code> — defines the normative execution semantics of local memory and valid feedback behavior.</li>
   <li><code>Expression/Widget interaction.md</code> — defines explicit UI sequencing through <code>ui_in</code> and <code>ui_out</code>.</li>
+  <li><code>Libraries/Core.md</code> — defines the standardized primitive identity and primitive-local behavior of <code>frog.core.delay</code>.</li>
+  <li><code>Libraries/UI.md</code> — defines standardized executable UI interaction primitives.</li>
 </ul>
 
 <p>
-This document does not redefine execution semantics or debugging controls.
+This document does not redefine execution semantics, primitive-local behavior, or debugging controls.
 It defines how probes attach to source-visible execution objects and what probed observations mean.
 </p>
+
+<p>
+Accordingly:
+</p>
+
+<ul>
+  <li><code>Expression/</code> remains authoritative for source-visible targets and source identity,</li>
+  <li><code>Language/</code> remains authoritative for normative execution semantics,</li>
+  <li><code>Libraries/</code> remains authoritative for primitive identity, ports, required metadata, and primitive-local behavior,</li>
+  <li><code>IDE/Debugging.md</code> remains authoritative for pause, resume, breakpoint, and stepping controls,</li>
+  <li><code>IDE/Watch.md</code> remains authoritative for persistent centralized watch behavior,</li>
+  <li><code>IDE/Probes.md</code> remains authoritative only for source-attached probe behavior and meaning.</li>
+</ul>
 
 <hr/>
 
@@ -152,7 +170,15 @@ Because FROG is dataflow-based, the canonical first-class probe target in v0.1 i
 This preserves the natural debugging model of observing values as they become available in the graph.
 </p>
 
-<h3>5.5 Minimal but extensible</h3>
+<h3>5.5 Local rather than centralized inspection</h3>
+
+<p>
+A probe is a source-attached local inspection object.
+It is not the same thing as a centralized persistent watch entry.
+The base probe model therefore emphasizes attachment to a local source target rather than aggregation into a global watch list.
+</p>
+
+<h3>5.6 Minimal but extensible</h3>
 
 <p>
 The v0.1 probe model is intentionally minimal.
@@ -183,6 +209,7 @@ Conceptually, a probe has:
 <p>
 A probe is not itself part of the FROG Expression.
 It is an IDE/runtime inspection construct layered over a live execution or a retained post-execution view.
+It is also distinct from a watch entry, which belongs to a centralized persistent watch view.
 </p>
 
 <hr/>
@@ -459,8 +486,8 @@ For <code>frog.core.delay</code>, a local-memory probe SHOULD make it possible t
 
 <p>
 A local-memory probe is not just another edge probe.
-It is attached to the stateful semantic object owned by the node instance.
-For <code>frog.core.delay</code>, it therefore observes the node-local memory semantics already defined by source.
+It is attached to the stateful source-aligned object owned by the node instance.
+For <code>frog.core.delay</code>, it therefore observes source-aligned local-memory activity without redefining the primitive-local behavior itself.
 </p>
 
 <h3>14.4 Deterministic interpretation</h3>
@@ -501,6 +528,10 @@ Object-style widget interaction through <code>widget_reference</code>, <code>fro
 <p>
 The <code>ui_in</code> / <code>ui_out</code> sequencing edges are not ordinary data-value edges.
 A stricter profile MAY support probes on these sequencing edges, but such probes MUST be interpreted as effect-order inspection rather than ordinary value inspection.
+</p>
+
+<p>
+When such probes are supported, they MUST remain aligned both with the source-facing widget interaction model and with the standardized <code>frog.ui.*</code> primitive definitions.
 </p>
 
 <hr/>
@@ -570,7 +601,7 @@ A stricter profile MAY additionally support:
 
 <ul>
   <li>pinning a probe window,</li>
-  <li>grouping probes by VI/FROG or by execution instance,</li>
+  <li>grouping probes by FROG or by execution instance,</li>
   <li>sorting by creation order,</li>
   <li>showing last-update timestamps,</li>
   <li>bulk removal.</li>
@@ -624,6 +655,7 @@ If no specialized probe exists for a type, the IDE SHOULD fall back to a generic
   <li>A probe MUST NOT expose a contradictory combination of target identity, execution context, and value.</li>
   <li>A local-memory probe MUST respect the node-instance-local scope of local memory.</li>
   <li>A UI sequencing probe, if supported, MUST NOT be misrepresented as an ordinary data-value probe.</li>
+  <li>A probe MUST NOT be presented as a watch entry unless the IDE explicitly re-exposes it through the watch model defined elsewhere.</li>
 </ul>
 
 <hr/>
@@ -730,6 +762,7 @@ This specification establishes that:
   <li>probe values represent last-known committed observations,</li>
   <li>paused probe views must remain causally consistent,</li>
   <li>retained values are optional and must be clearly identified as such,</li>
+  <li>probes remain distinct from centralized watch entries,</li>
   <li>custom and type-specific probes may exist without changing the base semantics.</li>
 </ul>
 
