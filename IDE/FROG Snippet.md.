@@ -1,722 +1,81 @@
-<h1 align="center">🐸 FROG IDE FROG Snippet Specification</h1>
+<p align="center">
+  <img src="../FROG logo.svg" alt="FROG logo" width="150" />
+</p>
+
+<h1 align="center">🐸 FROG IDE Snippet Legacy Redirect</h1>
 
 <p align="center">
-Definition of reusable snippet artifacts for copy, paste, drag-and-drop, and sharing in a FROG IDE<br/>
+Legacy redirect for the deprecated duplicate snippet specification file<br/>
 <em>FROG — Free Open Graphical Language</em>
 </p>
 
 <hr/>
 
-<h2>Contents</h2>
-
-<ul>
-  <li><a href="#overview">1. Overview</a></li>
-  <li><a href="#goals">2. Goals</a></li>
-  <li><a href="#scope-for-v01">3. Scope for v0.1</a></li>
-  <li><a href="#relation-with-other-specifications">4. Relation with Other Specifications</a></li>
-  <li><a href="#design-principles">5. Design Principles</a></li>
-  <li><a href="#what-a-frog-snippet-is">6. What a FROG Snippet Is</a></li>
-  <li><a href="#snippet-kinds">7. Snippet Kinds</a></li>
-  <li><a href="#transport-forms">8. Transport Forms</a></li>
-  <li><a href="#top-level-model">9. Top-Level Model</a></li>
-  <li><a href="#diagram-fragment-model">10. Diagram Fragment Model</a></li>
-  <li><a href="#front-panel-fragment-model">11. Front Panel Fragment Model</a></li>
-  <li><a href="#selection-closure-rules">12. Selection Closure Rules</a></li>
-  <li><a href="#snippet-boundaries">13. Snippet Boundaries</a></li>
-  <li><a href="#dependencies-and-references">14. Dependencies and References</a></li>
-  <li><a href="#preview-and-presentation">15. Preview and Presentation</a></li>
-  <li><a href="#export-semantics">16. Export Semantics</a></li>
-  <li><a href="#import-semantics">17. Import Semantics</a></li>
-  <li><a href="#validation-rules">18. Validation Rules</a></li>
-  <li><a href="#illustrative-examples">19. Illustrative Examples</a></li>
-  <li><a href="#out-of-scope-for-v01">20. Out of Scope for v0.1</a></li>
-  <li><a href="#summary">21. Summary</a></li>
-  <li><a href="#license">22. License</a></li>
-</ul>
-
-<hr/>
-
-<h2 id="overview">1. Overview</h2>
+<h2>Overview</h2>
 
 <p>
-This document defines the <strong>FROG Snippet</strong> model used by a FROG IDE for reusable partial program artifacts.
-A FROG Snippet is an IDE-level artifact intended for copy/paste, drag-and-drop, sharing, and reuse of source-aligned fragments.
+This file is deprecated.
+The canonical FROG snippet specification is:
 </p>
 
 <p>
-A FROG Snippet is <strong>not</strong> the canonical source representation of a full program.
-The canonical source representation of a full program remains the <code>.frog</code> file defined by the FROG Expression layer.
+<strong><code>IDE/Snippet.md</code></strong>
 </p>
 
 <p>
-A snippet captures a reusable fragment of authoring state, typically including:
-</p>
-
-<ul>
-  <li>a selected diagram fragment,</li>
-  <li>an optional related front-panel fragment,</li>
-  <li>local layout and editor-facing information needed for reuse,</li>
-  <li>boundary information for connections cut by the selection,</li>
-  <li>optional preview data.</li>
-</ul>
-
-<p>
-The purpose of a snippet is to make reuse fast and tool-friendly without collapsing the language into a closed editor-specific format.
+This legacy file is retained temporarily only to avoid broken references during repository cleanup and transition.
+It MUST NOT be treated as an independent normative specification.
 </p>
 
 <hr/>
 
-<h2 id="goals">2. Goals</h2>
+<h2>Normative Status</h2>
 
 <ul>
-  <li><strong>Reuse</strong> — allow users to capture and reinsert useful diagram and UI fragments quickly.</li>
-  <li><strong>Portability</strong> — allow snippet exchange across FROG-compatible IDEs without requiring a full project export.</li>
-  <li><strong>Source alignment</strong> — keep snippet content expressible in terms of source-level FROG objects.</li>
-  <li><strong>Structural safety</strong> — ensure that snippets preserve valid ownership, scope, and fragment boundaries.</li>
-  <li><strong>Extensibility</strong> — allow richer previews, metadata, and packaging later without changing the base semantic model.</li>
+  <li><code>IDE/Snippet.md</code> is the single canonical specification for FROG IDE snippets.</li>
+  <li>This file is a legacy redirect only.</li>
+  <li>This file MUST NOT define, override, or extend snippet semantics independently.</li>
+  <li>If any conflict appears between this file and <code>IDE/Snippet.md</code>, <code>IDE/Snippet.md</code> always takes precedence.</li>
 </ul>
 
 <hr/>
 
-<h2 id="scope-for-v01">3. Scope for v0.1</h2>
+<h2>Reason for Deprecation</h2>
 
 <p>
-For FROG v0.1, this document standardizes:
+This file duplicated the snippet topic under a competing document name and created unnecessary ambiguity in repository ownership.
+The repository architecture now uses a single canonical snippet specification located at <code>IDE/Snippet.md</code>.
 </p>
 
-<ul>
-  <li>the concept of a FROG Snippet,</li>
-  <li>the distinction between snippet artifacts and canonical program source,</li>
-  <li>the minimal top-level snippet structure,</li>
-  <li>diagram-fragment snippets,</li>
-  <li>front-panel-fragment snippets,</li>
-  <li>paired diagram + front-panel snippets,</li>
-  <li>selection-closure and boundary rules,</li>
-  <li>basic export and import semantics.</li>
-</ul>
-
 <p>
-FROG v0.1 does <strong>not</strong> standardize:
-</p>
-
-<ul>
-  <li>a mandatory clipboard protocol,</li>
-  <li>a mandatory drag-and-drop protocol,</li>
-  <li>a mandatory repository packaging format for snippet libraries,</li>
-  <li>marketplace-style snippet distribution,</li>
-  <li>signed snippet packages,</li>
-  <li>live executable snippet previews,</li>
-  <li>automatic semantic adaptation of snippets across incompatible profiles.</li>
-</ul>
-
-<hr/>
-
-<h2 id="relation-with-other-specifications">4. Relation with Other Specifications</h2>
-
-<p>
-This document complements the following specifications:
-</p>
-
-<ul>
-  <li><code>IDE/Readme.md</code> — defines the role of the IDE, the Program Model, and source-aligned editing responsibilities.</li>
-  <li><code>IDE/Palette.md</code> — defines how reusable authoring elements may be surfaced within the IDE.</li>
-  <li><code>Expression/Diagram.md</code> — defines the executable graph, source-level node kinds, ports, and edges.</li>
-  <li><code>Expression/Front panel.md</code> — defines front-panel widget composition and UI structure.</li>
-  <li><code>Expression/Widget.md</code> — defines the widget object model and widget identity rules.</li>
-</ul>
-
-<p>
-A FROG Snippet is an IDE artifact derived from Program Model content and source-level concepts.
-It does not replace the full FROG Expression and does not redefine the serialized structure of a complete <code>.frog</code> file.
+The canonical specification defines the FROG snippet as an image-backed IDE artifact whose embedded structured payload can be
+decoded by a conforming FROG IDE during import, paste, or drag-and-drop.
 </p>
 
 <hr/>
 
-<h2 id="design-principles">5. Design Principles</h2>
-
-<h3>5.1 Snippet is not full source</h3>
+<h2>Migration Rule</h2>
 
 <p>
-A FROG Snippet MUST be treated as a partial reusable artifact.
-It MUST NOT be treated as a complete canonical program source unless it independently satisfies the rules of a full FROG Expression, which is outside the purpose of this document.
+Any existing internal or external reference to:
 </p>
 
-<h3>5.2 Source-level structure first</h3>
-
 <p>
-Snippet content MUST be expressible in terms of source-level objects such as nodes, edges, widget subtrees, regions, and editor-facing fragment metadata.
-It MUST NOT depend on runtime-private representations.
+<code>IDE/FROG Snippet.md.</code>
 </p>
 
-<h3>5.3 Structural closure</h3>
-
 <p>
-A snippet MUST preserve ownership and scope boundaries.
-Selections that cut across ownership in invalid ways MUST be rejected or normalized before export.
+SHOULD be updated to:
 </p>
 
-<h3>5.4 Non-authoritative preview</h3>
-
 <p>
-A snippet MAY contain preview information such as a thumbnail or lightweight display metadata.
-Such preview information is non-authoritative and MUST NOT redefine snippet semantics.
-</p>
-
-<h3>5.5 Import safety</h3>
-
-<p>
-Importing a snippet MUST preserve source-level validity rules of the target Program Model.
-Identifiers, ownership, and boundary connections MUST be normalized during import.
+<code>IDE/Snippet.md</code>
 </p>
 
 <hr/>
 
-<h2 id="what-a-frog-snippet-is">6. What a FROG Snippet Is</h2>
+<h2>Future Repository Cleanup</h2>
 
 <p>
-A FROG Snippet is a reusable IDE artifact representing a selected source-aligned fragment.
-It is typically created from an IDE selection and later inserted into another location through paste, drag-and-drop, or snippet import.
-</p>
-
-<p>
-A snippet may represent:
-</p>
-
-<ul>
-  <li>a diagram-only fragment,</li>
-  <li>a front-panel-only fragment,</li>
-  <li>a paired fragment that includes both diagram and front-panel content.</li>
-</ul>
-
-<p>
-A snippet may also contain boundary descriptors for connections or references that were cut by the selection.
-This allows an IDE to preserve fragment meaning without pretending that the fragment is already a complete stand-alone program.
-</p>
-
-<hr/>
-
-<h2 id="snippet-kinds">7. Snippet Kinds</h2>
-
-<p>
-The canonical snippet kinds for FROG v0.1 are:
-</p>
-
-<ul>
-  <li><code>diagram_snippet</code> — a diagram fragment only,</li>
-  <li><code>front_panel_snippet</code> — a front-panel fragment only,</li>
-  <li><code>paired_snippet</code> — a diagram fragment plus an associated front-panel fragment.</li>
-</ul>
-
-<p>
-A FROG IDE SHOULD support <code>diagram_snippet</code> as the minimal required kind.
-Support for <code>front_panel_snippet</code> and <code>paired_snippet</code> is strongly recommended.
-</p>
-
-<hr/>
-
-<h2 id="transport-forms">8. Transport Forms</h2>
-
-<h3>8.1 General rule</h3>
-
-<p>
-A snippet is a conceptual artifact.
-An implementation MAY transport it through:
-</p>
-
-<ul>
-  <li>clipboard payloads,</li>
-  <li>drag-and-drop payloads,</li>
-  <li>standalone snippet files,</li>
-  <li>project-local snippet libraries,</li>
-  <li>other equivalent IDE-managed transport forms.</li>
-</ul>
-
-<h3>8.2 Standalone file form</h3>
-
-<p>
-For portable file-based exchange, FROG v0.1 defines the canonical standalone snippet extension:
-</p>
-
-<pre><code>.frogsnippet</code></pre>
-
-<p>
-The canonical snippet file payload is a structured text representation intended to be tool-readable and version-control-friendly.
-A preview image MAY be stored alongside or embedded as non-authoritative auxiliary data.
-</p>
-
-<h3>8.3 No image-carrier requirement</h3>
-
-<p>
-FROG v0.1 does not require snippets to be encoded inside an image carrier.
-A preview image MAY exist, but the canonical snippet meaning is defined by structured snippet data rather than by steganographic or image-only transport.
-</p>
-
-<hr/>
-
-<h2 id="top-level-model">9. Top-Level Model</h2>
-
-<p>
-The canonical top-level shape of a snippet artifact is conceptually:
-</p>
-
-<pre><code>{
-  "kind": "frog_snippet",
-  "version": "0.1",
-  "snippet_kind": "diagram_snippet | front_panel_snippet | paired_snippet",
-  "diagram_fragment": { ... },
-  "front_panel_fragment": { ... },
-  "boundaries": { ... },
-  "dependencies": { ... },
-  "preview": { ... },
-  "metadata": { ... }
-}</code></pre>
-
-<p>
-Rules:
-</p>
-
-<ul>
-  <li><code>kind</code> MUST be <code>frog_snippet</code>,</li>
-  <li><code>version</code> MUST identify the snippet-format version,</li>
-  <li><code>snippet_kind</code> MUST identify the snippet category,</li>
-  <li><code>diagram_fragment</code> MUST be present for <code>diagram_snippet</code> and <code>paired_snippet</code>,</li>
-  <li><code>front_panel_fragment</code> MUST be present for <code>front_panel_snippet</code> and <code>paired_snippet</code>.</li>
-</ul>
-
-<p>
-Auxiliary sections such as <code>preview</code>, <code>metadata</code>, and implementation-private editor hints MAY be present provided that they remain non-authoritative.
-</p>
-
-<hr/>
-
-<h2 id="diagram-fragment-model">10. Diagram Fragment Model</h2>
-
-<p>
-A diagram fragment represents a selected subset of one diagram scope.
-It MUST be expressible using the same source-level concepts used by the FROG diagram model, including:
-</p>
-
-<ul>
-  <li>selected nodes,</li>
-  <li>selected edges between those nodes,</li>
-  <li>annotations and local layout information,</li>
-  <li>boundary descriptors for cut external connections.</li>
-</ul>
-
-<p>
-A diagram fragment MUST belong to exactly one source diagram scope.
-It MUST NOT mix content from multiple independent diagram scopes in one fragment unless a stricter profile defines a normalized representation for doing so.
-</p>
-
-<p>
-The fragment MAY include:
-</p>
-
-<ul>
-  <li>primitive nodes,</li>
-  <li>structure nodes,</li>
-  <li>sub-FROG nodes,</li>
-  <li>interface boundary nodes when meaningful in the local source context,</li>
-  <li><code>widget_value</code> nodes,</li>
-  <li><code>widget_reference</code> nodes,</li>
-  <li>comments and documentation annotations,</li>
-  <li>local geometry or editor layout hints.</li>
-</ul>
-
-<hr/>
-
-<h2 id="front-panel-fragment-model">11. Front Panel Fragment Model</h2>
-
-<p>
-A front-panel fragment represents one or more selected widget subtrees and their local layout and presentation information.
-It MUST use source-level front-panel and widget concepts rather than editor-private rendered surfaces.
-</p>
-
-<p>
-A front-panel fragment MAY include:
-</p>
-
-<ul>
-  <li>widget subtree roots,</li>
-  <li>nested child widgets,</li>
-  <li>layout and styling properties,</li>
-  <li>non-authoritative editor hints for placement or grouping.</li>
-</ul>
-
-<p>
-A front-panel fragment MUST preserve widget ownership correctly.
-A snippet MUST NOT contain a cut partial widget object that omits required subtree structure.
-</p>
-
-<p>
-For a <code>paired_snippet</code>, the front-panel fragment MAY be associated with diagram-side widget-related nodes contained in the paired diagram fragment.
-</p>
-
-<hr/>
-
-<h2 id="selection-closure-rules">12. Selection Closure Rules</h2>
-
-<h3>12.1 Diagram-scope closure</h3>
-
-<p>
-A diagram snippet MUST be structurally closed with respect to diagram ownership.
-A selection that cuts across incompatible ownership boundaries MUST be rejected or normalized before snippet export.
-</p>
-
-<h3>12.2 Region closure</h3>
-
-<p>
-If a selection includes content inside a structure-owned region, the selection MUST remain valid with respect to that region.
-A snippet MUST NOT silently flatten or distort region ownership.
-</p>
-
-<p>
-For v0.1:
-</p>
-
-<ul>
-  <li>a snippet MAY contain content wholly inside one region,</li>
-  <li>a snippet MAY contain a structure node together with its owned regions,</li>
-  <li>a snippet MUST NOT export a semantically broken partial structure ownership graph.</li>
-</ul>
-
-<h3>12.3 Front-panel closure</h3>
-
-<p>
-A front-panel snippet MUST be closed with respect to widget ownership.
-It MAY contain one or more complete widget subtrees.
-It MUST NOT export an invalid partial widget subtree.
-</p>
-
-<h3>12.4 Mixed-scope rejection</h3>
-
-<p>
-If the user selection mixes incompatible source ownership scopes and the IDE cannot normalize them safely, snippet export MUST fail rather than producing a semantically misleading snippet.
-</p>
-
-<hr/>
-
-<h2 id="snippet-boundaries">13. Snippet Boundaries</h2>
-
-<h3>13.1 Purpose</h3>
-
-<p>
-A snippet often cuts connections to objects that are outside the selection.
-Those cut connections MUST be represented explicitly as snippet boundaries rather than being silently discarded.
-</p>
-
-<h3>13.2 Boundary descriptors</h3>
-
-<p>
-A snippet boundary descriptor conceptually identifies:
-</p>
-
-<ul>
-  <li>an exposed incoming requirement into the snippet fragment,</li>
-  <li>an exposed outgoing result from the snippet fragment,</li>
-  <li>the local node and port involved,</li>
-  <li>the expected type when known.</li>
-</ul>
-
-<h3>13.3 Meaning</h3>
-
-<p>
-Boundary descriptors do not turn the snippet into a full callable FROG.
-They simply preserve the local fragment interface produced by selection cutting.
-</p>
-
-<p>
-An IDE MAY visualize these boundaries as:
-</p>
-
-<ul>
-  <li>dangling snippet ports,</li>
-  <li>preview connectors,</li>
-  <li>paste-time attachment handles.</li>
-</ul>
-
-<hr/>
-
-<h2 id="dependencies-and-references">14. Dependencies and References</h2>
-
-<p>
-A snippet MAY reference external dependencies required for correct reuse, such as:
-</p>
-
-<ul>
-  <li>standard primitive namespaces,</li>
-  <li>sub-FROG references,</li>
-  <li>UI library references,</li>
-  <li>type names or profile-related requirements.</li>
-</ul>
-
-<p>
-For v0.1, dependency declarations SHOULD remain lightweight.
-They are intended to help import validation and user feedback, not to define a full package-management system.
-</p>
-
-<p>
-A snippet MUST NOT claim that referenced external dependencies are embedded unless they are actually included in the snippet artifact.
-</p>
-
-<hr/>
-
-<h2 id="preview-and-presentation">15. Preview and Presentation</h2>
-
-<p>
-A snippet MAY contain a non-authoritative preview used by IDEs for browsing, drag-and-drop, or gallery presentation.
-Examples include:
-</p>
-
-<ul>
-  <li>a diagram thumbnail,</li>
-  <li>a front-panel thumbnail,</li>
-  <li>a compact label or title,</li>
-  <li>a short description.</li>
-</ul>
-
-<p>
-Preview data MUST remain non-authoritative.
-The snippet’s semantic meaning is defined by its structured fragment content, not by its preview rendering.
-</p>
-
-<hr/>
-
-<h2 id="export-semantics">16. Export Semantics</h2>
-
-<h3>16.1 General rule</h3>
-
-<p>
-Snippet export is performed from the current Program Model selection.
-The export process MUST preserve source-level fragment meaning while normalizing the selection into a structurally valid snippet artifact.
-</p>
-
-<h3>16.2 Export responsibilities</h3>
-
-<p>
-An exporting IDE SHOULD:
-</p>
-
-<ul>
-  <li>capture selected source-level objects,</li>
-  <li>preserve internal connectivity within the selection,</li>
-  <li>derive explicit boundary descriptors for cut external connections,</li>
-  <li>capture enough local layout information for useful reinsertion,</li>
-  <li>record minimal dependency information needed for later validation.</li>
-</ul>
-
-<h3>16.3 Identifier normalization</h3>
-
-<p>
-Snippet-local identifiers MAY be preserved for internal consistency within the snippet artifact.
-However, they MUST NOT be assumed to remain globally unique when the snippet is imported into another Program Model.
-</p>
-
-<hr/>
-
-<h2 id="import-semantics">17. Import Semantics</h2>
-
-<h3>17.1 General rule</h3>
-
-<p>
-Snippet import inserts the snippet fragment into a target Program Model and target editing context.
-The imported result MUST satisfy the same source-level validity rules that apply to ordinary edited content.
-</p>
-
-<h3>17.2 Identifier regeneration</h3>
-
-<p>
-When necessary, an importing IDE MUST regenerate identifiers so that imported snippet objects do not collide with existing Program Model identifiers.
-</p>
-
-<h3>17.3 Internal preservation</h3>
-
-<p>
-Import MUST preserve:
-</p>
-
-<ul>
-  <li>the internal node set,</li>
-  <li>the internal edge topology,</li>
-  <li>owned regions and scopes,</li>
-  <li>widget subtree ownership,</li>
-  <li>source-level object relationships.</li>
-</ul>
-
-<h3>17.4 Boundary reconnection</h3>
-
-<p>
-Snippet boundaries MAY remain disconnected after import.
-An IDE MAY help the user reconnect them, but such reconnection MUST be explicit or clearly user-directed.
-Import MUST NOT silently invent semantic connections.
-</p>
-
-<h3>17.5 Context mismatch</h3>
-
-<p>
-If the target insertion context is incompatible with the snippet content, the IDE MUST reject the import or request user-guided normalization.
-Examples include:
-</p>
-
-<ul>
-  <li>incompatible structure ownership,</li>
-  <li>missing required widget context,</li>
-  <li>profile-incompatible primitive dependencies,</li>
-  <li>unsupported UI libraries.</li>
-</ul>
-
-<hr/>
-
-<h2 id="validation-rules">18. Validation Rules</h2>
-
-<ul>
-  <li>A snippet MUST be structurally valid with respect to its selected ownership scopes.</li>
-  <li>A snippet MUST NOT pretend to be a full canonical <code>.frog</code> program unless it independently satisfies the rules of full source, which is outside the base snippet purpose.</li>
-  <li>A diagram snippet MUST preserve internal connectivity and represent cut external connections explicitly through boundaries when relevant.</li>
-  <li>A front-panel snippet MUST preserve valid widget subtree ownership.</li>
-  <li>A paired snippet MUST preserve the intended association between its diagram-side and front-panel-side content.</li>
-  <li>Import MUST regenerate identifiers where needed to preserve Program Model uniqueness.</li>
-  <li>Import MUST NOT silently create semantic connections not represented by the snippet or explicitly requested by the user.</li>
-</ul>
-
-<hr/>
-
-<h2 id="illustrative-examples">19. Illustrative Examples</h2>
-
-<h3>19.1 Minimal diagram snippet</h3>
-
-<pre><code>{
-  "kind": "frog_snippet",
-  "version": "0.1",
-  "snippet_kind": "diagram_snippet",
-  "diagram_fragment": {
-    "nodes": [
-      { "id": "n1", "kind": "primitive", "type": "frog.core.add" },
-      { "id": "n2", "kind": "primitive", "type": "frog.core.mul" }
-    ],
-    "edges": [
-      {
-        "id": "e1",
-        "from": { "node": "n1", "port": "result" },
-        "to": { "node": "n2", "port": "a" }
-      }
-    ]
-  },
-  "boundaries": {
-    "inputs": [
-      { "node": "n1", "port": "a", "type": "float64" },
-      { "node": "n1", "port": "b", "type": "float64" },
-      { "node": "n2", "port": "b", "type": "float64" }
-    ],
-    "outputs": [
-      { "node": "n2", "port": "result", "type": "float64" }
-    ]
-  }
-}</code></pre>
-
-<h3>19.2 Front-panel snippet</h3>
-
-<pre><code>{
-  "kind": "frog_snippet",
-  "version": "0.1",
-  "snippet_kind": "front_panel_snippet",
-  "front_panel_fragment": {
-    "widgets": [
-      {
-        "id": "temperature_numeric",
-        "class": "numeric_indicator",
-        "label": "Temperature",
-        "children": []
-      }
-    ]
-  },
-  "preview": {
-    "title": "Temperature indicator"
-  }
-}</code></pre>
-
-<h3>19.3 Paired snippet with widget participation</h3>
-
-<pre><code>{
-  "kind": "frog_snippet",
-  "version": "0.1",
-  "snippet_kind": "paired_snippet",
-  "diagram_fragment": {
-    "nodes": [
-      { "id": "w1", "kind": "widget_value", "widget_id": "gain_knob" },
-      { "id": "n1", "kind": "primitive", "type": "frog.core.mul" }
-    ],
-    "edges": [
-      {
-        "id": "e1",
-        "from": { "node": "w1", "port": "value" },
-        "to": { "node": "n1", "port": "a" }
-      }
-    ]
-  },
-  "front_panel_fragment": {
-    "widgets": [
-      {
-        "id": "gain_knob",
-        "class": "numeric_knob",
-        "label": "Gain",
-        "children": []
-      }
-    ]
-  },
-  "boundaries": {
-    "inputs": [
-      { "node": "n1", "port": "b", "type": "float64" }
-    ],
-    "outputs": [
-      { "node": "n1", "port": "result", "type": "float64" }
-    ]
-  }
-}</code></pre>
-
-<hr/>
-
-<h2 id="out-of-scope-for-v01">20. Out of Scope for v0.1</h2>
-
-<ul>
-  <li>signed snippet packages,</li>
-  <li>marketplace distribution metadata,</li>
-  <li>full snippet library package management,</li>
-  <li>automatic semantic rewrites during import,</li>
-  <li>guaranteed cross-profile auto-conversion,</li>
-  <li>image-only canonical snippet carriers,</li>
-  <li>live executable previews,</li>
-  <li>security sandboxing for arbitrary snippet payload execution.</li>
-</ul>
-
-<hr/>
-
-<h2 id="summary">21. Summary</h2>
-
-<p>
-A FROG Snippet is a reusable IDE artifact for partial program reuse.
-It is not the canonical source representation of a full FROG program.
-Instead, it captures a structurally valid source-aligned fragment that may later be reinserted into a Program Model.
-</p>
-
-<p>
-This specification establishes that:
-</p>
-
-<ul>
-  <li>snippets belong to the IDE layer rather than the canonical full-program source layer,</li>
-  <li>the canonical portable standalone snippet extension is <code>.frogsnippet</code>,</li>
-  <li>snippets may be diagram-only, front-panel-only, or paired,</li>
-  <li>snippets must preserve ownership and structural closure,</li>
-  <li>cut external connections are represented explicitly as snippet boundaries,</li>
-  <li>import preserves internal fragment meaning while regenerating identifiers as needed,</li>
-  <li>preview data is optional and non-authoritative.</li>
-</ul>
-
-<hr/>
-
-<h2 id="license">22. License</h2>
-
-<p>
-This specification is part of the FROG repository and is governed by the repository license and contribution rules.
+This file MAY be removed entirely in a future repository cleanup pass once all references have been updated.
 </p>
