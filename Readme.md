@@ -63,6 +63,11 @@ FROG is designed to remain independent from any specific IDE, compiler, runtime,
 This separation provides a durable basis for multiple independent implementations and long-term industrial interoperability.
 </p>
 
+<p>
+This repository exists to define the <strong>FROG standard itself</strong>.
+It is the place where the language specification is written so that future actors may implement FROG-compatible IDEs, runtimes, compilers, validation tools, and related ecosystem components while targeting the same open standard.
+</p>
+
 <hr/>
 
 <h2 id="positioning">Positioning</h2>
@@ -173,6 +178,11 @@ FROG exists to define an <strong>open language specification</strong> for graphi
   <li>any single compiler,</li>
   <li>any single hardware vendor.</li>
 </ul>
+
+<p>
+This repository therefore defines the language standard and the complete surrounding specification needed to support future conforming implementations.
+The objective is to make it possible for different actors to build compatible FROG tooling while respecting one shared open language definition.
+</p>
 
 <p>
 <strong>FROG is not an IDE.</strong><br/>
@@ -445,7 +455,7 @@ It currently contains:
   <li><code>Debugging.md</code> — interactive debugging semantics for FROG IDEs,</li>
   <li><code>Probes.md</code> — source-aligned live inspection probes for values and execution state,</li>
   <li><code>Watch.md</code> — persistent centralized watch views for selected observations,</li>
-  <li><code>Snippet.md</code> — portable IDE snippets for fragment capture, paste, and reuse.</li>
+  <li><code>Snippet.md</code> — image-backed IDE snippets for fragment capture, drag-and-drop, paste, and reuse.</li>
 </ul>
 
 <p>
@@ -481,6 +491,11 @@ The repository is intentionally split into distinct architectural layers:
 <p>
 This separation is deliberate.
 It prevents the language from being reduced to one editor, one runtime, or one vendor implementation.
+</p>
+
+<p>
+It also makes the repository suitable as the basis of an open standard:
+different actors may later build compatible IDEs, runtimes, compilers, toolchains, and ecosystem services while still targeting the same language definition.
 </p>
 
 <hr/>
@@ -540,6 +555,10 @@ The Expression is designed for:
 The Expression is the authoritative source artifact of a FROG program, but cross-cutting execution meaning is defined by the language semantics and standardized primitive specifications applied to validated program content rather than by raw serialization alone.
 </p>
 
+<p>
+The Expression is also intended to remain <strong>open and inspectable</strong> so that a broader ecosystem of tools can parse, validate, transform, diff, review, and generate FROG programs without depending on one opaque vendor-owned file model.
+</p>
+
 <h3>FROG Program Model</h3>
 
 <p>
@@ -570,6 +589,10 @@ It contains normalized information required for validation, scheduling, lowering
 It should be understood as an <strong>open, inspectable execution representation</strong> rather than as a hidden vendor artifact.
 Programs are not executed directly from raw source serialization.
 Execution occurs from validated execution-oriented representations derived from source.
+</p>
+
+<p>
+The long-term ecosystem goal is not only to keep the source Expression readable, but also to keep the execution-oriented representation sufficiently open and inspectable to support independent compilers, analyzers, validators, profilers, debuggers, and other advanced tooling around the same language standard.
 </p>
 
 <p>
@@ -933,7 +956,7 @@ Current repository direction includes:
   <li>defining dataflow-native debugging semantics for FROG IDEs,</li>
   <li>defining source-aligned live inspection through probes,</li>
   <li>defining persistent centralized watch-based inspection for FROG IDEs,</li>
-  <li>defining snippet-based reusable authoring transport.</li>
+  <li>defining image-backed snippet-based reusable authoring transport.</li>
 </ul>
 
 <p>
