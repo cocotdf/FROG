@@ -23,7 +23,7 @@
   <li><a href="#case-structure">11. Case Structure</a></li>
   <li><a href="#for-loop-structure">12. For Loop Structure</a></li>
   <li><a href="#while-loop-structure">13. While Loop Structure</a></li>
-  <li><a href="#source-to-semantics-mapping">14. Source-to-Semantics Mapping</a></li>
+  <li><a href="#source-to-language-alignment">14. Source-to-Language Alignment</a></li>
   <li><a href="#interaction-with-local-memory-and-cycles">15. Interaction with Local Memory and Cycles</a></li>
   <li><a href="#diagram-representation">16. Diagram Representation</a></li>
   <li><a href="#validation-rules">17. Validation Rules</a></li>
@@ -38,7 +38,7 @@
 
 <p>
 FROG is a graphical dataflow language, but not every program behavior should be represented as an ordinary function call.
-Some behaviors are inherently structural: they select one executable region among several, or they repeat execution according
+Some behaviors are inherently structural: they select one executable region among several, or they repeat a region according
 to explicit structural rules. These behaviors are represented by control structures.
 </p>
 
@@ -52,7 +52,7 @@ In canonical source, it is a structural region of the diagram with:
   <li>an explicit boundary,</li>
   <li>explicit structure terminals when required,</li>
   <li>one or more owned executable regions,</li>
-  <li>a canonical source representation that maps to standardized execution semantics.</li>
+  <li>a canonical source representation aligned with standardized execution semantics.</li>
 </ul>
 
 <p>
@@ -141,7 +141,7 @@ FROG distinguishes between:
 
 <p>
 A function is evaluated according to its port signature and function semantics.
-A control structure owns one or more internal executable regions and defines how those regions are selected, repeated, or otherwise governed.
+A control structure owns one or more internal executable regions and defines a dedicated source form for structural control.
 </p>
 
 <p>
@@ -274,8 +274,8 @@ Conceptually, these crossings behave like explicit tunnels.
 <h3>8.1 Boundary inputs</h3>
 
 <p>
-A boundary input carries a value from the outer graph into the active internal region of the structure.
-The exact runtime meaning of “active” depends on the structure family and is defined normatively by
+A boundary input carries a value from the outer graph into the structure.
+The exact structure-family-specific interpretation of that crossing is defined normatively by
 <code>Language/Control structures.md</code>.
 </p>
 
@@ -288,8 +288,8 @@ The exact runtime meaning of “active” depends on the structure family and is
 <h3>8.2 Boundary outputs</h3>
 
 <p>
-A boundary output carries a value from an executed internal region back to the outer graph.
-The exact production semantics of those outputs are defined normatively by <code>Language/Control structures.md</code>.
+A boundary output carries a value from the structure back to the outer graph.
+The exact production rule for that output is defined normatively by <code>Language/Control structures.md</code>.
 </p>
 
 <ul>
@@ -389,7 +389,7 @@ Rules:
 
 <ul>
   <li>every standardized terminal MUST define <code>type</code>,</li>
-  <li>terminal semantics MUST be determined by the structure family,</li>
+  <li>terminal meaning is determined by the structure family and owned semantically by <code>Language/</code>,</li>
   <li>terminals MUST NOT be confused with ordinary boundary values.</li>
 </ul>
 
@@ -443,7 +443,7 @@ A structure MAY own one region or multiple regions depending on its family:
 
 <p>
 This document standardizes the canonical source shape of regions.
-The rules that determine which region executes, and how often, belong to <code>Language/Control structures.md</code>.
+The rules that determine region participation belong to <code>Language/Control structures.md</code>.
 </p>
 
 <hr/>
@@ -458,7 +458,7 @@ This document standardizes how that structure is represented in canonical source
 <h3>11.1 Purpose</h3>
 
 <p>
-A case structure is used when different executable regions must be selected according to a selector value.
+A case structure is used when different executable regions must be represented under one structural selection form driven by a selector value.
 </p>
 
 <p>
@@ -475,7 +475,7 @@ This means that a <code>case</code> structure in v0.1 supports:
 </p>
 
 <ul>
-  <li>boolean conditional execution,</li>
+  <li>boolean conditional structure selection,</li>
   <li>string-based branch selection.</li>
 </ul>
 
@@ -532,7 +532,7 @@ The canonical source remains <code>case</code>.
 <h3>11.4 String case</h3>
 
 <p>
-If <code>selector.type</code> is <code>string</code>, the structure performs multi-branch selection using string literals.
+If <code>selector.type</code> is <code>string</code>, the structure represents multi-branch selection using string literals.
 </p>
 
 <p>
@@ -613,14 +613,14 @@ Such extensions MUST preserve structural explicitness and MUST remain compatible
 <h2 id="for-loop-structure">12. For Loop Structure</h2>
 
 <p>
-A <code>for_loop</code> executes one body region a predetermined number of times.
+A <code>for_loop</code> represents a counted-loop structure with one owned body region.
 This document standardizes how that structure is represented in canonical source.
 </p>
 
 <h3>12.1 Purpose</h3>
 
 <p>
-A for loop is used when the iteration count is explicit and bounded by a count value.
+A for loop is used when the loop form is expressed through an explicit count terminal and a single body region.
 </p>
 
 <h3>12.2 Canonical terminals</h3>
@@ -660,7 +660,7 @@ Rules:
 
 <p>
 The canonical <code>for_loop</code> source model represents counted iteration through terminal <code>count</code>.
-The normative meaning of the resolved count value, including iteration cardinality and index progression, belongs to
+The normative interpretation of the resolved count value belongs to
 <code>Language/Control structures.md</code>.
 </p>
 
@@ -707,29 +707,35 @@ It governs repeated execution of a structural region and therefore requires its 
 <h2 id="while-loop-structure">13. While Loop Structure</h2>
 
 <p>
-A <code>while_loop</code> executes one body region repeatedly according to an explicit continuation condition.
+A <code>while_loop</code> represents a condition-governed loop structure with one owned body region.
 This document standardizes how that structure is represented in canonical source.
 </p>
 
 <h3>13.1 Purpose</h3>
 
 <p>
-A while loop is used when repetition is condition-driven rather than count-driven.
+A while loop is used when repetition is expressed through a dedicated continuation terminal rather than a dedicated count terminal.
 </p>
 
-<h3>13.2 Canonical continuation rule assumption</h3>
+<h3>13.2 Canonical v0.1 loop form</h3>
 
 <p>
-The canonical v0.1 source model of <code>while_loop</code> assumes the standardized continue-while-true semantics defined by
+The canonical v0.1 source model of <code>while_loop</code> is aligned with the standardized continue-while-true semantic family defined by
 <code>Language/Control structures.md</code>.
 </p>
 
-<pre><code>execute body once
-continue while condition is true</code></pre>
+<p>
+In source terms, this alignment is reflected by:
+</p>
+
+<ul>
+  <li>a body-exposed boolean <code>condition</code> terminal,</li>
+  <li>no distinct standardized pre-test <code>while_loop</code> source form in base v0.1,</li>
+  <li>a single owned region with <code>id: "body"</code>.</li>
+</ul>
 
 <p>
-Therefore, the base v0.1 <code>while_loop</code> source form corresponds to a post-test loop shape.
-The runtime meaning of that shape belongs to <code>Language/Control structures.md</code>.
+The runtime meaning of that loop family belongs to <code>Language/Control structures.md</code>.
 </p>
 
 <h3>13.3 Canonical terminals</h3>
@@ -807,39 +813,39 @@ Both remain distinct structure families in canonical v0.1 source.
 
 <hr/>
 
-<h2 id="source-to-semantics-mapping">14. Source-to-Semantics Mapping</h2>
+<h2 id="source-to-language-alignment">14. Source-to-Language Alignment</h2>
 
 <p>
 Canonical source representation and normative execution semantics are intentionally separated in FROG.
-This section defines how the source form declared here maps to the semantic layer owned by <code>Language/</code>.
+This section defines the source-level alignment points between the structures declared here and the execution-semantics layer owned by <code>Language/</code>.
 </p>
 
-<h3>14.1 Case mapping</h3>
+<h3>14.1 Case alignment</h3>
 
 <ul>
-  <li>a node with <code>kind: "structure"</code> and <code>structure_type: "case"</code> maps to the <code>case</code> semantic family,</li>
-  <li><code>structure_terminals.selector</code> identifies the selector terminal used by semantic branch selection,</li>
-  <li>the <code>regions</code> array identifies the candidate branch regions,</li>
-  <li><code>match</code> and <code>default</code> fields provide the canonical source data consumed by the semantic selection rule.</li>
+  <li>a node with <code>kind: "structure"</code> and <code>structure_type: "case"</code> aligns with the standardized <code>case</code> structure family,</li>
+  <li><code>structure_terminals.selector</code> identifies the selector terminal in source,</li>
+  <li>the <code>regions</code> array identifies the branch regions in source,</li>
+  <li><code>match</code> and <code>default</code> fields provide the source-level branch-selection metadata consumed by the semantic layer.</li>
 </ul>
 
-<h3>14.2 For-loop mapping</h3>
+<h3>14.2 For-loop alignment</h3>
 
 <ul>
-  <li>a node with <code>structure_type: "for_loop"</code> maps to the counted-loop semantic family,</li>
-  <li><code>structure_terminals.count</code> identifies the source terminal used to express iteration count,</li>
+  <li>a node with <code>structure_type: "for_loop"</code> aligns with the standardized counted-loop family,</li>
+  <li><code>structure_terminals.count</code> identifies the source terminal used to express loop count,</li>
   <li><code>structure_terminals.index</code> identifies the source terminal exposed in the body,</li>
-  <li>the region <code>body</code> identifies the repeated executable region,</li>
-  <li>loop-output metadata such as <code>mode</code> and <code>zero_iteration_value</code> provides canonical source data used by loop-output semantics.</li>
+  <li>the region <code>body</code> identifies the owned loop body region,</li>
+  <li>loop-output metadata such as <code>mode</code> and <code>zero_iteration_value</code> provides source-level data consumed by loop-output semantics.</li>
 </ul>
 
-<h3>14.3 While-loop mapping</h3>
+<h3>14.3 While-loop alignment</h3>
 
 <ul>
-  <li>a node with <code>structure_type: "while_loop"</code> maps to the condition-governed loop semantic family,</li>
-  <li><code>structure_terminals.condition</code> identifies the source terminal used by continuation semantics,</li>
+  <li>a node with <code>structure_type: "while_loop"</code> aligns with the standardized condition-governed loop family,</li>
+  <li><code>structure_terminals.condition</code> identifies the source terminal used for continuation representation,</li>
   <li><code>structure_terminals.index</code> identifies the source terminal exposed in the body,</li>
-  <li>the region <code>body</code> identifies the repeated executable region.</li>
+  <li>the region <code>body</code> identifies the owned loop body region.</li>
 </ul>
 
 <h3>14.4 No semantic redefinition in this document</h3>
@@ -952,7 +958,7 @@ Implementations MUST enforce the following source-level validation rules:
   <li>a <code>for_loop</code> MUST define a valid count terminal,</li>
   <li>a <code>for_loop</code> count MUST be represented in a way compatible with non-negative counted iteration in base v0.1,</li>
   <li>a <code>while_loop</code> MUST define a valid boolean continuation terminal,</li>
-  <li>a <code>while_loop</code> MUST use the canonical source shape corresponding to the standardized continue-while-true rule of base v0.1,</li>
+  <li>a <code>while_loop</code> MUST use the canonical source shape aligned with the standardized continue-while-true rule of base v0.1,</li>
   <li>every loop output MUST have a complete source-level meaning,</li>
   <li>if <code>mode: "last_value"</code> is used and zero iterations are possible, <code>zero_iteration_value</code> MUST be present and type-compatible,</li>
   <li>cycles inside structure regions MUST use explicit source representation for local memory when local memory is intended.</li>
