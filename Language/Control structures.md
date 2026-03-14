@@ -1,8 +1,12 @@
+<p align="center">
+  <img src="../FROG logo.svg" alt="FROG logo" width="150" />
+</p>
+
 <h1 align="center">🐸 FROG Control Structures Specification</h1>
 
 <p align="center">
-  Normative execution semantics for control structures in FROG programs<br/>
-  <em>FROG — Free Open Graphical Language</em>
+Normative execution semantics for control structures in FROG programs<br/>
+<em>FROG — Free Open Graphical Language</em>
 </p>
 
 <hr/>
@@ -16,16 +20,16 @@
   <li><a href="#functions-vs-control-structures">4. Functions vs Control Structures</a></li>
   <li><a href="#scope-for-v01">5. Scope for v0.1</a></li>
   <li><a href="#standard-control-structures-for-v01">6. Standard Control Structures for v0.1</a></li>
-  <li><a href="#canonical-structure-node-model">7. Canonical Structure Node Model</a></li>
-  <li><a href="#boundary-model">8. Boundary Model</a></li>
-  <li><a href="#structure-terminals">9. Structure Terminals</a></li>
-  <li><a href="#regions">10. Regions</a></li>
+  <li><a href="#validated-structure-semantic-model">7. Validated Structure Semantic Model</a></li>
+  <li><a href="#boundary-semantics">8. Boundary Semantics</a></li>
+  <li><a href="#structure-terminal-semantics">9. Structure-Terminal Semantics</a></li>
+  <li><a href="#region-semantics">10. Region Semantics</a></li>
   <li><a href="#case-structure">11. Case Structure</a></li>
   <li><a href="#for-loop-structure">12. For Loop Structure</a></li>
   <li><a href="#while-loop-structure">13. While Loop Structure</a></li>
   <li><a href="#execution-model">14. Execution Model</a></li>
   <li><a href="#interaction-with-local-memory-and-cycles">15. Interaction with Local Memory and Cycles</a></li>
-  <li><a href="#diagram-representation">16. Diagram Representation</a></li>
+  <li><a href="#diagram-level-interpretation">16. Diagram-Level Interpretation</a></li>
   <li><a href="#validation-rules">17. Validation Rules</a></li>
   <li><a href="#examples">18. Examples</a></li>
   <li><a href="#out-of-scope-for-v01">19. Out of Scope for v0.1</a></li>
@@ -38,13 +42,12 @@
 
 <p>
 FROG is a graphical dataflow language, but not every program behavior should be represented as an ordinary function call.
-Some behaviors are inherently structural: they select one executable region among several, or they repeat execution according to explicit structural rules.
-These behaviors are represented by control structures.
+Some behaviors are inherently structural: they select one executable region among several, or they repeat execution according
+to explicit structural rules. These behaviors are represented by control structures.
 </p>
 
 <p>
-A control structure is not merely a function with inputs and outputs.
-It is a structural region of the diagram with:
+A control structure is not merely a function with inputs and outputs. It is a structural region of the diagram with:
 </p>
 
 <ul>
@@ -56,14 +59,11 @@ It is a structural region of the diagram with:
 </ul>
 
 <p>
-FROG v0.1 keeps concrete loop forms explicit.
-Therefore, the language standardizes <code>case</code>, <code>for_loop</code>, and <code>while_loop</code> as distinct visible structures rather than collapsing them into one generic hidden form.
-</p>
-
-<p>
-In FROG, boolean conditional branching and multi-branch textual selection are both represented canonically by the same <code>case</code> structure family.
-A boolean <code>case</code> is the canonical equivalent of a traditional <code>if / else</code>.
-There is no separate canonical <code>if</code> structure in base v0.1.
+FROG v0.1 keeps concrete loop forms explicit. Therefore, the language standardizes <code>case</code>, <code>for_loop</code>,
+and <code>while_loop</code> as distinct visible structures rather than collapsing them into one generic hidden form.
+In FROG, boolean conditional branching and multi-branch textual selection are both represented canonically by the same
+<code>case</code> structure family. A boolean <code>case</code> is the canonical equivalent of a traditional
+<code>if / else</code>. There is no separate canonical <code>if</code> structure in base v0.1.
 </p>
 
 <hr/>
@@ -94,12 +94,37 @@ This document complements the following specifications:
   <li><code>Expression/Type.md</code> — defines type syntax and compatibility.</li>
   <li><code>Language/State and cycles.md</code> — defines local memory and the validity rule for cyclic graphs.</li>
   <li><code>Libraries/Core.md</code> — defines ordinary built-in functions such as <code>frog.core.add</code> and <code>frog.core.delay</code>.</li>
+  <li><code>IDE/Palette.md</code> — defines how structures are presented to users in authoring environments.</li>
 </ul>
 
 <p>
-This document defines the normative execution semantics of control structures.
-It does not redefine ordinary function libraries, and it does not redefine the general diagram node model already defined in <code>Expression/Diagram.md</code>.
+This document defines the <strong>normative execution semantics</strong> of control structures. It does not redefine
+ordinary function libraries, and it does not redefine the canonical source serialization already owned by
+<code>Expression/</code>.
 </p>
+
+<table>
+  <tr>
+    <th align="left">Layer</th>
+    <th align="left">Primary ownership for this topic</th>
+  </tr>
+  <tr>
+    <td><code>Expression/</code></td>
+    <td>Canonical source representation of structure nodes, regions, boundary shape, and serialized form</td>
+  </tr>
+  <tr>
+    <td><code>Language/</code></td>
+    <td>Normative execution meaning of structure families and their cross-cutting semantic rules</td>
+  </tr>
+  <tr>
+    <td><code>Libraries/</code></td>
+    <td>Ordinary primitive semantics referenced by structure bodies, including explicit local-memory primitives</td>
+  </tr>
+  <tr>
+    <td><code>IDE/</code></td>
+    <td>Authoring, visualization, palette exposure, observability, and debugging behavior</td>
+  </tr>
+</table>
 
 <p>
 Accordingly:
@@ -112,6 +137,8 @@ Accordingly:
 
 <p>
 When both documents discuss the same structure family, they MUST remain aligned, but semantic ownership belongs to this document.
+When a conflict exists between source shape and execution meaning, <code>Expression/</code> remains authoritative for
+source form while <code>Language/</code> remains authoritative for execution semantics.
 </p>
 
 <hr/>
@@ -128,8 +155,8 @@ FROG distinguishes between:
 </ul>
 
 <p>
-A function is evaluated according to its port signature and function semantics.
-A control structure owns one or more internal executable regions and defines how those regions are selected, repeated, or otherwise governed.
+A function is evaluated according to its port signature and function semantics. A control structure owns one or more internal
+executable regions and defines how those regions are selected, repeated, or otherwise governed.
 </p>
 
 <p>
@@ -142,8 +169,7 @@ Example:
 </ul>
 
 <p>
-This distinction is fundamental.
-A control structure is part of the language execution model itself.
+This distinction is fundamental. A control structure is part of the language execution model itself.
 </p>
 
 <hr/>
@@ -161,8 +187,8 @@ FROG v0.1 standardizes the following control structures:
 </ul>
 
 <p>
-FROG v0.1 does not standardize event structures, timed structures, parallel-region structures, pattern-match structures, or exception-handling structures.
-Those MAY be introduced later as their own structure families.
+FROG v0.1 does not standardize event structures, timed structures, parallel-region structures, pattern-match structures,
+or exception-handling structures. Those MAY be introduced later as their own structure families.
 </p>
 
 <hr/>
@@ -180,24 +206,25 @@ The standard structure kinds for FROG v0.1 are:
 </ul>
 
 <p>
-These are language structures, not library functions.
-Tools SHOULD present them as dedicated structural elements in the diagram editor rather than as ordinary primitive nodes.
+These are language structures, not library functions. Tools SHOULD present them as dedicated structural elements in the
+diagram editor rather than as ordinary primitive nodes.
 </p>
 
 <p>
-For usability, tools MAY present a boolean <code>case</code> as <em>If / Else</em> in the UI.
-However, the canonical structure kind remains <code>case</code>.
+For usability, tools MAY present a boolean <code>case</code> as <em>If / Else</em> in the UI. However, the canonical
+structure kind remains <code>case</code>.
 </p>
 
 <hr/>
 
-<h2 id="canonical-structure-node-model">7. Canonical Structure Node Model</h2>
+<h2 id="validated-structure-semantic-model">7. Validated Structure Semantic Model</h2>
 
 <p>
-This document assumes the following validated structure-node model for standardized control structures:
+This document assumes the following validated structure-node model for standardized control structures after canonical
+source has been parsed and validated:
 </p>
 
-<pre><code>{
+<pre><code class="language-json">{
   "id": "struct_1",
   "kind": "structure",
   "structure_type": "case",
@@ -242,20 +269,20 @@ Rules:
 </ul>
 
 <p>
-Canonical source serialization of this model belongs to <code>Expression/</code>.
-Normative interpretation of the model belongs to this document.
+Canonical source serialization of this model belongs to <code>Expression/</code>. Normative interpretation of the model
+belongs to this document.
 </p>
 
 <hr/>
 
-<h2 id="boundary-model">8. Boundary Model</h2>
+<h2 id="boundary-semantics">8. Boundary Semantics</h2>
 
 <p>
-The <code>boundary</code> object defines the values that cross the structure wall.
-Conceptually, these crossings behave like explicit tunnels.
+The <code>boundary</code> object defines the values that cross the structure wall. Conceptually, these crossings behave
+like explicit tunnels.
 </p>
 
-<pre><code>"boundary": {
+<pre><code class="language-json">"boundary": {
   "inputs": [
     { "id": "x", "type": "f64" }
   ],
@@ -267,7 +294,9 @@ Conceptually, these crossings behave like explicit tunnels.
 <h3>8.1 Boundary inputs</h3>
 
 <p>
-A boundary input carries a value from the outer graph into the active internal region of the structure.
+A boundary input carries a value from the outer graph into the executing internal region of the structure.
+For a <code>case</code>, that means the selected region of the current activation. For a loop, that means the loop body
+activation governed by the structure family semantics.
 </p>
 
 <ul>
@@ -303,7 +332,7 @@ The only standardized loop-output mode in v0.1 is:
 Example:
 </p>
 
-<pre><code>{ "id": "sum_out", "type": "f64", "mode": "last_value", "zero_iteration_value": 0.0 }</code></pre>
+<pre><code class="language-json">{ "id": "sum_out", "type": "f64", "mode": "last_value", "zero_iteration_value": 0.0 }</code></pre>
 
 <p>
 Rules for <code>mode: "last_value"</code>:
@@ -322,16 +351,17 @@ More advanced loop-output modes such as collection, reduction, or profile-define
 <h3>8.4 Boundary semantics are explicit</h3>
 
 <p>
-A structure boundary is part of the executable meaning of the program.
-The structure wall MUST NOT be treated as a purely visual editor artifact.
+A structure boundary is part of the executable meaning of the program. The structure wall MUST NOT be treated as a purely
+visual editor artifact.
 </p>
 
 <hr/>
 
-<h2 id="structure-terminals">9. Structure Terminals</h2>
+<h2 id="structure-terminal-semantics">9. Structure-Terminal Semantics</h2>
 
 <p>
-The <code>structure_terminals</code> object contains terminals that are intrinsic to the structure family rather than ordinary boundary tunnels.
+The <code>structure_terminals</code> object contains terminals that are intrinsic to the structure family rather than
+ordinary boundary tunnels.
 </p>
 
 <p>
@@ -346,10 +376,10 @@ Examples include:
 </ul>
 
 <p>
-A canonical terminal object SHOULD use the following fields when relevant:
+A standardized terminal object SHOULD use the following fields when relevant:
 </p>
 
-<pre><code>{
+<pre><code class="language-json">{
   "type": "bool",
   "outer_visible": true,
   "exposed_in_body": false,
@@ -380,24 +410,24 @@ Rules:
 </ul>
 
 <p>
-This document standardizes terminal availability and semantics.
-It does not require v0.1 to freeze one universal low-level nested-region reference encoding for consuming those terminals inside region-local diagrams.
+This document standardizes terminal availability and semantics. It does not require v0.1 to freeze one universal low-level
+nested-region reference encoding for consuming those terminals inside region-local diagrams.
 </p>
 
 <hr/>
 
-<h2 id="regions">10. Regions</h2>
+<h2 id="region-semantics">10. Region Semantics</h2>
 
 <p>
-The <code>regions</code> array contains the executable regions owned by the structure.
-Each region contains a local diagram scope.
+The <code>regions</code> array contains the executable regions owned by the structure. Each region contains a local
+diagram scope.
 </p>
 
 <p>
 General region shape:
 </p>
 
-<pre><code>{
+<pre><code class="language-json">{
   "id": "body",
   "diagram": {
     "nodes": [],
@@ -425,6 +455,16 @@ A structure MAY own one region or multiple regions depending on its family:
   <li>a <code>case</code> structure owns multiple branch regions,</li>
   <li>a <code>for_loop</code> owns one body region,</li>
   <li>a <code>while_loop</code> owns one body region.</li>
+</ul>
+
+<p>
+Region execution is family-dependent:
+</p>
+
+<ul>
+  <li>for a <code>case</code>, exactly one region executes per activation,</li>
+  <li>for a <code>for_loop</code>, the body region executes zero or more times according to the resolved count,</li>
+  <li>for a <code>while_loop</code>, the body region executes at least once and may execute repeatedly according to the continuation rule.</li>
 </ul>
 
 <hr/>
@@ -465,7 +505,7 @@ This means that a <code>case</code> structure in v0.1 supports:
 A canonical <code>case</code> MUST define one selector terminal named <code>selector</code>.
 </p>
 
-<pre><code>"structure_terminals": {
+<pre><code class="language-json">"structure_terminals": {
   "selector": {
     "type": "bool",
     "outer_visible": true,
@@ -512,8 +552,7 @@ Conceptually:
 selector = false → execute false branch</code></pre>
 
 <p>
-Tools MAY present this form as an If / Else structure in the UI.
-The canonical structure kind remains <code>case</code>.
+Tools MAY present this form as an If / Else structure in the UI. The canonical structure kind remains <code>case</code>.
 </p>
 
 <h3>11.4 String case</h3>
@@ -538,7 +577,7 @@ Rules:
 Canonical shape:
 </p>
 
-<pre><code>"regions": [
+<pre><code class="language-json">"regions": [
   {
     "id": "case_start",
     "match": "start",
@@ -606,7 +645,7 @@ A for loop is used when the iteration count is explicit and bounded by a count v
 
 <h3>12.2 Canonical terminals</h3>
 
-<pre><code>"structure_terminals": {
+<pre><code class="language-json">"structure_terminals": {
   "count": {
     "type": "i64",
     "outer_visible": true,
@@ -640,8 +679,8 @@ Rules:
 <h3>12.3 Count meaning</h3>
 
 <p>
-The loop executes a finite number of times determined by terminal <code>count</code>.
-If <code>N</code> is the resolved count value, the loop body executes exactly <code>N</code> times.
+The loop executes a finite number of times determined by terminal <code>count</code>. If <code>N</code> is the resolved
+count value, the loop body executes exactly <code>N</code> times.
 </p>
 
 <p>
@@ -653,16 +692,15 @@ The canonical iteration index values are:
 <h3>12.4 Negative counts</h3>
 
 <p>
-A negative iteration count is invalid in base v0.1.
-Validation MUST reject a <code>for_loop</code> whose resolved count is negative.
+A negative iteration count is invalid in base v0.1. Validation MUST reject a <code>for_loop</code> whose resolved count is negative.
 </p>
 
 <h3>12.5 Zero iterations</h3>
 
 <p>
-If <code>N = 0</code>, the body region is not executed.
-In that case, every loop output MUST still have deterministic meaning.
-If a loop output uses <code>mode: "last_value"</code> and zero iterations are possible, it MUST define a valid <code>zero_iteration_value</code>.
+If <code>N = 0</code>, the body region is not executed. In that case, every loop output MUST still have deterministic meaning.
+If a loop output uses <code>mode: "last_value"</code> and zero iterations are possible, it MUST define a valid
+<code>zero_iteration_value</code>.
 </p>
 
 <h3>12.6 Regions</h3>
@@ -671,7 +709,7 @@ If a loop output uses <code>mode: "last_value"</code> and zero iterations are po
 A canonical <code>for_loop</code> MUST define exactly one region with <code>id: "body"</code>.
 </p>
 
-<pre><code>"regions": [
+<pre><code class="language-json">"regions": [
   {
     "id": "body",
     "diagram": {
@@ -684,8 +722,7 @@ A canonical <code>for_loop</code> MUST define exactly one region with <code>id: 
 <h3>12.7 Distinction from ordinary functions</h3>
 
 <p>
-A for loop is not reducible to one ordinary function call.
-It governs repeated execution of a structural region.
+A for loop is not reducible to one ordinary function call. It governs repeated execution of a structural region.
 </p>
 
 <hr/>
@@ -712,13 +749,13 @@ The canonical v0.1 meaning of <code>while_loop</code> is:
 continue while condition is true</code></pre>
 
 <p>
-Therefore, the base v0.1 <code>while_loop</code> is a post-test loop.
-The body executes, then the continuation condition determines whether another iteration occurs.
+Therefore, the base v0.1 <code>while_loop</code> is a post-test loop. The body executes, then the continuation condition
+determines whether another iteration occurs.
 </p>
 
 <h3>13.3 Canonical terminals</h3>
 
-<pre><code>"structure_terminals": {
+<pre><code class="language-json">"structure_terminals": {
   "condition": {
     "type": "bool",
     "outer_visible": false,
@@ -753,8 +790,7 @@ Rules:
 
 <p>
 After each completed body activation, the continuation condition is resolved from terminal <code>condition</code>.
-If it is <code>true</code>, another iteration occurs.
-If it is <code>false</code>, the loop terminates.
+If it is <code>true</code>, another iteration occurs. If it is <code>false</code>, the loop terminates.
 </p>
 
 <h3>13.5 Regions</h3>
@@ -763,7 +799,7 @@ If it is <code>false</code>, the loop terminates.
 A canonical <code>while_loop</code> MUST define exactly one region with <code>id: "body"</code>.
 </p>
 
-<pre><code>"regions": [
+<pre><code class="language-json">"regions": [
   {
     "id": "body",
     "diagram": {
@@ -776,17 +812,15 @@ A canonical <code>while_loop</code> MUST define exactly one region with <code>id
 <h3>13.6 Loop outputs</h3>
 
 <p>
-Loop outputs MUST have deterministic meaning after termination.
-If a standardized output mode such as <code>last_value</code> is used, its rules MUST be satisfied.
+Loop outputs MUST have deterministic meaning after termination. If a standardized output mode such as
+<code>last_value</code> is used, its rules MUST be satisfied.
 </p>
 
 <h3>13.7 Distinction from for loop</h3>
 
 <p>
-A while loop is semantically distinct from a for loop.
-A for loop communicates counted iteration.
-A while loop communicates condition-governed iteration.
-Both remain distinct structure families in v0.1.
+A while loop is semantically distinct from a for loop. A for loop communicates counted iteration.
+A while loop communicates condition-governed iteration. Both remain distinct structure families in v0.1.
 </p>
 
 <hr/>
@@ -807,8 +841,8 @@ For a <code>case</code> structure:
 </ul>
 
 <p>
-For a boolean case, matching is exact on <code>true</code> or <code>false</code>.
-For a string case, matching is exact on the string literal values declared by branch regions; otherwise the default region executes.
+For a boolean case, matching is exact on <code>true</code> or <code>false</code>. For a string case, matching is exact
+on the string literal values declared by branch regions; otherwise the default region executes.
 </p>
 
 <h3>14.2 For-loop execution</h3>
@@ -840,18 +874,42 @@ For a <code>while_loop</code>:
 <h3>14.4 Dataflow and structure interaction</h3>
 
 <p>
-A structure remains part of the dataflow graph.
-Its external activations and observable outputs remain constrained by the graph and by the structure family semantics.
-A structure does not introduce arbitrary instruction ordering outside the standardized rules defined here.
+A structure remains part of the dataflow graph. Its external activations and observable outputs remain constrained by the
+graph and by the structure family semantics. A structure does not introduce arbitrary instruction ordering outside the
+standardized rules defined here.
 </p>
+
+<h3>14.5 Execution sketches</h3>
+
+<p>
+The following sketches are explanatory only. They summarize the normative meaning already defined above.
+</p>
+
+<pre><code>case:
+  resolve selector
+  choose one region
+  execute chosen region only
+  publish chosen outputs
+
+for_loop:
+  resolve count = N
+  repeat body exactly N times
+  expose index = 0 .. N - 1
+  publish loop outputs according to output mode
+
+while_loop:
+  execute body
+  resolve condition
+  if true  -> execute body again
+  if false -> terminate and publish loop outputs</code></pre>
 
 <hr/>
 
 <h2 id="interaction-with-local-memory-and-cycles">15. Interaction with Local Memory and Cycles</h2>
 
 <p>
-Control structures do not weaken the general cycle-validity rule of FROG.
-A directed cycle is valid only when explicit local memory exists in that cycle.
+Control structures do not weaken the general cycle-validity rule of FROG. A directed cycle is valid only when explicit
+local memory exists in that cycle.
 </p>
 
 <p>
@@ -866,14 +924,14 @@ Accordingly:
 </ul>
 
 <p>
-Any directed cycle inside a loop body remains subject to the same rule as any other diagram:
-every directed cycle MUST contain at least one explicit local-memory primitive.
-In base v0.1, <code>frog.core.delay</code> is the minimal standard primitive used to make such feedback explicit and deterministic.
+Any directed cycle inside a loop body remains subject to the same rule as any other diagram: every directed cycle MUST
+contain at least one explicit local-memory primitive. In base v0.1, <code>frog.core.delay</code> is the minimal standard
+primitive used to make such feedback explicit and deterministic.
 </p>
 
 <hr/>
 
-<h2 id="diagram-representation">16. Diagram Representation</h2>
+<h2 id="diagram-level-interpretation">16. Diagram-Level Interpretation</h2>
 
 <p>
 Control structures are represented in the diagram as nodes of:
@@ -908,8 +966,22 @@ Their internal region-local semantics are resolved from:
 </ul>
 
 <p>
-Tools SHOULD present these structures as dedicated visible structural elements rather than disguising them as ordinary primitive functions.
+Tools SHOULD present these structures as dedicated visible structural elements rather than disguising them as ordinary
+primitive functions.
 </p>
+
+<pre><code>Outer diagram
+   │
+   ├── boundary inputs
+   │
+   ▼
+[ structure node ]
+   ├── structure terminals
+   ├── owned regions
+   └── family-specific execution rule
+   │
+   ▼
+boundary outputs</code></pre>
 
 <hr/>
 
@@ -954,7 +1026,7 @@ Tools SHOULD additionally warn when:
 
 <h3>18.1 Boolean case (canonical if / else)</h3>
 
-<pre><code>{
+<pre><code class="language-json">{
   "id": "case_1",
   "kind": "structure",
   "structure_type": "case",
@@ -997,7 +1069,7 @@ Tools SHOULD additionally warn when:
 
 <h3>18.2 String case</h3>
 
-<pre><code>{
+<pre><code class="language-json">{
   "id": "case_2",
   "kind": "structure",
   "structure_type": "case",
@@ -1044,7 +1116,7 @@ Tools SHOULD additionally warn when:
 
 <h3>18.3 For loop</h3>
 
-<pre><code>{
+<pre><code class="language-json">{
   "id": "loop_1",
   "kind": "structure",
   "structure_type": "for_loop",
@@ -1085,7 +1157,7 @@ Tools SHOULD additionally warn when:
 
 <h3>18.4 While loop</h3>
 
-<pre><code>{
+<pre><code class="language-json">{
   "id": "loop_2",
   "kind": "structure",
   "structure_type": "while_loop",
