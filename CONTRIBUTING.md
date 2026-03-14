@@ -34,13 +34,13 @@ FROG is an open specification project defining a modern graphical dataflow langu
 </p>
 
 <p>
-The repository is still in an active design and stabilization phase.
+The repository is still in an active design, cleanup, and stabilization phase.
 Many documents are already substantial, but some areas are still being clarified, split, aligned, or structurally refactored.
 Contributions in the form of ideas, corrections, issue reports, specification proposals, architectural cleanup, and wording improvements are welcome.
 </p>
 
 <p>
-Because this is a specification repository rather than an ordinary application repository, contributions should prioritize:
+Because this is a specification repository rather than an ordinary application repository, contributions SHOULD prioritize:
 </p>
 
 <ul>
@@ -111,13 +111,19 @@ Layer ownership in summary:
 <ul>
   <li><strong><code>Expression/</code></strong> — canonical source representation and source-visible program objects,</li>
   <li><strong><code>Language/</code></strong> — normative execution semantics and cross-cutting semantic rules,</li>
-  <li><strong><code>Libraries/</code></strong> — standard primitive identities, ports, metadata, and library-owned primitive definitions,</li>
+  <li><strong><code>Libraries/</code></strong> — standardized primitive identities, ports, required metadata, and primitive-level definitions,</li>
   <li><strong><code>IDE/</code></strong> — authoring architecture, observability, debugging, probes, watch, and snippet workflows.</li>
 </ul>
 
 <p>
 If a contribution crosses multiple layers, the contributor SHOULD identify which document is the primary owner of the topic.
+If the current repository state is still transitional, the contributor SHOULD distinguish clearly between:
 </p>
+
+<ul>
+  <li>the current published repository state,</li>
+  <li>the proposed architectural direction.</li>
+</ul>
 
 <hr/>
 
@@ -185,8 +191,10 @@ Recommended step-by-step process:
   <li>Fork the repository.</li>
   <li>Create a branch for your change.</li>
   <li>Re-read the current version of the target document and its directly related documents.</li>
+  <li>Identify whether the target document is the primary owner of the topic.</li>
   <li>Commit your modifications.</li>
   <li>Open a Pull Request.</li>
+  <li>Explain any cross-document conflict, ownership issue, or follow-up cleanup that remains relevant.</li>
   <li>Discuss the proposal with maintainers if clarification is needed.</li>
 </ol>
 
@@ -205,10 +213,12 @@ Before modifying a document, you SHOULD:
 
 <ul>
   <li>start from the current version of the target file,</li>
+  <li>read the repository root <code>Readme.md</code>,</li>
   <li>read the relevant top-level <code>Readme.md</code>,</li>
   <li>read directly related files in the same semantic area,</li>
   <li>identify whether the target document is the primary owner of the topic,</li>
-  <li>identify any cross-document conflict before rewriting.</li>
+  <li>identify any cross-document conflict before rewriting,</li>
+  <li>preserve the distinction between current published state and proposed architectural direction when that distinction matters.</li>
 </ul>
 
 <p>
