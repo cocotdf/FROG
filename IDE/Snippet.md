@@ -77,7 +77,7 @@ a user can see the snippet as an image everywhere, while a FROG IDE can recover 
   <li><strong>LabVIEW-like workflow equivalence</strong> — support image-based snippet sharing and drag-and-drop authoring reuse.</li>
   <li><strong>Portability</strong> — allow small reusable authoring fragments to move across IDE sessions and tools.</li>
   <li><strong>Human previewability</strong> — ensure a snippet remains meaningful as a normal image outside the IDE.</li>
-  <li><strong>Source alignment</strong> — preserve source-level meaning, layout, and object relationships.</li>
+  <li><strong>Source alignment</strong> — preserve source-level meaning, layout, object relationships, and internal references.</li>
   <li><strong>Deterministic insertion</strong> — define how imported content is integrated into a target Program Model without ambiguity.</li>
   <li><strong>Non-confusion with full programs</strong> — clearly distinguish snippets from full <code>.frog</code> source files.</li>
   <li><strong>Extensibility</strong> — allow stricter carrier profiles and richer preview metadata later without changing the core snippet semantics.</li>
@@ -129,12 +129,12 @@ This document complements the following specifications:
 
 <ul>
   <li><code>IDE/Readme.md</code> — defines the role of the Program Model and the distinction between IDE artifacts and canonical source.</li>
-  <li><code>IDE/Palette.md</code> — defines reusable authoring elements surfaced by the IDE.</li>
-  <li><code>IDE/Execution observability.md</code> — defines IDE-facing runtime observability concepts that remain distinct from snippet transport.</li>
-  <li><code>Expression/Diagram.md</code> — defines executable graph objects, layout metadata, annotations, and dependencies.</li>
+  <li><code>Expression/Diagram.md</code> — defines executable graph objects, layout metadata, annotations, and diagram-scope dependency references.</li>
+  <li><code>Expression/Control structures.md</code> — defines structure nodes, owned regions, and the whole-structure representation that snippet capture must preserve when structures are selected.</li>
   <li><code>Expression/Front panel.md</code> — defines front-panel composition and widget-tree structure.</li>
   <li><code>Expression/Widget.md</code> — defines widget identity and widget object structure.</li>
-  <li><code>Expression/Icon.md</code> — defines reusable icon representation where relevant to source-aligned reusable content.</li>
+  <li><code>Expression/Widget interaction.md</code> — defines the source-facing representation of <code>widget_value</code>, <code>widget_reference</code>, and object-style widget interaction.</li>
+  <li><code>Libraries/UI.md</code> — defines the standardized <code>frog.ui.*</code> primitive identities and primitive-local behavior used by widget-related diagram content.</li>
 </ul>
 
 <p>
@@ -142,6 +142,16 @@ This document does not redefine the canonical <code>.frog</code> source format.
 It defines how the IDE may serialize, embed, transport, preview, and reinsert fragments of source-aligned authoring content
 through an image-backed snippet artifact.
 </p>
+
+<p>
+Accordingly:
+</p>
+
+<ul>
+  <li><code>Expression/</code> remains authoritative for the carried source-level object model,</li>
+  <li><code>Libraries/</code> remains authoritative for primitive identity and primitive-local behavior,</li>
+  <li><code>IDE/Snippet.md</code> remains authoritative only for snippet transport, preview, embedding, and reinsertion behavior.</li>
+</ul>
 
 <hr/>
 
@@ -164,6 +174,7 @@ defined elsewhere, such as:
 <ul>
   <li>diagram nodes and edges,</li>
   <li>diagram annotations,</li>
+  <li>structure-owned regions when a structure is carried,</li>
   <li>front-panel widgets,</li>
   <li>layout metadata,</li>
   <li>documentation metadata.</li>
@@ -331,7 +342,8 @@ owned regions and their source-aligned content.
 
 <p>
 A stricter profile MAY allow creating a snippet from content inside one structure-owned region without selecting the containing
-structure itself. In that case, the snippet root is that region-local diagram scope rather than the parent scope.
+structure itself.
+In that case, the snippet root is that region-local diagram scope rather than the parent scope.
 </p>
 
 <hr/>
@@ -349,7 +361,7 @@ A <code>diagram_snippet</code> MAY contain:
   <li>node-local documentation fields,</li>
   <li>node tags,</li>
   <li>layout metadata relevant to pasted placement,</li>
-  <li>scope-local dependency references needed by selected <code>subfrog</code> nodes.</li>
+  <li>diagram-scope dependency references needed by selected <code>subfrog</code> nodes.</li>
 </ul>
 
 <p>
@@ -397,6 +409,11 @@ A snippet MUST NOT silently break a widget subtree in a way that makes the resul
 An IDE MAY therefore require subtree closure for certain widget selections.
 </p>
 
+<p>
+A front-panel snippet MUST preserve widget instances using the canonical widget-instance field model defined by the front-panel
+and widget specifications rather than inventing a snippet-specific widget object shape.
+</p>
+
 <hr/>
 
 <h2 id="composite-snippets">12. Composite Snippets</h2>
@@ -423,6 +440,11 @@ This is especially useful when the diagram fragment contains:
 <p>
 If a snippet carries widget-related diagram nodes and is intended to be portable across documents, it SHOULD include the
 required referenced widget definitions in a front-panel fragment rather than assuming they already exist in the target FROG.
+</p>
+
+<p>
+When a composite snippet carries both diagram and front-panel content, all internal widget references between those carried
+content families MUST remain resolvable inside the snippet payload.
 </p>
 
 <hr/>
@@ -563,7 +585,8 @@ They exist only inside the snippet payload model.
 
 <p>
 A snippet boundary endpoint represents an open connection between the carried fragment and content that was not included in
-the snippet. When the snippet is imported or dropped, the IDE MAY:
+the snippet.
+When the snippet is imported or dropped, the IDE MAY:
 </p>
 
 <ul>
@@ -593,7 +616,8 @@ A snippet SHOULD carry the minimum supporting information needed to remain meani
 
 <p>
 Primitive nodes are carried by their canonical type identifiers such as <code>frog.core.add</code> or
-<code>frog.ui.property_read</code>. A snippet does not inline primitive-library definitions.
+<code>frog.ui.property_read</code>.
+A snippet does not inline primitive-library definitions.
 </p>
 
 <h3>16.3 Sub-FROG dependencies</h3>
@@ -611,7 +635,14 @@ If a snippet contains <code>widget_value</code> or <code>widget_reference</code>
 documents, it SHOULD carry the required widget definitions through a front-panel fragment or equivalent widget payload.
 </p>
 
-<h3>16.5 No unrelated closure</h3>
+<h3>16.5 Composite internal closure</h3>
+
+<p>
+If a composite snippet carries both diagram-side widget references and front-panel widget definitions, those internal references
+MUST remain consistent after identifier regeneration and insertion.
+</p>
+
+<h3>16.6 No unrelated closure</h3>
 
 <p>
 A snippet SHOULD NOT capture unrelated surrounding program content merely to avoid open boundaries.
@@ -735,6 +766,7 @@ When inserting a valid snippet payload, the IDE SHOULD:
 <ul>
   <li>regenerate local identifiers as required to avoid collisions,</li>
   <li>preserve internal connectivity and internal ownership relationships,</li>
+  <li>preserve internal cross-references between carried content families,</li>
   <li>preserve carried layout relationships as far as practical,</li>
   <li>leave external boundaries open unless the insertion operation provides an explicit reconnection rule,</li>
   <li>preserve semantic distinction between diagram content, front-panel content, and dependencies.</li>
@@ -824,7 +856,7 @@ Validation MUST be performed on the embedded structured payload.
   "snippet_kind": "composite_snippet",
   "diagram_fragment": {
     "nodes": [
-      { "id": "widget_temp", "kind": "widget_value", "widget_id": "temperature_numeric" }
+      { "id": "widget_temp", "kind": "widget_value", "widget": "temperature_numeric" }
     ],
     "edges": []
   },
@@ -832,8 +864,12 @@ Validation MUST be performed on the embedded structured payload.
     "widgets": [
       {
         "id": "temperature_numeric",
-        "class": "numeric_indicator",
-        "label": "Temperature",
+        "role": "indicator",
+        "widget": "frog.ui.standard.numeric_indicator",
+        "value_type": "f64",
+        "props": {
+          "label": "Temperature"
+        },
         "children": []
       }
     ]
