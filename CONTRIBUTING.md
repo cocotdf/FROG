@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="FROG logo.svg" alt="FROG logo" width="140" />
+</p>
+
 <h1 align="center">🐸 Contributing to FROG</h1>
 
 <p align="center">
@@ -94,9 +98,10 @@ Contributors SHOULD understand which layer owns which topic before proposing a c
 <pre><code>FROG/
 │
 ├── Expression/   canonical source specification
-├── IDE/          authoring, observability, debugging, probes, watch, snippets
 ├── Language/     normative execution semantics
-├── Libraries/    standard primitive-library specifications
+├── Libraries/    intrinsic standard primitive-library specifications
+├── Profiles/     optional standardized capability-family specifications
+├── IDE/          authoring, observability, debugging, probes, watch, snippets
 │
 ├── GOVERNANCE.md
 ├── CLA.md
@@ -111,7 +116,8 @@ Layer ownership in summary:
 <ul>
   <li><strong><code>Expression/</code></strong> — canonical source representation and source-visible program objects,</li>
   <li><strong><code>Language/</code></strong> — normative execution semantics and cross-cutting semantic rules,</li>
-  <li><strong><code>Libraries/</code></strong> — standardized primitive identities, ports, required metadata, and primitive-level definitions,</li>
+  <li><strong><code>Libraries/</code></strong> — intrinsic standardized primitive identities, ports, required metadata, and primitive-level definitions,</li>
+  <li><strong><code>Profiles/</code></strong> — optional standardized capability families that extend the usable surface of FROG without becoming part of the intrinsic core,</li>
   <li><strong><code>IDE/</code></strong> — authoring architecture, observability, debugging, probes, watch, and snippet workflows.</li>
 </ul>
 
@@ -148,7 +154,8 @@ Typical entry points:
 <ul>
   <li><code>Expression/</code> — canonical source specification</li>
   <li><code>Language/</code> — normative execution semantics</li>
-  <li><code>Libraries/</code> — standard primitive-library specifications</li>
+  <li><code>Libraries/</code> — intrinsic standard primitive-library specifications</li>
+  <li><code>Profiles/</code> — optional standardized capability-family specifications</li>
   <li><code>IDE/</code> — IDE architecture, authoring workflows, observability, debugging, and snippets</li>
 </ul>
 
@@ -192,6 +199,7 @@ Recommended step-by-step process:
   <li>Create a branch for your change.</li>
   <li>Re-read the current version of the target document and its directly related documents.</li>
   <li>Identify whether the target document is the primary owner of the topic.</li>
+  <li>Identify whether the topic belongs to the intrinsic core, to an optional profile, or to an implementation-facing concern.</li>
   <li>Commit your modifications.</li>
   <li>Open a Pull Request.</li>
   <li>Explain any cross-document conflict, ownership issue, or follow-up cleanup that remains relevant.</li>
@@ -229,6 +237,7 @@ Contributors SHOULD NOT:
   <li>rewrite a document from scratch without taking the current content into account,</li>
   <li>invent repository structure, file names, or ownership assumptions that are not present in the repository,</li>
   <li>move semantic ownership casually from one layer to another without clearly explaining the architectural reason,</li>
+  <li>treat an optional profile capability as if it were automatically part of the intrinsic core,</li>
   <li>remove useful existing content merely because a shorter formulation is possible.</li>
 </ul>
 
@@ -296,6 +305,7 @@ Major semantic or architectural changes SHOULD explain:
 <ul>
   <li>what problem they solve,</li>
   <li>which neighboring documents are affected,</li>
+  <li>whether the change affects the core language, an intrinsic library, an optional profile, or only an IDE-facing concern,</li>
   <li>whether migration or follow-up cleanup is required.</li>
 </ul>
 
@@ -318,6 +328,19 @@ Contributors SHOULD therefore cross-check:
   <li>duplicate topic coverage,</li>
   <li>references between layers,</li>
   <li>examples that may have become stale after an architectural change.</li>
+</ul>
+
+<p>
+Contributors SHOULD be especially careful when a topic could be mistaken for belonging to the wrong layer.
+For example:
+</p>
+
+<ul>
+  <li>source representation belongs to <code>Expression/</code>,</li>
+  <li>cross-cutting execution meaning belongs to <code>Language/</code>,</li>
+  <li>intrinsic primitive vocabularies belong to <code>Libraries/</code>,</li>
+  <li>optional standardized environment-dependent capability families belong to <code>Profiles/</code>,</li>
+  <li>authoring, observability, debugging, and inspection belong to <code>IDE/</code>.</li>
 </ul>
 
 <p>
