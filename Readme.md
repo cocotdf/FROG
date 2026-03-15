@@ -34,7 +34,7 @@
   <a href="#interoperability">Interoperability</a> •
   <a href="#separation-of-language-and-tooling">Language separation</a> •
   <a href="#governance-and-ecosystem">Governance and ecosystem</a> •
-  <a href="#project-status">Status</a> •
+  <a href="#project-status">Project status</a> •
   <a href="#license">License</a>
 </p>
 
@@ -63,7 +63,7 @@ FROG describes a program through:
 
 <p>
 Execution emerges from data availability, structural rules, explicit control structures,
-standardized primitive behavior, and explicit local-memory semantics rather than from manually authored instruction order.
+standardized primitive behavior, optional profile-owned capability behavior, and explicit local-memory semantics rather than from manually authored instruction order.
 </p>
 
 <p>
@@ -73,7 +73,7 @@ This separation provides a durable basis for multiple independent implementation
 
 <p>
 This repository exists to define the <strong>FROG specification itself</strong>.
-It is the place where the language and its immediate supporting specification layers are written so that future actors may implement FROG-compatible IDEs, validators, runtimes, compilers, libraries, and related ecosystem components while targeting the same open standard.
+It is the place where the language and its supporting specification layers are written so that future actors may implement FROG-compatible IDEs, validators, runtimes, compilers, libraries, profiles, and related ecosystem components while targeting the same open standard.
 </p>
 
 <hr/>
@@ -196,7 +196,7 @@ The objective is to make it possible for different actors to build compatible FR
 <strong>FROG is not an IDE.</strong><br/>
 <strong>FROG is not a single runtime.</strong><br/>
 <strong>FROG is not a vendor product.</strong><br/>
-<strong>FROG is a language specification with associated source, semantic, library, and IDE-facing specification layers.</strong>
+<strong>FROG is a language specification with associated source, semantic, intrinsic-library, profile, and IDE-facing specification layers.</strong>
 </p>
 
 <hr/>
@@ -305,6 +305,7 @@ The diagram expresses:
   <li>public interface participation through <code>interface_input</code> and <code>interface_output</code>,</li>
   <li>front-panel value participation through <code>widget_value</code>,</li>
   <li>object-style widget interaction through <code>widget_reference</code> and <code>frog.ui.*</code> primitives,</li>
+  <li>optional profile-owned capability usage where supported by the active implementation,</li>
   <li>explicit local memory and valid cycles.</li>
 </ul>
 
@@ -359,7 +360,8 @@ Each top-level directory has a specific role in the specification.
 │
 ├── Expression/                       Canonical source specification for .frog programs
 ├── Language/                         Normative execution semantics for validated programs
-├── Libraries/                        Standard primitive-library specifications
+├── Libraries/                        Intrinsic standard primitive-library specifications
+├── Profiles/                         Optional standardized capability-family specifications
 ├── IDE/                              IDE architecture, authoring, observability, debugging, and inspection
 │
 ├── CLA.md                            Contributor license agreement requirements
@@ -381,14 +383,21 @@ It describes what a FROG source file contains, how source sections are represent
 
 <p>
 This directory defines cross-cutting execution semantics for validated FROG programs.
-It is the normative home of language meaning when that meaning cannot be owned by one isolated source section or one primitive-library document alone.
+It is the normative home of language meaning when that meaning cannot be owned by one isolated source section or one intrinsic primitive-library document alone.
 </p>
 
-<h3><code>Libraries/</code> — standard primitive libraries</h3>
+<h3><code>Libraries/</code> — intrinsic standard primitive libraries</h3>
 
 <p>
-This directory defines standard library namespaces and primitive catalogs used by executable diagrams.
-It is the normative home of standardized primitive identities, ports, primitive-local metadata, and primitive-local behavior.
+This directory defines intrinsic library namespaces and primitive catalogs used by executable diagrams.
+It is the normative home of standardized primitive identities, ports, primitive-local metadata, and primitive-local behavior that belong to the core language surface.
+</p>
+
+<h3><code>Profiles/</code> — optional standardized capability families</h3>
+
+<p>
+This directory defines optional standardized capability families that extend the usable surface of FROG without redefining the canonical source structure of the language core and without redefining core execution semantics.
+It is the normative home of profile-owned primitive families and other optional capability contracts that should not be treated as intrinsic always-present language libraries.
 </p>
 
 <h3><code>IDE/</code> — IDE architecture and editing model</h3>
@@ -465,7 +474,7 @@ The map below summarizes the role of every Markdown document currently present i
 │
 ├── Libraries/
 │   ├── Readme.md
-│   │   -> architectural entry point for standard primitive families
+│   │   -> architectural entry point for intrinsic standard primitive families
 │   ├── Core.md
 │   │   -> foundational frog.core primitive library
 │   ├── Math.md
@@ -481,8 +490,15 @@ The map below summarizes the role of every Markdown document currently present i
 │   ├── UI.md
 │   │   -> frog.ui executable widget interaction primitives
 │   └── Connectivity.md
-│       -> frog.connectivity interoperability primitives for Python, native/shared
-│          libraries, .NET, SQL, and related external integrations
+│       -> transition note for frog.connectivity, redirecting normative ownership
+│          to the Interop profile in Profiles/
+│
+├── Profiles/
+│   ├── Readme.md
+│   │   -> architectural entry point for optional standardized capability families
+│   └── Interop.md
+│       -> Interop profile specification for frog.connectivity.* and related
+│          optional foreign-runtime / SQL interoperability capability
 │
 └── IDE/
     ├── Readme.md
@@ -532,6 +548,9 @@ Language/Readme.md
 Libraries/Readme.md
    |
    v
+Profiles/Readme.md
+   |
+   v
 IDE/Readme.md
 </pre>
 
@@ -542,7 +561,8 @@ This order mirrors the current architectural baseline:
 <ul>
   <li><strong>Expression</strong> defines the canonical saved source form,</li>
   <li><strong>Language</strong> defines cross-cutting execution meaning for validated programs,</li>
-  <li><strong>Libraries</strong> define the standardized executable primitive vocabularies,</li>
+  <li><strong>Libraries</strong> define the intrinsic standardized executable primitive vocabularies,</li>
+  <li><strong>Profiles</strong> define optional standardized capability families beyond the intrinsic core,</li>
   <li><strong>IDE</strong> defines authoring, observability, debugging, and inspection responsibilities built on top of those foundations.</li>
 </ul>
 
@@ -557,7 +577,8 @@ The repository is intentionally split into distinct architectural layers:
 <ul>
   <li><strong>Expression</strong> — canonical source representation, source sections, and source serialization rules,</li>
   <li><strong>Language</strong> — normative execution semantics for validated programs,</li>
-  <li><strong>Libraries</strong> — standardized primitive vocabularies and primitive-local behavior,</li>
+  <li><strong>Libraries</strong> — intrinsic standardized primitive vocabularies and primitive-local behavior,</li>
+  <li><strong>Profiles</strong> — optional standardized capability families and profile-owned capability contracts,</li>
   <li><strong>IDE</strong> — authoring architecture, editor-facing models, execution observability, debugging semantics, inspection workflows, snippets, and Express authoring.</li>
 </ul>
 
@@ -568,12 +589,12 @@ It prevents the language from being reduced to one editor, one runtime, or one v
 
 <p>
 It also makes the repository suitable as the basis of an open standard:
-different actors may later build compatible IDEs, validators, runtimes, compilers, toolchains, and ecosystem services while still targeting the same language definition.
+different actors may later build compatible IDEs, validators, runtimes, compilers, toolchains, ecosystem services, and profile-supporting implementations while still targeting the same language definition.
 </p>
 
 <p>
-At the current repository stage, this four-layer split is the main closed architectural baseline.
-Additional execution-facing layers such as IR, lowering, compilation, deployment, runtime profiles, or conformance-oriented execution profiles may be structured more explicitly over time, but they are not yet a separate fully closed top-level specification family in the same sense as <code>Expression/</code>, <code>Language/</code>, <code>Libraries/</code>, and <code>IDE/</code>.
+At the current repository stage, this five-layer split is the main architectural baseline.
+Additional execution-facing layers such as IR, lowering, compilation, deployment, runtime profiles, or conformance-oriented execution profiles may be structured more explicitly over time, but they are not yet a separate fully closed top-level specification family in the same sense as <code>Expression/</code>, <code>Language/</code>, <code>Libraries/</code>, <code>Profiles/</code>, and <code>IDE/</code>.
 </p>
 
 <hr/>
@@ -671,6 +692,8 @@ Accordingly, the current repository already stabilizes:
   <li>the canonical source form,</li>
   <li>the editable Program Model as an IDE architectural concern,</li>
   <li>language-level execution semantics needed to interpret validated programs,</li>
+  <li>intrinsic primitive vocabularies,</li>
+  <li>optional profile-owned capability families,</li>
   <li>IDE-facing observability and debugging layers built on top of those semantics.</li>
 </ul>
 
@@ -924,13 +947,17 @@ FROG is designed for interoperability at several levels:
 <ul>
   <li><strong>source interoperability</strong> — the canonical <code>.frog</code> file is readable, structured, and tool-independent,</li>
   <li><strong>editing interoperability</strong> — multiple IDEs may reconstruct equivalent Program Models,</li>
-  <li><strong>semantic interoperability</strong> — validated programs are interpreted against shared language and library specifications,</li>
+  <li><strong>semantic interoperability</strong> — validated programs are interpreted against shared language, intrinsic-library, and profile specifications,</li>
   <li><strong>execution interoperability</strong> — multiple toolchains may derive compatible execution-facing representations and target artifacts,</li>
   <li><strong>ecosystem interoperability</strong> — the language remains separate from vendor lock-in.</li>
 </ul>
 
 <p>
 FROG is also designed to integrate with external languages and external platform APIs through stable interoperation mechanisms.
+In the current repository architecture, such environment-dependent capability families are expected to be standardized through optional profiles rather than treated automatically as intrinsic standard libraries.
+</p>
+
+<p>
 Representative integration targets may include:
 </p>
 
@@ -944,7 +971,7 @@ Representative integration targets may include:
 
 <p>
 External functions and platform services can be exposed as FROG nodes while preserving graph-level validation and explicit type behavior.
-This is also essential for hardware support, because drivers, SDKs, real-time services, FPGA toolflows, and embedded platform stacks can be integrated without collapsing the language into one closed ecosystem.
+This is also essential for hardware support, because drivers, SDKs, real-time services, FPGA toolflows, embedded platform stacks, and external software ecosystems can be integrated without collapsing the language into one closed ecosystem.
 </p>
 
 <hr/>
@@ -959,6 +986,8 @@ FROG explicitly separates:
   <li>the language specification,</li>
   <li>the canonical source representation,</li>
   <li>the editable program model,</li>
+  <li>intrinsic primitive vocabularies,</li>
+  <li>optional standardized capability profiles,</li>
   <li>execution-oriented derivation,</li>
   <li>execution observability,</li>
   <li>interactive debugging semantics,</li>
@@ -979,6 +1008,7 @@ At the modeling level, FROG also separates:
 
 <ul>
   <li>language from IDE,</li>
+  <li>intrinsic libraries from optional profiles,</li>
   <li>IDE from runtime,</li>
   <li>runtime from hardware,</li>
   <li>public interface from front panel,</li>
@@ -996,7 +1026,7 @@ This enables:
   <li>multiple compilers,</li>
   <li>multiple backends,</li>
   <li>multiple runtimes,</li>
-  <li>multiple vendor ecosystems supporting the same language,</li>
+  <li>multiple profile-supporting ecosystems around the same core language,</li>
   <li>independent ecosystem evolution around a shared graphical standard.</li>
 </ul>
 
@@ -1020,7 +1050,7 @@ Graiphic is the initial steward of the FROG specification repository and is resp
 
 <p>
 Open specification does not imply a single implementation model.
-Different actors may build open-source or proprietary IDEs, validators, runtimes, compilers, libraries, integrations, deployment systems, and related services around the FROG specification.
+Different actors may build open-source or proprietary IDEs, validators, runtimes, compilers, libraries, profiles, integrations, deployment systems, and related services around the FROG specification.
 </p>
 
 <p>
@@ -1045,7 +1075,7 @@ This repository therefore separates:
 
 <p>
 FROG is currently under active design, cleanup, and stabilization.
-The repository already contains substantial material across canonical source representation, language semantics, standard primitive libraries, and IDE architecture, but the overall specification is still converging toward a coherent v0.1 foundation.
+The repository already contains substantial material across canonical source representation, language semantics, intrinsic standard primitive libraries, optional profile architecture, and IDE architecture, but the overall specification is still converging toward a coherent v0.1 foundation.
 </p>
 
 <p>
@@ -1056,7 +1086,8 @@ Current repository direction includes:
   <li>stabilizing the canonical source specification,</li>
   <li>stabilizing the separation between canonical source representation and normative execution semantics,</li>
   <li>clarifying language semantics and execution behavior,</li>
-  <li>growing the standard primitive libraries beyond the minimal core,</li>
+  <li>stabilizing the intrinsic library boundary,</li>
+  <li>establishing optional profile families without collapsing them into the intrinsic core,</li>
   <li>defining IDE responsibilities without coupling the language to one implementation,</li>
   <li>defining source-aligned execution observability for live execution,</li>
   <li>defining dataflow-native debugging semantics for FROG IDEs,</li>
@@ -1068,7 +1099,7 @@ Current repository direction includes:
 
 <p>
 At the same time, some broader execution-facing layers remain architectural direction rather than fully closed repository families.
-Topics such as more explicit IR structuring, lowering, deployment profiles, runtime-facing specification layers, and conformance-oriented execution profiles may be refined further over time.
+Topics such as more explicit IR structuring, lowering, compilation, deployment profiles, runtime-facing specification layers, and conformance-oriented execution profiles may be refined further over time.
 </p>
 
 <p>
