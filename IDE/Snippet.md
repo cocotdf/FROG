@@ -80,6 +80,7 @@ a user can see the snippet as an image everywhere, while a FROG IDE can recover 
   <li><strong>Source alignment</strong> — preserve source-level meaning, layout, object relationships, and internal references.</li>
   <li><strong>Deterministic insertion</strong> — define how imported content is integrated into a target Program Model without ambiguity.</li>
   <li><strong>Non-confusion with full programs</strong> — clearly distinguish snippets from full <code>.frog</code> source files.</li>
+  <li><strong>Express-safe transport</strong> — allow optional transport of IDE-side Express recoverability aids without making them semantically required.</li>
   <li><strong>Extensibility</strong> — allow stricter carrier profiles and richer preview metadata later without changing the core snippet semantics.</li>
 </ul>
 
@@ -98,7 +99,8 @@ For FROG v0.1, this document standardizes:
   <li>how references and required supporting objects are carried,</li>
   <li>that a standalone snippet artifact MUST be image-backed,</li>
   <li>that the image carrier MUST contain structured embedded snippet payload data readable by a conforming FROG IDE,</li>
-  <li>how import, paste, and drag-and-drop SHOULD behave at the source-model level.</li>
+  <li>how import, paste, and drag-and-drop SHOULD behave at the source-model level,</li>
+  <li>how optional non-authoritative IDE-side recoverability metadata MAY accompany carried content.</li>
 </ul>
 
 <p>
@@ -129,6 +131,9 @@ This document complements the following specifications:
 
 <ul>
   <li><code>IDE/Readme.md</code> — defines the role of the Program Model and the distinction between IDE artifacts and canonical source.</li>
+  <li><code>IDE/Express.md</code> — defines Express authoring, canonical target identity, and IDE-side recoverability expectations for guided authoring.</li>
+  <li><code>Expression/Readme.md</code> — defines the canonical source model and the optional source-level <code>ide</code> section.</li>
+  <li><code>Expression/IDE preferences.md</code> — defines IDE-facing preferences and recoverability metadata carried in the optional source-level <code>ide</code> section.</li>
   <li><code>Expression/Diagram.md</code> — defines executable graph objects, layout metadata, annotations, and diagram-scope dependency references.</li>
   <li><code>Expression/Control structures.md</code> — defines structure nodes, owned regions, and the whole-structure representation that snippet capture must preserve when structures are selected.</li>
   <li><code>Expression/Front panel.md</code> — defines front-panel composition and widget-tree structure.</li>
@@ -216,7 +221,21 @@ A snippet MUST NOT introduce ad hoc execution semantics that do not already exis
 It transports content; it does not redefine the language.
 </p>
 
-<h3>5.7 Minimal but extensible</h3>
+<h3>5.7 Express-related recoverability is optional</h3>
+
+<p>
+A snippet MAY carry non-authoritative IDE-side recoverability metadata related to Express-authored instances or other guided
+authoring flows.
+However:
+</p>
+
+<ul>
+  <li>such metadata MUST remain optional,</li>
+  <li>such metadata MUST remain non-authoritative for execution semantics,</li>
+  <li>loss of such metadata MUST NOT invalidate the carried canonical snippet content.</li>
+</ul>
+
+<h3>5.8 Minimal but extensible</h3>
 
 <p>
 FROG v0.1 defines a minimal snippet core.
@@ -242,6 +261,7 @@ Conceptually, a snippet contains:
   <li>a payload containing source-aligned fragment content,</li>
   <li>boundary information for open connections or incomplete surroundings,</li>
   <li>presentation metadata used to render the snippet as an image,</li>
+  <li>optional non-authoritative IDE recoverability metadata,</li>
   <li>an image carrier that embeds the structured snippet payload.</li>
 </ul>
 
@@ -267,6 +287,7 @@ Therefore, a snippet:
   <li>MAY be incomplete relative to a full program,</li>
   <li>MAY have open boundaries,</li>
   <li>MAY omit unrelated program sections,</li>
+  <li>MAY carry non-authoritative IDE-side recoverability hints,</li>
   <li>MUST NOT be treated as a complete executable FROG unless a stricter profile explicitly wraps it into a complete FROG.</li>
 </ul>
 
@@ -361,7 +382,8 @@ A <code>diagram_snippet</code> MAY contain:
   <li>node-local documentation fields,</li>
   <li>node tags,</li>
   <li>layout metadata relevant to pasted placement,</li>
-  <li>diagram-scope dependency references needed by selected <code>subfrog</code> nodes.</li>
+  <li>diagram-scope dependency references needed by selected <code>subfrog</code> nodes,</li>
+  <li>optional non-authoritative snippet-local recoverability metadata relevant to guided authoring reconstruction.</li>
 </ul>
 
 <p>
@@ -396,7 +418,8 @@ A <code>front_panel_snippet</code> MAY contain:
   <li>widget subtrees,</li>
   <li>layout and composition metadata,</li>
   <li>styling metadata,</li>
-  <li>widget-local configuration.</li>
+  <li>widget-local configuration,</li>
+  <li>optional non-authoritative snippet-local recoverability metadata relevant to guided authoring reconstruction.</li>
 </ul>
 
 <p>
@@ -445,6 +468,11 @@ required referenced widget definitions in a front-panel fragment rather than ass
 <p>
 When a composite snippet carries both diagram and front-panel content, all internal widget references between those carried
 content families MUST remain resolvable inside the snippet payload.
+</p>
+
+<p>
+If a composite snippet also carries Express-related recoverability metadata, that metadata MUST remain subordinate to the
+carried canonical diagram and front-panel content.
 </p>
 
 <hr/>
@@ -522,7 +550,8 @@ The embedded payload of a snippet image is conceptually:
   "boundaries": { },
   "dependencies": { },
   "preview": { },
-  "metadata": { }
+  "metadata": { },
+  "ide_hints": { }
 }</code></pre>
 
 <h3>14.2 Rules</h3>
@@ -536,8 +565,8 @@ The embedded payload of a snippet image is conceptually:
 </ul>
 
 <p>
-Auxiliary sections such as <code>preview</code>, <code>metadata</code>, and implementation-private editor hints MAY be present
-provided that they remain non-authoritative with respect to source-aligned snippet meaning.
+Auxiliary sections such as <code>preview</code>, <code>metadata</code>, and <code>ide_hints</code> MAY be present provided
+that they remain non-authoritative with respect to source-aligned snippet meaning.
 </p>
 
 <h3>14.3 Embedded payload requirement</h3>
@@ -553,6 +582,19 @@ An image that merely resembles a snippet visually but lacks recoverable structur
 The rendered image MAY be regenerated from the payload.
 The payload MUST NOT be reconstructed by lossy visual analysis of the rendered image.
 </p>
+
+<h3>14.5 Express-related IDE hints</h3>
+
+<p>
+If an embedded snippet payload carries Express-related IDE hints:
+</p>
+
+<ul>
+  <li>those hints MUST remain optional,</li>
+  <li>those hints MUST remain non-authoritative for canonical meaning,</li>
+  <li>their absence or loss MUST NOT invalidate the carried canonical snippet content,</li>
+  <li>they SHOULD help a conforming IDE reopen or preserve guided authoring presentation only when that is safely possible.</li>
+</ul>
 
 <hr/>
 
@@ -649,6 +691,14 @@ A snippet SHOULD NOT capture unrelated surrounding program content merely to avo
 Closure should be minimal and semantically relevant.
 </p>
 
+<h3>16.7 Optional Express closure hints</h3>
+
+<p>
+A snippet MAY carry IDE-side hints that help preserve or restore the relationship between a carried fragment and an
+Express-authored presentation.
+Such hints MUST NOT replace the requirement to carry the actual canonical content needed for insertion.
+</p>
+
 <hr/>
 
 <h2 id="preview-and-presentation">17. Preview and Presentation</h2>
@@ -707,6 +757,11 @@ When an IDE exports a snippet, it MUST:
   <li>generate a human-visible rendered image,</li>
   <li>embed the structured snippet payload into that image-backed carrier.</li>
 </ul>
+
+<p>
+If the exported selection also contains optional Express-related recoverability state, the IDE MAY embed corresponding
+non-authoritative IDE hints in the snippet payload.
+</p>
 
 <h3>18.2 Stable rendering intent</h3>
 
@@ -769,8 +824,14 @@ When inserting a valid snippet payload, the IDE SHOULD:
   <li>preserve internal cross-references between carried content families,</li>
   <li>preserve carried layout relationships as far as practical,</li>
   <li>leave external boundaries open unless the insertion operation provides an explicit reconnection rule,</li>
-  <li>preserve semantic distinction between diagram content, front-panel content, and dependencies.</li>
+  <li>preserve semantic distinction between diagram content, front-panel content, dependencies, and non-authoritative IDE hints.</li>
 </ul>
+
+<p>
+If optional Express-related IDE hints are present, the IDE MAY use them to restore or preserve guided authoring presentation.
+If such hints are absent, ignored, or cannot safely be applied, the IDE MUST still insert the canonical carried content
+deterministically when the canonical content itself is valid.
+</p>
 
 <h3>19.4 Drag-and-drop equivalence</h3>
 
@@ -804,6 +865,12 @@ A snippet payload MUST be rejected if any of the following is true:
 </ul>
 
 <p>
+Optional non-authoritative IDE hints, including Express-related recoverability hints, MUST NOT by themselves determine whether
+the canonical carried content is valid.
+They MAY be ignored, warned about, or dropped without invalidating an otherwise valid snippet payload.
+</p>
+
+<p>
 A target IDE SHOULD additionally warn when:
 </p>
 
@@ -811,6 +878,7 @@ A target IDE SHOULD additionally warn when:
   <li>the snippet is valid but requires external dependencies that are unavailable,</li>
   <li>the snippet is structurally valid but contains unresolved boundary endpoints,</li>
   <li>the visible image appears stale relative to regenerated preview expectations,</li>
+  <li>optional IDE hints are present but cannot be safely applied,</li>
   <li>the snippet was produced by a newer incompatible snippet-profile revision.</li>
 </ul>
 
@@ -883,7 +951,40 @@ Validation MUST be performed on the embedded structured payload.
   }
 }</code></pre>
 
-<h3>21.3 Conceptual image-backed artifact</h3>
+<h3>21.3 Diagram snippet with optional Express-related IDE hints</h3>
+
+<pre><code class="language-json">{
+  "kind": "frog_snippet",
+  "version": "0.1",
+  "snippet_kind": "diagram_snippet",
+  "diagram_fragment": {
+    "nodes": [
+      { "id": "read_text_1", "kind": "subfrog", "ref": "frog.io.read_text_file.basic" }
+    ],
+    "edges": []
+  },
+  "ide_hints": {
+    "express_bindings": [
+      {
+        "instance_id": "expr_001",
+        "express_id": "frog.ide.express.read_text_file",
+        "canonical_target_kind": "subfrog",
+        "canonical_target_ref": "frog.io.read_text_file.basic",
+        "visible_optional_terminals": ["error_in", "error_out"],
+        "config": {
+          "encoding": "utf8"
+        }
+      }
+    ]
+  }
+}</code></pre>
+
+<p>
+In this example, the carried canonical content remains the authoritative snippet meaning.
+The <code>ide_hints</code> section is optional and non-authoritative.
+</p>
+
+<h3>21.4 Conceptual image-backed artifact</h3>
 
 <pre><code>+---------------------------------------------+
 | visible snippet image                       |
@@ -896,9 +997,10 @@ Validation MUST be performed on the embedded structured payload.
 |  version = 0.1                              |
 |  snippet_kind = diagram/front_panel/...     |
 |  source-aligned fragment content            |
+|  optional non-authoritative ide_hints       |
 +---------------------------------------------+</code></pre>
 
-<h3>21.4 Drag-and-drop behavior</h3>
+<h3>21.5 Drag-and-drop behavior</h3>
 
 <pre><code>user drags snippet image into FROG IDE
             │
@@ -929,7 +1031,8 @@ insert fragment deterministically</code></pre>
   <li>a mandatory OS-level drag-and-drop binary protocol,</li>
   <li>online snippet marketplaces,</li>
   <li>cryptographic signing requirements for snippet images,</li>
-  <li>pixel-only recovery of snippet semantics without embedded structured payload.</li>
+  <li>pixel-only recovery of snippet semantics without embedded structured payload,</li>
+  <li>making optional Express-related IDE hints required for valid snippet insertion.</li>
 </ul>
 
 <hr/>
@@ -947,6 +1050,7 @@ defined as an <strong>image-backed snippet carrier</strong>.
   <li>a conforming FROG IDE can recover that payload during import, paste, or drag-and-drop,</li>
   <li>the embedded payload is authoritative for snippet meaning,</li>
   <li>the visible image is authoritative for presentation only,</li>
+  <li>optional IDE hints such as Express-related recoverability metadata MAY be transported but MUST remain non-authoritative,</li>
   <li>the snippet remains a fragment, not a full canonical <code>.frog</code> program.</li>
 </ul>
 
