@@ -1,7 +1,11 @@
+<p align="center">
+  <img src="../FROG logo.svg" alt="FROG logo" width="150" />
+</p>
+
 <h1 align="center">🐸 FROG IDE Execution Observability Specification</h1>
 
 <p align="center">
-Definition of the execution observability model exposed to a FROG IDE<br/>
+Definition of the execution observability contract exposed to a FROG IDE<br/>
 <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -16,18 +20,18 @@ Definition of the execution observability model exposed to a FROG IDE<br/>
   <li><a href="#relation-with-other-specifications">4. Relation with Other Specifications</a></li>
   <li><a href="#design-principles">5. Design Principles</a></li>
   <li><a href="#what-this-document-defines">6. What This Document Defines</a></li>
-  <li><a href="#live-execution-instance">7. Live Execution Instance</a></li>
-  <li><a href="#source-identity-and-execution-context">8. Source Identity and Execution Context</a></li>
-  <li><a href="#observable-states">9. Observable States</a></li>
+  <li><a href="#observed-execution-instance-projection">7. Observed Execution Instance Projection</a></li>
+  <li><a href="#source-projection-and-execution-context">8. Source Projection and Execution Context</a></li>
+  <li><a href="#observable-state-projection">9. Observable State Projection</a></li>
   <li><a href="#observable-event-model">10. Observable Event Model</a></li>
-  <li><a href="#node-activation-observation">11. Node Activation Observation</a></li>
-  <li><a href="#edge-and-value-observation">12. Edge and Value Observation</a></li>
-  <li><a href="#structure-and-region-observation">13. Structure and Region Observation</a></li>
-  <li><a href="#local-memory-observation">14. Local Memory Observation</a></li>
-  <li><a href="#sub-frog-observation">15. Sub-FROG Observation</a></li>
-  <li><a href="#ui-sequencing-observation">16. UI Sequencing Observation</a></li>
-  <li><a href="#pause-consistency-and-safe-observation-points">17. Pause Consistency and Safe Observation Points</a></li>
-  <li><a href="#ordering-time-and-event-delivery">18. Ordering, Time, and Event Delivery</a></li>
+  <li><a href="#node-activation-projection">11. Node Activation Projection</a></li>
+  <li><a href="#edge-and-value-projection">12. Edge and Value Projection</a></li>
+  <li><a href="#structure-and-region-projection">13. Structure and Region Projection</a></li>
+  <li><a href="#local-memory-projection">14. Local-Memory Projection</a></li>
+  <li><a href="#sub-frog-projection">15. Sub-FROG Projection</a></li>
+  <li><a href="#ui-effect-sequencing-projection">16. UI-Effect Sequencing Projection</a></li>
+  <li><a href="#projection-of-language-level-safe-boundaries">17. Projection of Language-Level Safe Boundaries</a></li>
+  <li><a href="#ordering-time-delivery-and-profiles">18. Ordering, Time, Delivery, and Profiles</a></li>
   <li><a href="#ide-requirements">19. IDE Requirements</a></li>
   <li><a href="#illustrative-event-shapes">20. Illustrative Event Shapes</a></li>
   <li><a href="#out-of-scope-for-v01">21. Out of Scope for v0.1</a></li>
@@ -40,27 +44,29 @@ Definition of the execution observability model exposed to a FROG IDE<br/>
 <h2 id="overview">1. Overview</h2>
 
 <p>
-This document defines the <strong>execution observability model</strong> exposed to a FROG IDE.
-It specifies the minimal concepts, states, and events that allow an IDE to inspect a running FROG program in a source-aligned way.
+This document defines the <strong>execution observability contract</strong> exposed to a FROG IDE.
+It specifies how language-defined execution activity becomes observable to IDE-facing tooling in a source-aligned way.
 </p>
 
 <p>
-The purpose of execution observability is not to redefine how the program executes.
-Execution semantics remain defined by the validated FROG graph and the related language and library specifications.
-This document defines how execution becomes <strong>observable</strong> to IDE-facing tooling such as:
+Execution observability does not redefine execution semantics.
+Execution meaning remains defined by the validated executable graph and by the relevant language and library specifications.
+This document defines the IDE-facing projection needed by tooling such as:
 </p>
 
 <ul>
   <li>diagram execution highlighting,</li>
   <li>live node-state overlays,</li>
-  <li>debugging controls,</li>
+  <li>structure and region activity overlays,</li>
   <li>probe updates,</li>
   <li>watch updates,</li>
-  <li>execution logs and diagnostics.</li>
+  <li>execution traces, logs, and diagnostics,</li>
+  <li>debugger-facing observation feeds.</li>
 </ul>
 
 <p>
-Execution observability is therefore an IDE-facing contract over a live execution, not a replacement for the execution model itself.
+Execution observability is therefore an IDE-facing contract over language-defined execution activity.
+It is not a replacement for the execution model and not a replacement for execution-control boundaries.
 </p>
 
 <hr/>
@@ -70,12 +76,12 @@ Execution observability is therefore an IDE-facing contract over a live executio
 <p>This document has the following goals:</p>
 
 <ul>
-  <li>define what a FROG IDE is allowed to observe from a live execution,</li>
-  <li>preserve source-level identity so that runtime activity can be projected back onto the diagram and front panel,</li>
-  <li>support debugging, probes, watch behavior, and related IDE tooling without redefining execution semantics here,</li>
+  <li>define what a FROG IDE may observe from a live execution,</li>
+  <li>preserve source-level identity and execution context in IDE-facing projections,</li>
+  <li>support debugging, probes, watch behavior, and related tooling without relocating execution semantics into <code>IDE/</code>,</li>
   <li>remain compatible with multiple runtimes, schedulers, and execution strategies,</li>
-  <li>separate <strong>execution behavior</strong> from <strong>execution observability</strong>,</li>
-  <li>provide a stable foundation for later or richer observability-related specifications and profiles.</li>
+  <li>separate <strong>execution meaning</strong> from <strong>execution observability</strong>,</li>
+  <li>provide a stable contract for event-oriented or snapshot-oriented tooling integration.</li>
 </ul>
 
 <hr/>
@@ -83,20 +89,16 @@ Execution observability is therefore an IDE-facing contract over a live executio
 <h2 id="scope-for-v01">3. Scope for v0.1</h2>
 
 <p>
-For FROG v0.1, this document standardizes the minimal observable concepts needed by an IDE:
+For FROG v0.1, this document standardizes the minimal IDE-facing observability concepts needed by execution-aware tooling:
 </p>
 
 <ul>
-  <li>live execution instances,</li>
-  <li>source identity mapping,</li>
-  <li>execution context,</li>
-  <li>observable states,</li>
-  <li>observable execution events,</li>
-  <li>node activation visibility,</li>
-  <li>edge-level value transfer visibility,</li>
-  <li>structure and region activity visibility,</li>
-  <li>local-memory visibility,</li>
-  <li>pause consistency requirements.</li>
+  <li>how a live execution instance is exposed to the IDE,</li>
+  <li>how source identity and execution context are projected,</li>
+  <li>which high-level states an IDE may project,</li>
+  <li>which canonical observable event names and event categories may be emitted,</li>
+  <li>how node, edge, structure, region, local-memory, sub-FROG, and UI-effect activity may be projected,</li>
+  <li>what consistency guarantees the IDE may assume when consuming language-level safe boundaries.</li>
 </ul>
 
 <p>
@@ -104,19 +106,20 @@ FROG v0.1 does <strong>not</strong> standardize:
 </p>
 
 <ul>
+  <li>the execution model itself,</li>
+  <li>the safe-observation and safe-debug-stop semantics themselves,</li>
   <li>a transport protocol between runtime and IDE,</li>
-  <li>a binary event stream format,</li>
+  <li>a binary event-stream format,</li>
   <li>a mandatory timestamp format,</li>
   <li>a mandatory value-serialization format,</li>
   <li>a single required scheduler implementation,</li>
-  <li>a total order over independent parallel activity beyond causal consistency,</li>
   <li>the full debugging-control model,</li>
   <li>the full probe model,</li>
   <li>the full watch model.</li>
 </ul>
 
 <p>
-Those IDE-facing topics are defined in their own dedicated specifications where applicable.
+Those concerns are defined elsewhere or intentionally remain out of scope for this document.
 </p>
 
 <hr/>
@@ -132,13 +135,15 @@ This document depends on the following specifications:
   <li><code>IDE/Debugging.md</code> for pause, resume, breakpoint, and stepping behavior built on top of observability,</li>
   <li><code>IDE/Probes.md</code> for source-aligned probe targets and probe update meaning,</li>
   <li><code>IDE/Watch.md</code> for persistent watch targets and watch update meaning,</li>
-  <li><code>Expression/Diagram.md</code> for the validated executable graph and its node and edge model,</li>
-  <li><code>Expression/Control structures.md</code> for the canonical source-facing representation of structure families, structure boundaries, terminals, and regions,</li>
-  <li><code>Language/Control structures.md</code> for the normative execution semantics of structure families,</li>
-  <li><code>Expression/State and cycles.md</code> for the canonical source-facing representation of local-memory constructs and cycle-facing source constraints,</li>
-  <li><code>Language/State and cycles.md</code> for the normative execution semantics of local memory and valid feedback,</li>
+  <li><code>Expression/Diagram.md</code> for the canonical source node and edge model,</li>
+  <li><code>Expression/Control structures.md</code> for canonical structure and region representation,</li>
+  <li><code>Expression/State and cycles.md</code> for canonical local-memory representation,</li>
   <li><code>Expression/Widget interaction.md</code> for explicit UI-effect sequencing through <code>ui_in</code> and <code>ui_out</code>,</li>
-  <li><code>Libraries/Core.md</code> for the standardized primitive identity and primitive-local behavior of <code>frog.core.delay</code>,</li>
+  <li><code>Language/Execution model.md</code> for validated executable graph, live execution instance, source identity, activation, execution context, semantic execution milestones, and committed source-level state,</li>
+  <li><code>Language/Execution control and observation boundaries.md</code> for safe observation points, pause-consistent snapshots, safe debug stops, and completion/fault/abort boundary semantics,</li>
+  <li><code>Language/Control structures.md</code> for normative control-structure execution semantics,</li>
+  <li><code>Language/State and cycles.md</code> for normative local-memory and feedback-cycle execution semantics,</li>
+  <li><code>Libraries/Core.md</code> for primitive-local behavior such as <code>frog.core.delay</code>,</li>
   <li><code>Libraries/UI.md</code> for standardized executable UI interaction primitives.</li>
 </ul>
 
@@ -149,13 +154,13 @@ If a conflict appears:
 
 <ul>
   <li><code>Expression/</code> remains authoritative for canonical source identity and source-visible representation,</li>
-  <li><code>Language/</code> remains authoritative for normative execution semantics,</li>
-  <li><code>Libraries/</code> remains authoritative for primitive identity, required ports, required metadata, and primitive-local behavior,</li>
+  <li><code>Language/</code> remains authoritative for normative execution meaning and safe execution boundaries,</li>
+  <li><code>Libraries/</code> remain authoritative for primitive identity, required ports, required metadata, and primitive-local behavior,</li>
   <li><code>IDE/</code> remains authoritative only for the observability contract exposed to tools.</li>
 </ul>
 
 <p>
-This document is intentionally placed in <code>IDE/</code> because it specifies what the IDE may observe and project, not the canonical source representation itself and not the execution semantics themselves.
+This document is intentionally placed in <code>IDE/</code> because it defines how execution is projected to tools, not what execution means in the language itself.
 </p>
 
 <hr/>
@@ -169,33 +174,40 @@ Observable execution MUST remain attributable to source-level objects known to t
 A user should be able to understand runtime activity by looking at the source diagram and related front-panel elements.
 </p>
 
-<h3>5.2 Runtime independence</h3>
+<h3>5.2 Language-derived meaning</h3>
 
 <p>
-Different runtimes MAY use different internal schedulers, queues, threads, buffers, or optimization strategies.
+The IDE-facing projection defined here MUST be derived from language-defined execution meaning.
+This document MUST NOT be used to create an alternative execution semantics layer inside <code>IDE/</code>.
+</p>
+
+<h3>5.3 Runtime independence</h3>
+
+<p>
+Different runtimes MAY use different internal schedulers, queues, threads, buffers, batching strategies, or optimization strategies.
 Those internal choices MAY vary.
-The observable meaning exposed to the IDE MUST remain equivalent.
+The observable IDE-facing meaning MUST remain equivalent.
 </p>
 
-<h3>5.3 Causal consistency</h3>
+<h3>5.4 Causal consistency</h3>
 
 <p>
-The IDE-facing event stream MUST represent a causally consistent view of execution.
-The IDE MUST NOT be forced to interpret impossible or self-contradictory execution states.
+The IDE-facing event stream or snapshot model MUST represent a causally consistent view of execution.
+The IDE MUST NOT be forced to interpret impossible or self-contradictory source-level states.
 </p>
 
-<h3>5.4 Minimal but extensible</h3>
+<h3>5.5 Minimal but extensible</h3>
 
 <p>
 FROG v0.1 defines a minimal observability core.
-Stricter profiles MAY expose additional fields, more detailed events, richer value snapshots, or stronger guarantees, provided that the v0.1 meaning remains preserved.
+Stricter profiles MAY expose additional fields, more detailed events, richer value snapshots, stronger ordering guarantees, or richer retention behavior, provided that the v0.1 meaning remains preserved.
 </p>
 
-<h3>5.5 Observability is descriptive, not prescriptive</h3>
+<h3>5.6 Observability is descriptive, not prescriptive</h3>
 
 <p>
-This document describes what may be observed.
-It does not require runtimes to execute nodes in any particular internal implementation order beyond what is necessary to preserve the validated observable meaning.
+This document describes what the IDE may observe and consume.
+It does not require runtimes to execute nodes in any one internal implementation order beyond what is necessary to preserve the validated observable meaning.
 </p>
 
 <hr/>
@@ -203,59 +215,66 @@ It does not require runtimes to execute nodes in any particular internal impleme
 <h2 id="what-this-document-defines">6. What This Document Defines</h2>
 
 <p>
-Execution observability defines the <strong>observable projection</strong> of a live FROG execution to an IDE.
+Execution observability defines the <strong>observable projection</strong> of language-defined execution activity to an IDE.
 At minimum, this projection includes:
 </p>
 
 <ul>
-  <li>when a live execution instance begins and ends,</li>
-  <li>when a node becomes ready, starts, completes, or faults,</li>
-  <li>when a value becomes available on an edge,</li>
-  <li>when a structure is entered, which region executes, and when iterations begin and end,</li>
-  <li>when local memory is read and updated,</li>
-  <li>when a live execution is paused, resumed, or aborted.</li>
+  <li>instance lifecycle visibility,</li>
+  <li>node activation visibility,</li>
+  <li>edge value-availability visibility,</li>
+  <li>structure and region visibility,</li>
+  <li>local-memory visibility,</li>
+  <li>sub-FROG visibility,</li>
+  <li>projection of safe pause and terminal states to tools,</li>
+  <li>canonical IDE-facing event categories and names.</li>
 </ul>
 
 <p>
 This projection is conceptual.
-Implementations MAY expose it through callbacks, event queues, polling APIs, logs, traces, or any equivalent mechanism.
+Implementations MAY expose it through callbacks, event queues, polling APIs, logs, trace buffers, or equivalent mechanisms.
 </p>
 
 <hr/>
 
-<h2 id="live-execution-instance">7. Live Execution Instance</h2>
+<h2 id="observed-execution-instance-projection">7. Observed Execution Instance Projection</h2>
 
 <p>
-A <strong>live execution instance</strong> is one running realization of a validated FROG program.
-Every observable event belongs to exactly one live execution instance.
+A live execution instance is defined by <code>Language/Execution model.md</code>.
+This document defines how that instance becomes observable to the IDE.
 </p>
 
 <p>
-A live execution instance MUST have an identifier that is unique within the observing session.
+Every observable event or snapshot belongs to exactly one live execution instance.
+An IDE-facing observability feed MUST therefore provide an identifier unique within the observing session.
 This identifier is referred to in this document as <code>instance_id</code>.
 </p>
 
 <p>
-A live execution instance conceptually owns:
+The IDE-facing projection of an instance SHOULD make it possible to distinguish:
 </p>
 
 <ul>
-  <li>its own activation history,</li>
-  <li>its own local-memory state for each local-memory primitive instance,</li>
-  <li>its own sub-FROG invocation stack,</li>
-  <li>its own observable event sequence.</li>
+  <li>different runs of the same FROG,</li>
+  <li>different active instances observed concurrently,</li>
+  <li>different retained histories or traces associated with different instances.</li>
 </ul>
 
 <p>
-Two separate runs of the same FROG are separate live execution instances.
-Their observable states and histories MUST NOT be conflated.
+This document does not redefine what a live execution instance is.
+It standardizes only the minimum information needed to observe one coherently from IDE tooling.
 </p>
 
 <hr/>
 
-<h2 id="source-identity-and-execution-context">8. Source Identity and Execution Context</h2>
+<h2 id="source-projection-and-execution-context">8. Source Projection and Execution Context</h2>
 
-<h3>8.1 Source identity</h3>
+<h3>8.1 Source projection</h3>
+
+<p>
+Source identity is defined by the source model and by the language execution model.
+This document defines how that identity SHOULD be carried into IDE-facing observation.
+</p>
 
 <p>
 Every observable execution event SHOULD be attributable to a source-level object where applicable.
@@ -278,15 +297,16 @@ When the source specification already defines stable identifiers such as <code>n
 When an observed object does not have a canonical serialized identifier, the FROG Program Model MAY assign a stable IDE-visible identifier.
 </p>
 
-<h3>8.2 Execution context</h3>
+<h3>8.2 Execution context projection</h3>
 
 <p>
-Because the same source node may activate multiple times and under nested scopes, observable activity MUST also carry an <strong>execution context</strong>.
-The execution context identifies the dynamic path under which an observation occurs.
+Execution context is defined at the language level.
+This document standardizes its IDE-facing projection.
 </p>
 
 <p>
-The execution context MAY include:
+Because the same source node may activate multiple times and under nested scopes, observable activity MUST also carry an execution context whenever source identity alone is insufficient.
+The projected execution context MAY include:
 </p>
 
 <ul>
@@ -308,31 +328,40 @@ This context is required so that an IDE can distinguish, for example:
   <li>activity inside a nested sub-FROG versus the caller diagram.</li>
 </ul>
 
-<h3>8.3 Activation identity</h3>
+<h3>8.3 Activation identity projection</h3>
 
 <p>
-Every node activation SHOULD have an <code>activation_id</code> unique within its live execution instance.
-This identifier is especially important for loops, repeated executions, and detailed trace analysis.
+Every node activation SHOULD have an <code>activation_id</code> unique within its live execution instance when the active profile exposes activation-level detail.
+This identifier is especially important for loops, repeated executions, traces, probes, and watch correlation.
 </p>
 
 <hr/>
 
-<h2 id="observable-states">9. Observable States</h2>
+<h2 id="observable-state-projection">9. Observable State Projection</h2>
 
-<h3>9.1 Instance states</h3>
+<h3>9.1 Instance-state projection</h3>
 
 <p>
-A live execution instance MUST be observable in one of the following high-level states:
+Language-level high-level instance states are defined elsewhere.
+This document standardizes how an IDE MAY project them.
+</p>
+
+<p>
+A live execution instance MUST be projectable in one of the following execution-facing states:
 </p>
 
 <ul>
-  <li><code>created</code> — the instance exists but execution has not yet started,</li>
   <li><code>running</code> — execution is actively progressing,</li>
-  <li><code>paused</code> — execution is suspended at a safe observation point,</li>
+  <li><code>paused</code> — execution is suspended at a language-valid safe pause boundary,</li>
   <li><code>completed</code> — execution finished normally,</li>
   <li><code>faulted</code> — execution terminated because of an execution fault,</li>
   <li><code>aborted</code> — execution was terminated externally without normal completion.</li>
 </ul>
+
+<p>
+An IDE MAY additionally use local tooling states such as <code>created</code>, <code>attached</code>, or <code>detached</code> before or around active execution integration.
+Such tooling states are IDE-local and MUST NOT be confused with language-level execution states.
+</p>
 
 <h3>9.2 Node-observation states</h3>
 
@@ -341,24 +370,24 @@ For IDE projection purposes, a node activation MAY be observed through the follo
 </p>
 
 <ul>
-  <li><code>inactive</code> — the node is outside the currently executing dynamic path,</li>
-  <li><code>waiting</code> — the node belongs to the active execution path but its required activation conditions are not yet satisfied,</li>
+  <li><code>inactive</code> — the node is outside the currently relevant dynamic path,</li>
+  <li><code>waiting</code> — the node belongs to the relevant dynamic path but its activation conditions are not yet satisfied,</li>
   <li><code>ready</code> — the node is eligible to begin execution,</li>
   <li><code>running</code> — the node is currently executing,</li>
   <li><code>completed</code> — the node activation completed normally,</li>
   <li><code>faulted</code> — the node activation failed,</li>
-  <li><code>canceled</code> — the node activation will not occur because the containing instance or scope was aborted.</li>
+  <li><code>canceled</code> — the node activation will not occur because the containing instance or relevant scope was aborted.</li>
 </ul>
 
 <p>
-These are observability states, not a required internal runtime state machine.
+These are projection states, not a required internal runtime state machine.
 A runtime MAY internally use a different representation provided that the IDE-visible meaning remains equivalent.
 </p>
 
 <h3>9.3 Region-observation states</h3>
 
 <p>
-A structure region MAY be observed as:
+A structure region MAY be projected as:
 </p>
 
 <ul>
@@ -380,7 +409,7 @@ For loop structures, the canonical body region is repeatedly activated across it
 <h3>10.1 Canonical event categories</h3>
 
 <p>
-FROG v0.1 defines the following canonical event categories:
+FROG v0.1 defines the following canonical IDE-facing observable event categories:
 </p>
 
 <ul>
@@ -396,7 +425,7 @@ FROG v0.1 defines the following canonical event categories:
 <h3>10.2 Canonical event names</h3>
 
 <p>
-The canonical semantic event names for v0.1 are:
+The canonical IDE-facing semantic event names for v0.1 are:
 </p>
 
 <ul>
@@ -437,7 +466,7 @@ A conceptual event therefore typically includes:
   <li><code>instance_id</code> — live execution instance identifier,</li>
   <li><code>sequence</code> — monotonically increasing event order within the instance,</li>
   <li><code>object</code> — the primary observed object,</li>
-  <li><code>context</code> — execution context,</li>
+  <li><code>context</code> — projected execution context,</li>
   <li><code>timestamp</code> — optional runtime timestamp,</li>
   <li><code>details</code> — event-specific additional fields.</li>
 </ul>
@@ -448,22 +477,14 @@ The exact concrete transport shape is not standardized by this document.
 
 <hr/>
 
-<h2 id="node-activation-observation">11. Node Activation Observation</h2>
+<h2 id="node-activation-projection">11. Node Activation Projection</h2>
 
 <h3>11.1 General model</h3>
 
 <p>
-A source node MAY activate zero, one, or multiple times during a live execution instance, depending on:
+A source node MAY activate zero, one, or multiple times during a live execution instance, depending on language-defined execution meaning.
+This document defines how such activity becomes visible to the IDE.
 </p>
-
-<ul>
-  <li>ordinary dataflow,</li>
-  <li>structure selection,</li>
-  <li>loop iteration,</li>
-  <li>sub-FROG invocation,</li>
-  <li>local-memory feedback behavior,</li>
-  <li>runtime-specific execution progress.</li>
-</ul>
 
 <h3>11.2 Ready visibility</h3>
 
@@ -474,13 +495,13 @@ The event <code>node_became_ready</code> indicates that a node activation is now
 
 <p>
 A runtime MAY internally transition from readiness to execution immediately.
-Even in that case, an interactive observability profile SHOULD still preserve a logical ready step so that debugging, highlighting, and related tooling remain definable.
+Even in that case, an interactive observability profile SHOULD still preserve a logical ready step so that highlighting, debugging, and related tooling remain definable.
 </p>
 
 <h3>11.3 Start and completion</h3>
 
 <p>
-A normal node activation SHOULD be observable through:
+A normal node activation SHOULD be observable through an equivalent causal pattern such as:
 </p>
 
 <pre><code>node_became_ready
@@ -489,7 +510,7 @@ node_completed
 </code></pre>
 
 <p>
-A faulting activation SHOULD be observable through:
+A faulting activation SHOULD be observable through an equivalent causal pattern such as:
 </p>
 
 <pre><code>node_became_ready
@@ -498,13 +519,13 @@ node_faulted
 </code></pre>
 
 <p>
-A node MUST NOT be reported as completed before its observable outputs and state-related effects for that activation are causally committed.
+A node MUST NOT be projected as completed before the corresponding source-visible outputs and state-related effects for that activation are committed according to the language-level model.
 </p>
 
 <h3>11.4 Source kinds</h3>
 
 <p>
-This node activation model applies uniformly to standard node kinds where relevant, including:
+This node-activation projection applies uniformly to standard node kinds where relevant, including:
 </p>
 
 <ul>
@@ -519,12 +540,12 @@ This node activation model applies uniformly to standard node kinds where releva
 
 <p>
 The exact meaning of their ports remains defined by the corresponding source, library, and language specifications.
-This document defines only their observability behavior.
+This document defines only their observability-side projection.
 </p>
 
 <hr/>
 
-<h2 id="edge-and-value-observation">12. Edge and Value Observation</h2>
+<h2 id="edge-and-value-projection">12. Edge and Value Projection</h2>
 
 <h3>12.1 Edge-level visibility</h3>
 
@@ -543,7 +564,7 @@ The primary observed object for that event SHOULD identify the edge by its sourc
 <h3>12.2 Meaning</h3>
 
 <p>
-The event <code>edge_value_available</code> means that, within the current live execution context, a value is now available on that edge for ordinary source-level understanding.
+The event <code>edge_value_available</code> means that, within the current live execution context, a value is now available for ordinary source-level understanding.
 It does not require the runtime to reveal internal buffer implementation details.
 </p>
 
@@ -563,7 +584,7 @@ A stricter profile MAY expose one of the following:
 </ul>
 
 <p>
-The chosen payload strategy MUST NOT alter the execution semantics.
+The chosen payload strategy MUST NOT alter execution meaning.
 It only affects what the IDE can display.
 </p>
 
@@ -576,7 +597,7 @@ A runtime MAY internally optimize such fan-out, but the IDE-visible meaning SHOU
 
 <hr/>
 
-<h2 id="structure-and-region-observation">13. Structure and Region Observation</h2>
+<h2 id="structure-and-region-projection">13. Structure and Region Projection</h2>
 
 <h3>13.1 General rule</h3>
 
@@ -595,7 +616,7 @@ The IDE SHOULD be able to see:
 <h3>13.2 Case structure</h3>
 
 <p>
-For a <code>case</code> structure, the canonical event sequence SHOULD include:
+For a <code>case</code> structure, the canonical observable model SHOULD include an equivalent causal pattern such as:
 </p>
 
 <pre><code>structure_entered
@@ -640,7 +661,7 @@ For a <code>while_loop</code>, the canonical observable model is similar to <cod
 </ul>
 
 <p>
-The continue/termination meaning of <code>while_loop</code> remains defined by the control-structure specifications.
+The continue/termination meaning of <code>while_loop</code> remains defined by the relevant language specifications.
 This document defines only how that activity becomes visible.
 </p>
 
@@ -653,7 +674,7 @@ For example, a node inside a loop body is not merely “the same node again”; 
 
 <hr/>
 
-<h2 id="local-memory-observation">14. Local Memory Observation</h2>
+<h2 id="local-memory-projection">14. Local-Memory Projection</h2>
 
 <h3>14.1 General rule</h3>
 
@@ -665,7 +686,7 @@ For IDE purposes, this state-related activity MUST be observable in a source-ali
 <h3>14.2 Canonical events</h3>
 
 <p>
-The canonical local-memory events are:
+The canonical local-memory projection events are:
 </p>
 
 <ul>
@@ -692,7 +713,7 @@ For one normal activation of <code>frog.core.delay</code>, a conforming observab
   <li>the delay node activation becomes ready and starts,</li>
   <li>the previously stored state is the state associated with the observed output of that activation,</li>
   <li>the next stored state is updated from the observed input of that activation,</li>
-  <li>the activation completes only after the observable state transition for that activation is causally committed.</li>
+  <li>the activation completes only after the observable state transition for that activation is committed.</li>
 </ul>
 
 <p>
@@ -708,7 +729,7 @@ node_completed
 </code></pre>
 
 <p>
-An implementation MAY merge or internally reorder operations provided that the exposed observable meaning remains equivalent and does not contradict the primitive-local behavior defined by <code>Libraries/Core.md</code>.
+An implementation MAY merge or internally reorder operations provided that the exposed observable meaning remains equivalent and does not contradict the primitive-local behavior defined elsewhere.
 </p>
 
 <h3>14.4 Initial state visibility</h3>
@@ -721,7 +742,7 @@ However, if shown, it MUST match the deterministic source and language semantics
 
 <hr/>
 
-<h2 id="sub-frog-observation">15. Sub-FROG Observation</h2>
+<h2 id="sub-frog-projection">15. Sub-FROG Projection</h2>
 
 <h3>15.1 Call-site visibility</h3>
 
@@ -749,7 +770,7 @@ This distinction is necessary for debugging behaviors such as step-into and step
 
 <hr/>
 
-<h2 id="ui-sequencing-observation">16. UI Sequencing Observation</h2>
+<h2 id="ui-effect-sequencing-projection">16. UI-Effect Sequencing Projection</h2>
 
 <h3>16.1 General rule</h3>
 
@@ -783,54 +804,64 @@ Only the existing explicit UI sequencing model and the ordinary node execution m
 
 <hr/>
 
-<h2 id="pause-consistency-and-safe-observation-points">17. Pause Consistency and Safe Observation Points</h2>
+<h2 id="projection-of-language-level-safe-boundaries">17. Projection of Language-Level Safe Boundaries</h2>
 
-<h3>17.1 Safe observation point</h3>
+<h3>17.1 General rule</h3>
 
 <p>
-A <strong>safe observation point</strong> is a moment at which a live execution instance may be observed or paused without exposing a partially committed source-level state to the IDE.
+Safe observation points, pause-consistent snapshots, and safe debug stops are defined by
+<code>Language/Execution control and observation boundaries.md</code>.
+This document defines how the IDE consumes and projects those boundaries.
+</p>
+
+<h3>17.2 Safe observation projection</h3>
+
+<p>
+When a runtime exposes an observation point to an IDE-facing observability feed, the exposed view MUST correspond to a language-valid safe observation boundary.
+The IDE MUST therefore be able to interpret the received state as a coherent causal prefix rather than as an arbitrary transient runtime microstate.
+</p>
+
+<h3>17.3 Paused projection</h3>
+
+<p>
+If a live execution instance enters the <code>paused</code> state, it MUST do so only at a language-valid safe pause boundary.
+The IDE-facing paused view MUST therefore be interpretable as a pause-consistent snapshot.
 </p>
 
 <p>
-At a safe observation point:
-</p>
-
-<ul>
-  <li>every emitted observable event belongs to a consistent causal prefix of the execution,</li>
-  <li>no already-emitted source-level event is contradicted by later pause interpretation,</li>
-  <li>no IDE-visible local-memory state is half-updated,</li>
-  <li>no already-highlighted node or region is left in an impossible intermediate state.</li>
-</ul>
-
-<h3>17.2 Pause-consistent view</h3>
-
-<p>
-If a live execution instance enters the <code>paused</code> state, it MUST do so only at a safe observation point.
-The IDE MUST then observe a causally consistent snapshot of:
+The IDE MAY then project:
 </p>
 
 <ul>
   <li>instance state,</li>
-  <li>currently running or last-completed observable activity,</li>
-  <li>current local-memory values if they are exposed,</li>
-  <li>already-available edge values if such visibility is supported by the active profile.</li>
+  <li>currently relevant or last-completed observable activity,</li>
+  <li>current local-memory values if exposed by the active profile,</li>
+  <li>already committed edge values if such visibility is supported,</li>
+  <li>execution context required to interpret the paused state correctly.</li>
 </ul>
 
-<h3>17.3 No partial node completion</h3>
+<h3>17.4 No contradiction rule for IDE projection</h3>
 
 <p>
-A node MUST NOT appear both completed and not-yet-committed within the same paused snapshot.
-Likewise, an edge value that is shown as available MUST correspond to a causally committed value in the paused view.
+The IDE MUST NOT be forced to represent:
 </p>
 
+<ul>
+  <li>a node as both completed and not yet committed,</li>
+  <li>a value as available when it is not yet committed at the language level,</li>
+  <li>a local-memory state as half-updated,</li>
+  <li>a selected region in a contradictory way,</li>
+  <li>caller/callee nesting in a way that loses the relevant execution context.</li>
+</ul>
+
 <p>
-This section defines only the observability-side consistency requirement.
-Debugging-side pause commands and stop behavior are defined in <code>IDE/Debugging.md</code>.
+This section defines the observability-side consumption rule.
+It does not redefine the boundary semantics themselves.
 </p>
 
 <hr/>
 
-<h2 id="ordering-time-and-event-delivery">18. Ordering, Time, and Event Delivery</h2>
+<h2 id="ordering-time-delivery-and-profiles">18. Ordering, Time, Delivery, and Profiles</h2>
 
 <h3>18.1 Sequence order</h3>
 
@@ -843,7 +874,7 @@ This order MUST be causally consistent.
 
 <p>
 Independent parallel activity need not imply one universal semantic order beyond causal consistency.
-If two independent node activations are both valid and concurrent, a runtime MAY choose either event emission order, provided that:
+If two independent node activations are both valid and concurrent, a runtime MAY choose either event-emission order, provided that:
 </p>
 
 <ul>
@@ -875,11 +906,11 @@ Implementations MAY use:
   <li>or any equivalent delivery model.</li>
 </ul>
 
-<h3>18.5 Event loss</h3>
+<h3>18.5 Event loss and weaker profiles</h3>
 
 <p>
 A profile intended for interactive debugging SHOULD avoid dropping canonical observability events.
-A lower-overhead telemetry profile MAY summarize or sample events, but only if it is explicitly identified as weaker than the full interactive observability profile.
+A lower-overhead telemetry or monitoring profile MAY summarize or sample events, but only if it is explicitly identified as weaker than the full interactive observability profile.
 </p>
 
 <hr/>
@@ -915,7 +946,7 @@ An IDE MAY present this information through:
 
 <p>
 The visual design is not standardized here.
-Only the source-aligned meaning is standardized.
+Only the IDE-facing observable meaning is standardized here.
 </p>
 
 <hr/>
@@ -924,7 +955,7 @@ Only the source-aligned meaning is standardized.
 
 <p>
 The following examples are illustrative only.
-They show one possible structured representation of the conceptual event model.
+They show one possible structured representation of the conceptual observability model.
 They are not a required transport format.
 </p>
 
@@ -1023,6 +1054,8 @@ The following are intentionally out of scope for this document:
 </p>
 
 <ul>
+  <li>execution-model ownership,</li>
+  <li>safe-observation and safe-debug-stop semantic ownership,</li>
   <li>breakpoint semantics,</li>
   <li>single-step semantics,</li>
   <li>step into / over / out behavior,</li>
@@ -1038,7 +1071,7 @@ The following are intentionally out of scope for this document:
 </ul>
 
 <p>
-Those topics MAY be defined later in separate IDE or runtime-facing specifications.
+Those topics MAY be defined later in separate IDE-facing or runtime-facing specifications.
 </p>
 
 <hr/>
@@ -1052,15 +1085,15 @@ Instead, it standardizes:
 </p>
 
 <ul>
-  <li>what execution objects are observable,</li>
-  <li>which states they may expose,</li>
-  <li>which canonical events may be emitted,</li>
-  <li>how runtime activity maps back to source identity,</li>
-  <li>what consistency guarantees an IDE may rely on when projecting execution.</li>
+  <li>how language-defined execution objects are projected to the IDE,</li>
+  <li>which high-level states the IDE may project,</li>
+  <li>which canonical observable events may be emitted,</li>
+  <li>how runtime activity maps back to source identity and execution context,</li>
+  <li>what consistency guarantees the IDE may rely on when consuming language-level safe boundaries.</li>
 </ul>
 
 <p>
-This observability layer is the foundation for debugging, probes, watches, and richer execution instrumentation without confusing IDE-facing observation with normative language or primitive behavior.
+This observability layer is the foundation for debugging, probes, watches, traces, and richer execution instrumentation without confusing IDE-facing observation with normative language or primitive behavior.
 </p>
 
 <hr/>
