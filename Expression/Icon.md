@@ -1,26 +1,38 @@
+<p align="center">
+  <img src="../FROG%20logo.svg" alt="FROG logo" width="140" />
+</p>
+
 <h1 align="center">🐸 FROG Icon Specification</h1>
 
 <p align="center">
-Icon definition for <strong>.frog</strong> programs<br/>
+Definition of the optional <code>icon</code> section of <strong>.frog</strong> programs<br/>
 <em>FROG — Free Open Graphical Language</em>
 </p>
 
 <hr/>
 
-<h2>Contents</h2>
+<h2 id="contents">Contents</h2>
 
 <ul>
   <li><a href="#overview">1. Overview</a></li>
-  <li><a href="#purpose">2. Purpose</a></li>
-  <li><a href="#location">3. Location in a .frog file</a></li>
-  <li><a href="#structure">4. Icon object structure</a></li>
-  <li><a href="#svg-requirements">5. SVG requirements</a></li>
-  <li><a href="#coordinate-system">6. Coordinate system and sizing</a></li>
-  <li><a href="#embedding">7. Embedding rules</a></li>
-  <li><a href="#optional-fields">8. Optional fields</a></li>
-  <li><a href="#examples">9. Examples</a></li>
-  <li><a href="#validation">10. Validation rules</a></li>
-  <li><a href="#summary">11. Summary</a></li>
+  <li><a href="#scope">2. Scope</a></li>
+  <li><a href="#relation-with-other-specifications">3. Relation with Other Specifications</a></li>
+  <li><a href="#location">4. Location in a <code>.frog</code> File</a></li>
+  <li><a href="#purpose">5. Purpose of the Icon Section</a></li>
+  <li><a href="#structure">6. Icon Object Structure</a></li>
+  <li><a href="#svg-requirements">7. SVG Requirements</a></li>
+  <li><a href="#coordinate-system-and-sizing">8. Coordinate System and Sizing</a></li>
+  <li><a href="#embedding-and-formatting-rules">9. Embedding and Formatting Rules</a></li>
+  <li><a href="#extensibility-and-boundary-rules">10. Extensibility and Boundary Rules</a></li>
+  <li><a href="#examples">11. Examples</a>
+    <ul>
+      <li><a href="#minimal-example">11.1 Minimal Icon</a></li>
+      <li><a href="#symbol-example">11.2 Icon with Simple Symbol</a></li>
+    </ul>
+  </li>
+  <li><a href="#validation-rules">12. Validation Rules</a></li>
+  <li><a href="#design-goals">13. Design Goals</a></li>
+  <li><a href="#summary">14. Summary</a></li>
 </ul>
 
 <hr/>
@@ -28,54 +40,157 @@ Icon definition for <strong>.frog</strong> programs<br/>
 <h2 id="overview">1. Overview</h2>
 
 <p>
-The <strong>icon</strong> section defines the graphical icon used to represent a Frog when displayed as a node in a diagram.
+The top-level <code>icon</code> section defines an optional graphical icon associated with a FROG program.
 </p>
 
 <p>
-Icons are intended for development environments and visualization tools.
-They MUST NOT affect execution semantics.
+This icon is primarily intended to represent the FROG when it is displayed, browsed, or reused as a node in development tools, library browsers, palettes, or diagram editors.
+</p>
+
+<p>
+The <code>icon</code> section is part of the canonical source representation when present, but it is <strong>non-executable</strong>.
+It MUST NOT define, modify, or override execution semantics.
+</p>
+
+<p>
+Execution behavior MUST be derived from the validated executable source representation of the program,
+centered on the public interface and the authoritative executable diagram,
+and interpreted according to the normative language semantics.
+</p>
+
+<p>
+Runtimes, compilers, and other execution-facing systems MUST ignore the icon when determining executable meaning.
 </p>
 
 <hr/>
 
-<h2 id="purpose">2. Purpose</h2>
+<h2 id="scope">2. Scope</h2>
 
 <p>
-The icon provides a compact, recognizable representation of a Frog.
+This document specifies:
 </p>
 
 <ul>
-  <li>Improves readability in diagrams</li>
-  <li>Provides consistent visual identity</li>
-  <li>Enables library browsing and search previews</li>
+  <li>the role of the optional top-level <code>icon</code> section,</li>
+  <li>the structure of the icon object,</li>
+  <li>the source representation of embedded SVG icon content,</li>
+  <li>validation rules for safe and portable icon content,</li>
+  <li>boundary rules between icon data and other source or tooling sections.</li>
+</ul>
+
+<p>
+This document does not specify:
+</p>
+
+<ul>
+  <li>the executable dataflow graph,</li>
+  <li>the public interface of the FROG,</li>
+  <li>front-panel widget composition,</li>
+  <li>IDE-specific asset pipelines,</li>
+  <li>runtime rendering engines,</li>
+  <li>theme systems, icon packs, or vendor-specific visual skins.</li>
 </ul>
 
 <hr/>
 
-<h2 id="location">3. Location in a .frog file</h2>
+<h2 id="relation-with-other-specifications">3. Relation with Other Specifications</h2>
 
 <p>
-The icon object is an optional top-level section in a <code>.frog</code> file.
+The <code>icon</code> section is one of the optional top-level source sections of a canonical <code>.frog</code> file.
+It belongs to the source representation defined in <code>Expression/</code>.
+</p>
+
+<p>
+Its ownership boundary relative to neighboring sections is:
+</p>
+
+<pre>Top-level source-section boundary
+
+metadata    - descriptive program identity and documentation
+interface   - public typed program boundary
+diagram     - authoritative executable graph
+front_panel - optional user-facing interaction surface
+icon        - optional reusable-node visual representation
+ide         - optional IDE-facing authoring preferences
+cache       - optional derived tooling data</pre>
+
+<p>
+In particular:
+</p>
+
+<ul>
+  <li><code>icon</code> does not define executable logic. That belongs to <code>diagram</code>.</li>
+  <li><code>icon</code> does not define the public API of the FROG. That belongs to <code>interface</code>.</li>
+  <li><code>icon</code> is not a replacement for front-panel composition. That belongs to <code>front_panel</code>.</li>
+  <li><code>icon</code> is not descriptive program documentation. That belongs to <code>metadata</code>.</li>
+  <li><code>icon</code> is not a container for transient editor state or rendering preferences. That belongs to <code>ide</code> or <code>cache</code> depending on ownership.</li>
+</ul>
+
+<hr/>
+
+<h2 id="location">4. Location in a <code>.frog</code> File</h2>
+
+<p>
+The <code>icon</code> object is an optional top-level JSON object inside a canonical <code>.frog</code> file.
+</p>
+
+<p>
+Example:
 </p>
 
 <pre>{
   "spec_version": "0.1",
   "metadata": {},
   "interface": {},
-  "connector": {},
   "diagram": {},
-  "front_panel": {},
-  "icon": { }
+  "icon": {}
 }</pre>
 
 <p>
-The <code>icon</code> object MAY be omitted.
-If omitted, tools MAY render a default icon.
+A canonical source file MAY omit the <code>icon</code> section entirely.
+If omitted, tools MAY render a default icon or another implementation-defined placeholder.
+</p>
+
+<pre>Canonical .frog structure
+
+example.frog
+├─ spec_version
+├─ metadata     -> required descriptive source section
+├─ interface    -> required public typed boundary
+├─ diagram      -> required executable graph
+├─ connector    -> optional reusable-node perimeter mapping
+├─ front_panel  -> optional UI composition
+├─ icon         -> optional reusable-node visual identity
+├─ ide          -> optional IDE-facing preferences
+└─ cache        -> optional derived tooling data</pre>
+
+<hr/>
+
+<h2 id="purpose">5. Purpose of the Icon Section</h2>
+
+<p>
+The purpose of the <code>icon</code> section is to provide a compact and recognizable visual representation of a FROG.
+</p>
+
+<p>
+Typical uses include:
+</p>
+
+<ul>
+  <li>diagram-node rendering when a FROG is reused as a subprogram,</li>
+  <li>palette or library browsing,</li>
+  <li>search previews and program pickers,</li>
+  <li>visual identity in authoring environments.</li>
+</ul>
+
+<p>
+The icon is a source-carried visual identifier, not a complete graphical asset system.
+It SHOULD remain simple, portable, and stable across tools.
 </p>
 
 <hr/>
 
-<h2 id="structure">4. Icon object structure</h2>
+<h2 id="structure">6. Icon Object Structure</h2>
 
 <p>
 Minimal icon structure:
@@ -83,99 +198,147 @@ Minimal icon structure:
 
 <pre>"icon": {
   "size": 40,
-  "svg": "&lt;svg&gt;...&lt;/svg&gt;"
+  "svg": "&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'&gt;...&lt;/svg&gt;"
 }</pre>
 
 <p>
-Fields:
+Standard fields:
 </p>
 
 <ul>
-  <li><code>size</code> (integer) — logical icon size in pixels (v0.1 default is 40)</li>
-  <li><code>svg</code> (string) — SVG content</li>
+  <li><code>size</code> — logical icon size in source units.</li>
+  <li><code>svg</code> — embedded SVG markup as a JSON string.</li>
 </ul>
+
+<p>
+Field rules:
+</p>
+
+<ul>
+  <li>If <code>icon</code> is present, <code>icon.svg</code> MUST be present.</li>
+  <li>If present, <code>icon.size</code> MUST be an integer.</li>
+  <li>If <code>icon.size</code> is omitted, tools MAY assume the standard logical size of <code>40</code>.</li>
+</ul>
+
+<p>
+The icon object SHOULD remain small and source-friendly.
+It is not intended to become a general multimedia container.
+</p>
 
 <hr/>
 
-<h2 id="svg-requirements">5. SVG requirements</h2>
+<h2 id="svg-requirements">7. SVG Requirements</h2>
 
 <p>
-The <code>svg</code> field MUST contain valid SVG markup.
+The <code>svg</code> field MUST contain valid SVG markup serialized as a JSON string.
+</p>
+
+<p>
+The embedded SVG MUST be self-contained.
 </p>
 
 <ul>
-  <li>The SVG MUST be self-contained.</li>
-  <li>The SVG MUST NOT reference external assets (no external images, no remote fonts).</li>
-  <li>The SVG SHOULD avoid scripts and animations.</li>
-  <li>The SVG MUST be safe to render in a sandboxed environment.</li>
+  <li>It MUST NOT reference remote assets.</li>
+  <li>It MUST NOT depend on external images.</li>
+  <li>It MUST NOT depend on remote fonts.</li>
+  <li>It SHOULD avoid scripting, animation, and other active content.</li>
+  <li>It MUST be safe to render in a sandboxed environment.</li>
 </ul>
 
 <p>
-For interoperability, icons SHOULD use simple shapes and paths:
+For portability and predictable rendering, icons SHOULD prefer simple, static SVG content such as:
 </p>
 
 <ul>
   <li><code>&lt;path&gt;</code></li>
   <li><code>&lt;rect&gt;</code></li>
   <li><code>&lt;circle&gt;</code></li>
-  <li><code>&lt;text&gt;</code> (optional)</li>
+  <li><code>&lt;line&gt;</code></li>
+  <li><code>&lt;polyline&gt;</code></li>
+  <li><code>&lt;text&gt;</code> when truly needed</li>
 </ul>
+
+<p>
+Implementations MAY reject unsafe or unsupported SVG subsets for security, portability, or rendering-stability reasons.
+</p>
 
 <hr/>
 
-<h2 id="coordinate-system">6. Coordinate system and sizing</h2>
+<h2 id="coordinate-system-and-sizing">8. Coordinate System and Sizing</h2>
 
 <p>
-In v0.1, icons are expected to be designed on a <strong>40×40 logical grid</strong>.
+In v0.1, icons are expected to target a <strong>40 x 40 logical grid</strong>.
 </p>
 
 <p>
-The SVG SHOULD declare:
+The embedded SVG SHOULD declare either:
 </p>
 
 <ul>
-  <li><code>width="40"</code> and <code>height="40"</code>, or</li>
-  <li>a <code>viewBox="0 0 40 40"</code></li>
+  <li><code>viewBox="0 0 40 40"</code>, or</li>
+  <li>an equivalent coordinate strategy clearly aligned to a 40-unit logical size.</li>
 </ul>
 
 <p>
-Recommended:
+Recommended form:
 </p>
 
 <pre>&lt;svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"&gt;...&lt;/svg&gt;</pre>
 
 <p>
-Tools MAY scale icons for high-DPI rendering.
-The logical coordinate system MUST remain consistent.
+Tools MAY scale icons for high-DPI or zoomed rendering.
+However, the source-level logical coordinate system SHOULD remain stable.
 </p>
+
+<pre>Logical icon model
+
+source icon
+   |
+   +-- logical size: 40
+   +-- logical grid: 0..40 x 0..40
+   |
+   +-- SVG viewBox defines source-space geometry
+   |
+tool rendering
+   |
+   +-- MAY scale for zoom
+   +-- MAY scale for DPI
+   +-- MUST NOT change executable meaning</pre>
 
 <hr/>
 
-<h2 id="embedding">7. Embedding rules</h2>
+<h2 id="embedding-and-formatting-rules">9. Embedding and Formatting Rules</h2>
 
 <p>
-The SVG is embedded as a JSON string.
+The SVG is embedded directly as a JSON string inside the <code>icon</code> object.
 </p>
 
 <p>
-Implementations MUST preserve SVG content exactly, except for JSON escaping.
+Implementations MUST preserve icon meaning exactly.
+JSON escaping is part of normal serialization and does not count as semantic modification.
 </p>
 
 <ul>
   <li>Newlines MAY be preserved.</li>
-  <li>Whitespace MAY be normalized by formatting tools.</li>
-  <li>Tools SHOULD provide a stable formatting strategy to avoid noisy diffs.</li>
+  <li>Whitespace MAY be normalized by formatting tools when that does not alter SVG meaning.</li>
+  <li>Formatting tools SHOULD use a stable strategy to avoid noisy diffs.</li>
 </ul>
+
+<p>
+Implementations SHOULD avoid rewriting the SVG content unnecessarily.
+</p>
 
 <hr/>
 
-<h2 id="optional-fields">8. Optional fields</h2>
+<h2 id="extensibility-and-boundary-rules">10. Extensibility and Boundary Rules</h2>
 
 <p>
-Tools MAY add optional icon fields for editing and rendering.
+Tools MAY add additional icon-related fields for non-executable editing or rendering support.
 </p>
 
+<p>
 Example:
+</p>
 
 <pre>"icon": {
   "size": 40,
@@ -187,61 +350,98 @@ Example:
   }
 }</pre>
 
-Rules:
+<p>
+Such extensions:
+</p>
 
 <ul>
-  <li>Unknown fields MUST be ignored by runtimes.</li>
-  <li>Unknown fields SHOULD be preserved by formatting tools.</li>
+  <li>MAY exist,</li>
+  <li>MUST remain non-executable,</li>
+  <li>MUST be safely ignorable by runtimes and other execution-facing systems,</li>
+  <li>SHOULD be preserved by source-formatting tools when practical.</li>
 </ul>
+
+<p>
+However, transient editor state or implementation-specific rendering caches SHOULD NOT be stored in <code>icon</code>.
+Those belong in <code>ide</code> or <code>cache</code> depending on ownership and durability.
+</p>
+
+<pre>Non-executable visual/tooling boundary
+
+metadata -> descriptive identity and documentation
+icon     -> durable reusable-node visual identity
+ide      -> IDE-facing authoring preferences
+cache    -> derived rendering/tooling accelerators</pre>
 
 <hr/>
 
-<h2 id="examples">9. Examples</h2>
+<h2 id="examples">11. Examples</h2>
 
-<h3>9.1 Minimal icon</h3>
+<h3 id="minimal-example">11.1 Minimal Icon</h3>
 
 <pre>"icon": {
   "size": 40,
   "svg": "&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'&gt;&lt;rect x='2' y='2' width='36' height='36' rx='6'/&gt;&lt;/svg&gt;"
 }</pre>
 
-<h3>9.2 Icon with simple symbol</h3>
+<hr/>
+
+<h3 id="symbol-example">11.2 Icon with Simple Symbol</h3>
 
 <pre>"icon": {
   "size": 40,
   "svg": "&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'&gt;
-            &lt;rect x='2' y='2' width='36' height='36' rx='6' fill='#1f2937'/&gt;
-            &lt;path d='M12 20h16' stroke='#ffffff' stroke-width='3' stroke-linecap='round'/&gt;
-            &lt;path d='M20 12v16' stroke='#ffffff' stroke-width='3' stroke-linecap='round'/&gt;
-          &lt;/svg&gt;"
+    &lt;rect x='2' y='2' width='36' height='36' rx='6' fill='#1f2937'/&gt;
+    &lt;path d='M12 20h16' stroke='#ffffff' stroke-width='3' stroke-linecap='round'/&gt;
+    &lt;path d='M20 12v16' stroke='#ffffff' stroke-width='3' stroke-linecap='round'/&gt;
+  &lt;/svg&gt;"
 }</pre>
 
 <hr/>
 
-<h2 id="validation">10. Validation rules</h2>
-
-Implementations MUST enforce:
+<h2 id="validation-rules">12. Validation Rules</h2>
 
 <ul>
-  <li>If <code>icon</code> exists, <code>icon.size</code> MUST be an integer.</li>
-  <li>If <code>icon</code> exists, <code>icon.svg</code> MUST be a string containing valid SVG.</li>
-  <li>The SVG SHOULD include a 40×40 viewBox or equivalent sizing strategy.</li>
-  <li>Icons MUST NOT affect execution semantics.</li>
+  <li>If <code>icon</code> is present, it MUST be a JSON object.</li>
+  <li>If <code>icon</code> is present, <code>icon.svg</code> MUST be present and MUST be a string.</li>
+  <li>If present, <code>icon.size</code> MUST be an integer.</li>
+  <li>The SVG SHOULD define a stable logical coordinate system compatible with the standard 40 x 40 grid.</li>
+  <li>The SVG MUST be self-contained.</li>
+  <li>The SVG MUST NOT alter executable meaning.</li>
+  <li>Implementations MAY apply stricter safety validation, including rejection of scripts or unsafe constructs.</li>
 </ul>
-
-Tools MAY provide stricter validation for safety (e.g., rejecting scripts).
 
 <hr/>
 
-<h2 id="summary">11. Summary</h2>
+<h2 id="design-goals">13. Design Goals</h2>
+
+<ul>
+  <li>Provide a compact visual identity for reusable FROG nodes.</li>
+  <li>Keep the source representation transparent and version-control-friendly.</li>
+  <li>Support stable cross-tool rendering.</li>
+  <li>Preserve a clean architectural boundary between visual identity, executable meaning, and IDE/tooling state.</li>
+  <li>Remain simple, portable, and non-executable.</li>
+</ul>
+
+<hr/>
+
+<h2 id="summary">14. Summary</h2>
 
 <p>
-The icon section provides an optional SVG-based icon for a Frog.
+The optional <code>icon</code> section defines a source-carried SVG icon for a FROG program.
+It provides durable reusable-node visual identity without affecting executable behavior.
+</p>
+
+<p>
+This preserves a clean separation between:
 </p>
 
 <ul>
-  <li>Icons are embedded as SVG strings in JSON.</li>
-  <li>v0.1 targets a 40×40 logical grid.</li>
-  <li>Icons must be safe, self-contained, and tool-agnostic.</li>
-  <li>Icons do not affect execution.</li>
+  <li>descriptive program identity (<code>metadata</code>),</li>
+  <li>public program boundary (<code>interface</code>),</li>
+  <li>authoritative executable logic (<code>diagram</code>),</li>
+  <li>optional user-facing composition (<code>front_panel</code>),</li>
+  <li>optional reusable-node iconography (<code>icon</code>),</li>
+  <li>optional IDE-facing authoring metadata (<code>ide</code>),</li>
+  <li>optional derived tooling data (<code>cache</code>).</li>
 </ul>
