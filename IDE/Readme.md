@@ -260,57 +260,66 @@ More specifically for Express authoring:
 
 <h2 id="high-level-architecture">5. High-Level Architecture</h2>
 
-<pre><code>+-------------------------------------------------------------------------------------------------+
-|                                           FROG IDE                                              |
-|                                                                                                 |
-|  +-------------------------+      +------------------------------------------+                  |
-|  |   Front Panel Editor    |      |             Diagram Editor               |                  |
-|  | UI / Layout Authoring   |      |      Graphical Dataflow Authoring        |                  |
-|  +-------------------------+      +------------------------------------------+                  |
-|                 \                               /                                                |
-|                  \                             /                                                 |
-|                   +---------------------------+                                                  |
-|                   |     FROG Program Model    |                                                  |
-|                   | canonical editable        |                                                  |
-|                   | in-memory model           |                                                  |
-|                   +-----------+---------------+                                                  |
-|                               |                                                                  |
-|      +------------------------+------------------------+                                         |
-|      |                                                 |                                         |
-|      v                                                 v                                         |
-|  Palette Services                               Express Authoring Services                        |
-|  search / discovery /                           assistant-driven insertion /                     |
-|  aliases / contextual views                     configuration / reopen / detach                  |
-|                               |                                                                  |
-|                               v                                                                  |
-|                     Source serialization / reload                                                |
-|                               |                                                                  |
-|                               v                                                                  |
-|                      FROG Expression (.frog)                                                     |
-|                                                                                                 |
-|                               |                                                                  |
-|                               v                                                                  |
-|                  Validation / execution preparation boundary                                     |
-|                               |                                                                  |
-|                               v                                                                  |
-|                    execution-facing systems                                                      |
-|            (semantics / lowering / compiler / runtime / profile support)                         |
-|                               |                                                                  |
-|                               v                                                                  |
-|                  Execution Observability Layer                                                   |
-|                               |                                                                  |
-|                  +------------+-------------+                                                    |
-|                  |                          |                                                    |
-|                  v                          v                                                    |
-|              Debugging                  IDE Inspection                                            |
-|                                          /         \                                              |
-|                                         v           v                                             |
-|                                      Probes       Watch                                           |
-|                                                                                                 |
-|  Snippet Services                                                                                |
-|    image-backed snippet export / import / drag-and-drop / paste                                  |
-|    visible as image outside the IDE, decodable as structured payload inside                      |
-+-------------------------------------------------------------------------------------------------+</code></pre>
+<pre><code>                         FROG IDE
+
++----------------------+        +------------------------------+
+| Front Panel Editor   |        | Diagram Editor               |
+| UI / Layout          |        | Graphical Dataflow           |
+| Authoring            |        | Authoring                    |
++----------+-----------+        +---------------+--------------+
+           \                                 /
+            \                               /
+             +-----------------------------+
+             |      FROG Program Model     |
+             | canonical editable          |
+             | in-memory model             |
+             +-------------+---------------+
+                           |
+            +--------------+---------------+
+            |                              |
+            v                              v
++--------------------------+    +-------------------------------+
+| Palette Services         |    | Express Authoring Services    |
+| search / discovery       |    | guided insertion / configure  |
+| aliases / contextual     |    | reopen / detach               |
+| views                    |    |                               |
++-------------+------------+    +---------------+---------------+
+              \                               /
+               \                             /
+                +---------------------------+
+                | Source serialization      |
+                | / reload                  |
+                +-------------+-------------+
+                              |
+                              v
+                    FROG Expression (.frog)
+                              |
+                              v
+          Validation / execution preparation boundary
+                              |
+                              v
+     execution-facing systems (semantics / lowering / compiler /
+                     runtime / profile support)
+                              |
+                              v
+                Execution Observability Layer
+                              |
+                 +------------+------------+
+                 |                         |
+                 v                         v
+            Debugging                IDE Inspection
+                                              |
+                                   +----------+----------+
+                                   |                     |
+                                   v                     v
+                                Probes                 Watch
+
+
+Snippet Services
+  - image-backed snippet export / import / drag-and-drop / paste
+  - visible as image outside the IDE
+  - decodable as structured payload inside the IDE
+</code></pre>
 
 <p>
 This architecture is conceptual. Different IDE implementations MAY distribute these responsibilities differently across
