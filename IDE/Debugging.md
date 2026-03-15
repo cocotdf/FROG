@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="../FROG logo.svg" alt="FROG logo" width="150" />
+</p>
+
 <h1 align="center">🐸 FROG IDE Debugging Specification</h1>
 
 <p align="center">
@@ -42,9 +46,9 @@ It specifies how an IDE may pause, resume, inspect, and step through a live exec
 </p>
 
 <p>
-The purpose of debugging is not to redefine execution semantics.
-Execution semantics remain defined by the validated executable graph and the related language and library specifications.
-This document defines the minimal debugging controls and their source-level meaning for:
+The purpose of debugging is not to redefine execution semantics or language-level execution boundaries.
+Execution meaning remains defined by the validated executable graph and the related language and library specifications.
+This document defines the IDE-facing debugging controls and their source-level interactive meaning for:
 </p>
 
 <ul>
@@ -52,13 +56,14 @@ This document defines the minimal debugging controls and their source-level mean
   <li>pause and resume,</li>
   <li>breakpoints,</li>
   <li>single-step execution,</li>
-  <li>source-level fault localization.</li>
+  <li>source-level fault localization,</li>
+  <li>debug-session state and pause reasons.</li>
 </ul>
 
 <p>
 This document is IDE-facing.
 It describes the behavior of interactive debugging as seen by the user and by source-aligned IDE tooling.
-It does not standardize the internal runtime scheduler, transport protocol, or execution engine used to implement that behavior.
+It does not standardize the internal runtime scheduler, transport protocol, execution engine, or language-level safe-boundary semantics used to implement that behavior.
 </p>
 
 <hr/>
@@ -70,10 +75,10 @@ It does not standardize the internal runtime scheduler, transport protocol, or e
 <ul>
   <li>define a clear source-level debugging model for FROG diagrams,</li>
   <li>support a LabVIEW-like interactive debugging experience while remaining independent from any one implementation,</li>
-  <li>keep debugging semantics aligned with dataflow execution rather than sequential source-code assumptions,</li>
-  <li>define canonical meanings for pause, resume, breakpoints, and stepping,</li>
+  <li>keep debugging behavior aligned with dataflow execution rather than sequential source-code assumptions,</li>
+  <li>define canonical IDE-facing meanings for pause, resume, breakpoints, and stepping,</li>
   <li>make debugging compatible with structures, loops, local memory, sub-FROGs, and widget interaction,</li>
-  <li>provide a stable base for probes, watches, and richer execution instrumentation without redefining those topics here.</li>
+  <li>provide a stable base for probes, watches, and richer execution instrumentation without relocating execution-model ownership into <code>IDE/</code>.</li>
 </ul>
 
 <hr/>
@@ -81,18 +86,19 @@ It does not standardize the internal runtime scheduler, transport protocol, or e
 <h2 id="scope-for-v01">3. Scope for v0.1</h2>
 
 <p>
-For FROG v0.1, this document standardizes the source-level meaning of:
+For FROG v0.1, this document standardizes the IDE-facing meaning of:
 </p>
 
 <ul>
   <li>debug sessions,</li>
   <li>execution highlighting,</li>
-  <li>pause and resume,</li>
+  <li>manual pause and resume,</li>
+  <li>user-facing stop / abort interaction,</li>
   <li>breakpoint kinds and activation rules,</li>
   <li><code>step_into</code>,</li>
   <li><code>step_over</code>,</li>
   <li><code>step_out</code>,</li>
-  <li>fault-directed pause and localization.</li>
+  <li>fault-directed pause and localization when supported by the active profile.</li>
 </ul>
 
 <p>
@@ -102,13 +108,15 @@ This document does <strong>not</strong> standardize:
 <ul>
   <li>the transport protocol between IDE and runtime,</li>
   <li>the exact rendering style of overlays,</li>
+  <li>the execution model itself,</li>
+  <li>the language-level safe-observation and safe-debug-stop semantics themselves,</li>
   <li>probe behavior,</li>
   <li>watch-list behavior,</li>
   <li>reverse execution,</li>
   <li>timeline scrubbing,</li>
   <li>deterministic replay,</li>
   <li>performance profiling,</li>
-  <li>deep value serialization formats.</li>
+  <li>deep value-serialization formats.</li>
 </ul>
 
 <hr/>
@@ -121,15 +129,17 @@ This document depends on the following specifications:
 
 <ul>
   <li><code>IDE/Readme.md</code> for the IDE-facing separation between authoring, source identity, execution integration, and interactive tooling,</li>
-  <li><code>IDE/Execution observability.md</code> for the source-aligned observability model on which interactive debugging builds,</li>
+  <li><code>IDE/Execution observability.md</code> for the source-aligned observability projection on which interactive debugging builds,</li>
   <li><code>IDE/Probes.md</code> for source-aligned probe behavior that may be consumed together with debugging,</li>
   <li><code>IDE/Watch.md</code> for persistent watch behavior that may be consumed together with debugging,</li>
   <li><code>Expression/Diagram.md</code> for the canonical node, edge, and executable-graph model,</li>
   <li><code>Expression/Control structures.md</code> for the canonical source-facing representation of structure kinds, regions, boundaries, and terminals,</li>
-  <li><code>Language/Control structures.md</code> for the normative execution semantics of structures,</li>
   <li><code>Expression/State and cycles.md</code> for the canonical source-facing representation of local-memory constructs and cycle-facing source constraints,</li>
-  <li><code>Language/State and cycles.md</code> for the normative execution semantics of local memory and valid feedback behavior,</li>
   <li><code>Expression/Widget interaction.md</code> for widget-related execution objects and explicit UI sequencing,</li>
+  <li><code>Language/Execution model.md</code> for live execution instance, source identity, activation, execution context, and committed source-level state,</li>
+  <li><code>Language/Execution control and observation boundaries.md</code> for safe observation points, pause-consistent snapshots, safe debug stops, and terminal boundary semantics,</li>
+  <li><code>Language/Control structures.md</code> for the normative execution semantics of structures,</li>
+  <li><code>Language/State and cycles.md</code> for the normative execution semantics of local memory and valid feedback behavior,</li>
   <li><code>Libraries/UI.md</code> for standardized executable widget-interaction primitives.</li>
 </ul>
 
@@ -140,9 +150,9 @@ If a conflict appears:
 
 <ul>
   <li><code>Expression/</code> remains authoritative for canonical source identity and source-visible representation,</li>
-  <li><code>Language/</code> remains authoritative for normative execution semantics,</li>
-  <li><code>Libraries/</code> remains authoritative for primitive identity and primitive-local behavior,</li>
-  <li><code>IDE/</code> remains authoritative only for debugging behavior and IDE-facing control meaning.</li>
+  <li><code>Language/</code> remains authoritative for normative execution semantics and execution-safe boundaries,</li>
+  <li><code>Libraries/</code> remain authoritative for primitive identity and primitive-local behavior,</li>
+  <li><code>IDE/</code> remains authoritative only for debugging behavior, debugger-facing objects, and IDE-facing control meaning.</li>
 </ul>
 
 <hr/>
@@ -154,10 +164,10 @@ If a conflict appears:
 <p>
 Debugging MUST be expressed in terms of source-level concepts visible to the user:
 nodes, edges, structures, regions, sub-FROG calls, and widget-related nodes.
-It MUST NOT require the user to understand internal runtime-only artifacts.
+It MUST NOT require the user to understand runtime-only artifacts.
 </p>
 
-<h3>5.2 Dataflow-first semantics</h3>
+<h3>5.2 Dataflow-first behavior</h3>
 
 <p>
 FROG debugging MUST respect dataflow semantics.
@@ -165,11 +175,12 @@ It MUST NOT assume that the program has an implicit sequential instruction order
 Debugging controls therefore operate on observable execution activity in the dataflow graph.
 </p>
 
-<h3>5.3 Safe pause semantics</h3>
+<h3>5.3 Language-derived safe boundaries</h3>
 
 <p>
-A debug pause MUST occur only at a source-consistent observation point.
+A debug pause MUST occur only at a language-valid safe debug stop.
 The IDE MUST NOT expose a partially committed source-level state as if it were stable.
+This document consumes that guarantee; it does not define it.
 </p>
 
 <h3>5.4 Runtime independence</h3>
@@ -183,7 +194,7 @@ The observable source-level meaning of debugging controls MUST remain equivalent
 
 <p>
 FROG v0.1 defines a minimal debugging core.
-Stricter profiles MAY expose richer control, finer-grained pause reasons, or deeper inspection capabilities, provided that the v0.1 semantics remain preserved.
+Stricter profiles MAY expose richer control, finer-grained pause reasons, conditional breakpoints, or deeper inspection capabilities, provided that the v0.1 debugging meanings remain preserved.
 </p>
 
 <hr/>
@@ -192,22 +203,22 @@ Stricter profiles MAY expose richer control, finer-grained pause reasons, or dee
 
 <p>
 Interactive debugging in FROG is defined over a <strong>live execution instance</strong>.
-A live execution instance is one running realization of a validated FROG program.
+A live execution instance is defined at the language level.
 A debugging-capable runtime MUST allow the IDE to observe and control such an instance in a source-aligned way.
 </p>
 
 <p>
-At minimum, a debugging-capable execution instance supports:
+At minimum, a debugging-capable execution instance supports, through the IDE-facing debugging layer:
 </p>
 
 <ul>
   <li>starting under debug control,</li>
-  <li>pausing at safe debug stops defined consistently with execution observability,</li>
+  <li>pausing at language-valid safe debug stops,</li>
   <li>resuming execution,</li>
   <li>aborting execution under user control,</li>
   <li>source-level breakpoint activation,</li>
   <li>single-step commands,</li>
-  <li>fault-directed pause when debugging is active.</li>
+  <li>fault-directed pause when debugging is active and the runtime profile supports it.</li>
 </ul>
 
 <p>
@@ -231,14 +242,15 @@ A debug session conceptually contains:
 
 <ul>
   <li>the target <code>instance_id</code>,</li>
-  <li>the current debug state,</li>
+  <li>the current debug-session state,</li>
+  <li>the projected execution state of the underlying instance,</li>
   <li>the active breakpoint set,</li>
   <li>the last pause reason,</li>
   <li>the last selected source object,</li>
   <li>the active stepping request if any.</li>
 </ul>
 
-<h3>7.2 Debug states</h3>
+<h3>7.2 Debug-session states</h3>
 
 <p>
 A debug session MUST expose one of the following high-level states:
@@ -247,12 +259,17 @@ A debug session MUST expose one of the following high-level states:
 <ul>
   <li><code>idle</code> — no live execution instance is attached,</li>
   <li><code>starting</code> — the instance is being prepared under debug control,</li>
-  <li><code>running</code> — the instance is executing freely,</li>
-  <li><code>paused</code> — the instance is suspended at a safe debug stop,</li>
-  <li><code>completed</code> — the instance finished normally,</li>
-  <li><code>faulted</code> — the instance terminated because of an execution fault,</li>
-  <li><code>aborted</code> — the instance was terminated by user abort or an equivalent external stop action.</li>
+  <li><code>running</code> — the instance is executing freely under an active debug session,</li>
+  <li><code>paused</code> — the instance is suspended at a language-valid safe debug stop,</li>
+  <li><code>completed</code> — the attached instance finished normally,</li>
+  <li><code>faulted</code> — the attached instance terminated because of an execution fault without remaining paused,</li>
+  <li><code>aborted</code> — the attached instance was terminated by user abort or an equivalent external stop action.</li>
 </ul>
+
+<p>
+These are debugger-facing session states.
+They MUST NOT be confused with any additional IDE-local transport, attachment, or view-management states.
+</p>
 
 <h3>7.3 Pause reasons</h3>
 
@@ -267,6 +284,32 @@ Canonical pause reasons for v0.1 are:
   <li><code>step_complete</code>,</li>
   <li><code>fault</code>.</li>
 </ul>
+
+<p>
+A stricter profile MAY expose additional pause reasons.
+Additional reasons MUST NOT contradict the meanings above.
+</p>
+
+<h3>7.4 Selected source object</h3>
+
+<p>
+When a debug session is paused, the IDE SHOULD identify one primary selected source object associated with the stop.
+That object MAY be:
+</p>
+
+<ul>
+  <li>a node,</li>
+  <li>an edge,</li>
+  <li>a structure,</li>
+  <li>a structure region,</li>
+  <li>a sub-FROG call site,</li>
+  <li>another source-aligned object supported by the active profile.</li>
+</ul>
+
+<p>
+The selected object is a debugger-facing focus object.
+It does not replace full execution context.
+</p>
 
 <hr/>
 
@@ -300,7 +343,7 @@ A debugging-capable IDE SHOULD be able to highlight at least:
 <p>
 Highlighting is descriptive, not prescriptive.
 It visualizes source-level execution activity.
-It MUST NOT change the execution semantics of the graph.
+It MUST NOT change execution meaning.
 </p>
 
 <h3>8.4 No mandatory rendering style</h3>
@@ -314,23 +357,24 @@ An IDE MAY choose any rendering strategy, provided that the displayed meaning re
 
 <h2 id="pause-and-resume-model">9. Pause and Resume Model</h2>
 
-<h3>9.1 Pause</h3>
+<h3>9.1 Manual pause</h3>
 
 <p>
-A manual pause request asks the runtime to suspend the live execution instance at the next safe debug stop.
-A safe debug stop is a source-consistent observation point at which the IDE may inspect execution without exposing a partially committed source-level state.
+A manual pause request asks the runtime to suspend the live execution instance at the next language-valid safe debug stop.
+The exact definition of a safe debug stop belongs to <code>Language/Execution control and observation boundaries.md</code>.
 </p>
 
 <p>
-At a safe debug stop:
+When the instance becomes paused, the IDE-facing debug view MUST be interpretable as a pause-consistent snapshot.
+The debugger MUST therefore be able to rely on the following:
 </p>
 
 <ul>
-  <li>already-reported node completion is causally committed,</li>
-  <li>already-reported edge values are causally committed,</li>
-  <li>already-reported local-memory updates are causally committed,</li>
+  <li>already-projected node completion is committed,</li>
+  <li>already-projected edge values are committed,</li>
+  <li>already-projected local-memory updates are committed,</li>
   <li>the active structure and region context is consistent,</li>
-  <li>the IDE-visible execution view is a consistent causal prefix.</li>
+  <li>the debugger-visible state is a coherent causal prefix.</li>
 </ul>
 
 <h3>9.2 Resume</h3>
@@ -352,7 +396,25 @@ Unless a stepping command is active, execution continues freely until:
 
 <p>
 A user-facing stop action terminates the live execution instance.
-At the observability and debug-state level, that termination MUST be represented consistently with the instance becoming <code>aborted</code>, unless a stricter runtime profile defines an explicitly different but equivalent user-stop state.
+At the execution-facing and debug-session-facing level, that termination MUST be represented consistently with the instance becoming <code>aborted</code>, unless a stricter runtime profile defines an explicitly different but equivalent user-stop outcome.
+</p>
+
+<h3>9.4 Pause visibility and inspection</h3>
+
+<p>
+While paused, the IDE MAY expose:
+</p>
+
+<ul>
+  <li>the selected source object,</li>
+  <li>the current execution context,</li>
+  <li>relevant committed edge values,</li>
+  <li>relevant committed local-memory state,</li>
+  <li>probe and watch views defined elsewhere.</li>
+</ul>
+
+<p>
+All such inspection MUST remain consistent with the committed source-level state exposed by the active profile.
 </p>
 
 <hr/>
@@ -362,8 +424,8 @@ At the observability and debug-state level, that termination MUST be represented
 <h3>10.1 General model</h3>
 
 <p>
-A breakpoint is a source-level debug stop condition attached to a source-visible execution object.
-When the breakpoint condition is satisfied, the live execution instance MUST enter the <code>paused</code> state at the corresponding safe debug stop.
+A breakpoint is a debugger-facing stop condition attached to a source-visible execution object.
+When the breakpoint condition is satisfied, the live execution instance MUST enter the <code>paused</code> state at a language-valid safe debug stop corresponding to that breakpoint hit.
 </p>
 
 <h3>10.2 Canonical breakpoint kinds for v0.1</h3>
@@ -383,7 +445,7 @@ The canonical breakpoint kinds for FROG v0.1 are:
 
 <p>
 A node breakpoint is attached to one source node.
-By default, it breaks when an activation of that node reaches its debug stop condition.
+By default, it breaks when an activation of that node reaches its debugger-defined break condition.
 For v0.1, the canonical node-break condition is:
 </p>
 
@@ -406,7 +468,7 @@ A stricter profile MAY additionally support:
 <p>
 An edge breakpoint is attached to one source edge.
 It breaks when a value becomes available on that edge in the current execution context.
-This is the dataflow analogue of breaking on a wire-level data arrival.
+This is the dataflow analogue of breaking on wire-level data arrival.
 </p>
 
 <h3>10.5 Structure breakpoint</h3>
@@ -456,8 +518,8 @@ The IDE MUST NOT present contradictory source state.
 <h3>11.1 General rule</h3>
 
 <p>
-Single-stepping in FROG is defined over observable source-level execution activity rather than a linear instruction stream.
-A step command resumes execution in a constrained way until the next required debug stop condition is met.
+Single-stepping in FROG is defined over observable source-level execution activity rather than over a linear instruction stream.
+A step command resumes execution in a constrained way until the next debugger-relevant stop condition is met.
 </p>
 
 <h3>11.2 Canonical step commands for v0.1</h3>
@@ -482,7 +544,7 @@ When the current paused object is a sub-FROG call or a structure activation, <co
 <h3>11.4 <code>step_over</code></h3>
 
 <p>
-<code>step_over</code> treats the current selected source-level activation as one unit for debugging purposes.
+<code>step_over</code> treats the current selected source-level activation as one debugger-facing unit.
 If the current paused object is:
 </p>
 
@@ -521,7 +583,7 @@ When a step command succeeds, the resulting pause reason SHOULD be:
 
 <p>
 If a breakpoint is hit before the intended step target is reached, the pause reason MAY remain <code>breakpoint</code>.
-If a fault occurs, the pause reason MUST be <code>fault</code>.
+If a fault-directed pause occurs, the pause reason MUST be <code>fault</code>.
 </p>
 
 <hr/>
@@ -606,7 +668,7 @@ For a <code>while_loop</code>:
 
 <p>
 Because a <code>while_loop</code> may execute an unbounded number of iterations, an IDE SHOULD make it visually clear that <code>step_over</code> may run for an extended period.
-This warning is advisory only and does not alter semantics.
+This warning is advisory only and does not alter debugging semantics.
 </p>
 
 <h3>13.4 Local memory in loops</h3>
@@ -623,8 +685,8 @@ A paused debug view MUST NOT misrepresent the stored state for the current live 
 <h3>14.1 General rule</h3>
 
 <p>
-If a fault occurs while debugging is active, the debug session SHOULD pause at the most relevant safe source-level location associated with that fault.
-The debug state MUST then become either:
+If a fault occurs while debugging is active, the debug session SHOULD pause at the most relevant language-valid safe debug stop associated with that fault when the runtime profile supports fault-directed pause.
+The debug-session state MUST then become either:
 </p>
 
 <ul>
@@ -648,8 +710,8 @@ When possible, the IDE SHOULD identify at least one primary source object relate
 <h3>14.3 Consistency</h3>
 
 <p>
-Fault-directed pause MUST still obey safe debug stop rules.
-The IDE MUST NOT show a contradictory partial state merely because the pause reason is a fault.
+Fault-directed pause MUST still obey language-level safe debug-stop rules.
+The IDE MUST NOT show a contradictory partial state merely because the pause reason is <code>fault</code>.
 </p>
 
 <hr/>
@@ -674,7 +736,7 @@ Widget participation in debugging occurs through the diagram-level node forms al
 These nodes are debuggable like other diagram nodes, subject to their source representation, execution semantics, library-defined primitive behavior, and explicit UI sequencing rules.
 </p>
 
-<h3>15.2 Front panel reflection</h3>
+<h3>15.2 Front-panel reflection</h3>
 
 <p>
 A debugging-capable IDE MAY reflect debug state on the front panel when that reflection is source-meaningful.
@@ -729,7 +791,7 @@ An IDE MAY additionally provide:
 
 <p>
 The user-interface design is not standardized here.
-Only the source-level meaning of the debugging controls is standardized.
+Only the source-level meaning of the debugging controls is standardized here.
 </p>
 
 <hr/>
@@ -811,6 +873,8 @@ The following topics are intentionally out of scope for this document:
 </p>
 
 <ul>
+  <li>execution-model ownership,</li>
+  <li>safe-debug-stop semantic ownership,</li>
   <li>probe behavior,</li>
   <li>watch-list behavior and watch expressions,</li>
   <li>conditional breakpoints,</li>
@@ -826,7 +890,7 @@ The following topics are intentionally out of scope for this document:
 </ul>
 
 <p>
-Those topics MAY be defined later in separate IDE or runtime-facing specifications.
+Those topics MAY be defined later in separate IDE-facing or runtime-facing specifications.
 </p>
 
 <hr/>
@@ -834,7 +898,7 @@ Those topics MAY be defined later in separate IDE or runtime-facing specificatio
 <h2 id="summary">19. Summary</h2>
 
 <p>
-FROG interactive debugging defines the source-level meaning of pause, resume, breakpoints, and stepping for live executions of FROG programs.
+FROG interactive debugging defines the IDE-facing meaning of pause, resume, breakpoints, and stepping for live executions of FROG programs.
 It preserves the dataflow nature of the language and avoids imposing a false sequential execution model.
 </p>
 
@@ -845,12 +909,12 @@ For FROG v0.1, this specification standardizes:
 <ul>
   <li>debug sessions,</li>
   <li>execution highlighting,</li>
-  <li>safe debug stops,</li>
+  <li>debugger-facing pause and resume behavior,</li>
   <li>canonical breakpoint kinds,</li>
   <li><code>step_into</code>,</li>
   <li><code>step_over</code>,</li>
   <li><code>step_out</code>,</li>
-  <li>fault-directed source localization.</li>
+  <li>fault-directed source localization and pause behavior when supported.</li>
 </ul>
 
 <p>
