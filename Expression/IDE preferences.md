@@ -5,29 +5,38 @@
 <h1 align="center">🐸 FROG IDE Preferences Specification</h1>
 
 <p align="center">
-IDE-facing preferences and recoverability metadata for <strong>.frog</strong> programs<br/>
+Definition of the optional <code>ide</code> section of <strong>.frog</strong> programs<br/>
 <em>FROG — Free Open Graphical Language</em>
 </p>
 
 <hr/>
 
-<h2>Contents</h2>
+<h2 id="contents">Contents</h2>
 
 <ul>
   <li><a href="#overview">1. Overview</a></li>
-  <li><a href="#principles">2. Core Principles</a></li>
-  <li><a href="#location">3. Location in a .frog File</a></li>
-  <li><a href="#scope-boundary">4. Scope and Boundary of the <code>ide</code> Section</a></li>
-  <li><a href="#structure">5. Recommended Structure</a></li>
-  <li><a href="#diagram-preferences">6. Diagram Preferences</a></li>
-  <li><a href="#front-panel-preferences">7. Front Panel Preferences</a></li>
-  <li><a href="#execution-hints">8. Execution Hints</a></li>
-  <li><a href="#workflow-preferences">9. Workflow Preferences</a></li>
-  <li><a href="#recoverability-metadata">10. Recoverability Metadata</a></li>
-  <li><a href="#validation">11. Validation and Compatibility Rules</a></li>
-  <li><a href="#extensibility">12. Extensibility</a></li>
-  <li><a href="#examples">13. Examples</a></li>
-  <li><a href="#summary">14. Summary</a></li>
+  <li><a href="#scope">2. Scope</a></li>
+  <li><a href="#relation-with-other-specifications">3. Relation with Other Specifications</a></li>
+  <li><a href="#location">4. Location in a <code>.frog</code> File</a></li>
+  <li><a href="#core-principles">5. Core Principles</a></li>
+  <li><a href="#ownership-boundary">6. Ownership Boundary of the <code>ide</code> Section</a></li>
+  <li><a href="#recommended-structure">7. Recommended Structure</a></li>
+  <li><a href="#diagram-preferences">8. Diagram Preferences</a></li>
+  <li><a href="#front-panel-preferences">9. Front Panel Preferences</a></li>
+  <li><a href="#execution-oriented-ide-hints">10. Execution-Oriented IDE Hints</a></li>
+  <li><a href="#workflow-preferences">11. Workflow Preferences</a></li>
+  <li><a href="#recoverability-metadata">12. Recoverability Metadata</a></li>
+  <li><a href="#validation-and-compatibility-rules">13. Validation and Compatibility Rules</a></li>
+  <li><a href="#extensibility-and-preservation-rules">14. Extensibility and Preservation Rules</a></li>
+  <li><a href="#examples">15. Examples</a>
+    <ul>
+      <li><a href="#minimal-example">15.1 Minimal IDE Metadata</a></li>
+      <li><a href="#preferences-example">15.2 Preferences-Focused Example</a></li>
+      <li><a href="#recoverability-example">15.3 Preferences Plus Recoverability Example</a></li>
+    </ul>
+  </li>
+  <li><a href="#design-goals">16. Design Goals</a></li>
+  <li><a href="#summary">17. Summary</a></li>
 </ul>
 
 <hr/>
@@ -35,75 +44,159 @@ IDE-facing preferences and recoverability metadata for <strong>.frog</strong> pr
 <h2 id="overview">1. Overview</h2>
 
 <p>
-The top-level <code>ide</code> section stores optional IDE-facing metadata associated with a FROG.
+The optional top-level <code>ide</code> section stores IDE-facing metadata serialized with a FROG program.
 </p>
 
 <p>
-This metadata exists to support a better authoring experience without changing the meaning of the program.
-It MAY contain:
+Its purpose is to support authoring, editing, reopening, and tool-assisted workflows without changing canonical program meaning.
+</p>
+
+<p>
+The <code>ide</code> section MAY contain:
 </p>
 
 <ul>
-  <li>editor preferences,</li>
-  <li>visual defaults,</li>
-  <li>workflow preferences,</li>
-  <li>tool-interpreted execution hints,</li>
-  <li>non-authoritative recoverability metadata that helps an IDE restore authoring state.</li>
+  <li>diagram authoring preferences,</li>
+  <li>front-panel authoring preferences,</li>
+  <li>workflow and editor UX preferences,</li>
+  <li>tool-interpreted execution-oriented hints,</li>
+  <li>non-authoritative recoverability metadata that helps an IDE reopen or restore authoring state.</li>
 </ul>
 
 <p>
-The <code>ide</code> section <strong>MUST NOT affect execution semantics</strong>.
-Runtimes and execution-facing systems MUST ignore this section completely when determining canonical executable meaning.
+The <code>ide</code> section is part of the source expression when present, but it is <strong>non-executable</strong>.
+It MUST NOT define, modify, or override execution semantics.
 </p>
 
 <p>
-This section belongs to the FROG Expression because a FROG is a durable editable program unit.
-A source file MAY therefore carry IDE-facing preferences and recoverability aids together with its canonical program content,
-provided that such metadata remains non-authoritative for execution.
+Runtimes, compilers, and other execution-facing systems MUST ignore the <code>ide</code> section when determining canonical executable meaning.
+</p>
+
+<p>
+This section belongs to the FROG Expression because a FROG is a durable editable program unit and MAY carry source-level authoring preferences and recoverability aids together with its canonical program content, provided that such metadata remains non-authoritative for execution.
 </p>
 
 <hr/>
 
-<h2 id="principles">2. Core Principles</h2>
+<h2 id="scope">2. Scope</h2>
+
+<p>
+This document specifies:
+</p>
 
 <ul>
-  <li><strong>Tool-agnostic</strong> — IDE metadata SHOULD NOT assume one specific editor framework or UI toolkit.</li>
-  <li><strong>Non-authoritative</strong> — IDE metadata MUST NEVER change canonical program meaning.</li>
-  <li><strong>Safe to ignore</strong> — a conforming runtime or execution-facing tool MUST be able to ignore the entire <code>ide</code> section safely.</li>
-  <li><strong>Recoverable but optional</strong> — IDE metadata MAY help an IDE reopen or restore authoring state, but it MUST NOT be required to interpret the program canonically.</li>
-  <li><strong>Stable diffs</strong> — formatting and tooling SHOULD minimize noisy changes in this section.</li>
-  <li><strong>Inter-tool survivability</strong> — tools SHOULD preserve unknown fields whenever practical.</li>
+  <li>the role of the optional top-level <code>ide</code> section,</li>
+  <li>the boundary between IDE-facing metadata and canonical executable source,</li>
+  <li>the recommended structure of the <code>ide</code> object,</li>
+  <li>validation and compatibility rules for IDE metadata,</li>
+  <li>recoverability-oriented source metadata that MAY be serialized with a FROG.</li>
+</ul>
+
+<p>
+This document does not specify:
+</p>
+
+<ul>
+  <li>the public interface of the FROG,</li>
+  <li>the authoritative executable graph,</li>
+  <li>the normative execution semantics of the language,</li>
+  <li>the runtime scheduler,</li>
+  <li>derived cache content,</li>
+  <li>a mandatory IDE implementation architecture.</li>
 </ul>
 
 <hr/>
 
-<h2 id="location">3. Location in a .frog File</h2>
+<h2 id="relation-with-other-specifications">3. Relation with Other Specifications</h2>
 
 <p>
-The <code>ide</code> object is an optional top-level section of a <code>.frog</code> file.
+The <code>ide</code> section is one of the optional top-level source sections of a canonical <code>.frog</code> file.
+It belongs to <code>Expression/</code>.
 </p>
 
-<pre><code>{
+<p>
+Its ownership boundary relative to neighboring source sections is:
+</p>
+
+<pre>Top-level source-section boundary
+
+metadata    - descriptive program identity and documentation
+interface   - public typed program boundary
+diagram     - authoritative executable graph
+front_panel - optional user-facing interaction composition
+icon        - optional reusable-node visual identity
+ide         - optional IDE-facing authoring preferences and recoverability metadata
+cache       - optional derived tooling data</pre>
+
+<p>
+In particular:
+</p>
+
+<ul>
+  <li><code>ide</code> does not define executable logic. That belongs to <code>diagram</code>.</li>
+  <li><code>ide</code> does not define the public API. That belongs to <code>interface</code>.</li>
+  <li><code>ide</code> does not replace front-panel composition. That belongs to <code>front_panel</code>.</li>
+  <li><code>ide</code> does not replace descriptive identity and documentation. That belongs to <code>metadata</code>.</li>
+  <li><code>ide</code> does not replace derived accelerators or regenerated artifacts. That belongs to <code>cache</code>.</li>
+</ul>
+
+<hr/>
+
+<h2 id="location">4. Location in a <code>.frog</code> File</h2>
+
+<p>
+The <code>ide</code> object is an optional top-level JSON object inside a canonical <code>.frog</code> file.
+</p>
+
+<p>
+Example:
+</p>
+
+<pre>{
   "spec_version": "0.1",
   "metadata": {},
   "interface": {},
-  "connector": {},
   "diagram": {},
-  "front_panel": {},
   "ide": {}
-}</code></pre>
+}</pre>
 
 <p>
-If omitted, tools MAY use their own defaults and MAY operate without recoverability metadata.
+If omitted, tools MAY use implementation-defined defaults and MAY operate without source-carried IDE recoverability metadata.
 </p>
+
+<pre>Canonical .frog structure
+
+example.frog
+├─ spec_version
+├─ metadata     -> required descriptive source section
+├─ interface    -> required public typed boundary
+├─ diagram      -> required executable graph
+├─ connector    -> optional reusable-node perimeter mapping
+├─ front_panel  -> optional UI composition
+├─ icon         -> optional reusable-node visual identity
+├─ ide          -> optional IDE-facing authoring metadata
+└─ cache        -> optional derived tooling data</pre>
 
 <hr/>
 
-<h2 id="scope-boundary">4. Scope and Boundary of the <code>ide</code> Section</h2>
+<h2 id="core-principles">5. Core Principles</h2>
+
+<ul>
+  <li><strong>Tool-facing but source-carried</strong> — IDE metadata MAY be serialized with the FROG source itself.</li>
+  <li><strong>Non-authoritative</strong> — IDE metadata MUST NEVER change canonical program meaning.</li>
+  <li><strong>Safe to ignore</strong> — a conforming runtime or other execution-facing system MUST be able to ignore the entire <code>ide</code> section safely.</li>
+  <li><strong>Recoverable but optional</strong> — IDE metadata MAY help reopen or restore authoring state, but it MUST NOT be required to interpret the program canonically.</li>
+  <li><strong>Stable diffs</strong> — tools SHOULD minimize noisy source changes in this section.</li>
+  <li><strong>Inter-tool survivability</strong> — tools SHOULD preserve unknown fields whenever practical.</li>
+  <li><strong>Canonical source wins</strong> — if a conflict exists between canonical source sections and <code>ide</code> metadata, canonical source sections MUST win.</li>
+</ul>
+
+<hr/>
+
+<h2 id="ownership-boundary">6. Ownership Boundary of the <code>ide</code> Section</h2>
 
 <p>
-The <code>ide</code> section is the source-level home for metadata that is meaningful to editors and other authoring tools,
-but not authoritative for execution.
+The <code>ide</code> section is the source-level home for metadata that is meaningful to editors and authoring tools but not authoritative for execution.
 </p>
 
 <p>
@@ -114,8 +207,8 @@ It MAY contain:
   <li>diagram editing preferences,</li>
   <li>front-panel editing preferences,</li>
   <li>workflow preferences,</li>
-  <li>execution-related hints for tools,</li>
-  <li>non-authoritative recoverability metadata for re-openable authoring features such as guided editing flows.</li>
+  <li>execution-oriented IDE hints,</li>
+  <li>non-authoritative recoverability metadata for guided authoring, presentation restoration, or editor reopen flows.</li>
 </ul>
 
 <p>
@@ -125,30 +218,43 @@ It MUST NOT contain:
 <ul>
   <li>canonical executable structure,</li>
   <li>runtime-required semantic data,</li>
-  <li>hidden information needed to understand the meaning of the diagram,</li>
-  <li>data that redefines primitive identity, structure identity, or language semantics.</li>
+  <li>hidden information needed to understand canonical program meaning,</li>
+  <li>data that redefines primitive identity, structure identity, type identity, or language semantics,</li>
+  <li>derived cache content whose intended lifecycle is delete-and-regenerate optimization.</li>
 </ul>
 
+<pre>Non-executable source/tooling boundary
+
+metadata -> durable descriptive identity
+icon     -> durable reusable-node visual identity
+ide      -> source-carried authoring preferences and recoverability aids
+cache    -> derived tooling accelerators safe to delete and regenerate</pre>
+
 <p>
-If a conflict exists between canonical source sections and <code>ide</code> metadata, canonical source sections win.
+A practical decision rule is:
 </p>
+
+<pre>If the data is:
+- needed only to reopen or author more comfortably -> ide
+- derived from source and safe to regenerate       -> cache
+- required to understand executable meaning        -> not ide</pre>
 
 <hr/>
 
-<h2 id="structure">5. Recommended Structure</h2>
+<h2 id="recommended-structure">7. Recommended Structure</h2>
 
 <p>
 The exact structure of the <code>ide</code> object is extensible.
 The following shape is recommended for the standardized v0.1 baseline:
 </p>
 
-<pre><code>"ide": {
+<pre>"ide": {
   "diagram": {},
   "front_panel": {},
   "execution": {},
   "workflow": {},
   "recoverability": {}
-}</code></pre>
+}</pre>
 
 <p>
 All sub-objects are optional.
@@ -158,7 +264,7 @@ Tools MAY add additional keys as long as they preserve the non-authoritative sta
 
 <hr/>
 
-<h2 id="diagram-preferences">6. Diagram Preferences</h2>
+<h2 id="diagram-preferences">8. Diagram Preferences</h2>
 
 <p>
 The <code>diagram</code> sub-object stores preferences for diagram rendering and editing.
@@ -168,7 +274,7 @@ The <code>diagram</code> sub-object stores preferences for diagram rendering and
 Example:
 </p>
 
-<pre><code>"diagram": {
+<pre>"diagram": {
   "background_color": "#202020",
   "grid": {
     "enabled": true,
@@ -182,7 +288,7 @@ Example:
   "zoom": {
     "default": 1.0
   }
-}</code></pre>
+}</pre>
 
 <p>
 Suggested fields include:
@@ -205,17 +311,17 @@ They MUST NOT affect canonical diagram meaning.
 
 <hr/>
 
-<h2 id="front-panel-preferences">7. Front Panel Preferences</h2>
+<h2 id="front-panel-preferences">9. Front Panel Preferences</h2>
 
 <p>
-The <code>front_panel</code> sub-object stores preferences for front panel editing and rendering.
+The <code>front_panel</code> sub-object stores preferences for front-panel editing and rendering.
 </p>
 
 <p>
 Example:
 </p>
 
-<pre><code>"front_panel": {
+<pre>"front_panel": {
   "background_color": "#FFFFFF",
   "alignment_guides": {
     "enabled": true
@@ -224,7 +330,7 @@ Example:
     "enabled": true,
     "size": 5
   }
-}</code></pre>
+}</pre>
 
 <p>
 Suggested fields include:
@@ -239,30 +345,44 @@ Suggested fields include:
 
 <p>
 These preferences affect editor UX only.
-They MUST NOT redefine widget behavior or public interface meaning.
+They MUST NOT redefine widget behavior, front-panel semantics, or public interface meaning.
 </p>
 
 <hr/>
 
-<h2 id="execution-hints">8. Execution Hints</h2>
+<h2 id="execution-oriented-ide-hints">10. Execution-Oriented IDE Hints</h2>
 
 <p>
-The <code>execution</code> sub-object stores execution-related hints interpreted by tools.
-These hints MAY influence how an IDE configures execution, debugging, validation, or build actions,
-but they MUST NOT change the meaning of the program itself.
+The <code>execution</code> sub-object stores execution-oriented hints interpreted by IDEs and related authoring tools.
+</p>
+
+<p>
+These hints MAY influence how an IDE configures:
+</p>
+
+<ul>
+  <li>launch defaults,</li>
+  <li>debugging behavior,</li>
+  <li>validation workflows,</li>
+  <li>build actions,</li>
+  <li>target-selection preferences.</li>
+</ul>
+
+<p>
+However, they MUST NOT define runtime semantics, scheduling semantics, memory semantics, type semantics, or canonical graph meaning.
 </p>
 
 <p>
 Example:
 </p>
 
-<pre><code>"execution": {
+<pre>"execution": {
   "debug_enabled": true,
   "reentrant_hint": false,
   "preferred_profile": "core",
   "run_on_open": false,
   "auto_validate_on_save": true
-}</code></pre>
+}</pre>
 
 <p>
 Suggested fields include:
@@ -271,28 +391,28 @@ Suggested fields include:
 <ul>
   <li><code>debug_enabled</code> — boolean</li>
   <li><code>reentrant_hint</code> — boolean</li>
-  <li><code>preferred_profile</code> — string such as <code>core</code>, <code>rt</code>, or <code>fpga</code></li>
+  <li><code>preferred_profile</code> — preferred execution profile label for tooling workflows</li>
   <li><code>run_on_open</code> — boolean</li>
   <li><code>auto_validate_on_save</code> — boolean</li>
 </ul>
 
 <p>
-Runtimes MUST ignore these hints when determining execution semantics.
+Runtimes and other execution-facing systems MUST ignore these hints when determining executable semantics.
 </p>
 
 <hr/>
 
-<h2 id="workflow-preferences">9. Workflow Preferences</h2>
+<h2 id="workflow-preferences">11. Workflow Preferences</h2>
 
 <p>
-The <code>workflow</code> sub-object stores editor UX and workflow preferences.
+The <code>workflow</code> sub-object stores editor UX and authoring workflow preferences.
 </p>
 
 <p>
 Example:
 </p>
 
-<pre><code>"workflow": {
+<pre>"workflow": {
   "panes": {
     "show_palette": true,
     "show_properties": true
@@ -303,7 +423,7 @@ Example:
   "history": {
     "remember_window_state": true
   }
-}</code></pre>
+}</pre>
 
 <p>
 Suggested fields include:
@@ -317,17 +437,16 @@ Suggested fields include:
 </ul>
 
 <p>
-These fields are editor conveniences only.
+These fields are authoring conveniences only.
 They MUST NOT affect canonical source meaning.
 </p>
 
 <hr/>
 
-<h2 id="recoverability-metadata">10. Recoverability Metadata</h2>
+<h2 id="recoverability-metadata">12. Recoverability Metadata</h2>
 
 <p>
-The <code>recoverability</code> sub-object stores non-authoritative IDE metadata that helps an editor restore or reopen
-authoring state that would otherwise be inconvenient to reconstruct from canonical source alone.
+The <code>recoverability</code> sub-object stores non-authoritative IDE metadata that helps an editor restore or reopen authoring state that would otherwise be inconvenient to reconstruct from canonical source alone.
 </p>
 
 <p>
@@ -335,10 +454,10 @@ Recoverability metadata MAY support:
 </p>
 
 <ul>
-  <li>guided authoring re-open workflows,</li>
+  <li>guided authoring reopen workflows,</li>
   <li>presentation-state restoration,</li>
   <li>stable mapping between IDE-level instances and owned canonical objects,</li>
-  <li>other authoring-layer recoverability needs that remain non-authoritative for execution.</li>
+  <li>other authoring-layer reopen needs that remain non-authoritative for execution.</li>
 </ul>
 
 <p>
@@ -354,16 +473,15 @@ Recoverability metadata MUST obey all of the following:
 </ul>
 
 <p>
-At the current repository stage, one important use case is Express authoring recoverability.
-For example, an IDE MAY preserve enough state to reopen a guided Express configuration, restore optional terminal visibility,
-or keep a stable mapping between an Express-authored instance and its canonical target.
+One important class of use case is Express authoring recoverability.
+For example, an IDE MAY preserve enough state to reopen a guided Express configuration, restore optional terminal visibility, or keep a stable mapping between an Express-authored instance and its canonical target.
 </p>
 
 <p>
 Example:
 </p>
 
-<pre><code>"recoverability": {
+<pre>"recoverability": {
   "express_bindings": [
     {
       "instance_id": "expr_001",
@@ -377,7 +495,7 @@ Example:
       }
     }
   ]
-}</code></pre>
+}</pre>
 
 <p>
 This example is conceptual.
@@ -385,9 +503,23 @@ It illustrates the class of source-level recoverability aids that MAY be stored 
 It does not define canonical execution meaning.
 </p>
 
+<pre>Recoverability normalization model
+
+IDE guided authoring state
+          |
+          v
+recoverability metadata in source
+          |
+          v
+canonical source sections remain authoritative
+(interface / diagram / front_panel / ...)
+          |
+          v
+execution-facing systems ignore recoverability</pre>
+
 <hr/>
 
-<h2 id="validation">11. Validation and Compatibility Rules</h2>
+<h2 id="validation-and-compatibility-rules">13. Validation and Compatibility Rules</h2>
 
 <p>
 Implementations MUST enforce the following rules:
@@ -397,7 +529,9 @@ Implementations MUST enforce the following rules:
   <li>If <code>ide</code> exists, it MUST be a JSON object.</li>
   <li>If present, each known sub-object such as <code>diagram</code>, <code>front_panel</code>, <code>execution</code>, <code>workflow</code>, or <code>recoverability</code> MUST be a JSON object of the expected shape for that tool.</li>
   <li>IDE metadata MUST NOT redefine execution semantics.</li>
-  <li>Unknown IDE fields MUST be safely ignored by runtimes and execution-facing systems.</li>
+  <li>IDE metadata MUST NOT be required for canonical semantic interpretation.</li>
+  <li>Unknown IDE fields MUST be safely ignored by runtimes and other execution-facing systems.</li>
+  <li>If <code>ide</code> metadata conflicts with canonical source content, canonical source content MUST win.</li>
   <li>Recoverability metadata MUST remain optional and non-authoritative.</li>
 </ul>
 
@@ -407,14 +541,14 @@ Tools SHOULD preserve unknown fields to support interoperability between editors
 
 <hr/>
 
-<h2 id="extensibility">12. Extensibility</h2>
+<h2 id="extensibility-and-preservation-rules">14. Extensibility and Preservation Rules</h2>
 
 <p>
 The <code>ide</code> section is intentionally extensible.
 Tools MAY add additional keys, for example:
 </p>
 
-<pre><code>"ide": {
+<pre>"ide": {
   "diagram": {
     "background_color": "#202020"
   },
@@ -426,7 +560,7 @@ Tools MAY add additional keys, for example:
   "custom_tool": {
     "layout_profile": "compact"
   }
-}</code></pre>
+}</pre>
 
 <p>
 The following extensibility rules apply:
@@ -436,24 +570,27 @@ The following extensibility rules apply:
   <li>unknown fields MUST NOT impact execution semantics,</li>
   <li>unknown fields SHOULD be preserved by formatting tools and IDEs whenever practical,</li>
   <li>vendor-specific or tool-specific fields SHOULD be namespaced or clearly grouped when that improves interoperability,</li>
-  <li>recoverability-oriented extensions MUST remain non-authoritative for execution.</li>
+  <li>recoverability-oriented extensions MUST remain non-authoritative for execution,</li>
+  <li>derived optimization content SHOULD go to <code>cache</code>, not <code>ide</code>.</li>
 </ul>
 
 <hr/>
 
-<h2 id="examples">13. Examples</h2>
+<h2 id="examples">15. Examples</h2>
 
-<h3>13.1 Minimal IDE metadata</h3>
+<h3 id="minimal-example">15.1 Minimal IDE Metadata</h3>
 
-<pre><code>"ide": {
+<pre>"ide": {
   "diagram": {
     "background_color": "#202020"
   }
-}</code></pre>
+}</pre>
 
-<h3>13.2 Preferences-focused example</h3>
+<hr/>
 
-<pre><code>"ide": {
+<h3 id="preferences-example">15.2 Preferences-Focused Example</h3>
+
+<pre>"ide": {
   "diagram": {
     "background_color": "#202020",
     "grid": { "enabled": true, "size": 10, "snap": true },
@@ -477,11 +614,13 @@ The following extensibility rules apply:
     "search": { "default_scope": "project" },
     "history": { "remember_window_state": true }
   }
-}</code></pre>
+}</pre>
 
-<h3>13.3 Preferences plus recoverability example</h3>
+<hr/>
 
-<pre><code>"ide": {
+<h3 id="recoverability-example">15.3 Preferences Plus Recoverability Example</h3>
+
+<pre>"ide": {
   "diagram": {
     "background_color": "#202020",
     "grid": { "enabled": true, "size": 10, "snap": true }
@@ -503,20 +642,39 @@ The following extensibility rules apply:
       }
     ]
   }
-}</code></pre>
+}</pre>
 
 <hr/>
 
-<h2 id="summary">14. Summary</h2>
+<h2 id="design-goals">16. Design Goals</h2>
+
+<ul>
+  <li>Allow source-carried IDE preferences without redefining canonical program meaning.</li>
+  <li>Support durable authoring workflows and reopen-friendly editing experiences.</li>
+  <li>Support optional recoverability metadata for guided authoring flows.</li>
+  <li>Preserve a clean architectural boundary between source authority, IDE convenience, and derived cache.</li>
+  <li>Remain tool-agnostic, non-executable, and safe to ignore for execution.</li>
+  <li>Keep serialized IDE metadata compatible with transparent long-term source control.</li>
+</ul>
+
+<hr/>
+
+<h2 id="summary">17. Summary</h2>
 
 <p>
-The <code>ide</code> section stores optional IDE-facing metadata for a FROG.
+The optional <code>ide</code> section stores source-carried IDE-facing metadata for a FROG program.
+It MAY store authoring preferences, workflow preferences, execution-oriented IDE hints, and recoverability aids, while remaining strictly non-authoritative for execution.
+</p>
+
+<p>
+This preserves a clean long-term separation between:
 </p>
 
 <ul>
-  <li>It MAY store editor preferences, execution hints for tools, workflow preferences, and recoverability aids.</li>
-  <li>It is non-authoritative and safe to ignore for execution.</li>
-  <li>Runtimes and execution-facing systems MUST ignore it completely for semantic interpretation.</li>
-  <li>Tools SHOULD preserve unknown fields to support interoperability and future extensions.</li>
-  <li>Recoverability metadata MAY help reopen guided authoring flows such as Express, but it MUST NOT become required to understand canonical program meaning.</li>
+  <li>descriptive source identity (<code>metadata</code>),</li>
+  <li>public program boundary (<code>interface</code>),</li>
+  <li>authoritative executable logic (<code>diagram</code>),</li>
+  <li>optional user-facing composition (<code>front_panel</code>),</li>
+  <li>optional IDE-facing authoring metadata (<code>ide</code>),</li>
+  <li>optional derived tooling data (<code>cache</code>).</li>
 </ul>
