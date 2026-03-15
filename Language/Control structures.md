@@ -72,6 +72,13 @@ semantic equivalent of a traditional <code>if / else</code>. There is no separat
 <code>if</code> structure family in base v0.1.
 </p>
 
+<p>
+More generally, authoring-facing labels such as <em>If</em>, <em>If / Else</em>, <em>Else If</em>,
+or <em>Switch</em> do not define additional semantic families by themselves.
+When such views are exposed by tooling, they remain authoring projections of the standardized
+control-structure families defined here.
+</p>
+
 <hr/>
 
 <h2 id="goals">2. Goals</h2>
@@ -101,6 +108,7 @@ This document complements the following specifications:
   <li><code>Expression/State and cycles.md</code> — defines the source-facing representation of explicit local memory and cycle-facing source constraints.</li>
   <li><code>Language/State and cycles.md</code> — defines the normative validity rule for cyclic graphs and the semantic meaning of explicit local memory.</li>
   <li><code>Libraries/Core.md</code> — defines ordinary built-in functions such as <code>frog.core.add</code> and <code>frog.core.delay</code>.</li>
+  <li><code>IDE/Readme.md</code> — defines the Program Model and the authoring boundary between editable views and canonical source.</li>
   <li><code>IDE/Palette.md</code> — defines how structures are presented to users in authoring environments.</li>
 </ul>
 
@@ -128,6 +136,11 @@ When a conflict exists:
   <li><code>Expression/</code> remains authoritative for canonical source form,</li>
   <li><code>Language/</code> remains authoritative for normative execution semantics.</li>
 </ul>
+
+<p>
+Derived authoring forms exposed by IDE tooling MUST NOT be interpreted as new semantic families
+unless and until such families are explicitly standardized by <code>Language/</code>.
+</p>
 
 <hr/>
 
@@ -203,8 +216,20 @@ Tools SHOULD present them as dedicated structural elements in the diagram editor
 
 <p>
 For usability, tools MAY present a boolean <code>case</code> as <em>If / Else</em> in the UI.
-However, the standardized structure family remains <code>case</code>.
+More generally, tools MAY expose authoring-facing derived forms such as <em>If</em>, <em>If / Else</em>,
+<em>Else If</em>, or <em>Switch</em>, provided that those views preserve the standardized semantic family.
+However, the standardized family remains <code>case</code>.
 </p>
+
+<p>
+Accordingly:
+</p>
+
+<ul>
+  <li>base v0.1 standardizes <code>case</code>, not a separate <code>if</code> family,</li>
+  <li>base v0.1 standardizes <code>case</code>, not a separate <code>switch</code> family,</li>
+  <li>authoring convenience MUST NOT fragment the language into multiple semantic families with equivalent meaning.</li>
+</ul>
 
 <hr/>
 
@@ -238,6 +263,11 @@ It does not introduce arbitrary instruction ordering outside the standardized ru
 Internal execution inside a selected or repeated region remains constrained by ordinary dataflow meaning.
 </p>
 
+<p>
+Derived authoring views MAY change how a structure is edited or displayed.
+They MUST NOT change the semantic meaning of a validated structure activation.
+</p>
+
 <hr/>
 
 <h2 id="case-structure-semantics">8. Case Structure Semantics</h2>
@@ -264,14 +294,32 @@ In base v0.1, the standardized selector categories are:
 No other selector category is standardized by base v0.1.
 </p>
 
-<h3>8.3 Selector resolution</h3>
+<h3>8.3 Derived authoring forms do not create new semantics</h3>
+
+<p>
+A tool MAY expose user-facing views such as <em>If</em>, <em>If / Else</em>, <em>Else If</em>, or <em>Switch</em>.
+Those views do not introduce independent semantic families in base v0.1.
+They remain authoring projections of the standardized <code>case</code> family.
+</p>
+
+<p>
+Accordingly:
+</p>
+
+<ul>
+  <li><em>If</em> and <em>If / Else</em> map to boolean <code>case</code> semantics,</li>
+  <li><em>Else If</em> remains a derived authoring form rather than a distinct standardized family,</li>
+  <li><em>Switch</em> remains a derived authoring form over exact-match <code>case</code> semantics in the selector categories standardized by base v0.1.</li>
+</ul>
+
+<h3>8.4 Selector resolution</h3>
 
 <p>
 For each <code>case</code> activation, the selector value MUST be resolved and one branch-selection rule MUST be applied.
 Branch selection MUST be deterministic for a given validated source structure and a given selector value.
 </p>
 
-<h3>8.4 Boolean case semantics</h3>
+<h3>8.5 Boolean case semantics</h3>
 
 <p>
 A boolean <code>case</code> is the base v0.1 semantic equivalent of a classic <code>if / else</code>.
@@ -288,7 +336,12 @@ If the selector category is <code>bool</code>:
   <li>no third branch and no default branch participate in base v0.1 boolean-case semantics.</li>
 </ul>
 
-<h3>8.5 String case semantics</h3>
+<p>
+A tool MAY visually minimize or present one branch differently for authoring purposes.
+That presentation MUST NOT redefine which branch is semantically selected.
+</p>
+
+<h3>8.6 String case semantics</h3>
 
 <p>
 If the selector category is <code>string</code>, the structure performs exact string-based branch selection.
@@ -300,7 +353,12 @@ If the selector category is <code>string</code>, the structure performs exact st
   <li>branch selection MUST be deterministic and MUST NOT depend on branch ordering heuristics.</li>
 </ul>
 
-<h3>8.6 Outputs</h3>
+<p>
+A tool MAY present such a structure as a <em>Switch</em>-like form in the UI.
+That presentation does not create a distinct standardized semantic family.
+</p>
+
+<h3>8.7 Outputs</h3>
 
 <p>
 For one <code>case</code> activation:
@@ -312,14 +370,14 @@ For one <code>case</code> activation:
   <li>non-selected regions MUST NOT produce competing outputs for that activation.</li>
 </ul>
 
-<h3>8.7 No implicit merging semantics beyond the selected branch</h3>
+<h3>8.8 No implicit merging semantics beyond the selected branch</h3>
 
 <p>
 A <code>case</code> structure does not execute multiple branches and later merge them.
 Its meaning is single-branch execution per activation.
 </p>
 
-<h3>8.8 Future extensibility</h3>
+<h3>8.9 Future extensibility</h3>
 
 <p>
 Future revisions or stricter profiles MAY add selector categories such as integers, enums, or pattern-oriented matching.
@@ -581,6 +639,7 @@ Implementations MUST enforce the following semantic rules:
   <li>a <code>case</code> activation MUST execute exactly one selected region,</li>
   <li>a boolean <code>case</code> MUST provide deterministic selection between the <code>true</code> and <code>false</code> branches,</li>
   <li>a string <code>case</code> MUST provide deterministic exact-match selection and a deterministic default fallback when no explicit match exists,</li>
+  <li>derived authoring views such as <em>If</em>, <em>If / Else</em>, <em>Else If</em>, or <em>Switch</em> MUST NOT alter the semantic family of the validated structure,</li>
   <li>a <code>for_loop</code> count MUST resolve to a non-negative <code>i64</code> value in base v0.1,</li>
   <li>a <code>for_loop</code> with resolved count <code>N</code> MUST execute exactly <code>N</code> iterations,</li>
   <li>a <code>while_loop</code> condition MUST resolve to a <code>bool</code> value after each body activation,</li>
@@ -615,6 +674,11 @@ Assume one validated boolean <code>case</code> activation:
   <li>if the selector resolves to <code>false</code>, the <code>false</code> region executes and the <code>true</code> region does not execute.</li>
 </ul>
 
+<p>
+An IDE MAY present this structure as <em>If</em> or <em>If / Else</em>.
+That presentation does not change the semantic family or the branch-selection rule.
+</p>
+
 <h3>15.2 String case with default fallback</h3>
 
 <p>
@@ -626,6 +690,11 @@ Assume a string <code>case</code> with explicit matches <code>"start"</code> and
   <li>selector = <code>"stop"</code> → the <code>"stop"</code> region executes,</li>
   <li>selector = <code>"pause"</code> → the default region executes.</li>
 </ul>
+
+<p>
+An IDE MAY present this structure as a <em>Switch</em>-like form.
+That presentation does not create a distinct standardized semantic family.
+</p>
 
 <h3>15.3 for_loop with count 3</h3>
 
@@ -674,7 +743,8 @@ If that feedback path is a directed cycle, it still requires explicit local memo
   <li>exception-handling structures,</li>
   <li>alternative standardized while-loop continuation policies,</li>
   <li>advanced loop-output modes such as generalized reduction or implicit collection,</li>
-  <li>hidden automatic memory insertion inside structure regions.</li>
+  <li>hidden automatic memory insertion inside structure regions,</li>
+  <li>derived authoring labels becoming independent semantic families without explicit language standardization.</li>
 </ul>
 
 <hr/>
@@ -690,6 +760,7 @@ This document defines the normative execution semantics of that structural contr
   <li><code>case</code>, <code>for_loop</code>, and <code>while_loop</code> are the standardized control-structure families of base v0.1.</li>
   <li>A boolean <code>case</code> is the semantic equivalent of <code>if / else</code>, but the standardized family remains <code>case</code>.</li>
   <li>A string <code>case</code> performs deterministic exact-match selection with a required default fallback.</li>
+  <li>Authoring-facing derived forms such as <em>If</em>, <em>If / Else</em>, <em>Else If</em>, and <em>Switch</em> do not introduce separate semantic families in base v0.1.</li>
   <li>A <code>for_loop</code> performs counted repetition with deterministic index progression.</li>
   <li>A base v0.1 <code>while_loop</code> uses standardized post-test continue-while-true semantics.</li>
   <li>Loop outputs have standardized deterministic meaning through <code>mode: "last_value"</code>.</li>
