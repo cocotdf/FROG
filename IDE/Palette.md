@@ -70,6 +70,7 @@ source identity.
   <li><strong>Namespace consistency</strong> — the palette SHOULD still reflect the actual standardized namespace model where namespaces exist.</li>
   <li><strong>Fast insertion</strong> — search and contextual suggestions SHOULD reduce friction.</li>
   <li><strong>Clarity</strong> — primitives, structures, source-node insertions, annotations, and future profile-specific entries MUST NOT be visually conflated.</li>
+  <li><strong>Canonical identity preservation</strong> — authoring aliases, search aliases, and UI-specific labels MUST map back to one canonical insertable identity.</li>
   <li><strong>Explicit taxonomy boundaries</strong> — UI, I/O, Connectivity, Signal, and future execution-facing families MUST remain conceptually distinct.</li>
   <li><strong>Scalability</strong> — the model MUST remain usable as FROG grows from a minimal core to richer libraries and stricter profiles.</li>
   <li><strong>Extensibility</strong> — third-party libraries MUST integrate cleanly without breaking the palette model.</li>
@@ -94,7 +95,8 @@ This document complements the following specifications:
   <li><code>Libraries/Signal.md</code> — defines signal-processing primitives in the <code>frog.signal</code> namespace.</li>
   <li><code>Libraries/UI.md</code> — defines executable widget interaction primitives in the <code>frog.ui</code> namespace.</li>
   <li><code>Libraries/Connectivity.md</code> — defines interoperability primitives in the <code>frog.connectivity</code> namespace.</li>
-  <li><code>Expression/Control structures.md</code> — defines structures such as <code>case</code>, <code>for_loop</code>, and <code>while_loop</code>.</li>
+  <li><code>Expression/Control structures.md</code> — defines structures such as <code>case</code>, <code>for_loop</code>, and <code>while_loop</code>, as well as the source-facing boundary between canonical structures and derived authoring forms.</li>
+  <li><code>Language/Control structures.md</code> — defines the normative semantic families of standardized control structures and the rule that authoring-facing derived forms do not create distinct semantic families by themselves.</li>
   <li><code>Expression/Diagram.md</code> — defines how inserted primitives, structures, boundary nodes, widget nodes, and related graph objects appear in canonical source.</li>
   <li><code>Expression/Widget interaction.md</code> — defines canonical source-level widget interaction paths such as <code>widget_value</code>, <code>widget_reference</code>, property access, and method invocation.</li>
   <li><code>Expression/Front panel.md</code> and <code>Expression/Widget.md</code> — define the front-panel and widget model that inform UI-related palette entries.</li>
@@ -112,6 +114,7 @@ Accordingly:
 <ul>
   <li><code>Libraries/</code> defines which standardized primitives exist,</li>
   <li><code>Expression/</code> defines how standardized nodes and structures appear in source,</li>
+  <li><code>Language/</code> defines the normative execution meaning of language-level structures,</li>
   <li><code>IDE/Palette.md</code> defines how a conforming IDE exposes those entries for discovery and insertion.</li>
 </ul>
 
@@ -142,8 +145,17 @@ The primary palette SHOULD be organized according to user intent such as:
 
 <p>
 A construct MAY appear in multiple discovery paths, but it MUST keep one canonical identity.
-A search alias, shortcut, or contextual presentation MUST NOT create a second semantic construct.
+A search alias, shortcut, contextual presentation, or authoring-facing label MUST NOT create a second semantic or source-level construct.
 </p>
+
+<p>
+For example:
+</p>
+
+<ul>
+  <li><em>If</em>, <em>If / Else</em>, and <em>Else If</em> MAY be exposed as authoring-facing views, but they resolve to canonical <code>case</code> insertion in base v0.1.</li>
+  <li><em>Switch</em> MAY be exposed as an authoring-facing view, but it resolves to canonical <code>case</code> insertion in the selector categories standardized by base v0.1.</li>
+</ul>
 
 <h3>4.3 Namespace remains visible where namespaces exist</h3>
 
@@ -336,7 +348,10 @@ Examples:
   <li>searching <code>length</code> SHOULD find the relevant <code>frog.collections.*</code> entry,</li>
   <li>searching <code>read text</code> SHOULD find the relevant <code>frog.io.*</code> entry,</li>
   <li>searching <code>moving average</code> SHOULD find the relevant <code>frog.signal.*</code> entry,</li>
-  <li>searching <code>if</code> SHOULD find the canonical boolean <code>case</code> structure,</li>
+  <li>searching <code>if</code> SHOULD find the canonical <code>case</code> structure through a boolean conditional authoring view,</li>
+  <li>searching <code>if else</code> SHOULD also find the canonical <code>case</code> structure,</li>
+  <li>searching <code>else if</code> SHOULD help surface the canonical <code>case</code> structure through an appropriate authoring presentation,</li>
+  <li>searching <code>switch</code> SHOULD find the canonical <code>case</code> structure through an exact-match authoring view,</li>
   <li>searching <code>else</code> SHOULD also help surface the canonical boolean <code>case</code> structure,</li>
   <li>searching <code>case</code> SHOULD find the canonical <code>case</code> structure,</li>
   <li>searching <code>for</code> SHOULD find <code>for_loop</code>,</li>
@@ -366,6 +381,7 @@ Search SHOULD rank results using at least:
 <p>
 The canonical identity of the returned entry MUST remain unchanged.
 For example, a search for <code>if</code> returns the canonical <code>case</code> structure rather than a separate language construct named <code>if</code>.
+Likewise, a search for <code>switch</code> returns the canonical <code>case</code> structure when the active selector category is represented through exact-match case semantics.
 </p>
 
 <hr/>
@@ -406,8 +422,18 @@ Examples:
 </ul>
 
 <p>
-Context-aware insertion is an IDE convenience feature.
-It MUST NOT alter the language semantics of the inserted construct.
+When the context strongly suggests a derived authoring form, the IDE MAY present that form directly.
+For example:
+</p>
+
+<ul>
+  <li>from a <code>bool</code> wire, the IDE MAY surface a conditional insertion entry labeled <em>If</em> or <em>If / Else</em>,</li>
+  <li>from a <code>string</code> wire, the IDE MAY surface a branching insertion entry labeled <em>Switch</em>.</li>
+</ul>
+
+<p>
+Such context-aware presentations remain authoring conveniences.
+They MUST NOT alter the canonical identity or language semantics of the inserted construct.
 </p>
 
 <hr/>
@@ -444,6 +470,21 @@ Examples:
 Search results and palette entries SHOULD make this distinction visible through iconography, labeling, badges, grouping, or equivalent UI mechanisms.
 </p>
 
+<p>
+A structure entry MAY additionally expose one or more <strong>authoring views</strong> or <strong>presentation labels</strong>.
+For example:
+</p>
+
+<ul>
+  <li><code>case</code> MAY be presented as <em>If</em> or <em>If / Else</em> when inserted in a boolean conditional context,</li>
+  <li><code>case</code> MAY be presented as <em>Switch</em> when inserted in a string exact-match branching context.</li>
+</ul>
+
+<p>
+Such labels are presentation-level affordances.
+They MUST remain attached to one canonical structure entry rather than creating additional structure identities.
+</p>
+
 <hr/>
 
 <h2 id="palette-categories-for-v01">11. Palette Categories for v0.1</h2>
@@ -471,9 +512,26 @@ Regions are owned by structures and arise through structure insertion and struct
 
 <ul>
   <li>Case structure</li>
+  <li>Boolean conditional authoring view for <code>case</code> such as <em>If</em> or <em>If / Else</em></li>
+  <li>Exact-match authoring view for <code>case</code> such as <em>Switch</em> when appropriate</li>
   <li>For loop structure</li>
   <li>While loop structure</li>
 </ul>
+
+<p>
+The canonical identity of these entries remains:
+</p>
+
+<ul>
+  <li><code>case</code></li>
+  <li><code>for_loop</code></li>
+  <li><code>while_loop</code></li>
+</ul>
+
+<p>
+A conforming IDE MAY expose multiple insertion presentations for <code>case</code>, but those presentations MUST normalize to the same canonical structure family.
+Base v0.1 MUST NOT treat <em>If</em>, <em>If / Else</em>, <em>Else If</em>, or <em>Switch</em> as independent standardized structure families.
+</p>
 
 <h3>11.3 State &amp; Timing</h3>
 
@@ -626,6 +684,10 @@ Recommended metadata includes:
 </ul>
 
 <p>
+When an entry exposes an authoring-facing alias or insertion view, the IDE SHOULD also make the canonical identity visible.
+</p>
+
+<p>
 Examples of useful badges:
 </p>
 
@@ -642,6 +704,8 @@ Examples of useful badges:
   <li>Experimental</li>
   <li>Third-party</li>
   <li>Profile-defined</li>
+  <li>Alias</li>
+  <li>Authoring View</li>
 </ul>
 
 <hr/>
@@ -759,7 +823,8 @@ In particular:
   <li>search aliases MUST map back to a canonical entry identity,</li>
   <li>contextual suggestions MUST NOT invent non-existent constructs,</li>
   <li>future or profile-defined groups MUST NOT be presented as baseline standardized families unless they actually are standardized in the active specification set,</li>
-  <li>UI, Signal, I/O, Connectivity, and future execution-facing entries MUST remain consistently classified across palette views.</li>
+  <li>UI, Signal, I/O, Connectivity, and future execution-facing entries MUST remain consistently classified across palette views,</li>
+  <li>authoring-facing labels such as <em>If</em>, <em>If / Else</em>, <em>Else If</em>, or <em>Switch</em> MUST resolve to canonical entries rather than independent language constructs when no such independent constructs are standardized.</li>
 </ul>
 
 <p>
@@ -775,7 +840,9 @@ It MUST NOT change the source semantics or source identity of the inserted const
 
 <ul>
   <li><code>if</code> → canonical <code>case</code> structure with boolean selector</li>
-  <li><code>else</code> → canonical <code>case</code> structure with boolean selector</li>
+  <li><code>if else</code> → canonical <code>case</code> structure with boolean selector</li>
+  <li><code>else if</code> → canonical <code>case</code> structure through a derived authoring view</li>
+  <li><code>switch</code> → canonical <code>case</code> structure with exact-match branching semantics for the active selector category</li>
   <li><code>for</code> → canonical <code>for_loop</code> structure</li>
   <li><code>while</code> → canonical <code>while_loop</code> structure</li>
   <li><code>+</code> → canonical <code>frog.core.add</code></li>
@@ -785,7 +852,8 @@ It MUST NOT change the source semantics or source identity of the inserted const
 <h3>17.2 Contextual suggestions from a <code>bool</code> wire</h3>
 
 <ul>
-  <li><code>case</code> (boolean conditional view)</li>
+  <li><code>case</code> (boolean conditional authoring view)</li>
+  <li><em>If</em> or <em>If / Else</em> presentation for canonical <code>case</code></li>
   <li><code>frog.core.and</code></li>
   <li><code>frog.core.or</code></li>
   <li><code>frog.core.not</code></li>
@@ -796,6 +864,7 @@ It MUST NOT change the source semantics or source identity of the inserted const
 
 <ul>
   <li><code>case</code> (string selector view)</li>
+  <li><em>Switch</em> presentation for canonical <code>case</code></li>
   <li>standardized <code>frog.text.*</code> entries</li>
   <li>text comparison entries</li>
 </ul>
@@ -828,7 +897,8 @@ It MUST NOT change the source semantics or source identity of the inserted const
   <li>cross-project recommendation systems,</li>
   <li>automatic insertion of profile-specific hidden helper nodes,</li>
   <li>semantic transformation of one canonical structure into another language construct,</li>
-  <li>a requirement that every future palette family already be fully standardized in v0.1.</li>
+  <li>a requirement that every future palette family already be fully standardized in v0.1,</li>
+  <li>turning authoring-facing aliases such as <em>If</em> or <em>Switch</em> into independent canonical entries without corresponding language standardization.</li>
 </ul>
 
 <hr/>
@@ -844,6 +914,7 @@ The FROG IDE palette is the primary discovery and insertion mechanism for diagra
   <li>It MUST distinguish primitive entries, structure entries, and node-insertion entries.</li>
   <li>It MUST preserve one canonical identity per construct.</li>
   <li>It SHOULD support aliases such as <code>if</code> for boolean <code>case</code>.</li>
+  <li>It MAY expose authoring-facing views such as <em>If</em>, <em>If / Else</em>, <em>Else If</em>, and <em>Switch</em>, but those views MUST resolve to canonical standardized entries.</li>
   <li>It SHOULD expose <code>case</code>, <code>for_loop</code>, and <code>while_loop</code> as the standard control structures of v0.1.</li>
   <li>It SHOULD expose the currently standardized library families of the active repository stage, including <code>frog.signal.*</code>.</li>
   <li>It SHOULD expose UI, I/O, Connectivity, and Signal as distinct palette families.</li>
