@@ -127,19 +127,34 @@ The FROG Expression is defined through the following documents in this directory
 
 <pre><code>Expression/
 ├── Readme.md
+│   -> architectural entry point for the canonical source specification
 ├── Metadata.md
+│   -> descriptive program metadata and non-executable identification fields
 ├── Type.md
+│   -> canonical type-expression model used across the source format
 ├── Interface.md
+│   -> public typed inputs and outputs of a FROG
 ├── Connector.md
+│   -> graphical perimeter mapping of interface ports when the FROG is reused as a node
 ├── Diagram.md
+│   -> authoritative executable graph as canonical source representation
 ├── Front panel.md
+│   -> optional front-panel composition and user-facing interaction surface
 ├── Widget.md
+│   -> widget object model, widget classes, roles, properties, methods, events, and parts
 ├── Widget interaction.md
+│   -> diagram-side widget interaction paths and execution-facing widget access model
 ├── Control structures.md
+│   -> source-facing representation of canonical control structures
 ├── State and cycles.md
+│   -> source-facing representation of explicit local memory and feedback-cycle formation rules
 ├── Icon.md
+│   -> reusable-node icon representation
 ├── IDE preferences.md
-└── Cache.md</code></pre>
+│   -> optional IDE-facing source metadata and recoverability-oriented authoring preferences
+└── Cache.md
+    -> optional non-authoritative cache content for tooling convenience
+</code></pre>
 
 <p>
 The documents in this directory play two different roles:
