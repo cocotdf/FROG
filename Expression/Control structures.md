@@ -96,6 +96,7 @@ This document complements the following specifications:
   <li><code>Expression/State and cycles.md</code> — defines the source-facing representation of explicit local memory and feedback-cycle formation constraints.</li>
   <li><code>Language/State and cycles.md</code> — defines the normative validity rule for cyclic graphs and local memory.</li>
   <li><code>Libraries/Core.md</code> — defines ordinary built-in functions such as <code>frog.core.add</code> and <code>frog.core.delay</code>.</li>
+  <li><code>IDE/Readme.md</code> — defines the Program Model used during authoring and its relation to canonical source.</li>
 </ul>
 
 <p>
@@ -109,7 +110,8 @@ Accordingly:
 
 <ul>
   <li><code>Expression/Control structures.md</code> owns the canonical source representation of structure nodes, boundaries, terminals, and regions,</li>
-  <li><code>Language/Control structures.md</code> owns the normative execution meaning of those structures.</li>
+  <li><code>Language/Control structures.md</code> owns the normative execution meaning of those structures,</li>
+  <li><code>IDE/</code> MAY expose richer authoring forms, but MUST serialize them back into canonical source structures.</li>
 </ul>
 
 <p>
@@ -198,8 +200,19 @@ Tools SHOULD present them as dedicated structural elements in the diagram editor
 
 <p>
 For usability, tools MAY present a boolean <code>case</code> as <em>If / Else</em> in the UI.
+More generally, tools MAY expose authoring-facing derived forms such as <em>If</em>, <em>If / Else</em>, <em>Else If</em>, or <em>Switch</em>, provided that those forms normalize to the canonical structure family defined in source.
 However, the canonical source structure kind remains <code>case</code>.
 </p>
+
+<p>
+Accordingly:
+</p>
+
+<ul>
+  <li>canonical source MUST serialize standardized structure families such as <code>case</code>, <code>for_loop</code>, and <code>while_loop</code>,</li>
+  <li>canonical source MUST NOT introduce separate structure kinds such as <code>if</code>, <code>if_else</code>, <code>else_if</code>, or <code>switch</code> in base v0.1,</li>
+  <li>tooling MAY preserve authoring intent in editor metadata, but MUST preserve canonical structural meaning when serializing source.</li>
+</ul>
 
 <hr/>
 
@@ -479,6 +492,12 @@ This means that a <code>case</code> structure in v0.1 supports:
   <li>string-based branch selection.</li>
 </ul>
 
+<p>
+At the authoring level, tooling MAY expose UI-facing derived forms such as <em>If</em>, <em>If / Else</em>, <em>Else If</em>, or <em>Switch</em>.
+Those presentations do not create distinct canonical structure families in source.
+They normalize to the canonical <code>case</code> family defined here.
+</p>
+
 <h3>11.2 Canonical selector terminal</h3>
 
 <p>
@@ -525,8 +544,13 @@ If <code>selector.type</code> is <code>bool</code>:
 </ul>
 
 <p>
-Tools MAY present this form as an If / Else structure in the UI.
+Tools MAY present this form as an <em>If / Else</em> structure in the UI.
 The canonical source remains <code>case</code>.
+</p>
+
+<p>
+If an IDE exposes an <em>If</em> view with a visually minimized or collapsed false branch, that presentation MUST still preserve the canonical meaning of the corresponding boolean <code>case</code> in source.
+Tool presentation MUST NOT silently redefine branch identity.
 </p>
 
 <h3>11.4 String case</h3>
@@ -578,6 +602,11 @@ Canonical shape:
 ]</code></pre>
 
 <p>
+Tools MAY present this form as <em>Switch</em> or another equivalent authoring view in the UI.
+The canonical source remains <code>case</code>.
+</p>
+
+<p>
 Normative branch-selection behavior is defined by <code>Language/Control structures.md</code>.
 This document only fixes the canonical source form used to express that behavior.
 </p>
@@ -600,7 +629,15 @@ A <code>case</code> MUST own at least one region, and in practice MUST own:
   <li>one or more matched regions plus exactly one default region for a string case.</li>
 </ul>
 
-<h3>11.7 Future extensibility</h3>
+<h3>11.7 Canonical-family rule</h3>
+
+<p>
+The canonical structural family is <code>case</code>.
+Base v0.1 MUST NOT introduce parallel canonical families such as <code>if</code>, <code>if_else</code>, <code>else_if</code>, or <code>switch</code>.
+Those are authoring-level presentations, not source-level structure kinds.
+</p>
+
+<h3>11.8 Future extensibility</h3>
 
 <p>
 Future revisions or stricter profiles MAY add selector categories such as integers, enums, or pattern-oriented matching.
@@ -955,6 +992,7 @@ Implementations MUST enforce the following source-level validation rules:
   <li>if a <code>case</code> selector uses <code>string</code>, each explicit string <code>match</code> value MUST be unique,</li>
   <li>if a <code>case</code> selector uses <code>string</code>, exactly one region MUST define <code>default: true</code>,</li>
   <li>a <code>case</code> structure MUST define the source representation of every required output for every executable branch,</li>
+  <li>canonical source MUST NOT replace <code>case</code> with derived editor-facing kinds such as <code>if</code>, <code>if_else</code>, <code>else_if</code>, or <code>switch</code>,</li>
   <li>a <code>for_loop</code> MUST define a valid count terminal,</li>
   <li>a <code>for_loop</code> count MUST be represented in a way compatible with non-negative counted iteration in base v0.1,</li>
   <li>a <code>while_loop</code> MUST define a valid boolean continuation terminal,</li>
@@ -1161,7 +1199,8 @@ Tools SHOULD additionally warn when:
   <li>pattern-matching structures beyond the standardized boolean and string case forms,</li>
   <li>exception-handling structures,</li>
   <li>advanced loop output modes such as implicit collection or generalized reduction,</li>
-  <li>hidden automatic memory insertion inside structures.</li>
+  <li>hidden automatic memory insertion inside structures,</li>
+  <li>standardized source-level aliases for authoring forms such as <code>if</code> or <code>switch</code>.</li>
 </ul>
 
 <hr/>
@@ -1177,6 +1216,7 @@ This document defines how that structural control is represented in canonical so
   <li><code>case</code>, <code>for_loop</code>, and <code>while_loop</code> are the standardized control structures of base v0.1.</li>
   <li>A boolean <code>case</code> is the canonical source-level equivalent of <code>if / else</code>.</li>
   <li>A string <code>case</code> provides canonical multi-branch source representation with an explicit required default region.</li>
+  <li>Derived IDE-facing authoring forms such as <em>If</em>, <em>If / Else</em>, <em>Else If</em>, and <em>Switch</em> do not introduce separate canonical structure families in source.</li>
   <li>Loop structures remain source-distinct from ordinary functions.</li>
   <li>Structure boundaries, structure terminals, and owned regions are explicit parts of canonical source.</li>
   <li>Normative execution semantics remain owned by <code>Language/Control structures.md</code>.</li>
