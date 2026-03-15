@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="../FROG logo.svg" alt="FROG logo" width="150" />
+  <img src="../FROG logo.svg" alt="FROG logo" width="140" />
 </p>
 
 <h1 align="center">🐸 FROG Expression Specification</h1>
@@ -69,7 +69,21 @@ It is not the complete runtime architecture, not the complete IDE implementation
 
 <p>
 Cross-cutting execution semantics are related to this source specification but are not owned here when they belong to the normative execution meaning of the language itself.
+Likewise, optional capability families may appear in executable diagrams, but their normative ownership remains outside <code>Expression/</code> when they belong to profile specifications rather than to the source format itself.
 </p>
+
+<pre>
+Repository architecture around Expression
+
+Expression/   -> canonical source form
+Language/     -> normative execution semantics
+Libraries/    -> intrinsic primitive vocabularies
+Profiles/     -> optional standardized capability families
+IDE/          -> authoring, observability, debugging, inspection
+
+Expression/ owns source structure.
+Expression/ does not own the whole execution meaning.
+</pre>
 
 <hr/>
 
@@ -89,13 +103,18 @@ This specification does not attempt to fully define:
   <li>the complete in-memory editable program model used by IDE implementations,</li>
   <li>the complete execution-oriented IR used by compilers or runtimes,</li>
   <li>the complete cross-cutting execution semantics of the language,</li>
-  <li>the complete standard library surface of FROG primitives,</li>
-  <li>the complete standard library surface of FROG UI widgets.</li>
+  <li>the complete intrinsic primitive vocabulary of FROG,</li>
+  <li>the complete optional profile surface of FROG,</li>
+  <li>the complete standard widget catalog of every possible IDE or UI system.</li>
 </ul>
 
 <p>
 Those concerns are specified elsewhere in the repository.
 This directory focuses on the authoritative source form.
+</p>
+
+<p>
+Accordingly, this directory defines how a FROG is <strong>serialized</strong>, not every detail of how it is edited, validated internally by a given tool, lowered, compiled, executed, or deployed.
 </p>
 
 <hr/>
@@ -106,24 +125,35 @@ This directory focuses on the authoritative source form.
 The FROG Expression is defined through the following documents in this directory:
 </p>
 
-<ul>
-  <li><code>Metadata.md</code></li>
-  <li><code>Type.md</code></li>
-  <li><code>Interface.md</code></li>
-  <li><code>Connector.md</code></li>
-  <li><code>Diagram.md</code></li>
-  <li><code>Front panel.md</code></li>
-  <li><code>Widget.md</code></li>
-  <li><code>Widget interaction.md</code></li>
-  <li><code>Control structures.md</code></li>
-  <li><code>State and cycles.md</code></li>
-  <li><code>Icon.md</code></li>
-  <li><code>IDE preferences.md</code></li>
-  <li><code>Cache.md</code></li>
-</ul>
+<pre><code>Expression/
+├── Readme.md
+├── Metadata.md
+├── Type.md
+├── Interface.md
+├── Connector.md
+├── Diagram.md
+├── Front panel.md
+├── Widget.md
+├── Widget interaction.md
+├── Control structures.md
+├── State and cycles.md
+├── Icon.md
+├── IDE preferences.md
+└── Cache.md</code></pre>
 
 <p>
-Some of these documents define dedicated top-level source sections such as:
+The documents in this directory play two different roles:
+</p>
+
+<ul>
+  <li><strong>top-level source-section specifications</strong>,</li>
+  <li><strong>cross-cutting source subsystems</strong>.</li>
+</ul>
+
+<h3>3.1 Top-level source-section specifications</h3>
+
+<p>
+Some documents define dedicated top-level source sections such as:
 </p>
 
 <ul>
@@ -136,6 +166,8 @@ Some of these documents define dedicated top-level source sections such as:
   <li><code>ide</code></li>
   <li><code>cache</code></li>
 </ul>
+
+<h3>3.2 Cross-cutting source subsystems</h3>
 
 <p>
 Other documents define cross-cutting source subsystems used throughout the source format.
@@ -150,6 +182,8 @@ In particular:
   <li><code>State and cycles.md</code> defines the source-facing representation of explicit local memory and feedback-cycle formation constraints.</li>
 </ul>
 
+<h3>3.3 Normative external dependencies</h3>
+
 <p>
 The current source specification also depends on normative specifications defined outside this directory.
 At the current repository stage, that includes:
@@ -158,19 +192,33 @@ At the current repository stage, that includes:
 <ul>
   <li><code>Language/Control structures.md</code> — normative execution semantics for standard control structures,</li>
   <li><code>Language/State and cycles.md</code> — normative execution semantics for local memory and valid feedback cycles,</li>
-  <li><code>Libraries/Core.md</code> — foundational primitive definitions such as <code>frog.core.add</code>, <code>frog.core.mul</code>, and <code>frog.core.delay</code>,</li>
-  <li><code>Libraries/Math.md</code> — numeric scalar primitives beyond the minimal core,</li>
-  <li><code>Libraries/Collections.md</code> — array-oriented collection primitives,</li>
-  <li><code>Libraries/Text.md</code> — text-processing primitives,</li>
-  <li><code>Libraries/IO.md</code> — file, path, byte, and related I/O primitives,</li>
-  <li><code>Libraries/Signal.md</code> — first-wave signal-processing primitives,</li>
-  <li><code>Libraries/UI.md</code> — standardized executable widget-interaction primitives,</li>
-  <li><code>Libraries/Connectivity.md</code> — standardized interoperability primitives.</li>
+  <li><code>Language/Execution model.md</code> — language-level execution concepts used to interpret validated executable content,</li>
+  <li><code>Libraries/Core.md</code> — foundational intrinsic primitive definitions such as <code>frog.core.add</code>, <code>frog.core.mul</code>, and <code>frog.core.delay</code>,</li>
+  <li><code>Libraries/Math.md</code> — intrinsic numeric scalar primitives beyond the minimal core,</li>
+  <li><code>Libraries/Collections.md</code> — intrinsic array-oriented collection primitives,</li>
+  <li><code>Libraries/Text.md</code> — intrinsic text-processing primitives,</li>
+  <li><code>Libraries/IO.md</code> — intrinsic file, path, byte, and related I/O primitives,</li>
+  <li><code>Libraries/Signal.md</code> — intrinsic first-wave signal-processing primitives,</li>
+  <li><code>Libraries/UI.md</code> — intrinsic standardized executable widget-interaction primitives,</li>
+  <li><code>Profiles/Interop.md</code> — optional standardized interoperability primitives owned by the Interop profile.</li>
 </ul>
 
 <p>
-Accordingly, <code>Expression/</code> is the canonical home of the source-format specification, while <code>Language/</code> and <code>Libraries/</code> are normative external dependencies for execution meaning used by validated executable diagrams.
+Accordingly, <code>Expression/</code> is the canonical home of the source-format specification, while <code>Language/</code>, <code>Libraries/</code>, and <code>Profiles/</code> are normative external dependencies for execution meaning used by validated executable diagrams.
 </p>
+
+<pre>
+Source ownership vs external meaning
+
+Expression/
+   ├─ defines how source is written
+   ├─ defines what sections exist
+   ├─ defines how diagrams, widgets, and sections are serialized
+   │
+   ├─ relies on Language/ for execution meaning
+   ├─ relies on Libraries/ for intrinsic primitive meaning
+   └─ relies on Profiles/ for optional profile-owned capability meaning
+</pre>
 
 <hr/>
 
@@ -212,6 +260,29 @@ A <code>.frog</code> file is a transparent source representation.
 It MUST NOT require hidden compiled payloads in order to define the program as canonical source.
 </p>
 
+<pre>
+Minimal canonical FROG
+
+example.frog
+├─ spec_version
+├─ metadata
+├─ interface
+└─ diagram
+
+Extended canonical FROG
+
+example.frog
+├─ spec_version
+├─ metadata
+├─ interface
+├─ connector
+├─ diagram
+├─ front_panel
+├─ icon
+├─ ide
+└─ cache
+</pre>
+
 <hr/>
 
 <h2 id="representation-levels">5. Representation Levels</h2>
@@ -232,6 +303,34 @@ Tooling MAY reconstruct a Program Model from the Expression and MAY derive an Ex
 However, the canonical editable source of a FROG remains the <code>.frog</code> file itself.
 </p>
 
+<pre>
+Representation pipeline
+
+.frog source
+   |
+   v
+FROG Expression
+   |
+   v
+Program Model
+   |
+   v
+Validated executable content
+   |
+   v
+Execution-oriented representation
+</pre>
+
+<p>
+These levels are related but not identical:
+</p>
+
+<ul>
+  <li>the Expression is the durable source artifact,</li>
+  <li>the Program Model is the editable in-memory tool model,</li>
+  <li>the Execution IR is the execution-facing derived form.</li>
+</ul>
+
 <hr/>
 
 <h2 id="file-tree-and-artifact-families">6. File Tree and Artifact Families</h2>
@@ -250,6 +349,11 @@ However, the canonical editable source of a FROG remains the <code>.frog</code> 
 <p>
 The <code>.frog</code> file is the canonical source representation.
 Other file forms are optional tool artifacts.
+</p>
+
+<p>
+Only the canonical <code>.frog</code> source is the authoritative editable source artifact.
+Cache and distribution artifacts MAY exist, but they do not replace canonical source ownership.
 </p>
 
 <hr/>
@@ -432,7 +536,8 @@ Detailed specifications:
 <code>Widget interaction.md</code>,
 the source-facing companion documents <code>Control structures.md</code> and <code>State and cycles.md</code>,
 the normative execution-semantics documents in <code>Language/</code>,
-and the relevant primitive-library specifications in <code>Libraries/</code>.
+the relevant intrinsic primitive-library specifications in <code>Libraries/</code>,
+and any relevant optional standardized capability specifications in <code>Profiles/</code>.
 </p>
 
 <h3>10.5 Front Panel</h3>
@@ -551,7 +656,7 @@ These interactions are represented inside the executable diagram rather than as 
 
 <p>
 The current source-level widget interaction model already uses standardized primitive identifiers in the <code>frog.ui.*</code> namespace.
-Future standardized UI primitive-library specifications MUST remain consistent with that source-level interaction model.
+Future intrinsic UI primitive specifications and future profile-based capability expansions MUST remain consistent with that source-level interaction model.
 </p>
 
 <h3>11.4 Control-Structure and Local-Memory Source Dependencies</h3>
@@ -576,8 +681,17 @@ However, the normative execution semantics for these topics are owned by <code>L
 
 <p>
 This separation allows <code>Expression/</code> to remain the canonical source-specification layer while <code>Language/</code> remains the normative execution-semantics layer.
-The standardized primitive catalogs consumed by executable diagrams remain defined in <code>Libraries/</code>.
+Intrinsic primitive catalogs consumed by executable diagrams remain defined in <code>Libraries/</code>, while optional standardized capability families remain defined in <code>Profiles/</code>.
 </p>
+
+<pre>
+Cross-cutting ownership
+
+Serialized shape of structures/cycles  -> Expression/
+Execution meaning of structures/cycles -> Language/
+Intrinsic primitive meaning            -> Libraries/
+Optional capability meaning            -> Profiles/
+</pre>
 
 <hr/>
 
@@ -592,6 +706,22 @@ FROG explicitly distinguishes three concepts that may appear related but serve d
   <li><code>connector</code> — the graphical projection of that public contract when the FROG is reused as a node,</li>
   <li><code>front_panel</code> — the optional user-facing interaction layer of the FROG itself.</li>
 </ul>
+
+<pre>
+Public contract vs graphical projections
+
+interface
+   |
+   +--> connector     (node-facing graphical projection)
+   |
+   +--> diagram       (authoritative executable use of interface boundaries)
+
+front_panel
+   |
+   +--> widgets       (user-facing interaction surface)
+   |
+   +--> diagram       (all semantic linkage MUST pass through the diagram)
+</pre>
 
 <h3>12.1 Interface</h3>
 
@@ -664,7 +794,7 @@ Validation includes, as applicable:
   <li>widget interaction validation,</li>
   <li>control-structure source validation,</li>
   <li>cycle and local-memory source validation,</li>
-  <li>primitive reference validation against the relevant standardized library catalogs.</li>
+  <li>primitive reference validation against the relevant intrinsic library catalogs and any relevant supported profile specifications.</li>
 </ul>
 
 <p>
@@ -730,10 +860,11 @@ Tools SHOULD preserve canonical local forms for:
 
 <ul>
   <li>type expressions,</li>
-  <li>primitive identifiers,</li>
+  <li>intrinsic primitive identifiers,</li>
+  <li>profile-owned primitive identifiers when used,</li>
   <li>widget class identifiers,</li>
   <li>structure identifiers,</li>
-  <li>property names and method names defined by active profiles.</li>
+  <li>property names and method names defined by the active intrinsic or profile-owned capability surface.</li>
 </ul>
 
 <h3>14.4 Optional tool freedom</h3>
@@ -771,8 +902,8 @@ It prioritizes explicit canonical source semantics, long-term durability, and to
 </p>
 
 <p>
-At the current repository stage, the standard primitive-library layer already extends beyond the minimal core.
-Future revisions MAY continue to expand those external library catalogs while preserving the architectural role of <code>Expression/</code> as the canonical source-specification layer.
+At the current repository stage, the intrinsic primitive layer already extends beyond the minimal core, and the repository now also distinguishes optional standardized profile-owned capability families.
+Future revisions MAY continue to expand both areas while preserving the architectural role of <code>Expression/</code> as the canonical source-specification layer.
 </p>
 
 <p>
@@ -782,6 +913,7 @@ Future revisions SHOULD also preserve the core architectural distinctions alread
 <ul>
   <li>source expression versus program model versus execution IR,</li>
   <li>canonical source representation versus normative execution semantics,</li>
+  <li>intrinsic primitive vocabularies versus optional profile-owned capability families,</li>
   <li>public interface versus connector versus optional front panel,</li>
   <li>natural widget value flow versus object-style widget interaction,</li>
   <li>authoritative source sections versus non-authoritative optional artifacts.</li>
