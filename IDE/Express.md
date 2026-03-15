@@ -87,6 +87,7 @@ This document complements the following specifications:
   <li><code>IDE/Palette.md</code> — defines how Express entries are discovered, searched, filtered, and inserted.</li>
   <li><code>IDE/Snippet.md</code> — defines snippet transport and insertion behavior for authoring fragments.</li>
   <li><code>Expression/Readme.md</code> — defines canonical source ownership and the optional source-level <code>ide</code> section.</li>
+  <li><code>Expression/IDE preferences.md</code> — defines the current source-level IDE-facing metadata model and its non-authoritative execution status.</li>
   <li><code>Expression/Diagram.md</code> — defines canonical graph objects and standard node kinds for v0.1.</li>
   <li><code>Expression/Control structures.md</code> — defines canonical source-facing structures and the rule that authoring views do not create new canonical structure identities.</li>
   <li><code>Libraries/</code> documents — define standardized primitive identities and primitive-local semantics.</li>
@@ -553,8 +554,8 @@ This state remains IDE-owned and non-authoritative for execution semantics.
 <h2 id="optional-source-persistence">16. Optional Source Persistence</h2>
 
 <p>
-The FROG source format MAY optionally persist IDE-facing recoverability aids through the source-level <code>ide</code> section
-owned by the Expression layer.
+The FROG source format MAY optionally persist IDE-facing preferences and recoverability aids through the source-level
+<code>ide</code> section owned by the Expression layer.
 </p>
 
 <p>
@@ -579,6 +580,12 @@ Examples of persistable Express-related IDE state MAY include:
   <li>optional terminal visibility state,</li>
   <li>mapping from Express instance identity to owned canonical objects.</li>
 </ul>
+
+<p>
+At the current repository stage, this source-level area is specified through the optional <code>ide</code> section of the
+Expression layer and its IDE-preferences-oriented extensibility model.
+Express-related recoverability data MAY be carried there as long as it remains non-authoritative for execution meaning.
+</p>
 
 <p>
 A conforming runtime MUST NOT require this state in order to execute the program.
