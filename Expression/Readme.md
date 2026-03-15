@@ -198,7 +198,7 @@ Its optional source sections MAY define:
   <li><code>front_panel</code> — the user-facing interaction layer and widget composition,</li>
   <li><code>connector</code> — the graphical projection of the public interface when the FROG is reused as a node,</li>
   <li><code>icon</code> — the graphical icon associated with the FROG,</li>
-  <li><code>ide</code> — IDE-facing editing preferences serialized with the FROG itself,</li>
+  <li><code>ide</code> — IDE-facing preferences and recoverability metadata serialized with the FROG itself,</li>
   <li><code>cache</code> — optional non-authoritative derived data used to accelerate tooling workflows.</li>
 </ul>
 
@@ -462,12 +462,13 @@ Detailed specification: <code>Icon.md</code>
 <h3>10.7 IDE Preferences</h3>
 
 <p>
-Optional section containing IDE-facing preferences serialized with the FROG itself.
-This section belongs to the FROG Expression because a FROG behaves as a durable editable program unit and may embed source-level IDE interpretation preferences.
+Optional section containing IDE-facing preferences and recoverability metadata serialized with the FROG itself.
+This section belongs to the FROG Expression because a FROG behaves as a durable editable program unit and may embed
+source-level IDE preferences together with non-authoritative authoring recoverability aids.
 </p>
 
 <p>
-Runtimes MUST ignore this section for execution semantics.
+Runtimes and other execution-facing systems MUST ignore this section for execution semantics.
 </p>
 
 <p>
