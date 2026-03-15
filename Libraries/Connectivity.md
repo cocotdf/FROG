@@ -27,7 +27,7 @@
 <h2 id="overview">1. Overview</h2>
 
 <p>
-This document is a transition note for the <code>frog.connectivity</code> namespace.
+This document is a <strong>transition note</strong> for the <code>frog.connectivity.*</code> namespace.
 </p>
 
 <p>
@@ -40,7 +40,7 @@ The detailed normative specification for this namespace is defined in:
 </p>
 
 <ul>
-  <li><code>Profiles/Interop.md</code> — for the Interop profile primitive catalog, and</li>
+  <li><code>Profiles/Interop.md</code> — for the Interop profile primitive catalog and normative primitive contracts,</li>
   <li><code>Profiles/Readme.md</code> — for the architectural role of optional standardized capability families.</li>
 </ul>
 
@@ -49,7 +49,7 @@ The detailed normative specification for this namespace is defined in:
 <h2 id="status-of-this-document">2. Status of this Document</h2>
 
 <p>
-This file is retained temporarily for repository continuity, navigation stability, and inbound links.
+This file is retained for repository continuity, navigation stability, and inbound-link compatibility.
 </p>
 
 <p>
@@ -59,6 +59,11 @@ This document is <strong>not</strong> the primary normative specification for <c
 <p>
 Implementations, tooling, and future repository work MUST treat <code>Profiles/Interop.md</code> as the
 authoritative normative source for the standardized <code>frog.connectivity.*</code> primitive family.
+</p>
+
+<p>
+This file SHOULD remain a short transition document.
+It SHOULD NOT evolve into a second competing normative specification.
 </p>
 
 <hr/>
@@ -83,6 +88,10 @@ data sources.
 <p>
 Accordingly, <code>frog.connectivity.*</code> belongs to the <strong>Interop profile</strong> and is
 normatively specified in <code>Profiles/Interop.md</code>.
+</p>
+
+<p>
+It MUST NOT be treated as part of the minimal intrinsic standard library core.
 </p>
 
 <hr/>
@@ -122,18 +131,23 @@ The primitive identifiers themselves remain stable.
 <h2 id="transition-guidance">5. Transition Guidance</h2>
 
 <p>
-Readers looking for the actual primitive definitions, ports, typing rules, validation rules, and
-scope of standardized interop support MUST use <code>Profiles/Interop.md</code>.
+Readers looking for primitive definitions, ports, typing rules, validation rules, capability claims,
+or scope boundaries for standardized interop support MUST use <code>Profiles/Interop.md</code>.
 </p>
 
 <p>
 This file SHOULD remain short and SHOULD NOT duplicate the detailed primitive catalog, behavioral
-rules, examples, or future-scope discussion already owned by the Interop profile specification.
+rules, examples, or scope discussion already owned by the Interop profile specification.
 </p>
 
 <p>
 If future updates modify the standardized interop surface, those updates MUST be made in
 <code>Profiles/Interop.md</code> rather than here.
+</p>
+
+<p>
+If this transition note becomes unnecessary in a later repository phase, it MAY be reduced further
+or removed once continuity and navigation concerns are no longer relevant.
 </p>
 
 <hr/>
