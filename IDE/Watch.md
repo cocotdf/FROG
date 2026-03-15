@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="../FROG logo.svg" alt="FROG logo" width="150" />
+</p>
+
 <h1 align="center">🐸 FROG IDE Watch Specification</h1>
 
 <p align="center">
@@ -42,7 +46,7 @@ Definition of persistent watch entries and watch views for live execution inspec
 
 <p>
 This document defines the watch model of a FROG IDE.
-A watch is a persistent IDE-side inspection entry that tracks the most relevant observable value or state associated with a selected source-visible target during or after a live execution.
+A watch is a persistent IDE-side inspection entry that tracks the most relevant source-aligned observed value or state associated with a selected watch target during or after a live execution.
 </p>
 
 <p>
@@ -56,10 +60,10 @@ Typical watch workflows include:
 </p>
 
 <ul>
-  <li>tracking selected values across stepping and breakpoints,</li>
-  <li>keeping important observations visible even when the user pans away from the source object,</li>
+  <li>tracking selected values across stepping, breakpoints, and pause/resume cycles,</li>
+  <li>keeping important observations visible even when the user navigates away from the source object,</li>
   <li>monitoring multiple graph locations from one centralized inspection view,</li>
-  <li>retaining recent values after a pause or completed execution when the active profile allows it.</li>
+  <li>retaining recent observations after pause, completion, or abort when the active profile allows it.</li>
 </ul>
 
 <hr/>
@@ -72,7 +76,7 @@ Typical watch workflows include:
   <li><strong>Source alignment</strong> — keep watch entries attached to source-visible targets rather than runtime-private implementation objects.</li>
   <li><strong>Debugging support</strong> — make watch entries usable together with pause, resume, stepping, and breakpoints.</li>
   <li><strong>Non-intrusiveness</strong> — ensure that watches do not alter graph execution semantics.</li>
-  <li><strong>Clear layering</strong> — keep watch behavior distinct from probe behavior and from execution semantics themselves.</li>
+  <li><strong>Clear layering</strong> — keep watch behavior distinct from probe behavior, execution observability, and execution semantics themselves.</li>
 </ul>
 
 <hr/>
@@ -87,7 +91,7 @@ For FROG v0.1, this document standardizes:
   <li>what a watch is,</li>
   <li>the distinction between watches and probes,</li>
   <li>the canonical watch target kinds,</li>
-  <li>the meaning of watched last-known values or state snapshots,</li>
+  <li>the meaning of watched last-known committed values or state snapshots,</li>
   <li>the basic lifecycle of watch entries,</li>
   <li>the concept of a centralized watch list or equivalent watch view.</li>
 </ul>
@@ -115,19 +119,21 @@ This document complements the following specifications:
 
 <ul>
   <li><code>IDE/Readme.md</code> — defines the role of execution observability, debugging, probes, and watches in the FROG IDE architecture.</li>
-  <li><code>IDE/Execution observability.md</code> — defines the source-aligned observable execution events from which watch values are derived.</li>
-  <li><code>IDE/Debugging.md</code> — defines pause, resume, stepping, and breakpoint behavior used together with watches.</li>
+  <li><code>IDE/Execution observability.md</code> — defines the IDE-facing observable execution projection from which watch values are derived.</li>
+  <li><code>IDE/Debugging.md</code> — defines pause, resume, stepping, breakpoint behavior, and debug-session behavior used together with watches.</li>
   <li><code>IDE/Probes.md</code> — defines local source-attached probes and the distinction between probes and watches.</li>
-  <li><code>Expression/Diagram.md</code> — defines source-visible edges, ports, nodes, and annotations.</li>
+  <li><code>Expression/Diagram.md</code> — defines source-visible edges, ports, nodes, and related source identity.</li>
   <li><code>Expression/State and cycles.md</code> — defines the source-facing representation of local-memory constructs and cycle-facing source constraints.</li>
-  <li><code>Language/State and cycles.md</code> — defines the normative execution semantics of local memory and valid feedback behavior.</li>
   <li><code>Expression/Widget interaction.md</code> — defines explicit UI sequencing through <code>ui_in</code> and <code>ui_out</code>.</li>
+  <li><code>Language/Execution model.md</code> — defines execution context, committed source-level state, and other execution-model concepts consumed by watches.</li>
+  <li><code>Language/Execution control and observation boundaries.md</code> — defines safe observation points and pause-consistent snapshots that watches must respect.</li>
+  <li><code>Language/State and cycles.md</code> — defines the normative execution semantics of local memory and valid feedback behavior.</li>
   <li><code>Libraries/Core.md</code> — defines the standardized primitive identity and primitive-local behavior of <code>frog.core.delay</code>.</li>
   <li><code>Libraries/UI.md</code> — defines standardized executable UI interaction primitives.</li>
 </ul>
 
 <p>
-This document does not redefine execution semantics, primitive-local behavior, breakpoint semantics, or probe semantics.
+This document does not redefine execution semantics, execution-model ownership, safe-boundary semantics, primitive-local behavior, breakpoint semantics, or probe semantics.
 It defines how persistent watch entries consume and present source-aligned observations.
 </p>
 
@@ -137,8 +143,8 @@ Accordingly:
 
 <ul>
   <li><code>Expression/</code> remains authoritative for source-visible targets and source identity,</li>
-  <li><code>Language/</code> remains authoritative for normative execution semantics,</li>
-  <li><code>Libraries/</code> remains authoritative for primitive identity, ports, required metadata, and primitive-local behavior,</li>
+  <li><code>Language/</code> remains authoritative for normative execution semantics, execution context, committed source-level state, and safe observation boundaries,</li>
+  <li><code>Libraries/</code> remain authoritative for primitive identity, ports, required metadata, and primitive-local behavior,</li>
   <li><code>IDE/Debugging.md</code> remains authoritative for pause, resume, breakpoint, and stepping controls,</li>
   <li><code>IDE/Probes.md</code> remains authoritative for local source-attached probe behavior,</li>
   <li><code>IDE/Watch.md</code> remains authoritative only for persistent centralized watch behavior and meaning.</li>
@@ -169,18 +175,25 @@ Creating, updating, or removing a watch MUST NOT change the semantics of the pro
 Watches belong to the IDE inspection layer only.
 </p>
 
-<h3>5.4 Watches show causally committed observations</h3>
+<h3>5.4 Watches consume committed observations</h3>
 
 <p>
-A watch MUST NOT present speculative or half-committed source-level observations as stable values.
-Watched values and state snapshots MUST correspond to causally committed source-level execution state.
+A watch MUST NOT present speculative, transient, or half-committed source-level observations as stable values.
+Watched values and state snapshots MUST correspond to committed source-level observations consistent with the language-level execution model and the active observability profile.
 </p>
 
-<h3>5.5 Minimal but extensible</h3>
+<h3>5.5 Watches consume safe paused views</h3>
+
+<p>
+When execution is paused, a watch MUST remain consistent with the language-valid pause-consistent snapshot exposed to the IDE.
+A watch MUST NOT contradict the paused view.
+</p>
+
+<h3>5.6 Minimal but extensible</h3>
 
 <p>
 FROG v0.1 defines a minimal watch model.
-Stricter profiles MAY add richer filtering, grouping, formatting, value history, or custom watch renderers, provided that the core semantic meaning remains preserved.
+Stricter profiles MAY add richer filtering, grouping, formatting, value history, custom watch renderers, or richer contextual retention, provided that the core semantic meaning remains preserved.
 </p>
 
 <hr/>
@@ -195,8 +208,9 @@ Conceptually, a watch contains:
 <ul>
   <li>a watch identifier,</li>
   <li>a watch target,</li>
-  <li>a current watch state,</li>
-  <li>a last-known observed value or state snapshot when available,</li>
+  <li>a current watch-entry state,</li>
+  <li>a last-known committed observed value or state snapshot when available,</li>
+  <li>context metadata for the most recent relevant observation when available,</li>
   <li>optional retained information from earlier execution activity when supported by the active profile.</li>
 </ul>
 
@@ -310,7 +324,7 @@ A watch target MUST be specific enough that the IDE can determine:
 
 <ul>
   <li>which source object is being watched,</li>
-  <li>which observable events update the watch entry,</li>
+  <li>which observable events or paused observations update the watch entry,</li>
   <li>which execution context applies when repeated activity occurs.</li>
 </ul>
 
@@ -339,6 +353,11 @@ A watch entry is normally attached to a stable source target, not to one permane
 Therefore, repeated observations of the same watched target MAY update one watch entry over time, while the IDE MAY also display contextual metadata about the most recent observation.
 </p>
 
+<p>
+This document does not define execution context.
+It defines how watch entries consume and present it.
+</p>
+
 <hr/>
 
 <h2 id="value-and-state-model">11. Value and State Model</h2>
@@ -357,7 +376,7 @@ This may be:
   <li>a value observed on an edge,</li>
   <li>a value observed at a node port,</li>
   <li>a state snapshot observed for local memory,</li>
-  <li>another source-aligned observation defined by a stricter profile.</li>
+  <li>another source-aligned committed observation defined by a stricter profile.</li>
 </ul>
 
 <h3>11.2 No fabricated values</h3>
@@ -384,6 +403,13 @@ A watch MAY display:
 The semantic meaning remains the same in all cases: the display corresponds to the last-known committed source-level observation for the watched target.
 </p>
 
+<h3>11.4 One retained value is not full history</h3>
+
+<p>
+If a watch retains only one last-known committed observation, the IDE MUST NOT imply that a full historical trace exists.
+A history exists only when the active profile explicitly supports one.
+</p>
+
 <hr/>
 
 <h2 id="live-paused-and-retained-behavior">12. Live, Paused, and Retained Behavior</h2>
@@ -391,35 +417,35 @@ The semantic meaning remains the same in all cases: the display corresponds to t
 <h3>12.1 Live behavior</h3>
 
 <p>
-During running execution, a watch MAY update whenever a relevant observation becomes available for its target.
+During running execution, a watch MAY update whenever a relevant committed observation becomes available for its target.
 The refresh strategy and update frequency are implementation-defined.
 </p>
 
 <h3>12.2 Paused behavior</h3>
 
 <p>
-When execution is paused under debugging control, a watch MUST reflect the causally consistent paused view.
+When execution is paused under debugging control, a watch MUST reflect the causally consistent paused view exposed to the IDE.
 A watch MUST NOT display a value or state snapshot that contradicts the paused snapshot visible to the IDE.
 </p>
 
 <h3>12.3 Retained behavior</h3>
 
 <p>
-A stricter profile MAY allow a watch to retain its last-known observation after pause completion, normal completion, or abort.
+A stricter profile MAY allow a watch to retain its last-known observation after pause completion, normal completion, fault termination, or abort.
 If retained behavior is supported, the IDE MUST distinguish clearly between:
 </p>
 
 <ul>
   <li>live-updating watch entries,</li>
   <li>paused-snapshot watch entries,</li>
-  <li>retained watch entries from prior live execution.</li>
+  <li>retained watch entries from prior execution activity.</li>
 </ul>
 
-<h3>12.4 No false history</h3>
+<h3>12.4 Instance association</h3>
 
 <p>
-If a watch retains only one last-known observation, the IDE MUST NOT imply that a full historical trace exists.
-A history exists only when the active profile explicitly supports one.
+A retained watch value SHOULD remain attributable to the live execution instance from which it was derived when the active profile exposes that distinction.
+An IDE MUST NOT silently conflate retained observations from unrelated instances.
 </p>
 
 <hr/>
@@ -454,7 +480,7 @@ It is updated from source-aligned edge observations.
 <h3>14.2 Update rule</h3>
 
 <p>
-An edge watch SHOULD update when the watched edge receives a relevant <code>edge_value_available</code> observation.
+An edge watch SHOULD update when the watched edge receives a relevant <code>edge_value_available</code> observation or when an equivalent paused committed observation confirms the current edge value in the active profile.
 </p>
 
 <h3>14.3 Fan-out</h3>
@@ -583,7 +609,7 @@ A watch is created when the IDE attaches a new watch entry to a valid watch targ
 Creation MUST fail if the requested target is not valid in the active profile.
 </p>
 
-<h3>18.2 States</h3>
+<h3>18.2 Watch-entry states</h3>
 
 <p>
 A watch entry MAY conceptually be in one of the following states:
@@ -597,6 +623,11 @@ A watch entry MAY conceptually be in one of the following states:
   <li><code>unavailable</code> — no compatible value or state snapshot is currently available,</li>
   <li><code>closed</code> — watch has been removed.</li>
 </ul>
+
+<p>
+These are watch-entry states.
+They MUST NOT be confused with the execution state of the underlying live instance.
+</p>
 
 <h3>18.3 Management operations</h3>
 
@@ -644,8 +675,8 @@ A watch presentation SHOULD be able to show at least:
   <li>watch target identity,</li>
   <li>watch kind,</li>
   <li>last-known value or state snapshot when available,</li>
-  <li>execution-state status such as live, paused, retained, or unavailable,</li>
-  <li>basic context information when relevant.</li>
+  <li>watch-entry status such as live, paused, retained, or unavailable,</li>
+  <li>basic execution-context information when relevant.</li>
 </ul>
 
 <p>
@@ -671,12 +702,13 @@ This expansion behavior is optional in v0.1.
 <ul>
   <li>A watch MUST target a valid source-visible object supported by the active profile.</li>
   <li>A watch MUST NOT alter program execution semantics.</li>
-  <li>A watch shown during pause MUST remain consistent with the paused execution snapshot.</li>
+  <li>A watch shown during pause MUST remain consistent with the paused execution snapshot exposed to the IDE.</li>
   <li>A retained watch value MUST be clearly distinguishable from a live-updating value.</li>
   <li>A watch MUST NOT misrepresent a sequencing observation as an ordinary data value.</li>
   <li>A local-memory watch MUST respect node-instance-local scope.</li>
   <li>A watch MUST NOT imply arbitrary user-defined watch expressions unless a later stricter specification defines them.</li>
   <li>A watch MUST NOT be presented as a probe unless the IDE explicitly re-exposes the same target through the probe model defined elsewhere.</li>
+  <li>A watch MUST NOT silently conflate observations from unrelated live execution instances when retained behavior is supported.</li>
 </ul>
 
 <hr/>
