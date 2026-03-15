@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="../FROG logo.svg" alt="FROG logo" width="150" />
+  <img src="../FROG logo.svg" alt="FROG logo" width="140" />
 </p>
 
 <h1 align="center">🐸 FROG Language</h1>
@@ -19,7 +19,7 @@
   <li><a href="#document-map">3. Document Map</a></li>
   <li><a href="#current-documents">4. Current Documents</a></li>
   <li><a href="#relation-with-expression">5. Relation with Expression</a></li>
-  <li><a href="#relation-with-libraries-and-ide">6. Relation with Libraries and IDE</a></li>
+  <li><a href="#relation-with-libraries-profiles-and-ide">6. Relation with Libraries, Profiles, and IDE</a></li>
   <li><a href="#role-in-the-repository">7. Role in the Repository</a></li>
   <li><a href="#status">8. Status</a></li>
 </ul>
@@ -30,7 +30,7 @@
 
 <p>
 This directory defines cross-cutting language semantics for FROG.
-It specifies what a validated FROG means at execution time when that meaning cannot be owned by one isolated source section or one primitive-library document alone.
+It specifies what a validated FROG means at execution time when that meaning cannot be owned by one isolated source section, one intrinsic primitive-library document, or one optional profile specification alone.
 </p>
 
 <p>
@@ -44,13 +44,25 @@ It is distinct from:
 
 <ul>
   <li>the canonical source representation defined in <code>Expression/</code>,</li>
-  <li>the standard primitive catalogs defined in <code>Libraries/</code>,</li>
+  <li>the intrinsic primitive catalogs defined in <code>Libraries/</code>,</li>
+  <li>the optional standardized capability families defined in <code>Profiles/</code>,</li>
   <li>the authoring, observability, debugging, and inspection model defined in <code>IDE/</code>.</li>
 </ul>
 
 <p>
-This separation exists so that FROG can keep source form, execution meaning, primitive definition, and tooling behavior as distinct long-term normative responsibilities.
+This separation exists so that FROG can keep source form, execution meaning, primitive definition, optional capability definition, and tooling behavior as distinct long-term normative responsibilities.
 </p>
+
+<pre><code>Repository architecture around Language/
+
+Expression/   -> canonical source form
+Language/     -> normative execution meaning
+Libraries/    -> intrinsic primitive vocabularies
+Profiles/     -> optional standardized capability families
+IDE/          -> authoring, observability, debugging, inspection
+
+Language/ owns execution meaning that multiple other layers rely on.
+</code></pre>
 
 <hr/>
 
@@ -81,7 +93,8 @@ This directory does not define:
   <li>the full canonical <code>.frog</code> top-level source structure,</li>
   <li>the full widget model,</li>
   <li>the full front-panel model,</li>
-  <li>the standard primitive catalog as a whole,</li>
+  <li>the intrinsic primitive catalog as a whole,</li>
+  <li>the optional profile catalog as a whole,</li>
   <li>IDE-facing breakpoint UX, watch UX, probe UX, snippet UX, or debugger command UX,</li>
   <li>a runtime-internal scheduler architecture,</li>
   <li>execution IR, lowering, compiler-backend contracts, or deployment profiles as normative closed layers for v0.1.</li>
@@ -99,34 +112,50 @@ Those concerns are defined elsewhere in the repository or remain future work out
 The current role of <code>Language/</code> can be summarized as follows:
 </p>
 
-<pre>
-Expression/  -> canonical source form
+<pre><code>Expression/  -> canonical source form
 Language/    -> normative execution meaning
-Libraries/   -> standard primitive families and primitive-local behavior
+Libraries/   -> intrinsic primitive families and primitive-local behavior
+Profiles/    -> optional standardized capability families
 IDE/         -> authoring, observability, debugging, inspection, tooling UX
-</pre>
+</code></pre>
 
 <p>
 Within <code>Language/</code>, the current internal split is:
 </p>
 
-<pre>
-Language/
+<pre><code>Language/
+├── Readme.md
+│   -> architectural entry point for normative execution semantics
 ├── Control structures.md
-│   └── normative execution meaning of case / for_loop / while_loop
+│   -> normative execution meaning of case / for_loop / while_loop
 ├── State and cycles.md
-│   └── normative meaning of explicit local memory and valid feedback cycles
+│   -> normative meaning of explicit local memory and valid feedback cycles
 ├── Execution model.md
-│   └── execution-model core: validated executable graph, live execution instance,
-│       source identity, activation, execution context, committed source-level state
+│   -> execution-model core: validated executable graph, live execution instance,
+│      source identity, activation, execution context, semantic milestones,
+│      and committed source-level state
 └── Execution control and observation boundaries.md
-    └── safe observation points, pause-consistent snapshots, safe debug stops,
-        and terminal control/observation boundaries
-</pre>
+    -> safe observation points, pause-consistent snapshots, safe debug stops,
+       and terminal control/observation boundaries
+</code></pre>
 
 <p>
-This organization keeps the directory small enough to remain readable, while still giving execution semantics a complete enough normative baseline for observability and debugging to build on.
+This organization keeps the directory compact enough to remain readable while still giving execution semantics a complete enough normative baseline for observability and debugging to build on.
 </p>
+
+<pre><code>Internal semantic layering
+
+Control structures / State and cycles
+                |
+                v
+         Execution model
+                |
+                v
+Execution control and observation boundaries
+                |
+                v
+   IDE-facing observability / debugging layers
+</code></pre>
 
 <hr/>
 
@@ -157,7 +186,7 @@ Taken together, these documents define the language-level baseline for:
 </ul>
 
 <p>
-Additional cross-cutting semantic specifications MAY be added here later when they belong to the execution semantics of the language itself rather than to source serialization, primitive catalogs, or IDE tooling.
+Additional cross-cutting semantic specifications MAY be added here later when they belong to the execution semantics of the language itself rather than to source serialization, intrinsic primitive catalogs, optional profile catalogs, or IDE tooling.
 </p>
 
 <hr/>
@@ -195,12 +224,18 @@ When a topic has both a source-representation aspect and an execution-semantics 
 This separation allows the repository to keep the source format explicit while also giving execution semantics a stable normative home of their own.
 </p>
 
+<pre><code>Same topic, different ownership
+
+Serialized structure shape  -> Expression/
+Execution meaning           -> Language/
+</code></pre>
+
 <hr/>
 
-<h2 id="relation-with-libraries-and-ide">6. Relation with Libraries and IDE</h2>
+<h2 id="relation-with-libraries-profiles-and-ide">6. Relation with Libraries, Profiles, and IDE</h2>
 
 <p>
-<code>Language/</code> is also distinct from <code>Libraries/</code> and <code>IDE/</code>.
+<code>Language/</code> is also distinct from <code>Libraries/</code>, <code>Profiles/</code>, and <code>IDE/</code>.
 </p>
 
 <p>
@@ -208,8 +243,9 @@ The responsibility split is:
 </p>
 
 <ul>
-  <li><code>Libraries/</code> define standard primitive families, primitive names, primitive-local ports, metadata, and primitive-local behavior,</li>
-  <li><code>Language/</code> defines cross-cutting execution meaning that spans beyond one primitive family or one source section,</li>
+  <li><code>Libraries/</code> define intrinsic primitive families, primitive names, primitive-local ports, metadata, and primitive-local behavior,</li>
+  <li><code>Profiles/</code> define optional standardized capability families and profile-owned capability contracts,</li>
+  <li><code>Language/</code> defines cross-cutting execution meaning that spans beyond one primitive family, one optional profile family, or one source section,</li>
   <li><code>IDE/</code> defines how execution is authored, observed, debugged, inspected, and presented to users or tools.</li>
 </ul>
 
@@ -218,7 +254,8 @@ This means, for example:
 </p>
 
 <ul>
-  <li>a primitive such as <code>frog.core.delay</code> belongs to <code>Libraries/</code> for its primitive-local definition,</li>
+  <li>a primitive such as <code>frog.core.delay</code> belongs to <code>Libraries/</code> for its intrinsic primitive-local definition,</li>
+  <li>a profile-owned primitive such as <code>frog.connectivity.python.call_text</code> belongs to <code>Profiles/</code> for its optional capability definition,</li>
   <li>the cross-cutting meaning of local memory and valid cycles belongs to <code>Language/</code>,</li>
   <li>the IDE-facing projection of committed observations, debug stops, probes, and watches belongs to <code>IDE/</code>.</li>
 </ul>
@@ -226,6 +263,14 @@ This means, for example:
 <p>
 The repository remains cleaner and more durable when these ownership boundaries stay explicit.
 </p>
+
+<pre><code>Ownership split
+
+Primitive-local intrinsic meaning   -> Libraries/
+Primitive-local optional meaning    -> Profiles/
+Cross-cutting execution meaning     -> Language/
+Tool-facing projection and UX       -> IDE/
+</code></pre>
 
 <hr/>
 
@@ -255,7 +300,8 @@ In practical terms:
 <ul>
   <li>read <code>Expression/</code> for canonical source structure,</li>
   <li>read <code>Language/</code> for cross-cutting execution semantics,</li>
-  <li>read <code>Libraries/</code> for standardized primitive catalogs and primitive families,</li>
+  <li>read <code>Libraries/</code> for intrinsic standardized primitive catalogs and primitive families,</li>
+  <li>read <code>Profiles/</code> for optional standardized capability families,</li>
   <li>read <code>IDE/</code> for authoring, observability, debugging, and inspection behavior.</li>
 </ul>
 
@@ -282,7 +328,7 @@ For FROG v0.1, this directory now establishes the execution-semantics baseline f
 </ul>
 
 <p>
-This makes <code>Language/</code> the layer that a serious FROG IDE, runtime, validator, or compiler can rely on when it needs normative execution meaning without confusing that meaning with canonical source form or IDE-facing tooling behavior.
+This makes <code>Language/</code> the layer that a serious FROG IDE, runtime, validator, or compiler can rely on when it needs normative execution meaning without confusing that meaning with canonical source form, intrinsic primitive definitions, optional profile-owned capability definitions, or IDE-facing tooling behavior.
 </p>
 
 <p>
@@ -292,11 +338,12 @@ That growth SHOULD remain disciplined:
 
 <ul>
   <li>do not move source-shape topics here when they belong to <code>Expression/</code>,</li>
-  <li>do not move primitive-catalog topics here when they belong to <code>Libraries/</code>,</li>
+  <li>do not move intrinsic primitive-catalog topics here when they belong to <code>Libraries/</code>,</li>
+  <li>do not move optional capability-family definitions here when they belong to <code>Profiles/</code>,</li>
   <li>do not move tooling-UX topics here when they belong to <code>IDE/</code>,</li>
   <li>do add topics here when they define execution meaning that multiple other layers must rely on.</li>
 </ul>
 
 <p>
-The long-term goal is a stable repository architecture in which <code>Expression/</code>, <code>Language/</code>, <code>Libraries/</code>, and <code>IDE/</code> each own a clearly separated normative responsibility.
+The long-term goal is a stable repository architecture in which <code>Expression/</code>, <code>Language/</code>, <code>Libraries/</code>, <code>Profiles/</code>, and <code>IDE/</code> each own a clearly separated normative responsibility.
 </p>
