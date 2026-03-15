@@ -23,6 +23,7 @@
   <a href="#core-concept-diagram-and-front-panel">Core concept</a> •
   <a href="#repository-structure">Repository structure</a> •
   <a href="#internal-documentation-map">Internal documentation map</a> •
+  <a href="#recommended-reading-path">Recommended reading path</a> •
   <a href="#specification-architecture">Specification architecture</a> •
   <a href="#program-representation">Program representation</a> •
   <a href="#execution-architecture">Execution architecture</a> •
@@ -61,7 +62,8 @@ FROG describes a program through:
 </ul>
 
 <p>
-Execution emerges from data availability, structural rules, explicit control structures, standardized primitive behavior, and explicit local-memory semantics rather than from manually authored instruction order.
+Execution emerges from data availability, structural rules, explicit control structures,
+standardized primitive behavior, and explicit local-memory semantics rather than from manually authored instruction order.
 </p>
 
 <p>
@@ -70,8 +72,8 @@ This separation provides a durable basis for multiple independent implementation
 </p>
 
 <p>
-This repository exists to define the <strong>FROG standard itself</strong>.
-It is the place where the language specification is written so that future actors may implement FROG-compatible IDEs, runtimes, compilers, validation tools, and related ecosystem components while targeting the same open standard.
+This repository exists to define the <strong>FROG specification itself</strong>.
+It is the place where the language and its immediate supporting specification layers are written so that future actors may implement FROG-compatible IDEs, validators, runtimes, compilers, libraries, and related ecosystem components while targeting the same open standard.
 </p>
 
 <hr/>
@@ -194,7 +196,7 @@ The objective is to make it possible for different actors to build compatible FR
 <strong>FROG is not an IDE.</strong><br/>
 <strong>FROG is not a single runtime.</strong><br/>
 <strong>FROG is not a vendor product.</strong><br/>
-<strong>FROG is a language specification with associated source, semantic, library, and tooling-facing specification layers.</strong>
+<strong>FROG is a language specification with associated source, semantic, library, and IDE-facing specification layers.</strong>
 </p>
 
 <hr/>
@@ -276,7 +278,7 @@ A FROG program combines two complementary layers:
 
 <p>
 The diagram defines the executable logic of the program.
-It is the authoritative execution graph.
+It is the authoritative source-level execution graph.
 </p>
 
 <p>
@@ -414,7 +416,7 @@ The map below summarizes the role of every Markdown document currently present i
 │   -> contributor license agreement entry point and legal contribution notice
 ├── GOVERNANCE.md
 │   -> repository governance, stewardship model, open-specification posture,
-│      ecosystem participation, and future conformance/trademark boundary
+│      ecosystem participation, and future conformance / trademark boundary
 │
 ├── Expression/
 │   ├── Readme.md
@@ -454,12 +456,12 @@ The map below summarizes the role of every Markdown document currently present i
 │   ├── State and cycles.md
 │   │   -> normative meaning of explicit local memory and valid feedback cycles
 │   ├── Execution model.md
-│   │   -> language-level execution model core: validated executable graph,
+│   │   -> language-level execution-model core: validated executable graph,
 │   │      live execution instance, source identity, activation, execution context,
 │   │      semantic milestones, and committed source-level state
 │   └── Execution control and observation boundaries.md
 │       -> safe observation points, pause-consistent snapshots, safe debug stops,
-│          and minimal completion/fault/abort boundary semantics
+│          and minimal completion / fault / abort boundary semantics
 │
 ├── Libraries/
 │   ├── Readme.md
@@ -511,6 +513,41 @@ Its purpose is to make repository ownership boundaries and recommended reading p
 
 <hr/>
 
+<h2 id="recommended-reading-path">Recommended reading path</h2>
+
+<p>
+Readers who are new to the repository should normally approach it in the following order:
+</p>
+
+<pre>
+Readme.md
+   |
+   v
+Expression/Readme.md
+   |
+   v
+Language/Readme.md
+   |
+   v
+Libraries/Readme.md
+   |
+   v
+IDE/Readme.md
+</pre>
+
+<p>
+This order mirrors the current architectural baseline:
+</p>
+
+<ul>
+  <li><strong>Expression</strong> defines the canonical saved source form,</li>
+  <li><strong>Language</strong> defines cross-cutting execution meaning for validated programs,</li>
+  <li><strong>Libraries</strong> define the standardized executable primitive vocabularies,</li>
+  <li><strong>IDE</strong> defines authoring, observability, debugging, and inspection responsibilities built on top of those foundations.</li>
+</ul>
+
+<hr/>
+
 <h2 id="specification-architecture">Specification architecture</h2>
 
 <p>
@@ -531,12 +568,12 @@ It prevents the language from being reduced to one editor, one runtime, or one v
 
 <p>
 It also makes the repository suitable as the basis of an open standard:
-different actors may later build compatible IDEs, runtimes, compilers, toolchains, and ecosystem services while still targeting the same language definition.
+different actors may later build compatible IDEs, validators, runtimes, compilers, toolchains, and ecosystem services while still targeting the same language definition.
 </p>
 
 <p>
 At the current repository stage, this four-layer split is the main closed architectural baseline.
-Additional execution-facing layers such as IR, lowering, compilation, deployment, or runtime-profile specifications may be structured more explicitly over time, but they are not yet a separate fully closed top-level specification family in the same sense as <code>Expression/</code>, <code>Language/</code>, <code>Libraries/</code>, and <code>IDE/</code>.
+Additional execution-facing layers such as IR, lowering, compilation, deployment, runtime profiles, or conformance-oriented execution profiles may be structured more explicitly over time, but they are not yet a separate fully closed top-level specification family in the same sense as <code>Expression/</code>, <code>Language/</code>, <code>Libraries/</code>, and <code>IDE/</code>.
 </p>
 
 <hr/>
@@ -560,25 +597,32 @@ That canonical source file is transparent, editable, portable, and version-contr
 </p>
 
 <p>
-Depending on the program, the Expression may contain:
+A canonical <code>.frog</code> source file MUST contain:
 </p>
 
 <ul>
-  <li>metadata,</li>
-  <li>interface definition,</li>
-  <li>connector definition,</li>
-  <li>diagram definition,</li>
-  <li>front-panel definition,</li>
-  <li>widget descriptions,</li>
-  <li>icon data,</li>
-  <li>IDE-interpreted preferences,</li>
-  <li>optional non-authoritative cache sections.</li>
+  <li><code>spec_version</code>,</li>
+  <li><code>metadata</code>,</li>
+  <li><code>interface</code>,</li>
+  <li><code>diagram</code>.</li>
 </ul>
 
 <p>
-The canonical source structure is centered around top-level sections such as
-<code>metadata</code>, <code>interface</code>, <code>connector</code>, <code>diagram</code>, <code>front_panel</code>, <code>icon</code>, <code>ide</code>, and <code>cache</code>.
+It MAY additionally contain:
+</p>
+
+<ul>
+  <li><code>front_panel</code>,</li>
+  <li><code>connector</code>,</li>
+  <li><code>icon</code>,</li>
+  <li><code>ide</code>,</li>
+  <li><code>cache</code>.</li>
+</ul>
+
+<p>
 Optional sections MUST NOT redefine authoritative program semantics.
+The diagram remains the authoritative source-level execution structure.
+The front panel remains optional and non-authoritative for public interface definition.
 </p>
 
 <h3>2. FROG Program Model</h3>
@@ -596,24 +640,27 @@ It maintains coherent relationships between:
   <li>interface declarations and <code>interface_input</code> / <code>interface_output</code> nodes,</li>
   <li>front-panel widget declarations and <code>widget_value</code> / <code>widget_reference</code> nodes,</li>
   <li>structure nodes and their owned regions,</li>
-  <li>semantic graph content and source-level layout information.</li>
+  <li>semantic graph content and source-level layout information,</li>
+  <li>authoring-facing insertion views and canonical source identities,</li>
+  <li>Express presentation state and the canonical objects that an Express entry edits or materializes.</li>
 </ul>
 
 <p>
 This Program Model is an IDE architectural concept and is central to the current <code>IDE/</code> layer.
 It is not the same thing as the raw serialized source file.
+It is also not, by itself, the normative execution-semantics layer of the language.
 </p>
 
 <h3>3. Execution-oriented representation</h3>
 
 <p>
-A validated FROG is not executed directly from raw unvalidated source text.
+A validated FROG is not executed directly from raw source text.
 A conforming toolchain is expected to validate the source-derived program representation and then derive an execution-oriented form suitable for execution, analysis, optimization, lowering, or compilation.
 </p>
 
 <p>
 That execution-oriented level is an important part of the long-term architecture, but it is not yet a fully closed standalone top-level specification layer in the current repository.
-At the present stage, the repository defines the conceptual need for that layer and some of the language-level semantic foundations that such a layer depends on.
+At the present stage, the repository defines the conceptual need for that layer and part of the language-level semantic foundations on which such a layer depends.
 </p>
 
 <p>
@@ -701,6 +748,12 @@ This architecture enforces a clean separation between:
   <li>runtime execution.</li>
 </ul>
 
+<p>
+The current repository defines this architecture unevenly by design:
+some layers are already documented in detail,
+while others remain architectural direction awaiting more explicit future specification work.
+</p>
+
 <hr/>
 
 <h2 id="execution-observability-debugging-and-inspection">Execution observability, debugging, and inspection</h2>
@@ -782,21 +835,13 @@ Representative target classes include:
 </ul>
 
 <p>
-Possible execution profiles may include:
+The programming model is intended to remain conceptually stable across such targets.
+What changes is the active execution profile, the validation or lowering strategy, the backend, and the available platform services.
 </p>
 
-<ul>
-  <li><strong>FROG Core</strong>,</li>
-  <li><strong>FROG RT</strong>,</li>
-  <li><strong>FROG FPGA</strong>,</li>
-  <li><strong>FROG Embedded</strong>,</li>
-  <li><strong>FROG MCU</strong>,</li>
-  <li><strong>FROG Accelerated</strong>.</li>
-</ul>
-
 <p>
-The programming model remains conceptually stable across these targets.
-What changes is the active execution profile, the validation/lowering strategy, the backend, and the available platform services.
+More explicit target-profile standardization may be refined over time.
+At the current repository stage, target diversity is an architectural direction rather than a fully closed standalone profile taxonomy.
 </p>
 
 <hr/>
@@ -969,7 +1014,7 @@ The repository is intended to remain readable, implementable, and usable by inde
 </p>
 
 <p>
-The current repository governance is steward-led.
+The current governance model is steward-led.
 Graiphic is the initial steward of the FROG specification repository and is responsible for maintaining architectural coherence, reviewing proposed changes, and publishing authoritative repository revisions.
 </p>
 
@@ -979,7 +1024,7 @@ Different actors may build open-source or proprietary IDEs, validators, runtimes
 </p>
 
 <p>
-Openness of the specification also does not automatically grant trademark rights or official compatibility claims.
+Openness of the specification does not automatically grant trademark rights or official compatibility claims.
 Names, logos, certification marks, and claims such as <em>official</em>, <em>certified</em>, or <em>endorsed</em> may be governed by separate policies when such policies are published.
 </p>
 
@@ -1023,7 +1068,7 @@ Current repository direction includes:
 
 <p>
 At the same time, some broader execution-facing layers remain architectural direction rather than fully closed repository families.
-Topics such as more explicit IR structuring, lowering, deployment profiles, and runtime-facing specification layers may be refined further over time.
+Topics such as more explicit IR structuring, lowering, deployment profiles, runtime-facing specification layers, and conformance-oriented execution profiles may be refined further over time.
 </p>
 
 <p>
