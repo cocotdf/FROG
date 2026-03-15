@@ -355,19 +355,18 @@ Each top-level directory has a specific role in the specification.
 
 <pre><code>FROG/
 │
-├── Expression/        Canonical source specification for .frog programs
-├── Language/          Normative execution semantics for validated programs
-├── Libraries/         Standard primitive-library specifications
-├── IDE/               IDE architecture, authoring, observability, debugging, and inspection
+├── Expression/                       Canonical source specification for .frog programs
+├── Language/                         Normative execution semantics for validated programs
+├── Libraries/                        Standard primitive-library specifications
+├── IDE/                              IDE architecture, authoring, observability, debugging, and inspection
 │
-├── CLA.md             Contributor license agreement requirements
-├── CONTRIBUTING.md    Contribution process and contribution rules
-├── GOVERNANCE.md      Governance, stewardship, and ecosystem model
-├── FROG logo.svg      Official logo asset
-├── LICENSE            Repository license
-├── Readme.md          Repository landing page and architectural overview
-└── frog-orville-chart.png
-                       Positioning illustration used by the repository</code></pre>
+├── CLA.md                            Contributor license agreement requirements
+├── CONTRIBUTING.md                   Contribution process and contribution rules
+├── GOVERNANCE.md                     Governance, stewardship, and ecosystem model
+├── FROG logo.svg                     Official logo asset
+├── LICENSE                           Repository license
+├── Readme.md                         Repository landing page and architectural overview
+└── frog-orville-chart.png            Positioning illustration used by the repository</code></pre>
 
 <h3><code>Expression/</code> — canonical source specification</h3>
 
