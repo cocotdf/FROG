@@ -240,49 +240,49 @@ More specifically for Express authoring:
 |  |   Front Panel Editor    |      |             Diagram Editor               |                  |
 |  | UI / Layout Authoring   |      |      Graphical Dataflow Authoring        |                  |
 |  +-------------------------+      +------------------------------------------+                  |
-|                 \                               /                                               |
-|                  \                             /                                                |
-|                   +---------------------------+                                                 |
-|                   |     FROG Program Model    |                                                 |
-|                   | canonical editable        |                                                 |
-|                   | in-memory model           |                                                 |
-|                   +-----------+---------------+                                                 |
-|                               |                                                                 |
-|      +------------------------+------------------------+                                        |
-|      |                                                 |                                        |
-|      v                                                 v                                        |
-|  Palette Services                               Express Authoring Services                       |
-|  search / discovery /                           assistant-driven insertion /                    |
-|  aliases / contextual views                     configuration / reopen / detach                 |
-|                               |                                                                 |
-|                               v                                                                 |
-|                     Source serialization / reload                                               |
-|                               |                                                                 |
-|                               v                                                                 |
-|                      FROG Expression (.frog)                                                    |
+|                 \                               /                                                |
+|                  \                             /                                                 |
+|                   +---------------------------+                                                  |
+|                   |     FROG Program Model    |                                                  |
+|                   | canonical editable        |                                                  |
+|                   | in-memory model           |                                                  |
+|                   +-----------+---------------+                                                  |
+|                               |                                                                  |
+|      +------------------------+------------------------+                                         |
+|      |                                                 |                                         |
+|      v                                                 v                                         |
+|  Palette Services                               Express Authoring Services                        |
+|  search / discovery /                           assistant-driven insertion /                     |
+|  aliases / contextual views                     configuration / reopen / detach                  |
+|                               |                                                                  |
+|                               v                                                                  |
+|                     Source serialization / reload                                                |
+|                               |                                                                  |
+|                               v                                                                  |
+|                      FROG Expression (.frog)                                                     |
 |                                                                                                 |
-|                               |                                                                 |
-|                               v                                                                 |
-|                  Validation / execution preparation boundary                                    |
-|                               |                                                                 |
-|                               v                                                                 |
-|                      execution-facing systems                                                   |
-|                  (semantics / lowering / compiler / runtime)                                    |
-|                               |                                                                 |
-|                               v                                                                 |
-|                  Execution Observability Layer                                                  |
-|                               |                                                                 |
-|                  +------------+-------------+                                                   |
-|                  |                          |                                                   |
-|                  v                          v                                                   |
-|              Debugging                  IDE Inspection                                           |
-|                                          /         \                                             |
-|                                         v           v                                            |
-|                                      Probes       Watch                                          |
+|                               |                                                                  |
+|                               v                                                                  |
+|                  Validation / execution preparation boundary                                     |
+|                               |                                                                  |
+|                               v                                                                  |
+|                      execution-facing systems                                                    |
+|                  (semantics / lowering / compiler / runtime)                                     |
+|                               |                                                                  |
+|                               v                                                                  |
+|                  Execution Observability Layer                                                   |
+|                               |                                                                  |
+|                  +------------+-------------+                                                    |
+|                  |                          |                                                    |
+|                  v                          v                                                    |
+|              Debugging                  IDE Inspection                                            |
+|                                          /         \                                              |
+|                                         v           v                                             |
+|                                      Probes       Watch                                           |
 |                                                                                                 |
-|  Snippet Services                                                                               |
-|    image-backed snippet export / import / drag-and-drop / paste                                 |
-|    visible as image outside the IDE, decodable as structured payload inside                     |
+|  Snippet Services                                                                                |
+|    image-backed snippet export / import / drag-and-drop / paste                                  |
+|    visible as image outside the IDE, decodable as structured payload inside                      |
 +-------------------------------------------------------------------------------------------------+</code></pre>
 
 <p>
@@ -560,8 +560,9 @@ an internal editable model for interactive tooling.
 </p>
 
 <p>
-If the source format optionally carries IDE-facing preferences or recoverability aids, those fields MUST remain
-non-authoritative for execution semantics.
+The source format MAY optionally carry IDE-facing preferences or recoverability aids through the source-level
+<code>ide</code> section defined by the Expression layer.
+Such fields MUST remain non-authoritative for execution semantics.
 They MAY help a conforming IDE restore authoring intent, including Express-related presentation state, but they MUST NOT be
 required in order to determine canonical executable meaning.
 </p>
@@ -936,6 +937,7 @@ The detailed snippet transport and insertion model SHOULD be defined in <code>ID
   <li>Preservation of canonical identity across aliases, views, assistant-driven flows, and contextual insertion workflows</li>
   <li>Express authoring as an IDE convenience layer rather than a separate language</li>
   <li>Deterministic normalization from guided authoring to canonical source content</li>
+  <li>Optional IDE recoverability metadata without executable authority</li>
 </ul>
 
 <hr/>
@@ -977,6 +979,11 @@ explicitly elsewhere in the repository over time.
 As the repository grows, the IDE layer SHOULD continue to absorb authoring-facing concerns such as discovery,
 presentation, Express interaction, snippet transport, and source-aligned inspection, while leaving canonical source and
 semantic ownership to the layers that already own them normatively.
+</p>
+
+<p>
+More detailed Express lifecycle behavior MAY later be refined in a dedicated IDE-facing specification while preserving the
+ownership boundaries defined here.
 </p>
 
 <hr/>
