@@ -765,18 +765,20 @@ A conforming ecosystem may conceptually follow an architecture similar to the on
               /               \
              /                 \
             v                   v
-   FROG Expression        Validation / Execution
-(.frog source,              preparation pipeline
- human-readable JSON)              |
-                                   v
-                     Execution-oriented representation
-                         (derived from validated content)
+🟩 OPEN SOURCE LAYER       ⚙️ Validation / Execution
+🟩 FROG Expression            preparation pipeline
+(.frog source,                        |
+ human-readable,                      v
+ open JSON)              🟩 OPEN EXECUTION LAYER
+                         🟩 Open execution IR / validated IR
+                          (derived, readable, inspectable,
+                           open specification-facing layer)
                                    |
                                    v
                       Compiler(s) / Backend(s) / Runtime(s)
                                    |
                                    v
-                            Target execution
+                            ▶️ Target execution
                                    |
                   +----------------+----------------+
                   |                                 |
