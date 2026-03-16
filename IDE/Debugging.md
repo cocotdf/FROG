@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="../FROG logo.svg" alt="FROG logo" width="150" />
+  <img src="../FROG logo.svg" alt="FROG logo" width="140" />
 </p>
 
 <h1 align="center">🐸 FROG IDE Debugging Specification</h1>
@@ -66,6 +66,16 @@ It describes the behavior of interactive debugging as seen by the user and by so
 It does not standardize the internal runtime scheduler, transport protocol, execution engine, or language-level safe-boundary semantics used to implement that behavior.
 </p>
 
+<pre><code>Language/
+    -&gt; owns execution meaning and safe debug stops
+
+IDE/Execution observability.md
+    -&gt; owns the observable projection of execution activity
+
+IDE/Debugging.md
+    -&gt; owns pause / resume / breakpoint / stepping meaning for tools
+</code></pre>
+
 <hr/>
 
 <h2 id="goals">2. Goals</h2>
@@ -98,7 +108,7 @@ For FROG v0.1, this document standardizes the IDE-facing meaning of:
   <li><code>step_into</code>,</li>
   <li><code>step_over</code>,</li>
   <li><code>step_out</code>,</li>
-  <li>fault-directed pause and localization when supported by the active profile.</li>
+  <li>fault-directed pause and localization when supported by the active debugging support level.</li>
 </ul>
 
 <p>
@@ -190,11 +200,24 @@ Different runtimes MAY implement debugging through different internal mechanisms
 The observable source-level meaning of debugging controls MUST remain equivalent.
 </p>
 
-<h3>5.5 Minimal but extensible</h3>
+<h3>5.5 Capability profiles and debugging support levels remain distinct</h3>
+
+<p>
+The repository uses <code>Profiles/</code> for optional standardized capability families.
+This document also needs to talk about stronger or weaker debugging support.
+Those are different concerns.
+</p>
+
+<ul>
+  <li>a capability profile defines what executable capability families exist,</li>
+  <li>a debugging support level defines how much interactive debugging behavior is available for those capabilities.</li>
+</ul>
+
+<h3>5.6 Minimal but extensible</h3>
 
 <p>
 FROG v0.1 defines a minimal debugging core.
-Stricter profiles MAY expose richer control, finer-grained pause reasons, conditional breakpoints, or deeper inspection capabilities, provided that the v0.1 debugging meanings remain preserved.
+Stricter debugging support levels MAY expose richer control, finer-grained pause reasons, conditional breakpoints, or deeper inspection capabilities, provided that the v0.1 debugging meanings remain preserved.
 </p>
 
 <hr/>
@@ -218,7 +241,7 @@ At minimum, a debugging-capable execution instance supports, through the IDE-fac
   <li>aborting execution under user control,</li>
   <li>source-level breakpoint activation,</li>
   <li>single-step commands,</li>
-  <li>fault-directed pause when debugging is active and the runtime profile supports it.</li>
+  <li>fault-directed pause when debugging is active and the active debugging support level provides it.</li>
 </ul>
 
 <p>
@@ -286,7 +309,7 @@ Canonical pause reasons for v0.1 are:
 </ul>
 
 <p>
-A stricter profile MAY expose additional pause reasons.
+A stricter debugging support level MAY expose additional pause reasons.
 Additional reasons MUST NOT contradict the meanings above.
 </p>
 
@@ -303,7 +326,7 @@ That object MAY be:
   <li>a structure,</li>
   <li>a structure region,</li>
   <li>a sub-FROG call site,</li>
-  <li>another source-aligned object supported by the active profile.</li>
+  <li>another source-aligned object supported by the active debugging support level.</li>
 </ul>
 
 <p>
@@ -329,7 +352,6 @@ A debugging-capable IDE SHOULD be able to highlight at least:
 </p>
 
 <ul>
-  <li>node readiness,</li>
   <li>node execution start,</li>
   <li>node execution completion,</li>
   <li>edge-level value availability,</li>
@@ -337,6 +359,10 @@ A debugging-capable IDE SHOULD be able to highlight at least:
   <li>selected case regions,</li>
   <li>loop-iteration progression.</li>
 </ul>
+
+<p>
+If the active observability support level exposes readiness, the IDE SHOULD also be able to highlight node readiness or an equivalent ready-to-run state.
+</p>
 
 <h3>8.3 Meaning of highlighting</h3>
 
@@ -396,7 +422,7 @@ Unless a stepping command is active, execution continues freely until:
 
 <p>
 A user-facing stop action terminates the live execution instance.
-At the execution-facing and debug-session-facing level, that termination MUST be represented consistently with the instance becoming <code>aborted</code>, unless a stricter runtime profile defines an explicitly different but equivalent user-stop outcome.
+At the execution-facing and debug-session-facing level, that termination MUST be represented consistently with the instance becoming <code>aborted</code>, unless a stricter runtime support level defines an explicitly different but equivalent user-stop outcome.
 </p>
 
 <h3>9.4 Pause visibility and inspection</h3>
@@ -414,7 +440,7 @@ While paused, the IDE MAY expose:
 </ul>
 
 <p>
-All such inspection MUST remain consistent with the committed source-level state exposed by the active profile.
+All such inspection MUST remain consistent with the committed source-level state exposed by the active observability support level.
 </p>
 
 <hr/>
@@ -454,7 +480,7 @@ For v0.1, the canonical node-break condition is:
 </ul>
 
 <p>
-A stricter profile MAY additionally support:
+A stricter debugging support level MAY additionally support:
 </p>
 
 <ul>
@@ -462,6 +488,10 @@ A stricter profile MAY additionally support:
   <li><code>on_complete</code>,</li>
   <li><code>on_fault</code>.</li>
 </ul>
+
+<p>
+When <code>on_ready</code> is supported, it requires an observability support level that exposes readiness in a source-aligned way.
+</p>
 
 <h3>10.4 Edge breakpoint</h3>
 
@@ -483,7 +513,7 @@ For v0.1, its canonical meaning is:
 </ul>
 
 <p>
-A stricter profile MAY support region-selection or iteration-specific structure breakpoint conditions.
+A stricter debugging support level MAY support region-selection or iteration-specific structure breakpoint conditions.
 </p>
 
 <h3>10.6 Sub-FROG breakpoint</h3>
@@ -563,7 +593,7 @@ If the current paused object is:
 <ul>
   <li>a sub-FROG body reached through a call site,</li>
   <li>a structure-owned region,</li>
-  <li>a nested dynamic execution scope supported by the active profile.</li>
+  <li>a nested dynamic execution scope supported by the active debugging support level.</li>
 </ul>
 
 <p>
@@ -651,7 +681,7 @@ For a <code>for_loop</code>:
 </ul>
 
 <p>
-A stricter profile MAY support iteration-specific debug commands, but those commands are not part of v0.1.
+A stricter debugging support level MAY support iteration-specific debug commands, but those commands are not part of v0.1.
 </p>
 
 <h3>13.3 <code>while_loop</code></h3>
@@ -685,13 +715,13 @@ A paused debug view MUST NOT misrepresent the stored state for the current live 
 <h3>14.1 General rule</h3>
 
 <p>
-If a fault occurs while debugging is active, the debug session SHOULD pause at the most relevant language-valid safe debug stop associated with that fault when the runtime profile supports fault-directed pause.
+If a fault occurs while debugging is active, the debug session SHOULD pause at the most relevant language-valid safe debug stop associated with that fault when the active debugging support level provides fault-directed pause.
 The debug-session state MUST then become either:
 </p>
 
 <ul>
   <li><code>paused</code> with pause reason <code>fault</code>, or</li>
-  <li><code>faulted</code> if the active runtime profile does not support fault-directed pause before termination.</li>
+  <li><code>faulted</code> if the active debugging support level does not support fault-directed pause before termination.</li>
 </ul>
 
 <h3>14.2 Fault localization</h3>
@@ -772,7 +802,7 @@ An IDE that claims support for FROG interactive debugging SHOULD provide at leas
   <li><code>step_into</code>,</li>
   <li><code>step_over</code>,</li>
   <li><code>step_out</code>,</li>
-  <li>fault-directed source localization when supported by the runtime profile.</li>
+  <li>fault-directed source localization when supported by the active debugging support level.</li>
 </ul>
 
 <p>
@@ -783,6 +813,7 @@ An IDE MAY additionally provide:
   <li>edge breakpoints,</li>
   <li>structure breakpoints,</li>
   <li>sub-FROG call breakpoints,</li>
+  <li>readiness-aware overlays when the active observability support level exposes readiness,</li>
   <li>front-panel debug reflection,</li>
   <li>execution traces,</li>
   <li>probe integrations defined by <code>IDE/Probes.md</code>,</li>
@@ -918,7 +949,7 @@ For FROG v0.1, this specification standardizes:
 </ul>
 
 <p>
-This debugging layer provides the foundation for probes, watches, richer instrumentation, and advanced debugging profiles without confusing IDE-facing control with normative language or primitive semantics.
+This debugging layer provides the foundation for probes, watches, richer instrumentation, and advanced debugging support levels without confusing IDE-facing control with normative language or primitive semantics.
 </p>
 
 <hr/>
