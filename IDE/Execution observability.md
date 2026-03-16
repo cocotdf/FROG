@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="../FROG logo.svg" alt="FROG logo" width="150" />
+  <img src="../FROG logo.svg" alt="FROG logo" width="140" />
 </p>
 
 <h1 align="center">🐸 FROG IDE Execution Observability Specification</h1>
@@ -31,7 +31,7 @@ Definition of the execution observability contract exposed to a FROG IDE<br/>
   <li><a href="#sub-frog-projection">15. Sub-FROG Projection</a></li>
   <li><a href="#ui-effect-sequencing-projection">16. UI-Effect Sequencing Projection</a></li>
   <li><a href="#projection-of-language-level-safe-boundaries">17. Projection of Language-Level Safe Boundaries</a></li>
-  <li><a href="#ordering-time-delivery-and-profiles">18. Ordering, Time, Delivery, and Profiles</a></li>
+  <li><a href="#ordering-time-delivery-and-observability-profiles">18. Ordering, Time, Delivery, and Observability Profiles</a></li>
   <li><a href="#ide-requirements">19. IDE Requirements</a></li>
   <li><a href="#illustrative-event-shapes">20. Illustrative Event Shapes</a></li>
   <li><a href="#out-of-scope-for-v01">21. Out of Scope for v0.1</a></li>
@@ -69,6 +69,16 @@ Execution observability is therefore an IDE-facing contract over language-define
 It is not a replacement for the execution model and not a replacement for execution-control boundaries.
 </p>
 
+<pre><code>Execution meaning
+        -&gt; defined by Language/ and Libraries/
+
+Execution observability
+        -&gt; IDE-facing projection of that meaning
+
+Debugging / probes / watch
+        -&gt; consume the projection
+</code></pre>
+
 <hr/>
 
 <h2 id="goals">2. Goals</h2>
@@ -96,7 +106,7 @@ For FROG v0.1, this document standardizes the minimal IDE-facing observability c
   <li>how a live execution instance is exposed to the IDE,</li>
   <li>how source identity and execution context are projected,</li>
   <li>which high-level states an IDE may project,</li>
-  <li>which canonical observable event names and event categories may be emitted,</li>
+  <li>which canonical observable event names and event categories may be exposed,</li>
   <li>how node, edge, structure, region, local-memory, sub-FROG, and UI-effect activity may be projected,</li>
   <li>what consistency guarantees the IDE may assume when consuming language-level safe boundaries.</li>
 </ul>
@@ -196,14 +206,27 @@ The IDE-facing event stream or snapshot model MUST represent a causally consiste
 The IDE MUST NOT be forced to interpret impossible or self-contradictory source-level states.
 </p>
 
-<h3>5.5 Minimal but extensible</h3>
+<h3>5.5 Capability profiles and observability profiles remain distinct</h3>
+
+<p>
+The term <strong>profile</strong> is used elsewhere in the repository for optional standardized capability families defined in <code>Profiles/</code>.
+This document additionally refers to <strong>observability profiles</strong>, meaning levels of detail or strength of the IDE-facing execution-observation contract.
+These two notions MUST NOT be conflated.
+</p>
+
+<ul>
+  <li>a capability profile defines what executable capability families exist,</li>
+  <li>an observability profile defines how much execution detail is exposed to tools.</li>
+</ul>
+
+<h3>5.6 Minimal but extensible</h3>
 
 <p>
 FROG v0.1 defines a minimal observability core.
-Stricter profiles MAY expose additional fields, more detailed events, richer value snapshots, stronger ordering guarantees, or richer retention behavior, provided that the v0.1 meaning remains preserved.
+Stricter observability profiles MAY expose additional fields, more detailed events, richer value snapshots, stronger ordering guarantees, or richer retention behavior, provided that the v0.1 meaning remains preserved.
 </p>
 
-<h3>5.6 Observability is descriptive, not prescriptive</h3>
+<h3>5.7 Observability is descriptive, not prescriptive</h3>
 
 <p>
 This document describes what the IDE may observe and consume.
@@ -331,7 +354,7 @@ This context is required so that an IDE can distinguish, for example:
 <h3>8.3 Activation identity projection</h3>
 
 <p>
-Every node activation SHOULD have an <code>activation_id</code> unique within its live execution instance when the active profile exposes activation-level detail.
+Every node activation SHOULD have an <code>activation_id</code> unique within its live execution instance when the active observability profile exposes activation-level detail.
 This identifier is especially important for loops, repeated executions, traces, probes, and watch correlation.
 </p>
 
@@ -372,7 +395,7 @@ For IDE projection purposes, a node activation MAY be observed through the follo
 <ul>
   <li><code>inactive</code> — the node is outside the currently relevant dynamic path,</li>
   <li><code>waiting</code> — the node belongs to the relevant dynamic path but its activation conditions are not yet satisfied,</li>
-  <li><code>ready</code> — the node is eligible to begin execution,</li>
+  <li><code>ready</code> — the node is eligible to begin execution when readiness is exposed by the active observability profile,</li>
   <li><code>running</code> — the node is currently executing,</li>
   <li><code>completed</code> — the node activation completed normally,</li>
   <li><code>faulted</code> — the node activation failed,</li>
@@ -450,6 +473,12 @@ The canonical IDE-facing semantic event names for v0.1 are:
 </ul>
 
 <p>
+These names define the canonical observability vocabulary.
+Not every active observability profile is required to expose every event directly.
+When a profile omits a finer-grained event such as <code>node_became_ready</code>, it MUST still preserve the observable meanings that remain exposed.
+</p>
+
+<p>
 Implementations MAY expose additional events.
 When they do, the additional events MUST NOT contradict the meaning of the canonical events above.
 </p>
@@ -489,13 +518,12 @@ This document defines how such activity becomes visible to the IDE.
 <h3>11.2 Ready visibility</h3>
 
 <p>
-If a runtime supports interactive inspection, it SHOULD make node readiness observable.
-The event <code>node_became_ready</code> indicates that a node activation is now eligible to start according to the validated execution semantics.
+If the active observability profile exposes readiness, the event <code>node_became_ready</code> indicates that a node activation is now eligible to start according to the validated execution semantics.
 </p>
 
 <p>
 A runtime MAY internally transition from readiness to execution immediately.
-Even in that case, an interactive observability profile SHOULD still preserve a logical ready step so that highlighting, debugging, and related tooling remain definable.
+Even in that case, an interactive observability profile SHOULD still preserve a logical ready step when readiness-sensitive tooling relies on it.
 </p>
 
 <h3>11.3 Start and completion</h3>
@@ -504,7 +532,7 @@ Even in that case, an interactive observability profile SHOULD still preserve a 
 A normal node activation SHOULD be observable through an equivalent causal pattern such as:
 </p>
 
-<pre><code>node_became_ready
+<pre><code>node_became_ready   // when readiness is exposed
 node_started
 node_completed
 </code></pre>
@@ -513,7 +541,7 @@ node_completed
 A faulting activation SHOULD be observable through an equivalent causal pattern such as:
 </p>
 
-<pre><code>node_became_ready
+<pre><code>node_became_ready   // when readiness is exposed
 node_started
 node_faulted
 </code></pre>
@@ -572,7 +600,7 @@ It does not require the runtime to reveal internal buffer implementation details
 
 <p>
 This document does not require every runtime to expose a full value payload for every observed edge event.
-A stricter profile MAY expose one of the following:
+A stricter observability profile MAY expose one of the following:
 </p>
 
 <ul>
@@ -645,7 +673,7 @@ For a <code>for_loop</code>, the canonical observable model SHOULD include:
 <p>
 Each iteration event SHOULD identify the loop structure and the current iteration index.
 If the loop executes zero iterations, the body region is never activated.
-That fact MAY be represented either by the absence of iteration events or by a stricter profile-specific summary event.
+That fact MAY be represented either by the absence of iteration events or by a stricter observability profile-specific summary event.
 </p>
 
 <h3>13.4 While loop</h3>
@@ -710,7 +738,7 @@ For one normal activation of <code>frog.core.delay</code>, a conforming observab
 </p>
 
 <ul>
-  <li>the delay node activation becomes ready and starts,</li>
+  <li>the delay node activation becomes ready when readiness is exposed and then starts,</li>
   <li>the previously stored state is the state associated with the observed output of that activation,</li>
   <li>the next stored state is updated from the observed input of that activation,</li>
   <li>the activation completes only after the observable state transition for that activation is committed.</li>
@@ -720,7 +748,7 @@ For one normal activation of <code>frog.core.delay</code>, a conforming observab
 A possible conceptual event sequence is:
 </p>
 
-<pre><code>node_became_ready
+<pre><code>node_became_ready   // when readiness is exposed
 state_read
 node_started
 edge_value_available   // for out
@@ -735,7 +763,7 @@ An implementation MAY merge or internally reorder operations provided that the e
 <h3>14.4 Initial state visibility</h3>
 
 <p>
-A stricter profile MAY expose the initial state of a local-memory node before first activation.
+A stricter observability profile MAY expose the initial state of a local-memory node before first activation.
 Such visibility is optional in v0.1.
 However, if shown, it MUST match the deterministic source and language semantics already defined elsewhere.
 </p>
@@ -791,7 +819,7 @@ In practice:
 
 <ul>
   <li>an IDE MAY highlight these edges differently from ordinary data edges,</li>
-  <li>a stricter profile MAY expose explicit UI-effect start and completion events,</li>
+  <li>a stricter observability profile MAY expose explicit UI-effect start and completion events,</li>
   <li>the absence of explicit UI-effect events in v0.1 does not invalidate UI sequencing semantics already defined by source and library specifications.</li>
 </ul>
 
@@ -835,7 +863,7 @@ The IDE MAY then project:
 <ul>
   <li>instance state,</li>
   <li>currently relevant or last-completed observable activity,</li>
-  <li>current local-memory values if exposed by the active profile,</li>
+  <li>current local-memory values if exposed by the active observability profile,</li>
   <li>already committed edge values if such visibility is supported,</li>
   <li>execution context required to interpret the paused state correctly.</li>
 </ul>
@@ -861,7 +889,7 @@ It does not redefine the boundary semantics themselves.
 
 <hr/>
 
-<h2 id="ordering-time-delivery-and-profiles">18. Ordering, Time, Delivery, and Profiles</h2>
+<h2 id="ordering-time-delivery-and-observability-profiles">18. Ordering, Time, Delivery, and Observability Profiles</h2>
 
 <h3>18.1 Sequence order</h3>
 
@@ -887,7 +915,7 @@ If two independent node activations are both valid and concurrent, a runtime MAY
 
 <p>
 Implementations MAY attach wall-clock or monotonic timestamps to observable events.
-Such timestamps are informative only unless a stricter profile defines stronger timing requirements.
+Such timestamps are informative only unless a stricter observability profile defines stronger timing requirements.
 </p>
 
 <h3>18.4 Delivery model</h3>
@@ -906,11 +934,11 @@ Implementations MAY use:
   <li>or any equivalent delivery model.</li>
 </ul>
 
-<h3>18.5 Event loss and weaker profiles</h3>
+<h3>18.5 Event loss and weaker observability profiles</h3>
 
 <p>
-A profile intended for interactive debugging SHOULD avoid dropping canonical observability events.
-A lower-overhead telemetry or monitoring profile MAY summarize or sample events, but only if it is explicitly identified as weaker than the full interactive observability profile.
+An observability profile intended for interactive debugging SHOULD avoid dropping canonical observability events.
+A lower-overhead telemetry or monitoring observability profile MAY summarize or sample events, but only if it is explicitly identified as weaker than the full interactive observability profile.
 </p>
 
 <hr/>
@@ -923,12 +951,16 @@ An IDE that claims support for FROG execution observability SHOULD be able to pr
 
 <ul>
   <li>instance lifecycle state,</li>
-  <li>node readiness, start, and completion overlays,</li>
+  <li>node start and completion overlays,</li>
   <li>edge-level value-availability highlighting,</li>
   <li>structure entry and selected-region visualization,</li>
   <li>loop iteration progression,</li>
   <li>fault localization to the most relevant source object when possible.</li>
 </ul>
+
+<p>
+If the active observability profile exposes readiness, the IDE SHOULD also be able to project readiness-sensitive overlays or equivalent readiness-aware diagnostic views.
+</p>
 
 <p>
 An IDE MAY present this information through:
@@ -1087,7 +1119,7 @@ Instead, it standardizes:
 <ul>
   <li>how language-defined execution objects are projected to the IDE,</li>
   <li>which high-level states the IDE may project,</li>
-  <li>which canonical observable events may be emitted,</li>
+  <li>which canonical observable events may be exposed,</li>
   <li>how runtime activity maps back to source identity and execution context,</li>
   <li>what consistency guarantees the IDE may rely on when consuming language-level safe boundaries.</li>
 </ul>
