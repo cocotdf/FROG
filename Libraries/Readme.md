@@ -15,15 +15,18 @@
 
 <ul>
   <li><a href="#overview">1. Overview</a></li>
-  <li><a href="#scope-of-this-directory">2. Scope of this Directory</a></li>
-  <li><a href="#role-of-libraries-in-frog">3. Role of Libraries in FROG</a></li>
-  <li><a href="#current-documents">4. Current Documents</a></li>
-  <li><a href="#library-taxonomy">5. Library Taxonomy</a></li>
-  <li><a href="#relation-with-other-specifications">6. Relation with Other Specifications</a></li>
-  <li><a href="#naming-and-namespaces">7. Naming and Namespaces</a></li>
-  <li><a href="#library-boundaries">8. Library Boundaries</a></li>
-  <li><a href="#library-evolution">9. Library Evolution</a></li>
-  <li><a href="#status">10. Status</a></li>
+  <li><a href="#why-this-layer-exists">2. Why this Layer Exists</a></li>
+  <li><a href="#scope-of-this-directory">3. Scope of this Directory</a></li>
+  <li><a href="#architectural-position">4. Architectural Position</a></li>
+  <li><a href="#how-a-primitive-gets-its-meaning">5. How a Primitive Gets its Meaning</a></li>
+  <li><a href="#current-documents">6. Current Documents</a></li>
+  <li><a href="#intrinsic-library-taxonomy">7. Intrinsic Library Taxonomy</a></li>
+  <li><a href="#libraries-vs-profiles">8. Libraries vs Profiles</a></li>
+  <li><a href="#naming-and-namespaces">9. Naming and Namespaces</a></li>
+  <li><a href="#library-boundaries">10. Library Boundaries</a></li>
+  <li><a href="#relation-with-other-specifications">11. Relation with Other Specifications</a></li>
+  <li><a href="#library-evolution">12. Library Evolution</a></li>
+  <li><a href="#status">13. Status</a></li>
 </ul>
 
 <hr/>
@@ -37,56 +40,33 @@ This directory contains the <strong>intrinsic standard primitive library specifi
 <p>
 In FROG, executable diagrams may contain nodes of kind <code>primitive</code>.
 The meaning of those nodes is defined by standardized primitive catalogs.
-This directory is the normative home of the intrinsic library catalogs that belong to the core language surface.
+This directory is the normative home of the primitive vocabularies that belong to the intrinsic language surface.
 </p>
 
 <p>
-Accordingly:
-</p>
-
-<ul>
-  <li><code>Expression/</code> defines the canonical source structure of a FROG,</li>
-  <li><code>Language/</code> defines cross-cutting normative execution semantics,</li>
-  <li><code>Libraries/</code> defines intrinsic standardized primitive vocabularies consumed by executable diagrams,</li>
-  <li><code>Profiles/</code> defines optional standardized capability families that remain outside the minimal intrinsic library core.</li>
-</ul>
-
-<hr/>
-
-<h2 id="scope-of-this-directory">2. Scope of this Directory</h2>
-
-<p>
-This directory specifies intrinsic library-level primitive catalogs.
-It defines which intrinsic standardized primitives exist, how they are named, what ports they expose,
-what primitive-local metadata they require, and what primitive-local semantics they carry.
-</p>
-
-<p>
-This directory does not define:
+In other words:
 </p>
 
 <ul>
-  <li>the canonical <code>.frog</code> source structure,</li>
-  <li>the general diagram graph model,</li>
-  <li>the type system,</li>
-  <li>the widget object model,</li>
-  <li>front-panel serialization,</li>
-  <li>cross-cutting language execution semantics,</li>
-  <li>IDE palette organization or authoring workflows,</li>
-  <li>optional profile-owned capability families,</li>
-  <li>implementation-specific extensions.</li>
+  <li><code>Expression/</code> defines how primitive nodes appear in canonical source,</li>
+  <li><code>Language/</code> defines cross-cutting execution semantics for validated programs,</li>
+  <li><code>Libraries/</code> defines intrinsic standardized primitive vocabularies,</li>
+  <li><code>Profiles/</code> defines optional standardized capability families that remain outside the intrinsic core,</li>
+  <li><code>IDE/</code> may expose those primitives in palettes and authoring flows without redefining them.</li>
 </ul>
 
 <p>
-Those concerns are defined elsewhere in the repository.
+The purpose of <code>Libraries/</code> is therefore precise:
+it standardizes the primitive families that are fundamental, portable, and intrinsic to the FROG language surface itself.
 </p>
 
 <hr/>
 
-<h2 id="role-of-libraries-in-frog">3. Role of Libraries in FROG</h2>
+<h2 id="why-this-layer-exists">2. Why this Layer Exists</h2>
 
 <p>
-An intrinsic primitive library provides the standardized executable vocabulary used by diagram nodes of kind <code>primitive</code>.
+A diagram can say that a node is a primitive, but the diagram alone does not define what that primitive means.
+That meaning must come from a stable normative source.
 </p>
 
 <p>
@@ -100,55 +80,204 @@ For example:
 }</code></pre>
 
 <p>
-The meaning of <code>frog.core.add</code> is not defined directly by the diagram file itself.
-It is defined by the relevant library specification in this directory.
+The diagram identifies the primitive.
+It does not fully define the primitive contract.
+The primitive contract comes from the relevant library specification.
 </p>
 
 <p>
-This separation keeps the following responsibilities distinct:
+This layer exists so that primitive identity remains:
 </p>
 
 <ul>
-  <li>graph structure,</li>
-  <li>type rules,</li>
-  <li>widget and front-panel models,</li>
-  <li>cross-cutting language semantics,</li>
-  <li>intrinsic library-defined primitive behavior,</li>
-  <li>optional profile-owned capability surfaces.</li>
+  <li>explicit,</li>
+  <li>portable,</li>
+  <li>tool-independent,</li>
+  <li>stable across IDEs, validators, runtimes, and compilers.</li>
 </ul>
 
 <p>
-The role of <code>Libraries/</code> is therefore intentionally narrow:
-it defines the reusable primitive vocabularies that belong to the intrinsic standard language surface.
-It is not the default home for every useful capability that may later appear in the FROG ecosystem.
+Without a dedicated library layer, primitive meaning would risk being scattered across:
+</p>
+
+<ul>
+  <li>diagram examples,</li>
+  <li>tooling behavior,</li>
+  <li>runtime implementations,</li>
+  <li>vendor-specific conventions.</li>
+</ul>
+
+<p>
+This directory prevents that drift by giving intrinsic primitive vocabularies a clear normative home.
 </p>
 
 <hr/>
 
-<h2 id="current-documents">4. Current Documents</h2>
+<h2 id="scope-of-this-directory">3. Scope of this Directory</h2>
 
 <p>
-This directory currently contains the following intrinsic standard library specifications:
+This directory specifies intrinsic library-level primitive catalogs.
+It defines which intrinsic standardized primitives exist, how they are named, what ports they expose, what primitive-local metadata they require, and what primitive-local semantics they carry.
+</p>
+
+<p>
+This directory is the normative home for questions such as:
 </p>
 
 <ul>
+  <li>Which intrinsic primitive identifiers exist?</li>
+  <li>Which namespace owns a primitive?</li>
+  <li>What ports does a primitive expose?</li>
+  <li>What primitive-local metadata is required?</li>
+  <li>What primitive-local behavior belongs to that primitive family?</li>
+</ul>
+
+<p>
+This directory does <strong>not</strong> define:
+</p>
+
+<ul>
+  <li>the canonical <code>.frog</code> source structure,</li>
+  <li>the general diagram graph model,</li>
+  <li>the general type-expression model,</li>
+  <li>the widget object model,</li>
+  <li>front-panel serialization,</li>
+  <li>cross-cutting execution semantics for validated programs,</li>
+  <li>IDE palette organization or authoring workflows,</li>
+  <li>optional profile-owned capability families,</li>
+  <li>implementation-specific extensions.</li>
+</ul>
+
+<p>
+Those concerns are defined elsewhere in the repository.
+</p>
+
+<hr/>
+
+<h2 id="architectural-position">4. Architectural Position</h2>
+
+<p>
+The position of <code>Libraries/</code> inside the repository architecture is intentionally narrow and explicit:
+</p>
+
+<pre>
+Repository architecture around Libraries/
+
+Expression/   -> canonical source form
+Language/     -> normative execution meaning
+Libraries/    -> intrinsic primitive vocabularies
+Profiles/     -> optional standardized capability families
+IDE/          -> authoring, palette, observability, debugging, inspection
+
+Libraries/ owns intrinsic primitive definitions that executable diagrams reference.
+Libraries/ does not own source structure, cross-cutting execution semantics, or IDE behavior.
+</pre>
+
+<p>
+This separation matters because the same primitive identity may be:
+</p>
+
+<ul>
+  <li>serialized in source by <code>Expression/</code>,</li>
+  <li>interpreted locally through <code>Libraries/</code>,</li>
+  <li>executed under broader constraints described by <code>Language/</code>,</li>
+  <li>surfaced to users by <code>IDE/Palette.md</code>,</li>
+  <li>extended by optional capability contracts defined in <code>Profiles/</code>.</li>
+</ul>
+
+<hr/>
+
+<h2 id="how-a-primitive-gets-its-meaning">5. How a Primitive Gets its Meaning</h2>
+
+<p>
+The following diagram summarizes how an intrinsic primitive node is interpreted:
+</p>
+
+<pre>
+Canonical source (.frog)
+        |
+        v
+Expression/Diagram.md
+declares a primitive node
+        |
+        v
+"type": "frog.core.add"
+        |
+        v
+Libraries/Core.md
+defines primitive-local contract
+        |
+        v
+Language/
+applies cross-cutting execution semantics
+        |
+        v
+Validated executable interpretation
+</pre>
+
+<p>
+This means that primitive meaning is <strong>composed</strong>, not dumped into one place:
+</p>
+
+<ul>
+  <li><code>Expression/</code> owns representation,</li>
+  <li><code>Libraries/</code> owns intrinsic primitive identity and primitive-local contract,</li>
+  <li><code>Language/</code> owns cross-cutting execution meaning.</li>
+</ul>
+
+<p>
+For <code>frog.ui.*</code>, this composition also depends on the widget-side source model:
+</p>
+
+<pre>
+Expression/Widget.md
+         +
+Expression/Widget interaction.md
+         +
+Libraries/UI.md
+         +
+Language/
+         =
+validated meaning of executable UI interaction
+</pre>
+
+<hr/>
+
+<h2 id="current-documents">6. Current Documents</h2>
+
+<p>
+This directory currently contains the following documents:
+</p>
+
+<ul>
+  <li><code>Readme.md</code> — architectural entry point for intrinsic standard primitive libraries.</li>
   <li><code>Core.md</code> — foundational <code>frog.core</code> primitives.</li>
   <li><code>Math.md</code> — standard <code>frog.math</code> primitives.</li>
   <li><code>Collections.md</code> — standard <code>frog.collections</code> primitives.</li>
   <li><code>Text.md</code> — standard <code>frog.text</code> primitives.</li>
   <li><code>IO.md</code> — standard <code>frog.io</code> primitives.</li>
   <li><code>Signal.md</code> — standard <code>frog.signal</code> primitives.</li>
-  <li><code>UI.md</code> — standard <code>frog.ui</code> interaction primitives.</li>
+  <li><code>UI.md</code> — standard <code>frog.ui</code> executable widget interaction primitives.</li>
+  <li><code>Connectivity.md</code> — transition note indicating that <code>frog.connectivity.*</code> is no longer normatively owned by the intrinsic library layer and now belongs to the Interop profile.</li>
 </ul>
 
 <p>
-Optional standardized capability families that depend on broader environment assumptions or external ecosystems
-MUST be specified outside this intrinsic library layer.
+The presence of <code>Connectivity.md</code> in this directory does <strong>not</strong> mean that <code>frog.connectivity.*</code> remains part of the intrinsic standard library core.
+It is retained as a repository continuity and redirection document.
 </p>
+
+<p>
+This is important for readers:
+</p>
+
+<pre>
+Libraries/Connectivity.md   -> transition note only
+Profiles/Interop.md        -> authoritative normative home
+</pre>
 
 <hr/>
 
-<h2 id="library-taxonomy">5. Library Taxonomy</h2>
+<h2 id="intrinsic-library-taxonomy">7. Intrinsic Library Taxonomy</h2>
 
 <p>
 At the current repository stage, the intrinsic standard primitive taxonomy is organized as follows:
@@ -165,41 +294,95 @@ At the current repository stage, the intrinsic standard primitive taxonomy is or
 </ul>
 
 <p>
-Additional intrinsic library families MAY be standardized later, but they are not part of the current intrinsic
-standard library surface unless a corresponding specification exists in this directory.
+The taxonomy can also be read as a simple mental map:
 </p>
 
+<pre>
+frog.core.*         -> fundamental execution building blocks
+frog.math.*         -> scalar numeric operations
+frog.collections.*  -> collection manipulation
+frog.text.*         -> text processing
+frog.io.*           -> file/path/resource/byte I/O
+frog.signal.*       -> signal-oriented operations
+frog.ui.*           -> object-style widget interaction in execution
+</pre>
+
 <p>
-Optional capability families that rely on external runtimes, managed platforms, databases, host ABIs,
-deployment assumptions, or other non-intrinsic execution environments SHOULD be specified as profiles rather than intrinsic libraries.
+Additional intrinsic library families MAY be standardized later, but they are not part of the intrinsic standard surface unless a corresponding specification exists in this directory and is published as such.
 </p>
 
 <hr/>
 
-<h2 id="relation-with-other-specifications">6. Relation with Other Specifications</h2>
+<h2 id="libraries-vs-profiles">8. Libraries vs Profiles</h2>
 
 <p>
-Library specifications are used together with the rest of the FROG specification.
-In particular:
+One of the most important architectural rules in the repository is the separation between:
 </p>
 
 <ul>
-  <li><code>Expression/Diagram.md</code> defines how primitive nodes appear in executable graphs,</li>
-  <li><code>Expression/Type.md</code> defines the ordinary type rules used by primitive ports,</li>
-  <li><code>Language/</code> defines cross-cutting execution semantics that remain distinct from library-local primitive behavior,</li>
-  <li><code>Expression/Widget.md</code> and <code>Expression/Widget interaction.md</code> define the widget model and source-facing interaction model used by <code>frog.ui.*</code>,</li>
-  <li><code>Profiles/</code> defines optional standardized capability families that are not part of the intrinsic library core,</li>
-  <li><code>IDE/Palette.md</code> may organize discovery and presentation of primitives, but does not replace library specifications.</li>
+  <li><strong>intrinsic standard libraries</strong>, and</li>
+  <li><strong>optional standardized profiles</strong>.</li>
 </ul>
 
 <p>
-Accordingly, a library specification is one normative input used to interpret intrinsic primitive nodes inside a validated executable graph.
-It is not a replacement for the diagram specification, the language semantics, the widget model, the profile layer, or the IDE model.
+The distinction is simple:
+</p>
+
+<pre>
+If a capability is:
+- generic,
+- portable,
+- intrinsic to the language surface,
+- not dependent on a particular external runtime or ecosystem,
+
+then it belongs in Libraries/.
+
+If a capability is:
+- optional,
+- environment-dependent,
+- tied to foreign runtimes, ABIs, databases, protocols, or host services,
+- standardized but not intrinsic to the minimal core,
+
+then it belongs in Profiles/.
+</pre>
+
+<p>
+Decision sketch:
+</p>
+
+<pre>
+                    New capability
+                          |
+                          v
+         +--------------------------------------+
+         | Is it intrinsic, generic, portable, |
+         | and broadly language-level?         |
+         +-------------------+------------------+
+                             |
+                   yes       |       no
+                             |
+                             v
+                       Libraries/        -----> evaluate as Profiles/
+                                                  or implementation-specific extension
+</pre>
+
+<p>
+Examples:
+</p>
+
+<ul>
+  <li><code>frog.core.add</code> belongs naturally to <code>Libraries/</code>.</li>
+  <li><code>frog.ui.property_read</code> belongs to <code>Libraries/</code> because it is part of the intrinsic executable UI interaction surface of the language model.</li>
+  <li><code>frog.connectivity.*</code> does <strong>not</strong> belong to the intrinsic library core because it represents an optional interoperability capability surface and is now normatively owned by the Interop profile.</li>
+</ul>
+
+<p>
+This separation keeps the intrinsic language taxonomy durable, predictable, portable, and easier to implement consistently.
 </p>
 
 <hr/>
 
-<h2 id="naming-and-namespaces">7. Naming and Namespaces</h2>
+<h2 id="naming-and-namespaces">9. Naming and Namespaces</h2>
 
 <p>
 FROG primitive identifiers use stable namespace-qualified names.
@@ -237,9 +420,23 @@ Such namespaces are not automatically intrinsic library namespaces merely becaus
 Architectural ownership is defined by the specification layer that normatively owns them.
 </p>
 
+<p>
+In practice:
+</p>
+
+<pre>
+Namespace prefix alone is not enough.
+
+"frog.something.*"
+does not automatically mean
+"intrinsic library namespace".
+
+Normative ownership still matters.
+</pre>
+
 <hr/>
 
-<h2 id="library-boundaries">8. Library Boundaries</h2>
+<h2 id="library-boundaries">10. Library Boundaries</h2>
 
 <p>
 The intrinsic standard library families in this directory are intentionally separated by responsibility.
@@ -256,27 +453,109 @@ The intrinsic standard library families in this directory are intentionally sepa
 </ul>
 
 <p>
+Boundary sketch:
+</p>
+
+<pre>
+frog.core.*         -> foundational primitives only
+frog.math.*         -> math only
+frog.collections.*  -> collections only
+frog.text.*         -> text only
+frog.io.*           -> I/O only
+frog.signal.*       -> signal only
+frog.ui.*           -> executable UI interaction only
+</pre>
+
+<p>
 Therefore:
 </p>
 
 <ul>
-  <li><code>frog.core.*</code> MUST NOT become a generic bucket for unrelated future functionality,</li>
-  <li><code>frog.io.*</code> MUST remain distinct from foreign-runtime interoperability, networking, deployment, and hardware-access concerns unless those are explicitly standardized as intrinsic libraries,</li>
-  <li><code>frog.ui.*</code> MUST remain distinct from front-panel serialization and widget catalog definition,</li>
-  <li><code>frog.text.*</code> MUST remain distinct from file, path, and external-service semantics,</li>
-  <li><code>frog.collections.*</code> MUST remain distinct from future map-, dictionary-, record-, or object-oriented families unless those are explicitly standardized,</li>
-  <li><code>frog.signal.*</code> MUST remain distinct from broader acquisition, streaming, tensor, or specialized domain families unless those are explicitly standardized,</li>
-  <li><code>Libraries/</code> MUST NOT become a catch-all container for ecosystem-specific capability growth,</li>
-  <li>optional capability families that depend on external runtimes, host ABIs, managed platforms, databases, or comparable execution-environment assumptions SHOULD be specified in <code>Profiles/</code> rather than in <code>Libraries/</code>.</li>
+  <li><code>frog.core.*</code> MUST NOT become a generic bucket for unrelated future functionality.</li>
+  <li><code>frog.io.*</code> MUST remain distinct from foreign-runtime interoperability, deployment, database access, and broader external integration concerns unless those are explicitly standardized as intrinsic libraries.</li>
+  <li><code>frog.ui.*</code> MUST remain distinct from front-panel serialization, widget catalog definition, and broader IDE UI editing concerns.</li>
+  <li><code>frog.text.*</code> MUST remain distinct from file, path, and external-service semantics.</li>
+  <li><code>frog.collections.*</code> MUST remain distinct from future specialized families unless those are explicitly standardized.</li>
+  <li><code>frog.signal.*</code> MUST remain distinct from broader acquisition, streaming, tensor, or specialized domain families unless those are explicitly standardized.</li>
+  <li><code>Libraries/</code> MUST NOT become a catch-all container for ecosystem-specific capability growth.</li>
+  <li>Optional capability families that depend on external runtimes, host ABIs, managed platforms, databases, protocols, or comparable environment assumptions SHOULD be specified in <code>Profiles/</code> rather than in <code>Libraries/</code>.</li>
 </ul>
 
 <p>
-This separation is intended to keep the intrinsic language taxonomy durable, predictable, portable, and IDE-friendly.
+The main anti-pattern to avoid is this:
+</p>
+
+<pre>
+Useful capability
+      ->
+"put it in Libraries/"
+      ->
+Libraries becomes a catch-all ecosystem bucket
+      ->
+intrinsic language surface loses clarity
+</pre>
+
+<p>
+This repository explicitly rejects that drift.
 </p>
 
 <hr/>
 
-<h2 id="library-evolution">9. Library Evolution</h2>
+<h2 id="relation-with-other-specifications">11. Relation with Other Specifications</h2>
+
+<p>
+Library specifications are used together with the rest of the FROG specification.
+In particular:
+</p>
+
+<ul>
+  <li><code>Expression/Diagram.md</code> defines how primitive nodes appear in executable graphs,</li>
+  <li><code>Expression/Type.md</code> defines the ordinary type model used by primitive ports,</li>
+  <li><code>Language/</code> defines cross-cutting execution semantics that remain distinct from library-local primitive behavior,</li>
+  <li><code>Expression/Widget.md</code> and <code>Expression/Widget interaction.md</code> define the widget model and source-facing interaction model used by <code>frog.ui.*</code>,</li>
+  <li><code>Profiles/</code> defines optional standardized capability families that are not part of the intrinsic library core,</li>
+  <li><code>IDE/Palette.md</code> may organize discovery and presentation of primitives, but does not replace library specifications.</li>
+</ul>
+
+<p>
+These relationships can be visualized as follows:
+</p>
+
+<pre>
+Expression/Diagram.md
+        |
+        |  references primitive nodes
+        v
+    Libraries/
+        |
+        |  provides primitive-local normative contracts
+        v
+    Language/
+        |
+        |  provides cross-cutting execution semantics
+        v
+validated executable meaning
+
+Profiles/
+        |
+        |  adds optional standardized capability families
+        v
+
+IDE/Palette.md
+        |
+        |  exposes discoverability and insertion
+        v
+does not redefine primitive semantics
+</pre>
+
+<p>
+Accordingly, a library specification is one normative input used to interpret intrinsic primitive nodes inside a validated executable graph.
+It is not a replacement for the diagram specification, the language semantics, the profile layer, the widget model, or the IDE model.
+</p>
+
+<hr/>
+
+<h2 id="library-evolution">12. Library Evolution</h2>
 
 <p>
 FROG v0.1 begins with a compact but extensible intrinsic library taxonomy.
@@ -305,7 +584,7 @@ Additional intrinsic library families MAY be added later where they remain:
   <li>generic,</li>
   <li>portable,</li>
   <li>intrinsic to the language ecosystem,</li>
-  <li>not dependent on one specific foreign runtime, managed platform, database stack, host ABI, or vendor technology.</li>
+  <li>not dependent on one specific foreign runtime, managed platform, database stack, host ABI, protocol family, or vendor technology.</li>
 </ul>
 
 <p>
@@ -324,12 +603,19 @@ Capability areas that are useful but environment-dependent SHOULD be specified a
 </p>
 
 <p>
-When a new intrinsic library family is introduced, it SHOULD be added as a sibling specification in this directory and SHOULD be reflected in the repository documentation and relevant IDE palette documentation.
+When a new intrinsic library family is introduced:
 </p>
+
+<ul>
+  <li>it SHOULD be added as a sibling specification in this directory,</li>
+  <li>it SHOULD define clear namespace ownership,</li>
+  <li>it SHOULD state its relation with <code>Language/</code>, <code>Profiles/</code>, and relevant <code>Expression/</code> documents,</li>
+  <li>it SHOULD be reflected in repository-level architecture and relevant IDE palette documentation.</li>
+</ul>
 
 <hr/>
 
-<h2 id="status">10. Status</h2>
+<h2 id="status">13. Status</h2>
 
 <p>
 At the current repository stage, <code>Libraries/</code> defines a growing but intentionally controlled intrinsic standard primitive taxonomy used by the rest of the specification.
@@ -343,12 +629,31 @@ Its role is to anchor the normative primitive vocabulary consumed by executable 
   <li>source-format structure in <code>Expression/</code>,</li>
   <li>cross-cutting execution semantics in <code>Language/</code>,</li>
   <li>optional standardized capability families in <code>Profiles/</code>,</li>
-  <li>widget and front-panel models,</li>
+  <li>widget and front-panel source models,</li>
   <li>IDE palette organization and authoring workflows,</li>
   <li>implementation-specific extensions.</li>
 </ul>
 
 <p>
-This directory is expected to evolve as the language matures, but that evolution MUST preserve explicit namespace ownership,
-clear architectural boundaries, and conservative integration with the rest of the specification.
+The current direction can be summarized simply:
+</p>
+
+<pre>
+Libraries/ should stay:
+- intrinsic
+- portable
+- explicit
+- bounded
+- stable
+
+Libraries/ should not become:
+- a profile bucket
+- an IDE bucket
+- a runtime bucket
+- a vendor bucket
+- a generic ecosystem dumping ground
+</pre>
+
+<p>
+This directory is expected to evolve as the language matures, but that evolution MUST preserve explicit namespace ownership, clear architectural boundaries, and conservative integration with the rest of the specification.
 </p>
