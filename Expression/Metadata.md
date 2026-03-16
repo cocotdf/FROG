@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="../FROG%20logo.svg" alt="FROG logo" width="140" />
+  <img src="../FROG logo.svg" alt="FROG logo" width="140" />
 </p>
 
 <h1 align="center">🐸 FROG Metadata Specification</h1>
@@ -15,34 +15,35 @@ Definition of the required <code>metadata</code> section of <strong>.frog</stron
 
 <ul>
   <li><a href="#overview">1. Overview</a></li>
-  <li><a href="#scope">2. Scope</a></li>
-  <li><a href="#relation-with-other-specifications">3. Relation with Other Specifications</a></li>
-  <li><a href="#location">4. Location in a <code>.frog</code> File</a></li>
-  <li><a href="#structure">5. Metadata Structure</a></li>
-  <li><a href="#field-definitions">6. Field Definitions</a>
+  <li><a href="#why-metadata-exists">2. Why Metadata Exists</a></li>
+  <li><a href="#scope">3. Scope</a></li>
+  <li><a href="#relation-with-other-specifications">4. Relation with Other Specifications</a></li>
+  <li><a href="#location">5. Location in a <code>.frog</code> File</a></li>
+  <li><a href="#structure">6. Metadata Structure</a></li>
+  <li><a href="#field-definitions">7. Field Definitions</a>
     <ul>
-      <li><a href="#field-name">6.1 <code>name</code></a></li>
-      <li><a href="#field-summary">6.2 <code>summary</code></a></li>
-      <li><a href="#field-description">6.3 <code>description</code></a></li>
-      <li><a href="#field-author">6.4 <code>author</code></a></li>
-      <li><a href="#field-program-version">6.5 <code>program_version</code></a></li>
-      <li><a href="#field-tags">6.6 <code>tags</code></a></li>
-      <li><a href="#field-is-example">6.7 <code>is_example</code></a></li>
-      <li><a href="#field-created">6.8 <code>created</code></a></li>
-      <li><a href="#field-updated">6.9 <code>updated</code></a></li>
-      <li><a href="#field-license">6.10 <code>license</code></a></li>
+      <li><a href="#field-name">7.1 <code>name</code></a></li>
+      <li><a href="#field-summary">7.2 <code>summary</code></a></li>
+      <li><a href="#field-description">7.3 <code>description</code></a></li>
+      <li><a href="#field-author">7.4 <code>author</code></a></li>
+      <li><a href="#field-program-version">7.5 <code>program_version</code></a></li>
+      <li><a href="#field-tags">7.6 <code>tags</code></a></li>
+      <li><a href="#field-is-example">7.7 <code>is_example</code></a></li>
+      <li><a href="#field-created">7.8 <code>created</code></a></li>
+      <li><a href="#field-updated">7.9 <code>updated</code></a></li>
+      <li><a href="#field-license">7.10 <code>license</code></a></li>
     </ul>
   </li>
-  <li><a href="#validation-rules">7. Validation Rules</a></li>
-  <li><a href="#extensibility-and-boundary-rules">8. Extensibility and Boundary Rules</a></li>
-  <li><a href="#examples">9. Examples</a>
+  <li><a href="#validation-rules">8. Validation Rules</a></li>
+  <li><a href="#extensibility-and-boundary-rules">9. Extensibility and Boundary Rules</a></li>
+  <li><a href="#examples">10. Examples</a>
     <ul>
-      <li><a href="#minimal-example">9.1 Minimal Metadata Example</a></li>
-      <li><a href="#extended-example">9.2 Extended Metadata Example</a></li>
+      <li><a href="#minimal-example">10.1 Minimal Metadata Example</a></li>
+      <li><a href="#extended-example">10.2 Extended Metadata Example</a></li>
     </ul>
   </li>
-  <li><a href="#design-goals">10. Design Goals</a></li>
-  <li><a href="#summary">11. Summary</a></li>
+  <li><a href="#design-goals">11. Design Goals</a></li>
+  <li><a href="#summary">12. Summary</a></li>
 </ul>
 
 <hr/>
@@ -76,17 +77,78 @@ It MUST NOT define, modify, or override execution semantics.
 </p>
 
 <p>
-Execution behavior MUST be derived from the validated executable source representation of the program,
-centered on the public interface and the authoritative executable diagram, and interpreted according to the normative language semantics.
+Execution behavior MUST be derived from the validated executable source representation of the program, centered on the public interface and the authoritative executable diagram, and interpreted according to the normative language semantics.
 </p>
 
 <p>
 Runtimes, compilers, and other execution-facing systems MUST ignore metadata fields when determining executable meaning.
 </p>
 
+<pre>
+Metadata at a glance
+
+metadata
+   -> descriptive identity
+   -> documentation-facing information
+   -> search / discovery support
+
+metadata
+   != interface
+   != diagram
+   != execution semantics
+</pre>
+
 <hr/>
 
-<h2 id="scope">2. Scope</h2>
+<h2 id="why-metadata-exists">2. Why Metadata Exists</h2>
+
+<p>
+A canonical source file needs more than executable structure.
+It also needs a stable descriptive layer that helps humans, repositories, IDEs, search systems, and documentation workflows understand what a FROG is.
+</p>
+
+<p>
+The <code>metadata</code> section exists to provide that descriptive layer without contaminating executable meaning.
+</p>
+
+<p>
+It makes the source artifact easier to:
+</p>
+
+<ul>
+  <li>identify,</li>
+  <li>document,</li>
+  <li>index,</li>
+  <li>search,</li>
+  <li>classify,</li>
+  <li>version and curate.</li>
+</ul>
+
+<p>
+At the same time, it preserves a strict architectural rule:
+descriptive information must remain separate from executable meaning.
+</p>
+
+<pre>
+Why metadata exists
+
+Humans and tools need:
+- a name
+- a description
+- descriptive context
+- discovery hints
+
+Execution does not need:
+- author name
+- tags
+- summary text
+- license label
+- timestamps
+</pre>
+
+<hr/>
+
+<h2 id="scope">3. Scope</h2>
 
 <p>
 This document specifies:
@@ -113,9 +175,24 @@ This document does not specify:
   <li>runtime scheduling, typing, or execution semantics.</li>
 </ul>
 
+<pre>
+This document owns:
+- descriptive source identity
+- standard metadata fields
+- metadata validation rules
+- metadata extensibility boundaries
+
+This document does not own:
+- public API
+- executable graph
+- IDE recoverability state
+- tooling cache
+- runtime meaning
+</pre>
+
 <hr/>
 
-<h2 id="relation-with-other-specifications">3. Relation with Other Specifications</h2>
+<h2 id="relation-with-other-specifications">4. Relation with Other Specifications</h2>
 
 <p>
 The <code>metadata</code> section belongs to the canonical source specification in <code>Expression/</code>.
@@ -128,12 +205,12 @@ Its boundary with related sections is as follows:
 
 <pre>Top-level source-section boundary
 
-metadata   - descriptive source identity and documentation
-interface  - public typed program boundary
-diagram    - authoritative executable graph
-front_panel - optional user-facing interaction layer
-ide        - optional IDE-facing authoring preferences
-cache      - optional derived non-authoritative tooling data</pre>
+metadata    -> descriptive source identity and documentation
+interface   -> public typed program boundary
+diagram     -> authoritative executable graph
+front_panel -> optional user-facing interaction layer
+ide         -> optional IDE-facing authoring preferences and recoverability aids
+cache       -> optional derived non-authoritative tooling data</pre>
 
 <p>
 In particular:
@@ -147,9 +224,17 @@ In particular:
   <li><code>metadata</code> does not carry derived accelerators or regenerated artifacts. That belongs to <code>cache</code>.</li>
 </ul>
 
+<pre>
+Non-executable boundary inside Expression/
+
+metadata -> durable descriptive identity
+ide      -> IDE-facing authoring preferences and recoverability aids
+cache    -> derived tooling accelerators safe to delete and regenerate
+</pre>
+
 <hr/>
 
-<h2 id="location">4. Location in a <code>.frog</code> File</h2>
+<h2 id="location">5. Location in a <code>.frog</code> File</h2>
 
 <p>
 The <code>metadata</code> section is a required top-level JSON object inside the canonical <code>.frog</code> source file.
@@ -196,7 +281,7 @@ Rules:
 
 <hr/>
 
-<h2 id="structure">5. Metadata Structure</h2>
+<h2 id="structure">6. Metadata Structure</h2>
 
 <p>
 A typical metadata object is:
@@ -232,11 +317,29 @@ All other standard fields are optional unless a profile, repository policy, or t
 Tools MAY add additional metadata fields, provided that those fields remain non-executable and safely ignorable by execution-facing systems.
 </p>
 
+<pre>
+Metadata structure model
+
+Required descriptive core
+   -> name
+   -> description
+
+Optional descriptive enrichments
+   -> summary
+   -> author
+   -> version
+   -> tags
+   -> example flag
+   -> timestamps
+   -> license
+   -> additional non-executable descriptive fields
+</pre>
+
 <hr/>
 
-<h2 id="field-definitions">6. Field Definitions</h2>
+<h2 id="field-definitions">7. Field Definitions</h2>
 
-<h3 id="field-name">6.1 <code>name</code></h3>
+<h3 id="field-name">7.1 <code>name</code></h3>
 
 <p>
 Human-readable program name.
@@ -253,10 +356,10 @@ Human-readable program name.
 
 <hr/>
 
-<h3 id="field-summary">6.2 <code>summary</code></h3>
+<h3 id="field-summary">7.2 <code>summary</code></h3>
 
 <p>
-Short one-line description suitable for listings, search results, previews, or palette-style browsers.
+Short one-line description suitable for listings, search results, previews, or browser-style views.
 </p>
 
 <pre>"summary": "Simple numeric addition example."</pre>
@@ -269,7 +372,7 @@ Short one-line description suitable for listings, search results, previews, or p
 
 <hr/>
 
-<h3 id="field-description">6.3 <code>description</code></h3>
+<h3 id="field-description">7.3 <code>description</code></h3>
 
 <p>
 Longer descriptive text explaining what the FROG does.
@@ -286,7 +389,7 @@ Longer descriptive text explaining what the FROG does.
 
 <hr/>
 
-<h3 id="field-author">6.4 <code>author</code></h3>
+<h3 id="field-author">7.4 <code>author</code></h3>
 
 <p>
 Identifies the creator, maintainer, or owning organization.
@@ -302,7 +405,7 @@ Identifies the creator, maintainer, or owning organization.
 
 <hr/>
 
-<h3 id="field-program-version">6.5 <code>program_version</code></h3>
+<h3 id="field-program-version">7.5 <code>program_version</code></h3>
 
 <p>
 Version identifier of the FROG program itself.
@@ -318,7 +421,7 @@ Version identifier of the FROG program itself.
 
 <hr/>
 
-<h3 id="field-tags">6.6 <code>tags</code></h3>
+<h3 id="field-tags">7.6 <code>tags</code></h3>
 
 <p>
 Keyword list for search, indexing, filtering, or example browsing.
@@ -335,7 +438,7 @@ Keyword list for search, indexing, filtering, or example browsing.
 
 <hr/>
 
-<h3 id="field-is-example">6.7 <code>is_example</code></h3>
+<h3 id="field-is-example">7.7 <code>is_example</code></h3>
 
 <p>
 Indicates whether the FROG is primarily intended as an example, tutorial artifact, or demonstration program.
@@ -350,7 +453,7 @@ Indicates whether the FROG is primarily intended as an example, tutorial artifac
 
 <hr/>
 
-<h3 id="field-created">6.8 <code>created</code></h3>
+<h3 id="field-created">7.8 <code>created</code></h3>
 
 <p>
 Creation timestamp of the source artifact or of the program record tracked by the owning workflow.
@@ -366,7 +469,7 @@ Creation timestamp of the source artifact or of the program record tracked by th
 
 <hr/>
 
-<h3 id="field-updated">6.9 <code>updated</code></h3>
+<h3 id="field-updated">7.9 <code>updated</code></h3>
 
 <p>
 Timestamp of the last significant metadata or source update tracked by the owning workflow.
@@ -382,7 +485,7 @@ Timestamp of the last significant metadata or source update tracked by the ownin
 
 <hr/>
 
-<h3 id="field-license">6.10 <code>license</code></h3>
+<h3 id="field-license">7.10 <code>license</code></h3>
 
 <p>
 Informational license identifier associated with the program or its distribution context.
@@ -398,7 +501,7 @@ Informational license identifier associated with the program or its distribution
 
 <hr/>
 
-<h2 id="validation-rules">7. Validation Rules</h2>
+<h2 id="validation-rules">8. Validation Rules</h2>
 
 <ul>
   <li><code>metadata</code> MUST be present.</li>
@@ -430,9 +533,20 @@ Validation of metadata is structural and descriptive.
 A metadata validation failure MUST NOT be interpreted as a dataflow execution rule by itself.
 </p>
 
+<pre>
+Validation boundary
+
+metadata validation
+   -> checks descriptive structure
+
+metadata validation
+   != executable graph validation
+   != runtime semantic interpretation
+</pre>
+
 <hr/>
 
-<h2 id="extensibility-and-boundary-rules">8. Extensibility and Boundary Rules</h2>
+<h2 id="extensibility-and-boundary-rules">9. Extensibility and Boundary Rules</h2>
 
 <p>
 Tools, repositories, or organizations MAY extend the metadata object with additional descriptive fields.
@@ -465,17 +579,29 @@ That kind of information belongs in <code>ide</code> when it is source-carried a
 or in <code>cache</code> when it is derived and regenerable tooling data.
 </p>
 
-<pre>Non-executable boundary inside Expression/
+<pre>
+Boundary rule for non-executable data
 
-metadata -> durable descriptive identity
-ide      -> IDE-facing authoring preferences and recoverability aids
-cache    -> derived tooling accelerators safe to delete and regenerate</pre>
+Durable descriptive identity
+    -> metadata
+
+IDE-facing authoring preferences or recoverability
+    -> ide
+
+Derived, regenerable tooling accelerators
+    -> cache
+</pre>
+
+<p>
+Metadata extensions SHOULD remain understandable as descriptive source information.
+They SHOULD NOT become a hidden transport for execution hints, private lowering directives, runtime policies, or editor-only transient state.
+</p>
 
 <hr/>
 
-<h2 id="examples">9. Examples</h2>
+<h2 id="examples">10. Examples</h2>
 
-<h3 id="minimal-example">9.1 Minimal Metadata Example</h3>
+<h3 id="minimal-example">10.1 Minimal Metadata Example</h3>
 
 <pre>"metadata": {
   "name": "Add",
@@ -484,7 +610,7 @@ cache    -> derived tooling accelerators safe to delete and regenerate</pre>
 
 <hr/>
 
-<h3 id="extended-example">9.2 Extended Metadata Example</h3>
+<h3 id="extended-example">10.2 Extended Metadata Example</h3>
 
 <pre>"metadata": {
   "name": "PIDController",
@@ -501,7 +627,7 @@ cache    -> derived tooling accelerators safe to delete and regenerate</pre>
 
 <hr/>
 
-<h2 id="design-goals">10. Design Goals</h2>
+<h2 id="design-goals">11. Design Goals</h2>
 
 <ul>
   <li>Provide a stable descriptive identity for a FROG program.</li>
@@ -512,9 +638,26 @@ cache    -> derived tooling accelerators safe to delete and regenerate</pre>
   <li>Preserve a clean architectural boundary with <code>interface</code>, <code>diagram</code>, <code>front_panel</code>, <code>ide</code>, and <code>cache</code>.</li>
 </ul>
 
+<pre>
+Metadata should stay:
+
+- descriptive
+- durable
+- transparent
+- searchable
+- ignorable for execution
+
+Metadata should not become:
+
+- executable
+- IDE transient state
+- cache payload
+- hidden runtime policy
+</pre>
+
 <hr/>
 
-<h2 id="summary">11. Summary</h2>
+<h2 id="summary">12. Summary</h2>
 
 <p>
 The required <code>metadata</code> section provides descriptive source information about a FROG program.
@@ -533,3 +676,10 @@ This preserves a clean long-term separation between:
   <li>optional IDE-facing authoring metadata (<code>ide</code>),</li>
   <li>optional derived tooling data (<code>cache</code>).</li>
 </ul>
+
+<pre>
+One-line mental model
+
+metadata tells you what the FROG is
+metadata does not tell the FROG how to execute
+</pre>
