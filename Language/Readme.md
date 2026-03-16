@@ -15,13 +15,15 @@
 
 <ul>
   <li><a href="#overview">1. Overview</a></li>
-  <li><a href="#scope-of-this-directory">2. Scope of this Directory</a></li>
-  <li><a href="#document-map">3. Document Map</a></li>
-  <li><a href="#current-documents">4. Current Documents</a></li>
-  <li><a href="#relation-with-expression">5. Relation with Expression</a></li>
-  <li><a href="#relation-with-libraries-profiles-and-ide">6. Relation with Libraries, Profiles, and IDE</a></li>
-  <li><a href="#role-in-the-repository">7. Role in the Repository</a></li>
-  <li><a href="#status">8. Status</a></li>
+  <li><a href="#why-this-layer-exists">2. Why this Layer Exists</a></li>
+  <li><a href="#scope-of-this-directory">3. Scope of this Directory</a></li>
+  <li><a href="#document-map">4. Document Map</a></li>
+  <li><a href="#current-documents">5. Current Documents</a></li>
+  <li><a href="#relation-with-expression">6. Relation with Expression</a></li>
+  <li><a href="#relation-with-libraries-profiles-and-ide">7. Relation with Libraries, Profiles, and IDE</a></li>
+  <li><a href="#semantic-layering-inside-language">8. Semantic Layering inside Language</a></li>
+  <li><a href="#role-in-the-repository">9. Role in the Repository</a></li>
+  <li><a href="#status">10. Status</a></li>
 </ul>
 
 <hr/>
@@ -66,7 +68,53 @@ Language/ owns execution meaning that multiple other layers rely on.
 
 <hr/>
 
-<h2 id="scope-of-this-directory">2. Scope of this Directory</h2>
+<h2 id="why-this-layer-exists">2. Why this Layer Exists</h2>
+
+<p>
+A language needs more than a source format.
+It also needs a stable place where validated program behavior is defined at the semantic level.
+That is the role of <code>Language/</code>.
+</p>
+
+<p>
+Without a dedicated execution-semantics layer, cross-cutting meaning would tend to drift into:
+</p>
+
+<ul>
+  <li>source-shape documents,</li>
+  <li>primitive-catalog documents,</li>
+  <li>runtime implementation notes,</li>
+  <li>IDE debugging behavior,</li>
+  <li>vendor-specific execution assumptions.</li>
+</ul>
+
+<p>
+This directory exists to prevent that drift.
+It gives execution meaning a durable normative home that remains independent from:
+</p>
+
+<ul>
+  <li>how a program is serialized,</li>
+  <li>how an IDE edits it,</li>
+  <li>how a runtime internally schedules it,</li>
+  <li>how a compiler lowers it,</li>
+  <li>how one particular implementation presents it to users.</li>
+</ul>
+
+<p>
+In simple terms:
+</p>
+
+<pre><code>Expression/ says:
+"how the program is written"
+
+Language/ says:
+"what the validated program means when it executes"
+</code></pre>
+
+<hr/>
+
+<h2 id="scope-of-this-directory">3. Scope of this Directory</h2>
 
 <p>
 This directory is concerned with language-level execution semantics that apply across the executable model.
@@ -104,9 +152,24 @@ This directory does not define:
 Those concerns are defined elsewhere in the repository or remain future work outside the current closed scope of <code>Language/</code>.
 </p>
 
+<pre><code>Language/ owns:
+- cross-cutting execution meaning
+- validated graph interpretation
+- structure semantics
+- cycle / memory semantics
+- semantic observation/control boundaries
+
+Language/ does not own:
+- source serialization
+- primitive catalogs
+- optional capability catalogs
+- IDE UX
+- runtime-private internals
+</code></pre>
+
 <hr/>
 
-<h2 id="document-map">3. Document Map</h2>
+<h2 id="document-map">4. Document Map</h2>
 
 <p>
 The current role of <code>Language/</code> can be summarized as follows:
@@ -159,7 +222,7 @@ Execution control and observation boundaries
 
 <hr/>
 
-<h2 id="current-documents">4. Current Documents</h2>
+<h2 id="current-documents">5. Current Documents</h2>
 
 <p>
 This directory currently contains:
@@ -189,9 +252,22 @@ Taken together, these documents define the language-level baseline for:
 Additional cross-cutting semantic specifications MAY be added here later when they belong to the execution semantics of the language itself rather than to source serialization, intrinsic primitive catalogs, optional profile catalogs, or IDE tooling.
 </p>
 
+<pre><code>Current semantic baseline
+
+Structures
+   +
+State / cycles
+   +
+Execution model
+   +
+Observation / control boundaries
+   =
+usable normative execution core
+</code></pre>
+
 <hr/>
 
-<h2 id="relation-with-expression">5. Relation with Expression</h2>
+<h2 id="relation-with-expression">6. Relation with Expression</h2>
 
 <p>
 <code>Expression/</code> and <code>Language/</code> are related but distinct layers of the specification.
@@ -230,9 +306,18 @@ Serialized structure shape  -> Expression/
 Execution meaning           -> Language/
 </code></pre>
 
+<pre><code>Example
+
+Expression/Control structures.md
+    -> how a case / for_loop / while_loop is represented in source
+
+Language/Control structures.md
+    -> what that validated structure means when it executes
+</code></pre>
+
 <hr/>
 
-<h2 id="relation-with-libraries-profiles-and-ide">6. Relation with Libraries, Profiles, and IDE</h2>
+<h2 id="relation-with-libraries-profiles-and-ide">7. Relation with Libraries, Profiles, and IDE</h2>
 
 <p>
 <code>Language/</code> is also distinct from <code>Libraries/</code>, <code>Profiles/</code>, and <code>IDE/</code>.
@@ -272,9 +357,69 @@ Cross-cutting execution meaning     -> Language/
 Tool-facing projection and UX       -> IDE/
 </code></pre>
 
+<pre><code>What Language/ should not become
+
+Not:
+- a source-format directory
+- a primitive catalog directory
+- a profile catalog directory
+- an IDE behavior directory
+
+But:
+- the semantic layer that those other directories can rely on
+</code></pre>
+
 <hr/>
 
-<h2 id="role-in-the-repository">7. Role in the Repository</h2>
+<h2 id="semantic-layering-inside-language">8. Semantic Layering inside Language</h2>
+
+<p>
+The current documents in <code>Language/</code> are not just a list.
+They form a useful semantic stack.
+</p>
+
+<p>
+At a high level:
+</p>
+
+<ul>
+  <li><strong>Control structures</strong> and <strong>state/cycles</strong> define key semantic building blocks of validated executable graphs,</li>
+  <li><strong>Execution model</strong> defines the language-level execution concepts needed to talk coherently about a running validated FROG,</li>
+  <li><strong>Execution control and observation boundaries</strong> defines where observation and control remain semantically safe and source-coherent.</li>
+</ul>
+
+<p>
+That stack can be visualized as follows:
+</p>
+
+<pre><code>Validated executable graph
+          |
+          +--> structure semantics
+          |      (case / for_loop / while_loop)
+          |
+          +--> state / cycle semantics
+                 (explicit local memory, valid feedback)
+                          |
+                          v
+                   Execution model
+      (activation, context, milestones, committed state)
+                          |
+                          v
+      Execution control and observation boundaries
+   (safe stops, consistent snapshots, terminal boundaries)
+                          |
+                          v
+       Source-aligned observability and debugging layers
+</code></pre>
+
+<p>
+This is one of the main reasons <code>Language/</code> matters:
+it provides the semantic bridge between canonical source and serious execution-facing tooling without forcing that bridge to live inside the IDE layer.
+</p>
+
+<hr/>
+
+<h2 id="role-in-the-repository">9. Role in the Repository</h2>
 
 <p>
 This directory provides the normative execution-semantics layer of the repository.
@@ -305,9 +450,18 @@ In practical terms:
   <li>read <code>IDE/</code> for authoring, observability, debugging, and inspection behavior.</li>
 </ul>
 
+<pre><code>Repository reading rule
+
+Expression/ -> how it is written
+Language/   -> what it means
+Libraries/  -> what intrinsic primitives mean
+Profiles/   -> what optional capability families mean
+IDE/        -> how tools expose and manipulate it
+</code></pre>
+
 <hr/>
 
-<h2 id="status">8. Status</h2>
+<h2 id="status">10. Status</h2>
 
 <p>
 At the current repository stage, <code>Language/</code> remains intentionally focused rather than broad.
@@ -347,3 +501,19 @@ That growth SHOULD remain disciplined:
 <p>
 The long-term goal is a stable repository architecture in which <code>Expression/</code>, <code>Language/</code>, <code>Libraries/</code>, <code>Profiles/</code>, and <code>IDE/</code> each own a clearly separated normative responsibility.
 </p>
+
+<pre><code>Long-term discipline for Language/
+
+Add here:
+- cross-cutting execution semantics
+- semantic invariants
+- language-level execution concepts
+- source-safe semantic boundaries
+
+Do not add here:
+- source-only shape rules
+- primitive catalog bulk
+- profile catalog bulk
+- debugger UX details
+- runtime-private implementation mechanics
+</code></pre>
