@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="../FROG logo.svg" alt="FROG logo" width="150" />
+  <img src="../FROG logo.svg" alt="FROG logo" width="140" />
 </p>
 
 <h1 align="center">🐸 FROG IDE Probes Specification</h1>
@@ -185,11 +185,24 @@ It is not the same thing as a centralized persistent watch entry.
 The base probe model therefore emphasizes attachment to a local source target rather than aggregation into a global watch list.
 </p>
 
-<h3>5.6 Minimal but extensible</h3>
+<h3>5.6 Capability profiles and observability profiles remain distinct</h3>
+
+<p>
+The repository uses <code>Profiles/</code> for optional standardized capability families.
+This document may also need to refer to stronger or weaker probe support.
+These are different concerns.
+</p>
+
+<ul>
+  <li>a capability profile defines what executable capability families exist,</li>
+  <li>an observability profile defines how much source-aligned execution detail is exposed to probes.</li>
+</ul>
+
+<h3>5.7 Minimal but extensible</h3>
 
 <p>
 The v0.1 probe model is intentionally minimal.
-Stricter profiles MAY add richer displays, deeper value views, specialized visualizations, or custom-probe registration mechanisms, provided that the base semantic meaning remains preserved.
+Stricter observability profiles MAY add richer displays, deeper value views, specialized visualizations, or custom-probe registration mechanisms, provided that the base semantic meaning remains preserved.
 </p>
 
 <hr/>
@@ -230,10 +243,10 @@ Probes and watches consume the same source-aligned observability space, but they
 
 <pre>
 same underlying execution observations
-                │
-        ┌───────┴────────┐
-        │                │
-        ▼                ▼
+                |
+        +-------+--------+
+        |                |
+        v                v
    local probe       centralized watch
    source-attached   persistent list entry
    diagram-centric   monitoring-centric
@@ -286,7 +299,7 @@ For v0.1, a primary target MAY be:
   <li>a node input port,</li>
   <li>a node output port,</li>
   <li>a local-memory slot owned by a local-memory node instance,</li>
-  <li>a UI-sequencing edge in a stricter profile.</li>
+  <li>a UI-sequencing edge in a stricter observability profile.</li>
 </ul>
 
 <p>
@@ -339,7 +352,7 @@ It is the canonical probe form for ordinary dataflow inspection.
 </p>
 
 <p>
-A stricter profile MAY additionally support:
+A stricter observability profile MAY additionally support:
 </p>
 
 <ul>
@@ -356,7 +369,7 @@ A stricter profile MAY additionally support:
 
 <p>
 A probe is created when the IDE attaches a new probe object to a valid source-level target.
-Probe creation MUST fail if the requested target is not a valid probe target in the active profile.
+Probe creation MUST fail if the requested target is not a valid probe target in the active observability profile.
 </p>
 
 <h3 id="probe-entry-states">10.2 Probe-entry states</h3>
@@ -367,7 +380,8 @@ A probe MAY conceptually be in one of the following states:
 
 <ul>
   <li><code>created</code> — probe exists but has not yet observed any compatible execution activity,</li>
-  <li><code>live</code> — probe is currently observing a running or paused execution instance,</li>
+  <li><code>live</code> — probe is currently receiving live updates from a running execution instance,</li>
+  <li><code>paused</code> — probe reflects a paused consistent snapshot,</li>
   <li><code>retained</code> — probe is showing the most recent retained value after execution,</li>
   <li><code>unavailable</code> — probe target exists but no compatible value or state snapshot is currently available,</li>
   <li><code>closed</code> — probe has been removed.</li>
@@ -399,7 +413,7 @@ It displays values or execution state only when those values or states become av
 <h3>11.2 Last-known committed observation</h3>
 
 <p>
-For v0.1, the primary value model of a probe is the <strong>last-known committed observation</strong>.
+For v0.1, the primary semantic value model of a probe is the <strong>last-known committed observation</strong>.
 This means the most recent committed source-level value or state snapshot observed for the probe target in the relevant execution context.
 </p>
 
@@ -407,7 +421,7 @@ This means the most recent committed source-level value or state snapshot observ
 
 <p>
 If a probe target receives multiple compatible observations over time, the base v0.1 model requires that the probe be able to show at least the most recent one.
-A stricter profile MAY additionally keep a bounded history or a richer time-series representation.
+A stricter observability profile MAY additionally keep a bounded history or a richer time-series representation.
 </p>
 
 <h3>11.4 Value previews and full values</h3>
@@ -442,13 +456,13 @@ If no compatible committed observation exists yet, the probe MUST remain unavail
 
 <pre>
 running execution
-      │
+      |
       ├── compatible committed observation arrives
-      │        └── probe may update live
-      │
+      |        └── probe may update live
+      |
       ├── debugger pauses at safe boundary
-      │        └── probe must match paused snapshot
-      │
+      |        └── probe must match paused snapshot
+      |
       └── execution ends
                └── probe may become retained if profile allows
 </pre>
@@ -470,25 +484,25 @@ A probe MUST NOT show values that contradict the paused execution view.
 <h3>12.4 Retained view</h3>
 
 <p>
-A stricter profile MAY support retained probe values after a run has completed, faulted, aborted, or paused.
+A stricter observability profile MAY support retained probe values after a run has completed, faulted, aborted, or paused.
 In that case, a probe MAY continue displaying the most recent retained observation even when execution is no longer live.
 </p>
 
 <p>
 Retained values are optional in v0.1.
-If they are supported, the IDE MUST clearly distinguish retained values from live-updating values.
+If they are supported, the IDE MUST clearly distinguish retained values from live-updating values and from paused-snapshot values.
 </p>
 
 <h3>12.5 No fabricated history</h3>
 
 <p>
-If retained values are supported, the IDE MUST NOT imply that a full historical sequence exists unless such history is actually preserved by the active profile.
+If retained values are supported, the IDE MUST NOT imply that a full historical sequence exists unless such history is actually preserved by the active observability profile.
 </p>
 
 <h3>12.6 Instance association</h3>
 
 <p>
-A retained probe value SHOULD remain attributable to the live execution instance from which it was derived when the active profile exposes that distinction.
+A retained probe value SHOULD remain attributable to the live execution instance from which it was derived when the active observability profile exposes that distinction.
 An IDE MUST NOT silently conflate retained observations from unrelated instances.
 </p>
 
@@ -506,7 +520,7 @@ It is the canonical probe type for observing ordinary dataflow in FROG.
 <h3>13.2 Trigger</h3>
 
 <p>
-An edge probe is updated when the probe target receives an observable <code>edge_value_available</code> event in the current execution context, or when an equivalent paused committed observation confirms the current edge value in the active profile.
+An edge probe is updated when the probe target receives an observable <code>edge_value_available</code> event in the current execution context, or when an equivalent paused committed observation confirms the current edge value in the active observability profile.
 </p>
 
 <h3>13.3 Meaning</h3>
@@ -530,7 +544,7 @@ This is correct because source-level inspection is naturally edge-based, even if
 
 <p>
 If the same edge is activated across different loop iterations or nested execution contexts, the probe SHOULD remain aware of that context.
-A stricter profile MAY show iteration metadata or a context stack together with the displayed value.
+A stricter observability profile MAY show iteration metadata or a context stack together with the displayed value.
 </p>
 
 <hr/>
@@ -608,7 +622,7 @@ delay node instance
    ├── observed state_read
    ├── observed state_updated
    └── paused current stored value
-        (only when the active profile exposes it)
+        (only when the active observability profile exposes it)
 </pre>
 
 <hr/>
@@ -635,14 +649,14 @@ Object-style widget interaction through <code>widget_reference</code>, <code>fro
 <ul>
   <li>ordinary valueflow edges,</li>
   <li>pause-localized debugging state,</li>
-  <li>a stricter profile’s dedicated UI-oriented probe renderers.</li>
+  <li>a stricter observability profile’s dedicated UI-oriented probe renderers.</li>
 </ul>
 
 <h3>16.3 UI sequencing edges</h3>
 
 <p>
 The <code>ui_in</code> / <code>ui_out</code> sequencing edges are not ordinary data-value edges.
-A stricter profile MAY support probes on these sequencing edges, but such probes MUST be interpreted as effect-order inspection rather than ordinary value inspection.
+A stricter observability profile MAY support probes on these sequencing edges, but such probes MUST be interpreted as effect-order inspection rather than ordinary value inspection.
 </p>
 
 <p>
@@ -711,7 +725,7 @@ A debugging-capable IDE SHOULD support at least the following probe-management o
 </ul>
 
 <p>
-A stricter profile MAY additionally support:
+A stricter observability profile MAY additionally support:
 </p>
 
 <ul>
@@ -749,7 +763,7 @@ A custom or type-specific probe MUST still obey the base semantic rules of this 
   <li>it must attach to a valid source-level target,</li>
   <li>it must display committed observations only,</li>
   <li>it must not change program semantics,</li>
-  <li>it must not pretend to expose more execution history than the active profile actually provides.</li>
+  <li>it must not pretend to expose more execution history than the active observability profile actually provides.</li>
 </ul>
 
 <h3>19.4 Default probe behavior</h3>
@@ -763,10 +777,10 @@ If no specialized probe exists for a type, the IDE SHOULD fall back to a generic
 <h2 id="validation-and-safety-rules">20. Validation and Safety Rules</h2>
 
 <ul>
-  <li>A probe MUST target a valid source-visible object supported by the active profile.</li>
+  <li>A probe MUST target a valid source-visible object supported by the active observability profile.</li>
   <li>A probe MUST NOT alter the execution semantics of the graph.</li>
-  <li>A probe shown during pause MUST reflect the paused causal snapshot exposed to the IDE.</li>
-  <li>A retained probe value MUST be clearly distinguishable from a live-updating value.</li>
+  <li>A probe shown during pause MUST reflect the paused execution snapshot exposed to the IDE.</li>
+  <li>A retained probe value MUST be clearly distinguishable from a live-updating value and from a paused-snapshot value.</li>
   <li>A probe MUST NOT expose a contradictory combination of target identity, execution context, and value.</li>
   <li>A local-memory probe MUST respect the node-instance-local scope of local memory.</li>
   <li>A UI-sequencing probe, if supported, MUST NOT be misrepresented as an ordinary data-value probe.</li>
