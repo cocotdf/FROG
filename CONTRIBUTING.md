@@ -23,10 +23,11 @@ Contribution guidelines for the FROG specification repository<br/>
   <li><a href="#contribution-expectations">7. Contribution Expectations</a></li>
   <li><a href="#change-categories">8. Change Categories</a></li>
   <li><a href="#cross-document-coherence">9. Cross-Document Coherence</a></li>
-  <li><a href="#governance">10. Governance</a></li>
-  <li><a href="#contributor-license-agreement">11. Contributor License Agreement</a></li>
-  <li><a href="#licensing">12. Licensing</a></li>
-  <li><a href="#community-and-collaboration">13. Community and Collaboration</a></li>
+  <li><a href="#pull-request-expectations">10. Pull Request Expectations</a></li>
+  <li><a href="#governance">11. Governance</a></li>
+  <li><a href="#contributor-license-agreement">12. Contributor License Agreement</a></li>
+  <li><a href="#licensing">13. Licensing</a></li>
+  <li><a href="#community-and-collaboration">14. Community and Collaboration</a></li>
 </ul>
 
 <hr/>
@@ -54,6 +55,18 @@ Because this is a specification repository rather than an ordinary application r
   <li>durable wording,</li>
   <li>implementable semantics.</li>
 </ul>
+
+<pre>
+This repository is not primarily:
+- an app codebase
+- a demo collection
+- a vendor product manual
+
+This repository is primarily:
+- a language specification
+- an architecture baseline
+- a durable normative document set
+</pre>
 
 <hr/>
 
@@ -84,6 +97,19 @@ Early contributions are especially valuable when they improve:
   <li>ownership clarity between specification layers,</li>
   <li>normative wording quality,</li>
   <li>long-term navigability of the repository.</li>
+</ul>
+
+<p>
+Useful contributions are not limited to adding new text.
+A contribution may also be valuable when it:
+</p>
+
+<ul>
+  <li>removes ambiguity,</li>
+  <li>makes an ownership boundary explicit,</li>
+  <li>turns a duplicated document into a redirect or transition stub,</li>
+  <li>realigns a document with the actual repository architecture,</li>
+  <li>identifies follow-up documents that also need adjustment.</li>
 </ul>
 
 <hr/>
@@ -131,6 +157,16 @@ If the current repository state is still transitional, the contributor SHOULD di
   <li>the proposed architectural direction.</li>
 </ul>
 
+<pre>
+Ownership rule of thumb
+
+How is it written in source?         -> Expression/
+What does it mean when it executes?  -> Language/
+What does this intrinsic primitive do? -> Libraries/
+What does this optional capability do? -> Profiles/
+How does the IDE expose or author it?  -> IDE/
+</pre>
+
 <hr/>
 
 <h2 id="where-to-start">4. Where to Start</h2>
@@ -162,6 +198,18 @@ Typical entry points:
 <p>
 Contributors SHOULD avoid modifying a document in isolation when its topic is semantically connected to neighboring documents.
 </p>
+
+<pre>
+Minimum reading path before a meaningful change
+
+root Readme.md
+      ->
+relevant layer Readme.md
+      ->
+target file
+      ->
+directly related files
+</pre>
 
 <hr/>
 
@@ -206,13 +254,28 @@ Recommended step-by-step process:
   <li>Discuss the proposal with maintainers if clarification is needed.</li>
 </ol>
 
+<p>
+For larger semantic or architectural changes, opening an issue first is RECOMMENDED.
+</p>
+
+<pre>
+Recommended large-change flow
+
+issue / discussion
+      ->
+scope clarification
+      ->
+document proposal
+      ->
+pull request
+</pre>
+
 <hr/>
 
 <h2 id="before-you-modify-a-document">6. Before You Modify a Document</h2>
 
 <p>
-Because FROG is a specification repository, contributors MUST work from the current repository state rather than from memory,
-assumption, or older draft wording.
+Because FROG is a specification repository, contributors MUST work from the current repository state rather than from memory, assumption, or older draft wording.
 </p>
 
 <p>
@@ -240,6 +303,26 @@ Contributors SHOULD NOT:
   <li>treat an optional profile capability as if it were automatically part of the intrinsic core,</li>
   <li>remove useful existing content merely because a shorter formulation is possible.</li>
 </ul>
+
+<pre>
+Do not work like this
+
+memory
+   ->
+assumption
+   ->
+isolated rewrite
+
+Work like this instead
+
+current repo state
+   ->
+related documents
+   ->
+ownership check
+   ->
+proposed change
+</pre>
 
 <hr/>
 
@@ -282,6 +365,27 @@ Contributors SHOULD call out:
   <li>outdated references or obsolete repository assumptions.</li>
 </ul>
 
+<p>
+Where it materially improves clarity, contributors SHOULD add:
+</p>
+
+<ul>
+  <li>small ASCII diagrams,</li>
+  <li>local tree views,</li>
+  <li>compact ownership summaries,</li>
+  <li>clear transition notes for legacy documents.</li>
+</ul>
+
+<pre>
+Good specification contributions improve:
+
+- wording
+- ownership clarity
+- cross-document coherence
+- future implementability
+- repository readability
+</pre>
+
 <hr/>
 
 <h2 id="change-categories">8. Change Categories</h2>
@@ -309,13 +413,20 @@ Major semantic or architectural changes SHOULD explain:
   <li>whether migration or follow-up cleanup is required.</li>
 </ul>
 
+<pre>
+Change classification matters
+
+small wording fix
+   !=
+cross-layer semantic refactor
+</pre>
+
 <hr/>
 
 <h2 id="cross-document-coherence">9. Cross-Document Coherence</h2>
 
 <p>
-A contribution is stronger when it respects repository-wide coherence rather than improving one file locally while creating
-inconsistency elsewhere.
+A contribution is stronger when it respects repository-wide coherence rather than improving one file locally while creating inconsistency elsewhere.
 </p>
 
 <p>
@@ -347,9 +458,60 @@ For example:
 If a contributor identifies a conflict but only proposes a local change, the Pull Request SHOULD still explain the broader conflict.
 </p>
 
+<pre>
+Local improvement is good.
+Local improvement that creates a neighboring contradiction is not.
+
+Always ask:
+- what else does this change touch?
+- which document owns this topic?
+- which document may now be stale?
+</pre>
+
 <hr/>
 
-<h2 id="governance">10. Governance</h2>
+<h2 id="pull-request-expectations">10. Pull Request Expectations</h2>
+
+<p>
+A strong Pull Request SHOULD make review easier rather than forcing maintainers to reconstruct the architectural impact from the diff alone.
+</p>
+
+<p>
+A Pull Request description SHOULD therefore identify:
+</p>
+
+<ul>
+  <li>the primary target document,</li>
+  <li>the type of change,</li>
+  <li>the ownership boundary involved,</li>
+  <li>the directly related documents that were checked,</li>
+  <li>any known follow-up cleanup that remains outside the current PR.</li>
+</ul>
+
+<p>
+For semantic or architectural changes, the Pull Request SHOULD also explain:
+</p>
+
+<ul>
+  <li>the problem being solved,</li>
+  <li>why the chosen document is the correct owner,</li>
+  <li>whether the change is clarifying existing intent or changing intended behavior,</li>
+  <li>whether any migration or transition note is needed.</li>
+</ul>
+
+<pre>
+Recommended PR summary shape
+
+- change type
+- primary owner document
+- directly related documents reviewed
+- main architectural rationale
+- follow-up documents if any
+</pre>
+
+<hr/>
+
+<h2 id="governance">11. Governance</h2>
 
 <p>
 FROG is an open specification project with repository-level governance.
@@ -366,7 +528,7 @@ See:
 
 <hr/>
 
-<h2 id="contributor-license-agreement">11. Contributor License Agreement</h2>
+<h2 id="contributor-license-agreement">12. Contributor License Agreement</h2>
 
 <p>
 By submitting a contribution, you agree to the Contributor License Agreement.
@@ -386,7 +548,7 @@ If CLA signing is required for your Pull Request, the repository workflow may pr
 
 <hr/>
 
-<h2 id="licensing">12. Licensing</h2>
+<h2 id="licensing">13. Licensing</h2>
 
 <p>
 Repository content is governed by the repository license.
@@ -403,7 +565,7 @@ See:
 
 <hr/>
 
-<h2 id="community-and-collaboration">13. Community and Collaboration</h2>
+<h2 id="community-and-collaboration">14. Community and Collaboration</h2>
 
 <p>
 FROG aims to build an open ecosystem around graphical dataflow programming.
@@ -414,3 +576,13 @@ Constructive discussions, careful specification proposals, editorial cleanup, an
 The goal is not only to add more content.
 The goal is to build a coherent, durable, and implementable specification that can support multiple independent implementations over time.
 </p>
+
+<pre>
+Contribution spirit
+
+Be explicit.
+Be architectural.
+Be conservative with ownership.
+Be precise with wording.
+Be helpful across document boundaries.
+</pre>
