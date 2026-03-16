@@ -45,22 +45,23 @@ Definition of the architecture and responsibilities of a FROG development enviro
 <h2 id="overview">1. Overview</h2>
 
 <p>
-The FROG IDE is the graphical development environment used to design, edit, validate, inspect, debug, and execute programs written in the FROG graphical dataflow language.
+The FROG IDE is the graphical development environment used to design, edit, validate, inspect, and debug programs written in the FROG graphical dataflow language.
+A conforming IDE MAY additionally integrate execution-facing services such as validation pipelines, execution preparation, compiler services, runtime services, or equivalent subsystems.
 </p>
 
 <p>
-A FROG IDE does not treat the saved <code>.frog</code> file as the live execution artifact.
+A FROG IDE does not treat the saved <code>.frog</code> file as the live editable artifact.
 Instead, it loads and maintains an internal <strong>FROG Program Model</strong>, which is the canonical editable in-memory representation used during authoring.
 The canonical saved source file remains the <strong>FROG Expression</strong>, defined in <code>Expression/</code>.
 </p>
 
 <p>
 Interactive inspection and debugging are not performed directly on raw serialized source.
-They are performed on a live execution derived from validated program content, through a source-aligned observability layer that allows the IDE to project runtime activity back onto diagram-visible and other source-meaningful objects.
+They are performed on a live execution derived from validated canonical program content, through a source-aligned observability layer that allows the IDE to project runtime activity back onto diagram-visible and other source-meaningful objects.
 </p>
 
 <p>
-A conforming IDE MAY expose authoring-facing views, shortcuts, aliases, assistant-driven insertion flows, and other conveniences that are more ergonomic than the raw canonical source representation.
+A conforming IDE MAY expose authoring-facing views, shortcuts, aliases, assistant-driven insertion flows, guided entries, and other conveniences that are more ergonomic than the raw canonical source representation.
 However, those conveniences do not become new language constructs by themselves.
 The IDE remains responsible for preserving canonical source identity and for keeping semantic ownership in the specification layers that define it normatively.
 </p>
@@ -71,16 +72,16 @@ an IDE MAY provide guided, configurable, task-oriented insertion experiences for
 </p>
 
 <p>
-This document defines how a conforming FROG IDE is organized as an authoring, observability, debugging, and inspection environment without making the language dependent on one particular editor implementation.
+This document defines how a conforming FROG IDE is organized as an authoring, discoverability, observability, debugging, inspection, and transport environment without making the language dependent on one particular editor implementation.
 </p>
 
 <pre><code>Repository architecture around IDE/
 
-Expression/   -> canonical source form
-Language/     -> normative execution semantics
-Libraries/    -> intrinsic primitive vocabularies
-Profiles/     -> optional standardized capability families
-IDE/          -> authoring, discoverability, observability, debugging, inspection
+Expression/   -&gt; canonical source form
+Language/     -&gt; normative execution semantics
+Libraries/    -&gt; intrinsic primitive vocabularies
+Profiles/     -&gt; optional standardized capability families
+IDE/          -&gt; authoring, discoverability, observability, debugging, inspection
 
 IDE/ owns tooling behavior.
 IDE/ does not own source meaning or execution meaning.
@@ -122,7 +123,7 @@ It defines:
   <li>the role of the IDE shell,</li>
   <li>the role of diagram and front panel editors,</li>
   <li>the role of the IDE-managed editable Program Model,</li>
-  <li>the IDE-facing boundary between authoring and execution,</li>
+  <li>the IDE-facing boundary between authoring and execution-facing integration,</li>
   <li>the role of palette-driven authoring,</li>
   <li>the architectural role of Express authoring,</li>
   <li>the role of execution observability,</li>
@@ -143,7 +144,8 @@ This document does not define:
   <li>the complete optional profile catalogs,</li>
   <li>the full compiler architecture,</li>
   <li>the full runtime architecture,</li>
-  <li>the full execution-oriented IR architecture.</li>
+  <li>the full execution-oriented IR architecture,</li>
+  <li>the full conformance model for execution-capable implementations.</li>
 </ul>
 
 <p>
@@ -179,7 +181,7 @@ The FROG repository separates several normative concerns.
   <li><code>Language/</code> defines cross-cutting normative execution semantics.</li>
   <li><code>Libraries/</code> defines intrinsic standardized primitive catalogs and primitive-local semantics.</li>
   <li><code>Profiles/</code> defines optional standardized capability families and profile-owned capability contracts.</li>
-  <li><code>IDE/</code> defines authoring, observability, debugging, inspection, snippet behavior, and IDE-facing insertion behavior.</li>
+  <li><code>IDE/</code> defines authoring, discoverability, observability, debugging, inspection, snippet behavior, and IDE-facing insertion behavior.</li>
 </ul>
 
 <p>
@@ -188,7 +190,7 @@ Accordingly:
 
 <ul>
   <li>this document is IDE-facing,</li>
-  <li>it may reference source, language, intrinsic-library, and profile-owned concepts,</li>
+  <li>it may reference source, language, intrinsic-library, profile-owned, and implementation-supported extension concepts,</li>
   <li>but it does not replace the specifications that own those concepts normatively.</li>
 </ul>
 
@@ -197,7 +199,7 @@ More specifically:
 </p>
 
 <ul>
-  <li><code>Expression/</code> owns canonical serialized identity, including the source-facing representation of structures, widgets, interface nodes, and other graph objects,</li>
+  <li><code>Expression/</code> owns canonical serialized identity, including the source-facing representation of structures, widgets, interface nodes, annotations, and other graph objects,</li>
   <li><code>Language/</code> owns normative meaning, including cross-cutting execution rules,</li>
   <li><code>Libraries/</code> owns intrinsic primitive identity and primitive-local semantics,</li>
   <li><code>Profiles/</code> owns optional standardized capability families and profile-owned capability definitions,</li>
@@ -211,21 +213,21 @@ That does not transfer ownership of source, intrinsic primitive meaning, profile
 
 <pre><code>Ownership summary
 
-Canonical source identity          -> Expression/
-Execution semantics               -> Language/
-Intrinsic primitive-local meaning -> Libraries/
-Optional capability meaning       -> Profiles/
-Tooling behavior and UX           -> IDE/
+Canonical source identity          -&gt; Expression/
+Execution semantics               -&gt; Language/
+Intrinsic primitive-local meaning -&gt; Libraries/
+Optional capability meaning       -&gt; Profiles/
+Tooling behavior and UX           -&gt; IDE/
 </code></pre>
 
 <pre><code>One construct, multiple layers
 
 Example: widget interaction
 
-Expression/  -> widget objects and source-facing interaction representation
-Libraries/   -> frog.ui.* primitive contracts
-Language/    -> cross-cutting execution semantics
-IDE/         -> how the user inserts, edits, observes, and debugs it
+Expression/  -&gt; widget objects and source-facing interaction representation
+Libraries/   -&gt; frog.ui.* primitive contracts
+Language/    -&gt; cross-cutting execution semantics
+IDE/         -&gt; how the user inserts, edits, observes, and debugs it
 </code></pre>
 
 <hr/>
@@ -299,17 +301,17 @@ More specifically for Express authoring:
 <pre><code>Boundary rule
 
 Nice IDE view
-     ->
+     -&gt;
 canonical Program Model identity
-     ->
+     -&gt;
 canonical source identity
-     ->
+     -&gt;
 validated execution-facing content
 
 Never:
 
 nice IDE view
-     ->
+     -&gt;
 new hidden language construct
 </code></pre>
 
@@ -371,7 +373,6 @@ new hidden language construct
                                    v                     v
                                 Probes                 Watch
 
-
 Snippet Services
   - image-backed snippet export / import / drag-and-drop / paste
   - visible as image outside the IDE
@@ -413,24 +414,25 @@ The IDE layer is currently organized as follows:
 
 <pre><code>IDE/
 ├── Readme.md
-│   -> architectural entry point for the FROG IDE and Program Model
+│   -&gt; architectural entry point for the FROG IDE and Program Model
 ├── Palette.md
-│   -> palette model for surfacing primitives, structures, reusable nodes,
-│      profiles, and guided authoring entries
+│   -&gt; palette model for the active insertable space, including primitives,
+│      structures, node insertions, annotations, guided entries,
+│      conditional profile-defined entries, and third-party entries
 ├── Express.md
-│   -> guided Express authoring model and normalization to canonical FROG content
+│   -&gt; guided Express authoring model and normalization to canonical FROG content
 ├── Execution observability.md
-│   -> source-aligned live execution observability contract for IDE tooling
+│   -&gt; source-aligned live execution observability contract for IDE tooling
 ├── Debugging.md
-│   -> interactive debugging behavior built on source-aligned observability
+│   -&gt; interactive debugging behavior built on source-aligned observability
 ├── Probes.md
-│   -> live local inspection probes for values and selected execution state
+│   -&gt; live local inspection probes for values and selected execution state
 ├── Watch.md
-│   -> persistent centralized watch-based inspection model
+│   -&gt; persistent centralized watch-based inspection model
 ├── Snippet.md
-│   -> image-backed snippet capture, transport, paste, and reuse workflows
+│   -&gt; image-backed snippet capture, transport, paste, and reuse workflows
 └── FROG Snippet.md
-    -> legacy redirect document pointing to Snippet.md
+    -&gt; legacy redirect document pointing to Snippet.md
 </code></pre>
 
 <p>
@@ -582,13 +584,15 @@ Such views remain editor-side authoring projections and MUST normalize to canoni
 </p>
 
 <p>
-Likewise, a conforming diagram editor MAY expose task-oriented Express entries for common authoring scenarios.
+Likewise, a conforming diagram editor MAY expose task-oriented guided entries for common authoring scenarios.
 Those entries MUST still resolve to canonical objects already defined by the active specification set, such as:
 </p>
 
 <ul>
   <li>a canonical <code>primitive</code> node,</li>
   <li>a canonical <code>subfrog</code> node,</li>
+  <li>a canonical structure insertion,</li>
+  <li>a canonical node insertion,</li>
   <li>or another canonical source-aligned fragment that the IDE knows how to materialize deterministically.</li>
 </ul>
 
@@ -649,9 +653,9 @@ A debugging-capable IDE MAY additionally reflect source-meaningful execution sta
 
 <pre><code>Three related but different things
 
-Public interface  -> reusable program boundary
-Diagram           -> authoritative executable graph
-Front panel       -> graphical interaction surface
+Public interface  -&gt; reusable program boundary
+Diagram           -&gt; authoritative executable graph
+Front panel       -&gt; graphical interaction surface
 
 Do not collapse them into one concept.
 </code></pre>
@@ -660,9 +664,9 @@ Do not collapse them into one concept.
 
 front_panel widget declaration
              |
-             +--> widget_value      -> ordinary value participation in the diagram
+             +--&gt; widget_value      -&gt; ordinary value participation in the diagram
              |
-             +--> widget_reference  -> explicit object-style UI interaction
+             +--&gt; widget_reference  -&gt; explicit object-style UI interaction
                                        through frog.ui.*
 </code></pre>
 
@@ -701,7 +705,7 @@ The Program Model is where the IDE maintains coherent relationships between:
   <li>structure nodes and their owned regions,</li>
   <li>semantic graph content and source-level layout information,</li>
   <li>authoring-facing insertion views and canonical source identities,</li>
-  <li>Express presentation state and the canonical objects that an Express entry edits or materializes.</li>
+  <li>guided presentation state and the canonical objects that a guided entry edits or materializes.</li>
 </ul>
 
 <p>
@@ -718,7 +722,7 @@ The Program Model is designed for:
 </ul>
 
 <p>
-The Program Model MAY temporarily preserve editor-side intent such as preferred insertion view, collapsed presentation, convenience aliases, Express configuration state, or optional-port visibility where that helps round-trip editing.
+The Program Model MAY temporarily preserve editor-side intent such as preferred insertion view, collapsed presentation, convenience aliases, guided configuration state, or optional-port visibility where that helps round-trip editing.
 However, the Program Model MUST keep canonical structural identity and source meaning recoverable and serializable.
 </p>
 
@@ -788,22 +792,22 @@ A FROG IDE SHOULD treat the canonical source representation as authoritative at 
 <p>
 The source format MAY optionally carry IDE-facing preferences or recoverability aids through the source-level <code>ide</code> section defined by the Expression layer.
 Such fields MUST remain non-authoritative for execution semantics.
-They MAY help a conforming IDE restore authoring intent, including Express-related presentation state, but they MUST NOT be required in order to determine canonical executable meaning.
+They MAY help a conforming IDE restore authoring intent, including guided-presentation state, but they MUST NOT be required in order to determine canonical executable meaning.
 </p>
 
 <p>
-If the IDE exposes authoring-facing derived views, aliases, or insertion labels, those facilities MUST survive round-trip authoring without corrupting canonical source identity.
+If the IDE exposes authoring-facing derived views, aliases, insertion labels, or guided entries, those facilities MUST survive round-trip authoring without corrupting canonical source identity.
 A stable load → edit → serialize → reload cycle MUST preserve the canonical construct represented by the source, even when the IDE chooses to present that construct through a more ergonomic authoring form.
 </p>
 
 <pre><code>Round-trip invariant
 
 load source
-   -> build Program Model
-   -> edit through IDE views
-   -> serialize canonical source
-   -> reload
-   -> recover same canonical construct identity
+   -&gt; build Program Model
+   -&gt; edit through IDE views
+   -&gt; serialize canonical source
+   -&gt; reload
+   -&gt; recover same canonical construct identity
 </code></pre>
 
 <hr/>
@@ -881,7 +885,8 @@ Not required:
 <h2 id="palette">14. Palette</h2>
 
 <p>
-The palette is the primary IDE mechanism for discovering and inserting reusable authoring elements such as primitives, structures, interface-related nodes, profile-owned entries, and other editor-supported constructs.
+The palette is the primary IDE mechanism for discovering and inserting elements from the <strong>active insertable space</strong>.
+That space may include intrinsic primitives, profile-defined primitives, structures, diagram-node insertions, annotations, guided entries, and implementation-supported third-party entries.
 </p>
 
 <p>
@@ -898,7 +903,7 @@ Accordingly:
 </ul>
 
 <p>
-The palette MAY expose search aliases, contextual insertion views, assistant-driven entries, and authoring-facing labels that are easier for users to discover than raw canonical names.
+The palette MAY expose search aliases, contextual insertion views, guided entries, and authoring-facing labels that are easier for users to discover than raw canonical names.
 For example, a palette MAY surface an <em>If</em> insertion view for the canonical boolean <code>case</code> structure.
 It MAY also surface a profile-owned interoperability entry in a profile-scoped category while still preserving the canonical target identity.
 </p>
@@ -910,11 +915,11 @@ However:
 <ul>
   <li>palette presentation MUST NOT create independent canonical identities,</li>
   <li>palette presentation MUST NOT redefine language semantics,</li>
-  <li>palette insertion MUST resolve to valid canonical objects known to the active specification set.</li>
+  <li>palette insertion MUST resolve to valid canonical objects known to the active insertable surface.</li>
 </ul>
 
 <p>
-Express entries are a special case of palette-driven discoverability:
+Guided entries are a special case of palette-driven discoverability:
 </p>
 
 <ul>
@@ -1016,15 +1021,15 @@ More detailed behavioral standardization MAY later be refined in dedicated IDE-f
 <pre><code>Express lifecycle
 
 choose entry
-    ->
+    -&gt;
 configure
-    ->
+    -&gt;
 resolve to canonical target
-    ->
+    -&gt;
 serialize canonical content
-    ->
+    -&gt;
 reopen / reconfigure if desired
-    ->
+    -&gt;
 detach safely if desired
 </code></pre>
 
@@ -1079,10 +1084,10 @@ The detailed source-level contract for this layer SHOULD be defined in <code>IDE
       v
 observable source-aligned events
       |
-      +--> debugging
-      +--> probes
-      +--> watch
-      +--> visual execution overlays
+      +--&gt; debugging
+      +--&gt; probes
+      +--&gt; watch
+      +--&gt; visual execution overlays
 </code></pre>
 
 <hr/>
@@ -1120,11 +1125,11 @@ The detailed source-level behavior of these controls SHOULD be defined in <code>
 </p>
 
 <pre><code>Not this:
-line 41 -> line 42 -> line 43
+line 41 -&gt; line 42 -&gt; line 43
 
 But this:
 observable graph activity
-      ->
+      -&gt;
 pause / break / step over source-meaningful events
 </code></pre>
 
@@ -1193,8 +1198,8 @@ The detailed watch model SHOULD be defined in <code>IDE/Watch.md</code>.
 
 <pre><code>Probe vs Watch
 
-Probe -> local, attached, immediate
-Watch -> centralized, persistent, managed list
+Probe -&gt; local, attached, immediate
+Watch -&gt; centralized, persistent, managed list
 </code></pre>
 
 <hr/>
@@ -1248,8 +1253,8 @@ embedded structured payload
 portable authoring fragment
 </code></pre>
 
-<pre><code>Outside IDE  -> behaves like an image
-Inside IDE   -> decodes as reusable structured content
+<pre><code>Outside IDE  -&gt; behaves like an image
+Inside IDE   -&gt; decodes as reusable structured content
 </code></pre>
 
 <hr/>
@@ -1273,11 +1278,11 @@ Inside IDE   -> decodes as reusable structured content
   <li>Portable authoring-fragment transport through snippets</li>
   <li>Image-backed reusable snippet workflows for drag-and-drop authoring reuse</li>
   <li>Authoring convenience without semantic drift</li>
-  <li>Preservation of canonical identity across aliases, views, assistant-driven flows, and contextual insertion workflows</li>
+  <li>Preservation of canonical identity across aliases, views, guided flows, and contextual insertion workflows</li>
   <li>Express authoring as an IDE convenience layer rather than a separate language</li>
   <li>Deterministic normalization from guided authoring to canonical source content</li>
   <li>Optional IDE recoverability metadata without executable authority</li>
-  <li>Clear distinction between intrinsic capability discovery and optional profile discovery</li>
+  <li>Clear distinction between intrinsic capability discovery, optional profile discovery, and third-party discovery</li>
 </ul>
 
 <hr/>
@@ -1308,7 +1313,7 @@ The long-term repository architecture SHOULD preserve a stable separation betwee
   <li><code>Language/</code> for normative execution semantics,</li>
   <li><code>Libraries/</code> for intrinsic standardized primitive catalogs,</li>
   <li><code>Profiles/</code> for optional standardized capability families,</li>
-  <li><code>IDE/</code> for authoring, discoverability, Express behavior, observability, debugging, and inspection.</li>
+  <li><code>IDE/</code> for authoring, discoverability, guided authoring behavior, observability, debugging, and inspection.</li>
 </ul>
 
 <p>
@@ -1316,11 +1321,11 @@ Additional execution-facing layers such as IR, compilation, deployment, or runti
 </p>
 
 <p>
-As the repository grows, the IDE layer SHOULD continue to absorb authoring-facing concerns such as discovery, presentation, Express interaction, snippet transport, and source-aligned inspection, while leaving canonical source and semantic ownership to the layers that already own them normatively.
+As the repository grows, the IDE layer SHOULD continue to absorb authoring-facing concerns such as discovery, presentation, guided interaction, snippet transport, and source-aligned inspection, while leaving canonical source and semantic ownership to the layers that already own them normatively.
 </p>
 
 <p>
-More detailed Express lifecycle behavior MAY later be refined in a dedicated IDE-facing specification while preserving the ownership boundaries defined here.
+More detailed guided-entry lifecycle behavior MAY later be refined in a dedicated IDE-facing specification while preserving the ownership boundaries defined here.
 </p>
 
 <pre><code>Long-term direction
@@ -1376,7 +1381,7 @@ In that architecture:
 </ul>
 
 <p>
-A conforming IDE MAY provide rich authoring-facing conveniences, including aliases, derived insertion views, assistant-driven Express entries, and contextual presentations.
+A conforming IDE MAY provide rich authoring-facing conveniences, including aliases, derived insertion views, guided entries, and contextual presentations.
 Those conveniences remain valid only if they preserve canonical source identity and avoid semantic drift.
 </p>
 
