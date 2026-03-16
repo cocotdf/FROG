@@ -5,7 +5,7 @@
 <h1 align="center">🐸 FROG IDE Express Specification</h1>
 
 <p align="center">
-Definition of assistant-driven Express authoring entries for the FROG IDE<br/>
+Definition of guided Express authoring entries for the FROG IDE<br/>
 <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -21,11 +21,11 @@ Definition of assistant-driven Express authoring entries for the FROG IDE<br/>
   <li><a href="#ownership-boundaries">6. Ownership Boundaries</a></li>
   <li><a href="#express-kinds">7. Express Kinds</a></li>
   <li><a href="#configuration-model">8. Configuration Model</a></li>
-  <li><a href="#configurable-vs-expandable">9. Configurable vs Expandable Parameters</a></li>
+  <li><a href="#configurable-vs-expandable">9. Configurable Parameters vs Expandable Terminals</a></li>
   <li><a href="#canonical-normalization">10. Canonical Normalization</a></li>
   <li><a href="#instance-model">11. Instance Model</a></li>
   <li><a href="#palette-integration">12. Palette Integration</a></li>
-  <li><a href="#editing-reopen-convert">13. Edit, Reopen, Detach, and Materialize</a></li>
+  <li><a href="#editing-reopen-detach-materialize">13. Edit, Reopen, Detach, and Materialize</a></li>
   <li><a href="#help-preview-doc">14. Help, Preview, and Documentation</a></li>
   <li><a href="#program-model">15. Program Model Representation</a></li>
   <li><a href="#optional-source-persistence">16. Optional Source Persistence</a></li>
@@ -41,24 +41,37 @@ Definition of assistant-driven Express authoring entries for the FROG IDE<br/>
 
 <p>
 Express authoring is an IDE-layer capability that allows a user to insert, configure, and re-edit common programming
-patterns through a guided experience rather than through raw low-level assembly alone.
+tasks through a guided experience rather than through raw low-level assembly alone.
 </p>
 
 <p>
-Its purpose is to improve usability, speed of insertion, discoverability, and correctness for frequent tasks while
+Its purpose is to improve usability, speed of insertion, discoverability, and correctness for recurring workflows while
 preserving the canonical FROG model.
 </p>
 
 <p>
-Express is therefore an <strong>authoring presentation mechanism</strong>, not a separate language.
+Express is therefore a <strong>guided authoring presentation mechanism</strong>, not a separate language.
 A conforming FROG IDE MAY expose Express entries, but any inserted Express-authored content MUST remain reducible to
-canonical FROG content already owned by the active specification set.
+canonical FROG content already valid in the active insertable space of the IDE.
 </p>
 
 <p>
 This document defines the normative IDE-facing role of Express entries, their lifecycle, their configuration model,
 their relationship to canonical source, and the minimum rules required to preserve stable round-trip authoring.
 </p>
+
+<pre><code>One-line model
+
+guided entry
+    -&gt; canonical target
+    -&gt; canonical content
+    -&gt; execution-facing systems
+
+Never:
+
+guided entry
+    -&gt; hidden semantic construct
+</code></pre>
 
 <hr/>
 
@@ -70,8 +83,9 @@ their relationship to canonical source, and the minimum rules required to preser
   <li><strong>Preserved canonical identity</strong> — Express authoring MUST normalize to canonical FROG content.</li>
   <li><strong>Stable re-editability</strong> — an Express-authored instance SHOULD remain safely reconfigurable after load and reload.</li>
   <li><strong>No semantic drift</strong> — Express authoring MUST NOT create hidden language semantics.</li>
-  <li><strong>Interoperability with direct authoring</strong> — users MUST remain able to work directly with canonical primitives, structures, and node insertions.</li>
+  <li><strong>Interoperability with direct authoring</strong> — users MUST remain able to work directly with canonical primitives, structures, node insertions, and other direct insertable entries.</li>
   <li><strong>Tooling safety</strong> — validation, execution preparation, debugging, probes, watch, and snippets MUST remain grounded in canonical content rather than Express-private semantics.</li>
+  <li><strong>Transparency</strong> — canonical target identity SHOULD remain knowable to the user.</li>
 </ul>
 
 <hr/>
@@ -84,27 +98,37 @@ This document complements the following specifications:
 
 <ul>
   <li><code>IDE/Readme.md</code> — defines the architectural role of Express authoring inside the FROG IDE.</li>
-  <li><code>IDE/Palette.md</code> — defines how Express entries are discovered, searched, filtered, and inserted.</li>
+  <li><code>IDE/Palette.md</code> — defines how guided entries are discovered, searched, filtered, classified, and inserted within the active insertable space.</li>
   <li><code>IDE/Snippet.md</code> — defines snippet transport and insertion behavior for authoring fragments.</li>
   <li><code>Expression/Readme.md</code> — defines canonical source ownership and the optional source-level <code>ide</code> section.</li>
-  <li><code>Expression/IDE preferences.md</code> — defines the current source-level IDE-facing metadata model and its non-authoritative execution status.</li>
+  <li><code>Expression/IDE preferences.md</code> — defines the source-level IDE-facing metadata model, including optional recoverability metadata and its non-authoritative execution status.</li>
   <li><code>Expression/Diagram.md</code> — defines canonical graph objects and standard node kinds for v0.1.</li>
   <li><code>Expression/Control structures.md</code> — defines canonical source-facing structures and the rule that authoring views do not create new canonical structure identities.</li>
-  <li><code>Libraries/</code> documents — define standardized primitive identities and primitive-local semantics.</li>
+  <li><code>Libraries/</code> documents — define intrinsic standardized primitive identities and primitive-local semantics.</li>
+  <li><code>Profiles/</code> documents — define optional standardized capability families and profile-owned capability contracts.</li>
   <li><code>Language/</code> documents — define cross-cutting normative execution semantics.</li>
 </ul>
 
 <p>
-This document does not define new canonical source objects, new primitive semantics, or new structure families.
+This document does not define new canonical source objects, new primitive semantics, new profile semantics, or new structure families.
 It defines how a conforming IDE MAY provide a guided authoring layer above constructs already owned elsewhere.
 </p>
+
+<pre><code>Ownership reminder
+
+Expression/  -&gt; canonical source representation
+Language/    -&gt; normative execution meaning
+Libraries/   -&gt; intrinsic primitive identity and local semantics
+Profiles/    -&gt; optional standardized capability families
+IDE/Express  -&gt; guided authoring behavior
+</code></pre>
 
 <hr/>
 
 <h2 id="definition">4. What an Express Entry Is</h2>
 
 <p>
-An <strong>Express entry</strong> is an IDE-defined, assistant-driven, task-oriented authoring entry that inserts or edits
+An <strong>Express entry</strong> is an IDE-defined, guided, task-oriented authoring entry that inserts or edits
 canonical FROG content through a guided configuration workflow.
 </p>
 
@@ -113,11 +137,11 @@ An Express entry is characterized by the following properties:
 </p>
 
 <ul>
-  <li>it is <strong>assistant-driven</strong>,</li>
+  <li>it is <strong>guided</strong>,</li>
   <li>it is <strong>instance-local</strong>,</li>
   <li>it is <strong>task-oriented</strong>,</li>
   <li>it is <strong>normalizable</strong> to canonical content,</li>
-  <li>it is <strong>re-editable</strong> when the IDE preserves sufficient non-authoritative state.</li>
+  <li>it is <strong>re-editable</strong> when the IDE preserves sufficient non-authoritative recoverability state.</li>
 </ul>
 
 <p>
@@ -126,12 +150,12 @@ An Express entry MAY represent:
 
 <ul>
   <li>a guided configuration surface for a single canonical primitive,</li>
-  <li>a guided configuration surface for a canonical sub-FROG invocation,</li>
+  <li>a guided configuration surface for a canonical <code>subfrog</code> node,</li>
   <li>a guided materialization process for a deterministic canonical fragment.</li>
 </ul>
 
 <p>
-A conforming IDE SHOULD make the canonical target identity visible to the user somewhere in the Express experience,
+A conforming IDE SHOULD make the canonical target identity visible to the user somewhere in the guided experience,
 entry metadata, or instance detail view.
 </p>
 
@@ -157,6 +181,7 @@ Accordingly:
 
 <ul>
   <li>an Express entry MUST NOT redefine primitive identity,</li>
+  <li>an Express entry MUST NOT redefine profile-owned capability identity,</li>
   <li>an Express entry MUST NOT redefine language semantics,</li>
   <li>an Express entry MUST NOT require a conforming runtime to understand IDE-private Express state,</li>
   <li>an Express entry MUST NOT make canonical execution meaning ambiguous.</li>
@@ -173,7 +198,8 @@ Ownership boundaries remain explicit:
 <ul>
   <li><code>Expression/</code> owns canonical source representation,</li>
   <li><code>Language/</code> owns normative execution meaning,</li>
-  <li><code>Libraries/</code> owns primitive identity and primitive-local semantics,</li>
+  <li><code>Libraries/</code> owns intrinsic primitive identity and primitive-local semantics,</li>
+  <li><code>Profiles/</code> owns optional standardized capability families and profile-owned capability meaning,</li>
   <li><code>IDE/Express.md</code> owns the IDE-facing guided authoring model of Express.</li>
 </ul>
 
@@ -232,6 +258,10 @@ This form is appropriate when:
   <li>the IDE should expose a simple task-oriented entry while preserving a clean canonical diagram identity.</li>
 </ul>
 
+<p>
+A sub-FROG-backed Express entry MUST preserve the canonical <code>subfrog</code> identity and MUST NOT invent a boundary different from the one implied by the referenced FROG interface.
+</p>
+
 <h3>7.3 Fragment-backed Express</h3>
 
 <p>
@@ -246,13 +276,20 @@ This form SHOULD be used more conservatively because it requires stronger guaran
   <li>stable re-editability,</li>
   <li>deterministic materialization,</li>
   <li>mapping from Express instance state to owned canonical objects,</li>
-  <li>safe detach or flatten behavior.</li>
+  <li>safe detach or materialize behavior.</li>
 </ul>
 
 <p>
 For v0.1, primitive-backed and sub-FROG-backed Express are the preferred baseline.
 Fragment-backed Express MAY exist, but it SHOULD remain conservative and predictable.
 </p>
+
+<pre><code>Preferred baseline for v0.1
+
+primitive-backed   -&gt; preferred
+subfrog-backed     -&gt; preferred
+fragment-backed    -&gt; allowed, but conservative
+</code></pre>
 
 <hr/>
 
@@ -291,7 +328,7 @@ parameter names, but the mapping from those controls to canonical content MUST r
 
 <hr/>
 
-<h2 id="configurable-vs-expandable">9. Configurable vs Expandable Parameters</h2>
+<h2 id="configurable-vs-expandable">9. Configurable Parameters vs Expandable Terminals</h2>
 
 <p>
 If Express authoring is supported, the IDE SHOULD distinguish clearly between:
@@ -341,7 +378,7 @@ The following rules apply:
   <li>an expandable terminal MUST correspond to a port that is valid for the canonical target,</li>
   <li>an Express presentation MUST NOT invent semantically invalid terminals,</li>
   <li>an Express presentation MUST NOT hide a semantically required terminal in a way that makes the canonical model ambiguous,</li>
-  <li>the mapping between instance configuration and terminal visibility SHOULD be deterministic.</li>
+  <li>the mapping between configuration state and terminal visibility SHOULD be deterministic.</li>
 </ul>
 
 <hr/>
@@ -357,7 +394,7 @@ A conforming IDE MUST ensure that:
 </p>
 
 <ul>
-  <li>an Express entry normalizes to content already valid in the active specification set,</li>
+  <li>an Express entry normalizes to content already valid in the active insertable space,</li>
   <li>normalization preserves the intended source-level meaning,</li>
   <li>execution-facing systems can operate on normalized canonical content without depending on Express UI state.</li>
 </ul>
@@ -369,7 +406,7 @@ Canonical normalization MAY target:
 <ul>
   <li>a canonical <code>primitive</code> node,</li>
   <li>a canonical <code>subfrog</code> node,</li>
-  <li>a deterministic canonical fragment whose owned objects are all valid under the active specification set.</li>
+  <li>a deterministic canonical fragment whose owned objects are all valid under the active insertable space.</li>
 </ul>
 
 <p>
@@ -381,6 +418,19 @@ The normalization process MUST NOT:
   <li>introduce runtime-required editor-private data,</li>
   <li>change canonical meaning depending on transient editor UI state alone.</li>
 </ul>
+
+<pre><code>Normalization rule
+
+guided presentation
+    -&gt; canonical target
+    -&gt; canonical content
+
+Execution-facing systems consume:
+- canonicalized content
+
+They do not consume:
+- guided UI state
+</code></pre>
 
 <hr/>
 
@@ -398,7 +448,7 @@ A conforming IDE SHOULD be able to associate the following conceptual elements w
   <li><strong>instance identity</strong> — the IDE-side identity of the Express-authored occurrence,</li>
   <li><strong>express identity</strong> — the Express entry definition used to create or edit the instance,</li>
   <li><strong>canonical target identity</strong> — the primitive, sub-FROG, or fragment target to which the instance resolves,</li>
-  <li><strong>configuration state</strong> — non-authoritative IDE state sufficient to reopen guided editing,</li>
+  <li><strong>configuration state</strong> — non-authoritative recoverability state sufficient to reopen guided editing,</li>
   <li><strong>visible optional terminals</strong> — the current authoring-facing terminal exposure state,</li>
   <li><strong>owned canonical objects</strong> — the canonical object or objects created or edited by the instance.</li>
 </ul>
@@ -429,7 +479,7 @@ A conforming IDE SHOULD:
 </p>
 
 <ul>
-  <li>make Express entries visually distinguishable from direct primitive, structure, and node-insertion entries,</li>
+  <li>make Express entries visually distinguishable from direct primitive, structure, node-insertion, and annotation entries,</li>
   <li>disclose canonical target identity in entry metadata or detail view,</li>
   <li>allow the user to reach the corresponding direct canonical entry where that improves transparency.</li>
 </ul>
@@ -441,13 +491,18 @@ Express entries SHOULD remain especially useful for task-oriented workflows such
 <ul>
   <li>common I/O tasks,</li>
   <li>common signal-processing tasks,</li>
-  <li>common connectivity tasks,</li>
+  <li>common connectivity tasks when the relevant profile support is active,</li>
   <li>other repetitive workflows where guided configuration materially improves usability.</li>
 </ul>
 
+<p>
+Express entries MAY also exist for implementation-supported third-party surfaces.
+When they do, the IDE SHOULD keep them visually distinguishable from baseline standardized entries and from standardized profile-defined entries.
+</p>
+
 <hr/>
 
-<h2 id="editing-reopen-convert">13. Edit, Reopen, Detach, and Materialize</h2>
+<h2 id="editing-reopen-detach-materialize">13. Edit, Reopen, Detach, and Materialize</h2>
 
 <p>
 A conforming IDE SHOULD support the following lifecycle operations for Express-authored instances where Express is available:
@@ -494,6 +549,16 @@ When materialization is supported:
   <li>materialization MUST NOT produce semantically hidden required content.</li>
 </ul>
 
+<pre><code>Lifecycle model
+
+insert
+   -&gt; configure
+   -&gt; normalize to canonical target
+   -&gt; reopen / reconfigure if supported
+   -&gt; detach safely if desired
+   -&gt; materialize if supported
+</code></pre>
+
 <hr/>
 
 <h2 id="help-preview-doc">14. Help, Preview, and Documentation</h2>
@@ -508,7 +573,7 @@ Useful capabilities include:
   <li>a canonical target disclosure,</li>
   <li>a preview of key configurable parameters,</li>
   <li>a preview of optional expandable terminals,</li>
-  <li>links or references to the underlying canonical primitive, sub-FROG, or related specification entry.</li>
+  <li>links or references to the underlying canonical primitive, sub-FROG, profile-defined capability, or related specification entry.</li>
 </ul>
 
 <p>
@@ -526,7 +591,7 @@ That state SHOULD be sufficient to support:
 </p>
 
 <ul>
-  <li>stable mapping from Express instance to owned canonical objects,</li>
+  <li>stable mapping from an Express instance to owned canonical objects,</li>
   <li>reopen and reconfigure workflows,</li>
   <li>deterministic terminal visibility,</li>
   <li>safe detach or materialize operations,</li>
@@ -554,8 +619,9 @@ This state remains IDE-owned and non-authoritative for execution semantics.
 <h2 id="optional-source-persistence">16. Optional Source Persistence</h2>
 
 <p>
-The FROG source format MAY optionally persist IDE-facing preferences and recoverability aids through the source-level
+The FROG source format MAY optionally persist IDE-facing recoverability aids through the source-level
 <code>ide</code> section owned by the Expression layer.
+Within that section, Express-related data SHOULD be treated as recoverability metadata rather than as executable program content.
 </p>
 
 <p>
@@ -563,10 +629,11 @@ If Express-related state is persisted there:
 </p>
 
 <ul>
+  <li>it MUST remain optional,</li>
   <li>it MUST remain non-authoritative for execution semantics,</li>
   <li>it MUST NOT be required to determine canonical executable meaning,</li>
   <li>it SHOULD support stable reopen and re-edit workflows,</li>
-  <li>it SHOULD remain safely ignorable by runtimes and other execution-facing systems.</li>
+  <li>it MUST be safely ignorable by runtimes, compilers, and other execution-facing systems.</li>
 </ul>
 
 <p>
@@ -582,14 +649,25 @@ Examples of persistable Express-related IDE state MAY include:
 </ul>
 
 <p>
-At the current repository stage, this source-level area is specified through the optional <code>ide</code> section of the
-Expression layer and its IDE-preferences-oriented extensibility model.
+At the current repository stage, this source-level area is carried by the optional <code>ide</code> section of the
+Expression layer and its recoverability-oriented model.
 Express-related recoverability data MAY be carried there as long as it remains non-authoritative for execution meaning.
 </p>
 
 <p>
 A conforming runtime MUST NOT require this state in order to execute the program.
 </p>
+
+<pre><code>Source persistence rule
+
+canonical source
+    may carry
+optional recoverability metadata
+
+Recoverability metadata
+    -&gt; helps IDE reopen guided state
+    -&gt; does not define execution meaning
+</code></pre>
 
 <hr/>
 
@@ -618,8 +696,9 @@ A conforming IDE SHOULD also detect and report:
 
 <ul>
   <li>broken mappings between Express instances and canonical targets,</li>
-  <li>configuration states that no longer match the active specification set,</li>
-  <li>profile mismatches that would make the target entry unavailable or invalid,</li>
+  <li>configuration states that no longer match the active insertable space,</li>
+  <li>profile mismatches that would make a profile-defined target unavailable or invalid,</li>
+  <li>third-party extension mismatches where the referenced target surface is unavailable,</li>
   <li>stale recoverability state that cannot safely be reapplied.</li>
 </ul>
 
@@ -642,7 +721,7 @@ The guided UI may expose:
 </ul>
 
 <p>
-After insertion, the canonical target remains an ordinary canonical object known to the active specification set.
+After insertion, the canonical target remains an ordinary canonical object known to the active insertable space.
 </p>
 
 <h3>18.2 Sub-FROG-backed Express example</h3>
@@ -664,19 +743,21 @@ re-editing is supported.
 
 <pre><code>{
   "ide": {
-    "express_bindings": [
-      {
-        "instance_id": "expr_001",
-        "express_id": "frog.ide.express.read_text_file",
-        "canonical_target_kind": "subfrog",
-        "canonical_target_ref": "frog.io.read_text_file.basic",
-        "visible_optional_terminals": ["error_in", "error_out"],
-        "config": {
-          "encoding": "utf8",
-          "line_endings": "auto"
+    "recoverability": {
+      "express_bindings": [
+        {
+          "instance_id": "expr_001",
+          "express_id": "frog.ide.express.read_text_file",
+          "canonical_target_kind": "subfrog",
+          "canonical_target_ref": "frog.io.read_text_file.basic",
+          "visible_optional_terminals": ["error_in", "error_out"],
+          "config": {
+            "encoding": "utf8",
+            "line_endings": "auto"
+          }
         }
-      }
-    ]
+      ]
+    }
   }
 }</code></pre>
 
@@ -707,7 +788,7 @@ It does not redefine canonical execution meaning.
 <h2 id="summary">20. Summary</h2>
 
 <p>
-Express authoring gives the FROG IDE a guided, assistant-driven insertion model for common tasks without creating a separate language.
+Express authoring gives the FROG IDE a guided insertion model for common tasks without creating a separate language.
 </p>
 
 <ul>
@@ -717,10 +798,10 @@ Express authoring gives the FROG IDE a guided, assistant-driven insertion model 
   <li>They SHOULD disclose canonical target identity.</li>
   <li>They MAY preserve non-authoritative recoverability state in the Program Model and, optionally, in the source-level <code>ide</code> section.</li>
   <li>They SHOULD support insert, configure, reopen, reconfigure, and safe detach workflows.</li>
-  <li>Execution-facing systems MUST remain grounded in canonicalized content rather than Express UI state.</li>
+  <li>Execution-facing systems MUST remain grounded in canonicalized content rather than guided UI state.</li>
 </ul>
 
 <p>
-This gives FROG a modern guided-authoring model inspired by practical IDE workflows while preserving an open, durable,
-canonical graphical language representation.
+This gives FROG a modern guided-authoring model compatible with practical IDE workflows while preserving an open,
+durable, canonical graphical language representation.
 </p>
