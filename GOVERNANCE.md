@@ -24,10 +24,11 @@ Governance model for the <strong>FROG</strong> specification repository<br/>
   <li><a href="#compatibility-versioning-and-deprecation">8. Compatibility, Versioning, and Deprecation</a></li>
   <li><a href="#repository-contributions-and-licensing">9. Repository Contributions and Licensing</a></li>
   <li><a href="#commercial-implementations-and-ecosystem-participation">10. Commercial Implementations and Ecosystem Participation</a></li>
-  <li><a href="#trademarks-certification-and-conformance">11. Trademarks, Certification, and Conformance</a></li>
-  <li><a href="#commercial-vs-non-commercial-certification-direction">12. Commercial vs Non-Commercial Certification Direction</a></li>
-  <li><a href="#future-governance-evolution">13. Future Governance Evolution</a></li>
-  <li><a href="#non-goals">14. Non-Goals</a></li>
+  <li><a href="#support-claims-conformance-and-certification">11. Support Claims, Conformance, and Certification</a></li>
+  <li><a href="#trademarks-branding-and-official-claims">12. Trademarks, Branding, and Official Claims</a></li>
+  <li><a href="#commercial-vs-non-commercial-certification-direction">13. Commercial vs Non-Commercial Certification Direction</a></li>
+  <li><a href="#future-governance-evolution">14. Future Governance Evolution</a></li>
+  <li><a href="#non-goals">15. Non-Goals</a></li>
 </ul>
 
 <hr/>
@@ -47,6 +48,24 @@ This governance document defines how the specification repository is stewarded, 
 This document governs the specification repository.
 It does not require any implementation to be open source, and it does not prohibit any party from building commercial tools, runtimes, compilers, integrations, services, or full IDE platforms around the FROG specification.
 </p>
+
+<p>
+This document governs the specification.
+It does not, by itself, fully define pricing, trademark procedure, detailed certification contracts, or every future business policy.
+Those topics MAY be defined in separate policy documents if and when such documents are published.
+</p>
+
+<pre>
+High-level governance model
+
+Open specification
+        +
+steward-led repository governance
+        +
+multiple independent implementations
+        +
+separate branding / certification authority
+</pre>
 
 <hr/>
 
@@ -101,6 +120,22 @@ This document does not, by itself, fully define:
 Those topics MAY be defined more precisely in separate policy documents if and when such documents are published.
 </p>
 
+<pre>
+Governance scope
+
+This document governs:
+- repository stewardship
+- editorial direction
+- specification evolution
+- repository-level architectural authority
+
+This document does not fully govern:
+- detailed commercial terms
+- fee schedules
+- legal trademark procedure
+- full certification operations manual
+</pre>
+
 <hr/>
 
 <h2 id="stewardship">4. Stewardship</h2>
@@ -127,6 +162,21 @@ The steward SHOULD make decisions in a way that preserves:
   <li>separation between the standard and any one implementation,</li>
   <li>clear boundaries between intrinsic libraries, profiles, and implementation-specific extensions.</li>
 </ul>
+
+<pre>
+Stewardship is not:
+
+- implementation monopoly
+- runtime monopoly
+- IDE monopoly
+- ecosystem exclusivity
+
+Stewardship is:
+
+- repository authority
+- editorial authority
+- architectural coherence authority
+</pre>
 
 <hr/>
 
@@ -171,6 +221,19 @@ An implementation MAY support:
 Support for optional profiles is not automatically required for core language support unless a future policy explicitly defines a stricter conformance target.
 </p>
 
+<pre>
+Open specification does not mean:
+
+one implementation
+or
+one business model
+
+Open specification means:
+
+many parties may implement
+the same published standard
+</pre>
+
 <hr/>
 
 <h2 id="decision-model">6. Decision Model</h2>
@@ -193,6 +256,18 @@ In practice:
 <p>
 The steward SHOULD explain major architectural decisions when such explanation materially helps contributors understand repository direction.
 </p>
+
+<pre>
+Decision flow
+
+proposal
+   ->
+review
+   ->
+architectural evaluation
+   ->
+accept / revise / split / defer / redirect / reject
+</pre>
 
 <hr/>
 
@@ -227,6 +302,17 @@ Editorial cleanup, factual corrections, and cross-reference alignment MAY be acc
 Major semantic changes SHOULD be reviewed more carefully because they may affect multiple specification layers and future implementations.
 </p>
 
+<pre>
+Change discipline
+
+Small editorial fix
+   -> lighter review
+
+Cross-layer semantic change
+   -> deeper review
+   -> stronger architectural scrutiny
+</pre>
+
 <hr/>
 
 <h2 id="compatibility-versioning-and-deprecation">8. Compatibility, Versioning, and Deprecation</h2>
@@ -254,6 +340,14 @@ Where appropriate, the repository SHOULD describe migration direction, replaceme
 <p>
 A future dedicated versioning policy MAY define more precise release classes, compatibility guarantees, profile-version compatibility rules, and conformance targets.
 </p>
+
+<pre>
+Change classes
+
+clarification -> clearer wording, same intended meaning
+additive      -> more capability, existing compliant content remains valid
+breaking      -> migration may be required
+</pre>
 
 <hr/>
 
@@ -296,18 +390,23 @@ Such implementations do not redefine the specification merely by existing.
 The specification remains governed by the normative repository documents.
 </p>
 
+<pre>
+Open spec
+   does not forbid
+commercial implementation
+
+Commercial implementation
+   does not redefine
+the specification
+</pre>
+
 <hr/>
 
-<h2 id="trademarks-certification-and-conformance">11. Trademarks, Certification, and Conformance</h2>
+<h2 id="support-claims-conformance-and-certification">11. Support Claims, Conformance, and Certification</h2>
 
 <p>
-The openness of the FROG specification does not automatically grant trademark rights.
-Names, logos, certification marks, and official compatibility claims are governed by the steward and MAY be subject to separate policies.
-</p>
-
-<p>
-An implementation MAY implement the FROG specification without being an official Graiphic product.
-However, terms such as <em>official</em>, <em>certified</em>, <em>endorsed</em>, <em>FROG-certified</em>, or equivalent claims SHOULD only be used in accordance with applicable trademark, certification, or conformance policies published by the steward.
+The governance of FROG SHOULD distinguish clearly between support claims, conformance claims, and certification claims.
+Those are related, but they are not the same thing.
 </p>
 
 <p>
@@ -330,12 +429,60 @@ Support for a profile MUST NOT, by itself, be treated as support for all profile
 Likewise, lack of support for a profile MUST NOT, by itself, be treated as failure of core language support unless the claimed target explicitly includes that profile.
 </p>
 
+<pre>
+Do not collapse these categories
+
+support claim
+    != conformance claim
+    != certification claim
+
+Example:
+
+"supports core FROG"
+    is not the same as
+"certified FROG implementation"
+</pre>
+
 <hr/>
 
-<h2 id="commercial-vs-non-commercial-certification-direction">12. Commercial vs Non-Commercial Certification Direction</h2>
+<h2 id="trademarks-branding-and-official-claims">12. Trademarks, Branding, and Official Claims</h2>
 
 <p>
-The steward MAY define a certification and branding program for implementations that wish to use official FROG certification, official compatibility branding, or equivalent steward-controlled marks.
+The openness of the FROG specification does not automatically grant trademark rights.
+Names, logos, certification marks, and official compatibility claims are governed by the steward and MAY be subject to separate policies.
+</p>
+
+<p>
+An implementation MAY implement the FROG specification without being an official Graiphic product.
+However, terms such as <em>official</em>, <em>certified</em>, <em>endorsed</em>, <em>FROG-certified</em>, or equivalent claims SHOULD only be used in accordance with applicable trademark, certification, or conformance policies published by the steward.
+</p>
+
+<p>
+This distinction exists so that:
+</p>
+
+<ul>
+  <li>the language specification remains open,</li>
+  <li>independent implementations remain possible,</li>
+  <li>official branding and certification claims remain governable and trustworthy.</li>
+</ul>
+
+<pre>
+Open specification
+    does not automatically grant
+official branding rights
+
+Implementing FROG
+    does not automatically mean
+official / certified / endorsed
+</pre>
+
+<hr/>
+
+<h2 id="commercial-vs-non-commercial-certification-direction">13. Commercial vs Non-Commercial Certification Direction</h2>
+
+<p>
+The steward MAY define a certification and branding program for implementations that wish to use official FROG certification, official branding, or equivalent steward-controlled marks.
 </p>
 
 <p>
@@ -356,9 +503,21 @@ This distinction exists to preserve openness of the language specification while
 More detailed rules, procedures, fee schedules, eligibility conditions, and branding requirements MAY be defined later in separate policy documents.
 </p>
 
+<pre>
+Direction of travel
+
+open specification for everyone
+        +
+optional official certification path
+        +
+commercial official certification may be paid
+        +
+non-commercial official certification may be free or low-cost
+</pre>
+
 <hr/>
 
-<h2 id="future-governance-evolution">13. Future Governance Evolution</h2>
+<h2 id="future-governance-evolution">14. Future Governance Evolution</h2>
 
 <p>
 The current governance model is intentionally simple and steward-led.
@@ -383,7 +542,7 @@ Any such change SHOULD preserve the core goals of openness, implementability, ar
 
 <hr/>
 
-<h2 id="non-goals">14. Non-Goals</h2>
+<h2 id="non-goals">15. Non-Goals</h2>
 
 <p>
 This document does not attempt to:
