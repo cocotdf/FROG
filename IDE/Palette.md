@@ -24,7 +24,7 @@ Definition of the discovery, search, and insertion palette for the FROG IDE<br/>
   <li><a href="#namespace-and-origin-view">8. Namespace and Origin View</a></li>
   <li><a href="#search-model">9. Search Model</a></li>
   <li><a href="#context-aware-insertion">10. Context-Aware Insertion</a></li>
-  <li><a href="#primitive-structure-node-insertion-and-express-presentation">11. Primitive, Structure, Node-Insertion, and Express Presentation</a></li>
+  <li><a href="#entry-kinds-and-guided-presentation">11. Entry Kinds and Guided Presentation</a></li>
   <li><a href="#palette-categories-for-v01">12. Palette Categories for v0.1</a></li>
   <li><a href="#entry-metadata">13. Entry Metadata</a></li>
   <li><a href="#express-entries-and-guided-insertion">14. Express Entries and Guided Insertion</a></li>
@@ -42,11 +42,25 @@ Definition of the discovery, search, and insertion palette for the FROG IDE<br/>
 <h2 id="overview">1. Overview</h2>
 
 <p>
-The FROG IDE palette is the primary user-facing mechanism used to discover, search, understand, and insert standardized and profile-available entries into a diagram.
+The FROG IDE palette is the primary user-facing mechanism used to discover, search, understand, and insert entries into a diagram during authoring.
 </p>
 
 <p>
-Its purpose is not only to expose the available catalog, but to expose it in a way that matches how users actually think when building a graphical program.
+The palette exposes the <strong>active insertable space</strong> of the IDE. That space includes:
+</p>
+
+<ul>
+  <li>intrinsic standardized primitives defined by <code>Libraries/</code>,</li>
+  <li>optional profile-defined primitives defined by active profile specifications,</li>
+  <li>standardized structures,</li>
+  <li>canonical diagram-node insertions such as interface and widget participation nodes,</li>
+  <li>non-executable diagram annotations and documentation entries,</li>
+  <li>editor-supported guided insertion experiences such as Express entries,</li>
+  <li>implementation-supported third-party namespaces when available.</li>
+</ul>
+
+<p>
+Its purpose is not only to expose what is available, but to expose it in a way that matches how users actually think when building a graphical program.
 </p>
 
 <p>
@@ -55,8 +69,8 @@ The palette therefore serves four complementary roles:
 
 <ul>
   <li><strong>discovery</strong> — helping users find available constructs and insertion paths,</li>
-  <li><strong>navigation</strong> — organizing the catalog in a coherent and scalable way,</li>
-  <li><strong>insertion</strong> — allowing rapid placement of primitives, structures, and other source-level entries into the diagram,</li>
+  <li><strong>navigation</strong> — organizing the active insertable surface in a coherent and scalable way,</li>
+  <li><strong>insertion</strong> — allowing rapid placement of primitives, structures, node insertions, and annotations into the diagram,</li>
   <li><strong>guided authoring</strong> — allowing certain common tasks to be inserted through assisted Express-style entries without creating new language constructs.</li>
 </ul>
 
@@ -68,11 +82,11 @@ It exposes constructs owned normatively by other specifications, but it does not
 <pre>
 Palette in repository architecture
 
-Expression/   -> canonical source form
-Language/     -> normative execution semantics
-Libraries/    -> intrinsic primitive vocabularies
-Profiles/     -> optional standardized capability families
-IDE/          -> authoring and discovery surfaces
+Expression/   -&gt; canonical source form
+Language/     -&gt; normative execution semantics
+Libraries/    -&gt; intrinsic primitive vocabularies
+Profiles/     -&gt; optional standardized capability families
+IDE/          -&gt; authoring and discovery surfaces
 
 Palette = discovery and insertion surface
 Palette != semantic ownership
@@ -83,8 +97,8 @@ Palette != semantic ownership
 <h2 id="why-the-palette-matters">2. Why the Palette Matters</h2>
 
 <p>
-A graphical language needs more than a catalog of available entries.
-Users must also be able to find the right entry quickly, understand what kind of thing it is, and insert it without semantic ambiguity.
+A graphical language needs more than a flat list of available entries.
+Users must be able to find the right entry quickly, understand what kind of thing it is, and insert it without semantic ambiguity.
 </p>
 
 <p>
@@ -95,29 +109,30 @@ Without a disciplined palette model, several kinds of drift become likely:
   <li>search aliases begin to look like new language constructs,</li>
   <li>authoring labels become confused with canonical identities,</li>
   <li>profile-defined capabilities appear indistinguishable from intrinsic baseline entries,</li>
+  <li>third-party entries appear indistinguishable from standardized entries,</li>
   <li>guided insertion starts to behave like a hidden private language.</li>
 </ul>
 
 <p>
 This document exists to prevent that drift.
-It defines how a conforming IDE presents insertable entries while preserving canonical identity and architectural ownership.
+It defines how a conforming IDE presents insertable entries while preserving canonical identity, architectural ownership, and insertion consistency.
 </p>
 
 <pre>
 User intent
-    ->
+    -&gt;
 palette discovery
-    ->
+    -&gt;
 canonical insertable target
-    ->
+    -&gt;
 Program Model
-    ->
+    -&gt;
 canonical source
 
 Never:
 
 user-facing label
-    ->
+    -&gt;
 hidden private semantic construct
 </pre>
 
@@ -126,14 +141,15 @@ hidden private semantic construct
 <h2 id="goals">3. Goals</h2>
 
 <ul>
-  <li><strong>Intent-first navigation</strong> — users SHOULD be able to find what they want by purpose, not only by internal specification category.</li>
+  <li><strong>Intent-first navigation</strong> — users SHOULD be able to find what they want by purpose, not only by specification directory or namespace.</li>
   <li><strong>Namespace consistency</strong> — the palette SHOULD still reflect the actual standardized namespace model where namespaces exist.</li>
   <li><strong>Fast insertion</strong> — search, contextual suggestions, and guided Express entries SHOULD reduce friction.</li>
-  <li><strong>Clarity</strong> — primitives, structures, source-node insertions, annotations, intrinsic library entries, profile-defined entries, and Express presentations MUST NOT be visually conflated.</li>
-  <li><strong>Canonical identity preservation</strong> — authoring aliases, search aliases, UI-specific labels, and Express presentations MUST map back to one canonical insertable identity or one canonical target set.</li>
-  <li><strong>Explicit taxonomy boundaries</strong> — UI, I/O, Connectivity, Signal, and future optional profile-defined families MUST remain conceptually distinct.</li>
-  <li><strong>Express without semantic drift</strong> — task-oriented guided insertion MUST remain an IDE convenience and MUST NOT become a separate semantic family by itself.</li>
-  <li><strong>Scalability</strong> — the model MUST remain usable as FROG grows from a minimal core to richer libraries and stricter profiles.</li>
+  <li><strong>Clarity</strong> — primitives, structures, node insertions, annotations, intrinsic library entries, profile-defined entries, third-party entries, and guided presentations MUST NOT be visually conflated.</li>
+  <li><strong>Canonical identity preservation</strong> — labels, aliases, shortcuts, authoring views, and guided presentations MUST map back to one canonical target identity or one deterministic canonical target set.</li>
+  <li><strong>Explicit taxonomy boundaries</strong> — UI, I/O, Signal, Connectivity, structure families, node insertions, and annotations MUST remain conceptually distinct.</li>
+  <li><strong>Conditional capability surfacing</strong> — optional profile-defined capability families MUST be surfaced as conditional rather than baseline-intrinsic.</li>
+  <li><strong>Express without semantic drift</strong> — guided insertion MUST remain an IDE convenience and MUST NOT become a separate semantic family by itself.</li>
+  <li><strong>Scalability</strong> — the model MUST remain usable as FROG grows from a minimal baseline to richer libraries, profiles, and IDE tooling.</li>
   <li><strong>Extensibility</strong> — third-party libraries MUST integrate cleanly without breaking the palette model.</li>
 </ul>
 
@@ -146,10 +162,10 @@ This document complements the following specifications:
 </p>
 
 <ul>
-  <li><code>IDE/Readme.md</code> — defines the role of the palette as an IDE-facing authoring and discovery surface.</li>
+  <li><code>IDE/Readme.md</code> — defines the role of the palette as an IDE-facing authoring and discovery surface and situates it within the IDE Program Model.</li>
   <li><code>Libraries/Readme.md</code> — defines the intrinsic standard primitive-library taxonomy.</li>
   <li><code>Libraries/Core.md</code> — defines foundational built-in primitives such as <code>frog.core.add</code> and <code>frog.core.delay</code>.</li>
-  <li><code>Libraries/Math.md</code> — defines numeric scalar primitives in the <code>frog.math</code> namespace.</li>
+  <li><code>Libraries/Math.md</code> — defines numeric primitives in the <code>frog.math</code> namespace.</li>
   <li><code>Libraries/Collections.md</code> — defines collection primitives in the <code>frog.collections</code> namespace.</li>
   <li><code>Libraries/Text.md</code> — defines text-processing primitives in the <code>frog.text</code> namespace.</li>
   <li><code>Libraries/IO.md</code> — defines file, path, byte, and related I/O primitives in the <code>frog.io</code> namespace.</li>
@@ -159,8 +175,8 @@ This document complements the following specifications:
   <li><code>Profiles/Readme.md</code> — defines the architectural role of optional standardized capability families.</li>
   <li><code>Profiles/Interop.md</code> — defines the Interop profile and the optional standardized <code>frog.connectivity.*</code> namespace family.</li>
   <li><code>Expression/Control structures.md</code> — defines structures such as <code>case</code>, <code>for_loop</code>, and <code>while_loop</code>, as well as the source-facing boundary between canonical structures and derived authoring forms.</li>
-  <li><code>Language/Control structures.md</code> — defines the normative semantic families of standardized control structures and the rule that authoring-facing derived forms do not create distinct semantic families by themselves.</li>
-  <li><code>Expression/Diagram.md</code> — defines how inserted primitives, structures, boundary nodes, widget nodes, and related graph objects appear in canonical source.</li>
+  <li><code>Language/Control structures.md</code> — defines the normative semantic families of standardized control structures and the rule that derived authoring forms do not create distinct semantic families by themselves.</li>
+  <li><code>Expression/Diagram.md</code> — defines how primitives, structures, boundary nodes, widget nodes, <code>subfrog</code> nodes, and annotations appear in canonical source.</li>
   <li><code>Expression/Widget interaction.md</code> — defines canonical source-level widget interaction paths such as <code>widget_value</code>, <code>widget_reference</code>, property access, and method invocation.</li>
   <li><code>Expression/Front panel.md</code> and <code>Expression/Widget.md</code> — define the front-panel and widget model that inform UI-related palette entries.</li>
 </ul>
@@ -177,8 +193,8 @@ Accordingly:
 <ul>
   <li><code>Libraries/</code> defines which intrinsic standardized primitives exist,</li>
   <li><code>Profiles/</code> defines which optional standardized capability families exist,</li>
-  <li><code>Expression/</code> defines how standardized nodes and structures appear in source,</li>
-  <li><code>Language/</code> defines the normative execution meaning of language-level structures,</li>
+  <li><code>Expression/</code> defines how standardized nodes, structures, and annotations appear in source,</li>
+  <li><code>Language/</code> defines the normative execution meaning of language-level structures and cross-cutting runtime rules,</li>
   <li><code>IDE/Palette.md</code> defines how a conforming IDE exposes those entries for discovery and insertion.</li>
 </ul>
 
@@ -190,18 +206,18 @@ Such entries remain IDE-layer authoring mechanisms and MUST normalize to canonic
 <pre>
 Ownership summary for palette users
 
-What exists intrinsically?      -> Libraries/
-What exists optionally?         -> Profiles/
-How is it written in source?    -> Expression/
-What does it mean?              -> Language/
-How is it found and inserted?   -> IDE/Palette.md
+What exists intrinsically?      -&gt; Libraries/
+What exists optionally?         -&gt; Profiles/
+What is serialized in source?   -&gt; Expression/
+What does it mean?              -&gt; Language/
+How is it found and inserted?   -&gt; IDE/Palette.md
 </pre>
 
 <hr/>
 
 <h2 id="design-principles">5. Design Principles</h2>
 
-<h3>5.1 Intent before implementation</h3>
+<h3>5.1 Intent before implementation detail</h3>
 
 <p>
 The primary palette SHOULD be organized according to user intent such as:
@@ -217,6 +233,7 @@ The primary palette SHOULD be organized according to user intent such as:
   <li>process signals,</li>
   <li>interact with a widget,</li>
   <li>read a file,</li>
+  <li>insert a public boundary node,</li>
   <li>call an external system through an active interoperability profile.</li>
 </ul>
 
@@ -227,20 +244,16 @@ A construct MAY appear in multiple discovery paths, but it MUST keep one canonic
 A search alias, shortcut, contextual presentation, authoring-facing label, or Express presentation MUST NOT create a second semantic or source-level construct.
 </p>
 
-<p>
-For example:
-</p>
-
 <ul>
   <li><em>If</em>, <em>If / Else</em>, and <em>Else If</em> MAY be exposed as authoring-facing views, but they resolve to canonical <code>case</code> insertion in base v0.1.</li>
   <li><em>Switch</em> MAY be exposed as an authoring-facing view, but it resolves to canonical <code>case</code> insertion in the selector categories standardized by base v0.1.</li>
-  <li><em>Read Text File</em> MAY be exposed as a task-oriented Express entry, but it MUST resolve to valid canonical content owned by the active specification set.</li>
+  <li><em>Read Text File</em> MAY be exposed as a task-oriented guided entry, but it MUST resolve to valid canonical content owned by the active specification set.</li>
 </ul>
 
 <h3>5.3 Namespace remains visible where namespaces exist</h3>
 
 <p>
-Although the primary palette is intent-first, the true standardized namespace model remains important for library and profile-owned primitive entries.
+Although the primary palette is intent-first, the true standardized namespace model remains important for library-owned, profile-owned, and third-party primitive entries.
 The IDE MUST therefore also provide a namespace- and origin-oriented view.
 </p>
 
@@ -251,10 +264,10 @@ The palette is not only a tree.
 Search is a primary insertion path and MUST be treated as a first-class mechanism.
 </p>
 
-<h3>5.5 Primitives, structures, source-node insertions, and Express presentations remain distinct</h3>
+<h3>5.5 Canonical kinds and guided presentations remain distinct</h3>
 
 <p>
-Ordinary primitives such as <code>frog.core.add</code>, structures such as <code>case</code>, source-node insertions such as <code>interface_input</code> or <code>widget_value</code>, and guided Express entries MUST remain visibly distinguishable in the palette and in search results.
+Ordinary primitives such as <code>frog.core.add</code>, structures such as <code>case</code>, node insertions such as <code>interface_input</code> or <code>widget_value</code>, annotations, and guided Express presentations MUST remain visibly distinguishable in the palette and in search results.
 </p>
 
 <h3>5.6 Taxonomy boundaries remain explicit</h3>
@@ -267,18 +280,16 @@ The palette MUST keep the following boundaries explicit:
   <li><strong>Signal</strong> — signal-processing primitives,</li>
   <li><strong>UI</strong> — widget-facing interaction and UI-related insertion paths,</li>
   <li><strong>I/O</strong> — file, path, resource, and byte-oriented I/O,</li>
-  <li><strong>Connectivity</strong> — Python, native/shared library, .NET, SQL, and related external-runtime or external-service bindings provided by active optional profiles,</li>
-  <li><strong>Future Optional Families</strong> — categories surfaced only when explicitly provided by the active specification set.</li>
+  <li><strong>Connectivity</strong> — Python, native/shared library, .NET, SQL, and related external-runtime or external-service bindings provided by an active optional profile,</li>
+  <li><strong>Structures</strong> — control structures and other canonical structure families,</li>
+  <li><strong>Diagram Nodes</strong> — interface boundaries, widget nodes, <code>subfrog</code>, and other direct diagram insertions,</li>
+  <li><strong>Annotations</strong> — non-executable diagram documentation elements.</li>
 </ul>
-
-<p>
-These groups MAY interact in real programs, but the palette SHOULD present them as distinct conceptual families.
-</p>
 
 <h3>5.7 Context improves speed</h3>
 
 <p>
-The IDE SHOULD use type context, wire context, and insertion context to improve suggestions without changing language semantics.
+The IDE SHOULD use type context, wire context, insertion location, and active-profile context to improve suggestions without changing language semantics.
 </p>
 
 <h3>5.8 Express remains an IDE-layer convenience</h3>
@@ -317,30 +328,25 @@ The FROG IDE palette SHOULD expose multiple complementary access paths:
 
 <ul>
   <li><strong>Primary palette view</strong> — intent-first hierarchical browsing,</li>
-  <li><strong>Namespace and origin view</strong> — direct browsing by intrinsic library namespace, optional profile namespace, and explicit non-library roots,</li>
+  <li><strong>Namespace and origin view</strong> — direct browsing by intrinsic library namespace, optional profile namespace, third-party namespace, and explicit non-library roots,</li>
   <li><strong>Search</strong> — direct textual lookup,</li>
   <li><strong>Contextual insertion</strong> — suggestions derived from the current diagram context,</li>
   <li><strong>Optional guided / Express lens</strong> — a task-oriented filtered presentation of the same insertable surface.</li>
 </ul>
 
 <p>
-These are alternative access modes to the same underlying catalog of insertable entries.
+These are alternative access modes to the same underlying canonical insertable space.
 They MUST remain semantically consistent with one another.
-</p>
-
-<p>
-A conforming IDE MAY expose an Express-specific lens, filter, or badge-based discovery mode.
-It SHOULD NOT treat Express as a separate semantic language family at the same level as intrinsic library namespaces, optional profile namespaces, or standardized structure families.
 </p>
 
 <pre>
 One insertable space
     |
-    +--> primary intent view
-    +--> namespace/origin view
-    +--> search
-    +--> contextual insertion
-    +--> optional guided / Express lens
+    +--&gt; primary intent view
+    +--&gt; namespace/origin view
+    +--&gt; search
+    +--&gt; contextual insertion
+    +--&gt; optional guided / Express lens
 
 All paths must resolve to the same canonical entry space.
 </pre>
@@ -359,7 +365,7 @@ Convenience surfaces such as <strong>Favorites</strong>, <strong>Recent</strong>
 </p>
 
 <p>
-Recommended top-level primary palette groups for the standardized v0.1 baseline are:
+Recommended top-level groups that a conforming IDE SHOULD be able to expose are:
 </p>
 
 <pre>
@@ -370,19 +376,28 @@ Optional Guided / Express Lens
 
 Program Structure
 Flow Control
-State & Timing
-Math & Logic
-Data & Types
+State &amp; Timing
+Math &amp; Logic
+Data &amp; Types
 Collections
 Text
 Signal
 UI
 I/O
-Connectivity
 </pre>
 
 <p>
-Additional groups MAY be surfaced by an active profile or future standardized family, but they SHOULD be clearly marked as profile-defined, future-facing, or non-baseline when they are not part of the current standardized baseline.
+The following groups are <strong>conditional</strong> rather than baseline-intrinsic:
+</p>
+
+<pre>
+Connectivity
+Additional Profile-Defined Families
+Third-Party Families
+</pre>
+
+<p>
+A conforming IDE SHOULD surface such groups only when the corresponding active profile set or implementation-supported extension set actually provides them.
 </p>
 
 <p>
@@ -399,7 +414,7 @@ Primary view answers:
 - "What do I want to do?"
 
 Namespace/origin view answers:
-- "What standardized family owns this entry?"
+- "What owns this entry?"
 </pre>
 
 <hr/>
@@ -407,7 +422,7 @@ Namespace/origin view answers:
 <h2 id="namespace-and-origin-view">8. Namespace and Origin View</h2>
 
 <p>
-The namespace and origin view exposes the actual standardized organization of the active insertable surface.
+The namespace and origin view exposes the actual organization of the active insertable surface.
 </p>
 
 <p>
@@ -434,11 +449,11 @@ The current standardized optional profile-owned namespace family is:
 Optional profile namespace families
 
 frog.connectivity.*
-    -> owned by the Interop profile
+    -&gt; owned by the Interop profile
 </pre>
 
 <p>
-Because the palette also exposes non-library constructs, a conforming IDE MUST NOT pretend that structures or source-node insertions belong to a primitive namespace when they do not.
+Because the palette also exposes non-library constructs, a conforming IDE MUST NOT pretend that structures or direct diagram-node insertions belong to a primitive namespace when they do not.
 </p>
 
 <p>
@@ -458,8 +473,10 @@ This allows the palette to expose:
 <ul>
   <li>intrinsic standardized library primitives through true intrinsic namespaces,</li>
   <li>optional profile-owned primitives through true profile-owned namespaces,</li>
+  <li>third-party primitives through true third-party namespaces,</li>
   <li>standardized structures through an explicit structure root,</li>
-  <li>standardized source-node insertion entries through explicit non-library roots.</li>
+  <li>standardized node-insertion entries through an explicit diagram-node root,</li>
+  <li>non-executable annotation entries through an explicit annotation root.</li>
 </ul>
 
 <p>
@@ -471,35 +488,16 @@ For example:
   <li><code>frog.core.add</code> — Intrinsic Library</li>
   <li><code>frog.ui.property_write</code> — Intrinsic Library</li>
   <li><code>frog.connectivity.sql.query_text</code> — Profile-defined / Interop</li>
+  <li><code>graiphic.vision.detect</code> — Third-Party Library</li>
   <li><code>case</code> — Structure</li>
-  <li><code>widget_value</code> — Diagram Node Insertion</li>
+  <li><code>widget_value</code> — Diagram Node</li>
+  <li><code>text annotation</code> — Annotation</li>
 </ul>
 
 <p>
 The namespace/origin view MAY additionally indicate which entries have guided Express presentations available.
-However, Express presentation MUST remain secondary to canonical origin and identity.
+However, guided presentation MUST remain secondary to canonical origin and identity.
 </p>
-
-<pre>
-Namespace/origin model
-
-Intrinsic Library
-    -> frog.core.*
-    -> frog.math.*
-    -> frog.collections.*
-    -> frog.text.*
-    -> frog.io.*
-    -> frog.signal.*
-    -> frog.ui.*
-
-Optional Profile
-    -> frog.connectivity.*   (Interop profile)
-
-Non-library roots
-    -> Structures
-    -> Diagram Nodes
-    -> Annotations
-</pre>
 
 <hr/>
 
@@ -514,6 +512,7 @@ Users SHOULD be able to search by:
   <li>primitive name,</li>
   <li>structure name,</li>
   <li>node-insertion name,</li>
+  <li>annotation name,</li>
   <li>namespace-qualified name,</li>
   <li>common alias,</li>
   <li>operator symbol,</li>
@@ -532,22 +531,17 @@ Examples:
   <li>searching <code>sqrt</code> SHOULD find the relevant <code>frog.math.*</code> entry,</li>
   <li>searching <code>length</code> SHOULD find the relevant <code>frog.collections.*</code> entry,</li>
   <li>searching <code>read text</code> SHOULD find the relevant canonical <code>frog.io.*</code> entry and MAY also surface a guided Express presentation when available,</li>
-  <li>searching <code>moving average</code> SHOULD find the relevant <code>frog.signal.*</code> entry and MAY surface an Express entry when available,</li>
+  <li>searching <code>moving average</code> SHOULD find the relevant <code>frog.signal.*</code> entry and MAY surface a guided signal entry when available,</li>
   <li>searching <code>if</code> SHOULD find the canonical <code>case</code> structure through a boolean conditional authoring view,</li>
-  <li>searching <code>if else</code> SHOULD also find the canonical <code>case</code> structure,</li>
-  <li>searching <code>else if</code> SHOULD help surface the canonical <code>case</code> structure through an appropriate authoring presentation,</li>
   <li>searching <code>switch</code> SHOULD find the canonical <code>case</code> structure through an exact-match authoring view,</li>
-  <li>searching <code>else</code> SHOULD also help surface the canonical boolean <code>case</code> structure,</li>
-  <li>searching <code>case</code> SHOULD find the canonical <code>case</code> structure,</li>
   <li>searching <code>for</code> SHOULD find <code>for_loop</code>,</li>
   <li>searching <code>while</code> SHOULD find <code>while_loop</code>,</li>
   <li>searching <code>widget value</code> SHOULD find the <code>widget_value</code> insertion entry,</li>
-  <li>searching <code>widget reference</code> SHOULD find the <code>widget_reference</code> insertion entry,</li>
   <li>searching <code>interface input</code> SHOULD find the <code>interface_input</code> insertion entry,</li>
-  <li>searching <code>interface output</code> SHOULD find the <code>interface_output</code> insertion entry,</li>
-  <li>searching <code>property write</code> SHOULD find the relevant widget interaction primitive,</li>
-  <li>searching <code>python</code> SHOULD find the relevant connectivity entry when the Interop profile is available,</li>
-  <li>searching <code>sql</code> SHOULD find the relevant connectivity entry when the Interop profile is available.</li>
+  <li>searching <code>subfrog</code> SHOULD find sub-FROG insertion,</li>
+  <li>searching <code>comment</code> SHOULD find the relevant non-executable annotation entry,</li>
+  <li>searching <code>python</code> SHOULD find the relevant connectivity entry only when the Interop profile is active,</li>
+  <li>searching <code>sql</code> SHOULD find the relevant connectivity entry only when the Interop profile is active.</li>
 </ul>
 
 <p>
@@ -560,7 +554,7 @@ Search SHOULD rank results using at least:
   <li>alias match,</li>
   <li>task-intent match,</li>
   <li>entry-kind relevance,</li>
-  <li>Express availability where appropriate,</li>
+  <li>guided-entry availability where appropriate,</li>
   <li>contextual relevance,</li>
   <li>recent usage.</li>
 </ul>
@@ -568,22 +562,17 @@ Search SHOULD rank results using at least:
 <p>
 The canonical identity of the returned entry MUST remain unchanged.
 For example, a search for <code>if</code> returns the canonical <code>case</code> structure rather than a separate language construct named <code>if</code>.
-Likewise, a search for <code>switch</code> returns the canonical <code>case</code> structure when the active selector category is represented through exact-match case semantics.
-</p>
-
-<p>
-If an Express entry is returned, the search result SHOULD make the canonical target visible through metadata, detail view, or equivalent disclosure.
 </p>
 
 <pre>
 Search rule
 
 User query
-   ->
+   -&gt;
 aliases / symbols / task phrases
-   ->
+   -&gt;
 ranked results
-   ->
+   -&gt;
 canonical identity remains visible
 </pre>
 
@@ -604,7 +593,8 @@ Useful contexts include:
   <li>inserting near a specific node,</li>
   <li>searching with a selected wire type,</li>
   <li>invoking insertion from a widget reference or widget value node,</li>
-  <li>invoking insertion from an empty canvas or structure region.</li>
+  <li>invoking insertion from an empty canvas or structure region,</li>
+  <li>invoking insertion while an optional profile is active.</li>
 </ul>
 
 <p>
@@ -620,23 +610,12 @@ Examples:
   <li>from a widget reference, prefer property and method interaction suggestions,</li>
   <li>from a value feedback path, prefer <code>frog.core.delay</code>,</li>
   <li>from a path-like or file-related context, prefer I/O suggestions,</li>
-  <li>from an interop-related insertion path, prefer Python, native binding, .NET, or SQL suggestions when the corresponding profile support is active,</li>
+  <li>from an interop-related insertion path, prefer Python, native binding, .NET, or SQL suggestions only when the corresponding profile support is active,</li>
   <li>from an empty top-level diagram, surface interface boundary nodes, sub-FROG insertion, annotations, and common structures where appropriate.</li>
 </ul>
 
 <p>
 When the context strongly suggests a derived authoring form, the IDE MAY present that form directly.
-For example:
-</p>
-
-<ul>
-  <li>from a <code>bool</code> wire, the IDE MAY surface a conditional insertion entry labeled <em>If</em> or <em>If / Else</em>,</li>
-  <li>from a <code>string</code> wire, the IDE MAY surface a branching insertion entry labeled <em>Switch</em>,</li>
-  <li>from a file-oriented task context, the IDE MAY surface a task-oriented Express entry such as <em>Read Text File</em> when a valid canonical target exists,</li>
-  <li>from a signal-processing context, the IDE MAY surface an Express filter entry when a valid canonical target exists.</li>
-</ul>
-
-<p>
 Such context-aware presentations remain authoring conveniences.
 They MUST NOT alter the canonical identity or language semantics of the inserted construct.
 </p>
@@ -646,26 +625,27 @@ Context helps ranking
 Context does not change meaning
 
 wire type / insertion location / active profile
-    -> better suggestions
+    -&gt; better suggestions
 
 not:
 wire type / insertion location
-    -> new hidden language construct
+    -&gt; new hidden language construct
 </pre>
 
 <hr/>
 
-<h2 id="primitive-structure-node-insertion-and-express-presentation">11. Primitive, Structure, Node-Insertion, and Express Presentation</h2>
+<h2 id="entry-kinds-and-guided-presentation">11. Entry Kinds and Guided Presentation</h2>
 
 <p>
 The palette MUST visually distinguish between:
 </p>
 
 <ul>
-  <li><strong>primitive entries</strong> — ordinary callable operations defined by intrinsic libraries or active profiles,</li>
+  <li><strong>primitive entries</strong> — ordinary callable operations defined by intrinsic libraries, active profiles, or active third-party libraries,</li>
   <li><strong>structure entries</strong> — diagram regions with owned subgraphs and explicit boundary semantics,</li>
-  <li><strong>node-insertion entries</strong> — canonical source nodes or annotations inserted directly into the diagram,</li>
-  <li><strong>Express entries</strong> — guided insertion presentations that resolve to canonical content.</li>
+  <li><strong>node-insertion entries</strong> — canonical source nodes inserted directly into the diagram,</li>
+  <li><strong>annotation entries</strong> — non-executable documentation and organization objects,</li>
+  <li><strong>guided entries</strong> — authoring presentations that resolve to canonical content.</li>
 </ul>
 
 <p>
@@ -680,43 +660,25 @@ Examples:
   <li><code>for_loop</code> is a structure entry,</li>
   <li><code>while_loop</code> is a structure entry,</li>
   <li><code>interface_input</code> is a node-insertion entry,</li>
-  <li><code>interface_output</code> is a node-insertion entry,</li>
   <li><code>widget_value</code> is a node-insertion entry,</li>
-  <li><code>widget_reference</code> is a node-insertion entry,</li>
-  <li><em>Read Text File</em> MAY be an Express entry if it resolves to a valid canonical target.</li>
+  <li>a text comment box is an annotation entry,</li>
+  <li><em>Read Text File</em> MAY be a guided entry if it resolves to a valid canonical target.</li>
 </ul>
-
-<p>
-Search results and palette entries SHOULD make this distinction visible through iconography, labeling, badges, grouping, or equivalent UI mechanisms.
-</p>
 
 <p>
 A structure entry MAY additionally expose one or more <strong>authoring views</strong> or <strong>presentation labels</strong>.
-For example:
-</p>
-
-<ul>
-  <li><code>case</code> MAY be presented as <em>If</em> or <em>If / Else</em> when inserted in a boolean conditional context,</li>
-  <li><code>case</code> MAY be presented as <em>Switch</em> when inserted in a string exact-match branching context.</li>
-</ul>
-
-<p>
 Such labels are presentation-level affordances.
 They MUST remain attached to one canonical structure entry rather than creating additional structure identities.
-</p>
-
-<p>
-Likewise, an Express entry MAY expose a task-oriented label, assistant badge, or guided configuration affordance.
-However, it MUST still disclose the canonical target to which it resolves.
 </p>
 
 <pre>
 Entry kind separation
 
-Primitive       -> callable operation
-Structure       -> owned region / control construct
-Node insertion  -> canonical source node inserted directly
-Express         -> guided presentation resolving to canonical content
+Primitive       -&gt; callable operation
+Structure       -&gt; owned region / control construct
+Node insertion  -&gt; canonical source node inserted directly
+Annotation      -&gt; non-executable documentation object
+Guided entry    -&gt; guided presentation resolving to canonical content
 </pre>
 
 <hr/>
@@ -724,7 +686,7 @@ Express         -> guided presentation resolving to canonical content
 <h2 id="palette-categories-for-v01">12. Palette Categories for v0.1</h2>
 
 <p>
-The following palette layout is recommended for the standardized v0.1 baseline.
+The following palette layout is recommended for base v0.1 and for compatible implementations that may also activate optional profiles.
 </p>
 
 <h3>12.1 Program Structure</h3>
@@ -762,17 +724,17 @@ The canonical identity of these entries remains:
   <li><code>while_loop</code></li>
 </ul>
 
-<p>
-A conforming IDE MAY expose multiple insertion presentations for <code>case</code>, but those presentations MUST normalize to the same canonical structure family.
-Base v0.1 MUST NOT treat <em>If</em>, <em>If / Else</em>, <em>Else If</em>, or <em>Switch</em> as independent standardized structure families.
-</p>
-
 <h3>12.3 State &amp; Timing</h3>
 
 <ul>
   <li><code>frog.core.delay</code></li>
   <li>additional timing-related entries only when standardized by the active specification set</li>
 </ul>
+
+<p>
+In base v0.1, this category is effectively centered on explicit local memory through <code>frog.core.delay</code>.
+It MUST NOT imply that a broader standardized timing surface already exists when it does not.
+</p>
 
 <h3>12.4 Math &amp; Logic</h3>
 
@@ -802,7 +764,7 @@ Base v0.1 MUST NOT treat <em>If</em>, <em>If / Else</em>, <em>Else If</em>, or <
 <ul>
   <li>type-conversion entries when standardized by the active specification set</li>
   <li>cast entries when standardized by the active specification set</li>
-  <li>future wrapper or representation entries only when explicitly standardized</li>
+  <li>future representation-related entries only when explicitly standardized</li>
 </ul>
 
 <h3>12.6 Collections</h3>
@@ -827,7 +789,7 @@ Base v0.1 MUST NOT treat <em>If</em>, <em>If / Else</em>, <em>Else If</em>, or <
   <li>standardized <code>frog.signal.*</code> entries</li>
   <li>signal filtering entries</li>
   <li>signal measurement and transformation entries</li>
-  <li>Express signal-processing entries when available and when they disclose a valid canonical target</li>
+  <li>guided signal-processing entries when available and when they disclose a valid canonical target</li>
 </ul>
 
 <h3>12.9 UI</h3>
@@ -845,10 +807,6 @@ This group is intended for widget-facing interaction and UI-related insertion pa
 It SHOULD NOT absorb file I/O, database access, external interoperability, or general service bindings.
 </p>
 
-<p>
-At the current repository stage, this category is grounded both in the source-level widget interaction model and in the standardized <code>frog.ui.*</code> intrinsic primitive library.
-</p>
-
 <h3>12.10 I/O</h3>
 
 <ul>
@@ -856,7 +814,7 @@ At the current repository stage, this category is grounded both in the source-le
   <li>file read and write entries</li>
   <li>path and resource entries</li>
   <li>byte-oriented I/O entries</li>
-  <li>Express I/O entries when available and when they disclose a valid canonical target</li>
+  <li>guided I/O entries when available and when they disclose a valid canonical target</li>
 </ul>
 
 <p>
@@ -866,21 +824,19 @@ It SHOULD NOT absorb Python, native/shared library, .NET, SQL, or general extern
 
 <h3>12.11 Connectivity</h3>
 
+<p>
+This category is <strong>conditional</strong>.
+It SHOULD be surfaced only when the Interop profile, or another future standardized profile defining connectivity-like capabilities, is active.
+It is not part of the baseline intrinsic library surface of base v0.1.
+</p>
+
 <ul>
   <li>standardized <code>frog.connectivity.python.*</code> entries when the Interop profile is available</li>
   <li>standardized <code>frog.connectivity.native.*</code> entries when the Interop profile is available</li>
   <li>standardized <code>frog.connectivity.dotnet.*</code> entries when the Interop profile is available</li>
   <li>standardized <code>frog.connectivity.sql.*</code> entries when the Interop profile is available</li>
-  <li>Express connectivity entries when available and when they disclose a valid canonical target</li>
+  <li>guided connectivity entries when available and when they disclose a valid canonical target</li>
 </ul>
-
-<p>
-This group exists to keep interop and external binding workflows explicit instead of collapsing them into a generic and ambiguous external bucket.
-</p>
-
-<p>
-It SHOULD cover Python bindings, native/shared-library bindings, .NET bindings, SQL and database connectivity, and related external-runtime or external-service bindings standardized by the active profile set.
-</p>
 
 <h3>12.12 Additional Profile-Defined Families</h3>
 
@@ -889,24 +845,12 @@ Additional profile-defined groups MAY be surfaced when the active profile set pr
 When surfaced before baseline standardization in the repository, they SHOULD be clearly marked as profile-defined, reserved, or future-facing.
 </p>
 
-<pre>
-Recommended baseline groups
+<h3>12.13 Third-Party Families</h3>
 
-Program Structure
-Flow Control
-State & Timing
-Math & Logic
-Data & Types
-Collections
-Text
-Signal
-UI
-I/O
-Connectivity
-
-Everything else:
-only when explicitly provided by the active specification set
-</pre>
+<p>
+Implementation-supported third-party families MAY be surfaced when available.
+They SHOULD remain clearly marked as third-party rather than standardized baseline or profile-defined entries.
+</p>
 
 <hr/>
 
@@ -924,18 +868,18 @@ Recommended metadata includes:
   <li>display name,</li>
   <li>canonical identity,</li>
   <li>namespace-qualified name when applicable,</li>
-  <li>origin — intrinsic library, profile-defined, structure, node insertion, annotation, Express, or equivalent,</li>
-  <li>entry kind — primitive, structure, node insertion, annotation, Express, or equivalent,</li>
-  <li>canonical target kind when the entry is Express,</li>
+  <li>canonical origin — intrinsic library, profile-defined library, third-party library, structure, diagram node, annotation, or equivalent,</li>
+  <li>canonical target kind — primitive, structure, node insertion, annotation, or equivalent,</li>
+  <li>presentation kind — direct entry, alias, authoring view, guided entry, or equivalent,</li>
   <li>short description,</li>
-  <li>type family,</li>
+  <li>type family where relevant,</li>
   <li>statefulness where relevant,</li>
   <li>stability level,</li>
-  <li>library origin or specification origin.</li>
+  <li>owning specification or library origin.</li>
 </ul>
 
 <p>
-When an entry exposes an authoring-facing alias, insertion view, or Express presentation, the IDE SHOULD also make the canonical identity visible.
+When an entry exposes an alias, insertion view, or guided presentation, the IDE SHOULD also make the canonical identity visible.
 </p>
 
 <p>
@@ -946,21 +890,19 @@ Examples of useful badges:
   <li>Primitive</li>
   <li>Structure</li>
   <li>Node Insertion</li>
-  <li>Express</li>
+  <li>Annotation</li>
   <li>Guided</li>
-  <li>Configurable</li>
-  <li>Expandable</li>
+  <li>Alias</li>
+  <li>Authoring View</li>
   <li>Pure</li>
   <li>Stateful</li>
   <li>Signal</li>
   <li>UI</li>
   <li>I/O</li>
   <li>Connectivity</li>
-  <li>Experimental</li>
-  <li>Third-party</li>
   <li>Profile-defined</li>
-  <li>Alias</li>
-  <li>Authoring View</li>
+  <li>Third-Party</li>
+  <li>Experimental</li>
 </ul>
 
 <pre>
@@ -973,8 +915,8 @@ If user sees:
 
 user should still be able to learn:
 - canonical identity
-- origin
-- kind
+- canonical origin
+- canonical target kind
 </pre>
 
 <hr/>
@@ -999,7 +941,7 @@ An Express entry:
 </ul>
 
 <p>
-A conforming IDE SHOULD support the following palette-facing Express lifecycle when Express entries exist:
+A conforming IDE SHOULD support at least the following palette-facing Express lifecycle where Express entries exist:
 </p>
 
 <ul>
@@ -1017,28 +959,14 @@ Express entries SHOULD be especially useful for:
 <ul>
   <li>common I/O tasks,</li>
   <li>common signal-processing tasks,</li>
-  <li>common connectivity tasks,</li>
+  <li>common connectivity tasks when the corresponding profile is active,</li>
   <li>other repetitive workflows where a guided configuration step is materially better than manual low-level assembly.</li>
 </ul>
 
 <p>
 Express entries SHOULD NOT be required for ordinary language use.
-A user MUST remain able to work directly with canonical primitives, canonical structures, and canonical node insertions.
+A user MUST remain able to work directly with canonical primitives, canonical structures, canonical node insertions, and ordinary annotations.
 </p>
-
-<pre>
-Express lifecycle
-
-discover
-   ->
-configure
-   ->
-resolve to canonical target
-   ->
-insert canonical content
-   ->
-optionally reopen / detach later
-</pre>
 
 <hr/>
 
@@ -1049,22 +977,13 @@ The palette SHOULD support the following convenience groups:
 </p>
 
 <h3>15.1 Favorites</h3>
-
-<p>
-User-pinned entries for fast access.
-</p>
+<p>User-pinned entries for fast access.</p>
 
 <h3>15.2 Recent</h3>
-
-<p>
-Recently inserted entries.
-</p>
+<p>Recently inserted entries.</p>
 
 <h3>15.3 Suggested</h3>
-
-<p>
-Entries recommended by the IDE based on context, type, structure location, recent activity, or Express availability.
-</p>
+<p>Entries recommended by the IDE based on context, type, structure location, recent activity, or guided-entry availability.</p>
 
 <p>
 These convenience groups are optional IDE features.
@@ -1085,6 +1004,7 @@ Recommended levels include:
   <li>Advanced</li>
   <li>Experimental</li>
   <li>Profile-defined</li>
+  <li>Third-Party</li>
 </ul>
 
 <p>
@@ -1093,19 +1013,15 @@ The palette MAY also support filtering by:
 
 <ul>
   <li>namespace,</li>
-  <li>origin,</li>
-  <li>entry kind,</li>
+  <li>canonical origin,</li>
+  <li>canonical target kind,</li>
+  <li>presentation kind,</li>
   <li>type family,</li>
   <li>statefulness,</li>
-  <li>library origin,</li>
-  <li>specification origin,</li>
-  <li>Express availability,</li>
+  <li>owning specification,</li>
+  <li>guided-entry availability,</li>
   <li>guided vs direct insertion mode.</li>
 </ul>
-
-<p>
-This helps keep the beginner experience clean while still exposing the full active surface to advanced users.
-</p>
 
 <hr/>
 
@@ -1122,7 +1038,7 @@ Third-party entries SHOULD:
 <ul>
   <li>appear in the namespace/origin view under their own namespace,</li>
   <li>appear in the primary palette under the most relevant intent category when appropriate,</li>
-  <li>expose clear library-origin metadata.</li>
+  <li>expose clear third-party origin metadata.</li>
 </ul>
 
 <p>
@@ -1146,9 +1062,9 @@ When they do:
 </p>
 
 <ul>
-  <li>the Express entry MUST still disclose canonical identity,</li>
+  <li>the guided entry MUST still disclose canonical identity,</li>
   <li>the origin of the underlying library SHOULD remain visible,</li>
-  <li>the palette MUST keep third-party Express entries distinguishable from baseline standardized entries.</li>
+  <li>the palette MUST keep third-party guided entries distinguishable from baseline standardized entries and profile-defined entries.</li>
 </ul>
 
 <pre>
@@ -1175,14 +1091,15 @@ In particular:
 </p>
 
 <ul>
-  <li>the primary palette view, namespace/origin view, search results, contextual insertion paths, and guided / Express lens MUST refer to the same canonical entry space,</li>
-  <li>every palette entry MUST resolve to a valid construct known to the active language specification and active profile set,</li>
+  <li>the primary palette view, namespace/origin view, search results, contextual insertion paths, and guided lens MUST refer to the same canonical insertable space,</li>
+  <li>every palette entry MUST resolve to a valid construct known to the active insertable surface,</li>
+  <li>the active insertable surface MUST remain consistent with canonical source rules, active standardized libraries, active profile support, and active implementation-supported third-party namespaces where such support exists,</li>
   <li>search aliases MUST map back to a canonical entry identity,</li>
   <li>contextual suggestions MUST NOT invent non-existent constructs,</li>
   <li>profile-defined groups MUST NOT be presented as baseline intrinsic library families unless they actually are,</li>
-  <li>UI, Signal, I/O, Connectivity, and other surfaced families MUST remain consistently classified across palette views,</li>
+  <li>third-party namespaces MUST NOT be presented as standardized baseline or standardized profile-defined families unless they actually are,</li>
   <li>authoring-facing labels such as <em>If</em>, <em>If / Else</em>, <em>Else If</em>, or <em>Switch</em> MUST resolve to canonical entries rather than independent language constructs when no such independent constructs are standardized,</li>
-  <li>Express entries MUST resolve to valid canonical content and MUST NOT become editor-private semantic constructs.</li>
+  <li>guided entries MUST resolve to valid canonical content and MUST NOT become editor-private semantic constructs.</li>
 </ul>
 
 <p>
@@ -1218,6 +1135,7 @@ the same canonical insertable space
   <li><code>while</code> → canonical <code>while_loop</code> structure</li>
   <li><code>+</code> → canonical <code>frog.core.add</code></li>
   <li><code>widget value</code> → canonical <code>widget_value</code> insertion entry</li>
+  <li><code>subfrog</code> → canonical sub-FROG insertion entry</li>
 </ul>
 
 <h3>19.2 Contextual suggestions from a <code>bool</code> wire</h3>
@@ -1257,12 +1175,12 @@ the same canonical insertable space
   <li><code>.net</code> → relevant .NET connectivity entry when the Interop profile is available</li>
 </ul>
 
-<h3>19.6 Express discovery examples</h3>
+<h3>19.6 Guided discovery examples</h3>
 
 <ul>
-  <li><code>read text file</code> → guided Express entry that resolves to a valid canonical I/O target</li>
-  <li><code>moving average</code> → canonical signal entry and MAY also surface a guided Express signal entry when available</li>
-  <li><code>python call</code> → canonical connectivity entry and MAY also surface a guided Express connectivity entry when available</li>
+  <li><code>read text file</code> → guided entry that resolves to a valid canonical I/O target</li>
+  <li><code>moving average</code> → canonical signal entry and MAY also surface a guided signal entry when available</li>
+  <li><code>python call</code> → canonical connectivity entry and MAY also surface a guided connectivity entry when available</li>
 </ul>
 
 <hr/>
@@ -1278,8 +1196,8 @@ the same canonical insertable space
   <li>semantic transformation of one canonical structure into another language construct,</li>
   <li>a requirement that every future palette family already be fully standardized in v0.1,</li>
   <li>turning authoring-facing aliases such as <em>If</em> or <em>Switch</em> into independent canonical entries without corresponding language standardization,</li>
-  <li>requiring execution-facing systems to depend on Express presentation state,</li>
-  <li>opaque Express entries whose canonical target cannot be determined by a conforming IDE.</li>
+  <li>requiring execution-facing systems to depend on guided presentation state,</li>
+  <li>opaque guided entries whose canonical target cannot be determined by a conforming IDE.</li>
 </ul>
 
 <hr/>
@@ -1287,23 +1205,23 @@ the same canonical insertable space
 <h2 id="summary">21. Summary</h2>
 
 <p>
-The FROG IDE palette is the primary discovery and insertion mechanism for diagram entries.
+The FROG IDE palette is the primary discovery and insertion mechanism for the active diagram-authoring surface.
 </p>
 
 <ul>
-  <li>It provides intent-first browsing, namespace/origin browsing, search, contextual insertion, and optional guided / Express discovery.</li>
-  <li>It MUST distinguish primitive entries, structure entries, node-insertion entries, and Express presentations.</li>
+  <li>It provides intent-first browsing, namespace/origin browsing, search, contextual insertion, and optional guided discovery.</li>
+  <li>It MUST distinguish primitive entries, structure entries, node-insertion entries, annotation entries, and guided presentations.</li>
   <li>It MUST preserve one canonical identity per construct.</li>
   <li>It SHOULD support aliases such as <code>if</code> for boolean <code>case</code>.</li>
   <li>It MAY expose authoring-facing views such as <em>If</em>, <em>If / Else</em>, <em>Else If</em>, and <em>Switch</em>, but those views MUST resolve to canonical standardized entries.</li>
-  <li>It MAY expose task-oriented Express entries, but those entries MUST resolve to valid canonical FROG content.</li>
+  <li>It MAY expose task-oriented guided entries, but those entries MUST resolve to valid canonical FROG content.</li>
   <li>It SHOULD expose <code>case</code>, <code>for_loop</code>, and <code>while_loop</code> as the standard control structures of v0.1.</li>
   <li>It SHOULD expose the currently standardized intrinsic library families of the active repository stage, including <code>frog.signal.*</code> and <code>frog.ui.*</code>.</li>
-  <li>It SHOULD expose Connectivity as a distinct family when the corresponding optional Interop profile is available.</li>
-  <li>It MAY surface additional profile-defined future families, but they SHOULD remain clearly marked when not part of the baseline standardized set.</li>
-  <li>It MUST remain semantically consistent with the active language specification and active profile set.</li>
+  <li>It SHOULD expose Connectivity only when the corresponding optional Interop profile is active.</li>
+  <li>It MAY surface additional profile-defined or third-party families, but they SHOULD remain clearly marked when not part of the baseline intrinsic set.</li>
+  <li>It MUST remain semantically consistent with canonical source rules, active standardized libraries, active profile support, and the active insertable surface of the IDE.</li>
 </ul>
 
 <p>
-This gives FROG a palette model that is scalable for experts, clear for implementers, intuitive for users working from intent, and compatible with guided Express-style workflows without creating semantic drift.
+This gives FROG a palette model that is scalable for experts, clear for implementers, intuitive for users working from intent, and compatible with guided workflows without creating semantic drift.
 </p>
