@@ -6,7 +6,7 @@
 
 <p align="center">
   <strong>Free Open Graphical Dataflow Programming Language</strong><br/>
-  FROG is an open, hardware-agnostic graphical dataflow programming language designed to describe computation as executable graphs while remaining accessible, explicit, deterministic, inspectable, and scalable across heterogeneous execution targets.
+  FROG is an open, hardware-agnostic graphical dataflow programming language designed to describe computation as explicit executable graphs while remaining accessible, explicit, deterministic, inspectable, portable, and scalable across heterogeneous execution targets.
 </p>
 
 <p align="center">
@@ -15,12 +15,13 @@
 
 <p align="center">
   <a href="#what-is-frog">What is FROG?</a> •
+  <a href="#what-this-repository-defines">What this repository defines</a> •
   <a href="#positioning">Positioning</a> •
   <a href="#breaking-the-syntax-first-bottleneck">Breaking the syntax-first bottleneck</a> •
   <a href="#why-frog-exists">Why FROG exists</a> •
   <a href="#dataflow-programming">Dataflow programming</a> •
   <a href="#from-prototyping-to-critical-systems">From prototyping to critical systems</a> •
-  <a href="#core-concept-diagram-and-front-panel">Core concept</a> •
+  <a href="#core-concept-diagram-front-panel-and-public-interface">Core concept</a> •
   <a href="#repository-structure">Repository structure</a> •
   <a href="#internal-documentation-map">Internal documentation map</a> •
   <a href="#recommended-reading-path">Recommended reading path</a> •
@@ -44,12 +45,11 @@
 
 <p>
 FROG is an open, hardware-agnostic <strong>graphical dataflow programming language</strong>.
-It represents computation as explicit executable graphs rather than as syntax-driven sequences of instructions.
+It represents computation as explicit executable graphs rather than as syntax-first sequences of textual instructions.
 </p>
 
 <p>
-Instead of describing a program primarily through ordered text,
-FROG describes a program through:
+Instead of describing a program primarily through ordered text, FROG describes a program through:
 </p>
 
 <ul>
@@ -57,13 +57,12 @@ FROG describes a program through:
   <li>typed ports,</li>
   <li>directed graph connections,</li>
   <li>structured control regions,</li>
-  <li>explicit interface boundaries,</li>
-  <li>front-panel widgets and interaction layers.</li>
+  <li>explicit public interface boundaries,</li>
+  <li>optional front-panel widgets and interaction layers.</li>
 </ul>
 
 <p>
-Execution emerges from data availability, structural rules, explicit control structures,
-standardized primitive behavior, optional profile-owned capability behavior, and explicit local-memory semantics rather than from manually authored instruction order.
+Execution emerges from data availability, structural rules, explicit control structures, standardized primitive behavior, optional profile-owned capability behavior, and explicit local-memory semantics rather than from manually authored instruction order.
 </p>
 
 <p>
@@ -72,9 +71,47 @@ This separation provides a durable basis for multiple independent implementation
 </p>
 
 <p>
-This repository exists to define the <strong>FROG specification itself</strong>.
-It is the place where the language and its supporting specification layers are written so that future actors may implement FROG-compatible IDEs, validators, runtimes, compilers, libraries, profiles, and related ecosystem components while targeting the same open standard.
+FROG is intended to scale from accessible graphical authoring to demanding execution contexts such as industrial automation, embedded systems, heterogeneous compute targets, and future conforming execution ecosystems.
 </p>
+
+<hr/>
+
+<h2 id="what-this-repository-defines">What this repository defines</h2>
+
+<p>
+This repository defines the <strong>published FROG specification</strong>.
+It is the repository where the language and its surrounding specification layers are written and stabilized.
+</p>
+
+<p>
+Its role is to provide a durable open foundation for future:
+</p>
+
+<ul>
+  <li>IDEs,</li>
+  <li>validators,</li>
+  <li>runtimes,</li>
+  <li>compilers,</li>
+  <li>execution backends,</li>
+  <li>profile-supporting toolchains,</li>
+  <li>ecosystem services and integrations.</li>
+</ul>
+
+<p>
+This repository does <strong>not</strong> define one mandatory product implementation.
+It does not equate the language with one IDE, one runtime, one vendor stack, or one deployment model.
+</p>
+
+<p>
+Accordingly:
+</p>
+
+<ul>
+  <li><strong>FROG is not an IDE.</strong></li>
+  <li><strong>FROG is not a single runtime.</strong></li>
+  <li><strong>FROG is not a vendor product.</strong></li>
+  <li><strong>FROG is an open language specification with distinct source, semantic, library, profile, and IDE-facing specification layers.</strong></li>
+</ul>
 
 <hr/>
 
@@ -162,10 +199,10 @@ Graphical dataflow programming has already demonstrated major advantages in many
 
 <ul>
   <li>natural parallelism,</li>
-  <li>deterministic execution,</li>
   <li>clear orchestration of behavior,</li>
   <li>strong correspondence between software structure and system behavior,</li>
-  <li>high productivity for engineers, scientists, and domain experts.</li>
+  <li>high productivity for engineers, scientists, and domain experts,</li>
+  <li>strong suitability for instrumentation, control, and observable systems.</li>
 </ul>
 
 <p>
@@ -173,7 +210,7 @@ However, many historical graphical environments have been tightly coupled to pro
 </p>
 
 <p>
-That model limits portability, slows independent ecosystem growth, and prevents multiple vendors or toolchains from implementing the same language cleanly.
+That model limits portability, slows independent ecosystem growth, and prevents multiple actors from implementing the same language cleanly.
 </p>
 
 <p>
@@ -189,14 +226,7 @@ FROG exists to define an <strong>open language specification</strong> for graphi
 
 <p>
 This repository therefore defines the language standard and the surrounding specification layers needed to support future conforming implementations.
-The objective is to make it possible for different actors to build compatible FROG tooling while respecting one shared open language definition.
-</p>
-
-<p>
-<strong>FROG is not an IDE.</strong><br/>
-<strong>FROG is not a single runtime.</strong><br/>
-<strong>FROG is not a vendor product.</strong><br/>
-<strong>FROG is a language specification with associated source, semantic, intrinsic-library, profile, and IDE-facing specification layers.</strong>
+The objective is to make it possible for different actors to build compatible FROG tooling while targeting one shared open language definition.
 </p>
 
 <hr/>
@@ -208,7 +238,7 @@ FROG follows a true <strong>dataflow execution model</strong>.
 </p>
 
 <p>
-In traditional instruction-sequenced programming, execution is primarily described as ordered steps.
+In instruction-sequenced programming, execution is primarily described as ordered steps.
 In dataflow programming, operations become executable when their required input data is available.
 </p>
 
@@ -228,14 +258,14 @@ Dataflow execution
 </pre>
 
 <p>
-Execution order therefore emerges from dependencies.
+Execution order therefore emerges from dependencies rather than from manually authored textual ordering.
 This model enables:
 </p>
 
 <ul>
   <li>automatic parallelism where valid,</li>
   <li>clear dependency visibility,</li>
-  <li>deterministic execution models,</li>
+  <li>deterministic execution models where required,</li>
   <li>efficient mapping to heterogeneous hardware.</li>
 </ul>
 
@@ -268,10 +298,11 @@ Usability and execution depth are treated as complementary goals rather than mut
 
 <hr/>
 
-<h2 id="core-concept-diagram-and-front-panel">Core concept: Diagram and Front Panel</h2>
+<h2 id="core-concept-diagram-front-panel-and-public-interface">Core concept: Diagram, Front Panel, and Public Interface</h2>
 
 <p>
-A FROG program combines two complementary layers:
+A FROG program combines multiple related but distinct source-level concepts.
+The repository deliberately separates them so that execution meaning, public API, and UI-facing authoring remain coherent over time.
 </p>
 
 <h3>Diagram — the authoritative executable graph</h3>
@@ -308,6 +339,18 @@ The diagram expresses:
   <li>optional profile-owned capability usage where supported by the active implementation,</li>
   <li>explicit local memory and valid cycles.</li>
 </ul>
+
+<h3>Public interface — the reusable program boundary</h3>
+
+<p>
+The public interface defines the typed reusable boundary of a FROG.
+It describes the inputs and outputs that matter when a FROG is invoked, embedded, reused, validated, documented, or integrated by other FROGs or tools.
+</p>
+
+<p>
+The public interface is not owned by the front panel.
+It is defined independently and participates in the diagram through <code>interface_input</code> and <code>interface_output</code>.
+</p>
 
 <h3>Front Panel — the interaction layer</h3>
 
@@ -352,7 +395,7 @@ This keeps ordinary dataflow wiring simple while preserving a clean long-term ob
 <h2 id="repository-structure">Repository structure</h2>
 
 <p>
-This repository is organized by architectural responsibility.
+This repository is organized by <strong>architectural responsibility</strong>.
 Each top-level directory has a specific role in the specification.
 </p>
 
@@ -398,6 +441,11 @@ It is the normative home of standardized primitive identities, ports, primitive-
 <p>
 This directory defines optional standardized capability families that extend the usable surface of FROG without redefining the canonical source structure of the language core and without redefining core execution semantics.
 It is the normative home of profile-owned primitive families and other optional capability contracts that should not be treated as intrinsic always-present language libraries.
+</p>
+
+<p>
+This separation matters.
+Capabilities that depend on external ecosystems, foreign runtimes, platform services, ABIs, databases, network stacks, or similar assumptions SHOULD be standardized through profiles or external ecosystem layers rather than absorbed by default into the intrinsic library core.
 </p>
 
 <h3><code>IDE/</code> — IDE architecture and editing model</h3>
@@ -594,7 +642,7 @@ different actors may later build compatible IDEs, validators, runtimes, compiler
 
 <p>
 At the current repository stage, this five-layer split is the main architectural baseline.
-Additional execution-facing layers such as IR, lowering, compilation, deployment, runtime profiles, or conformance-oriented execution profiles may be structured more explicitly over time, but they are not yet a separate fully closed top-level specification family in the same sense as <code>Expression/</code>, <code>Language/</code>, <code>Libraries/</code>, <code>Profiles/</code>, and <code>IDE/</code>.
+Additional execution-facing layers such as IR, lowering, compilation, deployment, runtime profiles, or conformance-oriented execution profiles MAY be structured more explicitly over time, but they are not yet a separate fully closed top-level specification family in the same sense as <code>Expression/</code>, <code>Language/</code>, <code>Libraries/</code>, <code>Profiles/</code>, and <code>IDE/</code>.
 </p>
 
 <hr/>
@@ -667,7 +715,7 @@ It maintains coherent relationships between:
 </ul>
 
 <p>
-This Program Model is an IDE architectural concept and is central to the current <code>IDE/</code> layer.
+This Program Model is an IDE architectural concept.
 It is not the same thing as the raw serialized source file.
 It is also not, by itself, the normative execution-semantics layer of the language.
 </p>
@@ -863,7 +911,7 @@ What changes is the active execution profile, the validation or lowering strateg
 </p>
 
 <p>
-More explicit target-profile standardization may be refined over time.
+More explicit target-profile standardization MAY be refined over time.
 At the current repository stage, target diversity is an architectural direction rather than a fully closed standalone profile taxonomy.
 </p>
 
@@ -953,8 +1001,8 @@ FROG is designed for interoperability at several levels:
 </ul>
 
 <p>
-FROG is also designed to integrate with external languages and external platform APIs through stable interoperation mechanisms.
-In the current repository architecture, such environment-dependent capability families are expected to be standardized through optional profiles rather than treated automatically as intrinsic standard libraries.
+FROG is also designed to integrate with external languages and platform APIs through stable interoperation mechanisms.
+In the current repository architecture, such environment-dependent capability families SHOULD be standardized through optional profiles rather than treated automatically as intrinsic standard libraries.
 </p>
 
 <p>
@@ -1055,19 +1103,24 @@ Different actors may build open-source or proprietary IDEs, validators, runtimes
 
 <p>
 Openness of the specification does not automatically grant trademark rights or official compatibility claims.
-Names, logos, certification marks, and claims such as <em>official</em>, <em>certified</em>, or <em>endorsed</em> may be governed by separate policies when such policies are published.
+Names, logos, certification marks, and claims such as <em>official</em>, <em>certified</em>, <em>endorsed</em>, or <em>FROG-certified</em> MAY be governed by separate conformance, certification, and branding policies.
 </p>
 
 <p>
-This repository therefore separates:
+Over time, the governance model is intended to distinguish clearly between:
 </p>
 
 <ul>
-  <li>the open normative specification,</li>
-  <li>the governance and stewardship model,</li>
-  <li>the contribution process and CLA,</li>
-  <li>any future conformance, certification, trademark, or ecosystem business policies.</li>
+  <li>implementing core FROG,</li>
+  <li>implementing core FROG plus explicitly named profiles,</li>
+  <li>claiming a conformant implementation under an applicable conformance policy,</li>
+  <li>claiming certified or official compatibility status under an applicable certification or branding policy.</li>
 </ul>
+
+<p>
+The intended ecosystem direction is that the specification remains open, while official certification, official branding, and equivalent steward-controlled compatibility claims MAY be governed separately.
+Commercial implementations seeking official certification or branding MAY be subject to paid verification or licensing policies, while non-commercial implementations MAY be verified free of charge or at minimal cost under applicable steward policies.
+</p>
 
 <hr/>
 
@@ -1099,7 +1152,7 @@ Current repository direction includes:
 
 <p>
 At the same time, some broader execution-facing layers remain architectural direction rather than fully closed repository families.
-Topics such as more explicit IR structuring, lowering, compilation, deployment profiles, runtime-facing specification layers, and conformance-oriented execution profiles may be refined further over time.
+Topics such as more explicit IR structuring, lowering, compilation, deployment profiles, runtime-facing specification layers, and conformance-oriented execution profiles MAY be refined further over time.
 </p>
 
 <p>
