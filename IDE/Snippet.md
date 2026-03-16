@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="../FROG logo.svg" alt="FROG logo" width="150" />
+  <img src="../FROG logo.svg" alt="FROG logo" width="140" />
 </p>
 
 <h1 align="center">🐸 FROG IDE Snippet Specification</h1>
@@ -65,8 +65,8 @@ The core intent of a FROG snippet is therefore dual:
 </ul>
 
 <p>
-This makes the snippet concept intentionally equivalent in workflow spirit to image-backed graphical-language snippet sharing:
-a user can see the snippet as an image everywhere, while a FROG IDE can recover the actual structured reusable content from it.
+This gives FROG a snippet workflow intentionally aligned with image-backed graphical-language reuse:
+a user can see the snippet as an image everywhere, while a conforming FROG IDE can recover the actual structured reusable content from it.
 </p>
 
 <hr/>
@@ -74,14 +74,15 @@ a user can see the snippet as an image everywhere, while a FROG IDE can recover 
 <h2 id="goals">2. Goals</h2>
 
 <ul>
-  <li><strong>LabVIEW-like workflow equivalence</strong> — support image-based snippet sharing and drag-and-drop authoring reuse.</li>
+  <li><strong>Image-based workflow parity</strong> — support image-based snippet sharing and drag-and-drop authoring reuse.</li>
   <li><strong>Portability</strong> — allow small reusable authoring fragments to move across IDE sessions and tools.</li>
   <li><strong>Human previewability</strong> — ensure a snippet remains meaningful as a normal image outside the IDE.</li>
   <li><strong>Source alignment</strong> — preserve source-level meaning, layout, object relationships, and internal references.</li>
   <li><strong>Deterministic insertion</strong> — define how imported content is integrated into a target Program Model without ambiguity.</li>
   <li><strong>Non-confusion with full programs</strong> — clearly distinguish snippets from full <code>.frog</code> source files.</li>
-  <li><strong>Express-safe transport</strong> — allow optional transport of IDE-side Express recoverability aids without making them semantically required.</li>
-  <li><strong>Extensibility</strong> — allow stricter carrier profiles and richer preview metadata later without changing the core snippet semantics.</li>
+  <li><strong>Recoverability-safe transport</strong> — allow optional transport of IDE-side recoverability metadata without making it semantically required.</li>
+  <li><strong>Profile-aware safety</strong> — allow snippet transport of profile-defined content without implying unconditional support in the target IDE.</li>
+  <li><strong>Extensibility</strong> — allow stricter transport conventions and richer preview metadata later without changing the core snippet semantics.</li>
 </ul>
 
 <hr/>
@@ -100,7 +101,7 @@ For FROG v0.1, this document standardizes:
   <li>that a standalone snippet artifact MUST be image-backed,</li>
   <li>that the image carrier MUST contain structured embedded snippet payload data readable by a conforming FROG IDE,</li>
   <li>how import, paste, and drag-and-drop SHOULD behave at the source-model level,</li>
-  <li>how optional non-authoritative IDE-side recoverability metadata MAY accompany carried content.</li>
+  <li>how optional non-authoritative recoverability metadata MAY accompany carried content.</li>
 </ul>
 
 <p>
@@ -118,7 +119,7 @@ FROG v0.1 does not standardize:
 
 <p>
 Base v0.1 standardizes the <strong>image-backed requirement</strong> and the <strong>logical embedded payload model</strong>.
-Stricter transport profiles MAY further freeze exact carrier encodings, chunk conventions, metadata slots, or file-extension rules.
+Stricter transport conventions MAY later freeze exact carrier encodings, chunk conventions, metadata slots, integrity metadata, or file-extension rules.
 </p>
 
 <hr/>
@@ -140,6 +141,7 @@ This document complements the following specifications:
   <li><code>Expression/Widget.md</code> — defines widget identity and widget object structure.</li>
   <li><code>Expression/Widget interaction.md</code> — defines the source-facing representation of <code>widget_value</code>, <code>widget_reference</code>, and object-style widget interaction.</li>
   <li><code>Libraries/UI.md</code> — defines the standardized <code>frog.ui.*</code> primitive identities and primitive-local behavior used by widget-related diagram content.</li>
+  <li><code>Profiles/Readme.md</code> — defines the architectural role of optional standardized capability families that may surface in transported snippet content.</li>
 </ul>
 
 <p>
@@ -154,7 +156,8 @@ Accordingly:
 
 <ul>
   <li><code>Expression/</code> remains authoritative for the carried source-level object model,</li>
-  <li><code>Libraries/</code> remains authoritative for primitive identity and primitive-local behavior,</li>
+  <li><code>Libraries/</code> remains authoritative for intrinsic primitive identity and primitive-local behavior,</li>
+  <li><code>Profiles/</code> remains authoritative for optional profile-defined capability families,</li>
   <li><code>IDE/Snippet.md</code> remains authoritative only for snippet transport, preview, embedding, and reinsertion behavior.</li>
 </ul>
 
@@ -185,7 +188,7 @@ defined elsewhere, such as:
   <li>documentation metadata.</li>
 </ul>
 
-<h3>5.3 Snippets must be image-backed</h3>
+<h3>5.3 Standalone snippets must be image-backed</h3>
 
 <p>
 A standalone snippet artifact MUST be an image that:
@@ -221,10 +224,10 @@ A snippet MUST NOT introduce ad hoc execution semantics that do not already exis
 It transports content; it does not redefine the language.
 </p>
 
-<h3>5.7 Express-related recoverability is optional</h3>
+<h3>5.7 Recoverability is optional</h3>
 
 <p>
-A snippet MAY carry non-authoritative IDE-side recoverability metadata related to Express-authored instances or other guided
+A snippet MAY carry non-authoritative recoverability metadata related to Express-authored instances or other guided
 authoring flows.
 However:
 </p>
@@ -235,11 +238,19 @@ However:
   <li>loss of such metadata MUST NOT invalidate the carried canonical snippet content.</li>
 </ul>
 
-<h3>5.8 Minimal but extensible</h3>
+<h3>5.8 Capability support is not implied by transport</h3>
+
+<p>
+A snippet MAY carry intrinsic, profile-defined, or other implementation-supported content.
+Transporting that content does not imply that every target IDE supports it.
+Import validation remains responsible for checking whether required capabilities are actually available.
+</p>
+
+<h3>5.9 Minimal but extensible</h3>
 
 <p>
 FROG v0.1 defines a minimal snippet core.
-Stricter profiles MAY define richer carrier encodings, previews, galleries, library conventions, signing models, or
+Future transport conventions MAY define richer carrier encodings, previews, galleries, library conventions, signing models, or
 cross-tool interchange standards.
 </p>
 
@@ -261,7 +272,7 @@ Conceptually, a snippet contains:
   <li>a payload containing source-aligned fragment content,</li>
   <li>boundary information for open connections or incomplete surroundings,</li>
   <li>presentation metadata used to render the snippet as an image,</li>
-  <li>optional non-authoritative IDE recoverability metadata,</li>
+  <li>optional non-authoritative recoverability metadata,</li>
   <li>an image carrier that embeds the structured snippet payload.</li>
 </ul>
 
@@ -287,8 +298,8 @@ Therefore, a snippet:
   <li>MAY be incomplete relative to a full program,</li>
   <li>MAY have open boundaries,</li>
   <li>MAY omit unrelated program sections,</li>
-  <li>MAY carry non-authoritative IDE-side recoverability hints,</li>
-  <li>MUST NOT be treated as a complete executable FROG unless a stricter profile explicitly wraps it into a complete FROG.</li>
+  <li>MAY carry non-authoritative recoverability metadata,</li>
+  <li>MUST NOT be treated as a complete executable FROG unless a future convention explicitly wraps it into a complete FROG.</li>
 </ul>
 
 <p>
@@ -362,7 +373,7 @@ owned regions and their source-aligned content.
 <h3>9.4 Region-local snippet</h3>
 
 <p>
-A stricter profile MAY allow creating a snippet from content inside one structure-owned region without selecting the containing
+A future stricter convention MAY allow creating a snippet from content inside one structure-owned region without selecting the containing
 structure itself.
 In that case, the snippet root is that region-local diagram scope rather than the parent scope.
 </p>
@@ -382,8 +393,8 @@ A <code>diagram_snippet</code> MAY contain:
   <li>node-local documentation fields,</li>
   <li>node tags,</li>
   <li>layout metadata relevant to pasted placement,</li>
-  <li>diagram-scope dependency references needed by selected <code>subfrog</code> nodes,</li>
-  <li>optional non-authoritative snippet-local recoverability metadata relevant to guided authoring reconstruction.</li>
+  <li>snippet-local dependency references needed by selected <code>subfrog</code> nodes,</li>
+  <li>optional non-authoritative recoverability metadata relevant to guided authoring reconstruction.</li>
 </ul>
 
 <p>
@@ -419,7 +430,7 @@ A <code>front_panel_snippet</code> MAY contain:
   <li>layout and composition metadata,</li>
   <li>styling metadata,</li>
   <li>widget-local configuration,</li>
-  <li>optional non-authoritative snippet-local recoverability metadata relevant to guided authoring reconstruction.</li>
+  <li>optional non-authoritative recoverability metadata relevant to guided authoring reconstruction.</li>
 </ul>
 
 <p>
@@ -471,7 +482,7 @@ content families MUST remain resolvable inside the snippet payload.
 </p>
 
 <p>
-If a composite snippet also carries Express-related recoverability metadata, that metadata MUST remain subordinate to the
+If a composite snippet also carries recoverability metadata, that metadata MUST remain subordinate to the
 carried canonical diagram and front-panel content.
 </p>
 
@@ -517,11 +528,11 @@ The image carrier exists so that a snippet can be:
   <li>decoded by the IDE into structured reusable authoring content.</li>
 </ul>
 
-<h3>13.5 Carrier profile freedom</h3>
+<h3>13.5 Carrier convention freedom</h3>
 
 <p>
 Base v0.1 requires an image-backed carrier but does not require one unique binary embedding technique across all environments.
-A stricter transport profile MAY freeze:
+A stricter transport convention MAY freeze:
 </p>
 
 <ul>
@@ -551,7 +562,7 @@ The embedded payload of a snippet image is conceptually:
   "dependencies": { },
   "preview": { },
   "metadata": { },
-  "ide_hints": { }
+  "recoverability": { }
 }</code></pre>
 
 <h3>14.2 Rules</h3>
@@ -565,7 +576,7 @@ The embedded payload of a snippet image is conceptually:
 </ul>
 
 <p>
-Auxiliary sections such as <code>preview</code>, <code>metadata</code>, and <code>ide_hints</code> MAY be present provided
+Auxiliary sections such as <code>preview</code>, <code>metadata</code>, and <code>recoverability</code> MAY be present provided
 that they remain non-authoritative with respect to source-aligned snippet meaning.
 </p>
 
@@ -583,17 +594,17 @@ The rendered image MAY be regenerated from the payload.
 The payload MUST NOT be reconstructed by lossy visual analysis of the rendered image.
 </p>
 
-<h3>14.5 Express-related IDE hints</h3>
+<h3>14.5 Recoverability metadata</h3>
 
 <p>
-If an embedded snippet payload carries Express-related IDE hints:
+If an embedded snippet payload carries recoverability metadata:
 </p>
 
 <ul>
-  <li>those hints MUST remain optional,</li>
-  <li>those hints MUST remain non-authoritative for canonical meaning,</li>
-  <li>their absence or loss MUST NOT invalidate the carried canonical snippet content,</li>
-  <li>they SHOULD help a conforming IDE reopen or preserve guided authoring presentation only when that is safely possible.</li>
+  <li>that metadata MUST remain optional,</li>
+  <li>that metadata MUST remain non-authoritative for canonical meaning,</li>
+  <li>its absence or loss MUST NOT invalidate the carried canonical snippet content,</li>
+  <li>it SHOULD help a conforming IDE reopen or preserve guided authoring presentation only when that is safely possible.</li>
 </ul>
 
 <hr/>
@@ -670,33 +681,41 @@ If a snippet contains <code>subfrog</code> nodes, it SHOULD carry the relevant d
 A snippet does not inline the full referenced dependent FROGs.
 </p>
 
-<h3>16.4 Widget references</h3>
+<h3>16.4 Profile-defined capabilities</h3>
+
+<p>
+If a snippet contains profile-defined entries, it SHOULD carry enough capability-identification information to allow the target
+IDE to validate whether the required profile support is available.
+A snippet does not convert optional profile-defined content into unconditional core content.
+</p>
+
+<h3>16.5 Widget references</h3>
 
 <p>
 If a snippet contains <code>widget_value</code> or <code>widget_reference</code> nodes and is intended to remain portable across
 documents, it SHOULD carry the required widget definitions through a front-panel fragment or equivalent widget payload.
 </p>
 
-<h3>16.5 Composite internal closure</h3>
+<h3>16.6 Composite internal closure</h3>
 
 <p>
 If a composite snippet carries both diagram-side widget references and front-panel widget definitions, those internal references
 MUST remain consistent after identifier regeneration and insertion.
 </p>
 
-<h3>16.6 No unrelated closure</h3>
+<h3>16.7 No unrelated closure</h3>
 
 <p>
 A snippet SHOULD NOT capture unrelated surrounding program content merely to avoid open boundaries.
 Closure should be minimal and semantically relevant.
 </p>
 
-<h3>16.7 Optional Express closure hints</h3>
+<h3>16.8 Optional recoverability closure</h3>
 
 <p>
-A snippet MAY carry IDE-side hints that help preserve or restore the relationship between a carried fragment and an
+A snippet MAY carry recoverability metadata that helps preserve or restore the relationship between a carried fragment and an
 Express-authored presentation.
-Such hints MUST NOT replace the requirement to carry the actual canonical content needed for insertion.
+Such metadata MUST NOT replace the requirement to carry the actual canonical content needed for insertion.
 </p>
 
 <hr/>
@@ -759,15 +778,15 @@ When an IDE exports a snippet, it MUST:
 </ul>
 
 <p>
-If the exported selection also contains optional Express-related recoverability state, the IDE MAY embed corresponding
-non-authoritative IDE hints in the snippet payload.
+If the exported selection also contains optional recoverability state, the IDE MAY embed corresponding
+non-authoritative recoverability metadata in the snippet payload.
 </p>
 
 <h3>18.2 Stable rendering intent</h3>
 
 <p>
 The visible rendering SHOULD remain stable enough that repeated exports of the same snippet produce recognizably similar images,
-subject to profile-defined rendering policies.
+subject to convention-defined rendering policies.
 </p>
 
 <h3>18.3 Export safety</h3>
@@ -824,12 +843,12 @@ When inserting a valid snippet payload, the IDE SHOULD:
   <li>preserve internal cross-references between carried content families,</li>
   <li>preserve carried layout relationships as far as practical,</li>
   <li>leave external boundaries open unless the insertion operation provides an explicit reconnection rule,</li>
-  <li>preserve semantic distinction between diagram content, front-panel content, dependencies, and non-authoritative IDE hints.</li>
+  <li>preserve semantic distinction between diagram content, front-panel content, dependencies, and non-authoritative recoverability metadata.</li>
 </ul>
 
 <p>
-If optional Express-related IDE hints are present, the IDE MAY use them to restore or preserve guided authoring presentation.
-If such hints are absent, ignored, or cannot safely be applied, the IDE MUST still insert the canonical carried content
+If optional recoverability metadata is present, the IDE MAY use it to restore or preserve guided authoring presentation.
+If such metadata is absent, ignored, or cannot safely be applied, the IDE MUST still insert the canonical carried content
 deterministically when the canonical content itself is valid.
 </p>
 
@@ -861,13 +880,13 @@ A snippet payload MUST be rejected if any of the following is true:
   <li>required fragment sections are missing for the declared snippet kind,</li>
   <li>internal references are inconsistent,</li>
   <li>the payload violates source-level invariants of the carried content family,</li>
-  <li>the payload depends on unsupported required features of the target profile.</li>
+  <li>the payload depends on unsupported required profile-defined capabilities in the target IDE.</li>
 </ul>
 
 <p>
-Optional non-authoritative IDE hints, including Express-related recoverability hints, MUST NOT by themselves determine whether
+Optional non-authoritative recoverability metadata MUST NOT by itself determine whether
 the canonical carried content is valid.
-They MAY be ignored, warned about, or dropped without invalidating an otherwise valid snippet payload.
+It MAY be ignored, warned about, or dropped without invalidating an otherwise valid snippet payload.
 </p>
 
 <p>
@@ -876,10 +895,11 @@ A target IDE SHOULD additionally warn when:
 
 <ul>
   <li>the snippet is valid but requires external dependencies that are unavailable,</li>
+  <li>the snippet is valid but references profile-defined capabilities that are not supported in the current environment,</li>
   <li>the snippet is structurally valid but contains unresolved boundary endpoints,</li>
   <li>the visible image appears stale relative to regenerated preview expectations,</li>
-  <li>optional IDE hints are present but cannot be safely applied,</li>
-  <li>the snippet was produced by a newer incompatible snippet-profile revision.</li>
+  <li>optional recoverability metadata is present but cannot be safely applied,</li>
+  <li>the snippet was produced by a newer incompatible snippet-transport revision.</li>
 </ul>
 
 <p>
@@ -951,7 +971,7 @@ Validation MUST be performed on the embedded structured payload.
   }
 }</code></pre>
 
-<h3>21.3 Diagram snippet with optional Express-related IDE hints</h3>
+<h3>21.3 Diagram snippet with optional recoverability metadata</h3>
 
 <pre><code class="language-json">{
   "kind": "frog_snippet",
@@ -963,7 +983,15 @@ Validation MUST be performed on the embedded structured payload.
     ],
     "edges": []
   },
-  "ide_hints": {
+  "dependencies": {
+    "diagram_dependencies": [
+      {
+        "name": "frog.io.read_text_file.basic",
+        "path": "lib/io/read_text_file/basic.frog"
+      }
+    ]
+  },
+  "recoverability": {
     "express_bindings": [
       {
         "instance_id": "expr_001",
@@ -981,7 +1009,7 @@ Validation MUST be performed on the embedded structured payload.
 
 <p>
 In this example, the carried canonical content remains the authoritative snippet meaning.
-The <code>ide_hints</code> section is optional and non-authoritative.
+The <code>recoverability</code> section is optional and non-authoritative.
 </p>
 
 <h3>21.4 Conceptual image-backed artifact</h3>
@@ -997,27 +1025,28 @@ The <code>ide_hints</code> section is optional and non-authoritative.
 |  version = 0.1                              |
 |  snippet_kind = diagram/front_panel/...     |
 |  source-aligned fragment content            |
-|  optional non-authoritative ide_hints       |
+|  optional non-authoritative recoverability  |
 +---------------------------------------------+</code></pre>
 
 <h3>21.5 Drag-and-drop behavior</h3>
 
 <pre><code>user drags snippet image into FROG IDE
-            │
-            ▼
+            |
+            v
 IDE detects image-backed candidate artifact
-            │
-            ▼
+            |
+            v
 IDE decodes embedded structured snippet payload
-            │
-      ┌─────┴─────┐
-      ▼           ▼
+            |
+      +-----+-----+
+      |           |
+      v           v
    success      failure
-      │           │
-      ▼           ▼
+      |           |
+      v           v
 validate     reject as snippet
-      │
-      ▼
+      |
+      v
 insert fragment deterministically</code></pre>
 
 <hr/>
@@ -1025,14 +1054,14 @@ insert fragment deterministically</code></pre>
 <h2 id="out-of-scope-for-v01">22. Out of Scope for v0.1</h2>
 
 <ul>
-  <li>automatic semantic adaptation across incompatible language profiles,</li>
+  <li>automatic semantic adaptation across incompatible language or profile environments,</li>
   <li>execution directly from snippet images,</li>
   <li>a mandatory cross-platform clipboard MIME registry,</li>
   <li>a mandatory OS-level drag-and-drop binary protocol,</li>
   <li>online snippet marketplaces,</li>
   <li>cryptographic signing requirements for snippet images,</li>
   <li>pixel-only recovery of snippet semantics without embedded structured payload,</li>
-  <li>making optional Express-related IDE hints required for valid snippet insertion.</li>
+  <li>making optional recoverability metadata required for valid snippet insertion.</li>
 </ul>
 
 <hr/>
@@ -1050,7 +1079,7 @@ defined as an <strong>image-backed snippet carrier</strong>.
   <li>a conforming FROG IDE can recover that payload during import, paste, or drag-and-drop,</li>
   <li>the embedded payload is authoritative for snippet meaning,</li>
   <li>the visible image is authoritative for presentation only,</li>
-  <li>optional IDE hints such as Express-related recoverability metadata MAY be transported but MUST remain non-authoritative,</li>
+  <li>optional recoverability metadata MAY be transported but MUST remain non-authoritative,</li>
   <li>the snippet remains a fragment, not a full canonical <code>.frog</code> program.</li>
 </ul>
 
