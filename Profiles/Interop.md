@@ -5,7 +5,7 @@
 <h1 align="center">🐸 FROG Interop Profile</h1>
 
 <p align="center">
-  Optional standardized interoperability profile for FROG<br/>
+  Optional standardized interoperability profile for <strong>FROG</strong><br/>
   <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -17,7 +17,7 @@
   <li><a href="#overview">1. Overview</a></li>
   <li><a href="#purpose">2. Purpose of the Interop Profile</a></li>
   <li><a href="#relation-with-other-specifications">3. Relation with Other Specifications</a></li>
-  <li><a href="#profile-role">4. Role of the Interop Profile</a></li>
+  <li><a href="#architectural-role">4. Architectural Role</a></li>
   <li><a href="#profile-identity-and-namespace">5. Profile Identity and Namespace</a></li>
   <li><a href="#scope-for-v01">6. Scope for v0.1</a></li>
   <li><a href="#interop-model">7. Interop Model</a></li>
@@ -42,8 +42,8 @@ This document defines the <strong>Interop profile</strong> for FROG v0.1.
 </p>
 
 <p>
-The Interop profile standardizes an optional capability family for interoperability with external
-execution environments and external data systems.
+The Interop profile standardizes an <strong>optional capability family</strong> for interoperability
+with external execution environments and external data systems.
 </p>
 
 <p>
@@ -58,9 +58,9 @@ In v0.1, this profile standardizes a conservative first surface covering:
 </ul>
 
 <p>
-The goal of this first version is to define a practical and portable interop surface that fits
-cleanly within the current FROG diagram and type model while remaining outside the minimal intrinsic
-standard library core.
+The goal of this first version is to define a practical, bounded, and portable interop surface that
+fits cleanly within the current FROG diagram and type model while remaining outside the minimal
+intrinsic library core.
 </p>
 
 <p>
@@ -84,7 +84,7 @@ This profile exists to preserve the architectural distinction between:
 
 <ul>
   <li>the minimal core language surface,</li>
-  <li>portable intrinsic standard libraries,</li>
+  <li>portable intrinsic standardized libraries,</li>
   <li>optional standardized capability families,</li>
   <li>implementation-specific extensions.</li>
 </ul>
@@ -105,33 +105,33 @@ This document complements the following specifications:
 <ul>
   <li><code>Profiles/Readme.md</code> — defines the architectural role of optional standardized capability families.</li>
   <li><code>Expression/Diagram.md</code> — defines how Interop profile primitives appear as executable diagram nodes.</li>
-  <li><code>Expression/Type.md</code> — defines the built-in scalar and array types used by these primitives.</li>
-  <li><code>Expression/Control structures.md</code> — defines structures that MAY be used to branch on interop success or failure.</li>
+  <li><code>Expression/Type.md</code> — defines the ordinary scalar and array types used by these primitives.</li>
   <li><code>Language/</code> — defines the cross-cutting execution semantics that remain authoritative for validated programs.</li>
   <li><code>Libraries/Core.md</code> — defines the minimal always-available computational primitives, which remain distinct from interop capability.</li>
-  <li><code>Libraries/IO.md</code> — defines file, path, byte, and related I/O primitives, which remain distinct from foreign-runtime and SQL interoperability.</li>
+  <li><code>Libraries/IO.md</code> — defines file, path, byte, and related resource I/O primitives, which remain distinct from foreign-runtime and SQL interoperability.</li>
   <li><code>Libraries/UI.md</code> — defines widget interaction primitives, which remain distinct from interop primitives.</li>
   <li><code>Libraries/Connectivity.md</code> — retained only as a transition note and MUST NOT be treated as the primary normative source for this profile.</li>
+  <li><code>GOVERNANCE.md</code> — defines governance-facing distinctions such as core support, profile support, conformance, certification, and branding-related claims.</li>
 </ul>
 
 <p>
 This document defines the standardized primitive catalog for the Interop profile.
-It does not redefine the graph model, the core type system, general execution semantics, or the
-widget interaction model.
+It does not redefine the graph model, the core type model, the general execution semantics,
+or the widget interaction model.
 </p>
 
 <hr/>
 
-<h2 id="profile-role">4. Role of the Interop Profile</h2>
+<h2 id="architectural-role">4. Architectural Role</h2>
 
 <p>
 The Interop profile provides standardized primitives for invoking capabilities that are external to
-the ordinary FROG function and intrinsic primitive model.
+the ordinary FROG function model and external to the intrinsic primitive core.
 </p>
 
 <p>
-In serialized diagrams, calls to these primitives are represented as <code>primitive</code> nodes
-whose <code>type</code> field uses the <code>frog.connectivity.*</code> namespace.
+In serialized diagrams, calls to these primitives are represented as <code>primitive</code> nodes whose
+<code>type</code> field uses the <code>frog.connectivity.*</code> namespace.
 </p>
 
 <p>
@@ -184,7 +184,6 @@ frog.connectivity.*
 </pre>
 
 <p>
-FROG primitive identifiers remain namespace-qualified.
 For this profile, the general naming pattern is:
 </p>
 
@@ -242,7 +241,7 @@ These primitives provide a first standardized interoperability layer for:
 </ul>
 
 <p>
-FROG v0.1 does not attempt to define:
+FROG v0.1 does <strong>not</strong> attempt to define:
 </p>
 
 <ul>
@@ -250,7 +249,7 @@ FROG v0.1 does not attempt to define:
   <li>callbacks, event subscriptions, or bidirectional host integration,</li>
   <li>async or streaming interop,</li>
   <li>object-graph reflection as a standard source-level mechanism,</li>
-  <li>prepared statements, transactions, cursors, or connection pooling as source-level standard objects,</li>
+  <li>prepared statements, transactions, cursors, or connection pooling as source-level standardized objects,</li>
   <li>automatic marshaling of arbitrary FROG values into foreign object systems,</li>
   <li>COM, ActiveX, Java, gRPC, REST, message-bus, or general network transport primitives,</li>
   <li>generic external-runtime or external-service bindings beyond the explicit primitive families standardized here.</li>
@@ -286,9 +285,9 @@ Accordingly:
 </ul>
 
 <p>
-Binding resolution, host process model, security policy, timeout policy, foreign runtime
-availability, driver availability, platform availability, and concrete execution environment are
-implementation-defined unless standardized elsewhere.
+Binding resolution, host process model, security policy, timeout policy, foreign runtime availability,
+driver availability, platform availability, and concrete execution environment are implementation-defined
+unless standardized elsewhere.
 </p>
 
 <p>
@@ -331,6 +330,12 @@ Unless stated otherwise:
 </ul>
 
 <p>
+This profile does not standardize an error-object output, exception payload, or diagnostic record as part
+of the source-visible primitive contract in v0.1.
+Failure is exposed only through <code>success</code> together with the standardized fallback value of each data output.
+</p>
+
+<p>
 Fallback values in this document are standardized as follows:
 </p>
 
@@ -341,10 +346,9 @@ Fallback values in this document are standardized as follows:
 </ul>
 
 <p>
-When a primitive uses a textual request or textual response payload, the semantic meaning of that
-payload is defined by the supporting implementation or by another applicable specification.
-For example, an implementation MAY use JSON text, SQL parameter text, or another stable textual
-interchange form.
+When a primitive uses a textual request or textual response payload, the semantic meaning of that payload
+is defined by the supporting implementation or by another applicable specification.
+For example, an implementation MAY use JSON text, SQL parameter text, or another stable textual interchange form.
 </p>
 
 <p>
@@ -566,7 +570,8 @@ Rules:
 <ul>
   <li>if <code>success = true</code>, <code>affected_rows</code> contains the affected-row count produced by the supporting implementation,</li>
   <li>if <code>success = false</code>, <code>affected_rows</code> MUST be <code>0</code>,</li>
-  <li>the textual form of <code>parameters</code> is implementation-defined unless standardized elsewhere.</li>
+  <li>the textual form of <code>parameters</code> is implementation-defined unless standardized elsewhere,</li>
+  <li>connection-string interpretation, driver selection, dialect behavior, and affected-row semantics are implementation-defined unless standardized elsewhere.</li>
 </ul>
 
 <p>
@@ -608,7 +613,7 @@ Examples:
 
 <p>
 The exact port existence, direction, and typing of these nodes are resolved from this specification
-together with the type system and the graph rules.
+together with the type model and the graph rules.
 </p>
 
 <hr/>
@@ -645,6 +650,13 @@ For <code>frog.connectivity.sql.execute</code>:
   <li><code>affected_rows</code> MUST use type <code>i64</code>.</li>
 </ul>
 
+<p>
+An implementation that does not support this profile MUST NOT silently reinterpret
+<code>frog.connectivity.*</code> primitives as intrinsic-library primitives.
+Unsupported profile usage MUST instead be rejected or reported as unsupported according to the
+implementation's validation or capability-reporting model.
+</p>
+
 <hr/>
 
 <h2 id="support-and-claims">15. Support and Capability Claims</h2>
@@ -658,9 +670,9 @@ A core-conforming FROG implementation MAY support none of the primitives defined
 </p>
 
 <p>
-An implementation claiming support for the <strong>Interop profile</strong> SHOULD support the full
-set of primitives defined by this document unless a future narrower subprofile, profile revision, or
-explicit subset claim model is standardized.
+An implementation claiming support for the <strong>Interop profile</strong> SHOULD support the full set
+of primitives defined by this document unless a future narrower subprofile, profile revision, or
+explicit subset-claim model is standardized.
 </p>
 
 <p>
@@ -671,6 +683,16 @@ Accordingly:
   <li><code>core FROG support only</code> is a valid claim,</li>
   <li><code>core FROG + Interop profile</code> is a stronger claim,</li>
   <li>a partial implementation MUST NOT present itself as full Interop profile support unless the supported subset is made explicit.</li>
+</ul>
+
+<p>
+Examples of explicit non-full claims may include implementation wording such as:
+</p>
+
+<ul>
+  <li><code>core FROG + Python interop subset</code></li>
+  <li><code>core FROG + SQL interop subset</code></li>
+  <li><code>core FROG + partial frog.connectivity support</code></li>
 </ul>
 
 <p>
@@ -692,7 +714,8 @@ official endorsement, or branding authorization.
   <li>network protocols such as HTTP, TCP, UDP, WebSocket, MQTT, or gRPC,</li>
   <li>COM, ActiveX, Java, or other non-listed foreign platforms,</li>
   <li>generic external-runtime or external-service primitives beyond the explicit families standardized here,</li>
-  <li>async execution, futures, promises, channels, or runtime scheduling primitives.</li>
+  <li>async execution, futures, promises, channels, or runtime scheduling primitives,</li>
+  <li>source-level error objects, exception payload channels, or standardized diagnostic record transport.</li>
 </ul>
 
 <hr/>
