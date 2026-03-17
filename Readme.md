@@ -846,7 +846,7 @@ A conforming FROG ecosystem should separate <strong>authoring</strong>, <strong>
 </p>
 
 <p>
-The important rule is that a FROG is <strong>not</strong> executed directly from raw source text.
+A FROG is <strong>not</strong> executed directly from raw source text.
 A toolchain edits a Program Model, serializes canonical source, validates program meaning against the relevant semantic, intrinsic-library, and profile rules, derives an open execution-facing IR, and only then proceeds toward lowering, compilation, backend preparation, or runtime realization.
 </p>
 
@@ -864,40 +864,42 @@ A toolchain edits a Program Model, serializes canonical source, validates progra
                      |                           |
                      | save / load               | execute / validate
                      v                           v
-        🟩 OPEN SOURCE SOURCE LAYER         Validation against:
-        🟩 FROG Expression                  - Language/
-        (.frog, canonical source)          - Libraries/
-                                           - Profiles/
-                                                   |
-                                                   v
+        🟩 OPEN SOURCE LAYER                Validation against
+        🟩 FROG Expression                 +----------------------+
+        (.frog, canonical source)         | Language/            |
+                                          | Libraries/           |
+                                          | Profiles/            |
+                                          +----------+-----------+
+                                                     |
+                                                     v
                                   🟩 OPEN EXECUTION LAYER
                                   🟩 FROG Execution IR
                          (derived, inspectable, source-attributed,
                           execution-facing, not backend-private)
-                                                   |
-                                                   v
-                              Lowering / compilation preparation
-                                                   |
-                                                   v
-                           Compiler(s) / Backend(s) / Runtime(s)
-                                                   |
-                                                   v
-                                    ▶ Target execution instance
-                                                   |
-                              +--------------------+--------------------+
-                              |                                         |
-                              v                                         v
-                 Source-aligned execution observability         Runtime activity
-                (mapped back to meaningful program objects)     on the active target
-                              |
-                              v
-                           Debugging
-                  (pause / resume / break / step)
-                              |
-                       +------+------+
-                       |             |
-                       v             v
-                     Probes        Watch
+                                                     |
+                                                     v
+                                   Lowering / backend preparation
+                                                     |
+                                                     v
+                            Compiler(s) / Backend(s) / Runtime(s)
+                                                     |
+                                                     v
+                                     ▶ Target execution instance
+                                                     |
+                            +------------------------+------------------------+
+                            |                                                 |
+                            v                                                 v
+              Source-aligned execution observability              Runtime activity
+             (mapped back to meaningful FROG objects)           on the active target
+                            |
+                            v
+                         Debugging
+                (pause / resume / break / step)
+                            |
+                     +------+------+ 
+                     |             |
+                     v             v
+                   Probes        Watch
 </pre>
 
 <p>
@@ -905,12 +907,12 @@ This architecture intentionally distinguishes two open specification-facing repr
 </p>
 
 <ul>
-  <li><strong>FROG Expression</strong> — the canonical saved source artifact,</li>
+  <li><strong>FROG Expression</strong> — the canonical saved source artifact.</li>
   <li><strong>FROG Execution IR</strong> — the derived execution-facing representation built from validated program meaning.</li>
 </ul>
 
 <p>
-It also separates what remains <strong>normatively open and inspectable</strong> from what may become <strong>implementation-specific</strong>:
+It also separates what remains <strong>normatively open and inspectable</strong> from what may remain <strong>implementation-specific</strong>:
 </p>
 
 <ul>
