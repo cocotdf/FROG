@@ -5,7 +5,7 @@
 <h1 align="center">🐸 FROG Profiles</h1>
 
 <p align="center">
-  Optional standardized capability families for FROG<br/>
+  Optional standardized capability families for <strong>FROG</strong><br/>
   <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -38,8 +38,8 @@ This directory defines <strong>optional standardized capability families</strong
 
 <p>
 A profile is a standardized specification layer that extends the usable capability surface of FROG
-without changing the canonical source structure of the language core and without redefining the
-cross-cutting execution semantics owned by the core language specification.
+without redefining the canonical source structure of the language core and without replacing the
+cross-cutting execution semantics owned by the core language architecture.
 </p>
 
 <p>
@@ -52,12 +52,17 @@ Within the current repository architecture:
 </p>
 
 <ul>
-  <li><code>Expression/</code> owns canonical source representation.</li>
-  <li><code>Language/</code> owns normative execution semantics.</li>
-  <li><code>Libraries/</code> owns intrinsic standard primitive vocabularies.</li>
-  <li><code>Profiles/</code> owns optional standardized capability families.</li>
+  <li><code>Expression/</code> owns canonical source representation,</li>
+  <li><code>Language/</code> owns normative execution semantics,</li>
+  <li><code>Libraries/</code> owns intrinsic standardized primitive vocabularies,</li>
+  <li><code>Profiles/</code> owns optional standardized capability families,</li>
   <li><code>IDE/</code> owns authoring, observability, debugging, inspection, and related tooling responsibilities.</li>
 </ul>
+
+<p>
+A profile therefore extends the <strong>standardized capability surface</strong> of FROG,
+but it does so from outside the intrinsic core.
+</p>
 
 <hr/>
 
@@ -70,8 +75,8 @@ The purpose of this directory is to provide a clean architectural home for speci
 <ul>
   <li>standardized,</li>
   <li>useful across multiple implementations,</li>
-  <li>optional rather than mandatory for the language core,</li>
-  <li>sometimes dependent on external runtimes, host environments, protocols, services, deployment assumptions, or ecosystem contracts.</li>
+  <li>optional rather than mandatory for the minimal language core,</li>
+  <li>sometimes dependent on external runtimes, host environments, protocols, services, deployment assumptions, or broader ecosystem contracts.</li>
 </ul>
 
 <p>
@@ -85,6 +90,7 @@ A profile is therefore neither:
 
 <ul>
   <li>a replacement for the language core,</li>
+  <li>a second core-language layer,</li>
   <li>a dumping ground for implementation-specific features,</li>
   <li>nor an excuse to move core language meaning into optional documents.</li>
 </ul>
@@ -103,13 +109,14 @@ They are intended to standardize capability families that are broader than one v
 extension but narrower than the mandatory language core.
 </p>
 
-<pre>FROG specification architecture
+<pre>
+FROG specification architecture
 
-Expression/   - canonical source form
-Language/     - normative execution semantics
-Libraries/    - intrinsic standard primitive vocabularies
-Profiles/     - optional standardized capability families
-IDE/          - authoring, observability, debugging, inspection
+Expression/   -> canonical source form
+Language/     -> normative execution semantics
+Libraries/    -> intrinsic standardized primitive vocabularies
+Profiles/     -> optional standardized capability families
+IDE/          -> authoring, observability, debugging, inspection
 
 Implementations MAY support:
 - core only
@@ -120,6 +127,11 @@ Implementations MAY support:
 <p>
 This model preserves a stable architectural center while allowing the ecosystem to grow through
 bounded optional capability families.
+</p>
+
+<p>
+Profiles are therefore part of the published FROG specification architecture,
+but they are <strong>not</strong> part of the minimal intrinsic core.
 </p>
 
 <hr/>
@@ -145,7 +157,13 @@ A profile specification MAY define:
 </ul>
 
 <p>
-A profile specification MUST remain subordinate to the core language architecture.
+A profile specification MUST remain subordinate to the core repository architecture.
+</p>
+
+<p>
+This means that a profile may add an optional capability layer,
+but it MUST do so without collapsing the ownership boundaries of
+<code>Expression/</code>, <code>Language/</code>, <code>Libraries/</code>, or <code>IDE/</code>.
 </p>
 
 <hr/>
@@ -198,6 +216,7 @@ In particular, a profile specification MUST NOT:
   <li>redefine the canonical <code>.frog</code> source file structure owned by <code>Expression/</code>,</li>
   <li>replace, weaken, or contradict execution semantics owned by <code>Language/</code>,</li>
   <li>reclassify profile-local behavior as unconditional language-core behavior,</li>
+  <li>absorb intrinsic primitive vocabularies that belong in <code>Libraries/</code>,</li>
   <li>turn <code>Libraries/</code> into a catch-all bucket for ecosystem-specific capability growth,</li>
   <li>treat one vendor, runtime, operating system, database engine, or framework as the mandatory baseline for FROG itself,</li>
   <li>use optional capability support as a hidden requirement for core language conformance.</li>
@@ -218,12 +237,24 @@ Profile specifications are used together with the rest of the FROG specification
 
 <ul>
   <li><code>Expression/Diagram.md</code> defines how profile-owned primitives appear as executable diagram nodes.</li>
-  <li><code>Expression/Type.md</code> defines the ordinary type-system baseline unless a profile explicitly introduces additional profile-local rules that remain compatible with the core model.</li>
+  <li><code>Expression/Type.md</code> defines the ordinary type-model baseline unless a profile explicitly introduces additional profile-local rules that remain compatible with the core model.</li>
   <li><code>Language/</code> defines cross-cutting execution semantics that remain authoritative across both core and profile-owned capabilities.</li>
-  <li><code>Libraries/</code> remains the home of intrinsic standard primitive vocabularies and MUST remain distinct from optional profile families.</li>
+  <li><code>Libraries/</code> remains the home of intrinsic standardized primitive vocabularies and MUST remain distinct from optional profile families.</li>
   <li><code>IDE/</code> MAY surface supported profiles in palette organization, authoring assistance, validation feedback, and observability tooling, but IDE presentation does not replace normative profile specifications.</li>
   <li><code>GOVERNANCE.md</code> defines governance-facing distinctions such as core support, profile support, conformance, certification, and branding policy.</li>
 </ul>
+
+<p>
+These relationships can be summarized as follows:
+</p>
+
+<pre>
+Expression/   -> source representation
+Language/     -> execution semantics
+Libraries/    -> intrinsic primitive vocabularies
+Profiles/     -> optional standardized capability families
+IDE/          -> tooling and authoring surface
+</pre>
 
 <p>
 Profile documents complement the rest of the specification.
@@ -242,6 +273,18 @@ This directory currently contains the following documents:
   <li><code>Readme.md</code> — overview of the Profiles layer and its architectural role.</li>
   <li><code>Interop.md</code> — the Interop profile, defining the first standardized optional interoperability capability family for <code>frog.connectivity.*</code>.</li>
 </ul>
+
+<p>
+Accordingly, the authoritative normative home of <code>frog.connectivity.*</code> is now:
+</p>
+
+<pre><code>Profiles/Interop.md</code></pre>
+
+<p>
+The presence of <code>Libraries/Connectivity.md</code> elsewhere in the repository does not create a second
+normative home.
+That file remains only as a transition and continuity note.
+</p>
 
 <p>
 Additional profile specifications MAY be added as sibling documents when their scope is sufficiently
@@ -324,6 +367,11 @@ Profiles SHOULD remain well-scoped.
 When a capability family grows too large, it MAY later be split into multiple sibling profile specifications.
 </p>
 
+<p>
+A capability area SHOULD NOT be placed in <code>Profiles/</code> merely because it is useful.
+It belongs here only when optional standardization is architecturally justified.
+</p>
+
 <hr/>
 
 <h2 id="status">12. Status</h2>
@@ -335,8 +383,8 @@ portable, and durable as the ecosystem grows.
 
 <p>
 At the current repository stage, the Profiles layer is no longer only a placeholder category.
-It already contains a first concrete profile specification and establishes the normative home for
-optional standardized capability families that do not belong to the intrinsic library core.
+It already contains a first concrete profile specification and already serves as the normative home
+for optional standardized capability families that do not belong to the intrinsic library core.
 </p>
 
 <p>
@@ -345,8 +393,27 @@ The long-term objective is to maintain a clean distinction between:
 
 <ul>
   <li>the FROG core language,</li>
-  <li>intrinsic standard libraries,</li>
+  <li>intrinsic standardized libraries,</li>
   <li>optional standardized capability profiles,</li>
   <li>implementation-specific extensions,</li>
   <li>future conformance, certification, and ecosystem participation models.</li>
 </ul>
+
+<p>
+In short:
+</p>
+
+<pre>
+Profiles/ should stay:
+- optional
+- standardized
+- bounded
+- explicitly claimed
+- subordinate to the core architecture
+
+Profiles/ should not become:
+- a second core
+- an extension dump
+- a vendor bucket
+- a hidden conformance trap
+</pre>
