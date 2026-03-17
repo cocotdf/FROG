@@ -797,7 +797,7 @@ They MAY help a conforming IDE restore authoring intent, including guided-presen
 
 <p>
 If the IDE exposes authoring-facing derived views, aliases, insertion labels, or guided entries, those facilities MUST survive round-trip authoring without corrupting canonical source identity.
-A stable load → edit → serialize → reload cycle MUST preserve the canonical construct represented by the source, even when the IDE chooses to present that construct through a more ergonomic authoring form.
+A stable load -&gt; edit -&gt; serialize -&gt; reload cycle MUST preserve the canonical construct represented by the source, even when the IDE chooses to present that construct through a more ergonomic authoring form.
 </p>
 
 <pre><code>Round-trip invariant
@@ -1146,7 +1146,7 @@ They allow an IDE to observe values or source-level execution state associated w
   <li>edges,</li>
   <li>node ports,</li>
   <li>local-memory state,</li>
-  <li>selected UI-related execution objects in stricter profiles.</li>
+  <li>selected UI-related execution objects in stricter observability profiles.</li>
 </ul>
 
 <p>
@@ -1236,7 +1236,7 @@ They complement the Program Model and the editing experience without changing th
 </p>
 
 <p>
-If a snippet carries content originating from an Express-authored instance, a conforming IDE MAY preserve related IDE-facing Express recoverability metadata where that metadata remains source-safe and non-authoritative.
+If a snippet carries content originating from an Express-authored instance, a conforming IDE MAY preserve related IDE-facing recoverability metadata where that metadata remains source-safe and non-authoritative.
 Dropping such metadata MUST NOT invalidate the carried canonical content.
 </p>
 
