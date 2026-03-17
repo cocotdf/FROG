@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="../FROG logo.svg" alt="FROG logo" width="150" />
+  <img src="../FROG logo.svg" alt="FROG logo" width="140" />
 </p>
 
 <h1 align="center">🐸 FROG IDE Watch Specification</h1>
@@ -63,7 +63,7 @@ Typical watch workflows include:
   <li>tracking selected values across stepping, breakpoints, and pause/resume cycles,</li>
   <li>keeping important observations visible even when the user navigates away from the source object,</li>
   <li>monitoring multiple graph locations from one centralized inspection view,</li>
-  <li>retaining recent observations after pause, completion, or abort when the active profile allows it.</li>
+  <li>retaining recent observations after pause, completion, fault, or abort when the active observability profile allows it.</li>
 </ul>
 
 <hr/>
@@ -189,11 +189,24 @@ When execution is paused, a watch MUST remain consistent with the language-valid
 A watch MUST NOT contradict the paused view.
 </p>
 
-<h3>5.6 Minimal but extensible</h3>
+<h3>5.6 Capability profiles and observability profiles remain distinct</h3>
+
+<p>
+The repository uses <code>Profiles/</code> for optional standardized capability families.
+This document also needs to refer to stronger or weaker watch support.
+These are different concerns.
+</p>
+
+<ul>
+  <li>a capability profile defines what executable capability families exist,</li>
+  <li>an observability profile defines how much source-aligned execution detail is exposed to watches.</li>
+</ul>
+
+<h3>5.7 Minimal but extensible</h3>
 
 <p>
 FROG v0.1 defines a minimal watch model.
-Stricter profiles MAY add richer filtering, grouping, formatting, value history, custom watch renderers, or richer contextual retention, provided that the core semantic meaning remains preserved.
+Stricter observability profiles MAY add richer filtering, grouping, formatting, value history, custom watch renderers, or richer contextual retention, provided that the core semantic meaning remains preserved.
 </p>
 
 <hr/>
@@ -211,7 +224,7 @@ Conceptually, a watch contains:
   <li>a current watch-entry state,</li>
   <li>a last-known committed observed value or state snapshot when available,</li>
   <li>context metadata for the most recent relevant observation when available,</li>
-  <li>optional retained information from earlier execution activity when supported by the active profile.</li>
+  <li>optional retained information from earlier execution activity when supported by the active observability profile.</li>
 </ul>
 
 <p>
@@ -310,7 +323,7 @@ For v0.1, a watch target MUST be one of the following source-visible targets:
   <li>a source edge,</li>
   <li>a source node port,</li>
   <li>a local-memory slot owned by a local-memory node instance,</li>
-  <li>a stricter-profile UI-related target that remains source-visible and semantically well-defined.</li>
+  <li>a UI-related target supported by a stricter observability profile that remains source-visible and semantically well-defined.</li>
 </ul>
 
 <p>
@@ -376,7 +389,7 @@ This may be:
   <li>a value observed on an edge,</li>
   <li>a value observed at a node port,</li>
   <li>a state snapshot observed for local memory,</li>
-  <li>another source-aligned committed observation defined by a stricter profile.</li>
+  <li>another source-aligned committed observation defined by a stricter observability profile.</li>
 </ul>
 
 <h3>11.2 No fabricated values</h3>
@@ -407,7 +420,7 @@ The semantic meaning remains the same in all cases: the display corresponds to t
 
 <p>
 If a watch retains only one last-known committed observation, the IDE MUST NOT imply that a full historical trace exists.
-A history exists only when the active profile explicitly supports one.
+A history exists only when the active observability profile explicitly supports one.
 </p>
 
 <hr/>
@@ -431,7 +444,7 @@ A watch MUST NOT display a value or state snapshot that contradicts the paused s
 <h3>12.3 Retained behavior</h3>
 
 <p>
-A stricter profile MAY allow a watch to retain its last-known observation after pause completion, normal completion, fault termination, or abort.
+A stricter observability profile MAY allow a watch to retain its last-known observation after pause completion, normal completion, fault termination, or abort.
 If retained behavior is supported, the IDE MUST distinguish clearly between:
 </p>
 
@@ -444,7 +457,7 @@ If retained behavior is supported, the IDE MUST distinguish clearly between:
 <h3>12.4 Instance association</h3>
 
 <p>
-A retained watch value SHOULD remain attributable to the live execution instance from which it was derived when the active profile exposes that distinction.
+A retained watch value SHOULD remain attributable to the live execution instance from which it was derived when the active observability profile exposes that distinction.
 An IDE MUST NOT silently conflate retained observations from unrelated instances.
 </p>
 
@@ -480,7 +493,7 @@ It is updated from source-aligned edge observations.
 <h3>14.2 Update rule</h3>
 
 <p>
-An edge watch SHOULD update when the watched edge receives a relevant <code>edge_value_available</code> observation or when an equivalent paused committed observation confirms the current edge value in the active profile.
+An edge watch SHOULD update when the watched edge receives a relevant <code>edge_value_available</code> observation or when an equivalent paused committed observation confirms the current edge value in the active observability profile.
 </p>
 
 <h3>14.3 Fan-out</h3>
@@ -549,7 +562,7 @@ For <code>frog.core.delay</code>, a local-memory watch SHOULD support at least t
 <ul>
   <li>the most recent observed state read when available,</li>
   <li>the most recent observed state update when available,</li>
-  <li>the current committed stored value in a paused snapshot when the active profile exposes it.</li>
+  <li>the current committed stored value in a paused snapshot when the active observability profile exposes it.</li>
 </ul>
 
 <h3>16.3 Local scope</h3>
@@ -584,14 +597,14 @@ Ordinary widget-related valueflow SHOULD be watched through the same canonical m
 <h3>17.2 Object-style widget interaction</h3>
 
 <p>
-Object-style widget interaction through <code>widget_reference</code>, <code>frog.ui.property_read</code>, <code>frog.ui.property_write</code>, and <code>frog.ui.method_invoke</code> MAY be watched through ordinary watched valueflow or through stricter-profile UI-oriented renderers.
+Object-style widget interaction through <code>widget_reference</code>, <code>frog.ui.property_read</code>, <code>frog.ui.property_write</code>, and <code>frog.ui.method_invoke</code> MAY be watched through ordinary watched valueflow or through UI-oriented renderers provided by a stricter observability profile.
 </p>
 
 <h3>17.3 UI sequencing</h3>
 
 <p>
 The <code>ui_in</code> / <code>ui_out</code> sequencing edges are not ordinary data-value edges.
-A stricter profile MAY allow watching such sequencing activity, but it MUST be interpreted as effect-order observation rather than ordinary value observation.
+A stricter observability profile MAY allow watching such sequencing activity, but it MUST be interpreted as effect-order observation rather than ordinary value observation.
 </p>
 
 <p>
@@ -606,7 +619,7 @@ When such watches are supported, they MUST remain aligned both with the source-f
 
 <p>
 A watch is created when the IDE attaches a new watch entry to a valid watch target.
-Creation MUST fail if the requested target is not valid in the active profile.
+Creation MUST fail if the requested target is not valid in the active observability profile.
 </p>
 
 <h3>18.2 Watch-entry states</h3>
@@ -647,7 +660,7 @@ A debugging-capable IDE SHOULD support at least:
 <h3>18.4 Optional management behavior</h3>
 
 <p>
-A stricter profile MAY additionally support:
+A stricter observability profile MAY additionally support:
 </p>
 
 <ul>
@@ -691,7 +704,7 @@ An IDE MAY present this information through:
 </ul>
 
 <p>
-A watch presentation MAY also allow expanding structured values into child fields or child elements when the active profile and available type information permit it.
+A watch presentation MAY also allow expanding structured values into child fields or child elements when the active observability profile and available type information permit it.
 This expansion behavior is optional in v0.1.
 </p>
 
@@ -700,10 +713,10 @@ This expansion behavior is optional in v0.1.
 <h2 id="validation-and-safety-rules">20. Validation and Safety Rules</h2>
 
 <ul>
-  <li>A watch MUST target a valid source-visible object supported by the active profile.</li>
+  <li>A watch MUST target a valid source-visible object supported by the active observability profile.</li>
   <li>A watch MUST NOT alter program execution semantics.</li>
   <li>A watch shown during pause MUST remain consistent with the paused execution snapshot exposed to the IDE.</li>
-  <li>A retained watch value MUST be clearly distinguishable from a live-updating value.</li>
+  <li>A retained watch value MUST be clearly distinguishable from a live-updating value and from a paused-snapshot value.</li>
   <li>A watch MUST NOT misrepresent a sequencing observation as an ordinary data value.</li>
   <li>A local-memory watch MUST respect node-instance-local scope.</li>
   <li>A watch MUST NOT imply arbitrary user-defined watch expressions unless a later stricter specification defines them.</li>
