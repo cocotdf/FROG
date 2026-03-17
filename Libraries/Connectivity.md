@@ -16,8 +16,8 @@
 <ul>
   <li><a href="#overview">1. Overview</a></li>
   <li><a href="#why-this-file-still-exists">2. Why this File Still Exists</a></li>
-  <li><a href="#architectural-reclassification">3. Architectural Reclassification</a></li>
-  <li><a href="#normative-home">4. Normative Home of <code>frog.connectivity</code></a></li>
+  <li><a href="#architectural-status">3. Architectural Status</a></li>
+  <li><a href="#normative-home">4. Normative Home</a></li>
   <li><a href="#what-did-not-change">5. What Did Not Change</a></li>
   <li><a href="#how-to-use-this-document">6. How to Use this Document</a></li>
   <li><a href="#summary">7. Summary</a></li>
@@ -32,22 +32,27 @@ This document is a <strong>transition note</strong> for the <code>frog.connectiv
 </p>
 
 <p>
-The <code>frog.connectivity.*</code> primitive family remains part of the FROG specification, but its
-normative architectural home is no longer the intrinsic <code>Libraries/</code> layer.
+The <code>frog.connectivity.*</code> capability family remains part of the <strong>standardized FROG specification surface</strong>,
+but it no longer belongs to the minimal intrinsic <code>Libraries/</code> core.
 </p>
 
 <p>
-The authoritative normative specification for this namespace is now defined in:
+Its authoritative normative home is now the <strong>Interop profile</strong>.
+</p>
+
+<p>
+Accordingly:
 </p>
 
 <ul>
-  <li><code>Profiles/Interop.md</code> — authoritative normative specification for the Interop profile primitive surface,</li>
-  <li><code>Profiles/Readme.md</code> — architectural definition of optional standardized capability families.</li>
+  <li><code>Profiles/Interop.md</code> is the primary normative specification for <code>frog.connectivity.*</code>,</li>
+  <li><code>Profiles/Readme.md</code> defines the architectural role of optional standardized capability families,</li>
+  <li>this file exists only to explain why <code>Connectivity.md</code> still appears under <code>Libraries/</code>.</li>
 </ul>
 
 <p>
-This file exists to make that transition explicit and easy to understand.
-It is intentionally short.
+This document is intentionally narrow.
+It is a routing and continuity note, not a second full specification.
 </p>
 
 <hr/>
@@ -66,26 +71,25 @@ This file is retained for:
 </ul>
 
 <p>
-In other words, this file remains here so that readers can quickly understand that:
+Its purpose is simple:
 </p>
 
 <pre>
 Libraries/Connectivity.md   -> transition note
-Profiles/Interop.md        -> normative specification
+Profiles/Interop.md         -> authoritative normative specification
 </pre>
 
 <p>
-This document is therefore <strong>not</strong> a second full specification.
-It is a redirection document with explicit architectural meaning.
+This file MUST NOT be treated as a competing normative source.
 </p>
 
 <hr/>
 
-<h2 id="architectural-reclassification">3. Architectural Reclassification</h2>
+<h2 id="architectural-status">3. Architectural Status</h2>
 
 <p>
-The change is not a removal of <code>frog.connectivity.*</code> from FROG.
-It is an <strong>architectural reclassification</strong>.
+The move of <code>frog.connectivity.*</code> out of the intrinsic library layer is an
+<strong>architectural reclassification</strong>, not a removal from FROG.
 </p>
 
 <p>
@@ -93,7 +97,7 @@ The repository now distinguishes more clearly between:
 </p>
 
 <ul>
-  <li><strong>intrinsic standard primitive vocabularies</strong> in <code>Libraries/</code>, and</li>
+  <li><strong>intrinsic standardized primitive vocabularies</strong> in <code>Libraries/</code>, and</li>
   <li><strong>optional standardized capability families</strong> in <code>Profiles/</code>.</li>
 </ul>
 
@@ -102,37 +106,27 @@ That distinction can be summarized as follows:
 </p>
 
 <pre>
-Intrinsic, portable, always-language-facing surface
+Intrinsic, portable, core language-facing surface
     -> Libraries/
 
-Optional, environment-dependent, ecosystem-facing capability surface
+Optional, environment-dependent, ecosystem-facing surface
     -> Profiles/
 </pre>
 
 <p>
-The <code>frog.connectivity.*</code> namespace defines an interoperability capability surface for interaction with:
-</p>
-
-<ul>
-  <li>foreign runtimes,</li>
-  <li>native or shared libraries,</li>
-  <li>managed platforms,</li>
-  <li>SQL-capable data systems.</li>
-</ul>
-
-<p>
-Because this capability surface depends on broader environment assumptions, it is now owned by the
-<strong>Interop profile</strong> rather than by the intrinsic library core.
+The <code>frog.connectivity.*</code> namespace belongs to the second category.
+It standardizes an interoperability capability surface that may depend on host environments,
+external runtimes, shared libraries, managed platforms, or data-system assumptions.
 </p>
 
 <p>
-This keeps <code>Libraries/</code> focused on intrinsic, portable primitive vocabularies and avoids turning
-the intrinsic library layer into a catch-all container for external ecosystem integration.
+Because of that architectural character, normative ownership now belongs to the
+<strong>Interop profile</strong> rather than to the intrinsic library core.
 </p>
 
 <hr/>
 
-<h2 id="normative-home">4. Normative Home of <code>frog.connectivity</code></h2>
+<h2 id="normative-home">4. Normative Home</h2>
 
 <p>
 Within the current FROG repository architecture:
@@ -147,11 +141,11 @@ IDE/          -> authoring and tooling responsibilities
 </pre>
 
 <p>
-Accordingly:
+Within that architecture:
 </p>
 
 <ul>
-  <li><code>Libraries/</code> owns intrinsic standard primitive vocabularies,</li>
+  <li><code>Libraries/</code> owns intrinsic standardized primitive vocabularies,</li>
   <li><code>Profiles/</code> owns optional standardized capability families,</li>
   <li><code>frog.connectivity.*</code> is normatively owned by the <strong>Interop profile</strong>.</li>
 </ul>
@@ -163,15 +157,14 @@ The authoritative normative home of <code>frog.connectivity.*</code> is therefor
 <pre><code>Profiles/Interop.md</code></pre>
 
 <p>
-It MUST be treated as the primary normative specification for:
+That document MUST be treated as the primary normative source for:
 </p>
 
 <ul>
-  <li>primitive catalog definition,</li>
-  <li>primitive ports,</li>
-  <li>typing rules,</li>
+  <li>the standardized primitive catalog,</li>
+  <li>primitive ports and types,</li>
   <li>validation rules,</li>
-  <li>capability claims,</li>
+  <li>profile support and capability claims,</li>
   <li>scope boundaries for standardized interop support.</li>
 </ul>
 
@@ -184,35 +177,22 @@ It MUST be treated as the primary normative specification for:
 <h2 id="what-did-not-change">5. What Did Not Change</h2>
 
 <p>
-This architectural reclassification does <strong>not</strong> rename the standardized primitive identifiers.
+This reclassification does <strong>not</strong> rename the namespace.
 </p>
 
 <p>
-The namespace remains:
+The standardized namespace remains:
 </p>
 
 <pre><code>frog.connectivity.*</code></pre>
 
 <p>
-Examples:
-</p>
-
-<ul>
-  <li><code>frog.connectivity.python.call_text</code></li>
-  <li><code>frog.connectivity.python.call_bytes</code></li>
-  <li><code>frog.connectivity.native.call_bytes</code></li>
-  <li><code>frog.connectivity.dotnet.call_text</code></li>
-  <li><code>frog.connectivity.sql.query_text</code></li>
-  <li><code>frog.connectivity.sql.execute</code></li>
-</ul>
-
-<p>
 Only the <strong>architectural ownership</strong> changes.
-The namespace identity itself remains stable.
+The namespace identity remains stable.
 </p>
 
 <p>
-This can be summarized simply:
+In simple terms:
 </p>
 
 <pre>
@@ -223,7 +203,7 @@ What changed:
 What did not change:
 - namespace prefix
 - primitive identifiers
-- FROG-level existence of the capability family
+- standardized existence of the capability family
 </pre>
 
 <hr/>
@@ -240,8 +220,7 @@ If you need to know:
 
 <ul>
   <li>which standardized interop primitives exist,</li>
-  <li>what their ports are,</li>
-  <li>how they are typed,</li>
+  <li>what ports and types they define,</li>
   <li>how they validate,</li>
   <li>what support claims an implementation may make,</li>
   <li>what belongs in scope or out of scope for standardized interop,</li>
@@ -258,20 +237,20 @@ This file SHOULD remain short and SHOULD NOT duplicate:
 </p>
 
 <ul>
-  <li>the detailed primitive catalog,</li>
-  <li>behavioral rules,</li>
-  <li>validation details,</li>
+  <li>the primitive catalog,</li>
+  <li>primitive-local behavioral details,</li>
+  <li>validation rules,</li>
   <li>examples already owned by the Interop profile specification,</li>
-  <li>profile support or capability-claim rules already defined there.</li>
+  <li>profile-support or capability-claim rules defined there.</li>
 </ul>
 
 <p>
-If future updates modify the standardized interop surface, those updates MUST be made in
-<code>Profiles/Interop.md</code> rather than here.
+If future revisions modify the standardized interop surface, those changes MUST be made in
+<code>Profiles/Interop.md</code>, not here.
 </p>
 
 <p>
-If a later repository phase makes this transition note unnecessary, it MAY be reduced further or removed
+If a later repository phase makes this transition note unnecessary, it MAY be reduced further or removed,
 once continuity and navigation concerns are no longer relevant.
 </p>
 
@@ -280,8 +259,8 @@ once continuity and navigation concerns are no longer relevant.
 <h2 id="summary">7. Summary</h2>
 
 <p>
-The <code>frog.connectivity.*</code> namespace remains part of the FROG specification, but it is now owned by the
-<strong>Interop profile</strong> rather than by the intrinsic library layer.
+The <code>frog.connectivity.*</code> namespace remains part of the standardized FROG specification surface,
+but it is now owned by the <strong>Interop profile</strong> rather than by the intrinsic library layer.
 </p>
 
 <p>
@@ -289,7 +268,7 @@ In short:
 </p>
 
 <ul>
-  <li><code>Libraries/</code> owns intrinsic standard primitive vocabularies,</li>
+  <li><code>Libraries/</code> owns intrinsic standardized primitive vocabularies,</li>
   <li><code>Profiles/</code> owns optional standardized capability families,</li>
   <li><code>frog.connectivity.*</code> remains stable as a namespace,</li>
   <li><code>Profiles/Interop.md</code> is the authoritative normative specification,</li>
@@ -306,7 +285,7 @@ Need the detailed interop specification?
         v
 Go to Profiles/Interop.md
 
-Need to understand why Connectivity is still listed under Libraries/?
+Need to understand why Connectivity still appears under Libraries/?
         |
         v
 Read this transition note
