@@ -5,7 +5,7 @@
 <h1 align="center">🐸 FROG IDE Probes Specification</h1>
 
 <p align="center">
-Definition of source-aligned probes for live execution inspection in a FROG IDE<br/>
+Definition of source-attached probes for execution inspection in a FROG IDE<br/>
 <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -15,29 +15,26 @@ Definition of source-aligned probes for live execution inspection in a FROG IDE<
 
 <ul>
   <li><a href="#overview">1. Overview</a></li>
-  <li><a href="#goals">2. Goals</a></li>
-  <li><a href="#scope-for-v01">3. Scope for v0.1</a></li>
-  <li><a href="#relation-with-other-specifications">4. Relation with Other Specifications</a></li>
-  <li><a href="#design-principles">5. Design Principles</a></li>
-  <li><a href="#what-a-probe-is">6. What a Probe Is</a></li>
-  <li><a href="#probes-vs-watches">7. Probes vs Watches</a></li>
-  <li><a href="#probe-attachment-model">8. Probe Attachment Model</a></li>
-  <li><a href="#canonical-probe-kinds">9. Canonical Probe Kinds</a></li>
-  <li><a href="#probe-lifecycle">10. Probe Lifecycle</a></li>
-  <li><a href="#value-capture-semantics">11. Value Capture Semantics</a></li>
-  <li><a href="#live-paused-and-retained-views">12. Live, Paused, and Retained Views</a></li>
-  <li><a href="#edge-probes">13. Edge Probes</a></li>
-  <li><a href="#node-port-probes">14. Node-Port Probes</a></li>
-  <li><a href="#local-memory-probes">15. Local-Memory Probes</a></li>
-  <li><a href="#ui-related-probes">16. UI-Related Probes</a></li>
-  <li><a href="#probe-presentation-model">17. Probe Presentation Model</a></li>
-  <li><a href="#probe-management">18. Probe Management</a></li>
-  <li><a href="#custom-and-type-specific-probes">19. Custom and Type-Specific Probes</a></li>
-  <li><a href="#validation-and-safety-rules">20. Validation and Safety Rules</a></li>
-  <li><a href="#illustrative-examples">21. Illustrative Examples</a></li>
-  <li><a href="#out-of-scope-for-v01">22. Out of Scope for v0.1</a></li>
-  <li><a href="#summary">23. Summary</a></li>
-  <li><a href="#license">24. License</a></li>
+  <li><a href="#scope-for-v01">2. Scope for v0.1</a></li>
+  <li><a href="#architectural-position-and-dependencies">3. Architectural Position and Dependencies</a></li>
+  <li><a href="#design-principles">4. Design Principles</a></li>
+  <li><a href="#probe-model">5. Probe Model</a></li>
+  <li><a href="#probes-vs-watches">6. Probes vs Watches</a></li>
+  <li><a href="#probe-target-model">7. Probe Target Model</a></li>
+  <li><a href="#probe-kinds">8. Probe Kinds</a></li>
+  <li><a href="#probe-lifecycle-and-states">9. Probe Lifecycle and States</a></li>
+  <li><a href="#observation-semantics">10. Observation Semantics</a></li>
+  <li><a href="#live-paused-and-retained-views">11. Live, Paused, and Retained Views</a></li>
+  <li><a href="#edge-probes">12. Edge Probes</a></li>
+  <li><a href="#port-probes">13. Port Probes</a></li>
+  <li><a href="#local-memory-probes">14. Local-Memory Probes</a></li>
+  <li><a href="#ui-related-probes">15. UI-Related Probes</a></li>
+  <li><a href="#presentation-and-management">16. Presentation and Management</a></li>
+  <li><a href="#validation-and-safety-rules">17. Validation and Safety Rules</a></li>
+  <li><a href="#illustrative-examples">18. Illustrative Examples</a></li>
+  <li><a href="#out-of-scope-for-v01">19. Out of Scope for v0.1</a></li>
+  <li><a href="#summary">20. Summary</a></li>
+  <li><a href="#license">21. License</a></li>
 </ul>
 
 <hr/>
@@ -45,37 +42,49 @@ Definition of source-aligned probes for live execution inspection in a FROG IDE<
 <h2 id="overview">1. Overview</h2>
 
 <p>
-This document defines the probe model of a FROG IDE.
-A probe is an IDE-side inspection object attached to a source-visible execution object so that a user can observe values or source-aligned execution state during or after a live execution.
+This document defines the <strong>probe model</strong> of a FROG IDE.
+A probe is an <strong>IDE-managed, source-attached inspection object</strong> associated with one
+source-visible execution target so that a user can inspect source-aligned execution observations.
 </p>
 
 <p>
-In FROG, probes are part of the debugging and inspection layer.
-They do not redefine execution semantics.
-They consume source-aligned execution observability and present that information in a form suitable for interactive inspection.
+A probe does <strong>not</strong> redefine execution semantics.
+It consumes the source-aligned observability already exposed to the IDE and presents that information
+in a local inspection form suitable for diagram-centric workflows.
 </p>
 
 <p>
-The primary purpose of a probe is to make runtime behavior understandable at the level of the diagram and related source-visible execution objects.
-For v0.1, the canonical probe model is centered on values flowing through edges, with additional probe forms for ports, local memory, and certain UI-related execution objects.
+For FROG v0.1, probes are primarily designed to make ordinary dataflow understandable at the level of:
 </p>
-
-<hr/>
-
-<h2 id="goals">2. Goals</h2>
 
 <ul>
-  <li><strong>Inspectability</strong> — allow users to observe dataflow values and selected source-level execution state.</li>
-  <li><strong>Source alignment</strong> — keep probes attached to source-visible objects rather than runtime-private artifacts.</li>
-  <li><strong>Debugging support</strong> — make probes usable together with pause, resume, breakpoints, and stepping.</li>
-  <li><strong>Deterministic meaning</strong> — ensure that probed values correspond to committed source-level execution state.</li>
-  <li><strong>Clear layering</strong> — keep probes distinct from centralized watch entries and from execution semantics themselves.</li>
-  <li><strong>Extensibility</strong> — allow richer type-specific or custom probes later without changing the base semantics.</li>
+  <li>edges,</li>
+  <li>node ports when needed,</li>
+  <li>local-memory state when supported,</li>
+  <li>certain UI-related execution objects under compatible observability support.</li>
 </ul>
+
+<pre><code>execution-facing systems
+        |
+        v
+execution observability
+        |
+        +-----------+-----------+
+        |                       |
+        v                       v
+   local probe             centralized watch
+ source-attached         persistent list entry
+ diagram-centric         monitoring-centric
+</code></pre>
+
+<p>
+A probe therefore belongs to the <strong>IDE inspection layer</strong>.
+It may be used together with debugging, but it is not itself a debugger control object.
+</p>
 
 <hr/>
 
-<h2 id="scope-for-v01">3. Scope for v0.1</h2>
+<h2 id="scope-for-v01">2. Scope for v0.1</h2>
 
 <p>
 For FROG v0.1, this document standardizes:
@@ -83,114 +92,148 @@ For FROG v0.1, this document standardizes:
 
 <ul>
   <li>what a probe is,</li>
-  <li>which source-level objects may be probed,</li>
-  <li>the canonical probe kinds,</li>
-  <li>the meaning of last-known committed observations,</li>
-  <li>the distinction between live, paused, and retained views,</li>
+  <li>which source-visible execution objects may be probed,</li>
+  <li>the minimum probe baseline and optional standardized probe kinds,</li>
+  <li>the meaning of the last-known committed observation,</li>
+  <li>the distinction between live, paused, and retained probe views,</li>
   <li>minimal probe-management behavior.</li>
 </ul>
 
 <p>
-FROG v0.1 does <strong>not</strong> standardize:
+This document does <strong>not</strong> standardize:
 </p>
 
 <ul>
-  <li>a specific probe window user interface,</li>
-  <li>conditional probe break semantics,</li>
+  <li>a specific probe window layout,</li>
+  <li>conditional break behavior driven by probes,</li>
   <li>watch expressions,</li>
-  <li>time-series graph widgets for every type,</li>
+  <li>a mandatory history buffer for every probe,</li>
+  <li>time-series visualization for every type,</li>
   <li>distributed multi-runtime probe coordination,</li>
-  <li>reverse-time value inspection,</li>
-  <li>a mandatory value-serialization format for every runtime.</li>
+  <li>reverse-time probe inspection,</li>
+  <li>a mandatory serialization format for all values.</li>
 </ul>
 
 <hr/>
 
-<h2 id="relation-with-other-specifications">4. Relation with Other Specifications</h2>
+<h2 id="architectural-position-and-dependencies">3. Architectural Position and Dependencies</h2>
+
+<h3>3.1 Repository position</h3>
 
 <p>
-This document complements the following specifications:
+This document belongs in <code>IDE/</code> because it defines how an IDE inspects execution through
+source-attached probe objects.
+It does <strong>not</strong> belong to <code>Language/</code> because it does not own execution meaning.
+</p>
+
+<h3>3.2 Dependencies</h3>
+
+<p>
+This document depends on the following specifications:
 </p>
 
 <ul>
-  <li><code>IDE/Readme.md</code> — defines the role of execution observability, debugging, probes, and watches within the IDE architecture.</li>
-  <li><code>IDE/Execution observability.md</code> — defines the source-aligned observable execution projection from which probe values are derived.</li>
-  <li><code>IDE/Debugging.md</code> — defines pause, resume, breakpoints, and stepping behavior used together with probes.</li>
-  <li><code>IDE/Watch.md</code> — defines persistent centralized inspection and the distinction between watches and probes.</li>
-  <li><code>Expression/Diagram.md</code> — defines nodes, ports, edges, and executable graph structure.</li>
-  <li><code>Expression/State and cycles.md</code> — defines the source-facing representation of local-memory constructs and cycle-facing source constraints.</li>
-  <li><code>Expression/Widget interaction.md</code> — defines explicit UI sequencing through <code>ui_in</code> and <code>ui_out</code>.</li>
-  <li><code>Language/Execution model.md</code> — defines execution context, committed source-level state, and instance-relative execution meaning consumed by probes.</li>
-  <li><code>Language/Execution control and observation boundaries.md</code> — defines safe observation points and pause-consistent snapshots that probes must respect.</li>
-  <li><code>Language/State and cycles.md</code> — defines the normative execution semantics of local memory and valid feedback behavior.</li>
-  <li><code>Libraries/Core.md</code> — defines the standardized primitive identity and primitive-local behavior of <code>frog.core.delay</code>.</li>
-  <li><code>Libraries/UI.md</code> — defines standardized executable UI interaction primitives.</li>
+  <li><code>IDE/Readme.md</code> — architectural role of observability, debugging, probes, and watches in the IDE layer,</li>
+  <li><code>IDE/Execution observability.md</code> — source-aligned observable projection consumed by probes,</li>
+  <li><code>IDE/Debugging.md</code> — pause, resume, stepping, and breakpoint behavior used together with probes,</li>
+  <li><code>IDE/Watch.md</code> — centralized persistent inspection behavior distinct from probes,</li>
+  <li><code>Expression/Diagram.md</code> — canonical node, port, and edge representation,</li>
+  <li><code>Expression/State and cycles.md</code> — source-facing local-memory representation,</li>
+  <li><code>Expression/Widget interaction.md</code> — explicit UI sequencing through <code>ui_in</code> and <code>ui_out</code>,</li>
+  <li><code>Language/Execution model.md</code> — execution context and committed source-level execution meaning,</li>
+  <li><code>Language/Execution control and observation boundaries.md</code> — safe observation boundaries and pause-consistent snapshots,</li>
+  <li><code>Language/State and cycles.md</code> — normative local-memory and cycle behavior,</li>
+  <li><code>Libraries/Core.md</code> — primitive-local behavior such as <code>frog.core.delay</code>,</li>
+  <li><code>Libraries/UI.md</code> — standardized executable UI interaction primitives.</li>
 </ul>
 
-<p>
-This document does not redefine execution semantics, execution-model ownership, primitive-local behavior, or debugging controls.
-It defines how probes attach to source-visible execution objects and what probed observations mean.
-</p>
+<h3>3.3 Ownership boundary</h3>
 
 <p>
-Accordingly:
+If a conflict appears, the following ownership rules apply:
 </p>
 
 <ul>
-  <li><code>Expression/</code> remains authoritative for source-visible targets and source identity,</li>
-  <li><code>Language/</code> remains authoritative for normative execution semantics, execution context, committed source-level state, and safe observation boundaries,</li>
-  <li><code>Libraries/</code> remain authoritative for primitive identity, ports, required metadata, and primitive-local behavior,</li>
-  <li><code>IDE/Debugging.md</code> remains authoritative for pause, resume, breakpoint, and stepping controls,</li>
-  <li><code>IDE/Watch.md</code> remains authoritative for persistent centralized watch behavior,</li>
+  <li><code>Expression/</code> remains authoritative for source-visible targets and canonical source identity,</li>
+  <li><code>Language/</code> remains authoritative for execution meaning, committed state, and safe observation boundaries,</li>
+  <li><code>Libraries/</code> remain authoritative for primitive-local meaning and primitive surfaces,</li>
+  <li><code>IDE/Debugging.md</code> remains authoritative for debugger controls,</li>
+  <li><code>IDE/Watch.md</code> remains authoritative for centralized persistent watch behavior,</li>
   <li><code>IDE/Probes.md</code> remains authoritative only for source-attached probe behavior and meaning.</li>
 </ul>
 
+<pre><code>Expression/
+    owns what is source-visible and serializable
+
+Language/
+    owns what execution means and when it is safe to observe
+
+Libraries/
+    own primitive-local executable meaning
+
+IDE/Execution observability.md
+    owns the observable projection exposed to tools
+
+IDE/Probes.md
+    owns local source-attached inspection behavior
+</code></pre>
+
 <hr/>
 
-<h2 id="design-principles">5. Design Principles</h2>
+<h2 id="design-principles">4. Design Principles</h2>
 
-<h3>5.1 Source-visible attachment</h3>
+<h3>4.1 Source-attached inspection</h3>
 
 <p>
-A probe MUST attach to a source-visible execution object such as an edge, a node port, a local-memory slot, or another explicitly standardized probe target.
-A probe MUST NOT require the user to understand runtime-private buffers or scheduler internals.
+A probe MUST attach to a source-visible execution target.
+A probe MUST NOT require the user to understand runtime-private buffers, queues, or scheduler artifacts.
 </p>
 
-<h3>5.2 Non-intrusive observation</h3>
+<h3>4.2 Non-intrusive observation</h3>
 
 <p>
 A standard probe MUST NOT change program semantics.
-Adding or removing a probe MUST NOT alter the meaning of the FROG graph.
+Adding, removing, opening, or closing a probe MUST NOT alter the meaning of the FROG graph.
 </p>
 
-<h3>5.3 Committed observations only</h3>
+<h3>4.3 Committed observations only</h3>
 
 <p>
-Probe-visible values MUST correspond to committed source-level execution state.
-A probe MUST NOT present speculative or half-committed source values as stable observations.
+Probe-visible values or states MUST correspond to committed source-level observations.
+A probe MUST NOT present speculative, half-updated, or otherwise incoherent source meaning as stable.
 </p>
 
-<h3>5.4 Dataflow-first design</h3>
+<h3>4.4 Dataflow-first model</h3>
 
 <p>
-Because FROG is dataflow-based, the canonical first-class probe target in v0.1 is the <strong>edge</strong>.
-This preserves the natural debugging model of observing values as they become available in the graph.
+Because FROG is dataflow-based, the canonical first-class probe target in v0.1 is the
+<strong>source edge</strong>.
+This preserves the natural inspection model of observing values as they become available in the graph.
 </p>
 
-<h3>5.5 Local rather than centralized inspection</h3>
+<h3>4.5 Local rather than centralized inspection</h3>
 
 <p>
-A probe is a source-attached local inspection object.
+A probe is defined by <strong>local source attachment</strong>.
 It is not the same thing as a centralized persistent watch entry.
-The base probe model therefore emphasizes attachment to a local source target rather than aggregation into a global watch list.
+A probe MAY be rendered inline, near its target, or in a detachable local view,
+but its semantic identity remains target-local.
 </p>
 
-<h3>5.6 Capability profiles and observability profiles remain distinct</h3>
+<h3>4.6 Debug-compatible but not debug-owned</h3>
 
 <p>
-The repository uses <code>Profiles/</code> for optional standardized capability families.
-This document may also need to refer to stronger or weaker probe support.
-These are different concerns.
+Probes MAY be used during free-running execution, during a paused debug session,
+or in a retained post-execution view when supported.
+They are compatible with debugging, but they are not owned by the debugger command model.
+</p>
+
+<h3>4.7 Capability profiles and observability profiles remain distinct</h3>
+
+<p>
+The repository uses <code>Profiles/</code> for optional standardized executable capability families.
+This document may also refer to stronger or weaker probe support through observability support.
+These notions MUST NOT be conflated.
 </p>
 
 <ul>
@@ -198,161 +241,195 @@ These are different concerns.
   <li>an observability profile defines how much source-aligned execution detail is exposed to probes.</li>
 </ul>
 
-<h3>5.7 Minimal but extensible</h3>
+<h3>4.8 Minimal but extensible</h3>
 
 <p>
-The v0.1 probe model is intentionally minimal.
-Stricter observability profiles MAY add richer displays, deeper value views, specialized visualizations, or custom-probe registration mechanisms, provided that the base semantic meaning remains preserved.
+FROG v0.1 defines a minimal probe core.
+Stronger observability support MAY expose richer rendering, richer history, type-specific visualization,
+or custom probe forms, provided that the base semantic meaning remains preserved.
 </p>
 
 <hr/>
 
-<h2 id="what-a-probe-is">6. What a Probe Is</h2>
+<h2 id="probe-model">5. Probe Model</h2>
+
+<h3>5.1 Definition</h3>
 
 <p>
-A probe is an IDE-managed inspection object associated with one source-level target.
-It receives source-aligned observable execution information and presents a user-facing view of that information.
+A probe is an IDE-managed inspection object associated with exactly one primary target.
+It receives compatible source-aligned observations and presents a user-facing inspection view of them.
 </p>
 
+<h3>5.2 Conceptual fields</h3>
+
 <p>
-Conceptually, a probe has:
+Conceptually, a probe contains:
 </p>
 
 <ul>
   <li>a probe identifier,</li>
-  <li>a target object,</li>
-  <li>a display strategy,</li>
+  <li>a primary target,</li>
+  <li>a probe kind,</li>
   <li>a current probe-entry state,</li>
-  <li>a last-known observed value or state snapshot when available,</li>
-  <li>optional execution-context metadata for the most recent relevant observation.</li>
+  <li>a last-known compatible observation when available,</li>
+  <li>the relevant execution context for that observation when needed,</li>
+  <li>an IDE-chosen display strategy.</li>
 </ul>
 
+<h3>5.3 Outside the canonical source</h3>
+
 <p>
-A probe is not itself part of the FROG Expression.
-It is an IDE/runtime inspection construct layered over a live execution or a retained post-execution view.
-It is also distinct from a watch entry, which belongs to a centralized persistent watch view.
+A probe is not part of the canonical FROG Expression.
+It is an IDE-side inspection construct layered over execution observability or retained post-execution inspection.
+Creating or removing a probe MUST NOT modify the source program.
 </p>
 
 <hr/>
 
-<h2 id="probes-vs-watches">7. Probes vs Watches</h2>
+<h2 id="probes-vs-watches">6. Probes vs Watches</h2>
 
 <p>
-Probes and watches consume the same source-aligned observability space, but they are optimized for different inspection workflows.
+Probes and watches consume the same underlying observability space, but they serve different workflows.
 </p>
 
-<pre>
-same underlying execution observations
-                |
-        +-------+--------+
-        |                |
-        v                v
-   local probe       centralized watch
-   source-attached   persistent list entry
-   diagram-centric   monitoring-centric
-   nearby context    cross-navigation context
-</pre>
+<pre><code>same underlying observations
+        |
+        +----------------------+----------------------+
+        |                                             |
+        v                                             v
+      probe                                         watch
+  local attachment                           centralized persistence
+  target-centric                              list-centric
+  diagram-centric                          monitoring-centric
+</code></pre>
 
-<h3>7.1 Probe</h3>
+<h3>6.1 Probe</h3>
 
 <p>
-A probe is primarily local and source-attached.
-It is commonly used near the target being inspected and is naturally associated with diagram-centric workflows.
+A probe is primarily local and target-centric.
+It is typically used near the source-visible object being inspected and is naturally diagram-centric.
 </p>
 
-<h3>7.2 Watch</h3>
+<h3>6.2 Watch</h3>
 
 <p>
 A watch is primarily persistent and centralized.
-It is designed to keep important observations visible across navigation, stepping, and broader inspection workflows.
+It belongs to a watch list or equivalent IDE-managed collection intended for cross-navigation and longer-lived monitoring.
 </p>
 
-<h3>7.3 Relationship</h3>
+<h3>6.3 Relationship</h3>
 
 <p>
 An IDE MAY allow:
 </p>
 
 <ul>
-  <li>creating a probe directly from a source target,</li>
-  <li>creating a watch directly from a source target,</li>
-  <li>creating a watch from an existing probe,</li>
+  <li>creating a probe from a source target,</li>
+  <li>creating a watch from a source target,</li>
+  <li>creating a watch from an existing probe target,</li>
   <li>creating a probe from an existing watch target.</li>
 </ul>
 
 <p>
 However, a probe MUST NOT be treated as merely a differently rendered watch.
-Its defining property is local source attachment.
+Its defining property is source attachment.
 </p>
 
 <hr/>
 
-<h2 id="probe-attachment-model">8. Probe Attachment Model</h2>
+<h2 id="probe-target-model">7. Probe Target Model</h2>
+
+<h3>7.1 General rule</h3>
 
 <p>
-A probe MUST be attached to exactly one primary target.
-For v0.1, a primary target MAY be:
+A probe MUST attach to exactly one primary source-visible target.
+For v0.1, a primary probe target MAY be:
 </p>
 
 <ul>
-  <li>an edge,</li>
-  <li>a node input port,</li>
-  <li>a node output port,</li>
+  <li>a source edge,</li>
+  <li>a source node input port,</li>
+  <li>a source node output port,</li>
   <li>a local-memory slot owned by a local-memory node instance,</li>
-  <li>a UI-sequencing edge in a stricter observability profile.</li>
+  <li>a stricter-profile target that remains source-visible and semantically well-defined.</li>
 </ul>
 
+<h3>7.2 Execution context</h3>
+
 <p>
-A probe MAY also be associated with contextual execution information such as:
+When repeated observations of the same target would otherwise be ambiguous,
+a probe MUST preserve sufficient execution context to disambiguate them.
+Relevant context MAY include:
 </p>
 
 <ul>
-  <li>sub-FROG call stack,</li>
+  <li>execution instance identity,</li>
+  <li>sub-FROG stack,</li>
   <li>structure nesting,</li>
-  <li>selected region,</li>
-  <li>loop iteration index,</li>
-  <li>activation identifier.</li>
+  <li>selected region identity,</li>
+  <li>loop iteration identity,</li>
+  <li>activation identity.</li>
 </ul>
 
+<h3>7.3 Target-local meaning</h3>
+
 <p>
-This context is necessary so that the IDE can distinguish repeated observations of the same source object across iterations, structure activations, and nested sub-FROG calls.
+A probe target defines <strong>where</strong> inspection is attached.
+The active observability profile defines <strong>how much</strong> compatible observation can actually be exposed for that target.
 </p>
 
-<pre>
-probe entry
+<pre><code>probe entry
   ├── primary target
   │     └── edge / port / local_memory / stricter-profile target
   ├── latest compatible observation
   │     └── committed value or committed state snapshot
   └── execution context
+        ├── instance
         ├── subfrog stack
         ├── structure stack
         ├── selected region
         ├── iteration
         └── activation id
-</pre>
+</code></pre>
 
 <hr/>
 
-<h2 id="canonical-probe-kinds">9. Canonical Probe Kinds</h2>
+<h2 id="probe-kinds">8. Probe Kinds</h2>
+
+<h3>8.1 Minimum baseline</h3>
 
 <p>
-The canonical probe kinds for FROG v0.1 are:
+For FROG v0.1, the <strong>minimum probe baseline</strong> requires support for:
 </p>
 
 <ul>
-  <li><code>edge_probe</code> — attached to one source edge,</li>
-  <li><code>port_probe</code> — attached to one source node port,</li>
-  <li><code>local_memory_probe</code> — attached to one local-memory slot owned by a node instance.</li>
+  <li><code>edge_probe</code></li>
 </ul>
 
 <p>
-Among these, <code>edge_probe</code> is the primary and most important probe kind for v0.1.
-It is the canonical probe form for ordinary dataflow inspection.
+This is the only required probe kind for a minimal conforming probe implementation.
 </p>
 
+<h3>8.2 Optional standardized probe kinds</h3>
+
 <p>
-A stricter observability profile MAY additionally support:
+FROG v0.1 additionally standardizes the following optional probe kinds:
+</p>
+
+<ul>
+  <li><code>port_probe</code>,</li>
+  <li><code>local_memory_probe</code>.</li>
+</ul>
+
+<p>
+These kinds are standardized so that compatible implementations can expose the same meanings,
+but they are not part of the minimum baseline.
+</p>
+
+<h3>8.3 Stronger-profile additions</h3>
+
+<p>
+A stronger observability profile MAY additionally support:
 </p>
 
 <ul>
@@ -361,30 +438,37 @@ A stricter observability profile MAY additionally support:
   <li><code>custom_probe</code>.</li>
 </ul>
 
-<hr/>
-
-<h2 id="probe-lifecycle">10. Probe Lifecycle</h2>
-
-<h3 id="creation">10.1 Creation</h3>
+<h3>8.4 Priority of ordinary dataflow inspection</h3>
 
 <p>
-A probe is created when the IDE attaches a new probe object to a valid source-level target.
-Probe creation MUST fail if the requested target is not a valid probe target in the active observability profile.
+Among all probe forms, <code>edge_probe</code> is the canonical and most important probe kind for v0.1.
+It is the primary inspection form for ordinary dataflow values.
 </p>
 
-<h3 id="probe-entry-states">10.2 Probe-entry states</h3>
+<hr/>
+
+<h2 id="probe-lifecycle-and-states">9. Probe Lifecycle and States</h2>
+
+<h3>9.1 Creation</h3>
+
+<p>
+A probe is created when the IDE attaches a new probe object to a valid target.
+Creation MUST fail if the requested target is not a valid probe target under the active observability support.
+</p>
+
+<h3>9.2 Probe-entry states</h3>
 
 <p>
 A probe MAY conceptually be in one of the following states:
 </p>
 
 <ul>
-  <li><code>created</code> — probe exists but has not yet observed any compatible execution activity,</li>
-  <li><code>live</code> — probe is currently receiving live updates from a running execution instance,</li>
-  <li><code>paused</code> — probe reflects a paused consistent snapshot,</li>
-  <li><code>retained</code> — probe is showing the most recent retained value after execution,</li>
-  <li><code>unavailable</code> — probe target exists but no compatible value or state snapshot is currently available,</li>
-  <li><code>closed</code> — probe has been removed.</li>
+  <li><code>created</code> — the probe exists but has not yet received a compatible observation,</li>
+  <li><code>live</code> — the probe is receiving live execution updates,</li>
+  <li><code>paused</code> — the probe reflects a paused consistent snapshot,</li>
+  <li><code>retained</code> — the probe shows a retained post-execution observation when supported,</li>
+  <li><code>unavailable</code> — the target exists but no compatible observation is currently available,</li>
+  <li><code>closed</code> — the probe has been removed.</li>
 </ul>
 
 <p>
@@ -392,43 +476,46 @@ These are probe-entry states.
 They MUST NOT be confused with the execution state of the underlying live instance.
 </p>
 
-<h3 id="removal">10.3 Removal</h3>
+<h3>9.3 Removal</h3>
 
 <p>
-Removing a probe MUST affect only the inspection layer.
-It MUST NOT alter the program graph, execution semantics, or source representation.
+Removing a probe affects only the inspection layer.
+It MUST NOT alter the graph, execution semantics, source identity, or debugger control state.
 </p>
 
 <hr/>
 
-<h2 id="value-capture-semantics">11. Value Capture Semantics</h2>
+<h2 id="observation-semantics">10. Observation Semantics</h2>
 
-<h3>11.1 General rule</h3>
+<h3>10.1 General rule</h3>
 
 <p>
 A probe does not invent values.
-It displays values or execution state only when those values or states become available through the source-aligned observability model.
+It displays values or source-aligned state only when those observations become available through the observability model exposed to the IDE.
 </p>
 
-<h3>11.2 Last-known committed observation</h3>
+<h3>10.2 Last-known committed observation</h3>
 
 <p>
-For v0.1, the primary semantic value model of a probe is the <strong>last-known committed observation</strong>.
-This means the most recent committed source-level value or state snapshot observed for the probe target in the relevant execution context.
+For v0.1, the primary semantic model of a probe is the
+<strong>last-known committed observation</strong>.
+This means the most recent committed source-level value or state snapshot observed for the probe target
+in the relevant execution context.
 </p>
 
-<h3>11.3 Multiple observations</h3>
+<h3>10.3 Multiple observations over time</h3>
 
 <p>
-If a probe target receives multiple compatible observations over time, the base v0.1 model requires that the probe be able to show at least the most recent one.
-A stricter observability profile MAY additionally keep a bounded history or a richer time-series representation.
+If a probe target receives multiple compatible observations over time, the base v0.1 model requires that the probe
+be able to show at least the most recent one.
+A stronger profile MAY additionally retain a bounded history or a richer time-oriented representation.
 </p>
 
-<h3>11.4 Value previews and full values</h3>
+<h3>10.4 Value previews and full values</h3>
 
 <p>
 A runtime is not required to expose a fully materialized value for every observation.
-A probe MAY display:
+A probe MAY therefore display:
 </p>
 
 <ul>
@@ -439,23 +526,27 @@ A probe MAY display:
 </ul>
 
 <p>
-Whatever rendering strategy is used, the semantic meaning MUST remain that the probe refers to the last-known committed source-level observation for its target.
+Whatever rendering strategy is used, the semantic meaning MUST remain that the probe refers to a compatible
+committed observation for its target.
 </p>
 
-<h3>11.5 No fabricated values</h3>
+<h3>10.5 No fabricated values</h3>
 
 <p>
 If no compatible committed observation exists yet, the probe MUST remain unavailable rather than implying that a value exists.
 </p>
 
+<h3>10.6 No fabricated history</h3>
+
+<p>
+A probe MUST NOT imply that a full historical sequence exists unless such history is actually preserved by the active observability support.
+</p>
+
 <hr/>
 
-<h2 id="live-paused-and-retained-views">12. Live, Paused, and Retained Views</h2>
+<h2 id="live-paused-and-retained-views">11. Live, Paused, and Retained Views</h2>
 
-<h3>12.1 General model</h3>
-
-<pre>
-running execution
+<pre><code>running execution
       |
       ├── compatible committed observation arrives
       |        └── probe may update live
@@ -464,66 +555,63 @@ running execution
       |        └── probe must match paused snapshot
       |
       └── execution ends
-               └── probe may become retained if profile allows
-</pre>
+               └── probe may become retained if supported
+</code></pre>
 
-<h3>12.2 Live view</h3>
+<h3>11.1 Live view</h3>
 
 <p>
-During a running execution, a probe MAY update continuously as new compatible source-aligned observations become available.
-The exact UI refresh strategy is implementation-defined.
+During a running execution, a probe MAY update as new compatible committed observations become available.
+The exact refresh cadence is implementation-defined.
 </p>
 
-<h3>12.3 Paused view</h3>
+<h3>11.2 Paused view</h3>
 
 <p>
-When a debug session is paused, probe values MUST reflect the causally consistent paused snapshot exposed to the IDE.
-A probe MUST NOT show values that contradict the paused execution view.
+When a debug session is paused, probe-visible information MUST match the paused execution snapshot exposed to the IDE.
+A probe MUST NOT show values or state that contradict the paused source-level view.
 </p>
 
-<h3>12.4 Retained view</h3>
+<h3>11.3 Retained view</h3>
 
 <p>
-A stricter observability profile MAY support retained probe values after a run has completed, faulted, aborted, or paused.
-In that case, a probe MAY continue displaying the most recent retained observation even when execution is no longer live.
+A stronger observability profile MAY support retained probe values after execution has completed, faulted, aborted, or otherwise ended.
+If retained values are supported, the IDE MUST clearly distinguish them from:
 </p>
 
-<p>
-Retained values are optional in v0.1.
-If they are supported, the IDE MUST clearly distinguish retained values from live-updating values and from paused-snapshot values.
-</p>
+<ul>
+  <li>live-updating values,</li>
+  <li>paused-snapshot values.</li>
+</ul>
 
-<h3>12.5 No fabricated history</h3>
-
-<p>
-If retained values are supported, the IDE MUST NOT imply that a full historical sequence exists unless such history is actually preserved by the active observability profile.
-</p>
-
-<h3>12.6 Instance association</h3>
+<h3>11.4 Instance association</h3>
 
 <p>
-A retained probe value SHOULD remain attributable to the live execution instance from which it was derived when the active observability profile exposes that distinction.
+When retained behavior is supported, a retained observation SHOULD remain attributable to the execution instance
+from which it was derived.
 An IDE MUST NOT silently conflate retained observations from unrelated instances.
 </p>
 
 <hr/>
 
-<h2 id="edge-probes">13. Edge Probes</h2>
+<h2 id="edge-probes">12. Edge Probes</h2>
 
-<h3>13.1 Role</h3>
-
-<p>
-An <code>edge_probe</code> is attached to a single source edge.
-It is the canonical probe type for observing ordinary dataflow in FROG.
-</p>
-
-<h3>13.2 Trigger</h3>
+<h3>12.1 Role</h3>
 
 <p>
-An edge probe is updated when the probe target receives an observable <code>edge_value_available</code> event in the current execution context, or when an equivalent paused committed observation confirms the current edge value in the active observability profile.
+An <code>edge_probe</code> is attached to one source edge.
+It is the canonical probe kind for ordinary dataflow inspection in FROG.
 </p>
 
-<h3>13.3 Meaning</h3>
+<h3>12.2 Update trigger</h3>
+
+<p>
+An edge probe is updated when the target edge receives a compatible observable
+<code>edge_value_available</code> observation in the relevant execution context,
+or when an equivalent paused committed observation confirms the current edge value.
+</p>
+
+<h3>12.3 Meaning</h3>
 
 <p>
 The meaning of an edge probe is:
@@ -531,34 +619,36 @@ The meaning of an edge probe is:
 
 <pre><code>show the last-known committed value
 that became available on this source edge
-in the relevant execution context</code></pre>
+in the relevant execution context
+</code></pre>
 
-<h3>13.4 Fan-out</h3>
+<h3>12.4 Fan-out</h3>
 
 <p>
 If one source output fans out to multiple edges, each edge MAY have its own probe.
-This is correct because source-level inspection is naturally edge-based, even if the runtime internally optimizes fan-out.
+This is correct because source-level inspection is naturally edge-based even if the runtime internally optimizes fan-out.
 </p>
 
-<h3>13.5 Context-sensitive repeated values</h3>
+<h3>12.5 Repeated dynamic contexts</h3>
 
 <p>
-If the same edge is activated across different loop iterations or nested execution contexts, the probe SHOULD remain aware of that context.
-A stricter observability profile MAY show iteration metadata or a context stack together with the displayed value.
+If the same edge is activated across different iterations or nested scopes,
+the probe SHOULD preserve the relevant context.
+A stronger profile MAY show iteration metadata or a visible context stack together with the displayed value.
 </p>
 
 <hr/>
 
-<h2 id="node-port-probes">14. Node-Port Probes</h2>
+<h2 id="port-probes">13. Port Probes</h2>
 
-<h3>14.1 Purpose</h3>
+<h3>13.1 Purpose</h3>
 
 <p>
 A <code>port_probe</code> is attached to a specific source node port rather than to a full edge.
-This is useful when the IDE wishes to present inspection at the node boundary level.
+This is useful when the IDE wants to present inspection at the node boundary level.
 </p>
 
-<h3>14.2 Input and output ports</h3>
+<h3>13.2 Input and output ports</h3>
 
 <p>
 A port probe MAY target:
@@ -569,67 +659,74 @@ A port probe MAY target:
   <li>an output port.</li>
 </ul>
 
+<h3>13.3 Preferred use of edge probes</h3>
+
 <p>
-However, an implementation SHOULD prefer edge probes for ordinary valueflow inspection whenever the source graph already provides an explicit edge identity.
+When the source graph already provides an explicit edge identity for ordinary valueflow,
+an implementation SHOULD prefer edge probes for canonical dataflow inspection.
+Port probes are an additional inspection form, not the preferred default for ordinary wire-level understanding.
 </p>
 
-<h3>14.3 Semantics</h3>
+<h3>13.4 Meaning</h3>
 
 <p>
-A port probe attached to an output port SHOULD be semantically equivalent to probing an outgoing edge, except that the presentation is port-centered rather than edge-centered.
-A port probe attached to an input port SHOULD reflect the committed value received at that input in the relevant execution context.
+A port probe attached to an output port SHOULD be semantically equivalent to probing the emitted committed value
+at that source boundary.
+A port probe attached to an input port SHOULD reflect the committed value received at that input
+in the relevant execution context.
 </p>
 
 <hr/>
 
-<h2 id="local-memory-probes">15. Local-Memory Probes</h2>
+<h2 id="local-memory-probes">14. Local-Memory Probes</h2>
 
-<h3>15.1 Purpose</h3>
+<h3>14.1 Purpose</h3>
 
 <p>
-A <code>local_memory_probe</code> is attached to the local-memory slot owned by a local-memory primitive instance.
-Its purpose is to inspect source-level memory behavior rather than only the values present on ordinary edges.
+A <code>local_memory_probe</code> is attached to the local-memory slot owned by a local-memory node instance.
+Its purpose is to inspect source-aligned memory behavior rather than only ordinary edge values.
 </p>
 
-<h3>15.2 Canonical v0.1 case: <code>frog.core.delay</code></h3>
+<h3>14.2 Canonical v0.1 case: <code>frog.core.delay</code></h3>
 
 <p>
-For <code>frog.core.delay</code>, a local-memory probe SHOULD make it possible to inspect at least:
+For <code>frog.core.delay</code>, a local-memory probe SHOULD make it possible to inspect at least,
+when the active observability support exposes the corresponding information:
 </p>
 
 <ul>
-  <li>the current stored state visible at pause time when such state exposure is supported,</li>
   <li>the most recent observed <code>state_read</code>,</li>
-  <li>the most recent observed <code>state_updated</code>.</li>
+  <li>the most recent observed <code>state_updated</code>,</li>
+  <li>the current stored state visible at pause time.</li>
 </ul>
 
-<h3>15.3 Meaning</h3>
+<h3>14.3 Meaning</h3>
 
 <p>
-A local-memory probe is not just another edge probe.
+A local-memory probe is not merely another edge probe.
 It is attached to the stateful source-aligned object owned by the node instance.
-For <code>frog.core.delay</code>, it therefore observes source-aligned local-memory activity without redefining the primitive-local behavior itself.
+It therefore observes local-memory activity without redefining primitive-local behavior or language-level cycle semantics.
 </p>
 
-<h3>15.4 Deterministic interpretation</h3>
+<h3>14.4 Deterministic paused interpretation</h3>
 
 <p>
-If a local-memory probe displays a current stored value during a paused snapshot, that value MUST be the value that is committed for the paused live execution instance.
+If a local-memory probe displays a current stored value during a paused snapshot,
+that value MUST be the committed stored value for the paused execution instance.
 </p>
 
-<pre>
-delay node instance
+<pre><code>delay node instance
    ├── observed state_read
    ├── observed state_updated
    └── paused current stored value
-        (only when the active observability profile exposes it)
-</pre>
+        (only when exposed by the active observability support)
+</code></pre>
 
 <hr/>
 
-<h2 id="ui-related-probes">16. UI-Related Probes</h2>
+<h2 id="ui-related-probes">15. UI-Related Probes</h2>
 
-<h3>16.1 Ordinary widget-related valueflow</h3>
+<h3>15.1 Ordinary widget-related valueflow</h3>
 
 <p>
 Ordinary widget-related valueflow SHOULD be inspected through the same canonical mechanisms as other dataflow:
@@ -637,83 +734,86 @@ Ordinary widget-related valueflow SHOULD be inspected through the same canonical
 
 <ul>
   <li>edge probes on edges connected to <code>widget_value</code>,</li>
-  <li>port probes on relevant widget-related ports if supported.</li>
+  <li>port probes on relevant widget-related ports when supported.</li>
 </ul>
 
-<h3>16.2 Object-style widget interaction</h3>
+<h3>15.2 Object-style widget interaction</h3>
 
 <p>
-Object-style widget interaction through <code>widget_reference</code>, <code>frog.ui.property_read</code>, <code>frog.ui.property_write</code>, and <code>frog.ui.method_invoke</code> MAY also be probed indirectly through:
+Object-style widget interaction through <code>widget_reference</code>,
+<code>frog.ui.property_read</code>, <code>frog.ui.property_write</code>,
+and <code>frog.ui.method_invoke</code> MAY be inspected through:
 </p>
 
 <ul>
-  <li>ordinary valueflow edges,</li>
-  <li>pause-localized debugging state,</li>
-  <li>a stricter observability profile’s dedicated UI-oriented probe renderers.</li>
+  <li>ordinary valueflow targets when relevant,</li>
+  <li>pause-consistent debug inspection,</li>
+  <li>stronger-profile UI-specific probe renderers.</li>
 </ul>
 
-<h3>16.3 UI sequencing edges</h3>
+<p>
+For ordinary widget value participation in dataflow, tools SHOULD prefer the natural
+<code>widget_value</code> representation rather than object-style property access.
+</p>
+
+<h3>15.3 UI sequencing edges</h3>
 
 <p>
 The <code>ui_in</code> / <code>ui_out</code> sequencing edges are not ordinary data-value edges.
-A stricter observability profile MAY support probes on these sequencing edges, but such probes MUST be interpreted as effect-order inspection rather than ordinary value inspection.
+A stronger observability profile MAY support probes on these edges, but such probes MUST be interpreted as
+<strong>effect-order inspection</strong> rather than ordinary value inspection.
 </p>
 
 <p>
-When such probes are supported, they MUST remain aligned both with the source-facing widget interaction model and with the standardized <code>frog.ui.*</code> primitive definitions.
+If supported, such probes MUST remain aligned with both:
 </p>
+
+<ul>
+  <li>the source-facing widget interaction model,</li>
+  <li>the relevant <code>frog.ui.*</code> primitive definitions.</li>
+</ul>
 
 <hr/>
 
-<h2 id="probe-presentation-model">17. Probe Presentation Model</h2>
+<h2 id="presentation-and-management">16. Presentation and Management</h2>
 
-<h3>17.1 General rule</h3>
+<h3>16.1 Presentation model</h3>
 
 <p>
 This document does not standardize one required probe window layout.
 It standardizes the source-level meaning of probe displays.
 </p>
 
-<h3>17.2 Minimal displayed information</h3>
+<h3>16.2 Minimal displayed information</h3>
 
 <p>
-For v0.1, a probe display SHOULD be able to show at least:
+A v0.1 probe display SHOULD be able to show at least:
 </p>
 
 <ul>
   <li>the probe target identity,</li>
-  <li>the most recent value or state snapshot when available,</li>
-  <li>the target type when useful,</li>
-  <li>the last update status,</li>
+  <li>the most recent compatible observation when available,</li>
+  <li>basic state information such as live, paused, retained, or unavailable,</li>
   <li>basic execution-context information when relevant.</li>
 </ul>
 
-<h3>17.3 Possible presentations</h3>
+<h3>16.3 Possible presentations</h3>
 
 <p>
 An IDE MAY present probes through:
 </p>
 
 <ul>
-  <li>inline overlay bubbles near the diagram target,</li>
+  <li>inline overlays near the target,</li>
   <li>detachable probe windows,</li>
-  <li>a centralized probe-management window,</li>
-  <li>status panes or inspector panels.</li>
+  <li>a probe inspector pane,</li>
+  <li>another equivalent local-inspection presentation.</li>
 </ul>
 
-<h3>17.4 Probe numbering or naming</h3>
+<h3>16.4 Probe management</h3>
 
 <p>
-An IDE MAY assign probe numbers or probe names for management purposes.
-Such numbering is an IDE concern only and is not part of the FROG source model.
-</p>
-
-<hr/>
-
-<h2 id="probe-management">18. Probe Management</h2>
-
-<p>
-A debugging-capable IDE SHOULD support at least the following probe-management operations:
+A probe-capable IDE SHOULD support at least:
 </p>
 
 <ul>
@@ -721,11 +821,11 @@ A debugging-capable IDE SHOULD support at least the following probe-management o
   <li>remove probe,</li>
   <li>list active probes,</li>
   <li>locate a probe from its source target,</li>
-  <li>locate a source target from its probe entry.</li>
+  <li>locate the source target from its probe entry.</li>
 </ul>
 
 <p>
-A stricter observability profile MAY additionally support:
+A stronger observability profile MAY additionally support:
 </p>
 
 <ul>
@@ -736,63 +836,40 @@ A stricter observability profile MAY additionally support:
   <li>bulk removal.</li>
 </ul>
 
-<hr/>
-
-<h2 id="custom-and-type-specific-probes">19. Custom and Type-Specific Probes</h2>
-
-<h3>19.1 Rationale</h3>
+<h3>16.5 Probe naming and numbering</h3>
 
 <p>
-Different data types benefit from different visualizations.
-For example, a scalar, an array, a waveform-like value, and an external reference handle may require different display strategies.
-</p>
-
-<h3>19.2 Base rule</h3>
-
-<p>
-FROG v0.1 allows the concept of type-specific and custom probes, but does not standardize a full plugin or packaging system for them.
-</p>
-
-<h3>19.3 Semantic constraints</h3>
-
-<p>
-A custom or type-specific probe MUST still obey the base semantic rules of this document:
-</p>
-
-<ul>
-  <li>it must attach to a valid source-level target,</li>
-  <li>it must display committed observations only,</li>
-  <li>it must not change program semantics,</li>
-  <li>it must not pretend to expose more execution history than the active observability profile actually provides.</li>
-</ul>
-
-<h3>19.4 Default probe behavior</h3>
-
-<p>
-If no specialized probe exists for a type, the IDE SHOULD fall back to a generic value-oriented probe representation.
+An IDE MAY assign probe numbers or names for management purposes.
+Such naming is an IDE concern only and is not part of the canonical source model.
 </p>
 
 <hr/>
 
-<h2 id="validation-and-safety-rules">20. Validation and Safety Rules</h2>
+<h2 id="validation-and-safety-rules">17. Validation and Safety Rules</h2>
 
 <ul>
-  <li>A probe MUST target a valid source-visible object supported by the active observability profile.</li>
-  <li>A probe MUST NOT alter the execution semantics of the graph.</li>
+  <li>A probe MUST target a valid source-visible object supported by the active observability support.</li>
+  <li>A probe MUST NOT alter execution semantics.</li>
   <li>A probe shown during pause MUST reflect the paused execution snapshot exposed to the IDE.</li>
   <li>A retained probe value MUST be clearly distinguishable from a live-updating value and from a paused-snapshot value.</li>
-  <li>A probe MUST NOT expose a contradictory combination of target identity, execution context, and value.</li>
-  <li>A local-memory probe MUST respect the node-instance-local scope of local memory.</li>
+  <li>A probe MUST NOT expose a contradictory combination of target identity, execution context, and observation.</li>
+  <li>A local-memory probe MUST respect node-instance-local memory scope.</li>
   <li>A UI-sequencing probe, if supported, MUST NOT be misrepresented as an ordinary data-value probe.</li>
-  <li>A probe MUST NOT be presented as a watch entry unless the IDE explicitly re-exposes it through the watch model defined elsewhere.</li>
-  <li>A probe MUST NOT silently conflate observations from unrelated live execution instances when retained behavior is supported.</li>
+  <li>A probe MUST NOT be presented as a watch entry unless the IDE explicitly re-exposes that target through the watch model.</li>
+  <li>A probe MUST NOT silently conflate observations from unrelated execution instances when retained behavior is supported.</li>
 </ul>
 
 <hr/>
 
-<h2 id="illustrative-examples">21. Illustrative Examples</h2>
+<h2 id="illustrative-examples">18. Illustrative Examples</h2>
 
-<h3>21.1 Edge probe</h3>
+<p>
+The examples below are illustrative only.
+They show possible probe-facing representations.
+They are <strong>not</strong> a required transport format.
+</p>
+
+<h3>18.1 Edge probe</h3>
 
 <pre><code>{
   "probe_id": "p1",
@@ -802,12 +879,12 @@ If no specialized probe exists for a type, the IDE SHOULD fall back to a generic
     "id": "e_sum"
   },
   "state": "live",
-  "last_value": {
+  "last_observation": {
     "preview": "17.5"
   }
 }</code></pre>
 
-<h3>21.2 Port probe</h3>
+<h3>18.2 Port probe</h3>
 
 <pre><code>{
   "probe_id": "p2",
@@ -818,13 +895,13 @@ If no specialized probe exists for a type, the IDE SHOULD fall back to a generic
     "port": "result",
     "direction": "output"
   },
-  "state": "live",
-  "last_value": {
+  "state": "paused",
+  "last_observation": {
     "preview": "17.5"
   }
 }</code></pre>
 
-<h3>21.3 Local-memory probe for <code>frog.core.delay</code></h3>
+<h3>18.3 Local-memory probe for <code>frog.core.delay</code></h3>
 
 <pre><code>{
   "probe_id": "p3",
@@ -834,7 +911,7 @@ If no specialized probe exists for a type, the IDE SHOULD fall back to a generic
     "node_id": "delay_1"
   },
   "state": "paused",
-  "last_value": {
+  "last_observation": {
     "preview": "5.0"
   },
   "details": {
@@ -842,7 +919,7 @@ If no specialized probe exists for a type, the IDE SHOULD fall back to a generic
   }
 }</code></pre>
 
-<h3>21.4 Retained edge probe</h3>
+<h3>18.4 Retained edge probe</h3>
 
 <pre><code>{
   "probe_id": "p4",
@@ -852,17 +929,18 @@ If no specialized probe exists for a type, the IDE SHOULD fall back to a generic
     "id": "e_output"
   },
   "state": "retained",
-  "last_value": {
+  "instance_id": "run_42",
+  "last_observation": {
     "preview": "42"
   }
 }</code></pre>
 
 <hr/>
 
-<h2 id="out-of-scope-for-v01">22. Out of Scope for v0.1</h2>
+<h2 id="out-of-scope-for-v01">19. Out of Scope for v0.1</h2>
 
 <ul>
-  <li>conditional probes that trigger break behavior,</li>
+  <li>conditional probes that trigger debugger break behavior,</li>
   <li>watch expressions over arbitrary graph expressions,</li>
   <li>mandatory history buffers for every probe,</li>
   <li>reverse-time probe inspection,</li>
@@ -874,11 +952,12 @@ If no specialized probe exists for a type, the IDE SHOULD fall back to a generic
 
 <hr/>
 
-<h2 id="summary">23. Summary</h2>
+<h2 id="summary">20. Summary</h2>
 
 <p>
-FROG probes are source-aligned inspection objects for live, paused, and retained execution views.
-For v0.1, the canonical probe model is centered on the inspection of values flowing through edges, while also allowing probes on ports and local-memory state where appropriate.
+FROG probes are <strong>source-attached inspection objects</strong> for live, paused, and optionally retained execution views.
+For v0.1, the canonical probe model is centered on ordinary dataflow inspection through source edges,
+while also allowing additional probe forms for ports and local memory when supported.
 </p>
 
 <p>
@@ -886,19 +965,19 @@ This specification establishes that:
 </p>
 
 <ul>
-  <li>probes belong to the IDE/debugging layer rather than the source language itself,</li>
-  <li>probes attach to source-visible execution objects,</li>
-  <li><code>edge_probe</code> is the primary probe form in v0.1,</li>
-  <li>probe values represent last-known committed observations,</li>
+  <li>probes belong to the IDE inspection layer rather than the source language itself,</li>
+  <li>probes consume execution observability but do not own debugger controls,</li>
+  <li><code>edge_probe</code> is the minimum and primary probe form for v0.1,</li>
+  <li>probe-visible values represent compatible committed observations,</li>
   <li>paused probe views must remain causally consistent,</li>
   <li>retained values are optional and must be clearly identified as such,</li>
   <li>probes remain distinct from centralized watch entries,</li>
-  <li>custom and type-specific probes may exist without changing the base semantics.</li>
+  <li>stronger profiles may add richer or more specialized probe forms without changing the base semantics.</li>
 </ul>
 
 <hr/>
 
-<h2 id="license">24. License</h2>
+<h2 id="license">21. License</h2>
 
 <p>
 This specification is part of the FROG repository and is governed by the repository license and contribution rules.
