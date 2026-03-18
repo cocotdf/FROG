@@ -15,22 +15,24 @@
 
 <ul>
   <li><a href="#overview">1. Overview</a></li>
-  <li><a href="#why-this-layer-exists">2. Why this layer exists</a></li>
-  <li><a href="#layer-boundary-snapshot">3. Layer boundary snapshot</a></li>
-  <li><a href="#architectural-role">4. Architectural role</a></li>
-  <li><a href="#position-in-the-representation-pipeline">5. Position in the representation pipeline</a></li>
-  <li><a href="#scope-of-this-directory">6. Scope of this directory</a></li>
-  <li><a href="#what-this-directory-does-not-own">7. What this directory does not own</a></li>
-  <li><a href="#relation-with-expression">8. Relation with Expression</a></li>
-  <li><a href="#relation-with-language">9. Relation with Language</a></li>
-  <li><a href="#relation-with-libraries-and-profiles">10. Relation with Libraries and Profiles</a></li>
-  <li><a href="#relation-with-the-ide-program-model">11. Relation with the IDE Program Model</a></li>
-  <li><a href="#relation-with-cache-artifacts">12. Relation with cache artifacts</a></li>
-  <li><a href="#relation-with-lowering-compilation-and-runtime">13. Relation with lowering, compilation, and runtime</a></li>
-  <li><a href="#ownership-quick-check">14. Ownership quick check</a></li>
-  <li><a href="#local-document-map">15. Local document map</a></li>
-  <li><a href="#reading-relationships">16. Reading relationships</a></li>
-  <li><a href="#status-in-v01">17. Status in v0.1</a></li>
+  <li><a href="#reading-legend">2. Reading legend</a></li>
+  <li><a href="#why-this-layer-exists">3. Why this layer exists</a></li>
+  <li><a href="#layer-boundary-snapshot">4. Layer boundary snapshot</a></li>
+  <li><a href="#architectural-role">5. Architectural role</a></li>
+  <li><a href="#position-in-the-representation-pipeline">6. Position in the representation pipeline</a></li>
+  <li><a href="#scope-of-this-directory">7. Scope of this directory</a></li>
+  <li><a href="#what-this-directory-does-not-own">8. What this directory does not own</a></li>
+  <li><a href="#relation-with-expression">9. Relation with Expression</a></li>
+  <li><a href="#relation-with-language">10. Relation with Language</a></li>
+  <li><a href="#relation-with-libraries-and-profiles">11. Relation with Libraries and Profiles</a></li>
+  <li><a href="#relation-with-the-ide-program-model">12. Relation with the IDE Program Model</a></li>
+  <li><a href="#relation-with-cache-artifacts">13. Relation with cache artifacts</a></li>
+  <li><a href="#relation-with-lowering-compilation-and-runtime">14. Relation with lowering, compilation, and runtime</a></li>
+  <li><a href="#relation-with-observation-debugging-and-diagnostics">15. Relation with observation, debugging, and diagnostics</a></li>
+  <li><a href="#ownership-quick-check">16. Ownership quick check</a></li>
+  <li><a href="#local-document-map">17. Local document map</a></li>
+  <li><a href="#reading-relationships">18. Reading relationships</a></li>
+  <li><a href="#status-in-v01">19. Status in v0.1</a></li>
 </ul>
 
 <hr/>
@@ -42,7 +44,7 @@ This directory defines the architectural home of <strong>execution-facing derive
 </p>
 
 <p>
-A FROG program is not authored directly as an execution IR. It is authored as canonical source, interpreted through language semantics, and then <strong>MAY</strong> be transformed into one or more execution-oriented intermediate forms suitable for validation pipelines, analysis, execution preparation, optimization, lowering, compilation, or backend mapping.
+A FROG program is not authored directly as an execution IR. It is authored as canonical source, interpreted through validated language semantics, and then <strong>MAY</strong> be transformed into one or more execution-oriented intermediate forms suitable for execution preparation, analysis, normalization, lowering, compilation preparation, backend mapping, or implementation-specific realization preparation.
 </p>
 
 <p>
@@ -51,19 +53,43 @@ The purpose of <code>IR/</code> is to prevent those execution-facing derived for
 
 <ul>
   <li>source-format documents,</li>
-  <li>IDE-internal documents,</li>
+  <li>IDE-internal authoring documents,</li>
+  <li>cache examples,</li>
   <li>library catalogs,</li>
-  <li>profile documents,</li>
+  <li>profile catalogs,</li>
   <li>runtime-specific implementation notes.</li>
 </ul>
 
 <p>
-This directory therefore exists to provide a durable normative place for open, inspectable, specification-facing intermediate representations that are <strong>derived from validated FROG program meaning</strong> but are <strong>not</strong> themselves the canonical source artifact.
+This directory therefore provides the durable normative home for open, inspectable, specification-facing intermediate representations that are:
 </p>
+
+<ul>
+  <li>derived from validated FROG program meaning,</li>
+  <li>execution-facing rather than source-canonical,</li>
+  <li>architecturally upstream of lowering and runtime-private realization,</li>
+  <li>still source-attributable and specification-friendly.</li>
+</ul>
 
 <hr/>
 
-<h2 id="why-this-layer-exists">2. Why this layer exists</h2>
+<h2 id="reading-legend">2. Reading legend</h2>
+
+<p>
+The diagrams in this README use the following visual legend:
+</p>
+
+<ul>
+  <li>🟦 <strong>Open specification-facing layer</strong></li>
+  <li>🟨 <strong>Standardized boundary or handoff</strong></li>
+  <li>🟧 <strong>Specialization / lowering zone</strong></li>
+  <li>🟥 <strong>Implementation-private realization zone</strong></li>
+  <li>🟩 <strong>Source-attribution or diagnostic obligation</strong></li>
+</ul>
+
+<hr/>
+
+<h2 id="why-this-layer-exists">3. Why this layer exists</h2>
 
 <p>
 FROG deliberately separates multiple architectural levels:
@@ -73,7 +99,7 @@ FROG deliberately separates multiple architectural levels:
   <li>the canonical saved source artifact,</li>
   <li>the IDE's editable in-memory model,</li>
   <li>the validated execution meaning of the program,</li>
-  <li>the derived forms used to prepare or realize execution.</li>
+  <li>the derived forms used to prepare or specialize execution.</li>
 </ul>
 
 <p>
@@ -82,7 +108,7 @@ Without a dedicated IR layer, execution-oriented representation risks being rede
 
 <ul>
   <li>IDE implementation details,</li>
-  <li>cache examples,</li>
+  <li>cache payload examples,</li>
   <li>runtime-internal scheduler structures,</li>
   <li>compiler-specific lowering pipelines,</li>
   <li>backend-specific transport or deployment formats.</li>
@@ -96,8 +122,7 @@ The IR layer exists to prevent that drift.
 In simple terms:
 </p>
 
-<pre>
-Expression/ says:
+<pre><code>Expression/ says:
 "what is saved"
 
 IDE/ says:
@@ -108,39 +133,60 @@ Language/ says:
 
 IR/ says:
 "what execution-facing derived form may be built from that meaning"
-</pre>
+
+Lowering and backend stages say:
+"how that derived form is specialized for realization"
+</code></pre>
 
 <hr/>
 
-<h2 id="layer-boundary-snapshot">3. Layer boundary snapshot</h2>
+<h2 id="layer-boundary-snapshot">4. Layer boundary snapshot</h2>
 
 <p>
 The shortest correct mental model of the surrounding architecture is:
 </p>
 
-<pre>
-+-------------------+----------------------------------------------+
-| Layer             | Primary question answered                    |
-+-------------------+----------------------------------------------+
-| Expression/       | What is the canonical saved source?          |
-| Language/         | What does the validated program mean?        |
-| Libraries/        | What intrinsic primitives exist?             |
-| Profiles/         | What optional standardized capabilities      |
-|                   | exist beyond the intrinsic core?             |
-| IDE/              | How is the program authored, inspected,      |
-|                   | debugged, and presented in tools?            |
-| IR/               | What execution-facing derived representation |
-|                   | may be built from validated program meaning? |
-+-------------------+----------------------------------------------+
-</pre>
+<pre><code>+-------------------+-----------------------------------------------+
+| Layer             | Primary question answered                     |
++-------------------+-----------------------------------------------+
+| Expression/       | What is the canonical saved source?           |
+| Language/         | What does the validated program mean?         |
+| Libraries/        | What intrinsic primitives exist?              |
+| Profiles/         | What optional standardized capabilities       |
+|                   | exist beyond the intrinsic core?              |
+| IDE/              | How is the program authored, inspected,       |
+|                   | debugged, and presented in tools?             |
+| IR/               | What execution-facing derived representation  |
+|                   | may be built from validated program meaning?  |
++-------------------+-----------------------------------------------+
+</code></pre>
 
 <p>
-This README exists primarily to keep that last boundary explicit and durable.
+A second boundary view is:
+</p>
+
+<pre><code>🟦 validated meaning
+          |
+          v
+🟦 open execution-facing derived form
+          |
+          v
+🟨 IR/
+          |
+          v
+🟧 lowering / backend preparation
+          |
+          v
+🟥 compiler / backend / runtime-private realization
+</code></pre>
+
+<p>
+This README exists primarily to keep the <code>IR/</code> ownership boundary explicit and durable.
 </p>
 
 <hr/>
 
-<h2 id="architectural-role">4. Architectural role</h2>
+<h2 id="architectural-role">5. Architectural role</h2>
 
 <p>
 The <code>IR/</code> layer occupies a distinct architectural role between:
@@ -160,7 +206,7 @@ This means:
   <li><code>IR/</code> <strong>MUST NOT</strong> redefine language meaning,</li>
   <li><code>IR/</code> <strong>MUST NOT</strong> become a dumping ground for private runtime internals,</li>
   <li><code>IR/</code> <strong>SHOULD</strong> define execution-facing derived forms that remain inspectable, portable, and specification-friendly,</li>
-  <li><code>IR/</code> <strong>MAY</strong> provide stable contracts that later lowering and backend-mapping stages can consume.</li>
+  <li><code>IR/</code> <strong>MAY</strong> define stable boundaries that later lowering and backend-facing stages can consume.</li>
 </ul>
 
 <p>
@@ -171,32 +217,33 @@ This layer is therefore about <strong>derived execution representation</strong>,
 The intended ownership boundary can be summarized like this:
 </p>
 
-<pre>
-validated meaning
-      |
-      |  semantic truth remains in Language/
-      v
-open execution-facing derived form
-      |
-      |  ownership begins here
-      v
-IR/
-      |
-      |  target specialization begins later
-      v
-lowering / backend mapping / runtime realization
-</pre>
+<pre><code>🟦 validated executable meaning
+          |
+          | semantic truth remains in Language/
+          v
+🟦 open execution-facing representation
+          |
+          | IR ownership begins here
+          v
+🟨 IR/
+          |
+          | target specialization begins later
+          v
+🟧 lowering / backend contract / backend preparation
+          |
+          v
+🟥 runtime-private realization
+</code></pre>
 
 <hr/>
 
-<h2 id="position-in-the-representation-pipeline">5. Position in the representation pipeline</h2>
+<h2 id="position-in-the-representation-pipeline">6. Position in the representation pipeline</h2>
 
 <p>
 The intended position of the IR layer is illustrated below:
 </p>
 
-<pre>
-Authoring side
+<pre><code>Authoring side
 --------------
 IDE Program Model
         |
@@ -214,20 +261,26 @@ validated program meaning
         +--> Libraries/
         +--> Profiles/
 
-Execution-preparation side
---------------------------
-derived execution-facing representation
+Execution-facing derived side
+-----------------------------
+Execution IR
         |
         v
 IR/
 
+Specialization side
+-------------------
+Identity and Mapping
+Lowering
+Backend contract
+
 Implementation side
 -------------------
-lowering
-compilation
-runtime mapping
-backend-specific forms
-</pre>
+compiler preparation
+backend mapping
+runtime realization
+deployment-specific forms
+</code></pre>
 
 <p>
 The transition into <code>IR/</code> begins <strong>after</strong> the program has a validated meaning.
@@ -241,8 +294,7 @@ An implementation <strong>MAY</strong> derive IR directly from canonical source,
 A second useful sketch is:
 </p>
 
-<pre>
-.frog source
+<pre><code>.frog source
     |
     v
 Program Model or equivalent validated tool form
@@ -255,11 +307,14 @@ Execution IR
     |
     v
 lowered / backend-facing forms
-</pre>
+    |
+    v
+compiler / runtime-private forms
+</code></pre>
 
 <hr/>
 
-<h2 id="scope-of-this-directory">6. Scope of this directory</h2>
+<h2 id="scope-of-this-directory">7. Scope of this directory</h2>
 
 <p>
 This directory is the normative home for questions such as:
@@ -270,28 +325,29 @@ This directory is the normative home for questions such as:
   <li>What is the architectural boundary between validated program meaning and execution IR?</li>
   <li>Which execution-facing properties are preserved from validated program meaning into IR?</li>
   <li>Which properties may be normalized, expanded, or made more explicit in IR?</li>
-  <li>How can later lowering or backend mapping consume an open IR without treating one private runtime structure as the language standard?</li>
+  <li>How are identity and attribution preserved between source-visible objects, validated meaning, and IR objects?</li>
+  <li>Where does lowering begin?</li>
+  <li>What is the standardized contract consumed by later backend-facing stages?</li>
 </ul>
 
 <p>
-This directory <strong>MAY</strong> eventually define topics such as:
+This directory currently defines or frames topics such as:
 </p>
 
 <ul>
-  <li>an open execution IR object model,</li>
-  <li>identity and mapping rules between source-level constructs and IR objects,</li>
-  <li>normalization rules applied during IR construction,</li>
-  <li>lowering boundaries,</li>
-  <li>compiler/backend consumption contracts.</li>
+  <li>the open Execution IR architecture,</li>
+  <li>identity and mapping rules between source, validated meaning, and IR,</li>
+  <li>the lowering boundary,</li>
+  <li>the backend-facing consumption contract.</li>
 </ul>
 
 <p>
-At a minimum, this directory establishes the architectural ownership of those concerns.
+At minimum, this directory establishes the architectural ownership of those concerns.
 </p>
 
 <hr/>
 
-<h2 id="what-this-directory-does-not-own">7. What this directory does not own</h2>
+<h2 id="what-this-directory-does-not-own">8. What this directory does not own</h2>
 
 <p>
 This directory does not define:
@@ -306,6 +362,7 @@ This directory does not define:
   <li>the intrinsic primitive catalogs in full,</li>
   <li>the optional standardized profile catalogs in full,</li>
   <li>the IDE's Program Model,</li>
+  <li>IDE-facing debug UX or observability UX,</li>
   <li>a private runtime scheduler architecture,</li>
   <li>a vendor-specific compiled artifact format,</li>
   <li>a backend-private transport representation.</li>
@@ -320,7 +377,7 @@ In particular:
   <li><code>Language/</code> owns normative meaning of validated execution,</li>
   <li><code>Libraries/</code> owns intrinsic primitive vocabularies and primitive-local behavior,</li>
   <li><code>Profiles/</code> owns optional standardized capability families,</li>
-  <li><code>IDE/</code> owns authoring-facing editable models and tooling concerns.</li>
+  <li><code>IDE/</code> owns authoring-facing editable models and tooling-facing concerns.</li>
 </ul>
 
 <p>
@@ -331,17 +388,18 @@ The IR layer <strong>MUST NOT</strong> absorb those ownerships.
 If a question sounds like one of the following, it probably does <strong>not</strong> belong here:
 </p>
 
-<pre>
-"What does a valid .frog file look like?"       -> Expression/
-"What does this construct mean?"                -> Language/
-"What primitive exists and what are its ports?" -> Libraries/
-"What optional capability family defines this?" -> Profiles/
-"How does the IDE edit or present this?"        -> IDE/
-</pre>
+<pre><code>"What does a valid .frog file look like?"        -> Expression/
+"What does this construct mean?"                 -> Language/
+"What primitive exists and what are its ports?"  -> Libraries/
+"What optional capability family defines this?"  -> Profiles/
+"How does the IDE edit or present this?"         -> IDE/
+"What debugger UI is shown to the user?"         -> IDE/
+"What private scheduler graph does runtime X use?" -> outside IR ownership
+</code></pre>
 
 <hr/>
 
-<h2 id="relation-with-expression">8. Relation with Expression</h2>
+<h2 id="relation-with-expression">9. Relation with Expression</h2>
 
 <p>
 <code>Expression/</code> defines the canonical serialized source artifact of a FROG program.
@@ -366,22 +424,20 @@ Therefore:
 In simple terms:
 </p>
 
-<pre>
-.frog source
+<pre><code>.frog source
    is not
 execution IR
 
 execution IR
    is derived from
 validated source meaning
-</pre>
+</code></pre>
 
 <p>
 A useful ownership sketch is:
 </p>
 
-<pre>
-Expression/
+<pre><code>Expression/
    owns:
    - canonical source structure
    - source serialization
@@ -392,11 +448,11 @@ IR/
    - execution-facing derived form
    - execution-oriented normalization
    - source-attributed execution representation
-</pre>
+</code></pre>
 
 <hr/>
 
-<h2 id="relation-with-language">9. Relation with Language</h2>
+<h2 id="relation-with-language">10. Relation with Language</h2>
 
 <p>
 <code>Language/</code> defines what a validated FROG program means when it executes.
@@ -419,24 +475,20 @@ Accordingly:
 </ul>
 
 <p>
-This directory therefore depends on <code>Language/</code> semantically, but does not replace it.
-</p>
-
-<p>
 The shortest correct relation is:
 </p>
 
-<pre>
-Language/ answers:
+<pre><code>Language/ answers:
 "What is true?"
 
 IR/ answers:
-"How may that validated truth be represented for execution-facing use?"
-</pre>
+"How may that validated truth be represented
+for execution-facing use?"
+</code></pre>
 
 <hr/>
 
-<h2 id="relation-with-libraries-and-profiles">10. Relation with Libraries and Profiles</h2>
+<h2 id="relation-with-libraries-and-profiles">11. Relation with Libraries and Profiles</h2>
 
 <p>
 IR is not a replacement for primitive-library or profile definitions.
@@ -461,8 +513,7 @@ Therefore:
 A compact sketch:
 </p>
 
-<pre>
-Libraries/ and Profiles/
+<pre><code>Libraries/ and Profiles/
       provide operation identities
                  |
                  v
@@ -470,11 +521,11 @@ IR/
       may reference them
       may normalize their execution-facing use
       must not re-own them
-</pre>
+</code></pre>
 
 <hr/>
 
-<h2 id="relation-with-the-ide-program-model">11. Relation with the IDE Program Model</h2>
+<h2 id="relation-with-the-ide-program-model">12. Relation with the IDE Program Model</h2>
 
 <p>
 The IDE Program Model is the authoritative editable in-memory representation during authoring.
@@ -488,11 +539,10 @@ The execution IR is not the Program Model.
 These layers are related but distinct:
 </p>
 
-<pre>
-Expression   -> what is saved
+<pre><code>Expression   -> what is saved
 Program Model-> what is edited
 Execution IR -> what is prepared for execution
-</pre>
+</code></pre>
 
 <p>
 The Program Model <strong>MAY</strong> preserve editor-side state that is useful for round-trip authoring. The execution IR <strong>SHOULD NOT</strong> depend on editor-only presentation state as if that state were part of normative program meaning.
@@ -506,25 +556,28 @@ An IDE <strong>MAY</strong> construct, inspect, cache, compare, or visualize exe
 A useful distinction is:
 </p>
 
-<pre>
-IDE concern
+<pre><code>IDE concern
 -----------
 editable convenience
 guided authoring
 round-trip preservation
 authoring-side state
+debug UX
+probe/watch presentation
+paused-view rendering
 
 IR concern
 ----------
 execution-facing structure
 source attribution
 normalization for execution preparation
-input to later lowering stages
-</pre>
+lowering boundary
+backend-facing handoff
+</code></pre>
 
 <hr/>
 
-<h2 id="relation-with-cache-artifacts">12. Relation with cache artifacts</h2>
+<h2 id="relation-with-cache-artifacts">13. Relation with cache artifacts</h2>
 
 <p>
 A FROG source or toolchain <strong>MAY</strong> embed or associate cache artifacts that store derived execution-facing data such as <code>frog.ir</code>.
@@ -550,23 +603,22 @@ Therefore:
 That relationship can be pictured like this:
 </p>
 
-<pre>
-IR meaning
+<pre><code>🟨 IR meaning
    lives in
 IR/
 
-serialized derived artifact
+🟨 serialized derived artifact
    may live in
 cache entry: frog.ir
 
 cache container
    is not
 IR ownership
-</pre>
+</code></pre>
 
 <hr/>
 
-<h2 id="relation-with-lowering-compilation-and-runtime">13. Relation with lowering, compilation, and runtime</h2>
+<h2 id="relation-with-lowering-compilation-and-runtime">14. Relation with lowering, compilation, and runtime</h2>
 
 <p>
 This directory sits before implementation-specific execution realization.
@@ -576,15 +628,16 @@ This directory sits before implementation-specific execution realization.
 In broad terms:
 </p>
 
-<pre>
-validated meaning
+<pre><code>🟦 validated meaning
       ->
-open execution IR
+🟦 open execution IR
       ->
-lowering
+🟧 lowering
       ->
-compiler/backend/runtime-specific realization
-</pre>
+🟨 backend contract
+      ->
+🟥 compiler / backend / runtime-specific realization
+</code></pre>
 
 <p>
 This means:
@@ -593,6 +646,7 @@ This means:
 <ul>
   <li><code>IR/</code> <strong>MAY</strong> provide standardized open forms that later lowering stages consume,</li>
   <li>lowering <strong>MAY</strong> specialize or transform IR for target-specific needs,</li>
+  <li>backend contracts <strong>MAY</strong> define explicit consumption assumptions for later stages,</li>
   <li>runtime-private scheduler graphs, compiled objects, deployment bundles, and backend-private executable forms <strong>SHOULD</strong> remain outside the ownership of this directory unless later standardized explicitly,</li>
   <li>the existence of an open FROG IR <strong>DOES NOT</strong> require every conforming implementation to expose every private internal execution form.</li>
 </ul>
@@ -613,8 +667,7 @@ This separation keeps the repository open to:
 A useful non-confusion sketch is:
 </p>
 
-<pre>
-open IR
+<pre><code>open IR
    != private scheduler graph
 
 open IR
@@ -625,18 +678,65 @@ open IR
 
 open IR
    = standardized execution-facing derived representation
-</pre>
+</code></pre>
 
 <hr/>
 
-<h2 id="ownership-quick-check">14. Ownership quick check</h2>
+<h2 id="relation-with-observation-debugging-and-diagnostics">15. Relation with observation, debugging, and diagnostics</h2>
+
+<p>
+This directory does not own debugger UX, probe presentation, watch presentation, or runtime command surfaces.
+</p>
+
+<p>
+However, it <strong>does</strong> own part of what makes later source-aligned observation and diagnostics possible:
+</p>
+
+<ul>
+  <li>source attribution,</li>
+  <li>identity mapping,</li>
+  <li>preservation of structure-origin and region-origin where required,</li>
+  <li>preservation of explicit local-memory identity where required,</li>
+  <li>backend-facing diagnostic anchors where relevant.</li>
+</ul>
+
+<p>
+The ownership split is therefore:
+</p>
+
+<pre><code>🟦 Language/
+   owns:
+   - safe observation boundaries
+   - pause-consistent snapshots
+   - safe debug-stop validity
+
+🟨 IR/
+   owns:
+   - execution-facing attribution foundations
+   - identity and mapping preservation
+   - lowering-safe diagnostic anchors
+
+🟦 IDE/
+   owns:
+   - observability UX
+   - debugger UX
+   - watch/probe presentation
+   - tooling projections built on the layers above
+</code></pre>
+
+<p>
+IR therefore supports later observability and diagnostics without taking ownership of their full language-level or IDE-level definitions.
+</p>
+
+<hr/>
+
+<h2 id="ownership-quick-check">16. Ownership quick check</h2>
 
 <p>
 When writing or reviewing documents in this layer, the following quick check SHOULD help avoid ownership drift:
 </p>
 
-<pre>
-Does this define canonical source syntax or section structure?
+<pre><code>Does this define canonical source syntax or section structure?
 -> move to Expression/
 
 Does this define what validated behavior means?
@@ -653,42 +753,43 @@ Does this define authoring UX, editing behavior, debugging UX, or IDE model beha
 
 Does this define an execution-facing derived representation built from validated meaning?
 -> it likely belongs in IR/
-</pre>
+
+Does this define target specialization, preserved assumptions,
+or a backend-facing handoff from IR?
+-> it may belong in IR/ as Lowering or Backend contract
+</code></pre>
 
 <hr/>
 
-<h2 id="local-document-map">15. Local document map</h2>
+<h2 id="local-document-map">17. Local document map</h2>
 
 <p>
-The directory is expected to grow over time.
+The current structure of the early IR layer is:
 </p>
 
-<p>
-A likely structure for the early IR layer is:
-</p>
-
-<pre>
-IR/
+<pre><code>IR/
 ├─ Readme.md                    Architectural role of the IR layer
 ├─ Execution IR.md              Open execution-facing IR model
 ├─ Identity and Mapping.md      Source / semantic / IR identity relations
-├─ Lowering.md                  Standardized lowering boundaries
+├─ Lowering.md                  Standardized lowering boundary
 └─ Backend contract.md          Consumption contract for later stages
-</pre>
+</code></pre>
 
 <p>
-This tree is partly indicative and partly directional:
+The intended ownership of these documents is:
 </p>
 
 <ul>
   <li><code>Readme.md</code> defines the layer boundary,</li>
   <li><code>Execution IR.md</code> defines the first concrete execution-facing IR document,</li>
-  <li>the remaining documents describe likely next closures of the layer, but are not automatically frozen by being listed here.</li>
+  <li><code>Identity and Mapping.md</code> defines how source-visible, validated-semantic, and IR identities relate,</li>
+  <li><code>Lowering.md</code> defines where specialization begins and what it may or may not do,</li>
+  <li><code>Backend contract.md</code> defines the standardized handoff consumed by later stages.</li>
 </ul>
 
 <hr/>
 
-<h2 id="reading-relationships">16. Reading relationships</h2>
+<h2 id="reading-relationships">18. Reading relationships</h2>
 
 <p>
 This README should not be read in isolation.
@@ -698,21 +799,30 @@ This README should not be read in isolation.
 A practical reading path is:
 </p>
 
-<pre>
-root Readme.md
+<pre><code>root Readme.md
       ->
 IR/Readme.md
       ->
 IR/Execution IR.md
       ->
-Expression/Readme.md
+IR/Identity and Mapping.md
+      ->
+IR/Lowering.md
+      ->
+IR/Backend contract.md
       ->
 Language/Readme.md
       ->
-IDE/Readme.md
+Language/Execution model.md
+      ->
+Language/Execution control and observation boundaries.md
+      ->
+IDE/Execution observability.md
+      ->
+Expression/Readme.md
       ->
 Expression/Cache.md
-</pre>
+</code></pre>
 
 <p>
 That reading path is useful because:
@@ -722,48 +832,60 @@ That reading path is useful because:
   <li>the root README explains repository-wide architecture,</li>
   <li>this file defines the ownership boundary of the IR layer,</li>
   <li><code>Execution IR.md</code> defines the first concrete execution-facing representation,</li>
-  <li><code>Expression/</code> defines canonical source,</li>
-  <li><code>Language/</code> defines semantic truth,</li>
-  <li><code>IDE/</code> defines the Program Model and authoring responsibilities,</li>
-  <li><code>Expression/Cache.md</code> explains how derived IR artifacts may be stored without becoming the canonical source of truth.</li>
+  <li><code>Identity and Mapping.md</code> closes attribution and recoverability rules,</li>
+  <li><code>Lowering.md</code> closes the specialization boundary,</li>
+  <li><code>Backend contract.md</code> closes the consumption handoff for later stages,</li>
+  <li><code>Language/</code> defines semantic truth and source-aligned execution boundaries,</li>
+  <li><code>IDE/</code> defines observability-facing and tooling-facing projections,</li>
+  <li><code>Expression/</code> defines canonical source and cache-carried derived artifacts.</li>
 </ul>
 
 <hr/>
 
-<h2 id="status-in-v01">17. Status in v0.1</h2>
+<h2 id="status-in-v01">19. Status in v0.1</h2>
 
 <p>
-In repository state v0.1, this document establishes the <strong>architectural ownership</strong> of the IR layer.
+In repository state v0.1, this directory defines a substantially clearer IR boundary than before.
 </p>
 
 <p>
-It does <strong>not yet</strong> fully freeze:
+The early closure of the layer is now:
 </p>
 
 <ul>
-  <li>one complete execution IR object schema for every implementation,</li>
-  <li>one complete normalization pipeline,</li>
-  <li>one complete lowering model,</li>
-  <li>one complete backend contract,</li>
-  <li>one mandatory runtime-private execution structure.</li>
+  <li>the architectural role of the IR layer,</li>
+  <li>the first concrete Execution IR document,</li>
+  <li>the source / semantic / IR identity boundary,</li>
+  <li>the lowering boundary,</li>
+  <li>the backend-facing consumption contract boundary.</li>
 </ul>
 
 <p>
-Those topics <strong>MAY</strong> be added as separate documents over time.
+What is still intentionally <strong>not</strong> frozen in v0.1 includes:
 </p>
+
+<ul>
+  <li>one universal serialized IR wire format,</li>
+  <li>one universal normalization pipeline shape,</li>
+  <li>one universal lowering pipeline shape,</li>
+  <li>one universal backend-family taxonomy,</li>
+  <li>one mandatory runtime-private execution structure,</li>
+  <li>one mandatory debugger or observability transport protocol.</li>
+</ul>
 
 <p>
-For now, the key rule is simple:
+For v0.1, the key rule remains simple:
 </p>
 
-<pre>
-IR is a derived execution-facing layer.
+<pre><code>IR is a derived execution-facing layer.
+
 It is not the source.
 It is not the Program Model.
 It is not the full language semantics.
+It is not the debugger UX.
 It is not one private runtime's internal graph.
-</pre>
 
-<p>
-That boundary is the purpose of this directory.
-</p>
+It is the open architectural bridge
+between validated meaning
+and later specialization for realization.
+</code></pre>
