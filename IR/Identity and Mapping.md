@@ -5,8 +5,8 @@
 <h1 align="center">🐸 FROG IR Identity and Mapping</h1>
 
 <p align="center">
-Normative identity and attribution rules for derived execution-facing IR in FROG v0.1<br/>
-<em>FROG — Free Open Graphical Language</em>
+  Normative identity, attribution, and recoverability rules for derived execution-facing IR in FROG v0.1<br/>
+  <em>FROG — Free Open Graphical Language</em>
 </p>
 
 <hr/>
@@ -36,6 +36,7 @@ Normative identity and attribution rules for derived execution-facing IR in FROG
   <li><a href="#minimal-open-shape">13. Minimal Open Shape</a></li>
   <li><a href="#examples">14. Examples</a></li>
   <li><a href="#out-of-scope-for-v01">15. Out of Scope for v0.1</a></li>
+  <li><a href="#summary">16. Summary</a></li>
 </ul>
 
 <hr/>
@@ -64,7 +65,28 @@ Its role is to ensure that the FROG IR remains:
 </ul>
 
 <p>
-This document does not redefine language semantics. It defines how identity and attribution MUST remain stable when a validated FROG program is projected into an open execution-facing IR.
+This document does not redefine language semantics.
+It defines how identity, attribution, and recoverability MUST remain stable when a validated FROG program is projected into an open execution-facing IR.
+</p>
+
+<pre><code>🟩 source-visible identity
+        |
+        v
+🟩 validated executable meaning
+        |
+        v
+🟦 execution-facing IR identity
+        |
+        v
+🟧 later specialization
+        |
+        v
+🟥 private realization
+</code></pre>
+
+<p>
+The normative mapping boundary owned by this document ends at the open IR layer.
+It does not standardize one private runtime object graph or one target-private identity model.
 </p>
 
 <hr/>
@@ -103,8 +125,21 @@ later lowering / backend-private forms
 </code></pre>
 
 <p>
-The normative mapping boundary owned by this document ends at the open IR layer. It does not standardize one private runtime object graph.
+This document is therefore the identity-side companion of:
 </p>
+
+<pre><code>Execution IR.md
+   -&gt; what the open IR is
+
+Derivation rules.md
+   -&gt; what must correspond
+
+Construction rules.md
+   -&gt; how open IR is materially built
+
+Identity and Mapping.md
+   -&gt; how attribution and recoverability survive that projection
+</code></pre>
 
 <hr/>
 
@@ -129,7 +164,7 @@ validated executable meaning
 Execution IR
         |
         v
-lowering / compilation / runtime-specific realization
+lowering / backend contract / runtime-specific realization
 </code></pre>
 
 <p>
@@ -137,7 +172,34 @@ Identity and mapping rules apply at the transition between validated executable 
 </p>
 
 <p>
-An implementation MAY derive IR from canonical source plus validation results, from a validated Program Model, or from another equivalent validated internal form. However, the resulting IR MUST remain attributable to validated FROG meaning rather than to editor-only convenience state.
+An implementation MAY derive IR from canonical source plus validation results, from a validated Program Model, or from another equivalent validated internal form.
+However, the resulting IR MUST remain attributable to validated FROG meaning rather than to editor-only convenience state.
+</p>
+
+<pre><code>🟦 raw or editable form
+        |
+        v
+🟩 validated meaning
+        |
+        v
+🟨 identity and mapping boundary starts here
+        |
+        v
+🟦 open Execution IR
+        |
+        v
+🟧 lowering
+        |
+        v
+🟨 backend-facing contract
+        |
+        v
+🟥 private realization
+</code></pre>
+
+<p>
+This document is upstream of lowering and backend contract.
+It exists so that later stages can still recover source-aligned identity rather than receiving one opaque execution artifact.
 </p>
 
 <hr/>
@@ -163,11 +225,27 @@ This document does not define:
 <ul>
   <li>the full canonical <code>.frog</code> source schema,</li>
   <li>the full language semantics of execution behavior,</li>
+  <li>the full open IR object model in isolation,</li>
+  <li>the material payload-construction procedure in full,</li>
   <li>a mandatory runtime scheduler architecture,</li>
   <li>a mandatory debugger protocol,</li>
   <li>a mandatory target-lowering format,</li>
   <li>a mandatory backend-private identity model.</li>
 </ul>
+
+<pre><code>This document defines:
+🟩 identity continuity
+🟩 attribution continuity
+🟩 recoverability obligations
+
+This document does not define:
+🟦 full source schema
+🟩 language semantics
+🟦 full IR object model
+🟨 construction procedure
+🟧 lowering format
+🟥 private runtime identity
+</code></pre>
 
 <hr/>
 
@@ -234,6 +312,10 @@ IR identities:
   <li>MUST NOT be treated as if they were automatically equal to runtime instance identities.</li>
 </ul>
 
+<p>
+IR identity is therefore an <strong>open representation identity</strong>, not a live runtime activation identity.
+</p>
+
 <h3 id="runtime-and-execution-context-identity">5.4 Runtime and execution-context identity</h3>
 
 <p>
@@ -252,6 +334,20 @@ However, this document imposes one important requirement:
 Accordingly, when a later layer needs to expose source-visible observation, pause, debug-stop, or fault attribution, it MUST remain able to relate dynamic execution contexts back to stable source-visible identity.
 </p>
 
+<pre><code>identity layers
+
+🟩 source identity
+        |
+        v
+🟩 validated semantic identity
+        |
+        v
+🟦 IR identity
+        |
+        v
+🟥 runtime / execution-context identity
+</code></pre>
+
 <hr/>
 
 <h2 id="general-mapping-model">6. General Mapping Model</h2>
@@ -265,10 +361,10 @@ The base mapping relations are:
 </p>
 
 <ul>
-  <li><strong>1→1 preservation</strong>: one source-visible object remains one attributable IR object,</li>
-  <li><strong>1→n expansion</strong>: one source-visible object yields multiple attributable IR objects,</li>
-  <li><strong>n→1 merge</strong>: multiple source-visible contributors yield one IR object,</li>
-  <li><strong>derived support object</strong>: an IR object is introduced by normalization but remains attributable to one or more validated source-visible contributors.</li>
+  <li><strong>1→1 preservation</strong> — one source-visible object remains one attributable IR object,</li>
+  <li><strong>1→n expansion</strong> — one source-visible object yields multiple attributable IR objects,</li>
+  <li><strong>n→1 restricted aggregation</strong> — multiple source-visible contributors yield one IR support object, but all relevant contributors remain recoverable,</li>
+  <li><strong>derived support object</strong> — an IR object is introduced by normalization but remains attributable to one or more validated source-visible contributors.</li>
 </ul>
 
 <p>
@@ -293,12 +389,28 @@ For every IR object, an implementation MUST preserve enough information to deter
 <ul>
   <li>which validated meaning it represents,</li>
   <li>which source-visible object or objects contributed to it,</li>
-  <li>whether it is preserved, expanded, merged, or introduced as a derived support object.</li>
+  <li>whether it is preserved, expanded, restrictedly aggregated, or introduced as a derived support object.</li>
 </ul>
 
 <p>
 When multiple source-visible contributors exist, an implementation MAY designate one contributor as primary for convenience, but all semantically relevant contributors MUST remain recoverable.
 </p>
+
+<pre><code>mapping relations
+
+1 → 1   preserved object
+1 → n   expanded object family
+n → 1   restricted support aggregation only
+n → n   allowed only if contributor attribution remains recoverable
+</code></pre>
+
+<p>
+The guiding rule is simple:
+</p>
+
+<pre><code>normalization MAY increase explicitness
+normalization MUST NOT destroy recoverability
+</code></pre>
 
 <hr/>
 
@@ -321,8 +433,15 @@ At minimum, that includes:
 </ul>
 
 <p>
-No implementation may justify identity loss by claiming that missing validation made attribution impossible. If validation has not completed, the object is not yet part of the standardized Execution IR boundary.
+No implementation may justify identity loss by claiming that missing validation made attribution impossible.
+If validation has not completed, the object is not yet part of the standardized Execution IR boundary.
 </p>
+
+<pre><code>No completed validation
+        |
+        v
+No conforming identity-preserving open IR claim
+</code></pre>
 
 <hr/>
 
@@ -371,6 +490,15 @@ The following distinctions MUST remain recoverable from the base open IR of v0.1
   <li>An invocation MUST NOT be flattened so aggressively that cross-boundary provenance becomes unrecoverable in the base open IR.</li>
 </ul>
 
+<pre><code>Required recoverability
+
+🟨 interface_input / interface_output remain distinct
+🟦 widget_value / widget_reference remain distinct
+🟦 structure family and regions remain distinct
+🟩 explicit memory remains explicit
+🟦 invocation identity remains recoverable
+</code></pre>
+
 <hr/>
 
 <h2 id="mapping-of-ports-connections-and-regions">9. Mapping of Ports, Connections, and Regions</h2>
@@ -403,6 +531,14 @@ Identity and attribution rules apply not only to executable objects but also to 
   <li>Region identity MUST remain sufficient to support structure-aware inspection and later safe observation semantics.</li>
 </ul>
 
+<pre><code>relationship mapping
+
+object
+  ├── port ownership remains recoverable
+  ├── connection meaning remains recoverable
+  └── region ownership remains recoverable
+</code></pre>
+
 <hr/>
 
 <h2 id="allowed-normalization">10. Allowed Normalization</h2>
@@ -426,6 +562,19 @@ The following transformations are allowed in the base open IR, provided that att
 Allowed normalization does not remove the obligation to preserve attribution.
 </p>
 
+<pre><code>Allowed normalization
+
+✔ make already-validated distinctions explicit
+✔ introduce attributable support objects
+✔ use implementation-local IR identifiers
+✔ expand one source object into several attributable IR objects
+
+Only if:
+🟩 contributor attribution remains recoverable
+🟩 validated meaning remains preserved
+🟩 critical distinctions remain recoverable
+</code></pre>
+
 <hr/>
 
 <h2 id="forbidden-transformations">11. Forbidden Transformations</h2>
@@ -444,6 +593,17 @@ The following transformations are forbidden in the base open IR of v0.1:
   <li>turning editor-only layout or presentation choices into identity-bearing execution semantics,</li>
   <li>treating one private runtime object graph as the normative meaning of the open IR.</li>
 </ul>
+
+<pre><code>Forbidden identity loss
+
+🟥 lost attribution
+🟥 opaque primary-object collapse
+🟥 hidden implicit memory
+🟥 collapsed interface / UI roles
+🟥 unrecoverable structured flattening
+🟥 editor-only execution identity
+🟥 private runtime graph as open IR
+</code></pre>
 
 <hr/>
 
@@ -470,6 +630,16 @@ Accordingly:
 <p>
 The base open IR is therefore not a debugger trace, but it MUST remain suitable as an attribution foundation for later inspection-facing projections.
 </p>
+
+<pre><code>🟦 open IR
+   is not
+🟥 debugger trace
+
+🟦 open IR
+   must remain usable as
+🟩 attribution foundation
+for later observability and debugging layers
+</code></pre>
 
 <hr/>
 
@@ -506,7 +676,7 @@ However, a conforming base open IR representation SHOULD preserve information eq
 </code></pre>
 
 <p>
-For v0.1, the exact field names are indicative rather than mandatory.
+For v0.1, the exact field names are illustrative rather than mandatory.
 </p>
 
 <p>
@@ -520,6 +690,14 @@ What is mandatory is the presence of information equivalent to:
   <li>validated semantic correspondence,</li>
   <li>recoverable source attribution.</li>
 </ul>
+
+<pre><code>Minimal identity intent
+
+🟦 IR identity
+🟦 object classification
+🟩 semantic correspondence
+🟩 source attribution
+</code></pre>
 
 <hr/>
 
@@ -568,7 +746,8 @@ IR:
 </code></pre>
 
 <p>
-This is a 1→n expansion relation. All derived objects MUST remain attributable to the original validated structure meaning.
+This is a 1→n expansion relation.
+All derived objects MUST remain attributable to the original validated structure meaning.
 </p>
 
 <h3>14.3 Derived support object</h3>
@@ -586,6 +765,27 @@ Such an object is allowed only if:
   <li>it does not become opaque,</li>
   <li>it does not silently replace the semantic identity of the validated object it supports.</li>
 </ul>
+
+<h3>14.4 Restricted aggregation</h3>
+
+<p>
+Multiple validated contributors MAY feed one derived support object when that support object exists only to make already-validated execution-facing structure explicit.
+</p>
+
+<pre><code>source contributors:
+  structure(loop_1)
+  region(loop_1.body)
+
+IR support object:
+  region_membership_record(loop_1.body.membership)
+
+Requirement:
+  contributors to both loop_1 and loop_1.body remain recoverable
+</code></pre>
+
+<p>
+This is not permission to collapse multiple primary execution-visible objects into one opaque replacement object.
+</p>
 
 <hr/>
 
@@ -607,3 +807,52 @@ The following topics remain out of scope for this document in v0.1:
 <p>
 Those topics may be refined later by stricter IR, lowering, backend-contract, observability, or conformance documents.
 </p>
+
+<pre><code>Out of scope in v0.1
+
+🟨 one mandatory serialized semantic-identity schema
+🟨 one mandatory global cross-family namespace
+🟥 one mandatory runtime execution-context schema
+🟨 one mandatory debugger-stop attribution payload
+🟧 one mandatory lowering identity contract
+🟥 one mandatory backend-private identity model
+</code></pre>
+
+<hr/>
+
+<h2 id="summary">16. Summary</h2>
+
+<p>
+FROG v0.1 requires identity-preserving open IR.
+A conforming open Execution IR MUST remain able to answer:
+</p>
+
+<ul>
+  <li>which source-visible contributors are involved,</li>
+  <li>which validated executable meaning is represented,</li>
+  <li>which IR object now carries that execution-facing role,</li>
+  <li>which distinctions remain recoverable after normalization.</li>
+</ul>
+
+<p>
+This document therefore preserves the attribution foundation needed by:
+</p>
+
+<ul>
+  <li>open Execution IR inspection,</li>
+  <li>safe later lowering,</li>
+  <li>source-aligned observability,</li>
+  <li>future debugging and diagnostics.</li>
+</ul>
+
+<pre><code>🟩 source-visible identity
+        |
+        v
+🟩 validated meaning
+        |
+        v
+🟦 recoverable execution-facing IR identity
+        |
+        v
+🟧 later specialization without attribution loss
+</code></pre>
