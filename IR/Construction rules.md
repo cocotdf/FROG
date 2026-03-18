@@ -39,18 +39,6 @@
 
 <hr/>
 
-<h2 id="reading-legend">2. Reading Legend</h2>
-
-<ul>
-  <li>🟦 <strong>Open specification-facing representation or layer</strong></li>
-  <li>🟩 <strong>Semantic truth, source attribution, or recoverability obligation</strong></li>
-  <li>🟨 <strong>Boundary, interface, or standardized construction handoff</strong></li>
-  <li>🟧 <strong>Lowering / specialization / target adaptation zone</strong></li>
-  <li>🟥 <strong>Implementation-private or runtime-private realization zone</strong></li>
-</ul>
-
-<hr/>
-
 <h2 id="overview">1. Overview</h2>
 
 <p>
@@ -67,7 +55,7 @@ in a way that remains conservative, attributable, structured, and portable.
 <p>
 This document does not standardize one private compiler pipeline.
 It standardizes the minimum construction obligations that make a produced Execution IR
-recognizable, inspectable, and suitable for later lowering.
+recognizable, inspectable, recoverable, and suitable for later lowering.
 </p>
 
 <pre><code>🟩 validated meaning
@@ -79,11 +67,26 @@ recognizable, inspectable, and suitable for later lowering.
 🟦 open Execution IR
         |
         v
-🟧 later specialization
+🟧 lowering / specialization
+        |
+        v
+🟨 backend-facing contract
         |
         v
 🟥 private realization
 </code></pre>
+
+<hr/>
+
+<h2 id="reading-legend">2. Reading Legend</h2>
+
+<ul>
+  <li>🟦 <strong>Open specification-facing representation or layer</strong></li>
+  <li>🟩 <strong>Semantic truth, source attribution, or recoverability obligation</strong></li>
+  <li>🟨 <strong>Boundary, interface, mapping, or standardized construction handoff</strong></li>
+  <li>🟧 <strong>Lowering / specialization / target adaptation zone</strong></li>
+  <li>🟥 <strong>Implementation-private or runtime-private realization zone</strong></li>
+</ul>
 
 <hr/>
 
@@ -109,6 +112,7 @@ This document does <strong>not</strong> fully define:
 <ul>
   <li>the canonical source representation,</li>
   <li>the semantic meaning of language constructs,</li>
+  <li>the full cross-stage identity model,</li>
   <li>one universal mandatory wire format for all implementations,</li>
   <li>backend-specific lowering or runtime-private realization.</li>
 </ul>
@@ -119,6 +123,7 @@ This document does <strong>not</strong> fully define:
 This document does not define:
 🟦 source shape
 🟩 language semantics
+🟩 full cross-stage identity contract
 🟧 lowering
 🟥 private realization
 </code></pre>
@@ -137,6 +142,9 @@ This document depends on the following ownership boundaries:
   <li><code>Libraries/</code> and <code>Profiles/</code> own primitive and optional capability identities.</li>
   <li><code>IR/Execution IR.md</code> owns the architectural invariants of the open Execution IR.</li>
   <li><code>IR/Derivation rules.md</code> owns the normative source-to-IR correspondence.</li>
+  <li><code>IR/Identity and Mapping.md</code> owns the broader recoverable identity and mapping boundary.</li>
+  <li><code>IR/Lowering.md</code> owns the boundary where target-oriented specialization begins.</li>
+  <li><code>IR/Backend contract.md</code> owns the later backend-facing contract boundary.</li>
 </ul>
 
 <p>
@@ -150,12 +158,14 @@ Accordingly:
   <li>this document MUST define how a conforming Execution IR is constructed once derivation eligibility is satisfied.</li>
 </ul>
 
-<pre><code>🟦 Expression/        -> source shape
-🟩 Language/          -> semantic truth
-🟨 Derivation rules   -> correspondence obligations
-🟦 Execution IR       -> open IR model
-🟨 Construction rules -> build obligations
-🟧 Lowering           -> later specialization
+<pre><code>🟦 Expression/         -&gt; source shape
+🟩 Language/           -&gt; semantic truth
+🟨 Derivation rules    -&gt; correspondence obligations
+🟦 Execution IR        -&gt; open IR model
+🟨 Construction rules  -&gt; build obligations
+🟩 Identity / Mapping  -&gt; recoverable cross-layer identity
+🟧 Lowering            -&gt; later specialization
+🟨 Backend contract    -&gt; later consumer-facing handoff
 </code></pre>
 
 <hr/>
@@ -249,6 +259,11 @@ A conforming implementation MAY carry additional execution-relevant metadata, pr
         └── 🟩 source attribution
 </code></pre>
 
+<p>
+The construction result is the open IR payload that later stages MAY consume.
+It is not yet a lowered target-facing form and not yet a backend-facing contract artifact.
+</p>
+
 <hr/>
 
 <h2 id="construction-principles">7. Construction Principles</h2>
@@ -261,6 +276,7 @@ All conforming Execution IR construction in base v0.1 MUST follow the following 
   <li><strong>validated-first</strong> — construction starts after validation, not before it,</li>
   <li><strong>conservative</strong> — major validated families remain visible unless later documents explicitly allow stronger lowering,</li>
   <li><strong>attributable</strong> — every execution-visible constructed object remains traceable to validated source-visible contributors,</li>
+  <li><strong>mapping-compatible</strong> — construction preserves enough structure and identity for later recoverable mapping,</li>
   <li><strong>structured</strong> — structured control remains explicit in the open IR,</li>
   <li><strong>portable</strong> — construction must not assume one private backend architecture,</li>
   <li><strong>execution-facing</strong> — construction may make execution-relevant facts explicit, but must not invent new semantic truth.</li>
@@ -270,6 +286,7 @@ All conforming Execution IR construction in base v0.1 MUST follow the following 
 
 🟩 validated-first
 🟩 attributable
+🟩 mapping-compatible
 🟩 structured
 🟦 execution-facing
 🟦 portable
@@ -319,6 +336,11 @@ The order above is normative at the level of dependency, not necessarily at the 
 For example, an implementation MAY resolve ports before materializing all objects, provided the final result is equivalent.
 </p>
 
+<p>
+Construction stops at the open IR boundary.
+Lowering, backend-contract shaping, scheduling, partitioning, or runtime realization belong to later stages.
+</p>
+
 <hr/>
 
 <h2 id="execution-unit-construction">9. Execution Unit Construction</h2>
@@ -341,7 +363,7 @@ The execution unit MUST provide the owning scope for:
 
 <p>
 The execution unit MUST carry a stable unit identity within the payload.
-That identity does not need one globally fixed syntax, but it MUST be stable enough for inspection, diagnostics, and cross-record reference inside the payload.
+That identity does not need one globally fixed syntax, but it MUST be stable enough for inspection, diagnostics, cross-record reference, and recoverable mapping inside the payload.
 </p>
 
 <p>
@@ -359,7 +381,7 @@ The open IR does not yet standardize multi-unit partitioning, distributed unit p
 
 Rule:
 🟩 one validated FROG
-   ->
+   -&gt;
 🟦 one execution unit
 </code></pre>
 
@@ -642,7 +664,7 @@ At minimum, the constructed payload MUST support:
 <ul>
   <li>direct attribution for directly preserved objects,</li>
   <li>multi-contributor attribution for support objects derived from more than one validated contributor,</li>
-  <li>stable attribution references for inspection, validation reporting, and toolchain diagnostics.</li>
+  <li>stable attribution references for inspection, validation reporting, diagnostics, and later mapping-aware tooling.</li>
 </ul>
 
 <p>
@@ -674,6 +696,11 @@ Allowed representations:
 Forbidden:
 🟥 implicit undocumented positional attribution only
 </code></pre>
+
+<p>
+This document does not require one universal attribution encoding.
+It requires a construction result that remains compatible with the recoverability obligations defined elsewhere in the IR layer.
+</p>
 
 <hr/>
 
@@ -733,7 +760,7 @@ Forbidden:
 
 <p>
 This document does not freeze one mandatory universal JSON wire format for every implementation.
-However, a conforming open payload SHOULD be representable in a broadly equivalent shape such as:
+However, a conforming open payload SHOULD be representable in a broadly equivalent open shape such as:
 </p>
 
 <pre><code>{
@@ -750,11 +777,15 @@ However, a conforming open payload SHOULD be representable in a broadly equivale
 </code></pre>
 
 <p>
+This example is an <strong>illustrative minimal open payload skeleton</strong>, not a claim that every conforming implementation must emit this exact JSON syntax.
+</p>
+
+<p>
 In a minimally open payload:
 </p>
 
 <ul>
-  <li><code>ir_version</code> SHOULD identify the IR schema/version family being emitted,</li>
+  <li><code>ir_version</code> SHOULD identify the IR schema or version family being emitted,</li>
   <li><code>kind</code> SHOULD classify the payload as open execution IR,</li>
   <li><code>unit</code> MUST identify the execution unit being described,</li>
   <li><code>objects</code> MUST carry the execution-facing object records,</li>
@@ -901,6 +932,12 @@ It starts from <strong>validated meaning</strong>, creates <strong>one execution
 <strong>explicit objects</strong>, <strong>typed ports</strong>, <strong>directed connections</strong>,
 <strong>structured regions</strong>, and <strong>mandatory source attribution</strong>,
 then verifies that the resulting payload remains structured, attributable, portable, and free from runtime-private leakage.
+</p>
+
+<p>
+It is also intentionally upstream of later stages:
+construction closes the material build boundary for open Execution IR,
+while lowering, backend-facing contracts, and private realization remain later concerns.
 </p>
 
 <p>
