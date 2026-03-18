@@ -15,24 +15,23 @@
 
 <ul>
   <li><a href="#overview">1. Overview</a></li>
-  <li><a href="#purpose">2. Purpose</a></li>
-  <li><a href="#non-goals">3. Non-goals</a></li>
-  <li><a href="#position-in-the-pipeline">4. Position in the pipeline</a></li>
-  <li><a href="#construction-boundary">5. Construction boundary</a></li>
-  <li><a href="#design-goals">6. Design goals</a></li>
-  <li><a href="#core-invariants">7. Core invariants</a></li>
-  <li><a href="#execution-ir-object-model">8. Execution IR object model</a></li>
-  <li><a href="#source-attribution-and-identity">9. Source attribution and identity</a></li>
-  <li><a href="#ports-values-and-connections">10. Ports, values, and connections</a></li>
-  <li><a href="#regions-and-structured-control">11. Regions and structured control</a></li>
-  <li><a href="#interface-and-ui-boundaries">12. Interface and UI boundaries</a></li>
-  <li><a href="#state-local-memory-and-cycles">13. State, local memory, and cycles</a></li>
-  <li><a href="#allowed-normalization">14. Allowed normalization</a></li>
-  <li><a href="#forbidden-transformations">15. Forbidden transformations</a></li>
-  <li><a href="#minimal-open-shape">16. Minimal open shape</a></li>
-  <li><a href="#examples">17. Examples</a></li>
-  <li><a href="#relation-with-cache">18. Relation with cache</a></li>
-  <li><a href="#out-of-scope-for-v01">19. Out of scope for v0.1</a></li>
+  <li><a href="#role-of-this-document">2. Role of this Document</a></li>
+  <li><a href="#what-this-document-owns">3. What this Document Owns</a></li>
+  <li><a href="#what-this-document-does-not-own">4. What this Document Does Not Own</a></li>
+  <li><a href="#position-in-the-pipeline">5. Position in the Pipeline</a></li>
+  <li><a href="#design-goals">6. Design Goals</a></li>
+  <li><a href="#core-invariants">7. Core Invariants</a></li>
+  <li><a href="#execution-ir-object-model">8. Execution IR Object Model</a></li>
+  <li><a href="#primary-object-families">9. Primary Object Families</a></li>
+  <li><a href="#ports-and-connectivity">10. Ports and Connectivity</a></li>
+  <li><a href="#regions-and-structured-control">11. Regions and Structured Control</a></li>
+  <li><a href="#interface-and-ui-boundaries">12. Interface and UI Boundaries</a></li>
+  <li><a href="#state-local-memory-and-cycles">13. State, Local Memory, and Cycles</a></li>
+  <li><a href="#relation-with-derivation-and-construction-rules">14. Relation with Derivation and Construction Rules</a></li>
+  <li><a href="#relation-with-lowering-and-runtime-private-forms">15. Relation with Lowering and Runtime-Private Forms</a></li>
+  <li><a href="#relation-with-cache-and-tooling">16. Relation with Cache and Tooling</a></li>
+  <li><a href="#out-of-scope-for-v01">17. Out of Scope for v0.1</a></li>
+  <li><a href="#summary">18. Summary</a></li>
 </ul>
 
 <hr/>
@@ -44,51 +43,54 @@ This document defines the base <strong>open execution-facing intermediate repres
 </p>
 
 <p>
-The Execution IR is a <strong>derived representation</strong> built from a validated FROG program. It is intended to support execution preparation, execution-facing analysis, normalization, inspection, optimization, lowering, and later backend consumption without confusing those concerns with:
+The Execution IR is a <strong>derived representation</strong> built from a validated FROG program.
+It exists to provide an execution-facing form that remains open, inspectable, source-attributable, and architecturally upstream of lowering and runtime-private realization.
 </p>
 
-<ul>
-  <li>the canonical serialized source artifact,</li>
-  <li>the IDE Program Model,</li>
-  <li>the full language-semantics layer,</li>
-  <li>a private runtime scheduler graph,</li>
-  <li>a runtime trace or execution log.</li>
-</ul>
-
 <p>
-For v0.1, the open Execution IR remains deliberately close to validated executable meaning. It is <strong>not</strong> yet a fully lowered backend contract.
+For v0.1, the Execution IR remains deliberately close to validated executable meaning.
+It is <strong>not</strong> yet a lowered backend contract, a private scheduler graph, or a runtime history form.
 </p>
 
 <hr/>
 
-<h2 id="purpose">2. Purpose</h2>
+<h2 id="role-of-this-document">2. Role of this Document</h2>
 
 <p>
-The purpose of the Execution IR is to provide a stable execution-facing representation that:
+This document defines <strong>what the open Execution IR is</strong> at the architectural level.
+It defines the object model, the major preserved families, and the invariants that make the IR portable, inspectable, and suitable for later specialization.
+</p>
+
+<p>
+This document is intentionally narrower than:
 </p>
 
 <ul>
-  <li>preserves attribution to source-visible program objects,</li>
-  <li>makes execution-relevant structure explicit,</li>
-  <li>supports implementation-independent inspection,</li>
-  <li>permits later normalization and lowering stages,</li>
-  <li>avoids standardizing one vendor's private runtime graph as the language-level execution form.</li>
+  <li>the full source-to-IR correspondence rules,</li>
+  <li>the procedural rules for constructing IR payloads,</li>
+  <li>later lowering or backend-facing contracts.</li>
 </ul>
-
-<p>
-In practical terms:
-</p>
-
-<pre>
-Expression   -> what is saved
-Program Model-> what is edited
-Execution IR -> what is prepared for execution
-Runtime      -> what is actually running
-</pre>
 
 <hr/>
 
-<h2 id="non-goals">3. Non-goals</h2>
+<h2 id="what-this-document-owns">3. What this Document Owns</h2>
+
+<p>
+This document owns:
+</p>
+
+<ul>
+  <li>the architectural role of the open Execution IR,</li>
+  <li>its position between validated meaning and later specialization,</li>
+  <li>its core invariants,</li>
+  <li>its high-level object model,</li>
+  <li>the major execution-facing families that remain visible in base v0.1,</li>
+  <li>the boundary between open Execution IR and later runtime-private realization.</li>
+</ul>
+
+<hr/>
+
+<h2 id="what-this-document-does-not-own">4. What this Document Does Not Own</h2>
 
 <p>
 This document does not define:
@@ -98,11 +100,11 @@ This document does not define:
   <li>the canonical <code>.frog</code> source structure in full,</li>
   <li>the IDE Program Model,</li>
   <li>the complete normative semantics of all FROG execution behavior,</li>
-  <li>debugger command protocols,</li>
-  <li>pause/resume/step command semantics,</li>
+  <li>the full source-to-IR derivation mapping,</li>
+  <li>the full procedural construction rules for building open IR payloads,</li>
   <li>one mandatory runtime scheduler architecture,</li>
   <li>one mandatory compiled artifact format,</li>
-  <li>one mandatory target-specific lowering pipeline.</li>
+  <li>one mandatory lowering or backend contract.</li>
 </ul>
 
 <p>
@@ -111,14 +113,13 @@ This document also does not require every implementation to expose every private
 
 <hr/>
 
-<h2 id="position-in-the-pipeline">4. Position in the pipeline</h2>
+<h2 id="position-in-the-pipeline">5. Position in the Pipeline</h2>
 
 <p>
 The base architectural pipeline is:
 </p>
 
-<pre>
-canonical .frog source
+<pre><code>canonical .frog source
         |
         v
 Expression
@@ -127,57 +128,27 @@ Expression
 Program Model or equivalent validated tool form
         |
         v
-validated executable graph
+validated executable meaning
         |
         v
 Execution IR
         |
         v
-lowering / compilation / runtime-specific realization
-</pre>
+later lowering / backend preparation / runtime-private realization
+</code></pre>
 
 <p>
-The validated executable graph is the language-level executable meaning of the program.
-The Execution IR is the execution-facing derived form built from that validated meaning.
+The validated executable meaning is the language-level truth of the program.
+The Execution IR is the open execution-facing form built from that validated meaning.
+</p>
+
+<p>
+Execution IR therefore begins <strong>after validation</strong> and remains <strong>before lowering</strong>.
 </p>
 
 <hr/>
 
-<h2 id="construction-boundary">5. Construction boundary</h2>
-
-<p>
-Execution IR construction begins only after the program has been validated according to the relevant FROG specifications.
-</p>
-
-<p>
-At minimum, that validation includes:
-</p>
-
-<ul>
-  <li>structural validation,</li>
-  <li>type validation,</li>
-  <li>primitive and structure-family validation,</li>
-  <li>cycle-validity validation,</li>
-  <li>all other applicable v0.1 validation rules.</li>
-</ul>
-
-<p>
-An implementation MAY internally derive Execution IR from:
-</p>
-
-<ul>
-  <li>canonical source plus validation results,</li>
-  <li>a validated Program Model,</li>
-  <li>another equivalent validated internal form.</li>
-</ul>
-
-<p>
-However, the resulting Execution IR MUST remain semantically grounded in the validated FROG program rather than in editor-only convenience state.
-</p>
-
-<hr/>
-
-<h2 id="design-goals">6. Design goals</h2>
+<h2 id="design-goals">6. Design Goals</h2>
 
 <p>
 The base Execution IR for v0.1 SHOULD be:
@@ -188,31 +159,33 @@ The base Execution IR for v0.1 SHOULD be:
   <li>source-attributable,</li>
   <li>inspectable,</li>
   <li>portable across implementations,</li>
-  <li>stable enough to support future tooling,</li>
-  <li>strict enough to support later lowering,</li>
-  <li>conservative enough to avoid freezing one private compiler design too early.</li>
+  <li>stable enough to support later tooling,</li>
+  <li>strict enough to support future lowering,</li>
+  <li>conservative enough to avoid freezing one private compiler or runtime design too early.</li>
 </ul>
 
 <hr/>
 
-<h2 id="core-invariants">7. Core invariants</h2>
+<h2 id="core-invariants">7. Core Invariants</h2>
 
 <p>
-The following invariants apply to the base Execution IR of v0.1:
+The following invariants apply to the base open Execution IR of v0.1:
 </p>
 
 <ul>
-  <li>Every Execution IR object MUST be attributable to validated program meaning.</li>
-  <li>The Execution IR MUST remain source-aligned at the level of attributable executable objects.</li>
+  <li>Every execution-visible IR object MUST be attributable to validated program meaning.</li>
+  <li>The Execution IR MUST remain source-aligned at the level of attributable execution-facing objects.</li>
   <li>The Execution IR MUST NOT silently change the normative language meaning of the validated program.</li>
-  <li>The Execution IR MUST NOT replace explicit local memory with hidden implicit state.</li>
-  <li>The Execution IR MUST NOT encode editor-only presentation state as if that state were execution semantics.</li>
+  <li>The Execution IR MUST preserve explicit local memory as explicit local memory.</li>
+  <li>The Execution IR MUST preserve structured control as structured control in the open IR.</li>
+  <li>The Execution IR MUST preserve the distinction between public interface participation and UI participation.</li>
+  <li>The Execution IR MUST NOT encode editor-only presentation state as execution semantics.</li>
   <li>The Execution IR MUST NOT be treated as a runtime history, event trace, or debugger session log.</li>
 </ul>
 
 <hr/>
 
-<h2 id="execution-ir-object-model">8. Execution IR object model</h2>
+<h2 id="execution-ir-object-model">8. Execution IR Object Model</h2>
 
 <p>
 The base Execution IR represents one validated FROG as one <strong>execution unit</strong> containing execution-facing objects and their relationships.
@@ -222,24 +195,39 @@ The base Execution IR represents one validated FROG as one <strong>execution uni
 Conceptually:
 </p>
 
-<pre>
-Execution IR
+<pre><code>Execution IR
 └── execution unit
-    ├── interface boundary objects
+    ├── boundary objects
     ├── executable objects
     ├── region objects
     ├── typed ports
     ├── directed connections
     └── source attribution
-</pre>
+</code></pre>
 
 <p>
-In base v0.1, the Execution IR SHOULD preserve the major validated object families rather than aggressively lowering them away. Those families include:
+This execution unit is the architectural container of the open IR for one validated FROG in base v0.1.
+</p>
+
+<p>
+The open Execution IR MAY contain support objects that make execution-facing structure more explicit, but such support objects MUST remain attributable and MUST NOT replace primary validated execution-visible content with opaque generated machinery.
+</p>
+
+<hr/>
+
+<h2 id="primary-object-families">9. Primary Object Families</h2>
+
+<p>
+In base v0.1, the Execution IR SHOULD preserve the major validated object families rather than aggressively lowering them away.
+</p>
+
+<p>
+Those families include:
 </p>
 
 <ul>
-  <li>primitive executable objects,</li>
-  <li>structured-control executable objects,</li>
+  <li>primitive execution objects,</li>
+  <li>structured execution objects,</li>
   <li>sub-FROG invocation objects,</li>
   <li>public interface boundary objects,</li>
   <li>widget-value participation objects,</li>
@@ -250,43 +238,32 @@ In base v0.1, the Execution IR SHOULD preserve the major validated object famili
 This conservative model keeps the open IR readable and attributable while still making execution-facing structure explicit.
 </p>
 
-<hr/>
-
-<h2 id="source-attribution-and-identity">9. Source attribution and identity</h2>
-
 <p>
-Source attribution is mandatory.
+Base v0.1 therefore favors:
 </p>
 
-<p>
-Each execution-facing object in the IR MUST preserve enough information to identify the source-visible object or objects from which it was derived.
-</p>
+<pre><code>validated structured meaning
+        |
+        v
+open structured IR
+        |
+        v
+later specialization
+</code></pre>
 
 <p>
-At minimum:
+rather than:
 </p>
 
-<ul>
-  <li>a directly preserved object SHOULD carry one stable source identity,</li>
-  <li>a normalized object derived from multiple source-visible objects MUST preserve an explicit attribution relation to all relevant source-visible contributors,</li>
-  <li>an implementation MUST NOT collapse multiple independently attributable source-visible objects into one opaque generated object without preserving traceable attribution.</li>
-</ul>
-
-<p>
-The goal is not to force one specific identifier syntax. The goal is to preserve stable cross-layer attribution for:
-</p>
-
-<ul>
-  <li>inspection,</li>
-  <li>validation reporting,</li>
-  <li>debugging and observability integration,</li>
-  <li>toolchain diagnostics,</li>
-  <li>future source/IR/runtime correspondence.</li>
-</ul>
+<pre><code>validated structured meaning
+        |
+        v
+immediate backend-shaped flattening
+</code></pre>
 
 <hr/>
 
-<h2 id="ports-values-and-connections">10. Ports, values, and connections</h2>
+<h2 id="ports-and-connectivity">10. Ports and Connectivity</h2>
 
 <p>
 The Execution IR MUST represent execution-relevant connectivity explicitly.
@@ -297,38 +274,28 @@ At minimum:
 </p>
 
 <ul>
-  <li>execution-facing objects MUST expose typed ports,</li>
+  <li>execution-facing objects MUST expose explicit typed ports or an equivalent explicit terminal interface,</li>
   <li>port direction MUST be explicit,</li>
-  <li>directed connections between ports MUST be explicit,</li>
+  <li>directed connections MUST be explicit,</li>
   <li>the resulting IR graph MUST preserve the validated dependency structure of the program,</li>
-  <li>connection endpoints MUST remain attributable to validated executable objects and validated ports.</li>
+  <li>connection endpoints MUST remain attributable to validated execution-facing objects and validated ports or terminals.</li>
 </ul>
 
 <p>
-The IR MAY make port details more explicit than the source representation when such details are already determined by validation or intrinsic primitive definitions.
+The open IR MAY be more explicit than source where validation has already resolved execution-relevant facts.
+That explicitness belongs to open execution-facing representation, not yet to target-specific lowering.
 </p>
-
-<p>
-Examples of permitted explicitness include:
-</p>
-
-<ul>
-  <li>resolved port direction,</li>
-  <li>resolved port type,</li>
-  <li>resolved structure terminal classification,</li>
-  <li>resolved interface-boundary port role.</li>
-</ul>
 
 <hr/>
 
-<h2 id="regions-and-structured-control">11. Regions and structured control</h2>
+<h2 id="regions-and-structured-control">11. Regions and Structured Control</h2>
 
 <p>
 Structured control remains explicit in the base Execution IR.
 </p>
 
 <p>
-For v0.1, control structures such as <code>case</code>, <code>for_loop</code>, and <code>while_loop</code> SHOULD remain represented as structured execution objects with explicit regions and explicit boundary terminals rather than being immediately flattened into target-specific branch or loop machinery.
+For v0.1, control structures such as <code>case</code>, <code>for_loop</code>, and <code>while_loop</code> SHOULD remain represented as structured execution objects with explicit owned regions and explicit boundary participation rather than being immediately flattened into backend-oriented branch or loop machinery.
 </p>
 
 <p>
@@ -337,27 +304,28 @@ Accordingly:
 
 <ul>
   <li>a structured execution object MUST identify its standardized structure family,</li>
-  <li>owned execution regions MUST remain explicit,</li>
-  <li>boundary terminals crossing the structure boundary MUST remain explicit,</li>
+  <li>owned regions MUST remain explicit,</li>
+  <li>structure-boundary participation MUST remain explicit,</li>
   <li>region-local execution content MUST remain attributable to source-level region content.</li>
 </ul>
 
 <p>
-This preserves a clean distinction between:
+This keeps the open IR aligned with validated control meaning while leaving backend-oriented branching and loop realization to later stages.
 </p>
-
-<ul>
-  <li>open execution IR, and</li>
-  <li>later lowering into backend-oriented branch and loop realizations.</li>
-</ul>
 
 <hr/>
 
-<h2 id="interface-and-ui-boundaries">12. Interface and UI boundaries</h2>
+<h2 id="interface-and-ui-boundaries">12. Interface and UI Boundaries</h2>
 
 <p>
-The Execution IR MUST preserve the distinction between public interface participation and UI participation.
+The Execution IR MUST preserve the distinction between:
 </p>
+
+<ul>
+  <li>public interface participation,</li>
+  <li>widget primary-value participation,</li>
+  <li>widget object-style reference participation.</li>
+</ul>
 
 <p>
 Therefore:
@@ -366,12 +334,12 @@ Therefore:
 <ul>
   <li>public interface entry and exit semantics MUST remain represented explicitly,</li>
   <li>widget primary-value participation MUST remain distinguishable from public interface participation,</li>
-  <li>widget-reference object access MUST remain distinguishable from ordinary valueflow participation,</li>
-  <li>the IR MUST NOT collapse public API boundaries and front-panel value boundaries into one undifferentiated concept.</li>
+  <li>widget-reference access MUST remain distinguishable from ordinary valueflow participation,</li>
+  <li>the open IR MUST NOT collapse those roles into one undifferentiated generic boundary concept.</li>
 </ul>
 
 <p>
-In base v0.1, a source-aligned implementation SHOULD preserve recognizable boundary families corresponding to:
+In base v0.1, a source-aligned implementation SHOULD preserve recognizable families corresponding to:
 </p>
 
 <ul>
@@ -381,20 +349,13 @@ In base v0.1, a source-aligned implementation SHOULD preserve recognizable bound
   <li><code>widget_reference</code>.</li>
 </ul>
 
-<p>
-More aggressive normalization is permitted only if source attribution and semantic distinction remain recoverable.
-</p>
-
 <hr/>
 
-<h2 id="state-local-memory-and-cycles">13. State, local memory, and cycles</h2>
+<h2 id="state-local-memory-and-cycles">13. State, Local Memory, and Cycles</h2>
 
 <p>
 Explicit local memory remains explicit in the base Execution IR.
-</p>
-
-<p>
-This is a hard requirement of the architectural model.
+This is a hard architectural requirement.
 </p>
 
 <p>
@@ -402,179 +363,91 @@ Accordingly:
 </p>
 
 <ul>
-  <li>the IR MUST preserve the presence of local-memory primitives such as <code>frog.core.delay</code>,</li>
+  <li>the IR MUST preserve explicit local-memory objects such as <code>frog.core.delay</code>,</li>
   <li>the IR MUST NOT legalize an otherwise invalid combinational cycle by introducing hidden implicit memory,</li>
-  <li>the IR MUST NOT erase explicit memory attribution in a valid stateful feedback path,</li>
+  <li>the IR MUST NOT erase explicit memory attribution in a valid feedback path,</li>
   <li>cycles represented in the IR MUST remain consistent with validated cycle rules.</li>
 </ul>
 
 <p>
-The open Execution IR is allowed to classify explicit memory-bearing objects as execution-relevant state objects, but it MUST remain faithful to the validated FROG rule that valid feedback depends on explicit local memory.
+The open Execution IR MAY classify explicit memory-bearing objects as execution-relevant state objects, but it MUST remain faithful to the validated FROG rule that valid feedback depends on explicit local memory.
 </p>
 
 <hr/>
 
-<h2 id="allowed-normalization">14. Allowed normalization</h2>
+<h2 id="relation-with-derivation-and-construction-rules">14. Relation with Derivation and Construction Rules</h2>
 
 <p>
-The base Execution IR MAY normalize validated program meaning in execution-facing ways that do not change semantic truth.
-</p>
-
-<p>
-Examples of allowed normalization include:
+This document defines the architectural shape of the open Execution IR.
+It does not fully define either:
 </p>
 
 <ul>
-  <li>making resolved port direction explicit,</li>
-  <li>making resolved port type explicit,</li>
-  <li>making structure boundary terminals explicit,</li>
-  <li>making region ownership explicit,</li>
-  <li>materializing validated object classification needed for execution-facing analysis,</li>
-  <li>adding explicit source-attribution maps,</li>
-  <li>normalizing equivalent source spellings into one execution-facing canonical form.</li>
+  <li>the normative correspondence between validated source-visible content and IR objects, or</li>
+  <li>the full procedural rules for materially building an open IR payload.</li>
 </ul>
 
 <p>
-Such normalization is acceptable only when the resulting IR remains semantically equivalent to the validated program.
+Those concerns belong to companion documents of the IR layer:
 </p>
+
+<ul>
+  <li><strong>Derivation rules</strong> define what must remain correspondingly recoverable between validated FROG meaning and open Execution IR.</li>
+  <li><strong>Construction rules</strong> define how a conforming open Execution IR is materially built.</li>
+</ul>
+
+<p>
+In compact form:
+</p>
+
+<pre><code>Execution IR.md
+   -> what the open IR is
+
+Derivation rules.md
+   -> what maps to what
+
+Construction rules.md
+   -> how the open IR is built
+</code></pre>
 
 <hr/>
 
-<h2 id="forbidden-transformations">15. Forbidden transformations</h2>
+<h2 id="relation-with-lowering-and-runtime-private-forms">15. Relation with Lowering and Runtime-Private Forms</h2>
 
 <p>
-The following transformations are forbidden in the base open Execution IR of v0.1:
+The open Execution IR sits before lowering and before runtime-private realization.
+</p>
+
+<p>
+Therefore:
 </p>
 
 <ul>
-  <li>changing language-level execution meaning,</li>
-  <li>removing source attribution for execution-visible objects,</li>
-  <li>converting explicit local memory into hidden implicit scheduler state,</li>
-  <li>treating editor-only annotations or presentation choices as execution semantics,</li>
-  <li>hard-coding one private runtime scheduling strategy as if it were the open IR standard,</li>
-  <li>flattening structured control so aggressively that structure identity, region attribution, or semantic correspondence is no longer recoverable,</li>
-  <li>merging public interface boundaries, widget boundaries, and object-style widget access into one untyped generic edge model without preserving their semantic roles.</li>
+  <li>the open Execution IR MAY serve as the input to later lowering stages,</li>
+  <li>later stages MAY specialize, normalize further, partition, schedule, or compile execution for specific targets,</li>
+  <li>runtime-private scheduler structures, compiled objects, target-private state layouts, and equivalent realization forms remain outside the ownership of this document unless later standardized explicitly.</li>
 </ul>
+
+<p>
+This means:
+</p>
+
+<pre><code>open Execution IR
+   != private scheduler graph
+
+open Execution IR
+   != compiled artifact
+
+open Execution IR
+   != runtime trace
+
+open Execution IR
+   = open execution-facing representation
+</code></pre>
 
 <hr/>
 
-<h2 id="minimal-open-shape">16. Minimal open shape</h2>
-
-<p>
-This document does not yet freeze one mandatory JSON wire format for all implementations.
-</p>
-
-<p>
-However, an open Execution IR payload SHOULD be representable in a shape broadly equivalent to:
-</p>
-
-<pre>
-{
-  "ir_version": "0.1",
-  "kind": "execution_ir",
-  "unit": {
-    "id": "main",
-    "objects": [],
-    "connections": [],
-    "regions": [],
-    "source_map": {}
-  }
-}
-</pre>
-
-<p>
-At minimum, such a representation SHOULD be capable of carrying:
-</p>
-
-<ul>
-  <li>execution-facing object identity,</li>
-  <li>object kind classification,</li>
-  <li>typed ports,</li>
-  <li>directed connections,</li>
-  <li>structured regions where applicable,</li>
-  <li>source attribution,</li>
-  <li>validated execution-relevant metadata where applicable.</li>
-</ul>
-
-<p>
-The exact transport schema MAY be defined more strictly in later documents.
-</p>
-
-<hr/>
-
-<h2 id="examples">17. Examples</h2>
-
-<h3>17.1 Basic interface-aligned arithmetic graph</h3>
-
-<pre>
-Source-facing idea
-------------------
-interface_input(a) ----\
-                        +--> frog.core.add --> interface_output(result)
-interface_input(b) ----/
-
-Possible execution-facing IR view
----------------------------------
-public_input[a] ----\
-                     +--> primitive[frog.core.add] --> public_output[result]
-public_input[b] ----/
-</pre>
-
-<p>
-This example illustrates that the Execution IR MAY normalize naming while preserving:
-</p>
-
-<ul>
-  <li>boundary role,</li>
-  <li>primitive identity,</li>
-  <li>dependency direction,</li>
-  <li>source attribution.</li>
-</ul>
-
-<h3>17.2 Explicit local memory in feedback</h3>
-
-<pre>
-validated source-aligned meaning
---------------------------------
-            +----------------------+
-            |                      |
-            v                      |
-      [ frog.core.delay ] --> [ frog.core.add ] --> next_value
-</pre>
-
-<p>
-In the Execution IR:
-</p>
-
-<ul>
-  <li>the feedback path MAY remain a directed cycle,</li>
-  <li>the delay MUST remain explicit as local memory,</li>
-  <li>the IR MUST NOT replace the delay with hidden runtime-only state while pretending that no explicit memory object exists.</li>
-</ul>
-
-<h3>17.3 Structured control remains structured</h3>
-
-<pre>
-Source-facing idea
-------------------
-case(selector)
-  ├── region "true"
-  └── region "false"
-
-Execution IR principle
-----------------------
-structure[case]
-  ├── region[true]
-  └── region[false]
-</pre>
-
-<p>
-The open Execution IR keeps the structured form explicit. Backend-oriented branch lowering belongs later.
-</p>
-
-<hr/>
-
-<h2 id="relation-with-cache">18. Relation with cache</h2>
+<h2 id="relation-with-cache-and-tooling">16. Relation with Cache and Tooling</h2>
 
 <p>
 A tool MAY serialize an Execution IR artifact inside a cache entry such as <code>frog.ir</code>.
@@ -592,13 +465,17 @@ However:
 </ul>
 
 <p>
-This document owns the architectural meaning of the Execution IR itself.
+This document owns the architectural meaning of the open Execution IR itself.
 Cache specifications only define how such derived artifacts may be stored or associated.
+</p>
+
+<p>
+Likewise, IDEs and other tools MAY inspect, compare, cache, render, or analyze open IR forms without thereby taking ownership of the IR definition itself.
 </p>
 
 <hr/>
 
-<h2 id="out-of-scope-for-v01">19. Out of scope for v0.1</h2>
+<h2 id="out-of-scope-for-v01">17. Out of Scope for v0.1</h2>
 
 <p>
 The following topics remain out of scope for this document in v0.1:
@@ -615,11 +492,46 @@ The following topics remain out of scope for this document in v0.1:
   <li>one mandatory trace or observability event protocol.</li>
 </ul>
 
+<hr/>
+
+<h2 id="summary">18. Summary</h2>
+
 <p>
-The purpose of v0.1 is narrower:
+The FROG Execution IR of v0.1 is an <strong>open execution-facing representation</strong> built from
+<strong>validated program meaning</strong>.
+It remains <strong>source-attributable</strong>, <strong>structured</strong>, <strong>portable</strong>, and
+<strong>conservative</strong> by design.
 </p>
 
-<pre>
-define an open execution-facing representation
-without collapsing FROG into one private implementation pipeline
-</pre>
+<p>
+It preserves:
+</p>
+
+<ul>
+  <li>major validated execution-facing object families,</li>
+  <li>explicit connectivity,</li>
+  <li>structured control and explicit regions,</li>
+  <li>public interface versus UI distinctions,</li>
+  <li>explicit local memory and valid stateful cycles.</li>
+</ul>
+
+<p>
+It does not yet define:
+</p>
+
+<ul>
+  <li>full derivation correspondence,</li>
+  <li>full construction procedure,</li>
+  <li>full lowering,</li>
+  <li>full backend contract,</li>
+  <li>runtime-private realization.</li>
+</ul>
+
+<p>
+In one line:
+</p>
+
+<pre><code>Execution IR is the open architectural bridge
+between validated FROG meaning
+and later specialization for execution realization.
+</code></pre>
