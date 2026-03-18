@@ -99,12 +99,13 @@ Its role is to provide a durable open foundation for future:
 
 <p>
 This repository does <strong>not</strong> define one mandatory product implementation.
-It does not equate the language with one IDE, one runtime, one vendor stack, or one deployment model.
+It does not equate the language with one IDE, one runtime, one compiler, one vendor stack, or one deployment model.
 </p>
 
 <ul>
   <li><strong>FROG is not an IDE.</strong></li>
   <li><strong>FROG is not a single runtime.</strong></li>
+  <li><strong>FROG is not a single compiler.</strong></li>
   <li><strong>FROG is not a vendor product.</strong></li>
   <li><strong>FROG is an open language specification with distinct source, semantic, IR, library, profile, and IDE-facing specification layers.</strong></li>
 </ul>
@@ -181,7 +182,7 @@ FROG is designed to reduce that bottleneck by moving more of the developer’s e
 
 <p>
 The goal is not to eliminate engineering complexity.
-The goal is to shift complexity toward the system itself instead of toward syntax-first representation.
+The goal is to shift complexity toward the system itself rather than toward syntax-first representation.
 </p>
 
 <hr/>
@@ -660,7 +661,7 @@ The repository is intentionally split into distinct architectural layers:
 
 <p>
 This separation is deliberate.
-It prevents the language from being reduced to one editor, one runtime, or one vendor implementation.
+It prevents the language from being reduced to one editor, one runtime, one compiler, or one vendor implementation.
 </p>
 
 <p>
@@ -736,6 +737,7 @@ It MAY additionally contain:
 <p>
 Optional sections MUST NOT redefine authoritative program semantics.
 The diagram remains the authoritative source-level execution structure.
+The public interface remains independent from the front panel.
 The front panel remains optional and non-authoritative for public interface definition.
 </p>
 
@@ -873,10 +875,10 @@ A toolchain edits a Program Model, serializes canonical source, validates progra
                          Debugging
                 (pause / resume / break / step)
                             |
-                     +------+------+ 
-                     |             |
-                     v             v
-                   Probes        Watch
+                     +------+
+                     |      |
+                     v      v
+                   Probes  Watch
 </pre>
 
 <p>
