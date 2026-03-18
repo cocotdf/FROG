@@ -31,8 +31,9 @@
   <li><a href="#state-and-cycle-preservation">15. State and Cycle Preservation</a></li>
   <li><a href="#allowed-normalization-during-derivation">16. Allowed Normalization During Derivation</a></li>
   <li><a href="#forbidden-derivation-outcomes">17. Forbidden Derivation Outcomes</a></li>
-  <li><a href="#out-of-scope-for-v01">18. Out of Scope for v0.1</a></li>
-  <li><a href="#summary">19. Summary</a></li>
+  <li><a href="#relation-with-lowering-and-backend-contract">18. Relation with Lowering and Backend Contract</a></li>
+  <li><a href="#out-of-scope-for-v01">19. Out of Scope for v0.1</a></li>
+  <li><a href="#summary">20. Summary</a></li>
 </ul>
 
 <hr/>
@@ -45,7 +46,7 @@ It specifies <strong>what must be preserved</strong>, <strong>what may be made e
 </p>
 
 <p>
-This document does <strong>not</strong> redefine canonical source structure, language meaning, or runtime-private realization.
+This document does <strong>not</strong> redefine canonical source structure, language meaning, payload construction procedure, or runtime-private realization.
 It defines the derivation boundary between validated FROG program meaning and open execution-facing IR.
 </p>
 
@@ -65,7 +66,10 @@ Compact mental model:
 🟦 open Execution IR
         |
         v
-🟧 lowering / backend mapping / compilation
+🟧 lowering / specialization
+        |
+        v
+🟨 backend-facing contract
         |
         v
 🟥 runtime-private realization
@@ -78,7 +82,7 @@ Compact mental model:
 <ul>
   <li>🟦 <strong>Open specification-facing representation or layer</strong></li>
   <li>🟩 <strong>Semantic truth, source attribution, or recoverability obligation</strong></li>
-  <li>🟨 <strong>Boundary, interface, or standardized derivation handoff</strong></li>
+  <li>🟨 <strong>Boundary, interface, mapping, or standardized derivation handoff</strong></li>
   <li>🟧 <strong>Lowering / specialization / target adaptation zone</strong></li>
   <li>🟥 <strong>Implementation-private or runtime-private realization zone</strong></li>
 </ul>
@@ -93,8 +97,8 @@ This document defines:
 
 <ul>
   <li>the normative entry condition for Execution IR derivation,</li>
-  <li>the minimum mapping between validated FROG source-visible families and Execution IR families,</li>
-  <li>the identity and attribution obligations that make source/IR correspondence recoverable,</li>
+  <li>the minimum mapping between validated FROG execution-relevant families and Execution IR families,</li>
+  <li>the attribution and identity-preservation obligations that make source/IR correspondence recoverable at the derivation boundary,</li>
   <li>the derivation constraints that preserve control structure, interface/UI distinction, and explicit memory,</li>
   <li>the allowed and forbidden kinds of derivation-time normalization in base v0.1.</li>
 </ul>
@@ -106,12 +110,14 @@ This document is intentionally narrower than a full IR transport schema and inte
 <pre><code>This document defines:
 🟨 what must correspond
 🟩 what must remain recoverable
-🟦 what may be made explicit
+🟦 what may be made explicit during derivation
 
 This document does not define:
-🟦 what the open IR is in full          -> Execution IR.md
-🟦 how payloads are materially built    -> Construction rules.md
-🟧 how IR is later specialized          -> later documents
+🟦 what the open IR is in full               -&gt; Execution IR.md
+🟦 how payloads are materially built         -&gt; Construction rules.md
+🟩 full cross-stage mapping architecture     -&gt; Identity and Mapping.md
+🟧 how IR is later specialized               -&gt; Lowering.md
+🟨 what later consumers may rely on          -&gt; Backend contract.md
 </code></pre>
 
 <hr/>
@@ -128,6 +134,10 @@ This document depends on the following ownership boundaries:
   <li><code>Libraries/</code> owns intrinsic primitive identities, primitive ports, and primitive-local behavior.</li>
   <li><code>Profiles/</code> owns optional standardized capability families.</li>
   <li><code>IR/Execution IR.md</code> owns the architectural shape and invariants of the open Execution IR.</li>
+  <li><code>IR/Identity and Mapping.md</code> owns the broader recoverable identity and mapping boundary across layers.</li>
+  <li><code>IR/Construction rules.md</code> owns the material build rules for conforming open IR payloads.</li>
+  <li><code>IR/Lowering.md</code> owns the boundary where target-oriented specialization begins.</li>
+  <li><code>IR/Backend contract.md</code> owns the later backend-facing contract boundary.</li>
 </ul>
 
 <p>
@@ -137,8 +147,9 @@ Accordingly:
 <ul>
   <li>this document MUST NOT redefine what a valid <code>.frog</code> file looks like,</li>
   <li>this document MUST NOT redefine what a validated program means,</li>
+  <li>this document MUST NOT redefine how all IR payloads are physically serialized,</li>
   <li>this document MUST NOT redefine private runtime scheduler internals,</li>
-  <li>this document MUST define how validated program meaning becomes open execution-facing IR.</li>
+  <li>this document MUST define how validated program meaning becomes open execution-facing IR at the derivation boundary.</li>
 </ul>
 
 <p>
@@ -147,18 +158,21 @@ This document should be read together with:
 
 <ul>
   <li><code>IR/Execution IR.md</code> — what the open Execution IR must preserve,</li>
+  <li><code>IR/Identity and Mapping.md</code> — how recoverable identity survives across derivation boundaries,</li>
   <li><code>Expression/Diagram.md</code> — executable source graph families,</li>
   <li><code>Expression/Control structures.md</code> — source-facing structure boundaries, terminals, and regions,</li>
   <li><code>Expression/State and cycles.md</code> — source-facing explicit memory and cycle constraints,</li>
   <li><code>Language/Control structures.md</code> and <code>Language/State and cycles.md</code> — execution semantics that derivation must preserve.</li>
 </ul>
 
-<pre><code>🟦 Expression/   -> source shape
-🟩 Language/     -> semantic truth
-🟦 Execution IR  -> open IR model
-🟨 Derivation    -> correspondence obligations
-🟦 Construction  -> build obligations
-🟧 Lowering      -> later specialization
+<pre><code>🟦 Expression/        -&gt; source shape
+🟩 Language/          -&gt; semantic truth
+🟦 Execution IR       -&gt; open IR model
+🟨 Derivation         -&gt; correspondence obligations
+🟦 Construction       -&gt; build obligations
+🟩 Identity/Mapping   -&gt; recoverable cross-layer identity
+🟧 Lowering           -&gt; later specialization
+🟨 Backend contract   -&gt; later consumer-facing handoff
 </code></pre>
 
 <hr/>
@@ -202,6 +216,11 @@ Derivation therefore begins at the following boundary:
 🟨 derivation boundary starts here
 </code></pre>
 
+<p>
+This document does not require all implementations to expose the same internal pre-IR validation machinery.
+It requires that whatever internal route is used, the open Execution IR be derivable from validated meaning and remain faithful to it.
+</p>
+
 <hr/>
 
 <h2 id="inputs-and-preconditions">6. Inputs and Preconditions</h2>
@@ -240,7 +259,7 @@ If those preconditions are not satisfied, a conforming implementation MUST NOT c
 🟩 validated cycle legality
 
 No validation
-   ->
+   -&gt;
 No conforming open Execution IR
 </code></pre>
 
@@ -268,7 +287,7 @@ That execution unit MUST contain enough information to represent:
 
 <p>
 This document does not require one frozen mandatory wire format.
-It requires a derivation result that is semantically equivalent, attributable, inspectable, and compatible with the Execution IR invariants defined elsewhere.
+It requires a derivation result that is semantically equivalent, attributable, inspectable, mapping-compatible, and compatible with the Execution IR invariants defined elsewhere.
 </p>
 
 <pre><code>🟩 one validated FROG
@@ -283,6 +302,11 @@ It requires a derivation result that is semantically equivalent, attributable, i
         └── 🟩 source attribution
 </code></pre>
 
+<p>
+The derivation result is the open IR layer input to later stages.
+It is not yet a lowered target-facing form and not yet a backend-facing contract artifact.
+</p>
+
 <hr/>
 
 <h2 id="core-derivation-invariants">8. Core Derivation Invariants</h2>
@@ -294,6 +318,7 @@ The following invariants apply to all conforming derivations in base v0.1:
 <ul>
   <li>Derivation MUST preserve validated language meaning.</li>
   <li>Derivation MUST preserve attribution to validated source-visible execution content.</li>
+  <li>Derivation MUST preserve enough structure and identity to satisfy later recoverable mapping obligations.</li>
   <li>Derivation MUST preserve explicit memory as explicit memory.</li>
   <li>Derivation MUST preserve structured control as structured control in the open IR.</li>
   <li>Derivation MUST preserve the distinction between public interface participation and UI participation.</li>
@@ -306,6 +331,7 @@ The following invariants apply to all conforming derivations in base v0.1:
 
 🟩 preserve semantic truth
 🟩 preserve source attribution
+🟩 preserve recoverable identity
 🟩 preserve explicit memory
 🟩 preserve structured control
 🟩 preserve interface / UI distinction
@@ -361,14 +387,15 @@ They MUST NOT replace meaning with runtime-private policy.
 <pre><code>Derived IR content
 
 🟦 Primary derived objects
-   -> direct execution-facing correspondence
+   -&gt; direct execution-facing correspondence
 
 🟦 Support objects
-   -> explicit helper structure
+   -&gt; explicit helper structure
 
 Support objects:
 ✔ may clarify
 ✔ may normalize explicitness
+✔ may support recoverable mapping
 ✘ may not change meaning
 ✘ may not inject runtime-private policy
 </code></pre>
@@ -484,8 +511,8 @@ Non-execution source content MUST NOT be converted into execution objects merely
         v
 🟦 corresponding execution-facing IR family
         |
-        +--> 🟩 recoverable attribution
-        +--> 🟦 possible support objects
+        +--&gt; 🟩 recoverable attribution
+        +--&gt; 🟦 possible support objects
 </code></pre>
 
 <hr/>
@@ -546,7 +573,8 @@ restricted aggregated support:
 
 <p>
 This document does not freeze one identifier syntax.
-It requires recoverable cross-layer identity.
+It requires recoverable cross-layer identity at the derivation boundary.
+Broader cross-stage identity rules remain owned by <code>Identity and Mapping.md</code>.
 </p>
 
 <hr/>
@@ -773,6 +801,7 @@ Examples of allowed normalization include:
   <li>making region ownership explicit,</li>
   <li>materializing explicit support objects for execution-facing classification,</li>
   <li>adding explicit source-attribution records,</li>
+  <li>adding explicit contributor records for permitted restricted aggregations,</li>
   <li>normalizing equivalent validated source spellings into one execution-facing canonical representation,</li>
   <li>carrying validated execution-relevant metadata in normalized explicit form.</li>
 </ul>
@@ -794,6 +823,7 @@ Allowed normalization is subject to all of the following conditions:
 ✔ make already-validated facts explicit
 ✔ add explicit support objects
 ✔ add attribution structure
+✔ add contributor structure where permitted
 ✔ normalize equivalent validated spellings
 
 Only if:
@@ -839,7 +869,50 @@ The following outcomes are forbidden in the base open Execution IR of v0.1:
 
 <hr/>
 
-<h2 id="out-of-scope-for-v01">18. Out of Scope for v0.1</h2>
+<h2 id="relation-with-lowering-and-backend-contract">18. Relation with Lowering and Backend Contract</h2>
+
+<p>
+The output of derivation is the <strong>open Execution IR</strong>.
+It is not yet a lowered form and not yet a backend-facing contract artifact.
+</p>
+
+<p>
+Accordingly:
+</p>
+
+<ul>
+  <li>derivation MUST stop at the open IR boundary defined by <code>Execution IR.md</code>,</li>
+  <li>later target-oriented specialization belongs to <code>Lowering.md</code>,</li>
+  <li>later consumer-facing assumptions belong to <code>Backend contract.md</code>,</li>
+  <li>derivation MUST NOT prematurely encode backend-private scheduling, partitioning, storage layout, or target ABI policy as if those belonged to the base open IR.</li>
+</ul>
+
+<pre><code>🟩 validated meaning
+        |
+        v
+🟨 derivation
+        |
+        v
+🟦 open Execution IR
+        |
+        v
+🟧 lowering
+        |
+        v
+🟨 backend contract
+        |
+        v
+🟥 private realization
+</code></pre>
+
+<p>
+This separation matters because the derivation boundary is about <strong>correspondence</strong>, not about <strong>target realization</strong>.
+A conforming derivation may make validated structure more explicit, but it MUST NOT turn the open IR into a backend-shaped artifact too early.
+</p>
+
+<hr/>
+
+<h2 id="out-of-scope-for-v01">19. Out of Scope for v0.1</h2>
 
 <p>
 The following topics are out of scope for this document in base v0.1:
@@ -858,7 +931,7 @@ The following topics are out of scope for this document in base v0.1:
 </ul>
 
 <p>
-Those concerns belong to later documents such as construction, lowering, backend contract, runtime, or IDE-facing specifications.
+Those concerns belong to later documents such as construction, identity and mapping, lowering, backend contract, runtime, or IDE-facing specifications.
 </p>
 
 <pre><code>Out of scope in v0.1
@@ -876,7 +949,7 @@ Those concerns belong to later documents such as construction, lowering, backend
 
 <hr/>
 
-<h2 id="summary">19. Summary</h2>
+<h2 id="summary">20. Summary</h2>
 
 <p>
 Execution IR derivation in FROG v0.1 is conservative by design.
@@ -887,6 +960,12 @@ It allows explicit execution-facing normalization, but it forbids semantic drift
 </p>
 
 <p>
+It is also intentionally positioned before later specialization:
+derivation closes the correspondence boundary into open Execution IR,
+while lowering and backend-facing contracts remain later stages.
+</p>
+
+<p>
 In compact form:
 </p>
 
@@ -894,6 +973,7 @@ In compact form:
    |
    +-- preserve executable meaning
    +-- preserve source attribution
+   +-- preserve recoverable identity
    +-- preserve explicit memory
    +-- preserve structured control
    +-- preserve interface / UI distinction
