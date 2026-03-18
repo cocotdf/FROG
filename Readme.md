@@ -399,7 +399,7 @@ Each top-level directory has a specific role in the specification.
 │
 ├── Expression/                       Canonical source specification for .frog programs
 ├── Language/                         Normative execution semantics for validated programs
-├── IR/                               Execution-facing derived representation architecture
+├── IR/                               Execution-facing derived representation architecture and downstream handoff boundaries
 ├── Libraries/                        Intrinsic standardized primitive-library specifications
 ├── Profiles/                         Optional standardized capability-family specifications
 ├── IDE/                              IDE architecture, authoring, observability, debugging, and inspection
@@ -431,7 +431,11 @@ It is the normative home of language meaning when that meaning cannot be owned b
 
 <p>
 This directory defines the architectural home of execution-facing derived forms built from validated FROG program meaning.
-It is the normative home of open, inspectable, specification-facing intermediate representations that sit between validated program semantics and later lowering, compilation, backend mapping, or runtime-specific realization.
+It is the normative home of open, inspectable, specification-facing intermediate representations that sit between validated program semantics and later lowering, backend mapping, compilation, or runtime-specific realization.
+</p>
+
+<p>
+It also documents adjacent downstream boundaries needed to connect open IR to later specialization stages without collapsing the open IR layer into one private runtime pipeline.
 </p>
 
 <h3><code>Libraries/</code> — intrinsic standardized primitive libraries</h3>
@@ -541,8 +545,14 @@ The map below summarizes the intended role of the Markdown documents in the curr
 │   │   -> open execution-facing IR model derived from validated FROG programs
 │   ├── Derivation rules.md
 │   │   -> normative source-to-IR correspondence rules for validated FROG
-│   └── Construction rules.md
-│       -> normative rules for materially building open Execution IR
+│   ├── Construction rules.md
+│   │   -> normative rules for materially building open Execution IR
+│   ├── Identity and Mapping.md
+│   │   -> identity continuity and recoverable mapping across derivation and lowering boundaries
+│   ├── Lowering.md
+│   │   -> normative lowering boundary from open IR toward target-oriented executable forms
+│   └── Backend contract.md
+│       -> normative backend-facing contract for consumption of lowered execution forms
 │
 ├── Libraries/
 │   ├── Readme.md
@@ -642,6 +652,39 @@ This order mirrors the current architectural baseline:
   <li><strong>IDE</strong> defines authoring, observability, debugging, and inspection responsibilities built on top of those foundations.</li>
 </ul>
 
+<p>
+Readers who continue specifically into the IR layer SHOULD then follow:
+</p>
+
+<pre>
+IR/Readme.md
+   |
+   v
+Execution IR.md
+   |
+   v
+Derivation rules.md
+   |
+   v
+Construction rules.md
+   |
+   v
+Identity and Mapping.md
+   |
+   v
+Lowering.md
+   |
+   v
+Backend contract.md
+</pre>
+
+<p>
+That second path makes the current IR closure easier to understand:
+open execution-facing IR comes first,
+recoverable identity and mapping close the attribution boundary,
+and downstream lowering and backend contracts remain explicitly downstream from the open IR core even though they are documented in the same directory.
+</p>
+
 <hr/>
 
 <h2 id="specification-architecture">Specification architecture</h2>
@@ -687,8 +730,13 @@ what is edited     -> IDE/
 </pre>
 
 <p>
-Beyond that baseline, later layers such as lowering, backend contracts, deployment, runtime profiles, or conformance-oriented execution profiles MAY be structured more explicitly over time.
-Those later layers are not yet closed top-level specification families in the same sense as the six layers listed above.
+Within that baseline, the <code>IR/</code> directory already includes documents for identity and mapping, lowering, and backend-facing contracts.
+Those documents remain architecturally downstream from the open Execution IR core, but they are already part of the published IR bundle.
+</p>
+
+<p>
+Beyond the six top-level families listed above, later top-level areas such as deployment, runtime profiles, or conformance-oriented execution profiles MAY be structured more explicitly over time.
+Those later areas are not yet closed top-level specification families in the same sense as the six layers listed above.
 </p>
 
 <hr/>
@@ -800,6 +848,10 @@ It is not the canonical source, not the IDE Program Model, and not one private r
 It is the open execution-facing representation derived from validated FROG program meaning.
 </p>
 
+<p>
+Within the current published architecture, the open Execution IR core may then be accompanied by identity-preserving mapping, lowering, and backend-facing handoff boundaries as execution preparation progresses toward realization.
+</p>
+
 <pre>
 .frog source
     |
@@ -814,6 +866,9 @@ validated program meaning
     |
     v
 Execution IR
+    |
+    v
+lowering / backend-facing handoff
 </pre>
 
 <hr/>
@@ -826,7 +881,7 @@ A conforming FROG ecosystem should separate <strong>authoring</strong>, <strong>
 
 <p>
 A FROG is <strong>not</strong> executed directly from raw source text.
-A toolchain edits a Program Model, serializes canonical source, validates program meaning against the relevant semantic, intrinsic-library, and profile rules, derives an open execution-facing IR, and only then proceeds toward lowering, compilation, backend preparation, or runtime realization.
+A toolchain edits a Program Model, serializes canonical source, validates program meaning against the relevant semantic, intrinsic-library, and profile rules, derives an open execution-facing IR, preserves recoverable attribution and mapping across that derivation, and only then proceeds toward lowering, backend preparation, compilation, or runtime realization.
 </p>
 
 <pre>
@@ -857,7 +912,10 @@ A toolchain edits a Program Model, serializes canonical source, validates progra
                           execution-facing, not backend-private)
                                                      |
                                                      v
-                                   Lowering / backend preparation
+                               Identity / Mapping preservation
+                                                     |
+                                                     v
+                              Lowering / backend-facing handoff
                                                      |
                                                      v
                             Compiler(s) / Backend(s) / Runtime(s)
@@ -897,6 +955,7 @@ It also separates what remains <strong>normatively open and inspectable</strong>
 <ul>
   <li>canonical source remains open, durable, and authoritative,</li>
   <li>execution IR remains open, inspectable, and specification-facing,</li>
+  <li>identity and mapping remain recoverable where required for attribution and diagnostics,</li>
   <li>lowering, backend preparation, compiler internals, runtime scheduling, and target realization MAY vary across implementations.</li>
 </ul>
 
@@ -1250,6 +1309,8 @@ Current repository direction includes:
   <li>stabilizing the separation between normative execution semantics and execution-facing IR,</li>
   <li>clarifying language semantics and execution behavior,</li>
   <li>closing an open execution-facing IR layer without collapsing FROG into one private runtime pipeline,</li>
+  <li>stabilizing recoverable identity and mapping across derivation and later specialization boundaries,</li>
+  <li>clarifying lowering and backend-facing handoff boundaries without over-freezing private runtime internals,</li>
   <li>stabilizing the intrinsic library boundary,</li>
   <li>establishing optional profile families without collapsing them into the intrinsic core,</li>
   <li>keeping profile-owned capability families explicitly distinct from intrinsic libraries,</li>
@@ -1263,8 +1324,8 @@ Current repository direction includes:
 </ul>
 
 <p>
-At the same time, some broader execution-facing layers remain architectural direction rather than fully closed repository families.
-Topics such as lowering, compilation, deployment profiles, runtime-facing specification layers, and conformance-oriented execution profiles MAY be refined further over time.
+At the same time, some broader execution-facing and deployment-facing areas remain architectural direction rather than fully closed top-level repository families.
+Topics such as deployment, runtime profiles, and conformance-oriented execution profiles MAY be refined further over time.
 </p>
 
 <p>
