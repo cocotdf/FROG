@@ -49,7 +49,7 @@ A FROG is a complete graphical dataflow program represented by a structured JSON
 
 <p>
 That canonical source file is called the <strong>FROG Expression</strong>.
-It is the authoritative, editable, transparent, version-control-friendly description of a FROG program at the source level.
+It is the authoritative, editable, transparent, and version-control-friendly description of a FROG program at the source level.
 </p>
 
 <p>
@@ -65,11 +65,11 @@ The purpose of this directory is to define:
 
 <p>
 This directory is about the authoritative source form of a FROG.
-It is not the complete runtime architecture, not the complete IDE implementation model, and not the complete execution-oriented IR.
+It is not the complete runtime architecture, not the complete IDE implementation model, and not the open execution-facing IR layer.
 </p>
 
 <p>
-Cross-cutting execution semantics are related to this source specification but are not owned here when they belong to the normative execution meaning of the language itself.
+Cross-cutting execution semantics are related to this source specification but are not owned here when they belong to validated program meaning.
 Likewise, optional capability families may appear in executable diagrams, but their normative ownership remains outside <code>Expression/</code> when they belong to profile specifications rather than to the source format itself.
 </p>
 
@@ -77,13 +77,14 @@ Likewise, optional capability families may appear in executable diagrams, but th
 Repository architecture around Expression
 
 Expression/   -> canonical source form
-Language/     -> normative execution semantics
+Language/     -> validated program meaning
+IR/           -> open execution-facing representation
 Libraries/    -> intrinsic primitive vocabularies
 Profiles/     -> optional standardized capability families
 IDE/          -> authoring, observability, debugging, inspection
 
 Expression/ owns source structure and source-visible object shape.
-Expression/ does not own the whole execution meaning.
+Expression/ does not own validated program meaning.
 </pre>
 
 <hr/>
@@ -105,7 +106,7 @@ The Expression layer exists so that a FROG program can be:
   <li>versioned in source control,</li>
   <li>loaded by different tools,</li>
   <li>validated independently of one IDE implementation,</li>
-  <li>used as the stable source basis for later execution-facing derivation.</li>
+  <li>used as the stable source basis for later semantic validation and execution-facing derivation.</li>
 </ul>
 
 <p>
@@ -157,8 +158,8 @@ This specification does not attempt to fully define:
 
 <ul>
   <li>the complete runtime architecture,</li>
-  <li>the complete in-memory editable program model used by IDE implementations,</li>
-  <li>the complete execution-oriented IR used by compilers or runtimes,</li>
+  <li>the complete in-memory editable Program Model used by IDE implementations,</li>
+  <li>the complete open execution-facing IR used by toolchains,</li>
   <li>the complete cross-cutting execution semantics of the language,</li>
   <li>the complete intrinsic primitive vocabulary of FROG,</li>
   <li>the complete optional profile surface of FROG,</li>
@@ -171,7 +172,7 @@ This directory focuses on the authoritative source form.
 </p>
 
 <p>
-Accordingly, this directory defines how a FROG is <strong>serialized</strong>, not every detail of how it is edited, validated internally by a given tool, lowered, compiled, executed, or deployed.
+Accordingly, this directory defines how a FROG is <strong>serialized</strong>, not every detail of how it is edited, semantically validated by a given tool, lowered, compiled, executed, or deployed.
 </p>
 
 <pre>
@@ -185,7 +186,8 @@ Expression/ answers:
 
 Expression/ does not answer by itself:
 
-- full execution meaning
+- validated program meaning
+- open execution-facing IR structure
 - full runtime architecture
 - full compiler architecture
 - full IDE authoring architecture
@@ -264,7 +266,7 @@ In particular:
 </p>
 
 <ul>
-  <li><code>Type.md</code> defines canonical value type expressions and source-level type rules used throughout the source format.</li>
+  <li><code>Type.md</code> defines canonical value-type expressions and source-level type rules used throughout the source format.</li>
   <li><code>Widget.md</code> defines the widget object model, including classes, roles, value behavior, parts, properties, methods, and events.</li>
   <li><code>Widget interaction.md</code> defines how executable diagrams may interact with widgets through standardized diagram-level interaction mechanisms.</li>
   <li><code>Control structures.md</code> defines the source-facing representation of language structures such as <code>case</code>, <code>for_loop</code>, and <code>while_loop</code>.</li>
@@ -281,7 +283,7 @@ At the current repository stage, that includes:
 <ul>
   <li><code>Language/Control structures.md</code> — normative execution semantics for standard control structures,</li>
   <li><code>Language/State and cycles.md</code> — normative execution semantics for local memory and valid feedback cycles,</li>
-  <li><code>Language/Execution model.md</code> — language-level execution concepts used to interpret validated executable content,</li>
+  <li><code>Language/Execution model.md</code> — language-level execution concepts used to interpret validated program meaning,</li>
   <li><code>Libraries/Core.md</code> — foundational intrinsic primitive definitions such as <code>frog.core.add</code>, <code>frog.core.mul</code>, and <code>frog.core.delay</code>,</li>
   <li><code>Libraries/Math.md</code> — intrinsic numeric scalar primitives beyond the minimal core,</li>
   <li><code>Libraries/Collections.md</code> — intrinsic array-oriented collection primitives,</li>
@@ -293,7 +295,7 @@ At the current repository stage, that includes:
 </ul>
 
 <p>
-Accordingly, <code>Expression/</code> is the canonical home of the source-format specification, while <code>Language/</code>, <code>Libraries/</code>, and <code>Profiles/</code> are normative external dependencies for execution meaning used by validated executable diagrams.
+Accordingly, <code>Expression/</code> is the canonical home of the source-format specification, while <code>Language/</code>, <code>Libraries/</code>, and <code>Profiles/</code> are normative external dependencies for the meaning of validated executable diagrams.
 </p>
 
 <pre>
@@ -304,7 +306,7 @@ Expression/
    ├─ defines what sections exist
    ├─ defines how diagrams, widgets, and sections are serialized
    │
-   ├─ relies on Language/ for execution meaning
+   ├─ relies on Language/ for validated program meaning
    ├─ relies on Libraries/ for intrinsic primitive meaning
    └─ relies on Profiles/ for optional profile-owned capability meaning
 </pre>
@@ -313,11 +315,11 @@ Expression/
 A useful reading rule
 
 If the question is:
-- "How is it written in source?"          -> Expression/
-- "What does it mean when it executes?"   -> Language/
-- "What does this intrinsic primitive do?"-> Libraries/
-- "What does this optional capability do?"-> Profiles/
-- "How does the IDE present it?"          -> IDE/
+- "How is it written in source?"           -> Expression/
+- "What does the validated program mean?"  -> Language/
+- "What does this intrinsic primitive do?" -> Libraries/
+- "What does this optional capability do?" -> Profiles/
+- "How does the IDE present it?"           -> IDE/
 </pre>
 
 <hr/>
@@ -395,7 +397,7 @@ Required sections
 
 Optional sections
     -> enrich source representation
-    -> MUST NOT redefine authoritative executable meaning
+    -> MUST NOT redefine authoritative execution meaning
 </pre>
 
 <hr/>
@@ -403,18 +405,19 @@ Optional sections
 <h2 id="representation-levels">6. Representation Levels</h2>
 
 <p>
-FROG distinguishes three conceptual representation levels:
+FROG distinguishes four related but distinct representation levels:
 </p>
 
 <ul>
-  <li><strong>FROG Expression</strong> — the serialized source representation stored in a <code>.frog</code> file,</li>
-  <li><strong>FROG Program Model</strong> — the canonical editable in-memory representation reconstructed by tools,</li>
-  <li><strong>FROG Execution IR</strong> — the execution-oriented representation derived from the validated program model.</li>
+  <li><strong>FROG Expression</strong> — the serialized canonical source representation stored in a <code>.frog</code> file,</li>
+  <li><strong>FROG Program Model</strong> — the canonical editable in-memory representation reconstructed and maintained by tools during authoring,</li>
+  <li><strong>Validated program meaning</strong> — the normative semantic state established after validation against the relevant language, library, and profile rules,</li>
+  <li><strong>Open execution-facing representation</strong> — the IR-layer representation derived from validated program meaning.</li>
 </ul>
 
 <p>
 This directory primarily specifies the FROG Expression.
-Tooling MAY reconstruct a Program Model from the Expression and MAY derive an Execution IR from the validated Program Model.
+Tooling MAY reconstruct a Program Model from the Expression and MAY derive an open execution-facing representation from validated program meaning.
 However, the canonical editable source of a FROG remains the <code>.frog</code> file itself.
 </p>
 
@@ -430,10 +433,10 @@ FROG Expression
 Program Model
    |
    v
-Validated executable content
+validated program meaning
    |
    v
-Execution-oriented representation
+open execution-facing representation
 </pre>
 
 <p>
@@ -443,15 +446,17 @@ These levels are related but not identical:
 <ul>
   <li>the Expression is the durable source artifact,</li>
   <li>the Program Model is the editable in-memory tool model,</li>
-  <li>the Execution IR is the execution-facing derived form.</li>
+  <li>validated program meaning is the semantic truth layer,</li>
+  <li>the open execution-facing representation is the derived execution layer.</li>
 </ul>
 
 <pre>
-Think of the three levels like this
+Think of the four levels like this
 
-Expression   -> what is saved
-Program Model-> what is edited
-Execution IR -> what is prepared for execution
+Expression     -> what is saved
+Program Model  -> what is edited
+Language       -> what is true
+IR             -> what is derived
 </pre>
 
 <hr/>
@@ -505,7 +510,7 @@ example.frogbin     -> non-authoritative distribution artifact
 
 <ul>
   <li>Generated by tools</li>
-  <li>May contain cached analysis or execution-oriented data</li>
+  <li>May contain cached analysis or derived execution-facing data</li>
   <li>Used to accelerate loading, validation, or compilation workflows</li>
   <li>Safe to delete and regenerate</li>
   <li>Non-authoritative with respect to program meaning</li>
@@ -520,7 +525,7 @@ See: <code>Cache.md</code>
 <ul>
   <li>Intended for distribution or deployment workflows</li>
   <li>May omit non-essential source detail</li>
-  <li>May contain execution-oriented or compiled payloads</li>
+  <li>May contain derived execution-facing or compiled payloads</li>
   <li>Is not the canonical editable source representation</li>
 </ul>
 
@@ -624,7 +629,7 @@ It SHOULD be present when the FROG is intended to be reused as a graphical node 
 </p>
 
 <p>
-Optional sections MUST NOT modify the authoritative execution semantics established by the validated source-derived program representation.
+Optional sections MUST NOT modify the authoritative execution semantics established by validated program meaning.
 </p>
 
 <pre>
@@ -694,7 +699,7 @@ Detailed specifications:
 <code>Type.md</code>,
 <code>Widget interaction.md</code>,
 the source-facing companion documents <code>Control structures.md</code> and <code>State and cycles.md</code>,
-the normative execution-semantics documents in <code>Language/</code>,
+the normative semantic documents in <code>Language/</code>,
 the relevant intrinsic primitive-library specifications in <code>Libraries/</code>,
 and any relevant optional standardized capability specifications in <code>Profiles/</code>.
 </p>
@@ -851,7 +856,7 @@ However, the normative execution semantics for these topics are owned by <code>L
 </ul>
 
 <p>
-This separation allows <code>Expression/</code> to remain the canonical source-specification layer while <code>Language/</code> remains the normative execution-semantics layer.
+This separation allows <code>Expression/</code> to remain the canonical source-specification layer while <code>Language/</code> remains the normative semantic layer.
 Intrinsic primitive catalogs consumed by executable diagrams remain defined in <code>Libraries/</code>, while optional standardized capability families remain defined in <code>Profiles/</code>.
 </p>
 
@@ -868,7 +873,7 @@ Optional capability meaning            -> Profiles/
 Cross-cutting rule of thumb
 
 If it must appear in source, Expression/ cares.
-If it explains runtime meaning, Language/ cares.
+If it defines validated program meaning, Language/ cares.
 If it defines a primitive contract, Libraries/ or Profiles/ care.
 </pre>
 
@@ -980,13 +985,15 @@ A conforming toolchain SHOULD apply the following conceptual pipeline:
 </p>
 
 <pre><code>FROG Expression
-    ↓ parse
-Parsed source
-    ↓ validate
-Validated source-derived program model
-    ↓ lower
-Execution-oriented representation
-    ↓ execute or compile</code></pre>
+    ↓ parse / load
+Source-derived program content
+    ↓ reconstruct as needed
+Program Model
+    ↓ validate against Language/ + Libraries/ + Profiles/
+Validated program meaning
+    ↓ derive
+Open execution-facing representation
+    ↓ lower / compile / execute</code></pre>
 
 <p>
 Validation includes, as applicable:
@@ -1006,7 +1013,8 @@ Validation includes, as applicable:
 </ul>
 
 <p>
-Normative execution meaning is derived from the validated program representation interpreted against the relevant language semantics and primitive specifications.
+Normative execution meaning is not owned by raw source alone.
+It is established from validated program meaning interpreted against the relevant language semantics and primitive specifications.
 Optional sections such as <code>front_panel</code>, <code>icon</code>, <code>ide</code>, and <code>cache</code> MUST NOT redefine executable semantics.
 </p>
 
@@ -1015,13 +1023,13 @@ Execution rule
 
 raw source
    ->
-parsed source
+source-derived program content
    ->
-validated source-derived program
+validated program meaning
    ->
-execution-facing derivation
+open execution-facing representation
    ->
-execute / compile
+lower / compile / execute
 
 Never:
 optional source decoration -> semantic override
@@ -1146,7 +1154,7 @@ Future revisions SHOULD also preserve the core architectural distinctions alread
 </p>
 
 <ul>
-  <li>source expression versus program model versus execution IR,</li>
+  <li>source expression versus Program Model versus validated program meaning versus open execution-facing representation,</li>
   <li>canonical source representation versus normative execution semantics,</li>
   <li>intrinsic primitive vocabularies versus optional profile-owned capability families,</li>
   <li>public interface versus connector versus diagram versus optional front panel,</li>
