@@ -6,7 +6,7 @@
 
 <p align="center">
   <strong>Free Open Graphical Dataflow Programming Language</strong><br/>
-  FROG is an open, hardware-agnostic graphical dataflow programming language designed to describe computation as explicit executable graphs while remaining accessible, explicit, deterministic, inspectable, portable, and scalable across heterogeneous execution targets.
+  FROG is an open, hardware-agnostic graphical dataflow programming language designed to describe computation as explicit executable graphs while remaining accessible, explicit, inspectable, portable, and scalable across heterogeneous execution targets.
 </p>
 
 <p align="center">
@@ -67,7 +67,7 @@ Execution emerges from data availability, structural rules, explicit control str
 
 <p>
 FROG is designed to remain independent from any specific IDE, compiler, runtime, operating system, or hardware vendor.
-This separation provides a durable basis for multiple independent implementations and long-term industrial interoperability.
+That separation provides a durable basis for multiple independent implementations and long-term industrial interoperability.
 </p>
 
 <p>
@@ -107,7 +107,7 @@ It does not equate the language with one IDE, one runtime, one compiler, one ven
   <li><strong>FROG is not a single runtime.</strong></li>
   <li><strong>FROG is not a single compiler.</strong></li>
   <li><strong>FROG is not a vendor product.</strong></li>
-  <li><strong>FROG is an open language specification with distinct source, semantic, IR, library, profile, and IDE-facing specification layers.</strong></li>
+  <li><strong>FROG is an open language specification with distinct source, semantic, IR, library, profile, and IDE-facing layers.</strong></li>
 </ul>
 
 <hr/>
@@ -398,8 +398,8 @@ Each top-level directory has a specific role in the specification.
 <pre><code>FROG/
 │
 ├── Expression/                       Canonical source specification for .frog programs
-├── Language/                         Normative execution semantics for validated programs
-├── IR/                               Execution-facing derived representation architecture and downstream handoff boundaries
+├── Language/                         Normative execution semantics for validated program meaning
+├── IR/                               Open execution-facing representation and downstream handoff boundaries
 ├── Libraries/                        Intrinsic standardized primitive-library specifications
 ├── Profiles/                         Optional standardized capability-family specifications
 ├── IDE/                              IDE architecture, authoring, observability, debugging, and inspection
@@ -423,19 +423,19 @@ It describes what a FROG source file contains, how source sections are represent
 <h3><code>Language/</code> — normative execution semantics</h3>
 
 <p>
-This directory defines cross-cutting execution semantics for validated FROG programs.
+This directory defines cross-cutting execution semantics for validated program meaning.
 It is the normative home of language meaning when that meaning cannot be owned by one isolated source section or one intrinsic primitive-library document alone.
 </p>
 
-<h3><code>IR/</code> — execution-facing derived representations</h3>
+<h3><code>IR/</code> — open execution-facing representation</h3>
 
 <p>
-This directory defines the architectural home of execution-facing derived forms built from validated FROG program meaning.
-It is the normative home of open, inspectable, specification-facing intermediate representations that sit between validated program semantics and later lowering, backend mapping, compilation, or runtime-specific realization.
+This directory defines the architectural home of open, inspectable, specification-facing intermediate representations derived from validated program meaning.
+It sits between validated semantics and later lowering, backend mapping, compilation, or runtime-specific realization.
 </p>
 
 <p>
-It also documents adjacent downstream boundaries needed to connect open IR to later specialization stages without collapsing the open IR layer into one private runtime pipeline.
+It also documents adjacent downstream boundaries needed to connect the open IR layer to later specialization stages without collapsing the open IR into one private runtime pipeline.
 </p>
 
 <h3><code>Libraries/</code> — intrinsic standardized primitive libraries</h3>
@@ -470,7 +470,7 @@ Profiles/Interop.md         -> authoritative normative home of frog.connectivity
 
 <p>
 This directory defines the architecture and responsibilities of a FROG development environment.
-It explains how editing relates to the Program Model, serialized Expression, validation, IR construction, execution preparation, execution observability, debugging, probes, watch views, snippets, and Express authoring.
+It explains how editing relates to the Program Model, serialized Expression, validation, IR derivation, execution preparation, execution observability, debugging, probes, watch views, snippets, and Express authoring.
 </p>
 
 <hr/>
@@ -531,7 +531,7 @@ The map below summarizes the intended role of the Markdown documents in the curr
 │   ├── State and cycles.md
 │   │   -> normative meaning of explicit local memory and valid feedback cycles
 │   ├── Execution model.md
-│   │   -> language-level execution-model core: validated executable graph,
+│   │   -> language-level execution-model core: validated program meaning,
 │   │      live execution instance, source identity, activation, execution context,
 │   │      semantic milestones, and committed source-level state
 │   └── Execution control and observation boundaries.md
@@ -542,9 +542,9 @@ The map below summarizes the intended role of the Markdown documents in the curr
 │   ├── Readme.md
 │   │   -> architectural entry point for the IR layer and its ownership boundary
 │   ├── Execution IR.md
-│   │   -> open execution-facing IR model derived from validated FROG programs
+│   │   -> open execution-facing IR model derived from validated program meaning
 │   ├── Derivation rules.md
-│   │   -> normative source-to-IR correspondence rules for validated FROG
+│   │   -> normative correspondence rules from validated program meaning to Execution IR
 │   ├── Construction rules.md
 │   │   -> normative rules for materially building open Execution IR
 │   ├── Identity and Mapping.md
@@ -645,8 +645,8 @@ This order mirrors the current architectural baseline:
 
 <ul>
   <li><strong>Expression</strong> defines the canonical saved source form,</li>
-  <li><strong>Language</strong> defines cross-cutting execution meaning for validated programs,</li>
-  <li><strong>IR</strong> defines execution-facing derived representation built from that validated meaning,</li>
+  <li><strong>Language</strong> defines normative execution semantics for validated program meaning,</li>
+  <li><strong>IR</strong> defines the open execution-facing representation derived from that validated meaning,</li>
   <li><strong>Libraries</strong> define the intrinsic standardized executable primitive vocabularies,</li>
   <li><strong>Profiles</strong> define optional standardized capability families beyond the intrinsic core,</li>
   <li><strong>IDE</strong> defines authoring, observability, debugging, and inspection responsibilities built on top of those foundations.</li>
@@ -679,9 +679,9 @@ Backend contract.md
 </pre>
 
 <p>
-That second path makes the current IR closure easier to understand:
-open execution-facing IR comes first,
-recoverable identity and mapping close the attribution boundary,
+That second path reflects the current published IR bundle:
+the open Execution IR core comes first,
+identity and mapping preserve attribution continuity,
 and downstream lowering and backend contracts remain explicitly downstream from the open IR core even though they are documented in the same directory.
 </p>
 
@@ -695,8 +695,8 @@ The repository is intentionally split into distinct architectural layers:
 
 <ul>
   <li><strong>Expression</strong> — canonical source representation, source sections, and source serialization rules,</li>
-  <li><strong>Language</strong> — normative execution semantics for validated programs,</li>
-  <li><strong>IR</strong> — execution-facing derived representations built from validated program meaning,</li>
+  <li><strong>Language</strong> — normative execution semantics for validated program meaning,</li>
+  <li><strong>IR</strong> — open execution-facing representations derived from validated program meaning,</li>
   <li><strong>Libraries</strong> — intrinsic standardized primitive vocabularies and primitive-local behavior,</li>
   <li><strong>Profiles</strong> — optional standardized capability families and profile-owned capability contracts,</li>
   <li><strong>IDE</strong> — authoring architecture, editor-facing models, execution observability, debugging semantics, inspection workflows, snippets, and Express authoring.</li>
@@ -714,8 +714,8 @@ different actors may later build compatible IDEs, validators, runtimes, compiler
 
 <pre>
 Expression/   -> canonical source form
-Language/     -> cross-cutting execution semantics
-IR/           -> execution-facing derived representation
+Language/     -> validated program meaning
+IR/           -> open execution-facing representation
 Libraries/    -> intrinsic standardized primitive vocabularies
 Profiles/     -> optional standardized capability families
 IDE/          -> authoring, observability, debugging, inspection
@@ -735,7 +735,7 @@ Those documents remain architecturally downstream from the open Execution IR cor
 </p>
 
 <p>
-Beyond the six top-level families listed above, later top-level areas such as deployment, runtime profiles, or conformance-oriented execution profiles MAY be structured more explicitly over time.
+Beyond the six top-level families listed above, later areas such as deployment, runtime profiles, or conformance-oriented execution profiles MAY be structured more explicitly over time.
 Those later areas are not yet closed top-level specification families in the same sense as the six layers listed above.
 </p>
 
@@ -819,7 +819,7 @@ It is also not, by itself, the normative execution-semantics layer of the langua
 
 <p>
 A source-derived FROG program must first be validated against the relevant language, primitive-library, and profile rules.
-That validated state is where normative execution meaning becomes usable as a trustworthy basis for later execution-facing derivation.
+That validated state is where normative execution meaning becomes a trustworthy basis for later derivation.
 </p>
 
 <p>
@@ -835,17 +835,17 @@ At this level, the repository defines:
   <li>optional profile-owned capability behavior where applicable.</li>
 </ul>
 
-<h3>4. Execution-oriented representation</h3>
+<h3>4. Open execution-facing representation</h3>
 
 <p>
 A validated FROG is not executed directly from raw source text.
-A conforming toolchain validates the source-derived program representation and then derives an execution-facing form suitable for execution, analysis, normalization, optimization, lowering, or compilation.
+A conforming toolchain validates the source-derived program representation and then derives an open execution-facing representation suitable for execution preparation, analysis, normalization, optimization, lowering, or compilation.
 </p>
 
 <p>
 That execution-facing level is the role of the <strong>IR layer</strong>.
 It is not the canonical source, not the IDE Program Model, and not one private runtime graph.
-It is the open execution-facing representation derived from validated FROG program meaning.
+It is the open execution-facing representation derived from validated program meaning.
 </p>
 
 <p>
@@ -865,7 +865,7 @@ Program Model
 validated program meaning
     |
     v
-Execution IR
+open execution-facing representation
     |
     v
 lowering / backend-facing handoff
@@ -876,12 +876,12 @@ lowering / backend-facing handoff
 <h2 id="execution-architecture">Execution architecture</h2>
 
 <p>
-A conforming FROG ecosystem should separate <strong>authoring</strong>, <strong>canonical source</strong>, <strong>validated program meaning</strong>, <strong>execution-facing derivation</strong>, and <strong>target-specific execution realization</strong>.
+A conforming FROG ecosystem should separate <strong>authoring</strong>, <strong>canonical source</strong>, <strong>validated program meaning</strong>, <strong>open execution-facing representation</strong>, and <strong>target-specific execution realization</strong>.
 </p>
 
 <p>
 A FROG is <strong>not</strong> executed directly from raw source text.
-A toolchain edits a Program Model, serializes canonical source, validates program meaning against the relevant semantic, intrinsic-library, and profile rules, derives an open execution-facing IR, preserves recoverable attribution and mapping across that derivation, and only then proceeds toward lowering, backend preparation, compilation, or runtime realization.
+A toolchain edits a Program Model, serializes canonical source, validates program meaning against the relevant semantic, intrinsic-library, and profile rules, derives an open execution-facing representation, preserves recoverable attribution and mapping across that derivation, and only then proceeds toward lowering, backend preparation, compilation, or runtime realization.
 </p>
 
 <pre>
@@ -945,7 +945,7 @@ This architecture intentionally distinguishes two open specification-facing repr
 
 <ul>
   <li><strong>FROG Expression</strong> — the canonical saved source artifact.</li>
-  <li><strong>FROG Execution IR</strong> — the derived execution-facing representation built from validated program meaning.</li>
+  <li><strong>FROG Execution IR</strong> — the open execution-facing representation derived from validated program meaning.</li>
 </ul>
 
 <p>
@@ -979,7 +979,7 @@ This separation keeps FROG open as a language while still allowing multiple inde
 <p>
 During development, tools maintain the Program Model.
 Saving serializes that model into canonical source.
-Execution requests validate the relevant program content, derive an execution-facing IR, and then pass that derived form into later execution-preparation or target-facing stages.
+Execution requests validate the relevant program content, derive an open execution-facing representation, and then pass that derived form into later execution-preparation or target-facing stages.
 </p>
 
 <hr/>
@@ -1128,7 +1128,7 @@ Base principles include:
 </ul>
 
 <p>
-Optimization occurs primarily in execution-facing preparation, IR normalization, lowering, compilation, and backend stages:
+Optimization occurs primarily in execution preparation, IR normalization, lowering, compilation, and backend stages:
 </p>
 
 <ul>
@@ -1199,7 +1199,7 @@ FROG explicitly separates:
   <li>the canonical source representation,</li>
   <li>the editable program model,</li>
   <li>validated program meaning,</li>
-  <li>execution-oriented derivation,</li>
+  <li>the open execution-facing representation,</li>
   <li>intrinsic standardized primitive vocabularies,</li>
   <li>optional standardized capability profiles,</li>
   <li>execution observability,</li>
@@ -1222,7 +1222,7 @@ At the modeling level, FROG also separates:
 <ul>
   <li>language from IDE,</li>
   <li>source from IR,</li>
-  <li>semantic truth from execution-facing representation,</li>
+  <li>semantic truth from derived execution-facing representation,</li>
   <li>intrinsic libraries from optional profiles,</li>
   <li>IDE from runtime,</li>
   <li>runtime from hardware,</li>
@@ -1296,7 +1296,7 @@ Commercial implementations seeking official certification or branding MAY be sub
 
 <p>
 FROG is currently under active design, cleanup, and stabilization.
-The repository already contains substantial material across canonical source representation, language semantics, execution-facing IR architecture, intrinsic standardized primitive libraries, optional profile architecture, and IDE architecture, but the overall specification is still converging toward a coherent v0.1 foundation.
+The repository already contains substantial material across canonical source representation, language semantics, open execution-facing IR architecture, intrinsic standardized primitive libraries, optional profile architecture, and IDE architecture, but the overall specification is still converging toward a coherent v0.1 foundation.
 </p>
 
 <p>
@@ -1306,9 +1306,9 @@ Current repository direction includes:
 <ul>
   <li>stabilizing the canonical source specification,</li>
   <li>stabilizing the separation between canonical source representation and normative execution semantics,</li>
-  <li>stabilizing the separation between normative execution semantics and execution-facing IR,</li>
+  <li>stabilizing the separation between normative execution semantics and the open execution-facing IR layer,</li>
   <li>clarifying language semantics and execution behavior,</li>
-  <li>closing an open execution-facing IR layer without collapsing FROG into one private runtime pipeline,</li>
+  <li>maintaining a distinct open execution-facing IR layer without collapsing FROG into one private runtime pipeline,</li>
   <li>stabilizing recoverable identity and mapping across derivation and later specialization boundaries,</li>
   <li>clarifying lowering and backend-facing handoff boundaries without over-freezing private runtime internals,</li>
   <li>stabilizing the intrinsic library boundary,</li>
