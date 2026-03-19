@@ -24,16 +24,17 @@
   <li><a href="#core-invariants">8. Core Invariants</a></li>
   <li><a href="#execution-ir-object-model">9. Execution IR Object Model</a></li>
   <li><a href="#primary-object-families">10. Primary Object Families</a></li>
-  <li><a href="#ports-and-connectivity">11. Ports and Connectivity</a></li>
-  <li><a href="#regions-and-structured-control">12. Regions and Structured Control</a></li>
-  <li><a href="#interface-and-ui-boundaries">13. Interface and UI Boundaries</a></li>
-  <li><a href="#state-local-memory-and-cycles">14. State, Local Memory, and Cycles</a></li>
-  <li><a href="#relation-with-identity-and-mapping">15. Relation with Identity and Mapping</a></li>
-  <li><a href="#relation-with-derivation-and-construction-rules">16. Relation with Derivation and Construction Rules</a></li>
-  <li><a href="#relation-with-lowering-backend-contract-and-runtime-private-forms">17. Relation with Lowering, Backend Contract, and Runtime-Private Forms</a></li>
-  <li><a href="#relation-with-cache-and-tooling">18. Relation with Cache and Tooling</a></li>
-  <li><a href="#out-of-scope-for-v01">19. Out of Scope for v0.1</a></li>
-  <li><a href="#summary">20. Summary</a></li>
+  <li><a href="#support-objects-and-non-primary-source-content">11. Support Objects and Non-Primary Source Content</a></li>
+  <li><a href="#ports-and-connectivity">12. Ports and Connectivity</a></li>
+  <li><a href="#regions-and-structured-control">13. Regions and Structured Control</a></li>
+  <li><a href="#interface-and-ui-boundaries">14. Interface and UI Boundaries</a></li>
+  <li><a href="#state-local-memory-and-cycles">15. State, Local Memory, and Cycles</a></li>
+  <li><a href="#relation-with-identity-and-mapping">16. Relation with Identity and Mapping</a></li>
+  <li><a href="#relation-with-derivation-and-construction-rules">17. Relation with Derivation and Construction Rules</a></li>
+  <li><a href="#relation-with-lowering-backend-contract-and-runtime-private-forms">18. Relation with Lowering, Backend Contract, and Runtime-Private Forms</a></li>
+  <li><a href="#relation-with-cache-and-tooling">19. Relation with Cache and Tooling</a></li>
+  <li><a href="#out-of-scope-for-v01">20. Out of Scope for v0.1</a></li>
+  <li><a href="#summary">21. Summary</a></li>
 </ul>
 
 <hr/>
@@ -115,7 +116,7 @@ Identity and Mapping.md
    -&gt; how source-aligned identity stays recoverable
 
 Derivation rules.md
-   -&gt; what must remain correspondingly recoverable
+   -&gt; what must correspond
 
 Construction rules.md
    -&gt; how a conforming open IR is materially built
@@ -288,6 +289,7 @@ The following invariants apply to the base open Execution IR of v0.1:
   <li>Every execution-visible IR object MUST be attributable to validated program meaning.</li>
   <li>The Execution IR MUST remain source-aligned at the level of attributable execution-facing objects.</li>
   <li>The Execution IR MUST preserve enough object identity and structure to support later recoverable mapping obligations.</li>
+  <li>The Execution IR MUST preserve the distinction between primary execution-facing objects and support objects.</li>
   <li>The Execution IR MUST NOT silently change the normative language meaning of the validated program.</li>
   <li>The Execution IR MUST preserve explicit local memory as explicit local memory.</li>
   <li>The Execution IR MUST preserve structured control as structured control in the open IR.</li>
@@ -301,6 +303,7 @@ The following invariants apply to the base open Execution IR of v0.1:
 🟩 attributable
 🟩 source-aligned
 🟩 mapping-supporting
+🟩 primary / support distinction preserving
 🟩 semantically faithful
 🟩 explicit-memory preserving
 🟩 structured-control preserving
@@ -324,9 +327,10 @@ Conceptually:
 <pre><code>🟦 Execution IR
 └── 🟦 execution unit
     ├── 🟨 boundary objects
-    ├── 🟦 executable objects
+    ├── 🟦 primary executable objects
+    ├── 🟦 support objects
     ├── 🟦 region objects
-    ├── 🟦 typed ports
+    ├── 🟦 typed ports / explicit terminals
     ├── 🟦 directed connections
     ├── 🟩 execution-facing identities
     └── 🟩 source attribution anchors
@@ -371,7 +375,7 @@ In base v0.1, the Execution IR SHOULD preserve the major validated object famili
 </p>
 
 <p>
-Those families include:
+Those primary families include:
 </p>
 
 <ul>
@@ -418,7 +422,56 @@ It means that specialization belongs to later stages, not to the base open Execu
 
 <hr/>
 
-<h2 id="ports-and-connectivity">11. Ports and Connectivity</h2>
+<h2 id="support-objects-and-non-primary-source-content">11. Support Objects and Non-Primary Source Content</h2>
+
+<p>
+Base v0.1 distinguishes clearly between:
+</p>
+
+<ul>
+  <li><strong>primary execution-facing objects</strong> — objects that directly carry execution-facing roles in the open IR,</li>
+  <li><strong>support objects</strong> — objects introduced to make already-validated execution-facing structure more explicit,</li>
+  <li><strong>source-visible content that does not become a primary execution object</strong> — source-visible declarations or records that may still matter for correspondence or attribution without becoming primary open-IR objects of their own.</li>
+</ul>
+
+<p>
+Support objects are legitimate when they help represent:
+</p>
+
+<ul>
+  <li>explicit regions,</li>
+  <li>explicit structure-boundary terminals,</li>
+  <li>explicit structure terminals,</li>
+  <li>explicit port descriptors,</li>
+  <li>explicit source-attribution anchors,</li>
+  <li>other execution-facing classification records that do not alter meaning.</li>
+</ul>
+
+<p>
+Conversely, the existence of source-visible content does <strong>not</strong> imply that it must become a primary execution object in the open IR.
+For example, declaration-side or descriptive source content may remain relevant only through recoverable correspondence handled by companion IR documents.
+</p>
+
+<p>
+This document therefore defines the architectural object model of the open IR, but it does not claim that every source-visible family produces one primary IR object.
+The exact correspondence rules belong to <code>Derivation rules.md</code>, and the exact recoverability obligations belong to <code>Identity and Mapping.md</code>.
+</p>
+
+<pre><code>Execution IR object roles
+
+🟦 primary execution-facing object
+   -&gt; directly carries execution-facing role
+
+🟦 support object
+   -&gt; clarifies already-validated execution-facing structure
+
+source-visible content
+   -&gt; may remain non-primary at the open-IR boundary
+</code></pre>
+
+<hr/>
+
+<h2 id="ports-and-connectivity">12. Ports and Connectivity</h2>
 
 <p>
 The Execution IR MUST represent execution-relevant connectivity explicitly.
@@ -462,7 +515,7 @@ Execution IR connectivity MUST therefore remain:
 
 <hr/>
 
-<h2 id="regions-and-structured-control">12. Regions and Structured Control</h2>
+<h2 id="regions-and-structured-control">13. Regions and Structured Control</h2>
 
 <p>
 Structured control remains explicit in the base Execution IR.
@@ -480,6 +533,7 @@ Accordingly:
   <li>a structured execution object MUST identify its standardized structure family,</li>
   <li>owned regions MUST remain explicit,</li>
   <li>structure-boundary participation MUST remain explicit,</li>
+  <li>structure-terminal roles MUST remain explicit or equivalently recoverable,</li>
   <li>region-local execution content MUST remain attributable to source-level region content.</li>
 </ul>
 
@@ -493,6 +547,7 @@ This keeps the open IR aligned with validated control meaning while leaving back
 🟦 explicit structured IR object
         ├── 🟦 explicit owned regions
         ├── 🟨 explicit boundary participation
+        ├── 🟨 explicit structure terminals where applicable
         └── 🟩 attributable region-local content
 </code></pre>
 
@@ -504,12 +559,13 @@ In v0.1, the open Execution IR SHOULD still make it possible to recover:
   <li>which structure family is involved,</li>
   <li>which regions belong to that structure,</li>
   <li>which execution-facing objects are region-local,</li>
-  <li>which boundary roles connect outer and inner execution content.</li>
+  <li>which boundary roles connect outer and inner execution content,</li>
+  <li>which roles are structure-intrinsic rather than ordinary boundary values.</li>
 </ul>
 
 <hr/>
 
-<h2 id="interface-and-ui-boundaries">13. Interface and UI Boundaries</h2>
+<h2 id="interface-and-ui-boundaries">14. Interface and UI Boundaries</h2>
 
 <p>
 The Execution IR MUST preserve the distinction between:
@@ -564,7 +620,7 @@ This distinction matters because:
 
 <hr/>
 
-<h2 id="state-local-memory-and-cycles">14. State, Local Memory, and Cycles</h2>
+<h2 id="state-local-memory-and-cycles">15. State, Local Memory, and Cycles</h2>
 
 <p>
 Explicit local memory remains explicit in the base Execution IR.
@@ -609,7 +665,7 @@ State elimination, storage remapping, or state-cell realization belong to later 
 
 <hr/>
 
-<h2 id="relation-with-identity-and-mapping">15. Relation with Identity and Mapping</h2>
+<h2 id="relation-with-identity-and-mapping">16. Relation with Identity and Mapping</h2>
 
 <p>
 This document defines the open Execution IR as an attributable execution-facing representation.
@@ -627,6 +683,7 @@ The relationship is:
 <ul>
   <li><code>Execution IR.md</code> defines the kinds of execution-facing objects the open IR contains,</li>
   <li><code>Identity and Mapping.md</code> defines how those objects remain connected to validated program meaning and source-visible contributors,</li>
+  <li><code>Identity and Mapping.md</code> also defines how primary objects, support objects, and non-primary correspondence remain distinguishable where required,</li>
   <li>the open Execution IR MUST preserve enough identity and structure for those mapping obligations to remain satisfiable.</li>
 </ul>
 
@@ -645,12 +702,13 @@ Therefore, the base open Execution IR MUST be designed so that later tools and l
 <ul>
   <li>Which validated structure does this IR object come from?</li>
   <li>Which source-visible region or port does this execution-facing object represent?</li>
+  <li>Is this object primary or support?</li>
   <li>Which distinctions remain recoverable after execution-facing normalization?</li>
 </ul>
 
 <hr/>
 
-<h2 id="relation-with-derivation-and-construction-rules">16. Relation with Derivation and Construction Rules</h2>
+<h2 id="relation-with-derivation-and-construction-rules">17. Relation with Derivation and Construction Rules</h2>
 
 <p>
 This document defines the architectural shape of the open Execution IR.
@@ -667,7 +725,7 @@ Those concerns belong to companion documents of the IR layer:
 </p>
 
 <ul>
-  <li><strong>Derivation rules</strong> define what must remain correspondingly recoverable between validated FROG program meaning and open Execution IR.</li>
+  <li><strong>Derivation rules</strong> define what must correspond between validated FROG program meaning and open Execution IR, including which content derives as primary objects, which may derive through support objects, and which may remain non-primary at the open-IR boundary.</li>
   <li><strong>Construction rules</strong> define how a conforming open Execution IR is materially built.</li>
 </ul>
 
@@ -679,7 +737,7 @@ In compact form:
    -&gt; what the open IR is
 
 Derivation rules.md
-   -&gt; what must remain recoverable
+   -&gt; what must correspond
 
 Construction rules.md
    -&gt; how the open IR is built
@@ -697,7 +755,7 @@ This separation is important:
 
 <hr/>
 
-<h2 id="relation-with-lowering-backend-contract-and-runtime-private-forms">17. Relation with Lowering, Backend Contract, and Runtime-Private Forms</h2>
+<h2 id="relation-with-lowering-backend-contract-and-runtime-private-forms">18. Relation with Lowering, Backend Contract, and Runtime-Private Forms</h2>
 
 <p>
 The open Execution IR sits before lowering and before runtime-private realization.
@@ -757,7 +815,7 @@ The architectural reading rule is:
 
 <hr/>
 
-<h2 id="relation-with-cache-and-tooling">18. Relation with Cache and Tooling</h2>
+<h2 id="relation-with-cache-and-tooling">19. Relation with Cache and Tooling</h2>
 
 <p>
 A tool MAY serialize an Execution IR artifact inside a cache entry such as <code>frog.ir</code>.
@@ -814,7 +872,7 @@ But such uses MUST NOT redefine the architectural meaning of the open Execution 
 
 <hr/>
 
-<h2 id="out-of-scope-for-v01">19. Out of Scope for v0.1</h2>
+<h2 id="out-of-scope-for-v01">20. Out of Scope for v0.1</h2>
 
 <p>
 The following topics remain out of scope for this document in v0.1:
@@ -844,7 +902,7 @@ The following topics remain out of scope for this document in v0.1:
 
 <hr/>
 
-<h2 id="summary">20. Summary</h2>
+<h2 id="summary">21. Summary</h2>
 
 <p>
 The FROG Execution IR of v0.1 is an <strong>open execution-facing representation</strong> built from
@@ -859,6 +917,7 @@ It preserves:
 
 <ul>
   <li>major validated execution-facing object families,</li>
+  <li>the distinction between primary objects and support objects,</li>
   <li>explicit connectivity,</li>
   <li>structured control and explicit regions,</li>
   <li>public interface versus UI distinctions,</li>
