@@ -5,8 +5,8 @@
 <h1 align="center">🐸 FROG IR Backend Contract</h1>
 
 <p align="center">
-Normative consumption contract for lowered execution forms in FROG v0.1<br/>
-<em>FROG — Free Open Graphical Language</em>
+  Normative consumption contract for lowered execution forms in FROG v0.1<br/>
+  <em>FROG — Free Open Graphical Language</em>
 </p>
 
 <hr/>
@@ -15,7 +15,7 @@ Normative consumption contract for lowered execution forms in FROG v0.1<br/>
 
 <ul>
   <li><a href="#overview">1. Overview</a></li>
-  <li><a href="#legend">2. Reading Legend</a></li>
+  <li><a href="#reading-legend">2. Reading Legend</a></li>
   <li><a href="#why-this-document-exists">3. Why this Document Exists</a></li>
   <li><a href="#position-in-the-pipeline">4. Position in the Pipeline</a></li>
   <li><a href="#scope">5. Scope</a></li>
@@ -47,6 +47,7 @@ Normative consumption contract for lowered execution forms in FROG v0.1<br/>
   <li><a href="#contract-lifecycle">20. Contract Lifecycle</a></li>
   <li><a href="#examples">21. Examples</a></li>
   <li><a href="#out-of-scope-for-v01">22. Out of Scope for v0.1</a></li>
+  <li><a href="#summary">23. Summary</a></li>
 </ul>
 
 <hr/>
@@ -71,9 +72,26 @@ This document does <strong>not</strong> define one universal backend implementat
 It defines the minimum interoperable contract shape and obligations that a lowered form MUST satisfy if it claims to be consumable by later stages under a standardized backend-facing contract.
 </p>
 
+<pre><code>🟦 open Execution IR
+        |
+        v
+🟧 lowering
+        |
+        v
+🟨 backend contract
+        |
+        v
+🟥 private realization
+</code></pre>
+
+<p>
+The backend contract is therefore a <strong>standardized consumer-facing handoff</strong>.
+It is not the open IR itself, and it is not one private runtime representation.
+</p>
+
 <hr/>
 
-<h2 id="legend">2. Reading Legend</h2>
+<h2 id="reading-legend">2. Reading Legend</h2>
 
 <p>
 The diagrams below use the following visual legend:
@@ -171,6 +189,10 @@ The intended architecture is:
 The backend contract therefore sits <strong>after lowering begins</strong> and <strong>before private realization takes over</strong>.
 </p>
 
+<p>
+It is downstream from the specialization boundary and upstream from consumer-private realization policy.
+</p>
+
 <hr/>
 
 <h2 id="scope">5. Scope</h2>
@@ -187,6 +209,10 @@ This document defines:
   <li>what remains attributable across the handoff,</li>
   <li>which architectural categories MUST remain explicit at the contract boundary.</li>
 </ul>
+
+<p>
+This document therefore owns the <strong>consumable handoff boundary</strong>, not the full lowering transformation space and not the full private runtime realization.
+</p>
 
 <hr/>
 
@@ -248,6 +274,11 @@ It tells the next stage:
 under these assumptions,
 with these required preserved meanings,
 and with these remaining obligations."</code></pre>
+
+<p>
+A backend contract is not identical to the lowered form itself.
+It is the standardized declaration that makes that lowered form safely consumable.
+</p>
 
 <hr/>
 
@@ -323,6 +354,11 @@ That boundary can be visualized as:
    - backend-private scheduling machinery
 </code></pre>
 
+<p>
+The contract boundary is therefore the point where a consumer is allowed to rely on declared assumptions without guessing.
+Undeclared assumptions remain outside the contract.
+</p>
+
 <hr/>
 
 <h2 id="minimum-preconditions">10. Minimum Preconditions</h2>
@@ -348,6 +384,12 @@ A backend contract MUST NOT be used to hide:
   <li>invalid memory semantics,</li>
   <li>unsupported structure semantics silently rewritten into a different meaning.</li>
 </ul>
+
+<pre><code>No valid lowered basis
+        |
+        v
+No conforming backend contract claim
+</code></pre>
 
 <hr/>
 
@@ -739,13 +781,13 @@ A useful sketch is:
 </p>
 
 <pre><code>🟦 source-semantic idea
-   [frog.core.delay] --> [add] --> next
+   [frog.core.delay] --&gt; [add] --&gt; next
 
 🟧 lowered form
-   [state_read] --> [lowered_add] --> [state_commit]
+   [state_read] --&gt; [lowered_add] --&gt; [state_commit]
 
 🟨 backend contract truth
-   state_read/state_commit
+   state_read / state_commit
       implement
    explicit semantic local memory
 
@@ -886,7 +928,7 @@ Still, a conforming backend contract SHOULD be representable in a conceptual sha
 </code></pre>
 
 <p>
-The exact field names are indicative only.
+The exact field names are illustrative only.
 What matters is the presence of information equivalent to:
 </p>
 
@@ -900,6 +942,15 @@ What matters is the presence of information equivalent to:
   <li>attribution support,</li>
   <li>unsupported-feature declaration.</li>
 </ul>
+
+<pre><code>Minimal contract intent
+
+🟨 contract identity
+🟨 backend-family orientation
+🟨 declared assumptions
+🟧 consumable specialized units
+🟩 attribution and diagnostic support
+</code></pre>
 
 <hr/>
 
@@ -917,19 +968,19 @@ A useful mental model is:
         v
 🟧 Lowering step(s)
         |
-        +--> adds specialization
-        +--> fixes assumptions
-        +--> preserves mapping
+        +-- adds specialization
+        +-- fixes assumptions
+        +-- preserves mapping
         |
         v
 🟨 Backend Contract
         |
-        +--> accepted by consumer
+        +--&gt; accepted by consumer
         |        |
         |        v
         |    🟥 private realization
         |
-        +--> rejected by consumer
+        +--&gt; rejected by consumer
                  |
                  v
             explicit incompatibility
@@ -981,10 +1032,10 @@ The consumer may then generate device-specific realization while preserving the 
 <h3>21.3 ABI-oriented callable unit</h3>
 
 <pre><code>🟦 source-facing idea
-   interface_input[a] --> add --> interface_output[result]
+   interface_input[a] --&gt; add --&gt; interface_output[result]
 
 🟧 lowered executable idea
-   abi_arg[0] --> op_add --> abi_ret[0]
+   abi_arg[0] --&gt; op_add --&gt; abi_ret[0]
 
 🟨 backend contract truth
    - public boundary origin preserved
@@ -1003,7 +1054,7 @@ The consumer may then generate device-specific realization while preserving the 
    valid feedback requires explicit local memory
 
 🟧 lowered realization-facing form
-   state_read -> op -> state_commit
+   state_read -&gt; op -&gt; state_commit
 
 🟨 backend contract requirement
    consumer MUST preserve state semantics
@@ -1039,4 +1090,39 @@ The goal of v0.1 is narrower and more architectural:
 <pre><code>define a clean, explicit, durable handoff
 between lowering and later realization
 without collapsing FROG into one implementation pipeline
+</code></pre>
+
+<hr/>
+
+<h2 id="summary">23. Summary</h2>
+
+<p>
+The FROG backend contract of v0.1 is the standardized consumption boundary after lowering.
+It declares what a consumer may rely on, what remains attributable, what assumptions are fixed, and what must be rejected rather than silently reinterpreted.
+</p>
+
+<p>
+It does not redefine the language.
+It does not replace the open Execution IR.
+It does not standardize private runtime realization.
+</p>
+
+<p>
+In compact form:
+</p>
+
+<pre><code>🟦 open Execution IR
+        |
+        v
+🟧 lowering
+        |
+        v
+🟨 backend contract
+        |
+        +-- declare consumable specialized form
+        +-- declare assumptions and obligations
+        +-- preserve diagnosability where claimed
+        |
+        v
+🟥 private realization
 </code></pre>
