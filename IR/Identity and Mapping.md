@@ -29,7 +29,7 @@
   <li><a href="#general-mapping-model">6. General Mapping Model</a></li>
   <li><a href="#minimum-preconditions">7. Minimum Preconditions</a></li>
   <li><a href="#required-recoverability">8. Required Recoverability</a></li>
-  <li><a href="#mapping-of-ports-connections-and-regions">9. Mapping of Ports, Connections, and Regions</a></li>
+  <li><a href="#mapping-of-objects-ports-connections-and-regions">9. Mapping of Objects, Ports, Connections, and Regions</a></li>
   <li><a href="#allowed-normalization">10. Allowed Normalization</a></li>
   <li><a href="#forbidden-transformations">11. Forbidden Transformations</a></li>
   <li><a href="#relation-with-observation-debugging-and-inspection">12. Relation with Observation, Debugging, and Inspection</a></li>
@@ -48,9 +48,9 @@ This document defines the normative identity and mapping rules that connect:
 </p>
 
 <ul>
-  <li>canonical source-visible program objects,</li>
+  <li>canonical source-visible program objects and source-visible records,</li>
   <li>validated program meaning, and</li>
-  <li>derived execution-facing IR objects.</li>
+  <li>derived execution-facing IR objects and support objects.</li>
 </ul>
 
 <p>
@@ -86,7 +86,7 @@ It defines how identity, attribution, and recoverability MUST remain stable when
 
 <p>
 The normative mapping boundary owned by this document begins at the transition from validated program meaning to open Execution IR.
-It does not standardize one private runtime object graph or one target-private identity model.
+It does not standardize one private runtime object graph, one target-private identity model, or one debugger-specific live identity protocol.
 </p>
 
 <hr/>
@@ -98,8 +98,9 @@ Execution-facing normalization is useful only if implementations and tools can s
 </p>
 
 <ul>
-  <li>Which source-visible object does this IR object come from?</li>
-  <li>Which validated program meaning does it represent?</li>
+  <li>Which validated meaning does this IR object represent?</li>
+  <li>Which source-visible object or source-visible contributors does it come from?</li>
+  <li>Is it a primary preserved object, a support object, or a non-primary correspondence result?</li>
   <li>Which distinctions remain recoverable after normalization?</li>
   <li>Which transformations are permitted without destroying attribution?</li>
 </ul>
@@ -112,7 +113,7 @@ This document exists to make those answers stable across implementations.
 In practical terms:
 </p>
 
-<pre><code>source object identity
+<pre><code>source-visible identity
         |
         v
 validated program meaning
@@ -261,7 +262,7 @@ This document does not define:
 <h3 id="source-identity">5.1 Source identity</h3>
 
 <p>
-A source identity is the stable identity of a source-visible program object as defined by the relevant source-facing specifications.
+A source identity is the stable identity of a source-visible program object or source-visible record as defined by the relevant source-facing specifications.
 </p>
 
 <p>
@@ -272,14 +273,25 @@ Examples of source-visible object families include:
   <li>primitive nodes,</li>
   <li>structure objects,</li>
   <li>sub-FROG invocation objects,</li>
-  <li>interface boundary objects,</li>
+  <li>diagram-side interface boundary objects,</li>
   <li>widget-value participation objects,</li>
   <li>widget-reference participation objects,</li>
   <li>source-visible connections where applicable.</li>
 </ul>
 
 <p>
-A source identity MUST refer to an object that remains meaningful from the perspective of canonical authored content, not merely from the perspective of one implementation.
+Examples of source-visible records that may matter for correspondence without becoming primary execution objects include:
+</p>
+
+<ul>
+  <li>interface declaration entries,</li>
+  <li>widget declarations,</li>
+  <li>resolved region membership relations,</li>
+  <li>descriptive or presentational records that remain source-owned.</li>
+</ul>
+
+<p>
+A source identity MUST refer to something meaningful from the perspective of canonical authored content, not merely from the perspective of one implementation.
 </p>
 
 <h3 id="validated-semantic-identity">5.2 Validated semantic identity</h3>
@@ -293,8 +305,9 @@ This identity layer exists because:
 </p>
 
 <ul>
-  <li>a source object may expand into multiple execution-relevant derived objects,</li>
+  <li>a source-visible object may expand into multiple execution-relevant derived objects,</li>
   <li>some execution-relevant distinctions become explicit only after validation,</li>
+  <li>some source-visible records matter only through validated correspondence,</li>
   <li>some invalid source distinctions disappear because they were never semantically valid.</li>
 </ul>
 
@@ -322,6 +335,16 @@ IR identities:
 <p>
 IR identity is therefore an <strong>open representation identity</strong>, not a live runtime activation identity.
 </p>
+
+<p>
+In base v0.1, IR identities may belong to:
+</p>
+
+<ul>
+  <li>primary execution-facing objects,</li>
+  <li>support objects that make already-validated structure explicit,</li>
+  <li>ports, terminals, connections, regions, and other explicit execution-facing relationships where the IR model materializes them explicitly.</li>
+</ul>
 
 <h3 id="runtime-and-execution-context-identity">5.4 Runtime and execution-context identity</h3>
 
@@ -368,10 +391,10 @@ The base mapping relations are:
 </p>
 
 <ul>
-  <li><strong>1→1 preservation</strong> — one source-visible object remains one attributable IR object,</li>
-  <li><strong>1→n expansion</strong> — one source-visible object yields multiple attributable IR objects,</li>
-  <li><strong>n→1 restricted aggregation</strong> — multiple source-visible contributors yield one IR support object, but all relevant contributors remain recoverable,</li>
-  <li><strong>derived support object</strong> — an IR object is introduced by normalization but remains attributable to one or more validated source-visible contributors.</li>
+  <li><strong>1 -&gt; 1 preservation</strong> — one source-visible execution-relevant object remains one attributable IR object,</li>
+  <li><strong>1 -&gt; n expansion</strong> — one source-visible execution-relevant object yields multiple attributable IR objects, typically one primary object plus one or more support objects,</li>
+  <li><strong>n -&gt; 1 restricted aggregation</strong> — multiple contributors yield one support object, but all semantically relevant contributors remain recoverable,</li>
+  <li><strong>1 -&gt; 0 non-primary correspondence</strong> — a source-visible object or record does not become a primary execution object in the open IR, but its identity still matters for validation, attribution, or boundary correspondence.</li>
 </ul>
 
 <p>
@@ -396,7 +419,17 @@ For every IR object, an implementation MUST preserve enough information to deter
 <ul>
   <li>which validated meaning it represents,</li>
   <li>which source-visible object or objects contributed to it,</li>
-  <li>whether it is preserved, expanded, restrictedly aggregated, or introduced as a derived support object.</li>
+  <li>whether it is a primary preserved object, an expanded object family, a restrictedly aggregated support object, or another attributable support object.</li>
+</ul>
+
+<p>
+For source-visible content that does not become a primary execution object, an implementation MUST preserve enough information to determine:
+</p>
+
+<ul>
+  <li>whether that content remains relevant to a public boundary, widget participation, region ownership, or another recoverable correspondence relation,</li>
+  <li>which derived objects refer back to it, if any,</li>
+  <li>which non-derivation was intentional rather than accidental identity loss.</li>
 </ul>
 
 <p>
@@ -405,10 +438,11 @@ When multiple source-visible contributors exist, an implementation MAY designate
 
 <pre><code>mapping relations
 
-1 → 1   preserved object
-1 → n   expanded object family
-n → 1   restricted support aggregation only
-n → n   allowed only if contributor attribution remains recoverable
+1 -&gt; 1   preserved object
+1 -&gt; n   expanded object family
+n -&gt; 1   restricted support aggregation only
+1 -&gt; 0   non-primary correspondence only
+n -&gt; n   allowed only if contributor attribution remains recoverable
 </code></pre>
 
 <p>
@@ -424,7 +458,7 @@ normalization MUST NOT destroy recoverability
 <h2 id="minimum-preconditions">7. Minimum Preconditions</h2>
 
 <p>
-Identity-preserving IR construction begins only after the program has been validated according to the applicable FROG specifications.
+Identity-preserving IR derivation begins only after the program has been validated according to the applicable FROG specifications.
 </p>
 
 <p>
@@ -435,6 +469,9 @@ At minimum, that includes:
   <li>structural validation,</li>
   <li>type validation,</li>
   <li>primitive and structure-family validation,</li>
+  <li>interface/diagram consistency validation,</li>
+  <li>region and structure-boundary validation,</li>
+  <li>widget participation validation where applicable,</li>
   <li>cycle-validity validation,</li>
   <li>all other applicable v0.1 validation rules.</li>
 </ul>
@@ -464,21 +501,26 @@ The following distinctions MUST remain recoverable from the base open IR of v0.1
   <li><code>interface_input</code> participation MUST remain distinguishable from all other boundary families.</li>
   <li><code>interface_output</code> participation MUST remain distinguishable from all other boundary families.</li>
   <li>Public API boundaries MUST NOT be collapsed into generic data ingress/egress objects with no recoverable source meaning.</li>
+  <li>When interface declarations exist, the correspondence between public declaration entries and diagram-side public boundary participation MUST remain recoverable.</li>
 </ul>
 
-<h3>8.2 Front-panel value vs object access</h3>
+<h3>8.2 Front-panel value versus object-style access</h3>
 
 <ul>
   <li><code>widget_value</code> participation MUST remain distinguishable from public interface participation.</li>
   <li><code>widget_reference</code> participation MUST remain distinguishable from ordinary valueflow participation.</li>
   <li>Object-style widget interaction through <code>frog.ui.*</code> MUST remain recoverable as object-style interaction.</li>
+  <li>When widget declarations exist, the correspondence between a widget declaration and its derived execution-facing participation objects MUST remain recoverable.</li>
+  <li>A widget declaration that does not participate in validated execution meaning MUST remain distinguishable from a widget that does participate.</li>
 </ul>
 
 <h3>8.3 Structured control</h3>
 
 <ul>
   <li>Structure family identity MUST remain recoverable.</li>
-  <li>Region ownership MUST remain recoverable.</li>
+  <li>Owned region identity MUST remain recoverable.</li>
+  <li>Structure boundary participation MUST remain recoverable.</li>
+  <li>Structure-terminal roles MUST remain recoverable when applicable.</li>
   <li>Boundary terminals introduced by structured control MAY be made more explicit, but structure correspondence MUST remain traceable.</li>
 </ul>
 
@@ -488,6 +530,7 @@ The following distinctions MUST remain recoverable from the base open IR of v0.1
   <li>Explicit local-memory primitives such as <code>frog.core.delay</code> MUST remain explicitly attributable.</li>
   <li>A valid stateful feedback path MUST remain recoverable as an explicitly stateful path.</li>
   <li>An invalid combinational cycle MUST NOT become indistinguishable from a valid stateful cycle through IR rewriting.</li>
+  <li>Required initial-state identity or equivalent validated memory configuration MUST remain recoverable where applicable.</li>
 </ul>
 
 <h3>8.5 Invocation boundaries</h3>
@@ -497,50 +540,75 @@ The following distinctions MUST remain recoverable from the base open IR of v0.1
   <li>An invocation MUST NOT be flattened so aggressively that cross-boundary provenance becomes unrecoverable in the base open IR.</li>
 </ul>
 
+<h3>8.6 Primary versus support versus non-primary correspondence</h3>
+
+<ul>
+  <li>A primary execution-facing object MUST remain distinguishable from a support object introduced for explicitness.</li>
+  <li>A support object MUST remain attributable to the validated meaning it supports.</li>
+  <li>Source-visible content that does not become a primary execution object MUST NOT disappear in a way that breaks required boundary correspondence.</li>
+  <li>An implementation MUST remain able to distinguish intended 1 -&gt; 0 non-primary correspondence from accidental attribution loss.</li>
+</ul>
+
 <pre><code>Required recoverability
 
 🟨 interface_input / interface_output remain distinct
 🟦 widget_value / widget_reference remain distinct
+🟦 public interface / UI participation remain distinct
 🟦 structure family and regions remain distinct
+🟨 structure-boundary roles remain distinct
 🟩 explicit memory remains explicit
 🟦 invocation identity remains recoverable
+🟩 primary / support / non-primary correspondence remain distinguishable
 </code></pre>
 
 <hr/>
 
-<h2 id="mapping-of-ports-connections-and-regions">9. Mapping of Ports, Connections, and Regions</h2>
+<h2 id="mapping-of-objects-ports-connections-and-regions">9. Mapping of Objects, Ports, Connections, and Regions</h2>
 
 <p>
 Identity and attribution rules apply not only to executable objects but also to execution-relevant relationships.
 </p>
 
-<h3>9.1 Ports</h3>
+<h3>9.1 Objects</h3>
 
 <ul>
-  <li>An IR port MUST remain attributable to the validated executable object that owns it.</li>
-  <li>If validation resolves direction or type information, the IR MAY make that information explicit.</li>
-  <li>A normalized IR port MUST remain connected to the source-visible or semantically validated port role from which it originates.</li>
+  <li>A primary IR object MUST remain attributable to the validated meaning unit it represents.</li>
+  <li>A support object MUST remain attributable to the validated meaning unit or contributors it supports.</li>
+  <li>An object introduced only for explicitness MUST NOT silently replace the identity of the primary object it supports.</li>
 </ul>
 
-<h3>9.2 Connections</h3>
+<h3>9.2 Ports and terminals</h3>
+
+<ul>
+  <li>An IR port or terminal MUST remain attributable to the validated executable object that owns it.</li>
+  <li>If validation resolves direction or type information, the IR MAY make that information explicit.</li>
+  <li>A normalized IR port or terminal MUST remain connected to the source-visible or semantically validated role from which it originates.</li>
+  <li>Structured boundary terminals and structure terminals MUST remain attributable to their owning structured object and their validated terminal role.</li>
+</ul>
+
+<h3>9.3 Connections</h3>
 
 <ul>
   <li>An IR connection MUST remain attributable to validated dependency meaning.</li>
   <li>Connection normalization MAY rewrite representation details, but MUST NOT silently reverse dependency meaning or erase relevant source correspondence.</li>
   <li>When multiple source-visible elements contribute to one normalized dependency relation, their contribution MUST remain recoverable.</li>
+  <li>Cross-scope connectivity MUST remain attributable to the correct boundary crossing rather than being rewritten as an opaque direct shortcut.</li>
 </ul>
 
-<h3>9.3 Regions</h3>
+<h3>9.4 Regions</h3>
 
 <ul>
   <li>Region objects MAY be introduced or made more explicit in the IR.</li>
   <li>Every region object MUST remain attributable to the structure and region semantics from which it was derived.</li>
   <li>Region identity MUST remain sufficient to support structure-aware inspection and later safe observation semantics.</li>
+  <li>Region-local graph ownership MUST remain distinguishable from top-level graph ownership.</li>
 </ul>
 
 <pre><code>relationship mapping
 
 object
+  ├── primary identity remains recoverable
+  ├── support-object attribution remains recoverable
   ├── port ownership remains recoverable
   ├── connection meaning remains recoverable
   └── region ownership remains recoverable
@@ -559,14 +627,18 @@ The following transformations are allowed in the base open IR, provided that att
   <li>making resolved port type explicit,</li>
   <li>making region ownership explicit,</li>
   <li>making structure boundary terminals explicit,</li>
-  <li>materializing execution-relevant helper objects,</li>
+  <li>making structure-terminal roles explicit,</li>
+  <li>materializing execution-relevant support objects,</li>
   <li>using implementation-specific IR identifiers instead of source identifiers,</li>
   <li>canonicalizing equivalent execution-facing spellings,</li>
-  <li>separating one source-visible object into multiple attributable IR objects when needed for analysis or later lowering.</li>
+  <li>separating one source-visible object into multiple attributable IR objects when needed for analysis or later lowering,</li>
+  <li>recording explicit contributor lists for restricted support aggregation,</li>
+  <li>preserving source-visible records as referenced correspondence rather than as primary execution objects when that is the correct v0.1 interpretation.</li>
 </ul>
 
 <p>
 Allowed normalization does not remove the obligation to preserve attribution.
+It also does not authorize reinterpretation of non-execution source content as execution-visible meaning.
 </p>
 
 <pre><code>Allowed normalization
@@ -575,6 +647,7 @@ Allowed normalization does not remove the obligation to preserve attribution.
 ✔ introduce attributable support objects
 ✔ use implementation-local IR identifiers
 ✔ expand one source object into several attributable IR objects
+✔ keep some source-visible content as referenced correspondence rather than primary execution objects
 
 Only if:
 🟩 contributor attribution remains recoverable
@@ -596,9 +669,11 @@ The following transformations are forbidden in the base open IR of v0.1:
   <li>converting explicit local memory into hidden implicit scheduler state,</li>
   <li>erasing the distinction between public interface boundaries and front-panel value boundaries,</li>
   <li>erasing the distinction between widget-value participation and widget-reference participation,</li>
-  <li>flattening structured control so aggressively that structure family, region attribution, or semantic correspondence is no longer recoverable,</li>
+  <li>flattening structured control so aggressively that structure family, region attribution, structure-terminal identity, or semantic correspondence is no longer recoverable,</li>
   <li>turning editor-only layout or presentation choices into identity-bearing execution semantics,</li>
-  <li>treating one private runtime object graph as the normative meaning of the open IR.</li>
+  <li>treating one private runtime object graph as the normative meaning of the open IR,</li>
+  <li>treating every source-visible declaration or descriptive record as if it were automatically a primary execution object,</li>
+  <li>using 1 -&gt; 0 omission as a loophole for accidental identity loss of execution-relevant content.</li>
 </ul>
 
 <pre><code>Forbidden identity loss
@@ -609,6 +684,8 @@ The following transformations are forbidden in the base open IR of v0.1:
 🟥 collapsed interface / UI roles
 🟥 unrecoverable structured flattening
 🟥 editor-only execution identity
+🟥 forced executionization of non-primary source content
+🟥 accidental identity loss disguised as omission
 🟥 private runtime graph as open IR
 </code></pre>
 
@@ -631,7 +708,7 @@ Accordingly:
 <ul>
   <li>source-visible observation MUST remain relatable to stable source-visible identity,</li>
   <li>when dynamic disambiguation is required, later layers MUST be able to relate a live execution context back to stable source-visible identity,</li>
-  <li>IR normalization MUST NOT destroy the information needed for structure-aware inspection, local-memory inspection, or boundary-aware observation.</li>
+  <li>IR normalization MUST NOT destroy the information needed for structure-aware inspection, local-memory inspection, boundary-aware observation, or invocation-aware inspection.</li>
 </ul>
 
 <p>
@@ -666,6 +743,7 @@ However, a conforming base open IR representation SHOULD preserve information eq
     {
       "ir_id": "obj_001",
       "kind": "primitive",
+      "role": "primary",
       "mapping_relation": "1_to_1",
       "semantic_identity": {
         "kind": "validated_object",
@@ -677,6 +755,29 @@ However, a conforming base open IR representation SHOULD preserve information eq
         ],
         "contributors": []
       }
+    },
+    {
+      "ir_id": "supp_001",
+      "kind": "resolved_port_descriptor",
+      "role": "support",
+      "mapping_relation": "1_to_n",
+      "semantic_identity": {
+        "kind": "validated_port_role",
+        "id": "sem.mul_1.out"
+      },
+      "source_attribution": {
+        "primary": [
+          { "layer": "diagram", "object_id": "mul_1" }
+        ],
+        "contributors": []
+      }
+    }
+  ],
+  "non_primary_correspondence": [
+    {
+      "source": { "layer": "front_panel", "object_id": "slider_1" },
+      "mapping_relation": "1_to_0",
+      "reason": "no_validated_execution_participation"
     }
   ]
 }
@@ -691,19 +792,21 @@ What is mandatory is the presence of information equivalent to:
 </p>
 
 <ul>
-  <li>a stable IR identity,</li>
+  <li>a stable IR identity where an IR object exists,</li>
   <li>object classification,</li>
   <li>mapping relation category,</li>
   <li>validated semantic correspondence,</li>
-  <li>recoverable source attribution.</li>
+  <li>recoverable source attribution,</li>
+  <li>enough distinction to tell primary objects, support objects, and non-primary correspondence apart.</li>
 </ul>
 
 <pre><code>Minimal identity intent
 
-🟦 IR identity
+🟦 IR identity where an IR object exists
 🟦 object classification
 🟩 semantic correspondence
 🟩 source attribution
+🟩 primary / support / non-primary distinction
 </code></pre>
 
 <hr/>
@@ -727,7 +830,7 @@ IR:
 </code></pre>
 
 <p>
-This is a 1→1 preservation relation.
+This is a 1 -&gt; 1 preservation relation.
 </p>
 
 <h3>14.2 One source object expanded into several IR objects</h3>
@@ -739,7 +842,8 @@ A structured-control object may be projected into:
 <ul>
   <li>one structure object,</li>
   <li>one or more region objects,</li>
-  <li>explicit structure-boundary terminal objects.</li>
+  <li>explicit structure-boundary terminal objects,</li>
+  <li>explicit structure-terminal objects.</li>
 </ul>
 
 <pre><code>source:
@@ -750,10 +854,11 @@ IR:
   region(loop_1.body)
   boundary_input(loop_1.N)
   boundary_output(loop_1.result)
+  structure_terminal(loop_1.i)
 </code></pre>
 
 <p>
-This is a 1→n expansion relation.
+This is a 1 -&gt; n expansion relation.
 All derived objects MUST remain attributable to the original validated structure meaning.
 </p>
 
@@ -792,6 +897,51 @@ Requirement:
 
 <p>
 This is not permission to collapse multiple primary execution-visible objects into one opaque replacement object.
+</p>
+
+<h3>14.5 Non-primary correspondence</h3>
+
+<p>
+A widget declaration may exist in the front panel while not participating in validated execution meaning.
+</p>
+
+<pre><code>source:
+  widget declaration "slider_1" in front_panel
+
+validated meaning:
+  no execution participation
+
+IR:
+  no primary execution object for slider_1
+  but omission is intentional and distinguishable from attribution loss
+</code></pre>
+
+<p>
+This is a 1 -&gt; 0 non-primary correspondence relation.
+It is allowed only because the widget declaration itself is not execution-facing participation in that validated program.
+</p>
+
+<h3>14.6 Declaration-to-participation correspondence</h3>
+
+<p>
+A public interface declaration entry may correspond to diagram-side public boundary participation without becoming a separate primary execution object of its own.
+</p>
+
+<pre><code>source:
+  interface.inputs[ id = "a" ]
+  interface_input node linked to "a"
+
+validated meaning:
+  public input boundary for port "a"
+
+IR:
+  primary boundary object for interface_input participation
+  plus recoverable correspondence to declared input "a"
+</code></pre>
+
+<p>
+This is not identity duplication.
+It is one execution-facing participation object with recoverable declaration correspondence.
 </p>
 
 <hr/>
@@ -837,8 +987,9 @@ A conforming open Execution IR MUST remain able to answer:
 <ul>
   <li>which source-visible contributors are involved,</li>
   <li>which validated program meaning is represented,</li>
-  <li>which IR object now carries that execution-facing role,</li>
-  <li>which distinctions remain recoverable after normalization.</li>
+  <li>which IR object or IR support object now carries that execution-facing role,</li>
+  <li>which distinctions remain recoverable after normalization,</li>
+  <li>which source-visible content intentionally remains non-primary at the open-IR boundary.</li>
 </ul>
 
 <p>
