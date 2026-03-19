@@ -85,7 +85,7 @@ It defines how identity, attribution, and recoverability MUST remain stable when
 </code></pre>
 
 <p>
-The normative mapping boundary owned by this document ends at the open IR layer.
+The normative mapping boundary owned by this document begins at the transition from validated executable meaning to open Execution IR.
 It does not standardize one private runtime object graph or one target-private identity model.
 </p>
 
@@ -121,7 +121,7 @@ validated executable meaning
 execution-facing IR identity
         |
         v
-later lowering / backend-private forms
+later lowering / backend-facing / private forms
 </code></pre>
 
 <p>
@@ -164,11 +164,18 @@ validated executable meaning
 Execution IR
         |
         v
-lowering / backend contract / runtime-specific realization
+lowering
+        |
+        v
+backend contract
+        |
+        v
+runtime-specific realization
 </code></pre>
 
 <p>
-Identity and mapping rules apply at the transition between validated executable meaning and Execution IR.
+Identity and mapping rules apply first at the transition between validated executable meaning and Execution IR.
+They also constrain what later stages must remain able to recover when specialization continues downstream.
 </p>
 
 <p>
@@ -585,7 +592,7 @@ The following transformations are forbidden in the base open IR of v0.1:
 
 <ul>
   <li>removing source attribution for execution-visible objects,</li>
-  <li>collapsing multiple independently attributable source-visible objects into one opaque generated object,</li>
+  <li>collapsing multiple independently attributable source-visible primary execution objects into one opaque generated object,</li>
   <li>converting explicit local memory into hidden implicit scheduler state,</li>
   <li>erasing the distinction between public interface boundaries and front-panel value boundaries,</li>
   <li>erasing the distinction between widget-value participation and widget-reference participation,</li>
