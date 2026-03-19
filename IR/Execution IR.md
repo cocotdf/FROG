@@ -50,13 +50,13 @@ It exists to provide an execution-facing form that remains open, inspectable, so
 </p>
 
 <p>
-For v0.1, the Execution IR remains deliberately close to validated executable meaning.
+For v0.1, the Execution IR remains deliberately close to validated program meaning.
 It is <strong>not</strong> yet a lowered backend contract, a private scheduler graph, a compiled artifact, or a runtime history form.
 </p>
 
 <pre><code>🟦 canonical source
       -&gt;
-🟩 validated meaning
+🟩 validated program meaning
       -&gt;
 🟦 open Execution IR
       -&gt;
@@ -137,7 +137,7 @@ This document owns:
 
 <ul>
   <li>the architectural role of the open Execution IR,</li>
-  <li>its position between validated meaning and later specialization,</li>
+  <li>its position between validated program meaning and later specialization,</li>
   <li>its core invariants,</li>
   <li>its high-level object model,</li>
   <li>the major execution-facing families that remain visible in base v0.1,</li>
@@ -208,7 +208,7 @@ The base architectural pipeline is:
 🟦 Program Model or equivalent validated tool form
         |
         v
-🟩 validated executable meaning
+🟩 validated program meaning
         |
         v
 🟦 Execution IR
@@ -224,7 +224,7 @@ The base architectural pipeline is:
 </code></pre>
 
 <p>
-The validated executable meaning is the language-level truth of the program.
+The validated program meaning is the language-level truth of the program.
 The Execution IR is the open execution-facing form built from that validated meaning.
 </p>
 
@@ -626,7 +626,7 @@ The relationship is:
 
 <ul>
   <li><code>Execution IR.md</code> defines the kinds of execution-facing objects the open IR contains,</li>
-  <li><code>Identity and Mapping.md</code> defines how those objects remain connected to validated meaning and source-visible contributors,</li>
+  <li><code>Identity and Mapping.md</code> defines how those objects remain connected to validated program meaning and source-visible contributors,</li>
   <li>the open Execution IR MUST preserve enough identity and structure for those mapping obligations to remain satisfiable.</li>
 </ul>
 
@@ -635,7 +635,7 @@ The relationship is:
 
 Identity and Mapping.md
    -&gt; how those objects remain recoverably connected
-      to validated meaning and source-visible origin
+      to validated program meaning and source-visible origin
 </code></pre>
 
 <p>
@@ -667,7 +667,7 @@ Those concerns belong to companion documents of the IR layer:
 </p>
 
 <ul>
-  <li><strong>Derivation rules</strong> define what must remain correspondingly recoverable between validated FROG meaning and open Execution IR.</li>
+  <li><strong>Derivation rules</strong> define what must remain correspondingly recoverable between validated FROG program meaning and open Execution IR.</li>
   <li><strong>Construction rules</strong> define how a conforming open Execution IR is materially built.</li>
 </ul>
 
@@ -884,7 +884,7 @@ In one line:
 </p>
 
 <pre><code>🟦 Execution IR is the open architectural bridge
-between 🟩 validated FROG meaning
+between 🟩 validated program meaning
 and 🟧 later specialization for execution realization,
 while remaining upstream of 🟨 backend contract
 and outside 🟥 private runtime realization.
