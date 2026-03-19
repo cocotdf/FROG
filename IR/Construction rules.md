@@ -5,7 +5,7 @@
 <h1 align="center">🐸 FROG IR Construction Rules</h1>
 
 <p align="center">
-  Normative construction rules for building open Execution IR from validated FROG programs<br/>
+  Normative construction rules for building open Execution IR from validated FROG program meaning<br/>
   <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -58,7 +58,7 @@ It standardizes the minimum construction obligations that make a produced Execut
 recognizable, inspectable, recoverable, and suitable for later lowering.
 </p>
 
-<pre><code>🟩 validated meaning
+<pre><code>🟩 validated program meaning
         |
         v
 🟨 construction rules   &lt;-- this document
@@ -173,7 +173,7 @@ Accordingly:
 <h2 id="construction-entry-condition">5. Construction Entry Condition</h2>
 
 <p>
-Execution IR construction begins only after the program has a <strong>validated executable meaning</strong>.
+Execution IR construction begins only after the program has a <strong>validated program meaning</strong>.
 Construction MUST NOT be claimed for a program that has not already satisfied the applicable validation rules.
 </p>
 
@@ -208,7 +208,7 @@ However, the constructed Execution IR MUST remain grounded in validated FROG pro
 <pre><code>🟦 raw or editable form
         |
         v
-🟩 validated meaning
+🟩 validated program meaning
         |
         v
 🟨 construction starts here
@@ -577,8 +577,8 @@ Therefore:
 
 <ul>
   <li><code>interface_input</code> and <code>interface_output</code> MUST construct to explicit public boundary participation in the IR,</li>
-  <li><code>widget_value</code> MUST construct to explicit widget-value participation when that widget participates in validated executable content,</li>
-  <li><code>widget_reference</code> MUST construct to explicit widget-reference participation when object-style widget interaction is part of validated executable content.</li>
+  <li><code>widget_value</code> MUST construct to explicit widget-value participation when that widget participates in validated program meaning,</li>
+  <li><code>widget_reference</code> MUST construct to explicit widget-reference participation when object-style widget interaction is part of validated program meaning.</li>
 </ul>
 
 <p>
@@ -591,7 +591,7 @@ Additional rules:
 
 <ul>
   <li>public interface declarations and diagram-side interface participation MUST remain coherently related in the constructed IR,</li>
-  <li>widgets that do not participate in validated executable content MUST NOT be forced into execution-facing IR objects merely because they exist in source,</li>
+  <li>widgets that do not participate in validated program meaning MUST NOT be forced into execution-facing IR objects merely because they exist in source,</li>
   <li>widget-reference-based interaction used with <code>frog.ui.property_read</code>, <code>frog.ui.property_write</code>, or <code>frog.ui.method_invoke</code> MUST remain distinguishable from ordinary valueflow participation.</li>
 </ul>
 
@@ -621,8 +621,8 @@ Accordingly:
 
 <ul>
   <li>a validated local-memory primitive such as <code>frog.core.delay</code> MUST construct to an explicit attributable IR object,</li>
-  <li>execution-relevant initialization data required by validated meaning MUST remain recoverable,</li>
-  <li>stateful feedback validity MUST remain grounded in explicit memory already present in validated meaning,</li>
+  <li>execution-relevant initialization data required by validated program meaning MUST remain recoverable,</li>
+  <li>stateful feedback validity MUST remain grounded in explicit memory already present in validated program meaning,</li>
   <li>construction MUST NOT legalize an otherwise invalid combinational cycle by injecting hidden implicit memory,</li>
   <li>construction MUST NOT erase attribution of explicit memory in a valid feedback path.</li>
 </ul>
@@ -928,7 +928,7 @@ Those concerns belong to later documents such as lowering, backend contract, run
 
 <p>
 Execution IR construction in FROG v0.1 is intentionally conservative.
-It starts from <strong>validated meaning</strong>, creates <strong>one execution unit</strong>, constructs
+It starts from <strong>validated program meaning</strong>, creates <strong>one execution unit</strong>, constructs
 <strong>explicit objects</strong>, <strong>typed ports</strong>, <strong>directed connections</strong>,
 <strong>structured regions</strong>, and <strong>mandatory source attribution</strong>,
 then verifies that the resulting payload remains structured, attributable, portable, and free from runtime-private leakage.
@@ -944,7 +944,7 @@ while lowering, backend-facing contracts, and private realization remain later c
 Compactly:
 </p>
 
-<pre><code>🟩 validated meaning
+<pre><code>🟩 validated program meaning
    |
    +-- construct explicit execution unit
    +-- construct primary objects
