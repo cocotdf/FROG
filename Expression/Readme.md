@@ -27,7 +27,7 @@
   <li><a href="#sections-overview">11. Sections Overview</a></li>
   <li><a href="#cross-cutting-subsystems">12. Cross-Cutting Subsystems</a></li>
   <li><a href="#interface-connector-diagram-and-front-panel">13. Interface, Connector, Diagram, and Front Panel</a></li>
-  <li><a href="#execution-and-validation">14. Execution and Validation</a></li>
+  <li><a href="#execution-relevance-validation-and-derivation-boundary">14. Execution Relevance, Validation, and Derivation Boundary</a></li>
   <li><a href="#canonical-formatting-and-ordering">15. Canonical Formatting and Ordering</a></li>
   <li><a href="#normative-terminology">16. Normative Terminology</a></li>
   <li><a href="#status">17. Status</a></li>
@@ -60,12 +60,12 @@ The purpose of this directory is to define:
   <li>the canonical top-level structure of a <code>.frog</code> file,</li>
   <li>the required and optional source sections of that file,</li>
   <li>the source-level representation of those sections,</li>
-  <li>the cross-cutting source subsystems that apply across those sections, including the type system, the widget model, the widget interaction model, and the source-facing representation of structures and local-memory constructs.</li>
+  <li>the source-visible families and cross-cutting source subsystems that appear in canonical source, including the type system, the widget model, the widget interaction model, and the source-facing representation of structures and local-memory constructs.</li>
 </ul>
 
 <p>
 This directory is about the authoritative source form of a FROG.
-It is not the complete runtime architecture, not the complete IDE implementation model, and not the open execution-facing IR layer.
+It is not the complete runtime architecture, not the complete IDE implementation model, not the complete semantic interpretation of validated programs, and not the open execution-facing IR layer.
 </p>
 
 <p>
@@ -85,6 +85,7 @@ IDE/          -> authoring, observability, debugging, inspection
 
 Expression/ owns source structure and source-visible object shape.
 Expression/ does not own validated program meaning.
+Expression/ does not own open execution-facing derivation.
 </pre>
 
 <hr/>
@@ -172,7 +173,7 @@ This directory focuses on the authoritative source form.
 </p>
 
 <p>
-Accordingly, this directory defines how a FROG is <strong>serialized</strong>, not every detail of how it is edited, semantically validated by a given tool, lowered, compiled, executed, or deployed.
+Accordingly, this directory defines how a FROG is <strong>serialized</strong>, not every detail of how it is edited, semantically validated by a given tool, derived into IR, lowered, compiled, executed, or deployed.
 </p>
 
 <pre>
@@ -353,8 +354,8 @@ Its optional source sections MAY define:
 </ul>
 
 <p>
-A FROG MAY therefore be diagram-only.
-A conforming canonical source file does not require a user-facing interaction layer unless such a layer is intentionally part of the program description.
+A FROG MAY therefore be diagram-only with respect to user-facing interaction.
+A conforming canonical source file does not require a front panel unless such a layer is intentionally part of the program description.
 </p>
 
 <p>
@@ -620,7 +621,7 @@ A canonical <code>.frog</code> source file MAY additionally contain:
 <p>
 The <code>front_panel</code> section is optional.
 It SHOULD be present when the FROG intentionally includes a user-facing interaction layer.
-When absent, the FROG is interpreted as a diagram-only program with no serialized front-panel composition.
+When absent, the FROG is interpreted as a program with no serialized front-panel composition.
 </p>
 
 <p>
@@ -689,7 +690,7 @@ Detailed specification: <code>Connector.md</code>
 
 <p>
 Required section defining the executable dataflow graph of the FROG.
-The diagram contains nodes, edges, dependencies, and annotations.
+The diagram contains nodes, edges, dependencies, regions, boundaries, and annotations as source-level constructs.
 It is the authoritative source-level execution structure of the program.
 </p>
 
@@ -929,6 +930,10 @@ The diagram defines the executable graph.
 It is the authoritative source-level execution structure of the program.
 </p>
 
+<p>
+Execution-relevant source families are expressed here in source form, including ordinary primitives, sub-FROG invocation nodes, structure nodes, interface boundary nodes, widget participation nodes, explicit edges, regions, structure terminals, and explicit local-memory participation where applicable.
+</p>
+
 <h3>13.4 Front Panel</h3>
 
 <p>
@@ -973,7 +978,7 @@ front_panel widget declaration
 
 <hr/>
 
-<h2 id="execution-and-validation">14. Execution and Validation</h2>
+<h2 id="execution-relevance-validation-and-derivation-boundary">14. Execution Relevance, Validation, and Derivation Boundary</h2>
 
 <p>
 The canonical <code>.frog</code> source file is the authoritative source artifact of the program.
@@ -1017,6 +1022,26 @@ Normative execution meaning is not owned by raw source alone.
 It is established from validated program meaning interpreted against the relevant language semantics and primitive specifications.
 Optional sections such as <code>front_panel</code>, <code>icon</code>, <code>ide</code>, and <code>cache</code> MUST NOT redefine executable semantics.
 </p>
+
+<p>
+This directory also defines the <strong>source-visible families</strong> from which validated meaning and later derivation proceed.
+However, this directory does not define the open IR object model, the detailed source-to-IR mapping, or the procedural rules for building open execution-facing payloads.
+Those concerns belong to <code>IR/</code>.
+</p>
+
+<pre>
+Boundary rule
+
+Expression/
+   defines source-visible execution-relevant content
+
+Language/
+   defines validated meaning of that content
+
+IR/
+   defines how validated meaning is represented
+   in open execution-facing form
+</pre>
 
 <pre>
 Execution rule
