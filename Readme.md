@@ -62,7 +62,7 @@ Instead of describing a program primarily through ordered text, FROG describes a
 </ul>
 
 <p>
-Execution emerges from data availability, structural rules, explicit control structures, intrinsic standardized primitive behavior, optional profile-owned capability behavior, and explicit local-memory semantics rather than from manually authored instruction order.
+Execution emerges from data availability, dependency structure, explicit control constructs, intrinsic standardized primitive behavior, optional profile-owned capability behavior, and explicit local-memory semantics rather than from manually authored instruction order.
 </p>
 
 <p>
@@ -906,8 +906,8 @@ A toolchain edits a Program Model, serializes canonical source, validates progra
                                           +----------+-----------+
                                                      |
                                                      v
-                                  🟩 OPEN EXECUTION LAYER
-                                  🟩 FROG Execution IR
+                                  🟦 OPEN EXECUTION LAYER
+                                  🟦 FROG Execution IR
                          (derived, inspectable, source-attributed,
                           execution-facing, not backend-private)
                                                      |
