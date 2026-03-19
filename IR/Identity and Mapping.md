@@ -49,7 +49,7 @@ This document defines the normative identity and mapping rules that connect:
 
 <ul>
   <li>canonical source-visible program objects,</li>
-  <li>validated executable meaning, and</li>
+  <li>validated program meaning, and</li>
   <li>derived execution-facing IR objects.</li>
 </ul>
 
@@ -72,7 +72,7 @@ It defines how identity, attribution, and recoverability MUST remain stable when
 <pre><code>🟩 source-visible identity
         |
         v
-🟩 validated executable meaning
+🟩 validated program meaning
         |
         v
 🟦 execution-facing IR identity
@@ -85,7 +85,7 @@ It defines how identity, attribution, and recoverability MUST remain stable when
 </code></pre>
 
 <p>
-The normative mapping boundary owned by this document begins at the transition from validated executable meaning to open Execution IR.
+The normative mapping boundary owned by this document begins at the transition from validated program meaning to open Execution IR.
 It does not standardize one private runtime object graph or one target-private identity model.
 </p>
 
@@ -99,7 +99,7 @@ Execution-facing normalization is useful only if implementations and tools can s
 
 <ul>
   <li>Which source-visible object does this IR object come from?</li>
-  <li>Which validated executable meaning does it represent?</li>
+  <li>Which validated program meaning does it represent?</li>
   <li>Which distinctions remain recoverable after normalization?</li>
   <li>Which transformations are permitted without destroying attribution?</li>
 </ul>
@@ -115,7 +115,7 @@ In practical terms:
 <pre><code>source object identity
         |
         v
-validated executable meaning
+validated program meaning
         |
         v
 execution-facing IR identity
@@ -158,7 +158,7 @@ Expression/
 Program Model or equivalent validated tool form
         |
         v
-validated executable meaning
+validated program meaning
         |
         v
 Execution IR
@@ -174,19 +174,19 @@ runtime-specific realization
 </code></pre>
 
 <p>
-Identity and mapping rules apply first at the transition between validated executable meaning and Execution IR.
+Identity and mapping rules apply first at the transition between validated program meaning and Execution IR.
 They also constrain what later stages must remain able to recover when specialization continues downstream.
 </p>
 
 <p>
 An implementation MAY derive IR from canonical source plus validation results, from a validated Program Model, or from another equivalent validated internal form.
-However, the resulting IR MUST remain attributable to validated FROG meaning rather than to editor-only convenience state.
+However, the resulting IR MUST remain attributable to validated FROG program meaning rather than to editor-only convenience state.
 </p>
 
 <pre><code>🟦 raw or editable form
         |
         v
-🟩 validated meaning
+🟩 validated program meaning
         |
         v
 🟨 identity and mapping boundary starts here
@@ -360,7 +360,7 @@ Accordingly, when a later layer needs to expose source-visible observation, paus
 <h2 id="general-mapping-model">6. General Mapping Model</h2>
 
 <p>
-Every execution-facing IR object MUST be connected to validated executable meaning through an explicit or recoverable mapping relation.
+Every execution-facing IR object MUST be connected to validated program meaning through an explicit or recoverable mapping relation.
 </p>
 
 <p>
@@ -382,7 +382,7 @@ The mapping model can be summarized as:
         |
         | validation and semantic resolution
         v
-validated executable meaning
+validated program meaning
         |
         | conservative execution-facing projection
         v
@@ -836,7 +836,7 @@ A conforming open Execution IR MUST remain able to answer:
 
 <ul>
   <li>which source-visible contributors are involved,</li>
-  <li>which validated executable meaning is represented,</li>
+  <li>which validated program meaning is represented,</li>
   <li>which IR object now carries that execution-facing role,</li>
   <li>which distinctions remain recoverable after normalization.</li>
 </ul>
@@ -855,7 +855,7 @@ This document therefore preserves the attribution foundation needed by:
 <pre><code>🟩 source-visible identity
         |
         v
-🟩 validated meaning
+🟩 validated program meaning
         |
         v
 🟦 recoverable execution-facing IR identity
