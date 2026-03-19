@@ -58,7 +58,7 @@ This document defines the normative architectural boundary called <strong>loweri
 
 <p>
 Lowering begins <strong>after</strong> an open execution-facing IR has been derived and constructed from validated FROG program meaning.
-Lowering exists to transform that open IR into more target-oriented, backend-oriented, or realization-oriented derived forms without redefining:
+Lowering exists to transform that open IR into more target-oriented, backend-oriented, or realization-oriented specialized forms without redefining:
 </p>
 
 <ul>
@@ -216,6 +216,16 @@ This document does not define:
 <p>
 Those topics may be constrained later by backend-family specifications, profile-specific runtime contracts, or the backend contract boundary.
 </p>
+
+<p>
+This document also does not redefine the ownership of:
+</p>
+
+<ul>
+  <li><code>Execution IR.md</code> for the base open IR model,</li>
+  <li><code>Identity and Mapping.md</code> for cross-layer recoverability rules,</li>
+  <li><code>Backend contract.md</code> for the standardized consumer-facing handoff.</li>
+</ul>
 
 <hr/>
 
@@ -442,7 +452,7 @@ All lowering stages in FROG v0.1 MUST respect the following invariants:
   <li>Lowering MUST NOT pretend that one private runtime form is the normative FROG execution model.</li>
   <li>Lowering MUST preserve enough attribution for diagnostics, inspection, and source-aligned execution reasoning.</li>
   <li>Lowering MUST preserve explicit memory semantics as explicit semantic fact, even if storage realization changes later.</li>
-  <li>Lowering MUST preserve the distinction between open IR, lowered form, and private realization.</li>
+  <li>Lowering MUST preserve the distinction between open IR, lowered form, backend contract, and private realization.</li>
 </ul>
 
 <pre><code>Core lowering invariants
@@ -533,7 +543,7 @@ A lowering pipeline MAY transform:
 However, the originating structure family, region semantics, and relevant mapping relations MUST remain recoverable where needed.
 </p>
 
-<h3>13.2 Boundary specialization</h3>
+<h3 id="boundary-specialization">13.2 Boundary specialization</h3>
 
 <p>
 A lowering pipeline MAY specialize:
@@ -545,7 +555,7 @@ A lowering pipeline MAY specialize:
   <li>sub-FROG invocation boundaries into explicit call, inline, or dispatch forms.</li>
 </ul>
 
-<h3>13.3 Storage and layout specialization</h3>
+<h3 id="storage-and-layout-specialization">13.3 Storage and layout specialization</h3>
 
 <p>
 A lowering pipeline MAY:
@@ -559,7 +569,7 @@ A lowering pipeline MAY:
   <li>introduce ownership and lifetime-support objects.</li>
 </ul>
 
-<h3>13.4 Execution-domain specialization</h3>
+<h3 id="execution-domain-specialization">13.4 Execution-domain specialization</h3>
 
 <p>
 A lowering pipeline MAY:
@@ -572,7 +582,7 @@ A lowering pipeline MAY:
   <li>introduce synchronization or transfer support objects.</li>
 </ul>
 
-<h3>13.5 Scheduling preparation</h3>
+<h3 id="scheduling-preparation">13.5 Scheduling preparation</h3>
 
 <p>
 A lowering pipeline MAY:
@@ -933,6 +943,11 @@ Lowering therefore does not cancel the mapping discipline of the IR layer.
 It extends it into a more specialized space.
 </p>
 
+<p>
+The exact representation of that mapping remains implementation-dependent unless a stricter downstream contract standardizes it more narrowly.
+What remains mandatory is recoverable origin, not one universal lowering-identity encoding.
+</p>
+
 <hr/>
 
 <h2 id="relation-with-observation-debugging-and-diagnostics">21. Relation with Observation, Debugging, and Diagnostics</h2>
@@ -1181,6 +1196,7 @@ It may reshape control, storage, boundaries, scheduling, placement, and target-f
 <p>
 It does not redefine the language.
 It does not replace the open Execution IR as the primary open execution-facing representation.
+It does not standardize the backend contract itself.
 It does not standardize private runtime realization.
 </p>
 
