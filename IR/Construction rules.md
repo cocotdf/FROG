@@ -49,7 +49,7 @@ This document defines how a conforming implementation constructs an open Executi
 <p>
 Where <code>IR/Derivation rules.md</code> defines <strong>what must correspond</strong> between validated program
 meaning and Execution IR, this document defines <strong>how the Execution IR is materially built</strong>
-in a way that remains conservative, attributable, structured, and portable.
+in a way that remains conservative, attributable, structured, portable, and recoverable.
 </p>
 
 <p>
