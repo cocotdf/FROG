@@ -5,7 +5,7 @@
 <h1 align="center">🐸 FROG IR Derivation Rules</h1>
 
 <p align="center">
-  Normative derivation rules from validated FROG programs to open Execution IR<br/>
+  Normative derivation rules from validated FROG program meaning to open Execution IR<br/>
   <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -182,7 +182,7 @@ This document should be read together with:
 <p>
 Execution IR derivation begins <strong>after validation</strong>.
 The derivation input is not merely a raw serialized file.
-The derivation input is the <strong>validated executable meaning</strong> of one FROG program.
+The derivation input is the <strong>validated program meaning</strong> of one FROG program.
 </p>
 
 <p>
@@ -196,7 +196,7 @@ An implementation MAY internally start from:
 </ul>
 
 <p>
-However, the resulting Execution IR MUST be grounded in validated FROG meaning rather than in editor-only convenience state.
+However, the resulting Execution IR MUST be grounded in validated FROG program meaning rather than in editor-only convenience state.
 </p>
 
 <p>
@@ -210,7 +210,7 @@ Derivation therefore begins at the following boundary:
 <pre><code>🟦 raw or editable form
         |
         v
-🟩 validated meaning
+🟩 validated program meaning
         |
         v
 🟨 derivation boundary starts here
@@ -218,7 +218,7 @@ Derivation therefore begins at the following boundary:
 
 <p>
 This document does not require all implementations to expose the same internal pre-IR validation machinery.
-It requires that whatever internal route is used, the open Execution IR be derivable from validated meaning and remain faithful to it.
+It requires that whatever internal route is used, the open Execution IR be derivable from validated program meaning and remain faithful to it.
 </p>
 
 <hr/>
@@ -349,7 +349,7 @@ Base v0.1 distinguishes two broad categories of derived IR content:
 </p>
 
 <ul>
-  <li><strong>primary derived objects</strong> — execution-facing objects corresponding directly to validated executable or boundary participation,</li>
+  <li><strong>primary derived objects</strong> — execution-facing objects corresponding directly to validated execution-relevant content or validated boundary participation,</li>
   <li><strong>support objects</strong> — explicit IR-side helper objects introduced only to make already-validated execution-relevant structure more explicit.</li>
 </ul>
 
@@ -458,7 +458,7 @@ The minimum source-to-IR mapping for base v0.1 is as follows.
       <td><code>widget_value</code> node</td>
       <td>Widget-value participation object</td>
       <td>Referenced widget identity, primary-value participation, control/indicator directionality</td>
-      <td>Only widgets that actually participate in validated executable content need such IR objects</td>
+      <td>Only widgets that actually participate in validated program meaning need such IR objects</td>
     </tr>
     <tr>
       <td><code>widget_reference</code> node</td>
@@ -727,7 +727,7 @@ Additional rules:
 
 <ul>
   <li>interface declarations and diagram-side interface nodes MUST remain coherently related,</li>
-  <li>front-panel widgets that do not participate in validated executable content MUST NOT be forced into execution-facing IR objects merely because they exist in source,</li>
+  <li>front-panel widgets that do not participate in validated program meaning MUST NOT be forced into execution-facing IR objects merely because they exist in source,</li>
   <li>widget references used together with <code>frog.ui.property_read</code>, <code>frog.ui.property_write</code>, or <code>frog.ui.method_invoke</code> MUST remain distinguishable from ordinary dataflow values,</li>
   <li>the base widget reference token MUST NOT be reinterpreted by derivation as an unrestricted general-purpose storage or computation value unless a future specification explicitly standardizes that meaning.</li>
 </ul>
@@ -887,7 +887,7 @@ Accordingly:
   <li>derivation MUST NOT prematurely encode backend-private scheduling, partitioning, storage layout, or target ABI policy as if those belonged to the base open IR.</li>
 </ul>
 
-<pre><code>🟩 validated meaning
+<pre><code>🟩 validated program meaning
         |
         v
 🟨 derivation
@@ -953,7 +953,7 @@ Those concerns belong to later documents such as construction, identity and mapp
 
 <p>
 Execution IR derivation in FROG v0.1 is conservative by design.
-It starts from <strong>validated meaning</strong>, not from raw source convenience.
+It starts from <strong>validated program meaning</strong>, not from raw source convenience.
 It produces <strong>one execution unit per validated FROG</strong>.
 It preserves <strong>source attribution</strong>, <strong>structured control</strong>, <strong>explicit memory</strong>, and the distinction between <strong>public interface</strong> and <strong>UI participation</strong>.
 It allows explicit execution-facing normalization, but it forbids semantic drift and runtime-private leakage.
