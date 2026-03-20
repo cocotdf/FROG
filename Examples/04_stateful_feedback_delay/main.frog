@@ -1,0 +1,77 @@
+{
+  "spec_version": "0.1",
+
+  "metadata": {
+    "name": "Stateful Feedback with Explicit Delay",
+    "summary": "Minimal valid feedback example using frog.core.delay with explicit initial state.",
+    "description": "Adds a public floating-point input to the delayed previous value, feeds the result back through frog.core.delay, and exposes the result through one public output.",
+    "author": "Graiphic",
+    "program_version": "0.1.0",
+    "tags": ["example", "state", "feedback", "delay", "minimal"],
+    "is_example": true,
+    "license": "Apache-2.0"
+  },
+
+  "interface": {
+    "inputs": [
+      {
+        "id": "x",
+        "type": "f64"
+      }
+    ],
+    "outputs": [
+      {
+        "id": "y",
+        "type": "f64"
+      }
+    ]
+  },
+
+  "diagram": {
+    "nodes": [
+      {
+        "id": "input_x",
+        "kind": "interface_input",
+        "interface_port": "x"
+      },
+      {
+        "id": "add_1",
+        "kind": "primitive",
+        "type": "frog.core.add"
+      },
+      {
+        "id": "delay_1",
+        "kind": "primitive",
+        "type": "frog.core.delay",
+        "initial": 0.0
+      },
+      {
+        "id": "output_y",
+        "kind": "interface_output",
+        "interface_port": "y"
+      }
+    ],
+    "edges": [
+      {
+        "id": "e1",
+        "from": { "node": "input_x", "port": "value" },
+        "to":   { "node": "add_1", "port": "a" }
+      },
+      {
+        "id": "e2",
+        "from": { "node": "delay_1", "port": "out" },
+        "to":   { "node": "add_1", "port": "b" }
+      },
+      {
+        "id": "e3",
+        "from": { "node": "add_1", "port": "result" },
+        "to":   { "node": "delay_1", "port": "in" }
+      },
+      {
+        "id": "e4",
+        "from": { "node": "add_1", "port": "result" },
+        "to":   { "node": "output_y", "port": "value" }
+      }
+    ]
+  }
+}
