@@ -1,0 +1,75 @@
+{
+  "spec_version": "0.1",
+
+  "metadata": {
+    "name": "Pure Addition",
+    "summary": "Minimal arithmetic example with two public inputs and one public output.",
+    "description": "Adds two floating-point public inputs and exposes the result through one floating-point public output.",
+    "author": "Graiphic",
+    "program_version": "0.1.0",
+    "tags": ["example", "math", "core", "minimal"],
+    "is_example": true,
+    "license": "Apache-2.0"
+  },
+
+  "interface": {
+    "inputs": [
+      {
+        "id": "a",
+        "type": "f64"
+      },
+      {
+        "id": "b",
+        "type": "f64"
+      }
+    ],
+    "outputs": [
+      {
+        "id": "result",
+        "type": "f64"
+      }
+    ]
+  },
+
+  "diagram": {
+    "nodes": [
+      {
+        "id": "input_a",
+        "kind": "interface_input",
+        "interface_port": "a"
+      },
+      {
+        "id": "input_b",
+        "kind": "interface_input",
+        "interface_port": "b"
+      },
+      {
+        "id": "add_1",
+        "kind": "primitive",
+        "type": "frog.core.add"
+      },
+      {
+        "id": "output_result",
+        "kind": "interface_output",
+        "interface_port": "result"
+      }
+    ],
+    "edges": [
+      {
+        "id": "e1",
+        "from": { "node": "input_a", "port": "value" },
+        "to":   { "node": "add_1", "port": "a" }
+      },
+      {
+        "id": "e2",
+        "from": { "node": "input_b", "port": "value" },
+        "to":   { "node": "add_1", "port": "b" }
+      },
+      {
+        "id": "e3",
+        "from": { "node": "add_1", "port": "result" },
+        "to":   { "node": "output_result", "port": "value" }
+      }
+    ]
+  }
+}
