@@ -20,4 +20,5 @@ def load_source(file_path: str) -> LoadedSource:
         "document": document,
         "diagnostics": [],
     }
+
     return LoadedSource(artifact=artifact)

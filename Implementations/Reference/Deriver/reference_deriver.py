@@ -12,9 +12,11 @@ def derive_execution_ir(validation: ValidationResult) -> DerivedIR:
     doc = validated_program["document"]
     interface = doc["interface"]
     diagram = doc["diagram"]
+    front_panel = doc.get("front_panel", {})
 
     input_types = {item["id"]: item["type"] for item in interface["inputs"]}
     output_types = {item["id"]: item["type"] for item in interface["outputs"]}
+    widget_by_id = {item["id"]: item for item in front_panel.get("widgets", [])}
 
     objects: List[Dict[str, Any]] = []
     connections: List[Dict[str, Any]] = []
@@ -22,6 +24,7 @@ def derive_execution_ir(validation: ValidationResult) -> DerivedIR:
     for node in diagram["nodes"]:
         kind = node["kind"]
         node_id = node["id"]
+
         if kind == "interface_input":
             port_id = node["interface_port"]
             objects.append(
@@ -48,6 +51,30 @@ def derive_execution_ir(validation: ValidationResult) -> DerivedIR:
                     "sources": [f"diagram.node:{node_id}"],
                 }
             )
+        elif kind == "widget_value":
+            widget_id = node["widget"]
+            widget = widget_by_id.get(widget_id)
+            if widget is None:
+                raise FrogPipelineError(stage="derive-ir", error_code="missing_widget_metadata", message=f"Missing widget metadata for '{widget_id}' during derivation.")
+
+            direction = "out" if widget["role"] == "control" else "in"
+            default_value = widget.get("props", {}).get("default_value") if widget["role"] == "control" else None
+
+            obj: Dict[str, Any] = {
+                "id": f"obj:{node_id}",
+                "kind": "widget_value_participation",
+                "widget_id": widget_id,
+                "widget_role": widget["role"],
+                "widget_class": widget["widget"],
+                "participation_kind": "widget_value",
+                "direction": direction,
+                "value_type": widget["value_type"],
+                "ports": [{"id": "value", "direction": direction, "value_type": widget["value_type"]}],
+                "sources": [f"diagram.node:{node_id}", f"front_panel.widget:{widget_id}"],
+            }
+            if default_value is not None:
+                obj["default_value"] = default_value
+            objects.append(obj)
         elif kind == "primitive":
             objects.append(
                 {
@@ -69,8 +96,8 @@ def derive_execution_ir(validation: ValidationResult) -> DerivedIR:
         connections.append(
             {
                 "id": f"conn:{edge['id']}",
-                "from": {"object": f"obj:{edge['from']['node']}", "port": edge['from']['port']},
-                "to": {"object": f"obj:{edge['to']['node']}", "port": edge['to']['port']},
+                "from": {"object": f"obj:{edge['from']['node']}", "port": edge["from"]["port"]},
+                "to": {"object": f"obj:{edge['to']['node']}", "port": edge["to"]["port"]},
                 "sources": [f"diagram.edge:{edge['id']}"],
             }
         )
@@ -92,4 +119,5 @@ def derive_execution_ir(validation: ValidationResult) -> DerivedIR:
         },
         "diagnostics": [],
     }
+
     return DerivedIR(artifact=artifact)

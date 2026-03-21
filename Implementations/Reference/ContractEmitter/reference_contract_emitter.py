@@ -9,6 +9,8 @@ def emit_backend_contract(lowered: LoweredForm, backend_family: str = DEFAULT_BA
     lowered_unit = lowered.artifact["units"][0]
     public_inputs = [op for op in lowered_unit["operations"] if op["kind"] == "public_input"]
     public_outputs = [op for op in lowered_unit["operations"] if op["kind"] == "public_output"]
+    ui_inputs = [op for op in lowered_unit["operations"] if op["kind"] == "ui_value_input"]
+    ui_outputs = [op for op in lowered_unit["operations"] if op["kind"] == "ui_value_output"]
 
     artifact = {
         "artifact_kind": "frog_backend_contract",
@@ -17,7 +19,10 @@ def emit_backend_contract(lowered: LoweredForm, backend_family: str = DEFAULT_BA
         "backend_family": backend_family,
         "assumptions": {
             "state_model": "none",
-            "ui_binding": {"enabled": False},
+            "ui_binding": {
+                "enabled": bool(ui_inputs or ui_outputs),
+                "kind": "natural_widget_value" if (ui_inputs or ui_outputs) else "none",
+            },
             "execution_mode": "deterministic_step_execution",
         },
         "units": [
@@ -34,6 +39,29 @@ def emit_backend_contract(lowered: LoweredForm, backend_family: str = DEFAULT_BA
                         for op in public_outputs
                     ],
                 ],
+                "ui_bindings": {
+                    "inputs": [
+                        {
+                            **{
+                                "widget_id": op["widget_id"],
+                                "widget_class": op["widget_class"],
+                                "value_type": op["value_type"],
+                                "participation_kind": op["ui_participation_kind"],
+                            },
+                            **({"default_value": op["default_value"]} if "default_value" in op else {}),
+                        }
+                        for op in ui_inputs
+                    ],
+                    "outputs": [
+                        {
+                            "widget_id": op["widget_id"],
+                            "widget_class": op["widget_class"],
+                            "value_type": op["value_type"],
+                            "participation_kind": op["ui_participation_kind"],
+                        }
+                        for op in ui_outputs
+                    ],
+                },
                 "implementation_payload": {
                     "kind": "demo_dataflow_plan",
                     "operations": lowered_unit["operations"],
@@ -44,4 +72,5 @@ def emit_backend_contract(lowered: LoweredForm, backend_family: str = DEFAULT_BA
         "unsupported": [],
         "diagnostics": [],
     }
+
     return BackendContract(artifact=artifact)
