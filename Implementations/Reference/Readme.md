@@ -34,7 +34,7 @@
 
 <p>
 This directory is the workspace for a <strong>reference implementation</strong> of the published FROG architecture.
-Its role is to make a small part of the specification executable without turning one implementation into the definition of the language.
+Its role is to make selected parts of the specification executable without turning one implementation into the definition of the language.
 </p>
 
 <p>
@@ -175,6 +175,11 @@ It should demonstrate:
 </ul>
 
 <p>
+The first slice is deliberately chosen because it exercises the full architectural chain while avoiding premature UI, state, and scheduling complexity.
+It is the smallest published case that can prove the implementation path without weakening the layer boundaries.
+</p>
+
+<p>
 After that first slice is stable, the reference implementation can expand in order to cover:
 </p>
 
@@ -218,7 +223,9 @@ The exact CLI surface may evolve, but the implementation should preserve the sta
 </ul>
 
 <p>
-This directory may contain compact demonstration code for that pipeline, but such code remains implementation-side convenience, not normative language definition.
+This directory may temporarily contain compact demonstration code for that pipeline, including early monolithic scripts used to prove a first slice.
+Such code remains implementation-side convenience.
+It does not redefine the specification and does not eliminate the intended internal separation between loader, validator, derivation, lowering, contract emission, and runtime consumption.
 </p>
 
 <hr/>
@@ -226,7 +233,7 @@ This directory may contain compact demonstration code for that pipeline, but suc
 <h2 id="directory-structure">7. Directory Structure</h2>
 
 <p>
-A useful structure for the first reference pipeline is:
+A useful structure for the reference implementation is:
 </p>
 
 <pre><code>Implementations/Reference/
@@ -258,6 +265,7 @@ They are not additional language layers.
 
 <p>
 A compact demonstration script may exist early in the process, but the long-term direction should still respect these implementation boundaries.
+Early convenience must not become accidental architecture.
 </p>
 
 <hr/>
@@ -290,6 +298,11 @@ Implementations/Reference/
 <p>
 The reference implementation should therefore start from the published named slices rather than from an unbounded language ambition.
 A correct first implementation should prove the first example path before widening scope.
+</p>
+
+<p>
+In practical terms, the first implementation milestone should be able to consume <code>Examples/01_pure_addition/main.frog</code>, produce the expected intermediate artifacts, and return the expected public result.
+Only after that path is stable should the implementation expand to the UI-oriented and state-oriented examples.
 </p>
 
 <hr/>
@@ -330,6 +343,7 @@ When the implementation moves beyond pure computation, the next published concer
 
 <p>
 Those expansions should happen slice by slice, not through a premature general runtime model.
+The first runtime should prove the architecture, not attempt to standardize all future runtime behavior.
 </p>
 
 <hr/>
@@ -377,6 +391,11 @@ A good initial success condition is:
   <li>emit a backend contract,</li>
   <li>execute it in a minimal reference runtime and obtain the expected public output.</li>
 </ul>
+
+<p>
+A useful early implementation form may be a compact Python demonstration pipeline living under <code>Implementations/Reference/CLI/</code>.
+That is acceptable as a first proving step as long as it remains explicitly non-normative and does not blur the intended stage ownership.
+</p>
 
 <p>
 Once that path is stable, the next expansions should remain incremental and published-slice-driven.
