@@ -5,7 +5,7 @@
 <h1 align="center">🐸 Example 01 — Pure Addition</h1>
 
 <p align="center">
-  Minimal public-interface arithmetic example for FROG v0.1<br/>
+  Minimal public-interface arithmetic example for the first executable FROG slice<br/>
   <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -20,8 +20,8 @@
   <li><a href="#source-shape">4. Source Shape</a></li>
   <li><a href="#validation-expectation">5. Validation Expectation</a></li>
   <li><a href="#derivation-expectation">6. Derivation Expectation</a></li>
-  <li><a href="#backend-contract-expectation">7. Backend Contract Expectation</a></li>
-  <li><a href="#reference-runtime-expectation">8. Reference Runtime Expectation</a></li>
+  <li><a href="#lowering-and-contract-expectation">7. Lowering and Backend Contract Expectation</a></li>
+  <li><a href="#reference-implementation-path">8. Reference Implementation Path</a></li>
   <li><a href="#why-this-example-matters">9. Why this Example Matters</a></li>
   <li><a href="#summary">10. Summary</a></li>
 </ul>
@@ -32,17 +32,19 @@
 
 <p>
 This example is the smallest useful executable FROG program for the first vertical slice of the repository.
-It receives two public floating-point inputs,
-adds them with one core primitive,
-and exposes the result through one public floating-point output.
+It receives two public floating-point inputs, applies one core arithmetic primitive, and exposes the result through one public floating-point output.
 </p>
 
 <p>
 It is intentionally minimal.
-There is no front panel,
+There is no front panel participation,
 no widget participation,
 no structure,
 and no explicit local memory.
+</p>
+
+<p>
+This example is the recommended entry point for the first executable reference slice because it exercises the full architectural chain without introducing early UI or state complexity.
 </p>
 
 <hr/>
@@ -57,12 +59,14 @@ The purpose of this example is to provide a clean baseline case for:
   <li>canonical source loading,</li>
   <li>basic interface validation,</li>
   <li>basic diagram validation,</li>
-  <li>Execution IR derivation of interface participation and primitive execution,</li>
-  <li>first backend contract emission for a simple callable execution unit.</li>
+  <li>Execution IR derivation of public-boundary participation and primitive execution,</li>
+  <li>controlled lowering for a first backend family,</li>
+  <li>backend contract emission for a minimal execution unit,</li>
+  <li>first reference-runtime consumption of that contract.</li>
 </ul>
 
 <p>
-This is the smallest example that still exercises the main source-to-execution path without bringing in UI, structures, state, or profile-dependent capabilities.
+This is the smallest published example that still exercises the complete source-to-execution path without bringing in UI object interaction, structured control, explicit memory, or profile-dependent capabilities.
 </p>
 
 <hr/>
@@ -83,7 +87,9 @@ This example uses only the following constructs:
 </ul>
 
 <p>
-No optional top-level sections are required for this example.
+No widget participation is involved.
+No structure is involved.
+No explicit local-memory construct is involved.
 </p>
 
 <hr/>
@@ -91,7 +97,8 @@ No optional top-level sections are required for this example.
 <h2 id="source-shape">4. Source Shape</h2>
 
 <p>
-The canonical source shape is intentionally small:
+The canonical source shape is intentionally small.
+At minimum, this example requires:
 </p>
 
 <pre><code>{
@@ -121,6 +128,10 @@ The executable diagram expresses:
 interface_input(b) ---/
 </code></pre>
 
+<p>
+The published source file may contain richer metadata fields, but the executable meaning of this example comes from the public interface, the primitive identity, and the validated edge wiring.
+</p>
+
 <hr/>
 
 <h2 id="validation-expectation">5. Validation Expectation</h2>
@@ -135,14 +146,19 @@ A conforming validator should confirm at least that:
 
 <ul>
   <li>the required top-level sections are present,</li>
-  <li>metadata is structurally valid,</li>
+  <li>the source structure is well-formed,</li>
   <li>interface port identifiers are valid and unique,</li>
-  <li>declared types are valid canonical FROG type expressions,</li>
+  <li>declared value types are valid for the accepted subset,</li>
   <li>the primitive reference <code>frog.core.add</code> is valid,</li>
   <li>all edge endpoints are valid,</li>
-  <li>the primitive input ports <code>a</code> and <code>b</code> are driven correctly,</li>
-  <li>the primitive output port <code>result</code> is routed correctly to the public output boundary.</li>
+  <li>the primitive input ports <code>a</code> and <code>b</code> are each driven exactly once,</li>
+  <li>the primitive output port <code>result</code> is routed to the public output boundary,</li>
+  <li>no UI or memory semantics are inferred from this source.</li>
 </ul>
+
+<p>
+For the first executable slice, this example should remain a straightforward success case rather than an ambiguous edge case.
+</p>
 
 <hr/>
 
@@ -153,51 +169,58 @@ Execution IR derivation should preserve the following distinctions explicitly:
 </p>
 
 <ul>
-  <li>the execution unit identity of the whole FROG,</li>
+  <li>the execution-unit identity of the whole FROG program,</li>
   <li>public interface entry participation for <code>a</code>,</li>
   <li>public interface entry participation for <code>b</code>,</li>
   <li>primitive execution identity for <code>frog.core.add</code>,</li>
   <li>public interface exit participation for <code>result</code>,</li>
-  <li>the three validated dependency edges between those objects.</li>
+  <li>the validated dependency edges between those objects.</li>
 </ul>
 
 <p>
-Nothing in this example should be reinterpreted as UI participation,
-object-style widget access,
-structured control,
-or explicit memory.
+Nothing in this example should be reinterpreted as:
 </p>
+
+<ul>
+  <li>UI participation,</li>
+  <li>object-style widget access,</li>
+  <li>structured control,</li>
+  <li>explicit local memory,</li>
+  <li>hidden scheduler-private semantics.</li>
+</ul>
 
 <hr/>
 
-<h2 id="backend-contract-expectation">7. Backend Contract Expectation</h2>
+<h2 id="lowering-and-contract-expectation">7. Lowering and Backend Contract Expectation</h2>
 
 <p>
-After lowering,
-a backend contract for this example should still make clear:
+After lowering, a backend contract for this example should still make clear:
 </p>
 
 <ul>
   <li>that one consumable execution unit is being offered,</li>
   <li>that the unit has two public inputs and one public output,</li>
-  <li>that the computation is pure arithmetic addition,</li>
+  <li>that the computation is ordinary arithmetic addition,</li>
   <li>that no explicit local-memory semantics are involved,</li>
   <li>that no UI participation is required for this example.</li>
 </ul>
 
 <p>
-A backend family may specialize argument passing,
-calling convention,
-or scheduling details,
-but it should not erase the public-boundary origin of the values.
+A backend family may specialize argument passing, evaluation order realization, or contract details, but it should not erase the public-boundary origin of the values and should not silently reinterpret this example as a UI or stateful program.
 </p>
 
 <hr/>
 
-<h2 id="reference-runtime-expectation">8. Reference Runtime Expectation</h2>
+<h2 id="reference-implementation-path">8. Reference Implementation Path</h2>
 
 <p>
-A first reference implementation should be able to:
+This example is the recommended first target for the non-normative reference implementation workspace under:
+</p>
+
+<pre><code>Implementations/Reference/</code></pre>
+
+<p>
+A first demonstration pipeline should be able to:
 </p>
 
 <ul>
@@ -213,8 +236,23 @@ A first reference implementation should be able to:
 A simple runtime-facing interpretation is:
 </p>
 
-<pre><code>result = a + b
-</code></pre>
+<pre><code>result = a + b</code></pre>
+
+<p>
+A compact demonstration flow may therefore look like:
+</p>
+
+<pre><code>python Implementations/Reference/CLI/frog_demo_pipeline.py validate Examples/01_pure_addition/main.frog
+python Implementations/Reference/CLI/frog_demo_pipeline.py derive-ir Examples/01_pure_addition/main.frog
+python Implementations/Reference/CLI/frog_demo_pipeline.py lower Examples/01_pure_addition/main.frog
+python Implementations/Reference/CLI/frog_demo_pipeline.py emit-contract Examples/01_pure_addition/main.frog
+python Implementations/Reference/CLI/frog_demo_pipeline.py run Examples/01_pure_addition/main.frog --inputs "{\"a\": 2.25, \"b\": 3.75}"</code></pre>
+
+<p>
+These commands are implementation-side demonstration commands.
+They do not define the language.
+They demonstrate that the published boundaries are executable for the first slice.
+</p>
 
 <hr/>
 
@@ -222,10 +260,7 @@ A simple runtime-facing interpretation is:
 
 <p>
 This example matters because it is the first clean “nothing extra” slice.
-If a toolchain cannot handle this example coherently,
-it is not ready to move on to UI participation,
-structured control,
-or explicit local memory.
+If a toolchain cannot handle this example coherently, it is not ready to move on to UI participation, widget references, structured control, or explicit local memory.
 </p>
 
 <p>
@@ -235,7 +270,9 @@ It is therefore a baseline case for:
 <ul>
   <li>basic correctness,</li>
   <li>basic source-to-IR continuity,</li>
-  <li>basic backend-hand-off clarity.</li>
+  <li>basic lowering discipline,</li>
+  <li>basic backend-hand-off clarity,</li>
+  <li>basic runtime-consumption correctness.</li>
 </ul>
 
 <hr/>
@@ -244,10 +281,15 @@ It is therefore a baseline case for:
 
 <p>
 This example is the minimal public-interface arithmetic program for the first FROG execution slice.
-It uses only interface participation,
+It uses only public interface participation,
 one core arithmetic primitive,
 and directed connections.
 It should validate cleanly,
 derive cleanly,
+lower cleanly,
 and remain easy to consume in an early backend contract and reference runtime.
+</p>
+
+<p>
+That is why it is the correct first executable target for the reference implementation.
 </p>
