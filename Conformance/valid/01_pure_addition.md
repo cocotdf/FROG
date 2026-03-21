@@ -140,10 +140,10 @@ Execution IR derivation should preserve explicitly:
 
 <ul>
   <li>one execution unit for the whole validated FROG program,</li>
-  <li>public entry participation for the first input,</li>
-  <li>public entry participation for the second input,</li>
+  <li>public entry participation for input <code>a</code>,</li>
+  <li>public entry participation for input <code>b</code>,</li>
   <li>primitive execution identity for <code>frog.core.add</code>,</li>
-  <li>public exit participation for the output,</li>
+  <li>public exit participation for output <code>result</code>,</li>
   <li>the validated dependency edges between those objects,</li>
   <li>recoverable attribution back to the source boundaries and primitive use.</li>
 </ul>
@@ -187,7 +187,7 @@ A backend family may specialize argument passing, evaluation realization, or con
 <h2 id="expected-reference-runtime-outcome">9. Expected Reference Runtime Outcome</h2>
 
 <p>
-A minimal reference implementation should be able to:
+A minimal reference implementation for the first executable slice should be able to:
 </p>
 
 <ul>
