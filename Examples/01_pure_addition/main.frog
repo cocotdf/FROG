@@ -1,17 +1,9 @@
 {
   "spec_version": "0.1",
-
   "metadata": {
-    "name": "Pure Addition",
-    "summary": "Minimal arithmetic example with two public inputs and one public output.",
-    "description": "Adds two floating-point public inputs and exposes the result through one floating-point public output.",
-    "author": "Graiphic",
-    "program_version": "0.1.0",
-    "tags": ["example", "math", "core", "minimal"],
-    "is_example": true,
-    "license": "Apache-2.0"
+    "name": "01_pure_addition",
+    "description": "Minimal executable reference slice: two public inputs, one frog.core.add primitive, one public output."
   },
-
   "interface": {
     "inputs": [
       {
@@ -30,16 +22,15 @@
       }
     ]
   },
-
   "diagram": {
     "nodes": [
       {
-        "id": "input_a",
+        "id": "in_a",
         "kind": "interface_input",
         "interface_port": "a"
       },
       {
-        "id": "input_b",
+        "id": "in_b",
         "kind": "interface_input",
         "interface_port": "b"
       },
@@ -49,7 +40,7 @@
         "type": "frog.core.add"
       },
       {
-        "id": "output_result",
+        "id": "out_result",
         "kind": "interface_output",
         "interface_port": "result"
       }
@@ -57,18 +48,36 @@
     "edges": [
       {
         "id": "e1",
-        "from": { "node": "input_a", "port": "value" },
-        "to":   { "node": "add_1", "port": "a" }
+        "from": {
+          "node": "in_a",
+          "port": "value"
+        },
+        "to": {
+          "node": "add_1",
+          "port": "a"
+        }
       },
       {
         "id": "e2",
-        "from": { "node": "input_b", "port": "value" },
-        "to":   { "node": "add_1", "port": "b" }
+        "from": {
+          "node": "in_b",
+          "port": "value"
+        },
+        "to": {
+          "node": "add_1",
+          "port": "b"
+        }
       },
       {
         "id": "e3",
-        "from": { "node": "add_1", "port": "result" },
-        "to":   { "node": "output_result", "port": "value" }
+        "from": {
+          "node": "add_1",
+          "port": "result"
+        },
+        "to": {
+          "node": "out_result",
+          "port": "value"
+        }
       }
     ]
   }
