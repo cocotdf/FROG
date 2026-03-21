@@ -23,13 +23,22 @@ def repo_root_from_here() -> Path:
     return Path(__file__).resolve().parents[3]
 
 
+def pipeline_script_path() -> Path:
+    return repo_root_from_here() / "Implementations" / "Reference" / "CLI" / "frog_demo_pipeline.py"
+
+
+def example_source_path() -> Path:
+    return repo_root_from_here() / "Examples" / "01_pure_addition" / "main.frog"
+
+
 def run_cli_command(*args: str) -> Dict[str, Any]:
     repo_root = repo_root_from_here()
-    pipeline = repo_root / "Implementations" / "Reference" / "CLI" / "frog_demo_pipeline.py"
-    source = repo_root / "Examples" / "01_pure_addition" / "main.frog"
+    pipeline = pipeline_script_path()
+    source = example_source_path()
 
     if not pipeline.is_file():
         raise RegressionFailure(f"Pipeline script not found: {pipeline}")
+
     if not source.is_file():
         raise RegressionFailure(f"Example source not found: {source}")
 
@@ -72,11 +81,11 @@ def assert_close(actual: float, expected: float, label: str, tol: float = 1e-12)
 
 
 def check_validate() -> None:
-    repo_root = repo_root_from_here()
-    source = repo_root / "Examples" / "01_pure_addition" / "main.frog"
-    data = run_cli_command("validate", str(source))
+    data = run_cli_command("validate", str(example_source_path()))
+
     assert_equal(data["artifact_kind"], "frog_validation_result", "validate.artifact_kind")
     assert_equal(data["status"], "ok", "validate.status")
+
     subset = data["validated_subset"]
     assert_equal(subset["core_primitives"], True, "validate.validated_subset.core_primitives")
     assert_equal(subset["public_interface"], True, "validate.validated_subset.public_interface")
@@ -86,10 +95,10 @@ def check_validate() -> None:
 
 
 def check_derive_ir() -> None:
-    repo_root = repo_root_from_here()
-    source = repo_root / "Examples" / "01_pure_addition" / "main.frog"
-    data = run_cli_command("derive-ir", str(source))
+    data = run_cli_command("derive-ir", str(example_source_path()))
+
     assert_equal(data["artifact_kind"], "frog_derived_execution_ir", "derive_ir.artifact_kind")
+
     unit = data["execution_unit"]
     assert_equal(unit["id"], "unit:main", "derive_ir.execution_unit.id")
     assert_equal(len(unit["objects"]), EXPECTED_OBJECT_COUNT, "derive_ir.object_count")
@@ -97,30 +106,45 @@ def check_derive_ir() -> None:
 
 
 def check_emit_contract() -> None:
-    repo_root = repo_root_from_here()
-    source = repo_root / "Examples" / "01_pure_addition" / "main.frog"
-    data = run_cli_command("emit-contract", str(source))
+    data = run_cli_command(
+        "emit-contract",
+        str(example_source_path()),
+        "--backend-family",
+        EXPECTED_BACKEND_FAMILY,
+    )
+
     assert_equal(data["artifact_kind"], "frog_backend_contract", "contract.artifact_kind")
     assert_equal(data["backend_family"], EXPECTED_BACKEND_FAMILY, "contract.backend_family")
     assert_equal(len(data["units"]), 1, "contract.unit_count")
+
     unit = data["units"][0]
     assert_equal(unit["id"], "main", "contract.unit.id")
+
     boundaries = unit["boundaries"]
-    public_inputs = [b for b in boundaries if b["kind"] == "public_input"]
-    public_outputs = [b for b in boundaries if b["kind"] == "public_output"]
+    public_inputs = [boundary for boundary in boundaries if boundary["kind"] == "public_input"]
+    public_outputs = [boundary for boundary in boundaries if boundary["kind"] == "public_output"]
+
     assert_equal(len(public_inputs), 2, "contract.public_input_count")
     assert_equal(len(public_outputs), 1, "contract.public_output_count")
 
 
 def check_run() -> None:
-    repo_root = repo_root_from_here()
-    source = repo_root / "Examples" / "01_pure_addition" / "main.frog"
-    data = run_cli_command("run", str(source), "--inputs", json.dumps(TEST_INPUTS))
+    data = run_cli_command(
+        "run",
+        str(example_source_path()),
+        "--backend-family",
+        EXPECTED_BACKEND_FAMILY,
+        "--inputs",
+        json.dumps(TEST_INPUTS),
+    )
+
     assert_equal(data["status"], "ok", "run.status")
     assert_equal(data["lowered"]["backend_family"], EXPECTED_BACKEND_FAMILY, "run.lowered.backend_family")
+
     runtime = data["runtime"]
     assert_equal(runtime["artifact_kind"], "frog_runtime_result", "run.runtime.artifact_kind")
     assert_equal(runtime["status"], "ok", "run.runtime.status")
+
     result_value = float(runtime["outputs"]["public"]["result"])
     assert_close(result_value, EXPECTED_RESULT, "run.runtime.outputs.public.result")
 
