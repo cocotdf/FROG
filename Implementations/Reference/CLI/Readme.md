@@ -11,55 +11,85 @@
 
 <hr/>
 
-<h2>Overview</h2>
-
-<p>
-This directory contains the command-line surface of the reference implementation.
-Its role is to expose a small, explicit, stage-aware toolchain for the first executable vertical slice of FROG.
-</p>
-
-<p>
-The CLI is <strong>not</strong> a language specification layer.
-It is a practical consumer-facing shell around the reference pipeline.
-</p>
-
-<hr/>
-
-<h2>Why this Directory Exists</h2>
-
-<p>
-A reference implementation becomes much easier to test and reason about when each major stage can be invoked explicitly.
-The CLI therefore exists to provide stable entry points such as:
-</p>
+<h2>Contents</h2>
 
 <ul>
-  <li><code>validate</code></li>
-  <li><code>derive-ir</code></li>
-  <li><code>lower</code></li>
-  <li><code>emit-contract</code></li>
-  <li><code>run</code></li>
+  <li><a href="#overview">1. Overview</a></li>
+  <li><a href="#status-and-boundary">2. Status and Boundary</a></li>
+  <li><a href="#current-role">3. Current Role</a></li>
+  <li><a href="#command-surface">4. Command Surface</a></li>
+  <li><a href="#relation-with-the-reference-pipeline">5. Relation with the Reference Pipeline</a></li>
+  <li><a href="#current-entry-points">6. Current Entry Points</a></li>
+  <li><a href="#design-rules">7. Design Rules</a></li>
+  <li><a href="#relation-with-examples-and-regression">8. Relation with Examples and Regression</a></li>
+  <li><a href="#what-this-directory-must-not-do">9. What this Directory Must Not Do</a></li>
+  <li><a href="#summary">10. Summary</a></li>
 </ul>
 
+<hr/>
+
+<h2 id="overview">1. Overview</h2>
+
 <p>
-These commands are intended to mirror the published architectural boundaries rather than skipping over them.
+This directory contains the command-line surface of the non-normative FROG reference implementation.
+Its role is to expose a small, explicit, stage-aware toolchain for the first executable vertical slices of FROG.
+</p>
+
+<p>
+The CLI is not a language specification layer.
+It is a practical implementation-facing shell around the published source → validation → IR → lowering → backend contract → runtime path.
 </p>
 
 <hr/>
 
-<h2>Non-Normative Status</h2>
+<h2 id="status-and-boundary">2. Status and Boundary</h2>
 
 <p>
-This directory is non-normative.
+This directory is <strong>non-normative</strong>.
 It does not define the language,
 the canonical source format,
 the validated program meaning,
-or the open Execution IR.
-Those remain owned by the published specification.
+the open Execution IR,
+or the backend contract boundary.
+Those remain owned by the published specification layers.
+</p>
+
+<p>
+The CLI exists to make those published boundaries executable and inspectable.
+It must not become a hidden source of language truth.
 </p>
 
 <hr/>
 
-<h2>Initial Command Intent</h2>
+<h2 id="current-role">3. Current Role</h2>
+
+<p>
+At the current stage of the repository, the CLI serves three practical purposes:
+</p>
+
+<ul>
+  <li>provide explicit stage entry points for the first executable slice,</li>
+  <li>make intermediate artifacts observable during reference-implementation work,</li>
+  <li>support regression checks on the minimal published example path.</li>
+</ul>
+
+<p>
+The current priority is the first executable slice built around:
+</p>
+
+<pre><code>Examples/01_pure_addition/main.frog</code></pre>
+
+<p>
+The CLI should therefore remain compact, explicit, and easy to audit before it expands to more advanced slices.
+</p>
+
+<hr/>
+
+<h2 id="command-surface">4. Command Surface</h2>
+
+<p>
+A useful command model for the reference CLI is:
+</p>
 
 <pre><code>frogc validate &lt;file.frog&gt;
 frogc derive-ir &lt;file.frog&gt;
@@ -71,25 +101,134 @@ frogc run &lt;file.frog&gt;
 <p>
 The exact command surface may evolve,
 but the stage separation should remain explicit.
+The CLI should mirror the published architecture rather than collapsing multiple stages into one opaque tool behavior.
 </p>
 
 <hr/>
 
-<h2>Design Rules</h2>
+<h2 id="relation-with-the-reference-pipeline">5. Relation with the Reference Pipeline</h2>
+
+<p>
+The CLI is the operational shell of the reference pipeline described under:
+</p>
+
+<pre><code>Implementations/Reference/</code></pre>
+
+<p>
+Its commands should remain aligned with the stage boundaries used by the reference implementation:
+</p>
+
+<ul>
+  <li><strong>validate</strong> — confirm that source belongs to the supported validated subset,</li>
+  <li><strong>derive-ir</strong> — derive an open execution-facing representation with recoverable attribution,</li>
+  <li><strong>lower</strong> — specialize the open IR for a selected backend family,</li>
+  <li><strong>emit-contract</strong> — produce the handoff consumed by a backend or runtime,</li>
+  <li><strong>run</strong> — execute through runtime-side contract consumption.</li>
+</ul>
+
+<p>
+The CLI should make those stages visible.
+It should not silently bypass them while still claiming to represent the full pipeline.
+</p>
+
+<hr/>
+
+<h2 id="current-entry-points">6. Current Entry Points</h2>
+
+<p>
+A compact demonstration entry point may exist in this directory for early executable slices.
+That is acceptable as long as it remains explicitly non-normative and does not blur ownership of the stages.
+</p>
+
+<p>
+In the current reference direction, a thin CLI entry point may orchestrate specialized implementation modules living under:
+</p>
+
+<pre><code>Implementations/Reference/
+├── Loader/
+├── Validator/
+├── Deriver/
+├── Lowerer/
+├── ContractEmitter/
+└── Runtime/
+</code></pre>
+
+<p>
+That means a script such as <code>frog_demo_pipeline.py</code> may remain the practical CLI entry point,
+while the implementation logic progressively moves into the dedicated stage-oriented modules.
+</p>
+
+<p>
+This is the preferred direction because it preserves a simple command-line surface without turning one monolithic script into accidental architecture.
+</p>
+
+<hr/>
+
+<h2 id="design-rules">7. Design Rules</h2>
 
 <ul>
   <li>Commands should reflect published architectural boundaries.</li>
   <li>Commands should fail explicitly rather than silently skipping invalid stages.</li>
   <li>Commands should remain implementation-oriented, not normative.</li>
   <li>Human-readable diagnostics should remain source-aligned where possible.</li>
+  <li>The CLI should remain usable for inspecting intermediate artifacts during the first executable slices.</li>
+  <li>Convenience wrappers must not erase the intended separation between loading, validation, derivation, lowering, contract emission, and runtime consumption.</li>
 </ul>
 
 <hr/>
 
-<h2>Summary</h2>
+<h2 id="relation-with-examples-and-regression">8. Relation with Examples and Regression</h2>
 
 <p>
-The CLI is the operational shell of the reference implementation.
-It exists to expose the first FROG reference pipeline clearly and explicitly,
-without collapsing the repository's published architecture into one opaque tool command.
+The CLI should work directly with the published example slices and with the reference regression checks.
+For the current milestone, the baseline path is:
+</p>
+
+<pre><code>Examples/01_pure_addition/main.frog</code></pre>
+
+<p>
+A correct CLI should make it straightforward to:
+</p>
+
+<ul>
+  <li>validate that example,</li>
+  <li>derive its Execution IR,</li>
+  <li>emit a backend contract for the first backend family,</li>
+  <li>run it and observe the expected arithmetic result,</li>
+  <li>rerun a regression script to confirm that the behavior remains stable after implementation changes.</li>
+</ul>
+
+<p>
+The CLI therefore plays an important role in locking down the first executable slice before wider expansion to UI and stateful cases.
+</p>
+
+<hr/>
+
+<h2 id="what-this-directory-must-not-do">9. What this Directory Must Not Do</h2>
+
+<p>
+This directory must not:
+</p>
+
+<ul>
+  <li>pretend that the CLI defines the language,</li>
+  <li>hide stage ownership behind one opaque private command flow,</li>
+  <li>replace published IR and backend boundaries with implementation shortcuts,</li>
+  <li>silently jump from source directly to private execution while claiming stage fidelity,</li>
+  <li>turn a convenience script into the de facto normative architecture.</li>
+</ul>
+
+<p>
+If the CLI reveals a specification gap, the fix belongs in the owning specification or implementation-layer document, not in undocumented command behavior.
+</p>
+
+<hr/>
+
+<h2 id="summary">10. Summary</h2>
+
+<p>
+The CLI is the operational shell of the non-normative FROG reference implementation.
+It exists to expose the first reference pipeline clearly and explicitly,
+to keep the stage boundaries visible,
+and to support executable example slices and regression checks without collapsing the repository's published architecture into one opaque tool command.
 </p>
