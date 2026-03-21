@@ -21,7 +21,7 @@
   <li><a href="#relation-with-the-reference-pipeline">5. Relation with the Reference Pipeline</a></li>
   <li><a href="#current-entry-points">6. Current Entry Points</a></li>
   <li><a href="#design-rules">7. Design Rules</a></li>
-  <li><a href="#relation-with-examples-and-regression">8. Relation with Examples and Regression</a></li>
+  <li><a href="#relation-with-examples-and-stage-results">8. Relation with Examples and Stage Results</a></li>
   <li><a href="#what-this-directory-must-not-do">9. What this Directory Must Not Do</a></li>
   <li><a href="#summary">10. Summary</a></li>
 </ul>
@@ -38,6 +38,10 @@ Its role is to expose a small, explicit, stage-aware toolchain for the first exe
 <p>
 The CLI is not a language specification layer.
 It is a practical implementation-facing shell around the published source → validation → IR → lowering → backend contract → runtime path.
+</p>
+
+<p>
+Its purpose is to make the first executable reference path observable and testable without collapsing the repository's architectural stages into one opaque command.
 </p>
 
 <hr/>
@@ -69,8 +73,8 @@ At the current stage of the repository, the CLI serves three practical purposes:
 
 <ul>
   <li>provide explicit stage entry points for the first executable slice,</li>
-  <li>make intermediate artifacts observable during reference-implementation work,</li>
-  <li>support regression checks on the minimal published example path.</li>
+  <li>make intermediate stage results observable during reference-implementation work,</li>
+  <li>support repeatable command-line execution of the minimal published example path.</li>
 </ul>
 
 <p>
@@ -80,7 +84,7 @@ The current priority is the first executable slice built around:
 <pre><code>Examples/01_pure_addition/main.frog</code></pre>
 
 <p>
-The CLI should therefore remain compact, explicit, and easy to audit before it expands to more advanced slices.
+The CLI should therefore remain compact, explicit, and easy to audit before it expands to broader UI-oriented and state-oriented slices.
 </p>
 
 <hr/>
@@ -141,7 +145,13 @@ That is acceptable as long as it remains explicitly non-normative and does not b
 </p>
 
 <p>
-In the current reference direction, a thin CLI entry point may orchestrate specialized implementation modules living under:
+In the current reference direction, the practical CLI entry point may be:
+</p>
+
+<pre><code>frog_demo_pipeline.py</code></pre>
+
+<p>
+while the implementation logic progressively lives in specialized modules under:
 </p>
 
 <pre><code>Implementations/Reference/
@@ -154,12 +164,7 @@ In the current reference direction, a thin CLI entry point may orchestrate speci
 </code></pre>
 
 <p>
-That means a script such as <code>frog_demo_pipeline.py</code> may remain the practical CLI entry point,
-while the implementation logic progressively moves into the dedicated stage-oriented modules.
-</p>
-
-<p>
-This is the preferred direction because it preserves a simple command-line surface without turning one monolithic script into accidental architecture.
+This is the preferred direction because it preserves a simple command-line surface without turning one convenience script into accidental architecture.
 </p>
 
 <hr/>
@@ -170,17 +175,17 @@ This is the preferred direction because it preserves a simple command-line surfa
   <li>Commands should reflect published architectural boundaries.</li>
   <li>Commands should fail explicitly rather than silently skipping invalid stages.</li>
   <li>Commands should remain implementation-oriented, not normative.</li>
-  <li>Human-readable diagnostics should remain source-aligned where possible.</li>
-  <li>The CLI should remain usable for inspecting intermediate artifacts during the first executable slices.</li>
+  <li>Diagnostics should remain source-aligned where possible.</li>
+  <li>The CLI should remain usable for inspecting intermediate stage results during the first executable slices.</li>
   <li>Convenience wrappers must not erase the intended separation between loading, validation, derivation, lowering, contract emission, and runtime consumption.</li>
 </ul>
 
 <hr/>
 
-<h2 id="relation-with-examples-and-regression">8. Relation with Examples and Regression</h2>
+<h2 id="relation-with-examples-and-stage-results">8. Relation with Examples and Stage Results</h2>
 
 <p>
-The CLI should work directly with the published example slices and with the reference regression checks.
+The CLI should work directly with the published example slices.
 For the current milestone, the baseline path is:
 </p>
 
@@ -193,9 +198,9 @@ A correct CLI should make it straightforward to:
 <ul>
   <li>validate that example,</li>
   <li>derive its Execution IR,</li>
-  <li>emit a backend contract for the first backend family,</li>
-  <li>run it and observe the expected arithmetic result,</li>
-  <li>rerun a regression script to confirm that the behavior remains stable after implementation changes.</li>
+  <li>lower it for the first backend family,</li>
+  <li>emit a backend contract,</li>
+  <li>run it and observe the expected arithmetic result.</li>
 </ul>
 
 <p>
@@ -230,5 +235,9 @@ If the CLI reveals a specification gap, the fix belongs in the owning specificat
 The CLI is the operational shell of the non-normative FROG reference implementation.
 It exists to expose the first reference pipeline clearly and explicitly,
 to keep the stage boundaries visible,
-and to support executable example slices and regression checks without collapsing the repository's published architecture into one opaque tool command.
+and to support executable example slices without collapsing the repository's published architecture into one opaque tool command.
+</p>
+
+<p>
+In the current milestone, it is primarily the command-line path for the first executable slice around <code>Examples/01_pure_addition</code>.
 </p>
