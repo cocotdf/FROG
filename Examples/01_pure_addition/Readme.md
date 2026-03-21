@@ -275,7 +275,7 @@ It is therefore a baseline case for:
   <li>basic runtime-consumption correctness.</li>
 </ul>
 
-<hr/>
+<hr/> 
 
 <h2 id="summary">10. Summary</h2>
 
