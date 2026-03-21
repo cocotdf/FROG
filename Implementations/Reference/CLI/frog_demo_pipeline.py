@@ -45,15 +45,21 @@ def pipeline_emit_contract(file_path: str, backend_family: str = DEFAULT_BACKEND
     return emit_backend_contract(lowered, backend_family)
 
 
-def frogc_run(file_path: str, public_inputs: Dict[str, Any], backend_family: str = DEFAULT_BACKEND_FAMILY) -> Dict[str, Any]:
+def frogc_run(
+    file_path: str,
+    public_inputs: Dict[str, Any],
+    backend_family: str = DEFAULT_BACKEND_FAMILY,
+) -> Dict[str, Any]:
     source = load_source(file_path)
     validation = validate_source(source)
     ir = derive_execution_ir(validation)
     lowered = lower_for_backend_family(ir, backend_family)
     contract = emit_backend_contract(lowered, backend_family)
+
     runtime = create_runtime_for_family(backend_family)
     runtime.accept_contract(contract)
     result = runtime.execute(contract, public_inputs)
+
     return {
         "status": "ok",
         "source": {
@@ -85,9 +91,19 @@ def parse_inputs(raw: str) -> Dict[str, Any]:
     try:
         value = json.loads(raw)
     except json.JSONDecodeError as exc:
-        raise FrogPipelineError(stage="run", error_code="invalid_inputs_json", message="--inputs must be valid JSON.") from exc
+        raise FrogPipelineError(
+            stage="run",
+            error_code="invalid_inputs_json",
+            message="--inputs must be valid JSON.",
+        ) from exc
+
     if not isinstance(value, dict):
-        raise FrogPipelineError(stage="run", error_code="invalid_inputs_shape", message="--inputs must decode to a JSON object.")
+        raise FrogPipelineError(
+            stage="run",
+            error_code="invalid_inputs_shape",
+            message="--inputs must decode to a JSON object.",
+        )
+
     return value
 
 
@@ -100,34 +116,66 @@ def dump_json(data: Dict[str, Any], output_path: Optional[str] = None) -> None:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="FROG demonstration pipeline for Example 01 (pure addition).")
+    parser = argparse.ArgumentParser(
+        description="FROG demonstration pipeline for Example 01 (pure addition)."
+    )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     def add_common_arguments(cmd: argparse.ArgumentParser) -> None:
         cmd.add_argument("file", help="Path to the .frog source file.")
-        cmd.add_argument("--out", help="Optional path where the JSON artifact/result will be written.")
+        cmd.add_argument(
+            "--out",
+            help="Optional path where the JSON artifact or result will be written.",
+        )
 
-    p_validate = subparsers.add_parser("validate", help="Validate a .frog source for the demo subset.")
+    p_validate = subparsers.add_parser(
+        "validate",
+        help="Validate a .frog source for the current demonstration subset.",
+    )
     add_common_arguments(p_validate)
 
-    p_derive = subparsers.add_parser("derive-ir", help="Derive the open execution-facing IR.")
+    p_derive = subparsers.add_parser(
+        "derive-ir",
+        help="Derive the open execution-facing IR.",
+    )
     add_common_arguments(p_derive)
 
-    p_lower = subparsers.add_parser("lower", help="Lower the derived IR for the demo backend family.")
+    p_lower = subparsers.add_parser(
+        "lower",
+        help="Lower the derived IR for the selected backend family.",
+    )
     add_common_arguments(p_lower)
-    p_lower.add_argument("--backend-family", default=DEFAULT_BACKEND_FAMILY)
+    p_lower.add_argument(
+        "--backend-family",
+        default=DEFAULT_BACKEND_FAMILY,
+        help=f"Backend family to target. Default: {DEFAULT_BACKEND_FAMILY}",
+    )
 
-    p_emit = subparsers.add_parser("emit-contract", help="Emit the backend contract.")
+    p_emit = subparsers.add_parser(
+        "emit-contract",
+        help="Emit the backend contract for the selected backend family.",
+    )
     add_common_arguments(p_emit)
-    p_emit.add_argument("--backend-family", default=DEFAULT_BACKEND_FAMILY)
+    p_emit.add_argument(
+        "--backend-family",
+        default=DEFAULT_BACKEND_FAMILY,
+        help=f"Backend family to target. Default: {DEFAULT_BACKEND_FAMILY}",
+    )
 
-    p_run = subparsers.add_parser("run", help="Run the full end-to-end demonstration pipeline.")
+    p_run = subparsers.add_parser(
+        "run",
+        help="Run the full end-to-end demonstration pipeline.",
+    )
     add_common_arguments(p_run)
-    p_run.add_argument("--backend-family", default=DEFAULT_BACKEND_FAMILY)
+    p_run.add_argument(
+        "--backend-family",
+        default=DEFAULT_BACKEND_FAMILY,
+        help=f"Backend family to target. Default: {DEFAULT_BACKEND_FAMILY}",
+    )
     p_run.add_argument(
         "--inputs",
         default='{"a": 1.5, "b": 2.5}',
-        help='Public input JSON object, e.g. {"a": 2.0, "b": 3.0}',
+        help='Public input JSON object, for example {"a": 2.0, "b": 3.0}',
     )
 
     return parser
@@ -152,8 +200,9 @@ def main() -> int:
             parser.error(f"Unknown command: {args.command}")
             return 2
 
-        dump_json(artifact, args.out)
+        dump_json(artifact, getattr(args, "out", None))
         return 0
+
     except FrogPipelineError as exc:
         dump_json(exc.as_dict(), getattr(args, "out", None))
         return 1
