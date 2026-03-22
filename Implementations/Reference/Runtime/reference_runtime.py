@@ -25,6 +25,11 @@ class ReferenceHostRuntime:
     def __init__(self, backend_family: str = DEFAULT_BACKEND_FAMILY):
         ensure(backend_family == DEFAULT_BACKEND_FAMILY, stage="runtime-create", error_code="unsupported_backend_family", message=f"Unsupported runtime family: {backend_family}")
         self.backend_family = backend_family
+        self._state_by_unit: Dict[Tuple[str, str], Dict[str, Any]] = {}
+
+    def _state_key(self, contract: BackendContract, unit_id: str) -> Tuple[str, str]:
+        source_ref = contract.artifact.get("source_ref", {})
+        return (source_ref.get("content_hash", "unknown"), unit_id)
 
     def accept_contract(self, contract: BackendContract) -> Dict[str, Any]:
         artifact = contract.artifact
@@ -35,6 +40,15 @@ class ReferenceHostRuntime:
         ensure(unit.get("role") == "entry_unit", stage="runtime-accept", error_code="unsupported_unit_role", message="Demo runtime expects one entry_unit.")
         payload = unit.get("implementation_payload")
         ensure(isinstance(payload, dict) and payload.get("kind") == "demo_dataflow_plan", stage="runtime-accept", error_code="missing_demo_payload", message="Demo runtime requires a demo_dataflow_plan payload.")
+
+        state_cells = unit.get("state", {}).get("cells", [])
+        state_key = self._state_key(contract, unit["id"])
+        if state_key not in self._state_by_unit:
+            self._state_by_unit[state_key] = {
+                cell["operation_id"]: _coerce_runtime_value(cell["initial"], cell["value_type"], stage="runtime-accept", label=f"Initial state for {cell['operation_id']}")
+                for cell in state_cells
+            }
+
         return {"status": "ok", "unit_ids": [unit["id"]]}
 
     def execute(self, contract: BackendContract, public_inputs: Dict[str, Any]) -> RuntimeResult:
@@ -44,10 +58,16 @@ class ReferenceHostRuntime:
         connections = payload["connections"]
         ui_declarations = payload.get("ui_declarations", {"widgets": []})
         ui_widgets = {widget["id"]: deepcopy(widget) for widget in ui_declarations.get("widgets", [])}
+        state_key = self._state_key(contract, unit["id"])
+        if state_key not in self._state_by_unit:
+            self.accept_contract(contract)
+        unit_state = self._state_by_unit[state_key]
 
         values: Dict[Tuple[str, str], Any] = {}
         executed_ops = set()
         ui_effects = []
+        state_before = deepcopy(unit_state)
+        next_state: Dict[str, Any] = {}
 
         input_boundaries = [b for b in unit["boundaries"] if b["kind"] == "public_input"]
         for boundary in input_boundaries:
@@ -69,6 +89,14 @@ class ReferenceHostRuntime:
                 if op["kind"] == "ui_value_input" and op["widget_id"] == widget_id:
                     values[(op["source_object"], "value")] = runtime_value
                     break
+
+        for op in operations:
+            if op["kind"] == "state_delay":
+                current_state = unit_state.get(op["id"])
+                if current_state is None:
+                    current_state = _coerce_runtime_value(op["initial"], op["value_type"], stage="run", label=f"State '{op['id']}'")
+                    unit_state[op["id"]] = current_state
+                values[(op["source_object"], "out")] = current_state
 
         progressed = True
         while progressed:
@@ -125,6 +153,12 @@ class ReferenceHostRuntime:
                         executed_ops.add(op["id"])
                         progressed = True
 
+        for op in operations:
+            if op["kind"] == "state_delay":
+                source_object = op["source_object"]
+                ensure((source_object, "in") in values, stage="run", error_code="missing_delay_input_value", message=f"Delay operation '{op['id']}' did not receive an input value.")
+                next_state[op["id"]] = _coerce_runtime_value(values[(source_object, "in")], op["value_type"], stage="run", label=f"Next state for '{op['id']}'")
+
         public_outputs = [b for b in unit["boundaries"] if b["kind"] == "public_output"]
         public_output_values: Dict[str, Any] = {}
         for boundary in public_outputs:
@@ -152,6 +186,9 @@ class ReferenceHostRuntime:
                     break
             ensure(matched, stage="run", error_code="missing_ui_output_operation", message=f"No ui_value_output operation found for '{widget_id}'.")
 
+        unit_state.update(next_state)
+        state_after = deepcopy(unit_state)
+
         artifact = {
             "artifact_kind": "frog_runtime_result",
             "artifact_version": DEMO_ARTIFACT_VERSION,
@@ -172,6 +209,10 @@ class ReferenceHostRuntime:
                 "widgets": ui_widgets,
             },
             "ui_effects": ui_effects,
+            "state": {
+                "before": state_before,
+                "after": state_after,
+            },
             "diagnostics": [],
         }
 

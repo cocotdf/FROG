@@ -15,8 +15,10 @@ def emit_backend_contract(lowered: LoweredForm, backend_family: str = DEFAULT_BA
     ui_outputs = [op for op in lowered_unit["operations"] if op["kind"] == "ui_value_output"]
     ui_refs = [op for op in lowered_unit["operations"] if op["kind"] == "ui_widget_reference"]
     ui_property_writes = [op for op in lowered_unit["operations"] if op["kind"] == "ui_property_write"]
+    state_delays = [op for op in lowered_unit["operations"] if op["kind"] == "state_delay"]
 
     ui_binding_kind = lowered.artifact["assumptions"]["ui_binding_kind"]
+    has_state = bool(state_delays)
 
     artifact = {
         "artifact_kind": "frog_backend_contract",
@@ -24,7 +26,7 @@ def emit_backend_contract(lowered: LoweredForm, backend_family: str = DEFAULT_BA
         "source_ref": dict(lowered.artifact["source_ref"]),
         "backend_family": backend_family,
         "assumptions": {
-            "state_model": "none",
+            "state_model": "explicit_local_memory" if has_state else "none",
             "ui_binding": {
                 "enabled": ui_binding_kind != "none",
                 "kind": ui_binding_kind,
@@ -89,6 +91,18 @@ def emit_backend_contract(lowered: LoweredForm, backend_family: str = DEFAULT_BA
                         }
                         for op in ui_property_writes
                     ],
+                },
+                "state": {
+                    "cells": [
+                        {
+                            "operation_id": op["id"],
+                            "primitive_ref": op["primitive_ref"],
+                            "state_kind": op["state_kind"],
+                            "value_type": op["value_type"],
+                            "initial": op["initial"],
+                        }
+                        for op in state_delays
+                    ]
                 },
                 "implementation_payload": {
                     "kind": "demo_dataflow_plan",

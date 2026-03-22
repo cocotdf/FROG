@@ -134,7 +134,7 @@ def build_parser() -> argparse.ArgumentParser:
     p_run.add_argument(
         "--inputs",
         default='{"a": 1.5, "b": 2.5}',
-        help='External input JSON object. For Example 01 use {"a": 2.0, "b": 3.0}. For Example 02 use {"ctrl_a": 2.0, "ctrl_b": 3.0}. For Example 03 use {"status": "Ready"}.',
+        help='External input JSON object. For Example 01 use {"a": 2.0, "b": 3.0}. For Example 02 use {"ctrl_a": 2.0, "ctrl_b": 3.0}. For Example 03 use {"status": "Ready"}. For Example 04 use {"x": 2.0}.',
     )
 
     return parser

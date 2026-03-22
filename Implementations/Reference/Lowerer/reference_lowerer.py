@@ -15,6 +15,7 @@ def lower_for_backend_family(ir: DerivedIR, backend_family: str = DEFAULT_BACKEN
     operations: List[Dict[str, Any]] = []
     has_natural_ui = False
     has_object_ui = False
+    has_explicit_local_memory = False
 
     for obj in objects:
         if obj["kind"] == "public_input_boundary":
@@ -53,6 +54,19 @@ def lower_for_backend_family(ir: DerivedIR, backend_family: str = DEFAULT_BACKEN
                 )
             else:
                 raise FrogPipelineError(stage="lower", error_code="unsupported_primitive", message=f"This demo lowerer does not support primitive '{obj['primitive_ref']}'.")
+        elif obj["kind"] == "explicit_local_memory_primitive":
+            has_explicit_local_memory = True
+            operations.append(
+                {
+                    "id": obj["id"].replace("obj:", "op:"),
+                    "kind": "state_delay",
+                    "primitive_ref": obj["primitive_ref"],
+                    "state_kind": obj["state_kind"],
+                    "value_type": obj["value_type"],
+                    "initial": obj["initial"],
+                    "source_object": obj["id"],
+                }
+            )
         elif obj["kind"] == "public_output_boundary":
             operations.append(
                 {
@@ -125,6 +139,7 @@ def lower_for_backend_family(ir: DerivedIR, backend_family: str = DEFAULT_BACKEN
         "assumptions": {
             "ui_binding_enabled": ui_binding_kind != "none",
             "ui_binding_kind": ui_binding_kind,
+            "explicit_local_memory": has_explicit_local_memory,
         },
         "units": [
             {

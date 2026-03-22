@@ -107,6 +107,22 @@ def derive_execution_ir(validation: ValidationResult) -> DerivedIR:
                         "sources": [f"diagram.node:{node_id}", f"library.primitive:{primitive_ref}"],
                     }
                 )
+            elif primitive_ref == "frog.core.delay":
+                objects.append(
+                    {
+                        "id": f"obj:{node_id}",
+                        "kind": "explicit_local_memory_primitive",
+                        "primitive_ref": primitive_ref,
+                        "state_kind": "explicit_local_memory",
+                        "value_type": "f64",
+                        "initial": float(node["_coerced_initial"] if "_coerced_initial" in node else node["initial"]),
+                        "ports": [
+                            {"id": "in", "direction": "in", "value_type": "f64"},
+                            {"id": "out", "direction": "out", "value_type": "f64"},
+                        ],
+                        "sources": [f"diagram.node:{node_id}", f"library.primitive:{primitive_ref}"],
+                    }
+                )
             elif primitive_ref == "frog.ui.property_write":
                 member = deepcopy(node["widget_member"])
                 objects.append(

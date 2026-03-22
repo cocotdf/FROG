@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
 from Implementations.Reference.common import (
     DEMO_ARTIFACT_VERSION,
@@ -19,7 +19,7 @@ SUPPORTED_WIDGET_CLASSES = {
     "frog.ui.standard.numeric_indicator": {"role": "indicator", "value_type": "f64"},
 }
 
-SUPPORTED_PRIMITIVES = {"frog.core.add", "frog.ui.property_write"}
+SUPPORTED_PRIMITIVES = {"frog.core.add", "frog.core.delay", "frog.ui.property_write"}
 
 SUPPORTED_WRITABLE_MEMBERS = {
     ("frog.ui.standard.numeric_control", "label", "text"): "string",
@@ -100,6 +100,11 @@ def _node_port_specs(node: Dict[str, Any], *, input_ports: Dict[str, Dict[str, A
                 "b": {"direction": "in", "value_type": "f64"},
                 "result": {"direction": "out", "value_type": "f64"},
             }
+        if node["type"] == "frog.core.delay":
+            return {
+                "in": {"direction": "in", "value_type": "f64"},
+                "out": {"direction": "out", "value_type": "f64"},
+            }
         if node["type"] == "frog.ui.property_write":
             return {
                 "ref": {"direction": "in", "value_type": "widget_reference"},
@@ -115,6 +120,10 @@ def _find_single_incoming(node_id: str, port: str, edges: List[Dict[str, Any]]) 
     if len(matches) > 1:
         raise FrogPipelineError(stage="validate", error_code="multiple_incoming_edges", message=f"Node '{node_id}' port '{port}' received multiple incoming edges in the demo slice.")
     return matches[0]
+
+
+def _find_outgoing(node_id: str, port: str, edges: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    return [edge for edge in edges if edge["from"]["node"] == node_id and edge["from"]["port"] == port]
 
 
 def validate_source(loaded: LoadedSource) -> ValidationResult:
@@ -174,6 +183,7 @@ def validate_source(loaded: LoadedSource) -> ValidationResult:
     widget_value_nodes: List[Dict[str, Any]] = []
     widget_reference_nodes: List[Dict[str, Any]] = []
     primitive_nodes: List[Dict[str, Any]] = []
+    delay_nodes: List[Dict[str, Any]] = []
 
     for node in nodes:
         require_keys(node, ["id", "kind"], stage="validate", context="diagram.nodes[]")
@@ -212,6 +222,13 @@ def validate_source(loaded: LoadedSource) -> ValidationResult:
                 require_keys(node, ["widget_member"], stage="validate", context=f"node {node_id}")
                 ensure(isinstance(node["widget_member"], dict), stage="validate", error_code="invalid_widget_member", message=f"Node {node_id} widget_member must be an object.")
                 require_keys(node["widget_member"], ["part", "member"], stage="validate", context=f"node {node_id}.widget_member")
+            if node["type"] == "frog.core.delay":
+                require_keys(node, ["initial"], stage="validate", context=f"node {node_id}")
+                try:
+                    node["_coerced_initial"] = float(node["initial"])
+                except (TypeError, ValueError) as exc:
+                    raise FrogPipelineError(stage="validate", error_code="invalid_delay_initial", message=f"Delay node '{node_id}' requires a numeric initial value for this demo slice.") from exc
+                delay_nodes.append(node)
             primitive_nodes.append(node)
         else:
             raise FrogPipelineError(stage="validate", error_code="unsupported_node_kind", message=f"Unsupported node kind in demo slice: {kind}")
@@ -220,6 +237,7 @@ def validate_source(loaded: LoadedSource) -> ValidationResult:
     uses_widget_value = bool(widget_value_nodes)
     uses_widget_reference = bool(widget_reference_nodes)
     uses_ui_object_primitives = any(node["type"] == "frog.ui.property_write" for node in primitive_nodes)
+    uses_explicit_local_memory = bool(delay_nodes)
 
     for edge in edges:
         require_keys(edge, ["id", "from", "to"], stage="validate", context="diagram.edges[]")
@@ -233,7 +251,6 @@ def validate_source(loaded: LoadedSource) -> ValidationResult:
         ensure(from_node_id in node_by_id, stage="validate", error_code="unknown_edge_source_node", message=f"Edge {edge_id} references unknown source node '{from_node_id}'.")
         ensure(to_node_id in node_by_id, stage="validate", error_code="unknown_edge_target_node", message=f"Edge {edge_id} references unknown target node '{to_node_id}'.")
 
-    # Resolve property_write node semantics before full port validation.
     for node in primitive_nodes:
         if node["type"] != "frog.ui.property_write":
             continue
@@ -255,7 +272,6 @@ def validate_source(loaded: LoadedSource) -> ValidationResult:
         node["_resolved_widget_class"] = widget["widget"]
         node["_resolved_value_type"] = expected_value_type
 
-    # Validate ports and edge typing.
     port_specs_by_node = {
         node_id: _node_port_specs(node, input_ports=input_ports, output_ports=output_ports, widget_by_id=widget_by_id)
         for node_id, node in node_by_id.items()
@@ -275,12 +291,14 @@ def validate_source(loaded: LoadedSource) -> ValidationResult:
         ensure(dst_specs[dst_port]["direction"] == "in", stage="validate", error_code="invalid_edge_target_direction", message=f"Edge {edge_id} target port '{to_node_id}.{dst_port}' is not an input port.")
         ensure(src_specs[src_port]["value_type"] == dst_specs[dst_port]["value_type"], stage="validate", error_code="edge_type_mismatch", message=f"Edge {edge_id} type mismatch: {from_node_id}.{src_port} ({src_specs[src_port]['value_type']}) -> {to_node_id}.{dst_port} ({dst_specs[dst_port]['value_type']}).")
 
-    # Primitive-specific structural checks for the supported slices.
     for node in primitive_nodes:
         node_id = node["id"]
         if node["type"] == "frog.core.add":
             ensure(_find_single_incoming(node_id, "a", edges) is not None, stage="validate", error_code="missing_add_input_a", message=f"Primitive '{node_id}' requires one incoming edge on port 'a'.")
             ensure(_find_single_incoming(node_id, "b", edges) is not None, stage="validate", error_code="missing_add_input_b", message=f"Primitive '{node_id}' requires one incoming edge on port 'b'.")
+        elif node["type"] == "frog.core.delay":
+            ensure(_find_single_incoming(node_id, "in", edges) is not None, stage="validate", error_code="missing_delay_input", message=f"Delay node '{node_id}' requires one incoming edge on port 'in'.")
+            ensure(len(_find_outgoing(node_id, "out", edges)) >= 1, stage="validate", error_code="missing_delay_output_use", message=f"Delay node '{node_id}' requires at least one outgoing edge on port 'out'.")
         elif node["type"] == "frog.ui.property_write":
             value_edge = _find_single_incoming(node_id, "value", edges)
             ensure(value_edge is not None, stage="validate", error_code="missing_property_write_value", message=f"Property write node '{node_id}' requires one incoming value edge.")
@@ -299,7 +317,7 @@ def validate_source(loaded: LoadedSource) -> ValidationResult:
             "widget_value": uses_widget_value,
             "widget_reference": uses_widget_reference,
             "ui_object_primitives": uses_ui_object_primitives,
-            "explicit_local_memory": False,
+            "explicit_local_memory": uses_explicit_local_memory,
         },
         "validated_program": {
             "program_id": program_id_from_path(source_path),
