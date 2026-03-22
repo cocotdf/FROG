@@ -516,6 +516,35 @@ It is to stabilize the standardized FROG IR and show how FROG lowering can feed 
 </p>
 
 <hr/>
+<h3>Current regression-tested outcomes</h3>
+
+<p>
+The current reference implementation has been exercised on four small executable slices.
+These tests do not claim full language closure.
+They show that the current reference path is able to execute the first published vertical slices while preserving the declared stage boundaries.
+</p>
+
+<ul>
+  <li>
+    <strong>01_pure_addition</strong> — public-input/public-output arithmetic path validated end to end.<br/>
+    Simple outcome: <code>result = a + b</code>
+  </li>
+  <li>
+    <strong>02_ui_value_roundtrip</strong> — natural widget-value flow validated end to end.<br/>
+    Simple outcome: <code>ind_result.value = ctrl_a.value + ctrl_b.value</code>
+  </li>
+  <li>
+    <strong>03_ui_property_write</strong> — object-style UI interaction validated end to end.<br/>
+    Simple outcome: <code>ctrl_gain.label.text = status</code>
+  </li>
+  <li>
+    <strong>04_stateful_feedback_delay</strong> — explicit-memory and valid-feedback path validated end to end.<br/>
+    Simple outcome:
+    <pre><code>y(t) = x(t) + state(t)
+state(t + 1) = y(t)
+state(0) = 0.0</code></pre>
+  </li>
+</ul>
 
 <h2 id="summary">13. Summary</h2>
 
