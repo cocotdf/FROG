@@ -17,9 +17,9 @@
   <li><a href="#overview">1. Overview</a></li>
   <li><a href="#status-and-boundary">2. Status and Boundary</a></li>
   <li><a href="#architectural-position">3. Architectural Position</a></li>
-  <li><a href="#what-this-directory-proves-today">4. What this Directory Proves Today</a></li>
+  <li><a href="#current-purpose">4. Current Purpose</a></li>
   <li><a href="#prototype-status-and-future-compiler-direction">5. Prototype Status and Future Compiler Direction</a></li>
-  <li><a href="#current-executable-slices">6. Current Executable Slices</a></li>
+  <li><a href="#executable-reference-slices">6. Executable Reference Slices</a></li>
   <li><a href="#reference-pipeline">7. Reference Pipeline</a></li>
   <li><a href="#directory-structure">8. Directory Structure</a></li>
   <li><a href="#relation-with-examples-and-conformance">9. Relation with Examples and Conformance</a></li>
@@ -35,7 +35,7 @@
 
 <p>
 This directory is the workspace for a <strong>reference implementation</strong> of the published FROG architecture.
-Its role is to make selected parts of the specification executable without turning one implementation into the definition of the language.
+Its purpose is to make selected parts of the specification executable without turning one implementation into the definition of the language.
 </p>
 
 <p>
@@ -129,7 +129,7 @@ A correct reference implementation should therefore make the published architect
 
 <hr/>
 
-<h2 id="what-this-directory-proves-today">4. What this Directory Proves Today</h2>
+<h2 id="current-purpose">4. Current Purpose</h2>
 
 <p>
 The immediate goal of this directory is <strong>not</strong> to build a feature-complete industrial platform.
@@ -177,15 +177,21 @@ What they prove today is that the architecture can already support:
 </ul>
 
 <p>
-What they do <strong>not</strong> yet claim is that the repository already contains the final normative compiler pipeline, the final fully stabilized FROG IR schema, or one definitive production runtime architecture.
-</p>
-
-<p>
-A later phase should make that future direction explicit:
+What they do <strong>not</strong> yet claim is that the repository already contains:
 </p>
 
 <ul>
-  <li>stabilize the normative FROG execution IR schema more fully,</li>
+  <li>the final normative production compiler pipeline,</li>
+  <li>the final fully stabilized FROG execution IR schema,</li>
+  <li>one definitive production runtime architecture.</li>
+</ul>
+
+<p>
+A later phase should make the future direction explicit:
+</p>
+
+<ul>
+  <li>stabilize the normative standardized FROG execution IR more fully,</li>
   <li>define clearer backend-oriented lowering rules,</li>
   <li>show how FROG IR is transformed into known compiler/runtime backend pipelines,</li>
   <li>demonstrate complete end-to-end compilation and execution from canonical <code>.frog</code> source to deployable artifact.</li>
@@ -225,7 +231,7 @@ It does not prematurely collapse them into one opaque compiler implementation.
 
 <hr/>
 
-<h2 id="current-executable-slices">6. Current Executable Slices</h2>
+<h2 id="executable-reference-slices">6. Executable Reference Slices</h2>
 
 <p>
 The current executable reference path is intentionally staged.
