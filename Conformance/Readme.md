@@ -186,7 +186,8 @@ validated program meaning
   <li>explicit state versus illegal feedback,</li>
   <li>source-visible structure legality versus execution convenience,</li>
   <li>explicit diagram participation versus layout or adjacency suggestion,</li>
-  <li>explicit connectivity versus inferred evaluation order.</li>
+  <li>explicit connectivity versus inferred evaluation order,</li>
+  <li>explicit structure boundaries versus layout grouping or apparent nesting.</li>
 </ul>
 
 <p>Conformance should therefore help prevent these forbidden collapses:</p>
@@ -200,6 +201,8 @@ runtime shortcut  -/-> semantic truth
 layout            -/-> executable participation
 adjacency         -/-> dependency law
 visual order      -/-> semantic execution order
+grouping          -/-> structure boundary
+apparent nesting  -/-> structure membership
 </code></pre>
 
 <hr>
@@ -251,6 +254,7 @@ Notes:
   <li><code>valid/11_public_interface_declaration_does_not_require_front_panel_widget_existence.md</code></li>
   <li><code>valid/13_explicit_diagram_participation_remains_distinct_from_layout_or_adjacency.md</code></li>
   <li><code>valid/15_explicit_connectivity_remains_distinct_from_inferred_evaluation_order.md</code></li>
+  <li><code>valid/17_explicit_structure_boundaries_remain_distinct_from_layout_grouping_or_nesting.md</code></li>
 </ul>
 
 <h3>8.2 Invalid cases</h3>
@@ -352,6 +356,13 @@ layout or adjacency
 inferred evaluation order
 </code></pre>
 
+<p>The newest valid case sharpens the next structure-oriented boundary:</p>
+
+<pre><code>explicit structure boundaries
+              !=
+layout grouping or nesting
+</code></pre>
+
 <p>This balance matters because explicit rejection is better than silent semantic laundering.</p>
 
 <hr>
@@ -387,6 +398,7 @@ inferred evaluation order
   <li><strong>Expected rejection:</strong> public interface declaration must not require front-panel widget existence</li>
   <li><strong>Expected rejection:</strong> layout or adjacency must not be treated as executable participation</li>
   <li><strong>Expected rejection:</strong> inferred evaluation order must not be treated as dependency or connectivity</li>
+  <li><strong>Expected rejection:</strong> layout grouping or apparent nesting must not be treated as structure boundary</li>
 </ul>
 
 <hr>
@@ -421,10 +433,11 @@ inferred evaluation order
   <li>front-panel composition versus executable meaning,</li>
   <li>validated meaning versus derived IR convenience,</li>
   <li>explicit graph participation versus layout or adjacency suggestion,</li>
-  <li>explicit connectivity versus inferred evaluation order.</li>
+  <li>explicit connectivity versus inferred evaluation order,</li>
+  <li>explicit structure boundaries versus grouping or apparent nesting.</li>
 </ul>
 
-<p>The current mirrored pairs sharpen six especially important rules:</p>
+<p>The current mirrored pairs sharpen six especially important rules, and the newest valid case prepares the seventh:</p>
 
 <pre><code>widget declaration
     does not create
@@ -449,6 +462,10 @@ layout or adjacency
 explicit connectivity
     does not become
 inferred evaluation order
+
+explicit structure boundaries
+    do not arise from
+layout grouping or nesting
 </code></pre>
 
 <hr>
