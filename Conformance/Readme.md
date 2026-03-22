@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="../FROG logo.svg" alt="FROG logo" width="140" />
+</p>
+
 <h1>FROG Conformance</h1>
 
 <p><strong>Public accept / reject / preserve truth surface for the published FROG specification</strong><br>
@@ -28,18 +32,18 @@ FROG — Free Open Graphical Language</p>
 
 <p>This directory contains public conformance material for the published FROG specification.</p>
 
-<p>Its purpose is to make expected outcomes explicit for named cases such as:</p>
+<p>Its role is to make expected outcomes explicit for named cases such as:</p>
 <ul>
   <li>what a conforming toolchain should accept,</li>
   <li>what a conforming toolchain should reject,</li>
   <li>what distinctions a conforming derivation must preserve,</li>
-  <li>what assumptions later lowering or backend handoff may specialize,</li>
-  <li>what must remain explicit rather than silently reinterpreted.</li>
+  <li>what assumptions a later lowering or backend handoff may specialize,</li>
+  <li>what must remain explicit rather than being silently reinterpreted.</li>
 </ul>
 
-<p>Conformance exists because a specification repository should not rely only on prose. It should also publish explicit cases that validators, semantic analyzers, derivation pipelines, lowerers, executors, and future independent implementations can check against.</p>
+<p>Conformance exists because a specification repository should not rely only on prose. It should also publish explicit public cases that validators, semantic analyzers, derivation pipelines, lowerers, executors, and future independent implementations can check against.</p>
 
-<p>The repository-level mental model is:</p>
+<p>The repository-level model is:</p>
 
 <pre><code>specification text
         +
@@ -117,7 +121,7 @@ A tool can derive something executable while still violating published distincti
   <li>a place where new language law is invented informally.</li>
 </ul>
 
-<p>In base v0.1, this directory is only the beginning of a conformance story. Its job is to make the first expectations explicit and durable.</p>
+<p>In base v0.1, this directory is the beginning of a conformance story. Its job is to make the first expectations explicit, reviewable, and durable.</p>
 
 <hr>
 
@@ -154,7 +158,7 @@ implementation checks
 
 <h2 id="relation-with-the-expression-to-meaning-boundary">6. Relation with the Expression-to-Meaning Boundary</h2>
 
-<p>A critical current conformance concern is the normative boundary:</p>
+<p>A critical conformance concern is the normative boundary:</p>
 
 <pre><code>canonical .frog source
         |
@@ -164,7 +168,7 @@ validated program meaning
 
 <p>That boundary is owned by <code>Language/Expression to validated meaning.md</code>.</p>
 
-<p>Conformance material must now make that boundary testable in public terms.</p>
+<p>Conformance material must make that boundary testable in public terms.</p>
 
 <p>In practice, this means conformance cases should increasingly express whether:</p>
 <ul>
@@ -174,23 +178,23 @@ validated program meaning
   <li>execution-facing derivation preserves the distinctions that validated meaning established.</li>
 </ul>
 
-<p>This boundary especially matters for cases involving:</p>
+<p>This boundary is especially important for cases involving:</p>
 <ul>
   <li><code>interface_input</code> / <code>interface_output</code>,</li>
   <li><code>widget_value</code> / <code>widget_reference</code>,</li>
-  <li>front-panel participation vs public interface contract,</li>
-  <li>explicit state vs illegal feedback,</li>
-  <li>source-visible structure legality vs execution convenience.</li>
+  <li>front-panel participation versus public interface contract,</li>
+  <li>explicit state versus illegal feedback,</li>
+  <li>source-visible structure legality versus execution convenience.</li>
 </ul>
 
 <p>Conformance should therefore help prevent these forbidden collapses:</p>
 
-<pre><code>source          -/-> semantic authority drift
-validator       -/-> hidden language law
-front panel     -/-> public interface
-widget_value    -/-> widget_reference
-illegal cycle   -/-> implicit memory
-runtime shortcut-/-> semantic truth
+<pre><code>source            -/-> semantic authority drift
+validator         -/-> hidden language law
+front panel       -/-> public interface
+widget_value      -/-> widget_reference
+illegal cycle     -/-> implicit memory
+runtime shortcut  -/-> semantic truth
 </code></pre>
 
 <hr>
@@ -214,7 +218,7 @@ runtime shortcut-/-> semantic truth
   <li>which rejection reason matters if the case is invalid.</li>
 </ul>
 
-<p>A useful compact structure for one case is:</p>
+<p>A compact case structure is usually enough:</p>
 
 <pre><code>Case name
 Expected: valid | invalid
@@ -236,6 +240,7 @@ Notes:
   <li><code>valid/02_ui_value_roundtrip.md</code></li>
   <li><code>valid/03_ui_property_write.md</code></li>
   <li><code>valid/04_stateful_feedback_delay.md</code></li>
+  <li><code>valid/05_public_interface_and_widget_participation_distinct.md</code></li>
 </ul>
 
 <h3>8.2 Invalid cases</h3>
@@ -244,16 +249,30 @@ Notes:
   <li><code>invalid/illegal_feedback_without_explicit_memory.md</code></li>
   <li><code>invalid/interface_widget_role_confusion.md</code></li>
   <li><code>invalid/ui_reference_without_ui_primitive.md</code></li>
+  <li><code>invalid/06_widget_must_not_be_promoted_to_public_interface.md</code></li>
 </ul>
 
-<p>Even at this early stage, the published set already shows the intended balance:</p>
+<p>The published set already shows the intended balance:</p>
 
 <pre><code>valid cases   -&gt; acceptance truth
 invalid cases -&gt; rejection truth
 both together -&gt; public boundary truth
 </code></pre>
 
-<p>This balance is important because explicit rejection is better than silent semantic laundering.</p>
+<p>The pair formed by:</p>
+<ul>
+  <li><code>valid/05_public_interface_and_widget_participation_distinct.md</code>, and</li>
+  <li><code>invalid/06_widget_must_not_be_promoted_to_public_interface.md</code></li>
+</ul>
+
+<p>makes one boundary especially explicit:</p>
+
+<pre><code>public interface participation
+            !=
+widget-owned value participation
+</code></pre>
+
+<p>This balance matters because explicit rejection is better than silent semantic laundering.</p>
 
 <hr>
 
@@ -282,6 +301,7 @@ both together -&gt; public boundary truth
   <li><strong>Expected preservation:</strong> interface contract remains distinct from widget participation</li>
   <li><strong>Expected rejection:</strong> illegal feedback without explicit local memory</li>
   <li><strong>Expected rejection:</strong> UI reference usage without a valid UI primitive context</li>
+  <li><strong>Expected rejection:</strong> widget-owned value participation must not be promoted to public interface participation</li>
 </ul>
 
 <hr>
@@ -310,12 +330,19 @@ both together -&gt; public boundary truth
 
 <p>In particular, the following distinctions should remain visible in public conformance material:</p>
 <ul>
-  <li><code>interface_input</code> vs <code>widget_value</code>,</li>
-  <li><code>widget_value</code> vs <code>widget_reference</code>,</li>
-  <li>legal explicit state vs illegal implicit state,</li>
-  <li>front-panel composition vs executable meaning,</li>
-  <li>validated meaning vs derived IR convenience.</li>
+  <li><code>interface_input</code> versus <code>widget_value</code>,</li>
+  <li><code>widget_value</code> versus <code>widget_reference</code>,</li>
+  <li>legal explicit state versus illegal implicit state,</li>
+  <li>front-panel composition versus executable meaning,</li>
+  <li>validated meaning versus derived IR convenience.</li>
 </ul>
+
+<p>The newest valid/invalid pair sharpens one especially important rule:</p>
+
+<pre><code>widget declaration
+    does not create
+public interface declaration
+</code></pre>
 
 <hr>
 
@@ -326,8 +353,8 @@ both together -&gt; public boundary truth
 <p>The distinction is:</p>
 
 <pre><code>Examples/                   -&gt; illustrative executable or inspectable slices
-Conformance/               -&gt; public accept / reject / preserve expectations
-Implementations/Reference/ -&gt; non-normative executable workspace
+Conformance/                -&gt; public accept / reject / preserve expectations
+Implementations/Reference/  -&gt; non-normative executable workspace
 </code></pre>
 
 <p>An example may demonstrate a pattern.<br>
@@ -351,7 +378,8 @@ A reference implementation may execute a case, but it does not become language l
   <li>more structure legality cases,</li>
   <li>more type / value / state legality cases,</li>
   <li>profile-gated acceptance and rejection cases,</li>
-  <li>backend-family rejection cases where silent reinterpretation would be wrong.</li>
+  <li>backend-family rejection cases where silent reinterpretation would be wrong,</li>
+  <li>mirrored valid/invalid pairs for each critical boundary.</li>
 </ul>
 
 <p>Growth should remain architecture-led:</p>
