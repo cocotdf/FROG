@@ -185,7 +185,8 @@ validated program meaning
   <li>front-panel participation versus public interface contract,</li>
   <li>explicit state versus illegal feedback,</li>
   <li>source-visible structure legality versus execution convenience,</li>
-  <li>explicit diagram participation versus layout or adjacency suggestion.</li>
+  <li>explicit diagram participation versus layout or adjacency suggestion,</li>
+  <li>explicit connectivity versus inferred evaluation order.</li>
 </ul>
 
 <p>Conformance should therefore help prevent these forbidden collapses:</p>
@@ -198,6 +199,7 @@ illegal cycle     -/-> implicit memory
 runtime shortcut  -/-> semantic truth
 layout            -/-> executable participation
 adjacency         -/-> dependency law
+visual order      -/-> semantic execution order
 </code></pre>
 
 <hr>
@@ -248,6 +250,7 @@ Notes:
   <li><code>valid/09_front_panel_presence_does_not_by_itself_define_execution_meaning.md</code></li>
   <li><code>valid/11_public_interface_declaration_does_not_require_front_panel_widget_existence.md</code></li>
   <li><code>valid/13_explicit_diagram_participation_remains_distinct_from_layout_or_adjacency.md</code></li>
+  <li><code>valid/15_explicit_connectivity_remains_distinct_from_inferred_evaluation_order.md</code></li>
 </ul>
 
 <h3>8.2 Invalid cases</h3>
@@ -261,6 +264,7 @@ Notes:
   <li><code>invalid/10_front_panel_presence_must_not_be_treated_as_execution_meaning.md</code></li>
   <li><code>invalid/12_public_interface_declaration_must_not_require_front_panel_widget_existence.md</code></li>
   <li><code>invalid/14_layout_or_adjacency_must_not_be_treated_as_executable_participation.md</code></li>
+  <li><code>invalid/16_inferred_evaluation_order_must_not_be_treated_as_dependency_or_connectivity.md</code></li>
 </ul>
 
 <p>The published set already shows the intended balance:</p>
@@ -299,7 +303,7 @@ widget_value
 <p>The pair formed by:</p>
 <ul>
   <li><code>valid/09_front_panel_presence_does_not_by_itself_define_execution_meaning.md</code>, and</li>
-  <li><code>invalid/10_front_panel_presence_must_not_be_treated_as_executionMeaning.md</code></li>
+  <li><code>invalid/10_front_panel_presence_must_not_be_treated_as_execution_meaning.md</code></li>
 </ul>
 
 <p>makes another boundary especially explicit:</p>
@@ -333,6 +337,19 @@ required front-panel widget existence
 <pre><code>explicit diagram participation
         !=
 layout or adjacency
+</code></pre>
+
+<p>The pair formed by:</p>
+<ul>
+  <li><code>valid/15_explicit_connectivity_remains_distinct_from_inferred_evaluation_order.md</code>, and</li>
+  <li><code>invalid/16_inferred_evaluation_order_must_not_be_treated_as_dependency_or_connectivity.md</code></li>
+</ul>
+
+<p>makes another boundary especially explicit:</p>
+
+<pre><code>explicit connectivity
+        !=
+inferred evaluation order
 </code></pre>
 
 <p>This balance matters because explicit rejection is better than silent semantic laundering.</p>
@@ -369,6 +386,7 @@ layout or adjacency
   <li><strong>Expected rejection:</strong> front-panel presence must not be treated as execution meaning</li>
   <li><strong>Expected rejection:</strong> public interface declaration must not require front-panel widget existence</li>
   <li><strong>Expected rejection:</strong> layout or adjacency must not be treated as executable participation</li>
+  <li><strong>Expected rejection:</strong> inferred evaluation order must not be treated as dependency or connectivity</li>
 </ul>
 
 <hr>
@@ -402,10 +420,11 @@ layout or adjacency
   <li>legal explicit state versus illegal implicit state,</li>
   <li>front-panel composition versus executable meaning,</li>
   <li>validated meaning versus derived IR convenience,</li>
-  <li>explicit graph participation versus layout or adjacency suggestion.</li>
+  <li>explicit graph participation versus layout or adjacency suggestion,</li>
+  <li>explicit connectivity versus inferred evaluation order.</li>
 </ul>
 
-<p>The current mirrored pairs sharpen five especially important rules:</p>
+<p>The current mirrored pairs sharpen six especially important rules:</p>
 
 <pre><code>widget declaration
     does not create
@@ -426,6 +445,10 @@ front-panel widget existence
 explicit diagram participation
     does not arise from
 layout or adjacency
+
+explicit connectivity
+    does not become
+inferred evaluation order
 </code></pre>
 
 <hr>
