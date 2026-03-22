@@ -1,136 +1,131 @@
-<p align="center">
-  <img src="../FROG logo.svg" alt="FROG logo" width="140" />
-</p>
+<h1>FROG Conformance</h1>
 
-<h1 align="center">🐸 FROG Conformance</h1>
+<p><strong>Public accept / reject / preserve truth surface for the published FROG specification</strong><br>
+FROG — Free Open Graphical Language</p>
 
-<p align="center">
-  Early conformance cases and expected outcomes for the published FROG specification<br/>
-  <em>FROG — Free Open Graphical Language</em>
-</p>
-
-<hr/>
+<hr>
 
 <h2>Contents</h2>
-
 <ul>
   <li><a href="#overview">1. Overview</a></li>
   <li><a href="#why-this-directory-exists">2. Why this Directory Exists</a></li>
   <li><a href="#what-conformance-means-here">3. What Conformance Means Here</a></li>
   <li><a href="#what-this-directory-does-not-do">4. What this Directory Does Not Do</a></li>
   <li><a href="#relation-with-specification-ownership">5. Relation with Specification Ownership</a></li>
-  <li><a href="#directory-structure">6. Directory Structure</a></li>
-  <li><a href="#valid-and-invalid-cases">7. Valid and Invalid Cases</a></li>
-  <li><a href="#expected-outcomes">8. Expected Outcomes</a></li>
-  <li><a href="#early-v01-conformance-focus">9. Early v0.1 Conformance Focus</a></li>
-  <li><a href="#relation-with-examples-and-reference-implementation">10. Relation with Examples and Reference Implementation</a></li>
-  <li><a href="#future-growth">11. Future Growth</a></li>
-  <li><a href="#summary">12. Summary</a></li>
+  <li><a href="#relation-with-the-expression-to-meaning-boundary">6. Relation with the Expression-to-Meaning Boundary</a></li>
+  <li><a href="#directory-structure">7. Directory Structure</a></li>
+  <li><a href="#current-published-cases">8. Current Published Cases</a></li>
+  <li><a href="#expected-outcomes">9. Expected Outcomes</a></li>
+  <li><a href="#active-v01-conformance-focus">10. Active v0.1 Conformance Focus</a></li>
+  <li><a href="#relation-with-examples-and-reference-implementation">11. Relation with Examples and Reference Implementation</a></li>
+  <li><a href="#future-growth">12. Future Growth</a></li>
+  <li><a href="#summary">13. Summary</a></li>
 </ul>
 
-<hr/>
+<hr>
 
 <h2 id="overview">1. Overview</h2>
 
-<p>
-This directory contains <strong>early conformance material</strong> for the published FROG specification.
-Its purpose is to make expected outcomes explicit for named cases such as:
-</p>
+<p>This directory contains public conformance material for the published FROG specification.</p>
 
+<p>Its purpose is to make expected outcomes explicit for named cases such as:</p>
 <ul>
   <li>what a conforming toolchain should accept,</li>
   <li>what a conforming toolchain should reject,</li>
-  <li>what distinctions a conforming derivation or backend-facing handoff must preserve.</li>
+  <li>what distinctions a conforming derivation must preserve,</li>
+  <li>what assumptions later lowering or backend handoff may specialize,</li>
+  <li>what must remain explicit rather than silently reinterpreted.</li>
 </ul>
 
-<p>
-Conformance material is needed because a specification repository should not rely only on prose and good intentions.
-It should also provide explicit cases that future validators, derivation pipelines, lowerers, and runtimes can use to check their own behavior.
-</p>
+<p>Conformance exists because a specification repository should not rely only on prose. It should also publish explicit cases that validators, semantic analyzers, derivation pipelines, lowerers, executors, and future independent implementations can check against.</p>
 
-<hr/>
+<p>The repository-level mental model is:</p>
+
+<pre><code>specification text
+        +
+named conformance cases
+        |
+        v
+public truth surface
+</code></pre>
+
+<p>A conforming implementation may vary in internal architecture.<br>
+It may not vary in what published conformance cases mean.</p>
+
+<hr>
 
 <h2 id="why-this-directory-exists">2. Why this Directory Exists</h2>
 
-<p>
-The FROG repository is architected as a specification-first repository rather than as one product implementation.
-That separation is valuable,
-but it also creates a practical need:
-different future implementations must have a shared way to check whether they are staying aligned with the published specification.
-</p>
+<p>FROG is intentionally organized as a specification-first repository rather than as a single product implementation.</p>
 
-<p>
-This directory exists to provide that shared starting point.
-</p>
+<p>That separation is valuable, but it creates a practical need:</p>
 
-<p>
-At minimum, conformance material should help answer questions such as:
-</p>
+<pre><code>different future implementations
+            need
+one public way to check whether they stay aligned
+</code></pre>
 
+<p>This directory exists to provide that shared starting point.</p>
+
+<p>At minimum, conformance material should help answer questions such as:</p>
 <ul>
   <li>Should this program validate or fail?</li>
-  <li>If it validates, which distinctions must still remain explicit after derivation?</li>
+  <li>If it validates, which distinctions must remain explicit after semantic validation and derivation?</li>
   <li>If it is lowered and emitted as a backend contract, which assumptions may be fixed and which may not be silently invented?</li>
   <li>If a feature is unsupported by one backend family, should it be rejected rather than reinterpreted?</li>
 </ul>
 
-<hr/>
+<hr>
 
 <h2 id="what-conformance-means-here">3. What Conformance Means Here</h2>
 
-<p>
-In this directory, <strong>conformance</strong> means alignment with the published FROG specification layers and their ownership boundaries.
-It includes at least:
-</p>
+<p>In this directory, conformance means alignment with the published FROG specification layers and their ownership boundaries.</p>
 
+<p>It includes at least:</p>
 <ul>
   <li>source validation conformance,</li>
+  <li>semantic validation conformance,</li>
   <li>semantic preservation conformance,</li>
   <li>derivation-boundary conformance,</li>
   <li>backend-contract conformance,</li>
-  <li>rejection conformance for unsupported or invalid cases.</li>
+  <li>rejection conformance for invalid or unsupported cases.</li>
 </ul>
 
-<p>
-This is intentionally broader than just “does the tool run the program?”
-A tool can run something incorrectly.
-Conformance must therefore include both:
-</p>
+<p>This is intentionally broader than just “does the tool run the program?”</p>
 
+<p>A tool can run something incorrectly.<br>
+A tool can validate something incorrectly.<br>
+A tool can derive something executable while still violating published distinctions.</p>
+
+<p>Conformance must therefore include both:</p>
 <ul>
-  <li><strong>acceptance / rejection correctness</strong>, and</li>
-  <li><strong>preservation correctness</strong>.</li>
+  <li>acceptance / rejection correctness, and</li>
+  <li>preservation correctness.</li>
 </ul>
 
-<hr/>
+<hr>
 
 <h2 id="what-this-directory-does-not-do">4. What this Directory Does Not Do</h2>
 
-<p>
-This directory is <strong>not</strong>:
-</p>
-
+<p>This directory is not:</p>
 <ul>
   <li>a complete certification program,</li>
   <li>a frozen cross-vendor compatibility matrix,</li>
   <li>a universal deployment test suite,</li>
-  <li>a replacement for the normative specification documents.</li>
+  <li>a replacement for the normative specification documents,</li>
+  <li>a substitute for implementation debugging logs,</li>
+  <li>a place where new language law is invented informally.</li>
 </ul>
 
-<p>
-In base v0.1, this directory is only the beginning of a conformance story.
-Its job is to make the first expectations explicit and durable.
-</p>
+<p>In base v0.1, this directory is only the beginning of a conformance story. Its job is to make the first expectations explicit and durable.</p>
 
-<hr/>
+<hr>
 
 <h2 id="relation-with-specification-ownership">5. Relation with Specification Ownership</h2>
 
-<p>
-This directory does not own language truth.
-Ownership remains in the published specification layers:
-</p>
+<p>This directory does not own language truth.</p>
 
+<p>Ownership remains in the published specification layers:</p>
 <ul>
   <li><code>Expression/</code> owns canonical source structure,</li>
   <li><code>Language/</code> owns validated semantic truth,</li>
@@ -140,17 +135,69 @@ Ownership remains in the published specification layers:
   <li><code>IDE/</code> owns authoring-facing and observability-facing tooling concerns.</li>
 </ul>
 
-<p>
-Conformance material should therefore always point back to those owners instead of silently inventing new rules.
-</p>
+<p>Conformance material should therefore always point back to those owners instead of silently inventing new rules.</p>
 
-<hr/>
+<p>The authority rule is:</p>
 
-<h2 id="directory-structure">6. Directory Structure</h2>
+<pre><code>specification owners
+        |
+        v
+conformance cases
+        |
+        v
+implementation checks
+</code></pre>
 
-<p>
-A minimal initial structure may look like:
-</p>
+<p>Not the reverse.</p>
+
+<hr>
+
+<h2 id="relation-with-the-expression-to-meaning-boundary">6. Relation with the Expression-to-Meaning Boundary</h2>
+
+<p>A critical current conformance concern is the normative boundary:</p>
+
+<pre><code>canonical .frog source
+        |
+        v
+validated program meaning
+</code></pre>
+
+<p>That boundary is owned by <code>Language/Expression to validated meaning.md</code>.</p>
+
+<p>Conformance material must now make that boundary testable in public terms.</p>
+
+<p>In practice, this means conformance cases should increasingly express whether:</p>
+<ul>
+  <li>a source program validly establishes language-level meaning,</li>
+  <li>a source program fails before semantic meaning exists,</li>
+  <li>source-visible distinctions remain recoverable after validation,</li>
+  <li>execution-facing derivation preserves the distinctions that validated meaning established.</li>
+</ul>
+
+<p>This boundary especially matters for cases involving:</p>
+<ul>
+  <li><code>interface_input</code> / <code>interface_output</code>,</li>
+  <li><code>widget_value</code> / <code>widget_reference</code>,</li>
+  <li>front-panel participation vs public interface contract,</li>
+  <li>explicit state vs illegal feedback,</li>
+  <li>source-visible structure legality vs execution convenience.</li>
+</ul>
+
+<p>Conformance should therefore help prevent these forbidden collapses:</p>
+
+<pre><code>source          -/-> semantic authority drift
+validator       -/-> hidden language law
+front panel     -/-> public interface
+widget_value    -/-> widget_reference
+illegal cycle   -/-> implicit memory
+runtime shortcut-/-> semantic truth
+</code></pre>
+
+<hr>
+
+<h2 id="directory-structure">7. Directory Structure</h2>
+
+<p>The current minimal structure is:</p>
 
 <pre><code>Conformance/
 ├── Readme.md
@@ -158,10 +205,7 @@ A minimal initial structure may look like:
 └── invalid/
 </code></pre>
 
-<p>
-Each conformance case should normally state:
-</p>
-
+<p>Each conformance case should normally state:</p>
 <ul>
   <li>the case name,</li>
   <li>whether the case is expected to validate or fail,</li>
@@ -170,171 +214,179 @@ Each conformance case should normally state:
   <li>which rejection reason matters if the case is invalid.</li>
 </ul>
 
-<hr/>
+<p>A useful compact structure for one case is:</p>
 
-<h2 id="valid-and-invalid-cases">7. Valid and Invalid Cases</h2>
-
-<h3>7.1 Valid cases</h3>
-
-<p>
-A valid case is one that a conforming toolchain should accept under the relevant base rules and active profiles.
-For a valid case, the conformance note should normally state:
-</p>
-
-<ul>
-  <li>why the case is valid,</li>
-  <li>which constructs are being exercised,</li>
-  <li>what derivation must preserve,</li>
-  <li>what later lowering and backend handoff may specialize without semantic drift.</li>
-</ul>
-
-<h3>7.2 Invalid cases</h3>
-
-<p>
-An invalid case is one that a conforming toolchain should reject.
-For an invalid case, the conformance note should normally state:
-</p>
-
-<ul>
-  <li>why the case is invalid,</li>
-  <li>which rule or boundary is being violated,</li>
-  <li>why silent reinterpretation would be architecturally wrong.</li>
-</ul>
-
-<p>
-A key design rule of this directory is:
-</p>
-
-<pre><code>explicit rejection
-   is better than
-silent semantic laundering
+<pre><code>Case name
+Expected: valid | invalid
+Why:
+Boundaries exercised:
+Expected preservation:
+Expected rejection:
+Notes:
 </code></pre>
 
-<hr/>
+<hr>
 
-<h2 id="expected-outcomes">8. Expected Outcomes</h2>
+<h2 id="current-published-cases">8. Current Published Cases</h2>
 
-<p>
-Conformance cases in this directory should express outcomes in a structured way.
-At minimum, a case should make clear whether:
-</p>
+<h3>8.1 Valid cases</h3>
 
 <ul>
+  <li><code>valid/01_pure_addition.md</code></li>
+  <li><code>valid/02_ui_value_roundtrip.md</code></li>
+  <li><code>valid/03_ui_property_write.md</code></li>
+  <li><code>valid/04_stateful_feedback_delay.md</code></li>
+</ul>
+
+<h3>8.2 Invalid cases</h3>
+
+<ul>
+  <li><code>invalid/illegal_feedback_without_explicit_memory.md</code></li>
+  <li><code>invalid/interface_widget_role_confusion.md</code></li>
+  <li><code>invalid/ui_reference_without_ui_primitive.md</code></li>
+</ul>
+
+<p>Even at this early stage, the published set already shows the intended balance:</p>
+
+<pre><code>valid cases   -&gt; acceptance truth
+invalid cases -&gt; rejection truth
+both together -&gt; public boundary truth
+</code></pre>
+
+<p>This balance is important because explicit rejection is better than silent semantic laundering.</p>
+
+<hr>
+
+<h2 id="expected-outcomes">9. Expected Outcomes</h2>
+
+<p>Conformance cases in this directory should express outcomes in a structured way.</p>
+
+<p>At minimum, a case should make clear whether:</p>
+<ul>
   <li>validation is expected to pass or fail,</li>
+  <li>semantic meaning is established or not established,</li>
   <li>derivation is allowed or forbidden,</li>
   <li>specific distinctions must remain recoverable,</li>
   <li>specific backend-family assumptions may be declared,</li>
-  <li>specific unsupported situations must cause explicit rejection.</li>
+  <li>specific unsupported or invalid situations must cause explicit rejection.</li>
 </ul>
 
-<p>
-Examples of outcome language:
-</p>
-
+<p>Examples of outcome language:</p>
 <ul>
-  <li><strong>Expected: valid</strong></li>
-  <li><strong>Expected: invalid</strong></li>
+  <li><strong>Expected:</strong> valid</li>
+  <li><strong>Expected:</strong> invalid</li>
+  <li><strong>Expected meaning:</strong> language-level meaning established</li>
+  <li><strong>Expected meaning:</strong> language-level meaning not established</li>
   <li><strong>Expected preservation:</strong> explicit local memory remains explicit</li>
   <li><strong>Expected preservation:</strong> <code>widget_value</code> and <code>widget_reference</code> remain distinct</li>
+  <li><strong>Expected preservation:</strong> interface contract remains distinct from widget participation</li>
   <li><strong>Expected rejection:</strong> illegal feedback without explicit local memory</li>
+  <li><strong>Expected rejection:</strong> UI reference usage without a valid UI primitive context</li>
 </ul>
 
-<hr/>
+<hr>
 
-<h2 id="early-v01-conformance-focus">9. Early v0.1 Conformance Focus</h2>
+<h2 id="active-v01-conformance-focus">10. Active v0.1 Conformance Focus</h2>
 
-<p>
-For the first executable vertical slice of FROG v0.1, the most useful conformance focus is deliberately narrow.
-Initial cases should concentrate on:
-</p>
+<p>The active base-v0.1 conformance focus should remain small and architectural.</p>
 
+<p>At this stage, the priority is not broad feature coverage. The priority is boundary correctness.</p>
+
+<p>That means concentrating on cases that clarify:</p>
 <ul>
-  <li>basic interface participation,</li>
-  <li>basic primitive execution,</li>
-  <li>structured control in a small number of canonical cases,</li>
-  <li>explicit local memory and legal feedback,</li>
-  <li>UI value participation,</li>
-  <li>UI object-style interaction through standardized primitives,</li>
-  <li>correct rejection of boundary confusion and invalid cycles.</li>
+  <li>what validates and what fails,</li>
+  <li>what establishes semantic meaning and what does not,</li>
+  <li>what distinctions later layers must still preserve,</li>
+  <li>what must be rejected rather than silently repaired or reinterpreted.</li>
 </ul>
 
-<p>
-This is enough to support a first reference pipeline without pretending that all future conformance concerns are already closed.
-</p>
+<p>The practical v0.1 focus can be summarized as:</p>
 
-<hr/>
-
-<h2 id="relation-with-examples-and-reference-implementation">10. Relation with Examples and Reference Implementation</h2>
-
-<p>
-This directory should work together with:
-</p>
-
-<ul>
-  <li><code>Examples/</code> — which provides named source programs,</li>
-  <li><code>Implementations/Reference/</code> — which may try to process those programs through a reference pipeline.</li>
-</ul>
-
-<p>
-The relationship is:
-</p>
-
-<pre><code>Examples/
-   gives named source cases
-
-Conformance/
-   says what should happen
-
-Implementations/Reference/
-   tries to do it correctly
+<pre><code>1. source validity
+2. semantic validity
+3. preservation of key distinctions
+4. explicit rejection of architectural violations
 </code></pre>
 
-<p>
-A useful early pattern is:
-</p>
-
+<p>In particular, the following distinctions should remain visible in public conformance material:</p>
 <ul>
-  <li>one example program,</li>
-  <li>one conformance note describing expected behavior,</li>
-  <li>one reference-implementation attempt to load, validate, derive, lower, emit a contract, and eventually run it.</li>
+  <li><code>interface_input</code> vs <code>widget_value</code>,</li>
+  <li><code>widget_value</code> vs <code>widget_reference</code>,</li>
+  <li>legal explicit state vs illegal implicit state,</li>
+  <li>front-panel composition vs executable meaning,</li>
+  <li>validated meaning vs derived IR convenience.</li>
 </ul>
 
-<hr/>
+<hr>
 
-<h2 id="future-growth">11. Future Growth</h2>
+<h2 id="relation-with-examples-and-reference-implementation">11. Relation with Examples and Reference Implementation</h2>
 
-<p>
-Later versions of this directory may grow toward:
-</p>
+<p><code>Examples/</code>, <code>Conformance/</code>, and <code>Implementations/Reference/</code> have different roles.</p>
 
+<p>The distinction is:</p>
+
+<pre><code>Examples/                   -&gt; illustrative executable or inspectable slices
+Conformance/               -&gt; public accept / reject / preserve expectations
+Implementations/Reference/ -&gt; non-normative executable workspace
+</code></pre>
+
+<p>An example may demonstrate a pattern.<br>
+A conformance case states what must be accepted, rejected, or preserved.<br>
+A reference implementation may execute a case, but it does not become language law by doing so.</p>
+
+<p>This distinction must remain explicit.</p>
+
+<hr>
+
+<h2 id="future-growth">12. Future Growth</h2>
+
+<p>This directory should grow gradually, not by uncontrolled accumulation.</p>
+
+<p>Future growth should prefer small, named, reviewable cases that each exercise one clear boundary or one tight cluster of related obligations.</p>
+
+<p>Useful future directions include:</p>
 <ul>
-  <li>richer valid and invalid corpora,</li>
-  <li>profile-specific cases,</li>
-  <li>backend-family-specific compatibility cases,</li>
-  <li>more explicit preservation checks,</li>
-  <li>formal steward-driven certification material.</li>
+  <li>more source-to-meaning boundary cases,</li>
+  <li>more preservation cases across derivation,</li>
+  <li>more structure legality cases,</li>
+  <li>more type / value / state legality cases,</li>
+  <li>profile-gated acceptance and rejection cases,</li>
+  <li>backend-family rejection cases where silent reinterpretation would be wrong.</li>
 </ul>
 
-<p>
-In base v0.1, that future should remain visible,
-but the present directory should stay compact and useful.
-</p>
+<p>Growth should remain architecture-led:</p>
 
-<hr/>
+<pre><code>small case
+   -&gt; clear expectation
+   -&gt; clear owning specification layer
+   -&gt; clear public reviewability
+</code></pre>
 
-<h2 id="summary">12. Summary</h2>
+<hr>
 
-<p>
-This directory contains early conformance material for the published FROG specification.
-Its role is to make expected outcomes explicit:
-what should validate,
-what should fail,
-what should be preserved,
-and what should be rejected rather than silently reinterpreted.
-</p>
+<h2 id="summary">13. Summary</h2>
 
-<p>
-Conformance material is downstream from the normative specification.
-It does not define the language.
-It helps implementations stay aligned with it.
-</p>
+<p>This directory is the public conformance surface of the FROG repository.</p>
+
+<p>Its job is to make visible and durable:</p>
+<ul>
+  <li>what a conforming implementation should accept,</li>
+  <li>what a conforming implementation should reject,</li>
+  <li>what distinctions later layers must preserve,</li>
+  <li>what must remain explicit rather than being silently laundered by tooling.</li>
+</ul>
+
+<p>The essential rule remains:</p>
+
+<pre><code>specification owns truth
+conformance publishes expectations
+implementations must align
+</code></pre>
+
+<p>As the repository matures, this directory should progressively become the public truth surface for:</p>
+<ul>
+  <li>acceptance,</li>
+  <li>rejection,</li>
+  <li>preservation,</li>
+  <li>boundary discipline.</li>
+</ul>
