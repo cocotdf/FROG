@@ -269,6 +269,7 @@ Notes:
   <li><code>invalid/12_public_interface_declaration_must_not_require_front_panel_widget_existence.md</code></li>
   <li><code>invalid/14_layout_or_adjacency_must_not_be_treated_as_executable_participation.md</code></li>
   <li><code>invalid/16_inferred_evaluation_order_must_not_be_treated_as_dependency_or_connectivity.md</code></li>
+  <li><code>invalid/18_layout_grouping_or_apparent_nesting_must_not_be_treated_as_structure_boundary.md</code></li>
 </ul>
 
 <p>The published set already shows the intended balance:</p>
@@ -356,11 +357,17 @@ layout or adjacency
 inferred evaluation order
 </code></pre>
 
-<p>The newest valid case sharpens the next structure-oriented boundary:</p>
+<p>The pair formed by:</p>
+<ul>
+  <li><code>valid/17_explicit_structure_boundaries_remain_distinct_from_layout_grouping_or_nesting.md</code>, and</li>
+  <li><code>invalid/18_layout_grouping_or_apparent_nesting_must_not_be_treated_as_structure_boundary.md</code></li>
+</ul>
+
+<p>makes another boundary especially explicit:</p>
 
 <pre><code>explicit structure boundaries
               !=
-layout grouping or nesting
+layout grouping or apparent nesting
 </code></pre>
 
 <p>This balance matters because explicit rejection is better than silent semantic laundering.</p>
@@ -437,7 +444,7 @@ layout grouping or nesting
   <li>explicit structure boundaries versus grouping or apparent nesting.</li>
 </ul>
 
-<p>The current mirrored pairs sharpen six especially important rules, and the newest valid case prepares the seventh:</p>
+<p>The current mirrored pairs sharpen seven especially important rules:</p>
 
 <pre><code>widget declaration
     does not create
@@ -465,7 +472,7 @@ inferred evaluation order
 
 explicit structure boundaries
     do not arise from
-layout grouping or nesting
+layout grouping or apparent nesting
 </code></pre>
 
 <hr>
