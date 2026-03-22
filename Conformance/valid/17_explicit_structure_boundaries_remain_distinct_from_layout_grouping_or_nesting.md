@@ -4,7 +4,7 @@
 
 <h1>Conformance Case — 17 Explicit Structure Boundaries Remain Distinct from Layout Grouping or Nesting</h1>
 
-<p><strong>Valid conformance case for preserving that structure boundaries arise only from explicit structure declaration and not from visual grouping, framing, or apparent nesting in FROG v0.1</strong><br>
+<p><strong>Valid conformance case for preserving that structure boundaries, region membership, and structure ownership arise only from explicit structure declaration and not from visual grouping, framing, enclosure, or apparent nesting in FROG v0.1</strong><br>
 FROG — Free Open Graphical Language</p>
 
 <hr>
@@ -28,34 +28,36 @@ FROG — Free Open Graphical Language</p>
 
 <h2 id="overview">1. Overview</h2>
 
-<p>This conformance case defines a minimal valid program in which one explicit control structure exists, while other nearby nodes may appear visually grouped, framed, or nested in the diagram without becoming members of that structure unless they are explicitly placed within its declared structural boundary.</p>
+<p>This conformance case defines a minimal valid program in which one explicit control structure exists while other nearby nodes may appear visually grouped, framed, enclosed, or nested in relation to that structure without becoming members of it unless canonical source explicitly assigns them to the structure boundary or one of its regions.</p>
 
 <p>The purpose of this case is to confirm that a conforming FROG toolchain can accept a program where:</p>
 
 <ul>
-  <li>one explicit structure, such as a <code>case</code> or <code>while_loop</code>, is declared in canonical source,</li>
-  <li>its structural boundary, regions, and terminals are explicit,</li>
-  <li>other nearby nodes may be visually close to the structure or appear grouped with it in the diagram,</li>
+  <li>one explicit structure such as <code>case</code>, <code>for_loop</code>, or <code>while_loop</code> is declared in canonical source,</li>
+  <li>its boundary, regions, and structure-terminal participation are explicit,</li>
+  <li>one or more nearby nodes may look visually associated with the structure,</li>
   <li>only explicit structural membership creates structure semantics,</li>
-  <li>visual grouping or apparent nesting does not create hidden structure membership.</li>
+  <li>visual grouping, framing, enclosure, or apparent nesting does not create hidden structure membership.</li>
 </ul>
 
 <p>The conceptual shape is:</p>
 
 <pre><code>diagram layout
 
-  +----------------------------------+
-  | explicit case structure          |
-  |   region A: frog.core.add        |
-  |   region B: frog.core.multiply   |
-  +----------------------------------+
+  +--------------------------------------+
+  | explicit case structure              |
+  |                                      |
+  |   region A: frog.core.add            |
+  |   region B: frog.core.multiply       |
+  |                                      |
+  +--------------------------------------+
 
-      frog.core.subtract
-      (visually near the case frame,
-       but not structurally inside it)
+        frog.core.subtract
+        (nearby, visually related,
+         but not structurally inside)
 </code></pre>
 
-<p>In this case, the nearby <code>frog.core.subtract</code> node remains outside the structure unless the canonical source explicitly places it inside one of the structure regions.</p>
+<p>In this case, the nearby <code>frog.core.subtract</code> node remains outside the structure unless canonical source explicitly places it inside a declared structure region or boundary participation role.</p>
 
 <p>The required architectural rule is:</p>
 
@@ -70,7 +72,7 @@ layout grouping or apparent nesting
 
 <p><strong>Expected:</strong> valid</p>
 
-<p>A conforming implementation should accept this case because the structural meaning is fully established by explicit structure declaration and explicit region membership rather than by visual grouping.</p>
+<p>A conforming implementation should accept this case because the structural meaning is fully established by explicit structure declaration and explicit region membership rather than by visual grouping or enclosure.</p>
 
 <hr>
 
@@ -86,9 +88,9 @@ layout grouping or apparent nesting
   <li>one explicit control structure such as <code>case</code>,</li>
   <li>explicit declared regions for that structure,</li>
   <li>one or more primitives explicitly placed inside those declared regions,</li>
+  <li>explicit structure terminals where required,</li>
   <li>one additional primitive visually near the structure frame but not declared as a member of any structure region,</li>
-  <li>explicit structure terminals and edges where required,</li>
-  <li>no published rule that allows apparent nesting, bounding-box overlap, or graphical framing to substitute for explicit structure membership.</li>
+  <li>no published rule that allows apparent nesting, frame overlap, enclosure, or editor grouping to substitute for explicit structure membership.</li>
 </ul>
 
 <p>The minimal participation model is therefore:</p>
@@ -96,10 +98,12 @@ layout grouping or apparent nesting
 <pre><code>explicit structure declaration
       +
 explicit region membership
+      +
+explicit boundary participation
       =
 structure semantics
 
-visual grouping
+visual grouping or enclosure
       !=
 structure membership
 </code></pre>
@@ -113,11 +117,11 @@ structure membership
 <ul>
   <li>which nodes belong to its regions,</li>
   <li>which terminals belong to its boundary,</li>
-  <li>which execution alternatives or iterations are governed by the structure,</li>
+  <li>which execution alternatives, iterations, or region-local rules are governed by the structure,</li>
   <li>which nearby nodes remain outside the structure.</li>
 </ul>
 
-<p>A visually nearby node does not enter the structure merely because it appears inside a rough graphical area, near a boundary, or visually associated with the structure.</p>
+<p>A visually nearby node does not enter the structure merely because it appears inside a rough graphical area, near a frame, inside a drawing box, or visually associated with the structure.</p>
 
 <p>The semantic rule is therefore:</p>
 
@@ -125,7 +129,7 @@ structure membership
 does create
 structure semantics
 
-apparent grouping
+apparent grouping or enclosure
 does not create
 structure semantics
 </code></pre>
@@ -140,14 +144,15 @@ structure semantics
   <li>explicit structure-terminal participation,</li>
   <li>distinction between structural boundary and diagram layout,</li>
   <li>distinction between structure membership and graphical grouping,</li>
-  <li>rejection of hidden structure law inferred from visual nesting.</li>
+  <li>distinction between declared nesting and apparent nesting,</li>
+  <li>rejection of hidden structure law inferred from visual arrangement.</li>
 </ul>
 
 <p>The key architectural boundary exercised by this case is:</p>
 
 <pre><code>declared structure membership
             !=
-visual grouping or framing
+visual grouping, enclosure, or framing
 </code></pre>
 
 <hr>
@@ -160,12 +165,13 @@ visual grouping or framing
   <li>the structure is explicitly declared in canonical source,</li>
   <li>its regions are explicitly defined,</li>
   <li>its participating internal nodes are explicitly placed within those regions,</li>
+  <li>its structure ownership is determined by declaration rather than by layout,</li>
   <li>the nearby external node remains outside the structure because no explicit structural membership places it inside,</li>
-  <li>the case preserves the published rule that structures are semantic objects with explicit boundaries, not editor-drawn grouping hints,</li>
+  <li>the case preserves the published rule that structures are semantic objects with explicit boundaries and explicit membership, not editor-drawn grouping hints,</li>
   <li>the program remains meaningful without inventing hidden nesting from layout.</li>
 </ul>
 
-<p>The essential point is that visual grouping may help readability, but it does not create structure ownership, region membership, or boundary law.</p>
+<p>The essential point is that visual grouping may help readability and recoverability, but it does not create structure ownership, region membership, or boundary law.</p>
 
 <hr>
 
@@ -181,7 +187,7 @@ visual grouping or framing
   <li>the participating internal nodes are validly placed within explicit structure regions,</li>
   <li>the structure terminals and boundary participations are valid where used,</li>
   <li>the nearby external node is not required to be treated as part of the structure,</li>
-  <li>no rule allows layout grouping, frame overlap, or apparent nesting to substitute for explicit structure membership.</li>
+  <li>no rule allows layout grouping, enclosure, frame overlap, or apparent nesting to substitute for explicit structure membership.</li>
 </ul>
 
 <p>The validator should therefore establish a valid program in which:</p>
@@ -201,7 +207,7 @@ visual proximity to a structure does not
   <li>internal nodes remain internal because of explicit membership,</li>
   <li>external nearby nodes remain external,</li>
   <li>diagram layout remains presentation and recoverability information,</li>
-  <li>structure law remains defined by explicit structural boundaries rather than visual grouping.</li>
+  <li>structure law remains defined by explicit structural boundaries rather than by visual grouping or apparent enclosure.</li>
 </ul>
 
 <p>The preserved distinction is conceptually:</p>
@@ -232,8 +238,8 @@ structure membership
 
 <ul>
   <li>structural control semantics come from explicit structure ownership and explicit region membership,</li>
-  <li>layout or framing metadata may remain useful for authoring or recoverability,</li>
-  <li>layout or framing metadata must not create structure boundaries or structure membership.</li>
+  <li>layout, framing, or grouping metadata may remain useful for authoring or recoverability,</li>
+  <li>layout, framing, or grouping metadata must not create structure boundaries or structure membership.</li>
 </ul>
 
 <p>The preservation rule remains:</p>
@@ -258,7 +264,7 @@ structure boundary
   <li>as if graphical framing or editor grouping implied region membership,</li>
   <li>as if apparent nesting created hidden structure ownership,</li>
   <li>as if layout overlap or boundary proximity were enough to move a node inside a structure,</li>
-  <li>as if editor convenience could promote grouping into structure law while still preserving conformance.</li>
+  <li>as if editor convenience could promote grouping or enclosure into structure law while still preserving conformance.</li>
 </ul>
 
 <p>The forbidden collapses can be summarized as:</p>
@@ -281,7 +287,7 @@ nearby node         -/-> internal structure node
   <li>accept the case,</li>
   <li>validate it as meaningful,</li>
   <li>preserve that structure semantics come from explicit structural declaration,</li>
-  <li>avoid collapsing layout grouping or apparent nesting into structure law.</li>
+  <li>avoid collapsing layout grouping, enclosure, or apparent nesting into structure law.</li>
 </ul>
 
 <p>The essential preservation rule is:</p>
