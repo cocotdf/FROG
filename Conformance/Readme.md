@@ -184,7 +184,8 @@ validated program meaning
   <li><code>widget_value</code> / <code>widget_reference</code>,</li>
   <li>front-panel participation versus public interface contract,</li>
   <li>explicit state versus illegal feedback,</li>
-  <li>source-visible structure legality versus execution convenience.</li>
+  <li>source-visible structure legality versus execution convenience,</li>
+  <li>explicit diagram participation versus layout or adjacency suggestion.</li>
 </ul>
 
 <p>Conformance should therefore help prevent these forbidden collapses:</p>
@@ -195,6 +196,8 @@ front panel       -/-> public interface
 widget_value      -/-> widget_reference
 illegal cycle     -/-> implicit memory
 runtime shortcut  -/-> semantic truth
+layout            -/-> executable participation
+adjacency         -/-> dependency law
 </code></pre>
 
 <hr>
@@ -244,6 +247,7 @@ Notes:
   <li><code>valid/07_widget_reference_remains_distinct_from_widget_value.md</code></li>
   <li><code>valid/09_front_panel_presence_does_not_by_itself_define_execution_meaning.md</code></li>
   <li><code>valid/11_public_interface_declaration_does_not_require_front_panel_widget_existence.md</code></li>
+  <li><code>valid/13_explicit_diagram_participation_remains_distinct_from_layout_or_adjacency.md</code></li>
 </ul>
 
 <h3>8.2 Invalid cases</h3>
@@ -256,6 +260,7 @@ Notes:
   <li><code>invalid/08_widget_reference_must_not_be_treated_as_widget_value.md</code></li>
   <li><code>invalid/10_front_panel_presence_must_not_be_treated_as_execution_meaning.md</code></li>
   <li><code>invalid/12_public_interface_declaration_must_not_require_front_panel_widget_existence.md</code></li>
+  <li><code>invalid/14_layout_or_adjacency_must_not_be_treated_as_executable_participation.md</code></li>
 </ul>
 
 <p>The published set already shows the intended balance:</p>
@@ -294,7 +299,7 @@ widget_value
 <p>The pair formed by:</p>
 <ul>
   <li><code>valid/09_front_panel_presence_does_not_by_itself_define_execution_meaning.md</code>, and</li>
-  <li><code>invalid/10_front_panel_presence_must_not_be_treated_as_execution_meaning.md</code></li>
+  <li><code>invalid/10_front_panel_presence_must_not_be_treated_as_executionMeaning.md</code></li>
 </ul>
 
 <p>makes another boundary especially explicit:</p>
@@ -315,6 +320,19 @@ execution meaning
 <pre><code>public interface declaration
         !=
 required front-panel widget existence
+</code></pre>
+
+<p>The pair formed by:</p>
+<ul>
+  <li><code>valid/13_explicit_diagram_participation_remains_distinct_from_layout_or_adjacency.md</code>, and</li>
+  <li><code>invalid/14_layout_or_adjacency_must_not_be_treated_as_executable_participation.md</code></li>
+</ul>
+
+<p>makes another boundary especially explicit:</p>
+
+<pre><code>explicit diagram participation
+        !=
+layout or adjacency
 </code></pre>
 
 <p>This balance matters because explicit rejection is better than silent semantic laundering.</p>
@@ -350,6 +368,7 @@ required front-panel widget existence
   <li><strong>Expected rejection:</strong> widget-reference participation must not be treated as widget-value participation</li>
   <li><strong>Expected rejection:</strong> front-panel presence must not be treated as execution meaning</li>
   <li><strong>Expected rejection:</strong> public interface declaration must not require front-panel widget existence</li>
+  <li><strong>Expected rejection:</strong> layout or adjacency must not be treated as executable participation</li>
 </ul>
 
 <hr>
@@ -382,10 +401,11 @@ required front-panel widget existence
   <li><code>widget_value</code> versus <code>widget_reference</code>,</li>
   <li>legal explicit state versus illegal implicit state,</li>
   <li>front-panel composition versus executable meaning,</li>
-  <li>validated meaning versus derived IR convenience.</li>
+  <li>validated meaning versus derived IR convenience,</li>
+  <li>explicit graph participation versus layout or adjacency suggestion.</li>
 </ul>
 
-<p>The current mirrored pairs sharpen four especially important rules:</p>
+<p>The current mirrored pairs sharpen five especially important rules:</p>
 
 <pre><code>widget declaration
     does not create
@@ -402,6 +422,10 @@ execution meaning
 public interface declaration
     does not require
 front-panel widget existence
+
+explicit diagram participation
+    does not arise from
+layout or adjacency
 </code></pre>
 
 <hr>
