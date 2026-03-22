@@ -241,6 +241,7 @@ Notes:
   <li><code>valid/03_ui_property_write.md</code></li>
   <li><code>valid/04_stateful_feedback_delay.md</code></li>
   <li><code>valid/05_public_interface_and_widget_participation_distinct.md</code></li>
+  <li><code>valid/07_widget_reference_remains_distinct_from_widget_value.md</code></li>
 </ul>
 
 <h3>8.2 Invalid cases</h3>
@@ -250,6 +251,7 @@ Notes:
   <li><code>invalid/interface_widget_role_confusion.md</code></li>
   <li><code>invalid/ui_reference_without_ui_primitive.md</code></li>
   <li><code>invalid/06_widget_must_not_be_promoted_to_public_interface.md</code></li>
+  <li><code>invalid/08_widget_reference_must_not_be_treated_as_widget_value.md</code></li>
 </ul>
 
 <p>The published set already shows the intended balance:</p>
@@ -270,6 +272,19 @@ both together -&gt; public boundary truth
 <pre><code>public interface participation
             !=
 widget-owned value participation
+</code></pre>
+
+<p>The pair formed by:</p>
+<ul>
+  <li><code>valid/07_widget_reference_remains_distinct_from_widget_value.md</code>, and</li>
+  <li><code>invalid/08_widget_reference_must_not_be_treated_as_widget_value.md</code></li>
+</ul>
+
+<p>makes another boundary especially explicit:</p>
+
+<pre><code>widget_reference
+        !=
+widget_value
 </code></pre>
 
 <p>This balance matters because explicit rejection is better than silent semantic laundering.</p>
@@ -302,6 +317,7 @@ widget-owned value participation
   <li><strong>Expected rejection:</strong> illegal feedback without explicit local memory</li>
   <li><strong>Expected rejection:</strong> UI reference usage without a valid UI primitive context</li>
   <li><strong>Expected rejection:</strong> widget-owned value participation must not be promoted to public interface participation</li>
+  <li><strong>Expected rejection:</strong> widget-reference participation must not be treated as widget-value participation</li>
 </ul>
 
 <hr>
@@ -337,11 +353,15 @@ widget-owned value participation
   <li>validated meaning versus derived IR convenience.</li>
 </ul>
 
-<p>The newest valid/invalid pair sharpens one especially important rule:</p>
+<p>The current mirrored pairs sharpen two especially important rules:</p>
 
 <pre><code>widget declaration
     does not create
 public interface declaration
+
+widget_reference
+    does not become
+widget_value
 </code></pre>
 
 <hr>
