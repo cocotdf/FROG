@@ -1,3 +1,6 @@
+<p align="center">
+  <img src="../../FROG logo.svg" alt="FROG logo" width="140" />
+</p>
 <h1>Conformance Case — 05 Public Interface and Widget Participation Distinct</h1>
 
 <p><strong>Valid conformance case for preserving the distinction between public interface participation and natural widget participation in FROG v0.1</strong><br>
