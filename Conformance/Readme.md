@@ -242,6 +242,7 @@ Notes:
   <li><code>valid/04_stateful_feedback_delay.md</code></li>
   <li><code>valid/05_public_interface_and_widget_participation_distinct.md</code></li>
   <li><code>valid/07_widget_reference_remains_distinct_from_widget_value.md</code></li>
+  <li><code>valid/09_front_panel_presence_does_not_by_itself_define_execution_meaning.md</code></li>
 </ul>
 
 <h3>8.2 Invalid cases</h3>
@@ -252,6 +253,7 @@ Notes:
   <li><code>invalid/ui_reference_without_ui_primitive.md</code></li>
   <li><code>invalid/06_widget_must_not_be_promoted_to_public_interface.md</code></li>
   <li><code>invalid/08_widget_reference_must_not_be_treated_as_widget_value.md</code></li>
+  <li><code>invalid/10_front_panel_presence_must_not_be_treated_as_execution_meaning.md</code></li>
 </ul>
 
 <p>The published set already shows the intended balance:</p>
@@ -287,6 +289,19 @@ widget-owned value participation
 widget_value
 </code></pre>
 
+<p>The pair formed by:</p>
+<ul>
+  <li><code>valid/09_front_panel_presence_does_not_by_itself_define_execution_meaning.md</code>, and</li>
+  <li><code>invalid/10_front_panel_presence_must_not_be_treated_as_execution_meaning.md</code></li>
+</ul>
+
+<p>makes another boundary especially explicit:</p>
+
+<pre><code>front-panel presence
+        !=
+execution meaning
+</code></pre>
+
 <p>This balance matters because explicit rejection is better than silent semantic laundering.</p>
 
 <hr>
@@ -318,6 +333,7 @@ widget_value
   <li><strong>Expected rejection:</strong> UI reference usage without a valid UI primitive context</li>
   <li><strong>Expected rejection:</strong> widget-owned value participation must not be promoted to public interface participation</li>
   <li><strong>Expected rejection:</strong> widget-reference participation must not be treated as widget-value participation</li>
+  <li><strong>Expected rejection:</strong> front-panel presence must not be treated as execution meaning</li>
 </ul>
 
 <hr>
@@ -353,7 +369,7 @@ widget_value
   <li>validated meaning versus derived IR convenience.</li>
 </ul>
 
-<p>The current mirrored pairs sharpen two especially important rules:</p>
+<p>The current mirrored pairs sharpen three especially important rules:</p>
 
 <pre><code>widget declaration
     does not create
@@ -362,6 +378,10 @@ public interface declaration
 widget_reference
     does not become
 widget_value
+
+front-panel presence
+    does not create
+execution meaning
 </code></pre>
 
 <hr>
