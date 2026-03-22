@@ -243,6 +243,7 @@ Notes:
   <li><code>valid/05_public_interface_and_widget_participation_distinct.md</code></li>
   <li><code>valid/07_widget_reference_remains_distinct_from_widget_value.md</code></li>
   <li><code>valid/09_front_panel_presence_does_not_by_itself_define_execution_meaning.md</code></li>
+  <li><code>valid/11_public_interface_declaration_does_not_require_front_panel_widget_existence.md</code></li>
 </ul>
 
 <h3>8.2 Invalid cases</h3>
@@ -254,13 +255,14 @@ Notes:
   <li><code>invalid/06_widget_must_not_be_promoted_to_public_interface.md</code></li>
   <li><code>invalid/08_widget_reference_must_not_be_treated_as_widget_value.md</code></li>
   <li><code>invalid/10_front_panel_presence_must_not_be_treated_as_execution_meaning.md</code></li>
+  <li><code>invalid/12_public_interface_declaration_must_not_require_front_panel_widget_existence.md</code></li>
 </ul>
 
 <p>The published set already shows the intended balance:</p>
 
-<pre><code>valid cases   -&gt; acceptance truth
-invalid cases -&gt; rejection truth
-both together -&gt; public boundary truth
+<pre><code>valid cases   -> acceptance truth
+invalid cases -> rejection truth
+both together -> public boundary truth
 </code></pre>
 
 <p>The pair formed by:</p>
@@ -302,6 +304,19 @@ widget_value
 execution meaning
 </code></pre>
 
+<p>The pair formed by:</p>
+<ul>
+  <li><code>valid/11_public_interface_declaration_does_not_require_front_panel_widget_existence.md</code>, and</li>
+  <li><code>invalid/12_public_interface_declaration_must_not_require_front_panel_widget_existence.md</code></li>
+</ul>
+
+<p>makes another boundary especially explicit:</p>
+
+<pre><code>public interface declaration
+        !=
+required front-panel widget existence
+</code></pre>
+
 <p>This balance matters because explicit rejection is better than silent semantic laundering.</p>
 
 <hr>
@@ -334,6 +349,7 @@ execution meaning
   <li><strong>Expected rejection:</strong> widget-owned value participation must not be promoted to public interface participation</li>
   <li><strong>Expected rejection:</strong> widget-reference participation must not be treated as widget-value participation</li>
   <li><strong>Expected rejection:</strong> front-panel presence must not be treated as execution meaning</li>
+  <li><strong>Expected rejection:</strong> public interface declaration must not require front-panel widget existence</li>
 </ul>
 
 <hr>
@@ -369,7 +385,7 @@ execution meaning
   <li>validated meaning versus derived IR convenience.</li>
 </ul>
 
-<p>The current mirrored pairs sharpen three especially important rules:</p>
+<p>The current mirrored pairs sharpen four especially important rules:</p>
 
 <pre><code>widget declaration
     does not create
@@ -382,6 +398,10 @@ widget_value
 front-panel presence
     does not create
 execution meaning
+
+public interface declaration
+    does not require
+front-panel widget existence
 </code></pre>
 
 <hr>
@@ -392,9 +412,9 @@ execution meaning
 
 <p>The distinction is:</p>
 
-<pre><code>Examples/                   -&gt; illustrative executable or inspectable slices
-Conformance/                -&gt; public accept / reject / preserve expectations
-Implementations/Reference/  -&gt; non-normative executable workspace
+<pre><code>Examples/                   -> illustrative executable or inspectable slices
+Conformance/                -> public accept / reject / preserve expectations
+Implementations/Reference/  -> non-normative executable workspace
 </code></pre>
 
 <p>An example may demonstrate a pattern.<br>
@@ -425,9 +445,12 @@ A reference implementation may execute a case, but it does not become language l
 <p>Growth should remain architecture-led:</p>
 
 <pre><code>small case
-   -&gt; clear expectation
-   -&gt; clear owning specification layer
-   -&gt; clear public reviewability
+   ->
+clear expectation
+   ->
+clear owning specification layer
+   ->
+clear public reviewability
 </code></pre>
 
 <hr>
