@@ -187,7 +187,8 @@ validated program meaning
   <li>source-visible structure legality versus execution convenience,</li>
   <li>explicit diagram participation versus layout or adjacency suggestion,</li>
   <li>explicit connectivity versus inferred evaluation order,</li>
-  <li>explicit structure boundaries versus layout grouping or apparent nesting.</li>
+  <li>explicit structure boundaries versus layout grouping or apparent nesting,</li>
+  <li>explicit structure terminals versus inferred region crossing by layout.</li>
 </ul>
 
 <p>Conformance should therefore help prevent these forbidden collapses:</p>
@@ -203,6 +204,7 @@ adjacency         -/-> dependency law
 visual order      -/-> semantic execution order
 grouping          -/-> structure boundary
 apparent nesting  -/-> structure membership
+frame crossing    -/-> structure-terminal usage
 </code></pre>
 
 <hr>
@@ -255,6 +257,7 @@ Notes:
   <li><code>valid/13_explicit_diagram_participation_remains_distinct_from_layout_or_adjacency.md</code></li>
   <li><code>valid/15_explicit_connectivity_remains_distinct_from_inferred_evaluation_order.md</code></li>
   <li><code>valid/17_explicit_structure_boundaries_remain_distinct_from_layout_grouping_or_nesting.md</code></li>
+  <li><code>valid/19_explicit_structure_terminals_remain_distinct_from_inferred_region_crossing_by_layout.md</code></li>
 </ul>
 
 <h3>8.2 Invalid cases</h3>
@@ -270,6 +273,7 @@ Notes:
   <li><code>invalid/14_layout_or_adjacency_must_not_be_treated_as_executable_participation.md</code></li>
   <li><code>invalid/16_inferred_evaluation_order_must_not_be_treated_as_dependency_or_connectivity.md</code></li>
   <li><code>invalid/18_layout_grouping_or_apparent_nesting_must_not_be_treated_as_structure_boundary.md</code></li>
+  <li><code>invalid/20_inferred_region_crossing_by_layout_must_not_be_treated_as_structure_terminal_usage.md</code></li>
 </ul>
 
 <p>The published set already shows the intended balance:</p>
@@ -370,6 +374,19 @@ inferred evaluation order
 layout grouping or apparent nesting
 </code></pre>
 
+<p>The pair formed by:</p>
+<ul>
+  <li><code>valid/19_explicit_structure_terminals_remain_distinct_from_inferred_region_crossing_by_layout.md</code>, and</li>
+  <li><code>invalid/20_inferred_region_crossing_by_layout_must_not_be_treated_as_structure_terminal_usage.md</code></li>
+</ul>
+
+<p>makes another boundary especially explicit:</p>
+
+<pre><code>explicit structure terminals
+              !=
+inferred region crossing by layout
+</code></pre>
+
 <p>This balance matters because explicit rejection is better than silent semantic laundering.</p>
 
 <hr>
@@ -406,6 +423,7 @@ layout grouping or apparent nesting
   <li><strong>Expected rejection:</strong> layout or adjacency must not be treated as executable participation</li>
   <li><strong>Expected rejection:</strong> inferred evaluation order must not be treated as dependency or connectivity</li>
   <li><strong>Expected rejection:</strong> layout grouping or apparent nesting must not be treated as structure boundary</li>
+  <li><strong>Expected rejection:</strong> inferred region crossing by layout must not be treated as structure-terminal usage</li>
 </ul>
 
 <hr>
@@ -441,10 +459,11 @@ layout grouping or apparent nesting
   <li>validated meaning versus derived IR convenience,</li>
   <li>explicit graph participation versus layout or adjacency suggestion,</li>
   <li>explicit connectivity versus inferred evaluation order,</li>
-  <li>explicit structure boundaries versus grouping or apparent nesting.</li>
+  <li>explicit structure boundaries versus grouping or apparent nesting,</li>
+  <li>explicit structure terminals versus inferred region crossing by layout.</li>
 </ul>
 
-<p>The current mirrored pairs sharpen seven especially important rules:</p>
+<p>The current mirrored pairs sharpen eight especially important rules:</p>
 
 <pre><code>widget declaration
     does not create
@@ -473,6 +492,10 @@ inferred evaluation order
 explicit structure boundaries
     do not arise from
 layout grouping or apparent nesting
+
+explicit structure terminals
+    do not arise from
+inferred region crossing by layout
 </code></pre>
 
 <hr>
@@ -508,6 +531,7 @@ A reference implementation may execute a case, but it does not become language l
   <li>more preservation cases across derivation,</li>
   <li>more structure legality cases,</li>
   <li>more type / value / state legality cases,</li>
+  <li>more structure-terminal legality cases,</li>
   <li>profile-gated acceptance and rejection cases,</li>
   <li>backend-family rejection cases where silent reinterpretation would be wrong,</li>
   <li>mirrored valid/invalid pairs for each critical boundary.</li>
