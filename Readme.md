@@ -16,6 +16,7 @@
 <p align="center">
   <a href="#what-is-frog">What is FROG?</a> •
   <a href="#what-this-repository-defines">What this repository defines</a> •
+  <a href="#published-repository-state">Published repository state</a> •
   <a href="#positioning">Positioning</a> •
   <a href="#breaking-the-syntax-first-bottleneck">Breaking the syntax-first bottleneck</a> •
   <a href="#why-frog-exists">Why FROG exists</a> •
@@ -98,6 +99,12 @@ Its role is to provide a durable open foundation for future:
 </ul>
 
 <p>
+The repository also contains repository-level support material that helps make the specification inspectable in practice:
+named examples, early conformance material, and a non-normative reference implementation workspace.
+Those areas support the published specification, but they do not replace its ownership boundaries.
+</p>
+
+<p>
 This repository does <strong>not</strong> define one mandatory product implementation.
 It does not equate the language with one IDE, one runtime, one compiler, one vendor stack, or one deployment model.
 </p>
@@ -109,6 +116,64 @@ It does not equate the language with one IDE, one runtime, one compiler, one ven
   <li><strong>FROG is not a vendor product.</strong></li>
   <li><strong>FROG is an open language specification with distinct source, semantic, IR, library, profile, and IDE-facing layers.</strong></li>
 </ul>
+
+<hr/>
+
+<h2 id="published-repository-state">Published repository state</h2>
+
+<p>
+At the current published state, the repository already contains the six core architectural specification families:
+<code>Expression/</code>,
+<code>Language/</code>,
+<code>IR/</code>,
+<code>Libraries/</code>,
+<code>Profiles/</code>,
+and <code>IDE/</code>.
+These remain the primary ownership layers of the published language specification.
+</p>
+
+<p>
+The repository also now contains three important repository-level support areas:
+</p>
+
+<ul>
+  <li><strong><code>Examples/</code></strong> — named source examples and the first executable vertical slices,</li>
+  <li><strong><code>Conformance/</code></strong> — early conformance material describing what should validate, fail, be preserved, or be rejected,</li>
+  <li><strong><code>Implementations/Reference/</code></strong> — a non-normative reference implementation workspace used to exercise a disciplined minimal execution path.</li>
+</ul>
+
+<p>
+The currently published example slices are:
+</p>
+
+<ul>
+  <li><code>01_pure_addition</code>,</li>
+  <li><code>02_ui_value_roundtrip</code>,</li>
+  <li><code>03_ui_property_write</code>,</li>
+  <li><code>04_stateful_feedback_delay</code>.</li>
+</ul>
+
+<p>
+Together, these published materials show that the repository is no longer only architectural prose.
+It already exposes a first repository-visible reference path where a controlled published subset can be loaded, validated, derived into a standardized open execution-facing representation, lowered toward a backend family, emitted as a backend-facing contract, and consumed by a reference runtime experiment.
+</p>
+
+<p>
+That published reality does <strong>not</strong> yet mean that the repository already contains:
+</p>
+
+<ul>
+  <li>the final normative production compiler pipeline,</li>
+  <li>the final fully stabilized FROG execution IR schema,</li>
+  <li>one definitive production runtime architecture.</li>
+</ul>
+
+<p>
+The current repository state should therefore be read as:
+published architectural specification first,
+published early examples and conformance expectations,
+and published non-normative executable reference prototypes for a controlled subset.
+</p>
 
 <hr/>
 
@@ -391,18 +456,23 @@ This keeps ordinary dataflow wiring simple while preserving a clean long-term ob
 <h2 id="repository-structure">Repository structure</h2>
 
 <p>
-This repository is organized by <strong>architectural responsibility</strong>.
-Each top-level directory has a specific role in the specification.
+This repository is organized by <strong>architectural responsibility</strong> plus a small number of repository-level support areas.
+The six core specification families remain the architectural baseline of FROG.
+The support areas exist to make that baseline more inspectable, testable, and executable without moving normative ownership away from the specification layers.
 </p>
 
 <pre><code>FROG/
 │
+├── Conformance/                      Early conformance material and expected outcomes
+├── Examples/                         Named source examples and first executable vertical slices
 ├── Expression/                       Canonical source specification for .frog programs
-├── Language/                         Normative execution semantics for validated program meaning
+├── IDE/                              IDE architecture, authoring, observability, debugging, and inspection
 ├── IR/                               Open execution-facing representation and downstream handoff boundaries
+├── Implementations/
+│   └── Reference/                    Non-normative reference implementation workspace and executable prototypes
+├── Language/                         Normative execution semantics for validated program meaning
 ├── Libraries/                        Intrinsic standardized primitive-library specifications
 ├── Profiles/                         Optional standardized capability-family specifications
-├── IDE/                              IDE architecture, authoring, observability, debugging, and inspection
 │
 ├── CLA.md                            Contributor license agreement requirements
 ├── CONTRIBUTING.md                   Contribution process and contribution rules
@@ -412,6 +482,58 @@ Each top-level directory has a specific role in the specification.
 ├── Readme.md                         Repository landing page and architectural overview
 └── frog-orville-chart.png            Positioning illustration used by the repository
 </code></pre>
+
+<p>
+The six core specification families are:
+</p>
+
+<ul>
+  <li><strong><code>Expression/</code></strong></li>
+  <li><strong><code>Language/</code></strong></li>
+  <li><strong><code>IR/</code></strong></li>
+  <li><strong><code>Libraries/</code></strong></li>
+  <li><strong><code>Profiles/</code></strong></li>
+  <li><strong><code>IDE/</code></strong></li>
+</ul>
+
+<p>
+The current repository-level support areas are:
+</p>
+
+<ul>
+  <li><strong><code>Examples/</code></strong> — named source cases and compact executable slices,</li>
+  <li><strong><code>Conformance/</code></strong> — expected outcomes for validation, preservation, and rejection,</li>
+  <li><strong><code>Implementations/Reference/</code></strong> — non-normative prototype workspace used to exercise the current reference path.</li>
+</ul>
+
+<h3><code>Conformance/</code> — early conformance material</h3>
+
+<p>
+This directory contains early conformance material for the published FROG specification.
+Its role is to make expected outcomes explicit:
+what a conforming toolchain should accept,
+what it should reject,
+what distinctions must be preserved,
+and what unsupported situations must cause explicit rejection rather than silent reinterpretation.
+</p>
+
+<h3><code>Examples/</code> — named source examples and first executable slices</h3>
+
+<p>
+This directory contains minimal example programs for the published FROG specification.
+Its role is to provide compact named source cases that help make the architecture readable, teach boundary distinctions, and support the first executable vertical slices without turning examples into hidden semantic law.
+</p>
+
+<p>
+At the current published state, the first visible example slices are:
+</p>
+
+<ul>
+  <li><code>01_pure_addition</code>,</li>
+  <li><code>02_ui_value_roundtrip</code>,</li>
+  <li><code>03_ui_property_write</code>,</li>
+  <li><code>04_stateful_feedback_delay</code>.</li>
+</ul>
 
 <h3><code>Expression/</code> — canonical source specification</h3>
 
@@ -436,6 +558,34 @@ It sits between validated semantics and later lowering, backend mapping, compila
 
 <p>
 It also documents adjacent downstream boundaries needed to connect the open IR layer to later specialization stages without collapsing the open IR into one private runtime pipeline.
+</p>
+
+<h3><code>Implementations/Reference/</code> — non-normative reference implementation workspace</h3>
+
+<p>
+This directory is the current published non-normative reference implementation workspace.
+Its immediate goal is not to define one production platform.
+Its immediate goal is to exercise disciplined minimal executable vertical slices that prove stage boundaries can already be made real and inspectable.
+</p>
+
+<p>
+Within the current published repository, this workspace contains prototype components such as:
+</p>
+
+<ul>
+  <li><code>CLI</code>,</li>
+  <li><code>Loader</code>,</li>
+  <li><code>Validator</code>,</li>
+  <li><code>Deriver</code>,</li>
+  <li><code>Lowerer</code>,</li>
+  <li><code>ContractEmitter</code>,</li>
+  <li><code>Runtime</code>,</li>
+  <li><code>UIHost</code>.</li>
+</ul>
+
+<p>
+These executable slices are reference prototypes.
+They are serious implementation exercises, but they are not yet the final production compiler pipeline of FROG.
 </p>
 
 <h3><code>Libraries/</code> — intrinsic standardized primitive libraries</h3>
@@ -491,7 +641,24 @@ The map below summarizes the intended role of the Markdown documents in the curr
 │   -> contributor license agreement entry point and legal contribution notice
 ├── GOVERNANCE.md
 │   -> repository governance, stewardship model, open-specification posture,
-│      ecosystem participation, conformance direction, and branding boundary
+│      ecosystem participation, conformance direction, certification direction,
+│      and branding boundary
+│
+├── Examples/
+│   └── Readme.md
+│       -> architectural role of named example programs, example design rules,
+│          first example slices, and relation with conformance and reference implementation
+│
+├── Conformance/
+│   └── Readme.md
+│       -> early conformance material, expected outcomes, valid/invalid case posture,
+│          preservation obligations, rejection expectations, and relation with examples
+│
+├── Implementations/
+│   └── Reference/
+│       └── Readme.md
+│           -> non-normative reference workspace, executable-slice purpose,
+│              prototype status, future compiler direction, and slice summary
 │
 ├── Expression/
 │   ├── Readme.md
@@ -606,7 +773,7 @@ The map below summarizes the intended role of the Markdown documents in the curr
 
 <p>
 This map is intentionally architectural rather than merely enumerative.
-Its purpose is to make repository ownership boundaries and recommended reading paths easier to understand.
+Its purpose is to make repository ownership boundaries, support layers, and recommended reading paths easier to understand.
 </p>
 
 <hr/>
@@ -640,7 +807,7 @@ IDE/Readme.md
 </pre>
 
 <p>
-This order mirrors the current architectural baseline:
+This first path mirrors the current architectural baseline:
 </p>
 
 <ul>
@@ -650,6 +817,30 @@ This order mirrors the current architectural baseline:
   <li><strong>Libraries</strong> define the intrinsic standardized executable primitive vocabularies,</li>
   <li><strong>Profiles</strong> define optional standardized capability families beyond the intrinsic core,</li>
   <li><strong>IDE</strong> defines authoring, observability, debugging, and inspection responsibilities built on top of those foundations.</li>
+</ul>
+
+<p>
+Readers who want to understand the currently published repository-level executable/reference path SHOULD then continue with:
+</p>
+
+<pre>
+Examples/Readme.md
+   |
+   v
+Conformance/Readme.md
+   |
+   v
+Implementations/Reference/Readme.md
+</pre>
+
+<p>
+That second path answers three different questions in order:
+</p>
+
+<ul>
+  <li><strong><code>Examples/</code></strong> — which named source cases are being used,</li>
+  <li><strong><code>Conformance/</code></strong> — what those cases are expected to validate, preserve, or reject,</li>
+  <li><strong><code>Implementations/Reference/</code></strong> — how a non-normative prototype pipeline currently tries to process them.</li>
 </ul>
 
 <p>
@@ -679,7 +870,7 @@ Backend contract.md
 </pre>
 
 <p>
-That second path reflects the current published IR bundle:
+That third path reflects the current published IR bundle:
 the open Execution IR core comes first,
 identity and mapping preserve attribution continuity,
 and downstream lowering and backend contracts remain explicitly downstream from the open IR core even though they are documented in the same directory.
@@ -730,9 +921,30 @@ what is edited     -> IDE/
 </pre>
 
 <p>
+Beyond those six core families, the published repository also contains three important support areas that should not be confused with competing semantic owners:
+</p>
+
+<pre>
+what is exemplified  -> Examples/
+what is expected     -> Conformance/
+what is prototyped   -> Implementations/Reference/
+</pre>
+
+<p>
 Within that baseline, the <code>IR/</code> directory already includes documents for identity and mapping, lowering, and backend-facing contracts.
 Those documents remain architecturally downstream from the open Execution IR core, but they are already part of the published IR bundle.
 </p>
+
+<p>
+Likewise, the repository-level support areas are already part of the published state of the repository,
+but they do not redefine the ownership model:
+</p>
+
+<ul>
+  <li><strong><code>Examples/</code></strong> do not define language truth,</li>
+  <li><strong><code>Conformance/</code></strong> does not become the semantic owner,</li>
+  <li><strong><code>Implementations/Reference/</code></strong> does not become the normative production compiler pipeline.</li>
+</ul>
 
 <p>
 Beyond the six top-level families listed above, later areas such as deployment, runtime profiles, or conformance-oriented execution profiles MAY be structured more explicitly over time.
@@ -1300,7 +1512,29 @@ The repository already contains substantial material across canonical source rep
 </p>
 
 <p>
-Current repository direction includes:
+At the same time, the repository has now moved beyond a purely architectural document set.
+It already contains:
+</p>
+
+<ul>
+  <li>a published <code>Examples/</code> directory with the first four repository-visible executable slices,</li>
+  <li>a published <code>Conformance/</code> directory with early valid/invalid structure and explicit expected-outcome posture,</li>
+  <li>a published <code>Implementations/Reference/</code> workspace whose current purpose is to exercise disciplined minimal executable vertical slices for a controlled subset.</li>
+</ul>
+
+<p>
+The first currently published executable slices are:
+</p>
+
+<ul>
+  <li><code>01_pure_addition</code>,</li>
+  <li><code>02_ui_value_roundtrip</code>,</li>
+  <li><code>03_ui_property_write</code>,</li>
+  <li><code>04_stateful_feedback_delay</code>.</li>
+</ul>
+
+<p>
+Current repository direction therefore includes both <strong>architectural stabilization</strong> and <strong>repository-visible reference-path proof work</strong>.
 </p>
 
 <ul>
@@ -1320,12 +1554,20 @@ Current repository direction includes:
   <li>defining source-aligned live inspection through probes,</li>
   <li>defining persistent centralized watch-based inspection for FROG IDEs,</li>
   <li>defining image-backed snippet-based reusable authoring transport,</li>
-  <li>defining guided Express authoring as an IDE convenience layer that normalizes to canonical FROG content.</li>
+  <li>defining guided Express authoring as an IDE convenience layer that normalizes to canonical FROG content,</li>
+  <li>keeping the executable reference path clean, reproducible, and inspectable,</li>
+  <li>keeping <code>Examples/</code>, <code>Conformance/</code>, and <code>Implementations/Reference/</code> aligned without letting them silently become hidden language law,</li>
+  <li>preparing the path from canonical <code>.frog</code> source toward a more complete future compiler/runtime story.</li>
 </ul>
 
 <p>
+The currently published reference workspace proves stage boundaries first.
+It does not yet claim that the repository already contains the final normative production compiler pipeline, the final fully stabilized FROG execution IR schema, or one definitive production runtime architecture.
+</p>
+
+<p>
 At the same time, some broader execution-facing and deployment-facing areas remain architectural direction rather than fully closed top-level repository families.
-Topics such as deployment, runtime profiles, and conformance-oriented execution profiles MAY be refined further over time.
+Topics such as deployment, runtime profiles, target-profile taxonomies, and broader conformance or certification growth MAY be refined further over time.
 </p>
 
 <p>
