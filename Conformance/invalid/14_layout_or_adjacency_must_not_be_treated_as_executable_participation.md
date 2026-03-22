@@ -2,9 +2,9 @@
   <img src="../../FROG logo.svg" alt="FROG logo" width="140" />
 </p>
 
-<h1>Conformance Case — Invalid: Public Interface Declaration Must Not Require Front-Panel Widget Existence</h1>
+<h1>Conformance Case — Invalid: Layout or Adjacency Must Not Be Treated as Executable Participation</h1>
 
-<p><strong>Invalid conformance case for requiring front-panel widget existence as a condition for public interface validity in FROG v0.1</strong><br>
+<p><strong>Invalid conformance case for collapsing diagram layout, proximity, or adjacency into executable participation in FROG v0.1</strong><br>
 FROG — Free Open Graphical Language</p>
 
 <hr>
@@ -26,22 +26,23 @@ FROG — Free Open Graphical Language</p>
 
 <h2 id="case-overview">1. Case Overview</h2>
 
-<p>This invalid case covers a source shape or tool behavior that treats front-panel widget existence as a required condition for public interface validity.</p>
+<p>This invalid case covers a source shape or tool behavior that treats diagram layout, spatial proximity, alignment, or adjacency as though they were sufficient to create executable participation or executable dependency.</p>
 
 <p>Typical anti-patterns include:</p>
 
 <ul>
-  <li>rejecting a public interface input because no matching front-panel control exists,</li>
-  <li>rejecting a public interface output because no matching front-panel indicator exists,</li>
-  <li>requiring every callable public port to have a UI counterpart,</li>
-  <li>treating front-panel widget inventory as the authority that determines whether a public interface is legitimate.</li>
+  <li>treating a nearby node as though it were part of a computation without an explicit edge,</li>
+  <li>treating visual alignment as though it implied dataflow direction,</li>
+  <li>treating graphical neighborhood as though it implied evaluation dependency,</li>
+  <li>auto-connecting source objects because they appear visually related,</li>
+  <li>using placement or routing convenience as a substitute for explicit executable connectivity.</li>
 </ul>
 
 <p>Conceptually, the forbidden collapse is:</p>
 
-<pre><code>public interface declaration
-              ==
-required front-panel widget existence
+<pre><code>layout or adjacency
+          ==
+executable participation
 </code></pre>
 
 <p>Base FROG v0.1 does not allow that equivalence.</p>
@@ -56,44 +57,48 @@ required front-panel widget existence
 
 <h2 id="intended-anti-pattern">3. Intended Anti-Pattern</h2>
 
-<p>The invalid intent is any source shape, validator behavior, derivation behavior, or lowering behavior that requires a public interface declaration to be backed by corresponding front-panel widget existence in order to be accepted.</p>
+<p>The invalid intent is any source shape, validator behavior, derivation behavior, or lowering behavior that requires layout or adjacency to act as executable graph law.</p>
 
 <p>A minimal conceptual anti-pattern is:</p>
 
-<pre><code>public interface:
-  input  x
-  output result
+<pre><code>diagram layout
 
-front panel:
-  no widget for x
-  no widget for result
-
-diagram:
   interface_input(x) ----&gt; frog.core.add ----&gt; interface_output(result)
 
+                 frog.core.multiply
+                 (visually nearby, not connected)
+
 tool interpretation:
-  "the interface is incomplete because no UI widgets exist for x and result"
+  "multiply is close to add,
+   therefore multiply also participates"
 </code></pre>
 
 <p>Another invalid interpretation is:</p>
 
-<pre><code>public port exists
+<pre><code>objects appear aligned
     therefore
-matching front-panel widget must exist
+dependency exists
 </code></pre>
 
-<p>without any published rule establishing such a requirement.</p>
+<p>or:</p>
+
+<pre><code>objects appear adjacent
+    therefore
+an implicit edge may be inferred
+</code></pre>
+
+<p>without an explicit published rule establishing such participation.</p>
 
 <hr>
 
 <h2 id="boundaries-exercised">4. Boundaries Exercised</h2>
 
 <ul>
-  <li>public interface ownership,</li>
-  <li>front-panel composition ownership,</li>
-  <li>public callable contract versus UI realization,</li>
-  <li>interface declaration versus widget inventory,</li>
-  <li>rejection of semantic collapse across public contract and UI surface.</li>
+  <li>diagram-side executable participation,</li>
+  <li>explicit edge connectivity,</li>
+  <li>graph structure versus layout metadata,</li>
+  <li>dependency semantics versus visual arrangement,</li>
+  <li>rejection of semantic collapse across executable graph law and source presentation.</li>
 </ul>
 
 <hr>
@@ -103,49 +108,53 @@ matching front-panel widget must exist
 <p>This case is invalid because base FROG v0.1 publishes these roles as distinct:</p>
 
 <ul>
-  <li>public interface declaration establishes the public callable boundary of the program,</li>
-  <li>front-panel composition belongs to the UI surface and remains optional or separate unless explicit published participation says otherwise,</li>
-  <li>public interface existence does not depend on widget existence,</li>
-  <li>UI presence may support interaction, projection, or recoverability, but it does not determine whether the public contract exists.</li>
+  <li>executable participation is established through explicit source-side executable objects and explicit valid connectivity,</li>
+  <li>diagram layout belongs to source representation, readability, and recoverability,</li>
+  <li>spatial proximity does not create graph edges,</li>
+  <li>alignment does not create dataflow,</li>
+  <li>adjacency does not create evaluation dependency,</li>
+  <li>unconnected nodes do not become participating nodes merely because they are visually suggestive.</li>
 </ul>
 
-<p>Requiring widgets in order for the public interface to be valid therefore contradicts the published architecture.</p>
+<p>Treating layout as execution law therefore contradicts the published architecture.</p>
 
 <p>The required separation is:</p>
 
-<pre><code>public interface law
+<pre><code>explicit executable graph
           !=
-front-panel widget inventory
+diagram layout suggestion
 </code></pre>
 
 <hr>
 
 <h2 id="expected-validation-outcome">6. Expected Validation Outcome</h2>
 
-<p>A conforming validator should reject the case when the source or tool behavior requires front-panel widget existence as a condition for accepting an otherwise valid public interface declaration.</p>
+<p>A conforming validator should reject the case when the source or tool behavior requires layout, proximity, or adjacency to be accepted as executable participation.</p>
 
 <p>It should report that at least one of the following boundaries has been violated:</p>
 
 <ul>
-  <li>public interface declaration versus front-panel composition,</li>
-  <li>callable program contract versus UI realization,</li>
-  <li>interface validity versus widget inventory.</li>
+  <li>explicit connectivity versus inferred connectivity,</li>
+  <li>participating node set versus nearby node set,</li>
+  <li>dependency semantics versus layout suggestion,</li>
+  <li>graph law versus presentation metadata.</li>
 </ul>
 
-<p>If the case attempts to justify the requirement through editor convention, UX preference, implementation convenience, or backend expectation, that should still be rejected. None of those creates language law.</p>
+<p>If the case attempts to justify the collapse through editor convenience, readability heuristics, automatic beautification, routing simplification, or backend preference, that should still be rejected. None of those creates language law.</p>
 
 <hr>
 
 <h2 id="why-derivation-is-forbidden">7. Why Derivation Is Forbidden</h2>
 
-<p>Execution IR derivation is forbidden for this invalid case because validation has not established a legitimate program meaning under the tool’s rewritten requirement.</p>
+<p>Execution IR derivation is forbidden for this invalid case because validation has not established a legitimate executable graph meaning.</p>
 
 <p>There is no conforming basis for deriving:</p>
 
 <ul>
-  <li>a failure of the public callable boundary solely because no widgets exist,</li>
-  <li>an execution model in which interface validity depends on UI inventory,</li>
-  <li>or a backend-facing contract that pretends the interface was incomplete until widgets were added.</li>
+  <li>an executable edge from layout alone,</li>
+  <li>a participating node from adjacency alone,</li>
+  <li>a dependency relation from alignment alone,</li>
+  <li>or a backend-facing contract that pretends visually related objects were explicitly connected all along.</li>
 </ul>
 
 <p>Derivation would first require an unpublished semantic reinterpretation. That is not allowed.</p>
@@ -157,34 +166,38 @@ front-panel widget inventory
 <p>A conforming toolchain must not silently “repair” this case by:</p>
 
 <ul>
-  <li>creating synthetic front-panel widgets in order to justify the public interface,</li>
-  <li>downgrading public interface declaration into a UI-dependent concept,</li>
-  <li>treating missing widgets as though they were missing interface declarations,</li>
-  <li>making interface acceptance contingent on UI projection conventions while still claiming conformance.</li>
+  <li>creating inferred edges from placement,</li>
+  <li>pulling nearby nodes into the executable graph,</li>
+  <li>rewriting layout adjacency into dataflow dependency,</li>
+  <li>treating layout metadata as executable metadata,</li>
+  <li>resolving ambiguous source arrangement by inventing hidden graph structure while still claiming conformance.</li>
 </ul>
 
 <p>Such behavior would erase distinctions that the published source-to-meaning boundary requires to remain explicit and recoverable.</p>
 
 <p>The forbidden repair pattern is:</p>
 
-<pre><code>public interface exists
-    -/-> required widget exists
+<pre><code>nearby node exists
+    -/-> executable participation exists
 
-missing widget
-    -/-> invalid public contract
+alignment exists
+    -/-> dependency exists
+
+layout metadata
+    -/-> graph law
 </code></pre>
 
 <hr>
 
 <h2 id="summary">9. Summary</h2>
 
-<p>This case must be rejected because FROG v0.1 treats public interface declaration and front-panel widget existence as distinct published categories.</p>
+<p>This case must be rejected because FROG v0.1 treats explicit executable participation and diagram layout as distinct published categories.</p>
 
-<p>A conforming implementation must reject any source or tool behavior that depends on requiring front-panel widget existence in order to accept a public interface declaration.</p>
+<p>A conforming implementation must reject any source or tool behavior that depends on treating layout, proximity, or adjacency as though they created executable participation or dependency.</p>
 
 <p>The essential rule is:</p>
 
-<pre><code>public interface declaration
-    does not require
-front-panel widget existence
+<pre><code>layout or adjacency
+    does not create
+executable participation
 </code></pre>
