@@ -90,18 +90,10 @@ def parse_inputs(raw: str) -> Dict[str, Any]:
     try:
         value = json.loads(raw)
     except json.JSONDecodeError as exc:
-        raise FrogPipelineError(
-            stage="run",
-            error_code="invalid_inputs_json",
-            message="--inputs must be valid JSON.",
-        ) from exc
+        raise FrogPipelineError(stage="run", error_code="invalid_inputs_json", message="--inputs must be valid JSON.") from exc
 
     if not isinstance(value, dict):
-        raise FrogPipelineError(
-            stage="run",
-            error_code="invalid_inputs_shape",
-            message="--inputs must decode to a JSON object.",
-        )
+        raise FrogPipelineError(stage="run", error_code="invalid_inputs_shape", message="--inputs must decode to a JSON object.")
 
     return value
 
@@ -115,61 +107,34 @@ def dump_json(data: Dict[str, Any], output_path: Optional[str] = None) -> None:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(
-        description="FROG demonstration pipeline for the first executable published slices."
-    )
+    parser = argparse.ArgumentParser(description="FROG demonstration pipeline for the first executable published slices.")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     def add_common_arguments(cmd: argparse.ArgumentParser) -> None:
         cmd.add_argument("file", help="Path to the .frog source file.")
-        cmd.add_argument(
-            "--out",
-            help="Optional path where the JSON artifact or result will be written.",
-        )
+        cmd.add_argument("--out", help="Optional path where the JSON artifact or result will be written.")
 
-    p_validate = subparsers.add_parser(
-        "validate", help="Validate a .frog source for the current demonstration subset."
-    )
+    p_validate = subparsers.add_parser("validate", help="Validate a .frog source for the current demonstration subset.")
     add_common_arguments(p_validate)
 
-    p_derive = subparsers.add_parser(
-        "derive-ir", help="Derive the open execution-facing IR."
-    )
+    p_derive = subparsers.add_parser("derive-ir", help="Derive the open execution-facing IR.")
     add_common_arguments(p_derive)
 
-    p_lower = subparsers.add_parser(
-        "lower", help="Lower the derived IR for the selected backend family."
-    )
+    p_lower = subparsers.add_parser("lower", help="Lower the derived IR for the selected backend family.")
     add_common_arguments(p_lower)
-    p_lower.add_argument(
-        "--backend-family",
-        default=DEFAULT_BACKEND_FAMILY,
-        help=f"Backend family to target. Default: {DEFAULT_BACKEND_FAMILY}",
-    )
+    p_lower.add_argument("--backend-family", default=DEFAULT_BACKEND_FAMILY, help=f"Backend family to target. Default: {DEFAULT_BACKEND_FAMILY}")
 
-    p_emit = subparsers.add_parser(
-        "emit-contract", help="Emit the backend contract for the selected backend family."
-    )
+    p_emit = subparsers.add_parser("emit-contract", help="Emit the backend contract for the selected backend family.")
     add_common_arguments(p_emit)
-    p_emit.add_argument(
-        "--backend-family",
-        default=DEFAULT_BACKEND_FAMILY,
-        help=f"Backend family to target. Default: {DEFAULT_BACKEND_FAMILY}",
-    )
+    p_emit.add_argument("--backend-family", default=DEFAULT_BACKEND_FAMILY, help=f"Backend family to target. Default: {DEFAULT_BACKEND_FAMILY}")
 
-    p_run = subparsers.add_parser(
-        "run", help="Run the full end-to-end demonstration pipeline."
-    )
+    p_run = subparsers.add_parser("run", help="Run the full end-to-end demonstration pipeline.")
     add_common_arguments(p_run)
-    p_run.add_argument(
-        "--backend-family",
-        default=DEFAULT_BACKEND_FAMILY,
-        help=f"Backend family to target. Default: {DEFAULT_BACKEND_FAMILY}",
-    )
+    p_run.add_argument("--backend-family", default=DEFAULT_BACKEND_FAMILY, help=f"Backend family to target. Default: {DEFAULT_BACKEND_FAMILY}")
     p_run.add_argument(
         "--inputs",
         default='{"a": 1.5, "b": 2.5}',
-        help='External input JSON object. For Example 01 use {"a": 2.0, "b": 3.0}. For Example 02 use {"ctrl_a": 2.0, "ctrl_b": 3.0}.',
+        help='External input JSON object. For Example 01 use {"a": 2.0, "b": 3.0}. For Example 02 use {"ctrl_a": 2.0, "ctrl_b": 3.0}. For Example 03 use {"status": "Ready"}.',
     )
 
     return parser

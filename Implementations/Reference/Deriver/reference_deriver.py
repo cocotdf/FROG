@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+from copy import deepcopy
 from typing import Any, Dict, List
 
-from Implementations.Reference.common import DEMO_ARTIFACT_VERSION, DerivedIR, ValidationResult, FrogPipelineError, ensure
+from Implementations.Reference.common import DEMO_ARTIFACT_VERSION, DerivedIR, FrogPipelineError, ValidationResult, ensure
 
 
 def derive_execution_ir(validation: ValidationResult) -> DerivedIR:
@@ -56,10 +57,8 @@ def derive_execution_ir(validation: ValidationResult) -> DerivedIR:
             widget = widget_by_id.get(widget_id)
             if widget is None:
                 raise FrogPipelineError(stage="derive-ir", error_code="missing_widget_metadata", message=f"Missing widget metadata for '{widget_id}' during derivation.")
-
             direction = "out" if widget["role"] == "control" else "in"
             default_value = widget.get("props", {}).get("default_value") if widget["role"] == "control" else None
-
             obj: Dict[str, Any] = {
                 "id": f"obj:{node_id}",
                 "kind": "widget_value_participation",
@@ -73,31 +72,71 @@ def derive_execution_ir(validation: ValidationResult) -> DerivedIR:
                 "sources": [f"diagram.node:{node_id}", f"front_panel.widget:{widget_id}"],
             }
             if default_value is not None:
-                obj["default_value"] = default_value
+                obj["default_value"] = float(default_value)
             objects.append(obj)
-        elif kind == "primitive":
+        elif kind == "widget_reference":
+            widget_id = node["widget"]
+            widget = widget_by_id.get(widget_id)
+            if widget is None:
+                raise FrogPipelineError(stage="derive-ir", error_code="missing_widget_metadata", message=f"Missing widget metadata for '{widget_id}' during derivation.")
             objects.append(
                 {
                     "id": f"obj:{node_id}",
-                    "kind": "primitive",
-                    "primitive_ref": node["type"],
-                    "ports": [
-                        {"id": "a", "direction": "in", "value_type": "f64"},
-                        {"id": "b", "direction": "in", "value_type": "f64"},
-                        {"id": "result", "direction": "out", "value_type": "f64"},
-                    ],
-                    "sources": [f"diagram.node:{node_id}"],
+                    "kind": "widget_reference_participation",
+                    "widget_id": widget_id,
+                    "widget_role": widget["role"],
+                    "widget_class": widget["widget"],
+                    "participation_kind": "widget_reference",
+                    "ports": [{"id": "ref", "direction": "out", "value_type": "widget_reference"}],
+                    "sources": [f"diagram.node:{node_id}", f"front_panel.widget:{widget_id}"],
                 }
             )
+        elif kind == "primitive":
+            primitive_ref = node["type"]
+            if primitive_ref == "frog.core.add":
+                objects.append(
+                    {
+                        "id": f"obj:{node_id}",
+                        "kind": "primitive",
+                        "primitive_ref": primitive_ref,
+                        "ports": [
+                            {"id": "a", "direction": "in", "value_type": "f64"},
+                            {"id": "b", "direction": "in", "value_type": "f64"},
+                            {"id": "result", "direction": "out", "value_type": "f64"},
+                        ],
+                        "sources": [f"diagram.node:{node_id}", f"library.primitive:{primitive_ref}"],
+                    }
+                )
+            elif primitive_ref == "frog.ui.property_write":
+                member = deepcopy(node["widget_member"])
+                objects.append(
+                    {
+                        "id": f"obj:{node_id}",
+                        "kind": "primitive",
+                        "primitive_ref": primitive_ref,
+                        "ui_operation_kind": "property_write",
+                        "widget_member": member,
+                        "target_widget_id": node.get("_resolved_widget_id"),
+                        "target_widget_class": node.get("_resolved_widget_class"),
+                        "ports": [
+                            {"id": "ref", "direction": "in", "value_type": "widget_reference"},
+                            {"id": "value", "direction": "in", "value_type": node["_resolved_value_type"]},
+                        ],
+                        "sources": [f"diagram.node:{node_id}", f"library.primitive:{primitive_ref}"],
+                    }
+                )
+            else:
+                raise FrogPipelineError(stage="derive-ir", error_code="unsupported_primitive", message=f"Unsupported primitive during derivation: {primitive_ref}")
         else:
             raise FrogPipelineError(stage="derive-ir", error_code="unsupported_node_kind", message=f"Unsupported node kind during derivation: {kind}")
 
+    node_id_to_object_id = {node["id"]: f"obj:{node['id']}" for node in diagram["nodes"]}
     for edge in diagram["edges"]:
         connections.append(
             {
                 "id": f"conn:{edge['id']}",
-                "from": {"object": f"obj:{edge['from']['node']}", "port": edge["from"]["port"]},
-                "to": {"object": f"obj:{edge['to']['node']}", "port": edge["to"]["port"]},
+                "from": {"object": node_id_to_object_id[edge["from"]["node"]], "port": edge["from"]["port"]},
+                "to": {"object": node_id_to_object_id[edge["to"]["node"]], "port": edge["to"]["port"]},
                 "sources": [f"diagram.edge:{edge['id']}"],
             }
         )
@@ -106,18 +145,15 @@ def derive_execution_ir(validation: ValidationResult) -> DerivedIR:
         "artifact_kind": "frog_derived_execution_ir",
         "artifact_version": DEMO_ARTIFACT_VERSION,
         "source_ref": dict(validation.artifact["source_ref"]),
-        "validation_ref": {
-            "status": validation.artifact["status"],
-            "program_id": validation.artifact["validated_program"]["program_id"],
-        },
         "execution_unit": {
             "id": "unit:main",
-            "family": "execution_unit",
+            "role": "entry_unit",
             "objects": objects,
             "connections": connections,
-            "support_objects": [],
+            "ui_declarations": {
+                "widgets": [deepcopy(widget) for widget in front_panel.get("widgets", [])],
+            },
         },
-        "diagnostics": [],
     }
 
     return DerivedIR(artifact=artifact)

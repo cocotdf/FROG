@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from copy import deepcopy
+
 from Implementations.Reference.common import DEFAULT_BACKEND_FAMILY, BackendContract, DEMO_ARTIFACT_VERSION, LoweredForm, ensure
 
 
@@ -11,6 +13,10 @@ def emit_backend_contract(lowered: LoweredForm, backend_family: str = DEFAULT_BA
     public_outputs = [op for op in lowered_unit["operations"] if op["kind"] == "public_output"]
     ui_inputs = [op for op in lowered_unit["operations"] if op["kind"] == "ui_value_input"]
     ui_outputs = [op for op in lowered_unit["operations"] if op["kind"] == "ui_value_output"]
+    ui_refs = [op for op in lowered_unit["operations"] if op["kind"] == "ui_widget_reference"]
+    ui_property_writes = [op for op in lowered_unit["operations"] if op["kind"] == "ui_property_write"]
+
+    ui_binding_kind = lowered.artifact["assumptions"]["ui_binding_kind"]
 
     artifact = {
         "artifact_kind": "frog_backend_contract",
@@ -20,8 +26,8 @@ def emit_backend_contract(lowered: LoweredForm, backend_family: str = DEFAULT_BA
         "assumptions": {
             "state_model": "none",
             "ui_binding": {
-                "enabled": bool(ui_inputs or ui_outputs),
-                "kind": "natural_widget_value" if (ui_inputs or ui_outputs) else "none",
+                "enabled": ui_binding_kind != "none",
+                "kind": ui_binding_kind,
             },
             "execution_mode": "deterministic_step_execution",
         },
@@ -62,15 +68,36 @@ def emit_backend_contract(lowered: LoweredForm, backend_family: str = DEFAULT_BA
                         for op in ui_outputs
                     ],
                 },
+                "ui_objects": {
+                    "references": [
+                        {
+                            "widget_id": op["widget_id"],
+                            "widget_class": op["widget_class"],
+                            "widget_role": op["widget_role"],
+                            "participation_kind": op["ui_participation_kind"],
+                        }
+                        for op in ui_refs
+                    ],
+                    "property_writes": [
+                        {
+                            "target_widget_id": op["target_widget_id"],
+                            "target_widget_class": op["target_widget_class"],
+                            "part": op["widget_member"]["part"],
+                            "member": op["widget_member"]["member"],
+                            "value_type": op["value_type"],
+                            "primitive_ref": op["primitive_ref"],
+                        }
+                        for op in ui_property_writes
+                    ],
+                },
                 "implementation_payload": {
                     "kind": "demo_dataflow_plan",
-                    "operations": lowered_unit["operations"],
-                    "connections": lowered_unit["connections"],
+                    "operations": deepcopy(lowered_unit["operations"]),
+                    "connections": deepcopy(lowered_unit["connections"]),
+                    "ui_declarations": deepcopy(lowered_unit.get("ui_declarations", {"widgets": []})),
                 },
             }
         ],
-        "unsupported": [],
-        "diagnostics": [],
     }
 
     return BackendContract(artifact=artifact)

@@ -8,11 +8,17 @@ from typing import Any, Dict, List, Optional, Tuple
 
 DEMO_ARTIFACT_VERSION = "0.1-dev"
 DEFAULT_BACKEND_FAMILY = "reference_host_runtime_ui_binding"
-SUPPORTED_SCALAR_TYPES = {"f64"}
+SUPPORTED_SCALAR_TYPES = {"f64", "string"}
 
 
 class FrogPipelineError(Exception):
-    def __init__(self, stage: str, error_code: str, message: str, diagnostics: Optional[List[Dict[str, Any]]] = None):
+    def __init__(
+        self,
+        stage: str,
+        error_code: str,
+        message: str,
+        diagnostics: Optional[List[Dict[str, Any]]] = None,
+    ):
         super().__init__(message)
         self.stage = stage
         self.error_code = error_code
@@ -115,7 +121,14 @@ def require_keys(obj: Dict[str, Any], keys: List[str], *, stage: str, context: s
         )
 
 
-def ensure(condition: bool, *, stage: str, error_code: str, message: str, diagnostics: Optional[List[Dict[str, Any]]] = None) -> None:
+def ensure(
+    condition: bool,
+    *,
+    stage: str,
+    error_code: str,
+    message: str,
+    diagnostics: Optional[List[Dict[str, Any]]] = None,
+) -> None:
     if not condition:
         raise FrogPipelineError(stage=stage, error_code=error_code, message=message, diagnostics=diagnostics)
 
