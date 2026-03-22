@@ -267,7 +267,7 @@ Notes:
   <li><code>invalid/interface_widget_role_confusion.md</code></li>
   <li><code>invalid/ui_reference_without_ui_primitive.md</code></li>
   <li><code>invalid/06_widget_must_not_be_promoted_to_public_interface.md</code></li>
-  <li><code>invalid/08_widget_reference_must_not_be_treated_as_widget_value.md</code></li>
+  <li><code>invalid/08_widget_reference_mUST_NOT_BE_TREATED_AS_WIDGET_VALUE.md</code></li>
   <li><code>invalid/10_front_panel_presence_must_not_be_treated_as_execution_meaning.md</code></li>
   <li><code>invalid/12_public_interface_declaration_must_not_require_front_panel_widget_existence.md</code></li>
   <li><code>invalid/14_layout_or_adjacency_must_not_be_treated_as_executable_participation.md</code></li>
@@ -463,7 +463,7 @@ inferred region crossing by layout
   <li>explicit structure terminals versus inferred region crossing by layout.</li>
 </ul>
 
-<p>The current mirrored pairs sharpen eight especially important rules:</p>
+<p>The current mirrored pairs sharpen nine especially important rules:</p>
 
 <pre><code>widget declaration
     does not create
