@@ -2,10 +2,12 @@
   <img src="../FROG logo.svg" alt="FROG logo" width="140" />
 </p>
 
-<h1>FROG Conformance</h1>
+<h1 align="center">FROG Conformance</h1>
 
-<p><strong>Public accept / reject / preserve truth surface for the published FROG specification</strong><br>
-FROG — Free Open Graphical Language</p>
+<p align="center">
+  <strong>Public accept / reject / preserve truth surface for the published FROG specification</strong><br>
+  FROG — Free Open Graphical Language
+</p>
 
 <hr>
 
@@ -188,7 +190,8 @@ validated program meaning
   <li>explicit diagram participation versus layout or adjacency suggestion,</li>
   <li>explicit connectivity versus inferred evaluation order,</li>
   <li>explicit structure boundaries versus layout grouping or apparent nesting,</li>
-  <li>explicit structure terminals versus inferred region crossing by layout.</li>
+  <li>explicit structure terminals versus inferred region crossing by layout,</li>
+  <li>explicit structure-owned state versus inferred persistent value by feedback shape.</li>
 </ul>
 
 <p>Conformance should therefore help prevent these forbidden collapses:</p>
@@ -205,6 +208,7 @@ visual order      -/-> semantic execution order
 grouping          -/-> structure boundary
 apparent nesting  -/-> structure membership
 frame crossing    -/-> structure-terminal usage
+feedback shape    -/-> explicit owned state
 </code></pre>
 
 <hr>
@@ -243,7 +247,18 @@ Notes:
 
 <h2 id="current-published-cases">8. Current Published Cases</h2>
 
-<h3>8.1 Valid cases</h3>
+<h3>8.1 Numbering note</h3>
+
+<p>Case numbering is publication-oriented, not a promise of uninterrupted numbering.</p>
+
+<p>Accordingly:</p>
+<ul>
+  <li>number gaps do not by themselves indicate missing architectural ownership,</li>
+  <li>legacy seed cases may coexist with later mirrored valid / invalid boundary pairs,</li>
+  <li>this README must list only cases that are actually published in this directory.</li>
+</ul>
+
+<h3>8.2 Published valid cases</h3>
 
 <ul>
   <li><code>valid/01_pure_addition.md</code></li>
@@ -252,28 +267,34 @@ Notes:
   <li><code>valid/04_stateful_feedback_delay.md</code></li>
   <li><code>valid/05_public_interface_and_widget_participation_distinct.md</code></li>
   <li><code>valid/07_widget_reference_remains_distinct_from_widget_value.md</code></li>
-  <li><code>valid/09_front_panel_presence_does_not_by_itself_define_execution_meaning.md</code></li>
   <li><code>valid/11_public_interface_declaration_does_not_require_front_panel_widget_existence.md</code></li>
   <li><code>valid/13_explicit_diagram_participation_remains_distinct_from_layout_or_adjacency.md</code></li>
   <li><code>valid/15_explicit_connectivity_remains_distinct_from_inferred_evaluation_order.md</code></li>
   <li><code>valid/17_explicit_structure_boundaries_remain_distinct_from_layout_grouping_or_nesting.md</code></li>
   <li><code>valid/19_explicit_structure_terminals_remain_distinct_from_inferred_region_crossing_by_layout.md</code></li>
+  <li><code>valid/21_explicit_structure_owned_state_remains_distinct_from_inferred_persistent_value_by_feedback_shape.md</code></li>
 </ul>
 
-<h3>8.2 Invalid cases</h3>
+<h3>8.3 Published invalid cases</h3>
 
 <ul>
-  <li><code>invalid/illegal_feedback_without_explicit_memory.md</code></li>
-  <li><code>invalid/interface_widget_role_confusion.md</code></li>
-  <li><code>invalid/ui_reference_without_ui_primitive.md</code></li>
   <li><code>invalid/06_widget_must_not_be_promoted_to_public_interface.md</code></li>
-  <li><code>invalid/08_widget_reference_mUST_NOT_BE_TREATED_AS_WIDGET_VALUE.md</code></li>
+  <li><code>invalid/08_widget_reference_must_not_be_treated_as_widget_value.md</code></li>
   <li><code>invalid/10_front_panel_presence_must_not_be_treated_as_execution_meaning.md</code></li>
   <li><code>invalid/12_public_interface_declaration_must_not_require_front_panel_widget_existence.md</code></li>
   <li><code>invalid/14_layout_or_adjacency_must_not_be_treated_as_executable_participation.md</code></li>
   <li><code>invalid/16_inferred_evaluation_order_must_not_be_treated_as_dependency_or_connectivity.md</code></li>
   <li><code>invalid/18_layout_grouping_or_apparent_nesting_must_not_be_treated_as_structure_boundary.md</code></li>
   <li><code>invalid/20_inferred_region_crossing_by_layout_must_not_be_treated_as_structure_terminal_usage.md</code></li>
+  <li><code>invalid/22_inferred_persistent_value_by_feedback_shape_must_not_be_treated_as_structure_owned_state.md</code></li>
+</ul>
+
+<h3>8.4 Published legacy invalid seed cases</h3>
+
+<ul>
+  <li><code>invalid/illegal_feedback_without_explicit_memory.md</code></li>
+  <li><code>invalid/interface_widget_role_confusion.md</code></li>
+  <li><code>invalid/ui_reference_without_ui_primitive.md</code></li>
 </ul>
 
 <p>The published set already shows the intended balance:</p>
@@ -309,9 +330,8 @@ widget-owned value participation
 widget_value
 </code></pre>
 
-<p>The pair formed by:</p>
+<p>The published invalid case:</p>
 <ul>
-  <li><code>valid/09_front_panel_presence_does_not_by_itself_define_execution_meaning.md</code>, and</li>
   <li><code>invalid/10_front_panel_presence_must_not_be_treated_as_execution_meaning.md</code></li>
 </ul>
 
@@ -387,6 +407,19 @@ layout grouping or apparent nesting
 inferred region crossing by layout
 </code></pre>
 
+<p>The pair formed by:</p>
+<ul>
+  <li><code>valid/21_explicit_structure_owned_state_remains_distinct_from_inferred_persistent_value_by_feedback_shape.md</code>, and</li>
+  <li><code>invalid/22_inferred_persistent_value_by_feedback_shape_must_not_be_treated_as_structure_owned_state.md</code></li>
+</ul>
+
+<p>makes another boundary especially explicit:</p>
+
+<pre><code>explicit structure-owned state
+              !=
+inferred persistent value by feedback shape
+</code></pre>
+
 <p>This balance matters because explicit rejection is better than silent semantic laundering.</p>
 
 <hr>
@@ -414,6 +447,7 @@ inferred region crossing by layout
   <li><strong>Expected preservation:</strong> explicit local memory remains explicit</li>
   <li><strong>Expected preservation:</strong> <code>widget_value</code> and <code>widget_reference</code> remain distinct</li>
   <li><strong>Expected preservation:</strong> interface contract remains distinct from widget participation</li>
+  <li><strong>Expected preservation:</strong> structure-owned state remains distinct from inferred persistent value by feedback shape</li>
   <li><strong>Expected rejection:</strong> illegal feedback without explicit local memory</li>
   <li><strong>Expected rejection:</strong> UI reference usage without a valid UI primitive context</li>
   <li><strong>Expected rejection:</strong> widget-owned value participation must not be promoted to public interface participation</li>
@@ -424,6 +458,7 @@ inferred region crossing by layout
   <li><strong>Expected rejection:</strong> inferred evaluation order must not be treated as dependency or connectivity</li>
   <li><strong>Expected rejection:</strong> layout grouping or apparent nesting must not be treated as structure boundary</li>
   <li><strong>Expected rejection:</strong> inferred region crossing by layout must not be treated as structure-terminal usage</li>
+  <li><strong>Expected rejection:</strong> inferred persistent value by feedback shape must not be treated as explicit structure-owned state</li>
 </ul>
 
 <hr>
@@ -460,10 +495,11 @@ inferred region crossing by layout
   <li>explicit graph participation versus layout or adjacency suggestion,</li>
   <li>explicit connectivity versus inferred evaluation order,</li>
   <li>explicit structure boundaries versus grouping or apparent nesting,</li>
-  <li>explicit structure terminals versus inferred region crossing by layout.</li>
+  <li>explicit structure terminals versus inferred region crossing by layout,</li>
+  <li>explicit structure-owned state versus inferred persistent value by feedback shape.</li>
 </ul>
 
-<p>The current mirrored pairs sharpen nine especially important rules:</p>
+<p>The current published mirrored progression sharpens the following especially important rules:</p>
 
 <pre><code>widget declaration
     does not create
@@ -496,6 +532,10 @@ layout grouping or apparent nesting
 explicit structure terminals
     do not arise from
 inferred region crossing by layout
+
+explicit structure-owned state
+    does not arise from
+feedback-shape inference
 </code></pre>
 
 <hr>
@@ -506,9 +546,9 @@ inferred region crossing by layout
 
 <p>The distinction is:</p>
 
-<pre><code>Examples/                   -> illustrative executable or inspectable slices
-Conformance/                -> public accept / reject / preserve expectations
-Implementations/Reference/  -> non-normative executable workspace
+<pre><code>Examples/                   -&gt; illustrative executable or inspectable slices
+Conformance/                -&gt; public accept / reject / preserve expectations
+Implementations/Reference/  -&gt; non-normative executable workspace
 </code></pre>
 
 <p>An example may demonstrate a pattern.<br>
@@ -532,6 +572,7 @@ A reference implementation may execute a case, but it does not become language l
   <li>more structure legality cases,</li>
   <li>more type / value / state legality cases,</li>
   <li>more structure-terminal legality cases,</li>
+  <li>more explicit state-initialization and default-inference cases,</li>
   <li>profile-gated acceptance and rejection cases,</li>
   <li>backend-family rejection cases where silent reinterpretation would be wrong,</li>
   <li>mirrored valid/invalid pairs for each critical boundary.</li>
@@ -540,11 +581,11 @@ A reference implementation may execute a case, but it does not become language l
 <p>Growth should remain architecture-led:</p>
 
 <pre><code>small case
-   ->
+   -&gt;
 clear expectation
-   ->
+   -&gt;
 clear owning specification layer
-   ->
+   -&gt;
 clear public reviewability
 </code></pre>
 
