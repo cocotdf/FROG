@@ -2,17 +2,16 @@
   <img src="../../FROG logo.svg" alt="FROG logo" width="140" />
 </p>
 
-<h1 align="center">🐸 FROG Reference Implementation</h1>
+<h1 align="center">FROG Reference Implementation</h1>
 
 <p align="center">
-  Non-normative reference implementation workspace for executable FROG vertical slices<br/>
+  <strong>Non-normative reference implementation workspace for executable FROG vertical slices</strong><br/>
   <em>FROG — Free Open Graphical Language</em>
 </p>
 
 <hr/>
 
 <h2>Contents</h2>
-
 <ul>
   <li><a href="#overview">1. Overview</a></li>
   <li><a href="#status-and-boundary">2. Status and Boundary</a></li>
@@ -21,7 +20,7 @@
   <li><a href="#prototype-status-and-future-compiler-direction">5. Prototype Status and Future Compiler Direction</a></li>
   <li><a href="#executable-reference-slices">6. Executable Reference Slices</a></li>
   <li><a href="#reference-pipeline">7. Reference Pipeline</a></li>
-  <li><a href="#directory-structure">8. Directory Structure</a></li>
+  <li><a href="#directory-posture">8. Directory Posture</a></li>
   <li><a href="#relation-with-examples-and-conformance">9. Relation with Examples and Conformance</a></li>
   <li><a href="#runtime-posture-in-v01">10. Runtime Posture in v0.1</a></li>
   <li><a href="#what-this-directory-does-not-standardize">11. What this Directory Does Not Standardize</a></li>
@@ -45,14 +44,14 @@ Its practical role is to:
 <ul>
   <li>load canonical <code>.frog</code> source,</li>
   <li>validate source against published rules,</li>
-  <li>derive a standardized open execution-facing FROG IR,</li>
+  <li>derive the published open execution-facing FROG IR,</li>
   <li>perform controlled lowering for a selected backend family,</li>
   <li>emit a backend contract or equivalent execution handoff,</li>
   <li>execute that handoff in a minimal reference runtime.</li>
 </ul>
 
 <p>
-This directory exists to prove that the published architectural boundaries are strong enough to support an end-to-end executable slice.
+This directory exists to prove that the published architectural boundaries are strong enough to support end-to-end executable slices.
 It does not replace the specification.
 It consumes it.
 </p>
@@ -75,7 +74,7 @@ Normative ownership remains in the specification layers:
   <li><code>Language/</code> — validated semantic truth,</li>
   <li><code>Libraries/</code> — intrinsic primitive identities and primitive-local contracts,</li>
   <li><code>Profiles/</code> — optional standardized capability families,</li>
-  <li><code>IR/</code> — derivation, construction, identity, lowering, and backend contract boundaries,</li>
+  <li><code>IR/</code> — derivation, identity, construction, lowering, and backend contract boundaries,</li>
   <li><code>IDE/</code> — authoring, debugging, observability, and tool-facing concerns.</li>
 </ul>
 
@@ -99,6 +98,9 @@ Its role is to consume already defined boundaries rather than to bypass them.
 validation
     |
     v
+validated program meaning
+    |
+    v
 standardized FROG execution IR
     |
     v
@@ -119,12 +121,13 @@ This means:
   <li>the reference implementation is not the owner of source shape,</li>
   <li>it is not the owner of validated semantic meaning,</li>
   <li>it is not the owner of the open IR model,</li>
-  <li>it is not the owner of future private runtime architecture,</li>
+  <li>it is not the owner of lowering law,</li>
+  <li>it is not the owner of backend contract law,</li>
   <li>it is a practical consumer of those published layers.</li>
 </ul>
 
 <p>
-A correct reference implementation should therefore make the published architecture executable <em>through</em> the declared stages, not around them.
+A correct reference implementation therefore makes the published architecture executable <em>through</em> the declared stages, not around them.
 </p>
 
 <hr/>
@@ -143,7 +146,7 @@ Those slices are meant to prove that the following chain can be made real and in
 <ul>
   <li>canonical source can be loaded,</li>
   <li>published validation rules can be applied,</li>
-  <li>a standardized open execution-facing FROG IR can be derived,</li>
+  <li>a published open execution-facing FROG IR can be derived,</li>
   <li>lowering can specialize that IR for a concrete backend family,</li>
   <li>a backend contract can be emitted,</li>
   <li>a reference runtime can accept and execute that contract.</li>
@@ -170,7 +173,7 @@ What they prove today is that the architecture can already support:
 <ul>
   <li>source loading,</li>
   <li>semantic validation for a controlled published subset,</li>
-  <li>standardized execution-facing IR derivation,</li>
+  <li>published execution-facing IR derivation,</li>
   <li>backend-family-oriented lowering,</li>
   <li>backend contract emission,</li>
   <li>runtime-side contract consumption.</li>
@@ -181,29 +184,13 @@ What they do <strong>not</strong> yet claim is that the repository already conta
 </p>
 
 <ul>
-  <li>the final normative production compiler pipeline,</li>
-  <li>the final fully stabilized FROG execution IR schema,</li>
+  <li>the final production compiler pipeline,</li>
+  <li>the final fully stabilized industrial backend set,</li>
   <li>one definitive production runtime architecture.</li>
 </ul>
 
 <p>
-A later phase should make the future direction explicit:
-</p>
-
-<ul>
-  <li>stabilize the normative standardized FROG execution IR more fully,</li>
-  <li>define clearer backend-oriented lowering rules,</li>
-  <li>show how FROG IR is transformed into known compiler/runtime backend pipelines,</li>
-  <li>demonstrate complete end-to-end compilation and execution from canonical <code>.frog</code> source to deployable artifact.</li>
-</ul>
-
-<p>
-That future backend side may include well-known compilation families such as LLVM-oriented CPU pipelines, hardware-oriented flows, or other backend-specific chains.
-However, those future backend families must remain <strong>downstream</strong> from standardized FROG IR rather than replacing it.
-</p>
-
-<p>
-In other words:
+The long-term direction remains:
 </p>
 
 <pre><code>.frog source
@@ -216,6 +203,9 @@ standardized FROG execution IR
     |
     v
 backend-specific lowering
+    |
+    v
+backend contract
     |
     v
 known compiler/runtime backend
@@ -249,7 +239,7 @@ The progression matters:
 Each slice adds one architectural concern without collapsing layer boundaries.
 </p>
 
-<h3>01_pure_addition</h3>
+<h3>6.1 01_pure_addition</h3>
 
 <p>
 This is the smallest end-to-end executable case.
@@ -268,7 +258,7 @@ Simple interpretation:
 <code>result = a + b</code>
 </p>
 
-<h3>02_ui_value_roundtrip</h3>
+<h3>6.2 02_ui_value_roundtrip</h3>
 
 <p>
 This is the first front-panel value-participation case.
@@ -280,7 +270,7 @@ Simple interpretation:
 <code>ind_result.value = ctrl_a.value + ctrl_b.value</code>
 </p>
 
-<h3>03_ui_property_write</h3>
+<h3>6.3 03_ui_property_write</h3>
 
 <p>
 This is the first object-style UI interaction case.
@@ -298,7 +288,7 @@ Simple interpretation:
 <code>ctrl_gain.label.text = status</code>
 </p>
 
-<h3>04_stateful_feedback_delay</h3>
+<h3>6.4 04_stateful_feedback_delay</h3>
 
 <p>
 This is the first explicit-memory and valid-feedback case.
@@ -323,7 +313,7 @@ It keeps the implementation aligned with the specification while avoiding premat
 <h2 id="reference-pipeline">7. Reference Pipeline</h2>
 
 <p>
-The reference pipeline should reflect the already published stage boundaries.
+The reference pipeline should reflect the published stage boundaries.
 A useful command-line model is:
 </p>
 
@@ -340,7 +330,7 @@ The exact CLI surface may evolve, but the implementation should preserve stage s
 
 <ul>
   <li><strong>validate</strong> — check that the source belongs to the supported validated subset,</li>
-  <li><strong>derive-ir</strong> — produce a standardized open execution-facing representation with recoverable source attribution,</li>
+  <li><strong>derive-ir</strong> — produce the published open execution-facing representation with recoverable source attribution,</li>
   <li><strong>lower</strong> — specialize the open IR for a selected backend family,</li>
   <li><strong>emit-contract</strong> — produce the handoff consumed by a runtime or backend,</li>
   <li><strong>run</strong> — execute through runtime-side contract consumption rather than by silently jumping from source straight to private execution.</li>
@@ -354,10 +344,14 @@ It does not redefine the specification and does not eliminate the intended inter
 
 <hr/>
 
-<h2 id="directory-structure">8. Directory Structure</h2>
+<h2 id="directory-posture">8. Directory Posture</h2>
 
 <p>
-A useful structure for the reference implementation is:
+A useful posture for the reference implementation workspace is to keep implementation concerns explicit without pretending they are new language layers.
+</p>
+
+<p>
+A practical internal structure may eventually distinguish work areas such as:
 </p>
 
 <pre><code>Implementations/Reference/
@@ -380,7 +374,7 @@ They are not additional language layers.
   <li><code>CLI/</code> — command entry points for the reference toolchain,</li>
   <li><code>Loader/</code> — canonical source intake, decoding, and structural loading,</li>
   <li><code>Validator/</code> — supported-subset validation against published rules,</li>
-  <li><code>Deriver/</code> — derivation of standardized open execution-facing IR,</li>
+  <li><code>Deriver/</code> — derivation of the published open execution-facing IR,</li>
   <li><code>Lowerer/</code> — backend-family-oriented specialization,</li>
   <li><code>ContractEmitter/</code> — backend contract emission,</li>
   <li><code>Runtime/</code> — runtime-side contract acceptance and execution,</li>
@@ -499,7 +493,7 @@ A good current success condition is:
 <ul>
   <li>load a published example <code>.frog</code> source,</li>
   <li>validate the supported subset,</li>
-  <li>derive standardized open execution-facing IR,</li>
+  <li>derive the published open execution-facing IR,</li>
   <li>lower for the first backend family,</li>
   <li>emit a backend contract,</li>
   <li>execute it in a minimal reference runtime and obtain the expected observable result or effect.</li>
@@ -512,7 +506,7 @@ That remains acceptable as long as it stays explicitly non-normative and does no
 
 <p>
 The next long-term step after the early executable slices is not to hide the architecture behind a private monolith.
-It is to stabilize the standardized FROG IR and show how FROG lowering can feed known backend/compiler/runtime families in a disciplined and reproducible way.
+It is to stabilize the published IR and show how disciplined FROG lowering can feed known backend/compiler/runtime families in a reproducible way.
 </p>
 
 <hr/>
@@ -524,7 +518,7 @@ This directory is the home of the non-normative FROG reference implementation wo
 Its job is to make the published architecture executable through disciplined vertical slices:
 source,
 validation,
-standardized FROG execution IR derivation,
+published execution IR derivation,
 lowering,
 backend contract emission,
 and runtime-side contract consumption.
@@ -532,8 +526,17 @@ and runtime-side contract consumption.
 
 <p>
 It is practical by design, but it does not own the language.
-It is a consumer of the published specification, a detector of specification gaps, and a proving ground for executable slices.
+It is:
+</p>
+
+<ul>
+  <li>a consumer of the published specification,</li>
+  <li>a detector of specification gaps,</li>
+  <li>a proving ground for executable slices.</li>
+</ul>
+
+<p>
 It is also a bridge toward a future full compiler/runtime story,
 but it is not yet that final compiler pipeline.
-It must remain clear about that distinction.
+That distinction must remain explicit.
 </p>
