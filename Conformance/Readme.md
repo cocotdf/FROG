@@ -13,24 +13,83 @@
 
 <h2>Contents</h2>
 <ul>
-  <li><a href="#overview">1. Overview</a></li>
-  <li><a href="#why-this-directory-exists">2. Why this Directory Exists</a></li>
-  <li><a href="#what-conformance-means-here">3. What Conformance Means Here</a></li>
-  <li><a href="#what-this-directory-does-not-do">4. What this Directory Does Not Do</a></li>
-  <li><a href="#relation-with-specification-ownership">5. Relation with Specification Ownership</a></li>
-  <li><a href="#relation-with-the-expression-to-meaning-boundary">6. Relation with the Expression-to-Meaning Boundary</a></li>
-  <li><a href="#directory-structure">7. Directory Structure</a></li>
-  <li><a href="#current-published-cases">8. Current Published Cases</a></li>
-  <li><a href="#expected-outcomes">9. Expected Outcomes</a></li>
-  <li><a href="#active-v01-conformance-focus">10. Active v0.1 Conformance Focus</a></li>
-  <li><a href="#relation-with-examples-and-reference-implementation">11. Relation with Examples and Reference Implementation</a></li>
-  <li><a href="#future-growth">12. Future Growth</a></li>
-  <li><a href="#summary">13. Summary</a></li>
+  <li><a href="#plain-language-purpose">1. Plain-Language Purpose</a></li>
+  <li><a href="#overview">2. Overview</a></li>
+  <li><a href="#why-this-directory-exists">3. Why this Directory Exists</a></li>
+  <li><a href="#what-conformance-means-here">4. What Conformance Means Here</a></li>
+  <li><a href="#what-this-directory-does-not-do">5. What this Directory Does Not Do</a></li>
+  <li><a href="#relation-with-specification-ownership">6. Relation with Specification Ownership</a></li>
+  <li><a href="#relation-with-the-expression-to-meaning-boundary">7. Relation with the Expression-to-Meaning Boundary</a></li>
+  <li><a href="#directory-structure">8. Directory Structure</a></li>
+  <li><a href="#current-published-cases">9. Current Published Cases</a></li>
+  <li><a href="#expected-outcomes">10. Expected Outcomes</a></li>
+  <li><a href="#active-v01-conformance-focus">11. Active v0.1 Conformance Focus</a></li>
+  <li><a href="#relation-with-examples-and-reference-implementation">12. Relation with Examples and Reference Implementation</a></li>
+  <li><a href="#future-growth">13. Future Growth</a></li>
+  <li><a href="#summary">14. Summary</a></li>
 </ul>
 
 <hr>
 
-<h2 id="overview">1. Overview</h2>
+<h2 id="plain-language-purpose">1. Plain-Language Purpose</h2>
+
+<p>This directory exists to answer one simple question in public:</p>
+
+<pre><code>When a tool reads a .frog file,
+what is it allowed to accept,
+what must it reject,
+and what distinctions must it preserve?
+</code></pre>
+
+<p>In plain language:</p>
+<ul>
+  <li>the specification says what the rules are,</li>
+  <li>conformance publishes example cases that make those rules testable,</li>
+  <li>implementations must behave in a way that matches those published cases.</li>
+</ul>
+
+<p>A useful mental model is:</p>
+
+<pre><code>Specification = the law
+Conformance   = public example cases showing how the law applies
+Implementation = a tool that must follow that law
+</code></pre>
+
+<p>So this directory is <strong>not</strong> where FROG language truth is invented.</p>
+
+<p>It is where FROG makes that truth checkable in public form.</p>
+
+<p>This matters because a <code>.frog</code> file can be:</p>
+<ul>
+  <li>well-formed, yet still semantically invalid,</li>
+  <li>accepted by one tool and misread by another,</li>
+  <li>silently “repaired” by an implementation in a way the specification never allowed.</li>
+</ul>
+
+<p>Conformance exists to stop that drift.</p>
+
+<p>It helps make clear that:</p>
+<ul>
+  <li>a tool must not silently invent missing meaning,</li>
+  <li>a tool must not silently collapse important distinctions,</li>
+  <li>a tool must reject some cases instead of guessing what the user “probably meant”.</li>
+</ul>
+
+<p>What FROG wants to avoid is simple:</p>
+
+<pre><code>well-formed file
+        -/-> automatically valid meaning
+
+implementation convenience
+        -/-> language law
+
+"it runs"
+        -/-> "it is conforming"
+</code></pre>
+
+<hr>
+
+<h2 id="overview">2. Overview</h2>
 
 <p>This directory contains public conformance material for the published FROG specification.</p>
 
@@ -60,7 +119,7 @@ It may not vary in what published conformance cases mean.</p>
 
 <hr>
 
-<h2 id="why-this-directory-exists">2. Why this Directory Exists</h2>
+<h2 id="why-this-directory-exists">3. Why this Directory Exists</h2>
 
 <p>FROG is intentionally organized as a specification-first repository rather than as a single product implementation.</p>
 
@@ -81,9 +140,19 @@ one public way to check whether they stay aligned
   <li>If a feature is unsupported by one backend family, should it be rejected rather than reinterpreted?</li>
 </ul>
 
+<p>Without conformance, a project can drift into a dangerous pattern:</p>
+
+<pre><code>specification text exists
+but each implementation
+quietly decides for itself
+what the rules really mean
+</code></pre>
+
+<p>This directory exists to keep that from happening.</p>
+
 <hr>
 
-<h2 id="what-conformance-means-here">3. What Conformance Means Here</h2>
+<h2 id="what-conformance-means-here">4. What Conformance Means Here</h2>
 
 <p>In this directory, conformance means alignment with the published FROG specification layers and their ownership boundaries.</p>
 
@@ -109,9 +178,20 @@ A tool can derive something executable while still violating published distincti
   <li>preservation correctness.</li>
 </ul>
 
+<p>A short version is:</p>
+
+<pre><code>Conformance asks:
+Did the tool understand the .frog correctly?
+</code></pre>
+
+<p>Not just:</p>
+
+<pre><code>Did the tool do something executable?
+</code></pre>
+
 <hr>
 
-<h2 id="what-this-directory-does-not-do">4. What this Directory Does Not Do</h2>
+<h2 id="what-this-directory-does-not-do">5. What this Directory Does Not Do</h2>
 
 <p>This directory is not:</p>
 <ul>
@@ -125,9 +205,15 @@ A tool can derive something executable while still violating published distincti
 
 <p>In base v0.1, this directory is the beginning of a conformance story. Its job is to make the first expectations explicit, reviewable, and durable.</p>
 
+<p>So the rule is:</p>
+
+<pre><code>Conformance does not replace the specification.
+Conformance makes the specification testable.
+</code></pre>
+
 <hr>
 
-<h2 id="relation-with-specification-ownership">5. Relation with Specification Ownership</h2>
+<h2 id="relation-with-specification-ownership">6. Relation with Specification Ownership</h2>
 
 <p>This directory does not own language truth.</p>
 
@@ -158,7 +244,7 @@ implementation checks
 
 <hr>
 
-<h2 id="relation-with-the-expression-to-meaning-boundary">6. Relation with the Expression-to-Meaning Boundary</h2>
+<h2 id="relation-with-the-expression-to-meaning-boundary">7. Relation with the Expression-to-Meaning Boundary</h2>
 
 <p>A critical conformance concern is the normative boundary:</p>
 
@@ -192,7 +278,8 @@ validated program meaning
   <li>explicit structure boundaries versus layout grouping or apparent nesting,</li>
   <li>explicit structure terminals versus inferred region crossing by layout,</li>
   <li>explicit structure-owned state versus inferred persistent value by feedback shape,</li>
-  <li>explicit state initialization versus inferred default initial value.</li>
+  <li>explicit state initialization versus inferred default initial value,</li>
+  <li>explicit state read timing versus inferred scheduler order.</li>
 </ul>
 
 <p>Conformance should therefore help prevent these forbidden collapses:</p>
@@ -211,11 +298,12 @@ apparent nesting  -/-> structure membership
 frame crossing    -/-> structure-terminal usage
 feedback shape    -/-> explicit owned state
 default inference -/-> explicit state initialization
+scheduler order   -/-> explicit state read timing
 </code></pre>
 
 <hr>
 
-<h2 id="directory-structure">7. Directory Structure</h2>
+<h2 id="directory-structure">8. Directory Structure</h2>
 
 <p>The current minimal structure is:</p>
 
@@ -247,9 +335,9 @@ Notes:
 
 <hr>
 
-<h2 id="current-published-cases">8. Current Published Cases</h2>
+<h2 id="current-published-cases">9. Current Published Cases</h2>
 
-<h3>8.1 Numbering note</h3>
+<h3>9.1 Numbering note</h3>
 
 <p>Case numbering is publication-oriented, not a promise of uninterrupted numbering.</p>
 
@@ -260,7 +348,7 @@ Notes:
   <li>this README must list only cases that are actually published in this directory.</li>
 </ul>
 
-<h3>8.2 Published valid cases</h3>
+<h3>9.2 Published valid cases</h3>
 
 <ul>
   <li><code>valid/01_pure_addition.md</code></li>
@@ -276,9 +364,10 @@ Notes:
   <li><code>valid/19_explicit_structure_terminals_remain_distinct_from_inferred_region_crossing_by_layout.md</code></li>
   <li><code>valid/21_explicit_structure_owned_state_remains_distinct_from_inferred_persistent_value_by_feedback_shape.md</code></li>
   <li><code>valid/23_explicit_state_initialization_remains_distinct_from_inferred_default_initial_value.md</code></li>
+  <li><code>valid/25_explicit_state_read_timing_remains_distinct_from_inferred_scheduler_order.md</code></li>
 </ul>
 
-<h3>8.3 Published invalid cases</h3>
+<h3>9.3 Published invalid cases</h3>
 
 <ul>
   <li><code>invalid/06_widget_must_not_be_promoted_to_public_interface.md</code></li>
@@ -291,9 +380,10 @@ Notes:
   <li><code>invalid/20_inferred_region_crossing_by_layout_must_not_be_treated_as_structure_terminal_usage.md</code></li>
   <li><code>invalid/22_inferred_persistent_value_by_feedback_shape_must_not_be_treated_as_structure_owned_state.md</code></li>
   <li><code>invalid/24_inferred_default_initial_value_must_not_be_treated_as_explicit_state_initialization.md</code></li>
+  <li><code>invalid/26_inferred_scheduler_order_must_not_be_treated_as_explicit_state_read_timing.md</code></li>
 </ul>
 
-<h3>8.4 Published legacy invalid seed cases</h3>
+<h3>9.4 Published legacy invalid seed cases</h3>
 
 <ul>
   <li><code>invalid/illegal_feedback_without_explicit_memory.md</code></li>
@@ -437,11 +527,24 @@ inferred persistent value by feedback shape
 inferred default initial value
 </code></pre>
 
+<p>The pair formed by:</p>
+<ul>
+  <li><code>valid/25_explicit_state_read_timing_remains_distinct_from_inferred_scheduler_order.md</code>, and</li>
+  <li><code>invalid/26_inferred_scheduler_order_must_not_be_treated_as_explicit_state_read_timing.md</code></li>
+</ul>
+
+<p>makes another boundary especially explicit:</p>
+
+<pre><code>explicit state read timing
+              !=
+inferred scheduler order
+</code></pre>
+
 <p>This balance matters because explicit rejection is better than silent semantic laundering.</p>
 
 <hr>
 
-<h2 id="expected-outcomes">9. Expected Outcomes</h2>
+<h2 id="expected-outcomes">10. Expected Outcomes</h2>
 
 <p>Conformance cases in this directory should express outcomes in a structured way.</p>
 
@@ -466,6 +569,7 @@ inferred default initial value
   <li><strong>Expected preservation:</strong> interface contract remains distinct from widget participation</li>
   <li><strong>Expected preservation:</strong> structure-owned state remains distinct from inferred persistent value by feedback shape</li>
   <li><strong>Expected preservation:</strong> explicit state initialization remains distinct from inferred default initial value</li>
+  <li><strong>Expected preservation:</strong> explicit state read timing remains distinct from inferred scheduler order</li>
   <li><strong>Expected rejection:</strong> illegal feedback without explicit local memory</li>
   <li><strong>Expected rejection:</strong> UI reference usage without a valid UI primitive context</li>
   <li><strong>Expected rejection:</strong> widget-owned value participation must not be promoted to public interface participation</li>
@@ -478,11 +582,12 @@ inferred default initial value
   <li><strong>Expected rejection:</strong> inferred region crossing by layout must not be treated as structure-terminal usage</li>
   <li><strong>Expected rejection:</strong> inferred persistent value by feedback shape must not be treated as explicit structure-owned state</li>
   <li><strong>Expected rejection:</strong> inferred default initial value must not be treated as explicit state initialization</li>
+  <li><strong>Expected rejection:</strong> inferred scheduler order must not be treated as explicit state read timing</li>
 </ul>
 
 <hr>
 
-<h2 id="active-v01-conformance-focus">10. Active v0.1 Conformance Focus</h2>
+<h2 id="active-v01-conformance-focus">11. Active v0.1 Conformance Focus</h2>
 
 <p>The active base-v0.1 conformance focus should remain small and architectural.</p>
 
@@ -516,7 +621,8 @@ inferred default initial value
   <li>explicit structure boundaries versus grouping or apparent nesting,</li>
   <li>explicit structure terminals versus inferred region crossing by layout,</li>
   <li>explicit structure-owned state versus inferred persistent value by feedback shape,</li>
-  <li>explicit state initialization versus inferred default initial value.</li>
+  <li>explicit state initialization versus inferred default initial value,</li>
+  <li>explicit state read timing versus inferred scheduler order.</li>
 </ul>
 
 <p>The current published mirrored progression sharpens the following especially important rules:</p>
@@ -560,11 +666,15 @@ feedback-shape inference
 explicit state initialization
     does not arise from
 default-value inference
+
+explicit state read timing
+    does not arise from
+scheduler-order inference
 </code></pre>
 
 <hr>
 
-<h2 id="relation-with-examples-and-reference-implementation">11. Relation with Examples and Reference Implementation</h2>
+<h2 id="relation-with-examples-and-reference-implementation">12. Relation with Examples and Reference Implementation</h2>
 
 <p><code>Examples/</code>, <code>Conformance/</code>, and <code>Implementations/Reference/</code> have different roles.</p>
 
@@ -583,7 +693,7 @@ A reference implementation may execute a case, but it does not become language l
 
 <hr>
 
-<h2 id="future-growth">12. Future Growth</h2>
+<h2 id="future-growth">13. Future Growth</h2>
 
 <p>This directory should grow gradually, not by uncontrolled accumulation.</p>
 
@@ -597,6 +707,7 @@ A reference implementation may execute a case, but it does not become language l
   <li>more type / value / state legality cases,</li>
   <li>more structure-terminal legality cases,</li>
   <li>more explicit state-initialization and default-inference cases,</li>
+  <li>more explicit timing and scheduling-boundary cases,</li>
   <li>profile-gated acceptance and rejection cases,</li>
   <li>backend-family rejection cases where silent reinterpretation would be wrong,</li>
   <li>mirrored valid/invalid pairs for each critical boundary.</li>
@@ -615,7 +726,7 @@ clear public reviewability
 
 <hr>
 
-<h2 id="summary">13. Summary</h2>
+<h2 id="summary">14. Summary</h2>
 
 <p>This directory is the public conformance surface of the FROG repository.</p>
 
@@ -632,6 +743,13 @@ clear public reviewability
 <pre><code>specification owns truth
 conformance publishes expectations
 implementations must align
+</code></pre>
+
+<p>Or in simpler terms:</p>
+
+<pre><code>the specification says the rules
+conformance shows how to test them
+tools must behave accordingly
 </code></pre>
 
 <p>As the repository matures, this directory should progressively become the public truth surface for:</p>
