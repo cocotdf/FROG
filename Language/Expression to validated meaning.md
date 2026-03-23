@@ -1,7 +1,13 @@
-<h1>FROG Expression to Validated Meaning</h1>
+<p align="center">
+  <img src="../FROG logo.svg" alt="FROG logo" width="140">
+</p>
 
-<p><strong>Normative boundary from canonical <code>.frog</code> source to validated program meaning</strong><br>
-FROG — Free Open Graphical Language</p>
+<h1 align="center">FROG Expression to Validated Meaning</h1>
+
+<p align="center">
+  <strong>Normative boundary from canonical <code>.frog</code> source to validated program meaning</strong><br>
+  FROG — Free Open Graphical Language
+</p>
 
 <hr>
 
@@ -18,7 +24,7 @@ FROG — Free Open Graphical Language</p>
   <li><a href="#source-families-and-meaning-ownership">9. Source Families and Meaning Ownership</a></li>
   <li><a href="#execution-relevant-source-content">10. Execution-Relevant Source Content</a></li>
   <li><a href="#non-semantic-or-non-authoritative-source-content">11. Non-Semantic or Non-Authoritative Source Content</a></li>
-  <li><a href="#interface-diagram-and-front-panel-participation">12. Interface, Diagram, and Front-Panel Participation</a></li>
+  <li><a href="#interface-connector-diagram-and-front-panel-participation">12. Interface, Connector, Diagram, and Front-Panel Participation</a></li>
   <li><a href="#structures-state-and-cycles">13. Structures, State, and Cycles</a></li>
   <li><a href="#type-value-and-state-commitments">14. Type, Value, and State Commitments</a></li>
   <li><a href="#attribution-and-recoverability-at-the-semantic-boundary">15. Attribution and Recoverability at the Semantic Boundary</a></li>
@@ -37,7 +43,7 @@ FROG — Free Open Graphical Language</p>
 <p>It specifies:</p>
 <ul>
   <li>which source-visible families participate in validated execution meaning,</li>
-  <li>which source-visible families remain source-only,</li>
+  <li>which source-visible families remain source-only or support-only,</li>
   <li>which distinctions MUST remain semantically recoverable after validation,</li>
   <li>which source-side information is required before IR derivation may begin,</li>
   <li>which source-side information MUST NOT be mistaken for semantic authority.</li>
@@ -45,12 +51,12 @@ FROG — Free Open Graphical Language</p>
 
 <p>The repository architecture is:</p>
 
-<pre><code>Expression/   -&gt; canonical source form
-Language/     -&gt; validated program meaning
-IR/           -&gt; open execution-facing representation
-Lowering      -&gt; target-family-oriented specialization
-Backend       -&gt; backend-facing standardized handoff
-Runtime       -&gt; private realization
+<pre><code>Expression/        -&gt; canonical source form
+Language/          -&gt; validated program meaning
+IR/                -&gt; open execution-facing representation
+Lowering           -&gt; target-family-oriented specialization
+Backend contract   -&gt; backend-facing standardized handoff
+Runtime            -&gt; private realization
 </code></pre>
 
 <p>This document governs the first normative transition in that chain:</p>
@@ -147,7 +153,9 @@ This document MUST define what source validation establishes as program meaning.
   <li><code>Expression/Readme.md</code></li>
   <li><code>Expression/Diagram.md</code></li>
   <li><code>Expression/Interface.md</code></li>
+  <li><code>Expression/Connector.md</code></li>
   <li><code>Expression/Front panel.md</code></li>
+  <li><code>Expression/Widget.md</code></li>
   <li><code>Expression/Widget interaction.md</code></li>
   <li><code>Expression/Control structures.md</code></li>
   <li><code>Expression/State and cycles.md</code></li>
@@ -221,6 +229,7 @@ validated program meaning
   <li>source-shape validation,</li>
   <li>required-section presence validation,</li>
   <li>interface declaration validation,</li>
+  <li>connector consistency validation where connector material is present,</li>
   <li>diagram structure validation,</li>
   <li>boundary and region validation,</li>
   <li>structure-terminal validation,</li>
@@ -331,7 +340,7 @@ validated program meaning
 
 <h3>9.2 Families that may support meaning but do not independently define it</h3>
 
-<p>These families may support interpretation or recoverability without independently owning semantic truth:</p>
+<p>These families may support recoverability, projection, or interpretation without independently owning semantic truth:</p>
 <ul>
   <li><code>connector</code></li>
   <li>serialized front-panel composition details not used as execution participants</li>
@@ -356,7 +365,7 @@ validated program meaning
 
 <h2 id="execution-relevant-source-content">10. Execution-Relevant Source Content</h2>
 
-<p>A source-side family is execution-relevant when it contributes to validated program meaning as opposed to tooling-only recoverability or presentation.</p>
+<p>A source-side family is execution-relevant when it contributes to validated program meaning as opposed to tooling-only recoverability, projection, or presentation.</p>
 
 <p>Execution-relevant source content includes, where applicable:</p>
 <ul>
@@ -390,7 +399,7 @@ validated program meaning
   <li>tool acceleration metadata.</li>
 </ul>
 
-<p>These families MAY still matter for durability, authoring, recoverability, and user experience. They remain valid source concerns. But they are not semantic authority for execution.</p>
+<p>These families MAY still matter for durability, authoring, recoverability, projection, and user experience. They remain valid source concerns. But they are not semantic authority for execution.</p>
 
 <pre><code>executable meaning      != editor convenience
 executable meaning      != graphical layout
@@ -400,9 +409,9 @@ executable meaning      != runtime-private shortcut
 
 <hr>
 
-<h2 id="interface-diagram-and-front-panel-participation">12. Interface, Diagram, and Front-Panel Participation</h2>
+<h2 id="interface-connector-diagram-and-front-panel-participation">12. Interface, Connector, Diagram, and Front-Panel Participation</h2>
 
-<p>Validation must preserve the explicit distinction between public contract, executable graph, and optional user interaction surface.</p>
+<p>Validation must preserve the explicit distinction between public contract, public graphical projection, executable graph, and optional user interaction surface.</p>
 
 <h3>12.1 Interface</h3>
 
@@ -416,7 +425,13 @@ executable meaning      != runtime-private shortcut
   <li>any applicable boundary constraints defined by the specification.</li>
 </ul>
 
-<h3>12.2 Diagram</h3>
+<h3>12.2 Connector</h3>
+
+<p>The connector defines the graphical projection of the public interface when the FROG is reused as a node.</p>
+
+<p>Connector material MAY support usability, reuse, and durable source representation, but connector projection is not the public interface itself and does not independently define execution meaning.</p>
+
+<h3>12.3 Diagram</h3>
 
 <p>The diagram defines the authoritative source-level executable graph.</p>
 
@@ -430,7 +445,7 @@ executable meaning      != runtime-private shortcut
   <li>applicable primitive and profile usage legality.</li>
 </ul>
 
-<h3>12.3 Front panel</h3>
+<h3>12.4 Front panel</h3>
 
 <p>The front panel defines optional serialized user interaction composition.</p>
 
@@ -438,7 +453,7 @@ executable meaning      != runtime-private shortcut
 
 <p>Execution meaning arises only where the specification defines valid execution-relevant participation between front-panel-owned objects and the executable program.</p>
 
-<h3>12.4 Widget participation distinction</h3>
+<h3>12.5 Widget participation distinction</h3>
 
 <p>Validation MUST preserve the distinction between:</p>
 <ul>
@@ -456,7 +471,7 @@ executable meaning      != runtime-private shortcut
   <li>later derivation obligations.</li>
 </ul>
 
-<h3>12.5 Interface vs front-panel distinction</h3>
+<h3>12.6 Interface vs front-panel distinction</h3>
 
 <p>Validation MUST preserve the distinction between:</p>
 <ul>
@@ -471,6 +486,7 @@ Any linkage between them must remain explicit and source-attributable.</p>
 <p>The boundary can be summarized as:</p>
 
 <pre><code>interface         = public program contract
+connector         = public graphical projection for reuse
 diagram           = executable source graph
 front panel       = optional user interaction surface
 widget_value      = widget contributes a value
@@ -511,8 +527,8 @@ widget_reference  = widget contributes a standardized UI object reference
 <p>Useful mental model:</p>
 
 <pre><code>graph loop alone            != valid stateful behavior
-explicit legal memory       -> possible valid stateful behavior
-illegal feedback cycle      -> validation failure
+explicit legal memory       -&gt; possible valid stateful behavior
+illegal feedback cycle      -&gt; validation failure
 </code></pre>
 
 <hr>
@@ -550,6 +566,8 @@ illegal feedback cycle      -> validation failure
   <li>source-visible boundaries relevant to later derivation.</li>
 </ul>
 
+<p>Where stable identifiers are defined and preserved by the source architecture, later conforming layers SHOULD avoid losing that recoverability without explicit justification.</p>
+
 <p>This does not require one frozen internal representation. It requires that later conforming layers do not lose distinctions they are obligated to preserve.</p>
 
 <hr>
@@ -565,13 +583,16 @@ illegal feedback cycle      -> validation failure
 <h3>16.3 Front panel into interface collapse</h3>
 <p>Front-panel widgets MUST NOT be treated as equivalent to public interface declarations.</p>
 
-<h3>16.4 Widget-value into widget-reference collapse</h3>
+<h3>16.4 Connector into interface collapse</h3>
+<p>Connector projection MUST NOT be treated as the public contract itself.</p>
+
+<h3>16.5 Widget-value into widget-reference collapse</h3>
 <p>These families MUST remain distinct.</p>
 
-<h3>16.5 Semantics into runtime collapse</h3>
+<h3>16.6 Semantics into runtime collapse</h3>
 <p>Validated program meaning MUST NOT be defined by runtime-private behavior.</p>
 
-<h3>16.6 Tooling metadata into semantics collapse</h3>
+<h3>16.7 Tooling metadata into semantics collapse</h3>
 <p>IDE metadata, cache material, styling, and layout MUST NOT redefine execution meaning.</p>
 
 <p>Forbidden collapses at a glance:</p>
@@ -579,6 +600,7 @@ illegal feedback cycle      -> validation failure
 <pre><code>source          -/-> IR
 validator       -/-> language law
 front panel     -/-> interface
+connector       -/-> interface
 widget_value    -/-> widget_reference
 runtime         -/-> semantic authority
 IDE/cache       -/-> execution meaning
@@ -656,7 +678,7 @@ runtime-private realization
   <li>validation determines whether source successfully establishes that meaning,</li>
   <li>execution-relevant source families contribute to meaning,</li>
   <li>non-semantic support families remain non-authoritative for execution,</li>
-  <li>critical distinctions such as interface vs widget participation, widget value vs widget reference, and explicit state vs illegal feedback must remain preserved,</li>
+  <li>critical distinctions such as interface vs widget participation, connector vs interface, widget value vs widget reference, and explicit state vs illegal feedback must remain preserved,</li>
   <li>IR derivation is downstream from validated meaning, not a replacement for it.</li>
 </ul>
 
