@@ -191,7 +191,8 @@ validated program meaning
   <li>explicit connectivity versus inferred evaluation order,</li>
   <li>explicit structure boundaries versus layout grouping or apparent nesting,</li>
   <li>explicit structure terminals versus inferred region crossing by layout,</li>
-  <li>explicit structure-owned state versus inferred persistent value by feedback shape.</li>
+  <li>explicit structure-owned state versus inferred persistent value by feedback shape,</li>
+  <li>explicit state initialization versus inferred default initial value.</li>
 </ul>
 
 <p>Conformance should therefore help prevent these forbidden collapses:</p>
@@ -209,6 +210,7 @@ grouping          -/-> structure boundary
 apparent nesting  -/-> structure membership
 frame crossing    -/-> structure-terminal usage
 feedback shape    -/-> explicit owned state
+default inference -/-> explicit state initialization
 </code></pre>
 
 <hr>
@@ -273,6 +275,7 @@ Notes:
   <li><code>valid/17_explicit_structure_boundaries_remain_distinct_from_layout_grouping_or_nesting.md</code></li>
   <li><code>valid/19_explicit_structure_terminals_remain_distinct_from_inferred_region_crossing_by_layout.md</code></li>
   <li><code>valid/21_explicit_structure_owned_state_remains_distinct_from_inferred_persistent_value_by_feedback_shape.md</code></li>
+  <li><code>valid/23_explicit_state_initialization_remains_distinct_from_inferred_default_initial_value.md</code></li>
 </ul>
 
 <h3>8.3 Published invalid cases</h3>
@@ -287,6 +290,7 @@ Notes:
   <li><code>invalid/18_layout_grouping_or_apparent_nesting_must_not_be_treated_as_structure_boundary.md</code></li>
   <li><code>invalid/20_inferred_region_crossing_by_layout_must_not_be_treated_as_structure_terminal_usage.md</code></li>
   <li><code>invalid/22_inferred_persistent_value_by_feedback_shape_must_not_be_treated_as_structure_owned_state.md</code></li>
+  <li><code>invalid/24_inferred_default_initial_value_must_not_be_treated_as_explicit_state_initialization.md</code></li>
 </ul>
 
 <h3>8.4 Published legacy invalid seed cases</h3>
@@ -420,6 +424,19 @@ inferred region crossing by layout
 inferred persistent value by feedback shape
 </code></pre>
 
+<p>The pair formed by:</p>
+<ul>
+  <li><code>valid/23_explicit_state_initialization_remains_distinct_from_inferred_default_initial_value.md</code>, and</li>
+  <li><code>invalid/24_inferred_default_initial_value_must_not_be_treated_as_explicit_state_initialization.md</code></li>
+</ul>
+
+<p>makes another boundary especially explicit:</p>
+
+<pre><code>explicit state initialization
+              !=
+inferred default initial value
+</code></pre>
+
 <p>This balance matters because explicit rejection is better than silent semantic laundering.</p>
 
 <hr>
@@ -448,6 +465,7 @@ inferred persistent value by feedback shape
   <li><strong>Expected preservation:</strong> <code>widget_value</code> and <code>widget_reference</code> remain distinct</li>
   <li><strong>Expected preservation:</strong> interface contract remains distinct from widget participation</li>
   <li><strong>Expected preservation:</strong> structure-owned state remains distinct from inferred persistent value by feedback shape</li>
+  <li><strong>Expected preservation:</strong> explicit state initialization remains distinct from inferred default initial value</li>
   <li><strong>Expected rejection:</strong> illegal feedback without explicit local memory</li>
   <li><strong>Expected rejection:</strong> UI reference usage without a valid UI primitive context</li>
   <li><strong>Expected rejection:</strong> widget-owned value participation must not be promoted to public interface participation</li>
@@ -459,6 +477,7 @@ inferred persistent value by feedback shape
   <li><strong>Expected rejection:</strong> layout grouping or apparent nesting must not be treated as structure boundary</li>
   <li><strong>Expected rejection:</strong> inferred region crossing by layout must not be treated as structure-terminal usage</li>
   <li><strong>Expected rejection:</strong> inferred persistent value by feedback shape must not be treated as explicit structure-owned state</li>
+  <li><strong>Expected rejection:</strong> inferred default initial value must not be treated as explicit state initialization</li>
 </ul>
 
 <hr>
@@ -496,7 +515,8 @@ inferred persistent value by feedback shape
   <li>explicit connectivity versus inferred evaluation order,</li>
   <li>explicit structure boundaries versus grouping or apparent nesting,</li>
   <li>explicit structure terminals versus inferred region crossing by layout,</li>
-  <li>explicit structure-owned state versus inferred persistent value by feedback shape.</li>
+  <li>explicit structure-owned state versus inferred persistent value by feedback shape,</li>
+  <li>explicit state initialization versus inferred default initial value.</li>
 </ul>
 
 <p>The current published mirrored progression sharpens the following especially important rules:</p>
@@ -536,6 +556,10 @@ inferred region crossing by layout
 explicit structure-owned state
     does not arise from
 feedback-shape inference
+
+explicit state initialization
+    does not arise from
+default-value inference
 </code></pre>
 
 <hr>
