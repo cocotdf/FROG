@@ -282,7 +282,8 @@ validated program meaning
   <li>explicit state read timing versus inferred scheduler order,</li>
   <li>explicit state write visibility versus inferred runtime flush order,</li>
   <li>explicit state snapshot boundary versus inferred runtime observation point,</li>
-  <li>explicit state version boundary versus inferred runtime update epoch.</li>
+  <li>explicit state version boundary versus inferred runtime update epoch,</li>
+  <li>explicit state merge boundary versus inferred runtime reconciliation pass.</li>
 </ul>
 
 <p>Conformance should therefore help prevent these forbidden collapses:</p>
@@ -305,6 +306,7 @@ scheduler order       -/-> explicit state read timing
 runtime flush         -/-> explicit state write visibility
 observation point     -/-> explicit state snapshot boundary
 update epoch          -/-> explicit state version boundary
+reconciliation pass   -/-> explicit state merge boundary
 </code></pre>
 
 <hr>
@@ -374,6 +376,7 @@ Notes:
   <li><code>valid/27_explicit_state_write_visibility_remains_distinct_from_inferred_runtime_flush_order.md</code></li>
   <li><code>valid/29_explicit_state_snapshot_boundary_remains_distinct_from_inferred_runtime_observation_point.md</code></li>
   <li><code>valid/31_explicit_state_version_boundary_remains_distinct_from_inferred_runtime_update_epoch.md</code></li>
+  <li><code>valid/33_explicit_state_merge_boundary_remains_distinct_from_inferred_runtime_reconciliation_pass.md</code></li>
 </ul>
 
 <h3>9.3 Published invalid cases</h3>
@@ -393,6 +396,7 @@ Notes:
   <li><code>invalid/28_inferred_runtime_flush_order_must_not_be_treated_as_explicit_state_write_visibility.md</code></li>
   <li><code>invalid/30_inferred_runtime_observation_point_must_not_be_treated_as_explicit_state_snapshot_boundary.md</code></li>
   <li><code>invalid/32_inferred_runtime_update_epoch_must_not_be_treated_as_explicit_state_version_boundary.md</code></li>
+  <li><code>invalid/34_inferred_runtime_reconciliation_pass_must_not_be_treated_as_explicit_state_merge_boundary.md</code></li>
 </ul>
 
 <h3>9.4 Published legacy invalid seed cases</h3>
@@ -490,7 +494,7 @@ inferred evaluation order
 <p>The pair formed by:</p>
 <ul>
   <li><code>valid/17_explicit_structure_boundaries_remain_distinct_from_layout_grouping_or_nesting.md</code>, and</li>
-  <li><code>invalid/18_layout_grouping_or_apparent_nesting_mUST_NOT_BE_TREATED_AS_STRUCTURE_BOUNDARY.md</code></li>
+  <li><code>invalid/18_layout_grouping_or_apparent_nesting_must_not_be_treated_as_structure_boundary.md</code></li>
 </ul>
 
 <p>makes another boundary especially explicit:</p>
@@ -568,7 +572,7 @@ inferred runtime flush order
 <p>The pair formed by:</p>
 <ul>
   <li><code>valid/29_explicit_state_snapshot_boundary_remains_distinct_from_inferred_runtime_observation_point.md</code>, and</li>
-  <li><code>invalid/30_inferred_runtime_observation_point_must_not_be_treated_as_explicit_state_snapshot_boundary.md</code></li>
+  <li><code>invalid/30_inferred_runtime_observation_point_mUST_NOT_BE_TREATED_AS_EXPLICIT_STATE_SNAPSHOT_BOUNDARY.md</code></li>
 </ul>
 
 <p>makes another boundary especially explicit:</p>
@@ -589,6 +593,19 @@ inferred runtime observation point
 <pre><code>explicit state version boundary
               !=
 inferred runtime update epoch
+</code></pre>
+
+<p>The pair formed by:</p>
+<ul>
+  <li><code>valid/33_explicit_state_merge_boundary_remains_distinct_from_inferred_runtime_reconciliation_pass.md</code>, and</li>
+  <li><code>invalid/34_inferred_runtime_reconciliation_pass_must_not_be_treated_as_explicit_state_merge_boundary.md</code></li>
+</ul>
+
+<p>makes another boundary especially explicit:</p>
+
+<pre><code>explicit state merge boundary
+              !=
+inferred runtime reconciliation pass
 </code></pre>
 
 <p>This balance matters because explicit rejection is better than silent semantic laundering.</p>
@@ -624,6 +641,7 @@ inferred runtime update epoch
   <li><strong>Expected preservation:</strong> explicit state write visibility remains distinct from inferred runtime flush order</li>
   <li><strong>Expected preservation:</strong> explicit state snapshot boundary remains distinct from inferred runtime observation point</li>
   <li><strong>Expected preservation:</strong> explicit state version boundary remains distinct from inferred runtime update epoch</li>
+  <li><strong>Expected preservation:</strong> explicit state merge boundary remains distinct from inferred runtime reconciliation pass</li>
   <li><strong>Expected rejection:</strong> illegal feedback without explicit local memory</li>
   <li><strong>Expected rejection:</strong> UI reference usage without a valid UI primitive context</li>
   <li><strong>Expected rejection:</strong> widget-owned value participation must not be promoted to public interface participation</li>
@@ -640,6 +658,7 @@ inferred runtime update epoch
   <li><strong>Expected rejection:</strong> inferred runtime flush order must not be treated as explicit state write visibility</li>
   <li><strong>Expected rejection:</strong> inferred runtime observation point must not be treated as explicit state snapshot boundary</li>
   <li><strong>Expected rejection:</strong> inferred runtime update epoch must not be treated as explicit state version boundary</li>
+  <li><strong>Expected rejection:</strong> inferred runtime reconciliation pass must not be treated as explicit state merge boundary</li>
 </ul>
 
 <hr>
@@ -682,7 +701,8 @@ inferred runtime update epoch
   <li>explicit state read timing versus inferred scheduler order,</li>
   <li>explicit state write visibility versus inferred runtime flush order,</li>
   <li>explicit state snapshot boundary versus inferred runtime observation point,</li>
-  <li>explicit state version boundary versus inferred runtime update epoch.</li>
+  <li>explicit state version boundary versus inferred runtime update epoch,</li>
+  <li>explicit state merge boundary versus inferred runtime reconciliation pass.</li>
 </ul>
 
 <p>The current published mirrored progression sharpens the following especially important rules:</p>
@@ -742,6 +762,10 @@ runtime-observation inference
 explicit state version boundary
     does not arise from
 runtime-update-epoch inference
+
+explicit state merge boundary
+    does not arise from
+runtime-reconciliation inference
 </code></pre>
 
 <hr>
@@ -783,6 +807,7 @@ A reference implementation may execute a case, but it does not become language l
   <li>more explicit state-visibility and propagation-boundary cases,</li>
   <li>more explicit state-snapshot and observation-boundary cases,</li>
   <li>more explicit state-version and update-epoch boundary cases,</li>
+  <li>more explicit state-merge and reconciliation-boundary cases,</li>
   <li>profile-gated acceptance and rejection cases,</li>
   <li>backend-family rejection cases where silent reinterpretation would be wrong,</li>
   <li>mirrored valid/invalid pairs for each critical boundary.</li>
