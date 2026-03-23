@@ -2,26 +2,25 @@
   <img src="../FROG logo.svg" alt="FROG logo" width="140" />
 </p>
 
-<h1 align="center">🐸 FROG IR Construction Rules</h1>
+<h1 align="center">FROG IR Construction Rules</h1>
 
 <p align="center">
-  Normative construction rules for building open Execution IR from validated FROG program meaning<br/>
-  <em>FROG — Free Open Graphical Language</em>
+  <strong>Normative construction rules for building open Execution IR from validated FROG program meaning</strong><br />
+  FROG — Free Open Graphical Language
 </p>
 
-<hr/>
+<hr />
 
 <h2>Contents</h2>
-
 <ul>
   <li><a href="#overview">1. Overview</a></li>
-  <li><a href="#reading-legend">2. Reading Legend</a></li>
-  <li><a href="#scope">3. Scope of this Document</a></li>
+  <li><a href="#boundary-contract">2. Boundary Contract</a></li>
+  <li><a href="#scope">3. Scope</a></li>
   <li><a href="#relation-with-other-specifications">4. Relation with Other Specifications</a></li>
   <li><a href="#construction-entry-condition">5. Construction Entry Condition</a></li>
   <li><a href="#construction-result">6. Construction Result</a></li>
   <li><a href="#construction-principles">7. Construction Principles</a></li>
-  <li><a href="#construction-pipeline">8. Construction Pipeline</a></li>
+  <li><a href="#conceptual-construction-pipeline">8. Conceptual Construction Pipeline</a></li>
   <li><a href="#execution-unit-construction">9. Execution Unit Construction</a></li>
   <li><a href="#primary-object-construction">10. Primary Object Construction</a></li>
   <li><a href="#port-terminal-and-connection-construction">11. Port, Terminal, and Connection Construction</a></li>
@@ -34,23 +33,23 @@
   <li><a href="#minimal-open-payload-shape">18. Minimal Open Payload Shape</a></li>
   <li><a href="#ir-validity-checks">19. IR Validity Checks</a></li>
   <li><a href="#determinism-and-stability">20. Determinism and Stability</a></li>
-  <li><a href="#out-of-scope-for-v01">21. Out of Scope for v0.1</a></li>
+  <li><a href="#out-of-scope">21. Out of Scope</a></li>
   <li><a href="#summary">22. Summary</a></li>
 </ul>
 
-<hr/>
+<hr />
 
 <h2 id="overview">1. Overview</h2>
 
 <p>
 This document defines how a conforming implementation constructs an open Execution IR from
-<strong>validated</strong> FROG program meaning in base v0.1.
+<strong>validated FROG program meaning</strong> in base v0.1.
 </p>
 
 <p>
-Where <code>IR/Derivation rules.md</code> defines <strong>what must correspond</strong> between validated program
-meaning and open Execution IR, this document defines <strong>how that corresponding IR is materially built</strong>
-in a way that remains conservative, attributable, structured, portable, and recoverable.
+Where <code>IR/Derivation rules.md</code> defines <strong>what must correspond</strong> between validated meaning and open Execution IR,
+this document defines <strong>how that corresponding IR is materially built</strong> in a way that remains conservative,
+attributable, structured, portable, and recoverable.
 </p>
 
 <p>
@@ -59,22 +58,22 @@ It standardizes the minimum construction obligations that make a produced open E
 recognizable, inspectable, recoverable, and suitable for later lowering.
 </p>
 
-<pre><code>🟩 validated program meaning
+<pre><code>validated program meaning
         |
         v
-🟨 construction rules   &lt;-- this document
+construction rules   &lt;-- this document
         |
         v
-🟦 open Execution IR
+open Execution IR
         |
         v
-🟧 lowering / specialization
+lowering
         |
         v
-🟨 backend-facing contract
+backend contract
         |
         v
-🟥 private realization
+runtime-private realization
 </code></pre>
 
 <p>
@@ -88,21 +87,53 @@ It builds:
   <li>recoverable correspondence for source-visible content that does not become a primary execution object in the open IR.</li>
 </ul>
 
-<hr/>
+<hr />
 
-<h2 id="reading-legend">2. Reading Legend</h2>
+<h2 id="boundary-contract">2. Boundary Contract</h2>
+
+<p>
+Construction begins only after validated program meaning exists.
+Construction does not decide validity.
+Construction does not invent missing semantics.
+Construction materializes an execution-facing payload from already-validated meaning.
+</p>
+
+<p>
+A conforming construction result MUST therefore be:
+</p>
 
 <ul>
-  <li>🟦 <strong>Open specification-facing representation or layer</strong></li>
-  <li>🟩 <strong>Semantic truth, source attribution, or recoverability obligation</strong></li>
-  <li>🟨 <strong>Boundary, interface, mapping, or standardized construction handoff</strong></li>
-  <li>🟧 <strong>Lowering / specialization / target adaptation zone</strong></li>
-  <li>🟥 <strong>Implementation-private or runtime-private realization zone</strong></li>
+  <li>semantically faithful,</li>
+  <li>execution-facing,</li>
+  <li>explicit enough for inspection and later lowering,</li>
+  <li>attributable to validated source-visible contributors,</li>
+  <li>free of runtime-private semantic invention.</li>
 </ul>
 
-<hr/>
+<p>
+Construction is not:
+</p>
 
-<h2 id="scope">3. Scope of this Document</h2>
+<ul>
+  <li>a validator,</li>
+  <li>a lowering step,</li>
+  <li>a backend contract emitter,</li>
+  <li>a runtime scheduler realization.</li>
+</ul>
+
+<pre><code>validation decides:
+  whether meaning exists
+
+derivation decides:
+  what must correspond
+
+construction decides:
+  how the open IR payload is materially built
+</code></pre>
+
+<hr />
+
+<h2 id="scope">3. Scope</h2>
 
 <p>
 This document defines:
@@ -110,54 +141,54 @@ This document defines:
 
 <ul>
   <li>the construction entry condition,</li>
-  <li>the minimum construction stages of the open Execution IR,</li>
+  <li>the minimum conceptual construction stages of open Execution IR,</li>
   <li>the obligations for building execution units, primary objects, support objects, ports, terminals, connections, and regions,</li>
-  <li>the obligations for building explicit source attribution and correspondence records,</li>
+  <li>the obligations for building explicit source attribution and correspondence,</li>
   <li>the conditions under which support objects may be introduced,</li>
-  <li>the minimum validity properties of the constructed IR payload.</li>
+  <li>the minimum validity properties of the constructed payload.</li>
 </ul>
 
 <p>
-This document does <strong>not</strong> fully define:
+This document does <strong>not</strong> define:
 </p>
 
 <ul>
-  <li>the canonical source representation,</li>
-  <li>the semantic meaning of language constructs,</li>
+  <li>canonical source representation,</li>
+  <li>language semantics,</li>
   <li>the full cross-stage identity model,</li>
-  <li>one universal mandatory wire format for all implementations,</li>
-  <li>backend-specific lowering or runtime-private realization.</li>
+  <li>one universal mandatory wire format,</li>
+  <li>backend-specific lowering,</li>
+  <li>runtime-private realization.</li>
 </ul>
 
 <pre><code>This document defines:
-🟨 how a conforming open IR is materially built
+how a conforming open IR is materially built
 
 This document does not define:
-🟦 source shape
-🟩 language semantics
-🟩 full cross-stage identity contract
-🟧 lowering
-🟥 private realization
+source shape
+language semantics
+full cross-stage identity contract
+lowering
+private realization
 </code></pre>
 
-<hr/>
+<hr />
 
 <h2 id="relation-with-other-specifications">4. Relation with Other Specifications</h2>
 
 <p>
-This document depends on the following ownership boundaries:
+Ownership remains:
 </p>
 
-<ul>
-  <li><code>Expression/</code> owns canonical source structure and source-visible object presence.</li>
-  <li><code>Language/</code> owns validated program meaning.</li>
-  <li><code>Libraries/</code> and <code>Profiles/</code> own primitive and optional capability identities.</li>
-  <li><code>IR/Execution IR.md</code> owns the architectural invariants of the open Execution IR.</li>
-  <li><code>IR/Derivation rules.md</code> owns the normative source-to-IR correspondence.</li>
-  <li><code>IR/Identity and Mapping.md</code> owns the broader recoverable identity and mapping boundary.</li>
-  <li><code>IR/Lowering.md</code> owns the boundary where target-oriented specialization begins.</li>
-  <li><code>IR/Backend contract.md</code> owns the later backend-facing contract boundary.</li>
-</ul>
+<pre><code>Expression/              -&gt; source shape
+Language/                -&gt; validated program meaning
+IR/Derivation rules.md   -&gt; correspondence obligations
+IR/Execution IR.md       -&gt; open IR architecture
+IR/Construction rules.md -&gt; build obligations
+IR/Identity and Mapping.md -&gt; recoverability obligations
+IR/Lowering.md           -&gt; later specialization
+IR/Backend contract.md   -&gt; later backend-facing handoff
+</code></pre>
 
 <p>
 Accordingly:
@@ -168,25 +199,33 @@ Accordingly:
   <li>this document MUST NOT redefine language semantics,</li>
   <li>this document MUST NOT replace derivation rules with implementation-private heuristics,</li>
   <li>this document MUST NOT replace identity and mapping rules with opaque construction shortcuts,</li>
-  <li>this document MUST define how a conforming open Execution IR payload is constructed once derivation eligibility is satisfied.</li>
+  <li>this document MUST define how a conforming open Execution IR payload is materially built once derivation eligibility is satisfied.</li>
 </ul>
 
-<pre><code>🟦 Expression/         -&gt; source shape
-🟩 Language/           -&gt; semantic truth
-🟨 Derivation rules    -&gt; correspondence obligations
-🟦 Execution IR        -&gt; open IR model
-🟨 Construction rules  -&gt; build obligations
-🟩 Identity / Mapping  -&gt; recoverable cross-layer identity
-🟧 Lowering            -&gt; later specialization
-🟨 Backend contract    -&gt; later consumer-facing handoff
-</code></pre>
+<p>
+This document should be read together with:
+</p>
 
-<hr/>
+<ul>
+  <li><code>Language/Expression to validated meaning.md</code>,</li>
+  <li><code>IR/Derivation rules.md</code>,</li>
+  <li><code>IR/Identity and Mapping.md</code>,</li>
+  <li><code>IR/Execution IR.md</code>,</li>
+  <li><code>Expression/Diagram.md</code>,</li>
+  <li><code>Expression/Control structures.md</code>,</li>
+  <li><code>Expression/State and cycles.md</code>,</li>
+  <li><code>Expression/Interface.md</code>,</li>
+  <li><code>Expression/Front panel.md</code>,</li>
+  <li><code>Expression/Widget.md</code>,</li>
+  <li><code>Expression/Widget interaction.md</code>.</li>
+</ul>
+
+<hr />
 
 <h2 id="construction-entry-condition">5. Construction Entry Condition</h2>
 
 <p>
-Open Execution IR construction begins only after the program has a <strong>validated program meaning</strong>.
+Open Execution IR construction begins only after the program has <strong>validated program meaning</strong>.
 Construction MUST NOT be claimed for a program that has not already satisfied the applicable validation rules.
 </p>
 
@@ -198,7 +237,7 @@ At minimum, the following validation classes MUST already be satisfied:
   <li>structural validation,</li>
   <li>type validation,</li>
   <li>primitive and structure-family validation,</li>
-  <li>interface/diagram consistency validation,</li>
+  <li>interface / diagram consistency validation,</li>
   <li>region and structure-boundary validation,</li>
   <li>widget participation validation where applicable,</li>
   <li>cycle-validity validation,</li>
@@ -216,24 +255,24 @@ An implementation MAY internally start construction from:
 </ul>
 
 <p>
-However, the constructed open Execution IR MUST remain grounded in validated FROG program meaning rather than in editor-only convenience state.
+However, the constructed open Execution IR MUST remain grounded in validated program meaning rather than in editor-only convenience state.
 </p>
 
-<pre><code>🟦 raw or editable form
+<pre><code>raw or editable form
         |
         v
-🟩 validated program meaning
+validated program meaning
         |
         v
-🟨 construction starts here
+construction starts here
 </code></pre>
 
-<hr/>
+<hr />
 
 <h2 id="construction-result">6. Construction Result</h2>
 
 <p>
-The construction result in base v0.1 is one open Execution IR payload describing one validated FROG as one
+The construction result in base v0.1 is one open Execution IR payload describing one validated FROG program as one
 <strong>execution unit</strong>.
 </p>
 
@@ -243,7 +282,7 @@ That execution unit MUST contain enough constructed content to expose:
 
 <ul>
   <li>execution-facing object identity,</li>
-  <li>object family classification,</li>
+  <li>object-family classification,</li>
   <li>primary objects,</li>
   <li>support objects where needed,</li>
   <li>typed ports or equivalent explicit terminal interfaces,</li>
@@ -263,17 +302,17 @@ A conforming implementation MAY carry additional execution-relevant metadata, pr
   <li>it does not masquerade as runtime-private scheduler state.</li>
 </ul>
 
-<pre><code>🟩 one validated FROG
+<pre><code>one validated FROG
         |
         v
-🟦 one execution unit
-        ├── 🟦 primary execution-facing objects
-        ├── 🟦 support objects where needed
-        ├── 🟦 typed ports / explicit terminals
-        ├── 🟦 directed connections
-        ├── 🟦 regions where applicable
-        ├── 🟨 boundary participation
-        └── 🟩 source attribution / correspondence
+one execution unit
+        ├── primary execution-facing objects
+        ├── support objects where needed
+        ├── typed ports / explicit terminals
+        ├── directed connections
+        ├── regions where applicable
+        ├── boundary participation
+        └── source attribution / correspondence
 </code></pre>
 
 <p>
@@ -281,7 +320,7 @@ The construction result is the open IR payload that later stages MAY consume.
 It is not yet a lowered target-facing form and not yet a backend-facing contract artifact.
 </p>
 
-<hr/>
+<hr />
 
 <h2 id="construction-principles">7. Construction Principles</h2>
 
@@ -302,25 +341,27 @@ All conforming open Execution IR construction in base v0.1 MUST follow the follo
 
 <pre><code>Construction principles
 
-🟩 validated-first
-🟩 attributable
-🟩 mapping-compatible
-🟩 structured
-🟦 execution-facing
-🟦 portable
-🟩 non-forcing of non-primary source content
-🟥 not backend-private by assumption
+validated-first
+attributable
+mapping-compatible
+structured
+execution-facing
+portable
+non-forcing of non-primary source content
+
+not backend-private by assumption
 </code></pre>
 
-<hr/>
+<hr />
 
-<h2 id="construction-pipeline">8. Construction Pipeline</h2>
+<h2 id="conceptual-construction-pipeline">8. Conceptual Construction Pipeline</h2>
 
 <p>
-A conforming implementation MAY organize internal construction differently, but the resulting construction MUST be equivalent to the following conceptual pipeline:
+A conforming implementation MAY organize internal construction differently,
+but the resulting construction MUST be equivalent to the following conceptual pipeline:
 </p>
 
-<pre><code>🟩 validated program meaning
+<pre><code>validated program meaning
         |
         v
 (1) create execution unit
@@ -350,7 +391,7 @@ A conforming implementation MAY organize internal construction differently, but 
 (9) verify IR validity invariants
         |
         v
-🟦 open Execution IR payload
+open Execution IR payload
 </code></pre>
 
 <p>
@@ -363,12 +404,12 @@ Construction stops at the open IR boundary.
 Lowering, backend-contract shaping, scheduling, partitioning, or runtime realization belong to later stages.
 </p>
 
-<hr/>
+<hr />
 
 <h2 id="execution-unit-construction">9. Execution Unit Construction</h2>
 
 <p>
-Construction MUST begin by creating one execution unit for the validated FROG being constructed.
+Construction MUST begin by creating one execution unit for the validated FROG program being constructed.
 </p>
 
 <p>
@@ -386,15 +427,15 @@ The execution unit MUST provide the owning scope for:
 
 <p>
 The execution unit MUST carry a stable unit identity within the payload.
-That identity does not need one globally fixed syntax, but it MUST be stable enough for inspection, diagnostics, cross-record reference, and recoverable mapping inside the payload.
+That identity does not require one globally fixed syntax, but it MUST be stable enough for inspection, diagnostics, cross-record reference, and recoverable mapping inside the payload.
 </p>
 
 <p>
-In base v0.1, one validated FROG MUST construct to one execution unit.
+In base v0.1, one validated FROG program MUST construct to one execution unit.
 The open IR does not yet standardize multi-unit partitioning, distributed unit packaging, or backend-sharded unit construction.
 </p>
 
-<pre><code>🟦 execution unit
+<pre><code>execution unit
    owns:
    - primary objects
    - support objects
@@ -404,17 +445,17 @@ The open IR does not yet standardize multi-unit partitioning, distributed unit p
    - correspondence records
 
 Rule:
-🟩 one validated FROG
+one validated FROG
    -&gt;
-🟦 one execution unit
+one execution unit
 </code></pre>
 
-<hr/>
+<hr />
 
 <h2 id="primary-object-construction">10. Primary Object Construction</h2>
 
 <p>
-Primary execution-facing objects MUST be constructed from validated source-visible executable or boundary-participating content according to the derivation rules.
+Primary execution-facing objects MUST be constructed from validated executable or boundary-participating content according to the derivation rules.
 </p>
 
 <p>
@@ -446,27 +487,24 @@ Each constructed primary object MUST contain at minimum:
 
 <p>
 Construction MUST NOT produce anonymous execution-visible objects whose role cannot be classified or attributed.
-</p>
-
-<p>
 Construction MUST NOT merge multiple independently attributable primary validated objects into one opaque generated object.
 </p>
 
 <pre><code>Primary object requirements
 
-🟦 local IR identity
-🟦 family classification
-🟦 explicit port / terminal interface
-🟩 source attribution
-🟩 semantic correspondence
-🟦 required execution-facing metadata
+local IR identity
+family classification
+explicit port / terminal interface
+source attribution
+semantic correspondence
+required execution-facing metadata
 
 Forbidden:
-🟥 anonymous execution-visible objects
-🟥 opaque unattributable primary merging
+anonymous execution-visible objects
+opaque unattributable primary merging
 </code></pre>
 
-<hr/>
+<hr />
 
 <h2 id="port-terminal-and-connection-construction">11. Port, Terminal, and Connection Construction</h2>
 
@@ -512,23 +550,23 @@ Construction MAY make already-resolved details explicit, including:
 
 <p>
 Construction MUST preserve the validated dependency structure of the executable graph.
-It MUST NOT silently bypass a structure boundary or region wall that exists in validated program meaning.
+It MUST NOT silently bypass a structure boundary or region wall that exists in validated meaning.
 </p>
 
 <pre><code>Connectivity construction
 
-🟦 explicit ports / terminals
-🟦 explicit direction
-🟦 explicit port type
-🟦 explicit directed connections
-🟩 attributable endpoints
-🟩 preserved validated dependencies
+explicit ports / terminals
+explicit direction
+explicit port type
+explicit directed connections
+attributable endpoints
+preserved validated dependencies
 
 Forbidden:
-🟥 hidden cross-boundary bypass
+hidden cross-boundary bypass
 </code></pre>
 
-<hr/>
+<hr />
 
 <h2 id="region-and-structure-construction">12. Region and Structure Construction</h2>
 
@@ -540,7 +578,7 @@ Therefore, construction of a validated structure MUST produce:
 <ul>
   <li>one structured execution object,</li>
   <li>explicit owned regions,</li>
-  <li>explicit boundary inputs and outputs or equivalent explicit structured ports,</li>
+  <li>explicit boundary inputs and outputs or equivalent structured ports,</li>
   <li>explicit structure terminals where applicable.</li>
 </ul>
 
@@ -561,7 +599,8 @@ A region MUST NOT exist in the payload without a recoverable ownership relation.
 
 <p>
 Each region MUST contain or reference the execution-facing objects and connectivity that belong to that region.
-A conforming payload MAY represent region-local membership directly or indirectly, but region-local content MUST remain recoverable.
+A conforming payload MAY represent region-local membership directly or indirectly,
+but region-local content MUST remain recoverable.
 </p>
 
 <p>
@@ -576,17 +615,17 @@ Construction MUST NOT flatten structured control so aggressively that:
   <li>structure-terminal roles become unrecoverable.</li>
 </ul>
 
-<pre><code>🟦 structured execution object
-        ├── 🟦 explicit owned regions
-        ├── 🟨 explicit structure-boundary participation
-        ├── 🟨 explicit structure terminals where applicable
-        └── 🟩 recoverable region-local content
+<pre><code>structured execution object
+        ├── explicit owned regions
+        ├── explicit structure-boundary participation
+        ├── explicit structure terminals where applicable
+        └── recoverable region-local content
 
 Forbidden:
-🟥 unrecoverable structural flattening
+unrecoverable structural flattening
 </code></pre>
 
-<hr/>
+<hr />
 
 <h2 id="boundary-and-ui-construction">13. Boundary and UI Construction</h2>
 
@@ -606,8 +645,8 @@ Therefore:
 
 <ul>
   <li><code>interface_input</code> and <code>interface_output</code> MUST construct to explicit public boundary participation in the IR,</li>
-  <li><code>widget_value</code> MUST construct to explicit widget-value participation when that widget participates in validated program meaning,</li>
-  <li><code>widget_reference</code> MUST construct to explicit widget-reference participation when object-style widget interaction is part of validated program meaning.</li>
+  <li><code>widget_value</code> MUST construct to explicit widget-value participation when that widget participates in validated meaning,</li>
+  <li><code>widget_reference</code> MUST construct to explicit widget-reference participation when object-style widget interaction is part of validated meaning.</li>
 </ul>
 
 <p>
@@ -620,24 +659,24 @@ Additional rules:
 
 <ul>
   <li>public interface declarations and diagram-side interface participation MUST remain coherently related in the constructed IR,</li>
-  <li>widgets that do not participate in validated program meaning MUST NOT be forced into primary execution-facing IR objects merely because they exist in source,</li>
+  <li>widgets that do not participate in validated meaning MUST NOT be forced into primary execution-facing IR objects merely because they exist in source,</li>
   <li>widget declarations that do participate through <code>widget_value</code> or <code>widget_reference</code> MUST remain recoverably related to the constructed participation objects,</li>
   <li>widget-reference-based interaction used with <code>frog.ui.property_read</code>, <code>frog.ui.property_write</code>, or <code>frog.ui.method_invoke</code> MUST remain distinguishable from ordinary valueflow participation.</li>
 </ul>
 
 <pre><code>Boundary construction
 
-🟨 public interface participation
+public interface participation
    !=
-🟦 widget primary-value participation
+widget primary-value participation
    !=
-🟦 widget object-style reference participation
+widget object-style reference participation
 
 Forbidden:
-🟥 one untyped generic endpoint role
+one untyped generic endpoint role
 </code></pre>
 
-<hr/>
+<hr />
 
 <h2 id="state-and-cycle-construction">14. State and Cycle Construction</h2>
 
@@ -651,35 +690,36 @@ Accordingly:
 
 <ul>
   <li>a validated local-memory primitive such as <code>frog.core.delay</code> MUST construct to an explicit attributable IR object,</li>
-  <li>execution-relevant initialization data required by validated program meaning MUST remain recoverable,</li>
-  <li>stateful feedback validity MUST remain grounded in explicit memory already present in validated program meaning,</li>
+  <li>execution-relevant initialization data required by validated meaning MUST remain recoverable,</li>
+  <li>stateful feedback validity MUST remain grounded in explicit memory already present in validated meaning,</li>
   <li>construction MUST NOT legalize an otherwise invalid combinational cycle by injecting hidden implicit memory,</li>
   <li>construction MUST NOT erase attribution of explicit memory in a valid feedback path.</li>
 </ul>
 
 <p>
-If the implementation chooses to classify some constructed objects as state-bearing execution objects, that classification MAY be added as execution-facing metadata.
+If the implementation chooses to classify some constructed objects as state-bearing execution objects,
+that classification MAY be added as execution-facing metadata.
 It MUST NOT change the rule that valid feedback depends on explicit memory rather than hidden runtime policy.
 </p>
 
 <pre><code>Cycle construction rule
 
-🟩 valid feedback
+valid feedback
    requires
-🟩 explicit local memory
+explicit local memory
 
 therefore
 
-🟦 constructed IR
+constructed IR
    must preserve
-🟩 explicit memory identity
-🟩 explicit initial-state recoverability
+explicit memory identity
+explicit initial-state recoverability
 
 Forbidden:
-🟥 hidden implicit-memory legalization
+hidden implicit-memory legalization
 </code></pre>
 
-<hr/>
+<hr />
 
 <h2 id="source-attribution-and-correspondence-construction">15. Source Attribution and Correspondence Construction</h2>
 
@@ -717,10 +757,10 @@ Construction MUST NOT rely on unstated positional assumptions or undocumented or
 
 <pre><code>Source attribution construction
 
-✔ direct attribution
-✔ multi-contributor attribution where needed
-✔ declaration-to-participation correspondence where needed
-✔ stable diagnostic references
+direct attribution
+multi-contributor attribution where needed
+declaration-to-participation correspondence where needed
+stable diagnostic references
 
 Allowed representations:
 - inline attribution
@@ -729,7 +769,7 @@ Allowed representations:
 - equivalent explicit mechanism
 
 Forbidden:
-🟥 implicit undocumented positional attribution only
+implicit undocumented positional attribution only
 </code></pre>
 
 <p>
@@ -737,7 +777,7 @@ This document does not require one universal attribution encoding.
 It requires a construction result that remains compatible with the recoverability obligations defined elsewhere in the IR layer.
 </p>
 
-<hr/>
+<hr />
 
 <h2 id="support-object-construction">16. Support Object Construction</h2>
 
@@ -764,8 +804,8 @@ Support-object construction is permitted only if all of the following remain tru
 
 <ul>
   <li>the support object serves a real execution-facing or attribution-facing purpose,</li>
-  <li>the validated program meaning remains unchanged,</li>
-  <li>the source-visible contributors remain recoverable,</li>
+  <li>validated meaning remains unchanged,</li>
+  <li>source-visible contributors remain recoverable,</li>
   <li>the support object does not smuggle in runtime-private scheduler policy.</li>
 </ul>
 
@@ -779,18 +819,18 @@ It MUST NOT erase it.
 <pre><code>Support objects
 
 Allowed:
-✔ clarify
-✔ classify
-✔ expose explicit structure
-✔ carry attribution / correspondence
+clarify
+classify
+expose explicit structure
+carry attribution / correspondence
 
 Forbidden:
-🟥 replace primary meaning
-🟥 erase primary contributors
-🟥 smuggle runtime-private policy
+replace primary meaning
+erase primary contributors
+smuggle runtime-private policy
 </code></pre>
 
-<hr/>
+<hr />
 
 <h2 id="non-primary-correspondence-handling">17. Non-Primary Correspondence Handling</h2>
 
@@ -806,7 +846,7 @@ Typical examples include:
 <ul>
   <li>interface declaration entries that correspond to public boundary participation but do not need a second independent primary execution object,</li>
   <li>widget declarations that are referenced by participation objects but are not themselves primary execution objects,</li>
-  <li>widget declarations that do not participate in validated execution meaning at all,</li>
+  <li>widget declarations that do not participate in validated meaning at all,</li>
   <li>non-execution descriptive or presentational records.</li>
 </ul>
 
@@ -838,15 +878,15 @@ Construction MUST NOT use absence alone as the only signal when absence would ma
 <pre><code>Non-primary correspondence
 
 Allowed:
-✔ declaration referenced by a primary participation object
-✔ intentional non-participation recorded explicitly where needed
-✔ no primary object when v0.1 does not require one
+declaration referenced by a primary participation object
+intentional non-participation recorded explicitly where needed
+no primary object when v0.1 does not require one
 
 Forbidden:
-🟥 accidental silent omission of required correspondence
+accidental silent omission of required correspondence
 </code></pre>
 
-<hr/>
+<hr />
 
 <h2 id="minimal-open-payload-shape">18. Minimal Open Payload Shape</h2>
 
@@ -889,25 +929,27 @@ In a minimally open payload:
 </ul>
 
 <p>
-An implementation MAY extend this shape with additional execution-relevant metadata, provided that such metadata does not redefine language semantics or freeze runtime-private realization details as if they were open IR standard.
+An implementation MAY extend this shape with additional execution-relevant metadata,
+provided that such metadata does not redefine language semantics or freeze runtime-private realization details as though they were open IR standard.
 </p>
 
 <pre><code>Minimal open payload intent
 
-🟦 unit
-├── 🟦 objects
-├── 🟦 connections
-├── 🟦 regions
-├── 🟩 source attribution
-└── 🟩 correspondence where needed
+unit
+├── objects
+├── connections
+├── regions
+├── source attribution
+└── correspondence where needed
 </code></pre>
 
-<hr/>
+<hr />
 
 <h2 id="ir-validity-checks">19. IR Validity Checks</h2>
 
 <p>
-Before a constructed payload is claimed to be a valid open Execution IR, it MUST satisfy the following minimum checks:
+Before a constructed payload is claimed to be a valid open Execution IR,
+it MUST satisfy the following minimum checks:
 </p>
 
 <ul>
@@ -916,7 +958,7 @@ Before a constructed payload is claimed to be a valid open Execution IR, it MUST
   <li>all primary objects are distinguishable from support objects,</li>
   <li>all connection endpoints resolve to valid explicit ports or terminals,</li>
   <li>all structured regions have valid ownership relations,</li>
-  <li>all explicit public/interface/UI distinctions required by v0.1 remain recoverable,</li>
+  <li>all explicit public / interface / UI distinctions required by v0.1 remain recoverable,</li>
   <li>all explicit local-memory objects remain explicit and attributable,</li>
   <li>required declaration-to-participation correspondence remains recoverable where applicable,</li>
   <li>intentional non-primary correspondence is not confused with accidental identity loss,</li>
@@ -930,20 +972,21 @@ If those checks are not satisfied, the implementation MUST NOT claim that the em
 
 <pre><code>IR validity checks
 
-🟩 classifiable objects
-🟩 attributable objects
-🟩 primary / support distinction
-🟩 valid endpoint resolution
-🟩 valid region ownership
-🟩 recoverable interface / UI distinctions
-🟩 explicit attributable memory
-🟩 recoverable declaration correspondence where required
-🟩 non-primary correspondence not confused with identity loss
-🟥 no editor-only execution semantics
-🟥 no hidden runtime-policy dependency
+classifiable objects
+attributable objects
+primary / support distinction
+valid endpoint resolution
+valid region ownership
+recoverable interface / UI distinctions
+explicit attributable memory
+recoverable declaration correspondence where required
+non-primary correspondence not confused with identity loss
+
+no editor-only execution semantics
+no hidden runtime-policy dependency
 </code></pre>
 
-<hr/>
+<hr />
 
 <h2 id="determinism-and-stability">20. Determinism and Stability</h2>
 
@@ -980,18 +1023,18 @@ However, a conforming implementation SHOULD avoid unnecessary instability in:
 <pre><code>Construction stability
 
 Required:
-🟩 structural coherence
-🟩 attribution stability
-🟩 semantic equivalence
-🟦 predictable inspection-friendly shape
+structural coherence
+attribution stability
+semantic equivalence
+predictable inspection-friendly shape
 
 Not required:
-🟥 identical byte-for-byte payload across all tools
+identical byte-for-byte payload across all tools
 </code></pre>
 
-<hr/>
+<hr />
 
-<h2 id="out-of-scope-for-v01">21. Out of Scope for v0.1</h2>
+<h2 id="out-of-scope">21. Out of Scope</h2>
 
 <p>
 The following are out of scope for this document in base v0.1:
@@ -1013,19 +1056,7 @@ The following are out of scope for this document in base v0.1:
 Those concerns belong to later documents such as lowering, backend contract, runtime, deployment, and IDE-facing observability specifications.
 </p>
 
-<pre><code>Out of scope in v0.1
-
-🟨 one mandatory transport syntax
-🟥 mandatory SSA construction
-🟥 mandatory CFG flattening
-🟧 backend-specific lowering rules
-🟥 private scheduler graph construction
-🟥 compiled artifact formats
-🟥 distributed packaging
-🟨 debugger / trace / observability protocols
-</code></pre>
-
-<hr/>
+<hr />
 
 <h2 id="summary">22. Summary</h2>
 
@@ -1044,11 +1075,7 @@ construction closes the material build boundary for open Execution IR,
 while lowering, backend-facing contracts, and private realization remain later concerns.
 </p>
 
-<p>
-Compactly:
-</p>
-
-<pre><code>🟩 validated program meaning
+<pre><code>validated program meaning
    |
    +-- construct execution unit
    +-- construct primary objects
@@ -1059,5 +1086,5 @@ Compactly:
    +-- verify invariants
    |
    v
-🟦 open Execution IR
+open Execution IR
 </code></pre>
