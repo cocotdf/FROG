@@ -5,7 +5,7 @@
 <h1 align="center">🐸 FROG Roadmap</h1>
 
 <p align="center">
-  <strong>Non-normative planning layer for the progressive closure of the FROG as a language, conformance surface, reference path, compiler stack, runtime path, and future IDE ecosystem</strong>
+  <strong>Non-normative planning layer for the progressive closure of FROG as a language, conformance surface, reference path, compiler stack, runtime path, deployment path, and future IDE ecosystem</strong>
 </p>
 
 <p align="center">
@@ -56,10 +56,10 @@ standardized FROG execution IR
 backend-specific lowering
         |
         v
-backend contract / target-facing IR
+backend contract / consumable handoff
         |
         v
-runtime or compiler backend
+runtime or compiler/backend realization
         |
         v
 deployable artifact
@@ -105,7 +105,7 @@ Its practical purpose is to answer one project question:
 </p>
 
 <p>
-<strong>What sequence of concrete closures must be completed to move from the currently published FROG baseline to a serious open graphical programming ecosystem with a credible compiler/runtime path and a serious future IDE?</strong>
+<strong>What sequence of concrete closures must be completed to move from the currently published FROG baseline to a serious open graphical programming ecosystem with a credible compiler/runtime path, credible deployment depth, and a serious future IDE?</strong>
 </p>
 
 <p>
@@ -135,7 +135,7 @@ That distinction matters:
 <ul>
   <li>not the normative language definition,</li>
   <li>not the source of semantic truth,</li>
-  <li>not a substitute for <code>Expression/</code>, <code>Language/</code>, or <code>IR/</code>,</li>
+  <li>not a substitute for <code>Expression/</code>, <code>Language/</code>, <code>IR/</code>, or <code>Profiles/</code>,</li>
   <li>not a place where implementation convenience becomes language law,</li>
   <li>not a place where strategy prose silently replaces technical closure.</li>
 </ul>
@@ -159,6 +159,7 @@ That distinction matters:
   <li>Prefer small coherent closures over large speculative rewrites.</li>
   <li>Do not let reference implementation convenience become hidden language law.</li>
   <li>Do not collapse open FROG IR into one backend-specific or runtime-private form.</li>
+  <li>Do not confuse backend family, target profile, deployment mode, and runtime-private realization.</li>
   <li>Do not confuse roadmap planning with normative ownership.</li>
   <li>Keep the path from canonical <code>.frog</code> source to deployable execution explicit and inspectable.</li>
   <li>Use conformance as a public truth surface, not as commentary only.</li>
@@ -213,10 +214,12 @@ A meaningful public foundation already exists.
   <li>[x] The reference implementation posture is explicitly non-normative.</li>
   <li>[x] The distinction between public interface, front panel, and diagram is already explicit.</li>
   <li>[x] The distinction between <code>widget_value</code> and <code>widget_reference</code> is already explicit.</li>
-  <li>[x] A strategic framing layer already exists through <code>Strategy/Heilmeier/</code>.</li>
+  <li>[x] The strategic framing layer already exists through <code>Strategy/Heilmeier/</code>.</li>
+  <li>[x] The roadmap layer already exists as a non-normative planning surface distinct from both strategy and specification.</li>
   <li>[x] The long-term chain remains explicit:
     <code>.frog source -> validation -> FROG execution IR -> lowering -> backend contract -> backend/runtime</code>.
   </li>
+  <li>[x] The distinction between backend family, target profile, deployment mode, and runtime-private realization is now explicit at the architectural level and no longer only implicit future intent.</li>
 </ul>
 
 <h3>Partially formed but not yet fully closed</h3>
@@ -229,6 +232,9 @@ A meaningful public foundation already exists.
   <li>[~] source-shape / schema and validator posture</li>
   <li>[~] conformance breadth and public completeness</li>
   <li>[~] repeatable reference execution path for a clearly bounded supported subset</li>
+  <li>[~] explicit target-profile taxonomy beyond the now-established architectural distinction</li>
+  <li>[~] explicit deployment-mode taxonomy beyond the now-established architectural distinction</li>
+  <li>[~] first serious backend-family taxonomies and first reusable contract families</li>
 </ul>
 
 <h3>Still future work</h3>
@@ -252,6 +258,7 @@ FROG today
    +-- first public executable reference slices
    +-- early conformance posture
    +-- explicit non-normative reference path
+   +-- explicit profile / backend / runtime separation
    +-- no final production compiler stack yet
    +-- no serious full IDE yet
    +-- no mature deployment ecosystem yet
@@ -275,6 +282,7 @@ The project currently benefits most from the following closure order.
   <li>expand conformance in a disciplined way,</li>
   <li>strengthen the repeatable reference execution path,</li>
   <li>prepare the first serious backend contract and lowering family,</li>
+  <li>deepen explicit target-profile and deployment-mode families where they materially improve execution and deployment clarity,</li>
   <li>expand examples only when they add new boundary value,</li>
   <li>expand benchmark and strategic material after enough technical closure exists.</li>
 </ol>
@@ -294,10 +302,12 @@ then
 then
    conformance growth
    + example growth
+   + repeatable reference path
 
 then
-   reference executor hardening
-   + backend contract preparation
+   backend contract preparation
+   + backend family depth
+   + target-profile and deployment clarity
 </pre>
 
 <hr/>
@@ -363,6 +373,8 @@ Establish a durable architectural base and prove that the specification can alre
   <li>[x] Prove the first executable vertical slices.</li>
   <li>[x] Recontextualize the root repository around the real published state.</li>
   <li>[x] Publish a strategic framing layer distinct from the normative layers.</li>
+  <li>[x] Publish a roadmap layer distinct from both strategy and specification.</li>
+  <li>[x] Make the distinction between backend family, target profile, deployment mode, and runtime-private realization explicit at the architectural level.</li>
 </ul>
 
 <h3>Exit condition</h3>
@@ -400,6 +412,8 @@ Turn the current baseline into a tighter, better owned, and more machine-checkab
   <li>[ ] Publish validator expectations aligned with canonical source ownership.</li>
   <li>[ ] Tighten conformance coverage around already published boundaries.</li>
   <li>[ ] Ensure every published example slice has an explicit expected-outcome posture.</li>
+  <li>[x] Make the architectural distinction between backend family, target profile, deployment mode, and runtime-private realization explicit.</li>
+  <li>[ ] Decide whether first named target-profile families need publication in base v0.1 or may remain future profile work.</li>
   <li>[~] Publish and maintain this roadmap layer inside the repository.</li>
 </ul>
 
@@ -413,6 +427,8 @@ A new reader should be able to understand, without ambiguity:
   <li>what is source truth,</li>
   <li>what is semantic truth,</li>
   <li>what is derived execution form,</li>
+  <li>what is a backend-family-facing handoff,</li>
+  <li>what is target-profile or deployment-class planning rather than language truth,</li>
   <li>what is conformance truth,</li>
   <li>what is example material only,</li>
   <li>what is implementation workspace only,</li>
@@ -446,6 +462,7 @@ Turn the first published slices into a reliable minimal reference path that prov
   <li>[ ] Expand conformance around preserve, reject, and unsupported situations.</li>
   <li>[ ] Keep the runtime posture conservative and clearly non-normative.</li>
   <li>[ ] Prevent convenience scripts from silently becoming architecture.</li>
+  <li>[ ] Demonstrate that different development and execution postures may legitimately use different runtime-service bundles without changing language meaning.</li>
 </ul>
 
 <h3>Recommended early slice growth</h3>
@@ -489,6 +506,7 @@ Show that FROG can feed a serious backend path without abandoning its own open I
   <li>[ ] Keep the downstream target explicitly downstream from FROG IR.</li>
   <li>[ ] Preserve source attribution and recoverability across derivation and lowering.</li>
   <li>[ ] Add deterministic testing around compilation-oriented execution equivalence.</li>
+  <li>[ ] Decide which target-profile classes and deployment-mode classes must become first-class named profile material for serious backend work.</li>
 </ul>
 
 <h3>Architectural rule</h3>
@@ -500,7 +518,7 @@ correct direction
    -> validation
    -> standardized FROG execution IR
    -> backend-specific lowering
-   -> backend contract / target-facing IR
+   -> backend contract / target-facing handoff
    -> known compiler/runtime backend
    -> deployable artifact
 </pre>
@@ -553,6 +571,7 @@ Deliver the first truly usable FROG IDE foundation with coherent authoring, insp
   </li>
   <li>[ ] Implement probes and watch surfaces.</li>
   <li>[ ] Implement snippets as reusable graphical transport.</li>
+  <li>[ ] Implement deployment selection that can target different backend families, target profiles, and deployment modes without blurring their distinction.</li>
   <li>[ ] Implement convenience authoring that always normalizes back to canonical FROG content.</li>
 </ul>
 
@@ -570,7 +589,7 @@ viewer
 <h3>Exit condition</h3>
 
 <p>
-A user can author, inspect, validate, execute, and debug a meaningful supported subset in one coherent graphical environment.
+A user can author, inspect, validate, execute, debug, and prepare deployment for a meaningful supported subset in one coherent graphical environment.
 </p>
 
 <hr/>
@@ -604,8 +623,9 @@ Expand the usable language surface, execution depth, and reusable ecosystem powe
   </li>
   <li>[ ] Expand collections, text, IO, signal, and interop libraries where genuinely required.</li>
   <li>[ ] Add stronger sub-FROG packaging and reusable component patterns.</li>
-  <li>[ ] Expand target-profile thinking for CPU, RT, embedded, GPU, FPGA, and microcontroller classes.</li>
+  <li>[ ] Expand named target-profile thinking for CPU, RT, embedded, GPU, FPGA, and microcontroller classes.</li>
   <li>[ ] Define stronger packaging, dependency, and deployment preparation rules.</li>
+  <li>[ ] Define practical runtime-module strategies for development, debug, release, self-contained, and constrained deployment postures without creating one monolithic universal runtime.</li>
 </ul>
 
 <hr/>
@@ -644,7 +664,7 @@ Deliver an open graphical ecosystem that retains the strengths of graphical engi
   <li>[ ] fully open and inspectable canonical source</li>
   <li>[ ] fully open and inspectable execution-facing IR</li>
   <li>[ ] explicit source-to-IR-to-backend traceability</li>
-  <li>[ ] explicit separation between language, IDE, runtime, backend, and vendor ecosystem</li>
+  <li>[ ] explicit separation between language, IDE, runtime, backend, deployment, and vendor ecosystem</li>
   <li>[ ] multiple independent implementation potential</li>
   <li>[ ] cleaner interop and profile boundaries</li>
   <li>[ ] a cleaner compiler path</li>
@@ -666,6 +686,7 @@ FROG target model
    + explicit conformance boundary
    + multiple toolchain potential
    + multiple backend/runtime potential
+   + explicit deployment and target-profile surface
    + explicit ecosystem and certification layer
 </pre>
 
@@ -716,6 +737,7 @@ FROG becomes a credible open industrial graphical programming platform with seri
 
 <ul>
   <li>[x] the conceptual chain is explicit</li>
+  <li>[~] backend-family / target-profile / deployment-mode architectural distinction is now explicit</li>
   <li>[ ] the first real backend path is stabilized</li>
   <li>[ ] deployable artifact stories become concrete</li>
 </ul>
@@ -728,7 +750,16 @@ FROG becomes a credible open industrial graphical programming platform with seri
   <li>[ ] debugging and observability become industrially credible</li>
 </ul>
 
-<h3>7. Ecosystem and governance</h3>
+<h3>7. Deployment and runtime posture</h3>
+
+<ul>
+  <li>[x] the project no longer assumes one universal runtime shape</li>
+  <li>[~] implementation-side runtime-module thinking is explicit but not yet ecosystem-stable</li>
+  <li>[ ] first reusable deployment bundles and runtime-module strategies become concrete</li>
+  <li>[ ] target-profile-specific deployment depth becomes practically usable</li>
+</ul>
+
+<h3>8. Ecosystem and governance</h3>
 
 <ul>
   <li>[x] governance direction exists</li>
@@ -777,6 +808,8 @@ specialization
 
 realization
    -> multiple credible compiler/runtime/backend paths
+   -> explicit target-profile and deployment depth
+   -> no collapse into one monolithic hidden runtime
 
 inspection
    -> serious observability, debugging, probes, and watch
