@@ -19,12 +19,12 @@
   <li><a href="#definition-of-conformance">4. Definition of Conformance</a></li>
   <li><a href="#non-goals">5. Non-Goals</a></li>
   <li><a href="#relation-with-specification-ownership">6. Relation with Specification Ownership</a></li>
-  <li><a href="#critical-boundary-expression-to-meaning">7. Critical Boundary: Expression → Meaning</a></li>
+  <li><a href="#critical-boundaries">7. Critical Boundaries</a></li>
   <li><a href="#directory-structure">8. Directory Structure</a></li>
   <li><a href="#published-cases">9. Published Cases</a></li>
   <li><a href="#expected-outcomes">10. Expected Outcomes</a></li>
   <li><a href="#v01-focus">11. Active v0.1 Conformance Focus</a></li>
-  <li><a href="#relation-with-examples-and-reference">12. Relation with Examples and Reference Implementation</a></li>
+  <li><a href="#relation-with-examples-ir-and-reference-implementation">12. Relation with Examples, IR, and Reference Implementation</a></li>
   <li><a href="#future-growth">13. Future Growth</a></li>
   <li><a href="#summary">14. Summary</a></li>
 </ul>
@@ -52,7 +52,7 @@ What must be preserved?
 
 <p>
 This directory does not define the language.
-It makes the language verifiable.
+It makes the published language testable and publicly checkable.
 </p>
 
 <hr/>
@@ -73,16 +73,19 @@ Implementation  = must behave accordingly
 </code></pre>
 
 <p>
-A conforming implementation may vary internally.
-It must not vary in observable meaning for published cases.
+A conforming implementation MAY vary internally.
+It MUST NOT vary in published accept / reject / preserve outcomes for the same published case while still claiming conformance to the same published repository state.
 </p>
 
 <p>
-Conformance prevents the following drift:
+Conformance therefore prevents the following drift:
 </p>
 
 <pre><code>well-formed file
         -/-> valid meaning
+
+validated meaning
+        -/-> arbitrary IR
 
 implementation convenience
         -/-> language truth
@@ -100,12 +103,12 @@ FROG is specification-first and implementation-independent.
 </p>
 
 <p>
-This creates a requirement:
+That creates a requirement:
 </p>
 
 <pre><code>multiple independent implementations
             require
-one shared validation surface
+one shared public validation surface
 </code></pre>
 
 <p>
@@ -119,16 +122,21 @@ It ensures that:
 <ul>
   <li>implementations do not silently diverge,</li>
   <li>semantic meaning is not reinterpreted implicitly,</li>
-  <li>invalid constructs are rejected instead of repaired,</li>
-  <li>critical distinctions remain visible across the pipeline.</li>
+  <li>invalid constructs are rejected instead of silently repaired,</li>
+  <li>critical distinctions remain visible across validation, IR derivation, and later specialization.</li>
 </ul>
+
+<p>
+Conformance is therefore not commentary.
+It is the public truth surface that turns specification architecture into comparable observable behavior.
+</p>
 
 <hr/>
 
 <h2 id="definition-of-conformance">4. Definition of Conformance</h2>
 
 <p>
-Conformance is alignment with the published specification across all architectural stages.
+Conformance is alignment with the published specification across the relevant architectural stages.
 </p>
 
 <p>
@@ -138,10 +146,9 @@ It includes:
 <ul>
   <li>source validation correctness,</li>
   <li>semantic validation correctness,</li>
-  <li>semantic preservation across derivation,</li>
-  <li>boundary preservation across IR and lowering,</li>
-  <li>correct rejection of invalid or unsupported cases,</li>
-  <li>correct declaration of backend assumptions.</li>
+  <li>correct rejection where validated meaning does not exist,</li>
+  <li>correct preservation of distinctions across derivation into open Execution IR,</li>
+  <li>correct preservation of required boundaries across later lowering and backend-facing handoff where applicable.</li>
 </ul>
 
 <p>
@@ -175,10 +182,10 @@ This directory does not define:
 
 <ul>
   <li>a certification program,</li>
-  <li>a universal compatibility matrix,</li>
-  <li>a full execution test suite,</li>
-  <li>a debugger validation framework,</li>
-  <li>a deployment validation system.</li>
+  <li>a universal implementation compatibility matrix,</li>
+  <li>a full execution-performance suite,</li>
+  <li>a debugger validation framework in full,</li>
+  <li>a deployment validation system in full.</li>
 </ul>
 
 <p>
@@ -194,6 +201,11 @@ Conformance exposes
 Implementation follows
 </code></pre>
 
+<p>
+Conformance must never become the place where missing language law is invented retroactively.
+When a case reveals ambiguity, the owning specification document must be clarified.
+</p>
+
 <hr/>
 
 <h2 id="relation-with-specification-ownership">6. Relation with Specification Ownership</h2>
@@ -207,19 +219,23 @@ Ownership remains:
 </p>
 
 <ul>
-  <li><code>Expression/</code> — source structure,</li>
-  <li><code>Language/</code> — semantic truth,</li>
-  <li><code>Libraries/</code> — primitives,</li>
-  <li><code>Profiles/</code> — capability families,</li>
-  <li><code>IR/</code> — execution representation and lowering boundaries,</li>
-  <li><code>IDE/</code> — tooling behavior.</li>
+  <li><code>Expression/</code> — source structure and canonical source shape,</li>
+  <li><code>Language/</code> — semantic truth and validated meaning,</li>
+  <li><code>Libraries/</code> — intrinsic primitive vocabularies,</li>
+  <li><code>Profiles/</code> — optional standardized capability families,</li>
+  <li><code>IR/</code> — execution-facing representation, derivation, construction, lowering, and backend-facing boundaries,</li>
+  <li><code>IDE/</code> — tooling behavior and authoring-facing concerns.</li>
 </ul>
 
 <p>
 Conformance cases must always map back to these owners.
 </p>
 
-<pre><code>specification → conformance → implementation
+<pre><code>specification
+      -&gt;
+conformance
+      -&gt;
+implementation
 </code></pre>
 
 <p>
@@ -228,7 +244,7 @@ Never the reverse.
 
 <hr/>
 
-<h2 id="critical-boundary-expression-to-meaning">7. Critical Boundary: Expression → Meaning</h2>
+<h2 id="critical-boundaries">7. Critical Boundaries</h2>
 
 <p>
 The most critical conformance boundary is:
@@ -251,11 +267,33 @@ This includes verifying:
 <ul>
   <li>what establishes semantic meaning,</li>
   <li>what fails before meaning exists,</li>
-  <li>what distinctions must survive validation and derivation.</li>
+  <li>what distinctions must survive validation,</li>
+  <li>what distinctions must survive derivation into open Execution IR,</li>
+  <li>what distinctions must remain explicit before later lowering and backend-facing handoff.</li>
 </ul>
 
 <p>
-Critical invariants:
+The second critical boundary is:
+</p>
+
+<pre><code>validated program meaning
+      |
+      v
+open Execution IR
+</code></pre>
+
+<p>
+The third critical downstream boundary is:
+</p>
+
+<pre><code>open Execution IR
+      |
+      v
+lowering / backend-facing handoff
+</code></pre>
+
+<p>
+Critical invariants therefore include:
 </p>
 
 <pre><code>front panel            != public interface
@@ -265,10 +303,14 @@ adjacency              != dependency
 visual order           != execution order
 feedback shape         != state
 default inference      != explicit initialization
+validated meaning      != open Execution IR
+open Execution IR      != private runtime realization
+backend family         != target profile
+deployment mode        != runtime-private realization
 </code></pre>
 
 <p>
-These are enforced through mirrored valid / invalid cases.
+These invariants are enforced through explicit valid / invalid and preserve / reject expectations.
 </p>
 
 <hr/>
@@ -292,29 +334,64 @@ Each case should define:
   <li>rejection reason if invalid.</li>
 </ul>
 
+<p>
+In practice, the directory serves three public roles:
+</p>
+
+<ul>
+  <li><strong>accept</strong> — what must validate and remain correct,</li>
+  <li><strong>reject</strong> — what must fail explicitly,</li>
+  <li><strong>preserve</strong> — what distinctions must remain explicit across later stages.</li>
+</ul>
+
 <hr/>
 
 <h2 id="published-cases">9. Published Cases</h2>
 
 <p>
-The current published set follows a mirrored pattern:
+The current published set combines:
 </p>
 
-<pre><code>valid case   → defines allowed behavior
-invalid case → defines forbidden behavior
-pair         → defines boundary
+<ul>
+  <li>early positive executable anchor cases,</li>
+  <li>a mirrored valid / invalid boundary progression,</li>
+  <li>additional invalid architectural rejection cases.</li>
+</ul>
+
+<h3>9.1 Early valid executable anchor cases</h3>
+
+<pre><code>01_pure_addition
+02_ui_value_roundtrip
+03_ui_property_write
+04_stateful_feedback_delay
 </code></pre>
 
 <p>
-These pairs define core invariants such as:
+These anchor cases show that conformance is not only about abstract rejection.
+It also covers minimal positive executable slices that the published architecture is expected to support.
 </p>
 
-<pre><code>public interface       != widget participation
-widget_reference       != widget_value
-execution meaning      != UI presence
-connectivity           != evaluation order
-structure              != layout grouping
-state                  != inferred feedback
+<h3>9.2 Mirrored boundary progression</h3>
+
+<p>
+The published mirrored progression currently includes:
+</p>
+
+<pre><code>05 / 06   public interface participation != widget participation
+07 / 08   widget_reference != widget_value
+10 / 11   front-panel presence != execution meaning
+11 / 12   public interface declaration does not require widget existence
+13 / 14   explicit diagram participation != layout or adjacency
+15 / 16   explicit connectivity != inferred evaluation order
+17 / 18   explicit structure boundary != layout grouping or apparent nesting
+19 / 20   explicit structure terminals != inferred region crossing by layout
+21 / 22   explicit structure-owned state != inferred persistent value by feedback shape
+23 / 24   explicit state initialization != inferred default initial value
+25 / 26   explicit state read timing != inferred scheduler order
+27 / 28   explicit state write visibility != inferred runtime flush order
+29 / 30   explicit state snapshot boundary != inferred runtime observation point
+31 / 32   explicit state version boundary != inferred runtime update epoch
+33 / 34   explicit state merge boundary != inferred runtime reconciliation pass
 </code></pre>
 
 <p>
@@ -326,12 +403,34 @@ rejection alone is insufficient
 both define truth
 </code></pre>
 
+<h3>9.3 Additional invalid architectural rejection cases</h3>
+
+<p>
+The published invalid set also contains additional non-mirrored rejection cases such as:
+</p>
+
+<pre><code>illegal_feedback_without_explicit_memory
+interface_widget_role_confusion
+ui_reference_without_ui_primitive
+</code></pre>
+
+<p>
+These exist because some architectural failures are important enough to publish even when they are not yet part of one large mirrored numbering progression.
+</p>
+
+<h3>9.4 Reading rule for published cases</h3>
+
+<p>
+A published case defines public truth for the published repository state.
+A session draft that is not yet published does not.
+</p>
+
 <hr/>
 
 <h2 id="expected-outcomes">10. Expected Outcomes</h2>
 
 <p>
-Each case expresses structured expectations:
+Each case expresses structured expectations such as:
 </p>
 
 <ul>
@@ -346,42 +445,57 @@ Examples:
 </p>
 
 <pre><code>Expected: valid
+Expected meaning: established
 Expected preservation:
   explicit state remains explicit
 
 Expected: invalid
+Expected meaning: not established
 Expected rejection:
   illegal feedback without explicit memory
 </code></pre>
+
+<p>
+For later-stage-sensitive cases, expectations may also include:
+</p>
+
+<ul>
+  <li>required IR-side recoverability,</li>
+  <li>required lowering-side distinction preservation,</li>
+  <li>required backend-facing explicitness where applicable.</li>
+</ul>
 
 <hr/>
 
 <h2 id="v01-focus">11. Active v0.1 Conformance Focus</h2>
 
 <p>
-v0.1 focuses on architectural correctness, not feature coverage.
+v0.1 focuses on architectural correctness, not broad feature coverage.
 </p>
 
 <p>
-Priorities:
+Priorities are:
 </p>
 
 <pre><code>1. source validity
 2. semantic validity
 3. preservation of distinctions
 4. explicit rejection of violations
+5. conservative correctness across the IR corridor
 </code></pre>
 
 <p>
-Key enforced separations:
+The active public truth surface therefore emphasizes:
 </p>
 
 <ul>
-  <li>interface vs widget,</li>
-  <li>value vs reference,</li>
-  <li>state vs feedback,</li>
-  <li>execution vs layout,</li>
-  <li>connectivity vs order.</li>
+  <li>interface versus widget participation,</li>
+  <li>value versus reference participation,</li>
+  <li>state versus inferred feedback,</li>
+  <li>execution versus layout,</li>
+  <li>connectivity versus order,</li>
+  <li>explicit state-family boundaries,</li>
+  <li>the fact that validated meaning, Execution IR, lowering, and backend-facing handoff are distinct stages rather than one blurred implementation pipeline.</li>
 </ul>
 
 <p>
@@ -391,15 +505,16 @@ Rule:
 <pre><code>no implicit meaning
 no silent repair
 no hidden interpretation
+no silent stage collapse
 </code></pre>
 
 <hr/>
 
-<h2 id="relation-with-examples-and-reference">12. Relation with Examples and Reference Implementation</h2>
+<h2 id="relation-with-examples-ir-and-reference-implementation">12. Relation with Examples, IR, and Reference Implementation</h2>
 
-<pre><code>Examples/                   → illustrate
-Conformance/                → define expectations
-Implementations/Reference/  → execute
+<pre><code>Examples/                   -&gt; illustrate and anchor named programs
+Conformance/                -&gt; define public expectations
+Implementations/Reference/  -&gt; try to execute correctly
 </code></pre>
 
 <p>
@@ -407,7 +522,22 @@ These roles must remain strictly separated.
 </p>
 
 <p>
+Likewise, the relation with the IR corridor is:
+</p>
+
+<pre><code>Language/
+   defines semantic truth
+
+IR/
+   defines derivation, identity, construction, lowering, and backend-facing boundaries
+
+Conformance/
+   tests whether those published boundaries are being respected
+</code></pre>
+
+<p>
 An implementation passing a case does not redefine the language.
+It only demonstrates alignment with the published conformance surface.
 </p>
 
 <hr/>
@@ -423,21 +553,33 @@ Preferred pattern:
 </p>
 
 <pre><code>small case
-→ clear boundary
-→ clear expectation
-→ clear ownership
+-&gt; clear boundary
+-&gt; clear expectation
+-&gt; clear ownership
 </code></pre>
 
 <p>
-Future expansion areas:
+Near-term future expansion areas include:
 </p>
 
 <ul>
   <li>type and value legality,</li>
   <li>state semantics and timing,</li>
   <li>structure legality,</li>
+  <li>validated meaning to open-IR preservation,</li>
   <li>profile-dependent behavior,</li>
-  <li>backend-family rejection cases.</li>
+  <li>backend-family and target-profile rejection cases where applicable.</li>
+</ul>
+
+<p>
+Growth should continue to prefer:
+</p>
+
+<ul>
+  <li>small sharply-owned boundary cases,</li>
+  <li>mirrored valid / invalid pairs where they clarify truth,</li>
+  <li>additional standalone invalid cases where architecture requires them,</li>
+  <li>explicit published expectations rather than implementation folklore.</li>
 </ul>
 
 <hr/>
@@ -474,4 +616,25 @@ Or more directly:
 <pre><code>rules are written
 cases make them testable
 tools must follow
+</code></pre>
+
+<p>
+In v0.1, conformance is intentionally conservative and architecture-first.
+It exists to keep the most important public boundaries explicit:
+</p>
+
+<pre><code>.frog source
+   -&gt;
+validated meaning
+   -&gt;
+open Execution IR
+   -&gt;
+lowering / backend-facing handoff
+   -&gt;
+private realization
+
+Conformance checks:
+accept
+reject
+preserve
 </code></pre>
