@@ -22,10 +22,11 @@
   <li><a href="#reference-pipeline">7. Reference Pipeline</a></li>
   <li><a href="#directory-posture">8. Directory Posture</a></li>
   <li><a href="#relation-with-examples-and-conformance">9. Relation with Examples and Conformance</a></li>
-  <li><a href="#runtime-posture-in-v01">10. Runtime Posture in v0.1</a></li>
-  <li><a href="#what-this-directory-does-not-standardize">11. What this Directory Does Not Standardize</a></li>
-  <li><a href="#current-status-in-v01">12. Current Status in v0.1</a></li>
-  <li><a href="#summary">13. Summary</a></li>
+  <li><a href="#runtime-modules-deployment-modes-and-targets">10. Runtime Modules, Deployment Modes, and Targets</a></li>
+  <li><a href="#runtime-posture-in-v01">11. Runtime Posture in v0.1</a></li>
+  <li><a href="#what-this-directory-does-not-standardize">12. What this Directory Does Not Standardize</a></li>
+  <li><a href="#current-status-in-v01">13. Current Status in v0.1</a></li>
+  <li><a href="#summary">14. Summary</a></li>
 </ul>
 
 <hr/>
@@ -47,7 +48,7 @@ Its practical role is to:
   <li>derive the published open execution-facing FROG IR,</li>
   <li>perform controlled lowering for a selected backend family,</li>
   <li>emit a backend contract or equivalent execution handoff,</li>
-  <li>execute that handoff in a minimal reference runtime.</li>
+  <li>execute that handoff through one or more reference-side runtime service bundles.</li>
 </ul>
 
 <p>
@@ -110,7 +111,7 @@ lowering
 backend contract / backend-oriented handoff
     |
     v
-reference runtime consumption
+runtime-side consumption on a selected target
 </code></pre>
 
 <p>
@@ -149,7 +150,7 @@ Those slices are meant to prove that the following chain can be made real and in
   <li>a published open execution-facing FROG IR can be derived,</li>
   <li>lowering can specialize that IR for a concrete backend family,</li>
   <li>a backend contract can be emitted,</li>
-  <li>a reference runtime can accept and execute that contract.</li>
+  <li>a reference runtime path can accept and execute that contract on a selected target posture.</li>
 </ul>
 
 <p>
@@ -186,7 +187,8 @@ What they do <strong>not</strong> yet claim is that the repository already conta
 <ul>
   <li>the final production compiler pipeline,</li>
   <li>the final fully stabilized industrial backend set,</li>
-  <li>one definitive production runtime architecture.</li>
+  <li>one definitive production runtime architecture,</li>
+  <li>one universal deployment model for all targets.</li>
 </ul>
 
 <p>
@@ -339,7 +341,7 @@ The exact CLI surface may evolve, but the implementation should preserve stage s
 <p>
 This directory may temporarily contain compact demonstration code for that pipeline, including early monolithic scripts used to prove first slices.
 Such code remains implementation-side convenience.
-It does not redefine the specification and does not eliminate the intended internal separation between loader, validator, derivation, lowering, contract emission, and runtime consumption.
+It does not redefine the specification and does not eliminate the intended internal separation between loader, validator, derivation, lowering, contract emission, and runtime-side consumption.
 </p>
 
 <hr/>
@@ -377,7 +379,7 @@ They are not additional language layers.
   <li><code>Deriver/</code> — derivation of the published open execution-facing IR,</li>
   <li><code>Lowerer/</code> — backend-family-oriented specialization,</li>
   <li><code>ContractEmitter/</code> — backend contract emission,</li>
-  <li><code>Runtime/</code> — runtime-side contract acceptance and execution,</li>
+  <li><code>Runtime/</code> — runtime-side contract acceptance and execution services,</li>
   <li><code>UIHost/</code> — host-side UI binding support for the first host-oriented family.</li>
 </ul>
 
@@ -425,7 +427,76 @@ Only after those paths are stable should the implementation widen further.
 
 <hr/>
 
-<h2 id="runtime-posture-in-v01">10. Runtime Posture in v0.1</h2>
+<h2 id="runtime-modules-deployment-modes-and-targets">10. Runtime Modules, Deployment Modes, and Targets</h2>
+
+<p>
+This directory may realize execution through different runtime-service bundles depending on the target posture being exercised.
+That flexibility is an implementation concern, not a redefinition of the language.
+</p>
+
+<p>
+For implementation clarity, it is useful to distinguish the following:
+</p>
+
+<ul>
+  <li><strong>backend family</strong> — the downstream technical execution-consumption family selected after lowering,</li>
+  <li><strong>target profile</strong> — the class of execution assumptions and constraints being aimed at,</li>
+  <li><strong>deployment mode</strong> — the packaging and observability posture used for execution,</li>
+  <li><strong>runtime module</strong> — an implementation-side service bundle used to make execution possible on a selected target posture.</li>
+</ul>
+
+<p>
+These terms must not be collapsed into one word such as <code>runtime</code>.
+A runtime module is not identical to a target profile.
+A target profile is not identical to a backend family.
+A deployment mode is not itself the program meaning.
+</p>
+
+<p>
+Accordingly, a compiled artifact does not automatically imply one universal runtime shape.
+Different deployment modes and different target postures may require different runtime-service bundles while still preserving the same validated FROG meaning.
+</p>
+
+<p>
+Examples of implementation-side runtime-module families that may appear in this workspace include:
+</p>
+
+<ul>
+  <li><code>runtime.core</code> — minimal execution services,</li>
+  <li><code>runtime.ui</code> — host-side UI event-loop and widget binding services,</li>
+  <li><code>runtime.observability</code> — tracing, probes, watch, and inspection services,</li>
+  <li><code>runtime.interop</code> — external host interaction and interop services,</li>
+  <li><code>runtime.rt</code> — stricter execution-support services for constrained real-time-oriented paths,</li>
+  <li><code>runtime.embedded_support</code> — reduced services for constrained deployment families.</li>
+</ul>
+
+<p>
+These names are implementation-facing examples.
+They are not, by themselves, normative profile specifications.
+</p>
+
+<p>
+A useful build and deployment posture is therefore:
+</p>
+
+<ul>
+  <li>select a supported target posture,</li>
+  <li>select a backend family,</li>
+  <li>lower accordingly,</li>
+  <li>emit the appropriate handoff,</li>
+  <li>bundle or provide only the runtime modules required for that execution path.</li>
+</ul>
+
+<p>
+This keeps the executable reference path honest:
+the language stays stable,
+the stage boundaries stay visible,
+and the implementation remains free to avoid one unnecessarily heavy monolithic runtime.
+</p>
+
+<hr/>
+
+<h2 id="runtime-posture-in-v01">11. Runtime Posture in v0.1</h2>
 
 <p>
 The first target family should remain deliberately conservative.
@@ -444,7 +515,9 @@ In v0.1, the runtime posture should remain compact:
   <li>explicit local state only where already justified by published slices,</li>
   <li>no requirement to standardize one universal runtime-private architecture,</li>
   <li>no silent collapse of the backend contract into private runtime internals,</li>
-  <li>narrow UI support only where already justified by the published slices.</li>
+  <li>narrow UI support only where already justified by the published slices,</li>
+  <li>observability support only where needed to keep the early slices inspectable,</li>
+  <li>no assumption that development execution and deployable execution must bundle the same runtime-service set.</li>
 </ul>
 
 <p>
@@ -454,7 +527,7 @@ It should not pretend to define the full long-term FROG runtime story.
 
 <hr/>
 
-<h2 id="what-this-directory-does-not-standardize">11. What this Directory Does Not Standardize</h2>
+<h2 id="what-this-directory-does-not-standardize">12. What this Directory Does Not Standardize</h2>
 
 <p>
 This directory must not:
@@ -467,8 +540,9 @@ This directory must not:
   <li>replace published IR boundaries with private shortcuts,</li>
   <li>merge open IR with runtime-private scheduling internals,</li>
   <li>treat backend contract as if it were identical to one private runtime representation,</li>
+  <li>treat one chosen runtime-module layout as the universal FROG runtime architecture,</li>
+  <li>treat one development convenience bundle as the mandatory deployment shape for every target,</li>
   <li>hide unsupported features behind silent reinterpretation,</li>
-  <li>claim that one runtime-private architecture is the universal FROG runtime,</li>
   <li>pretend that current vertical slices already constitute the final production compiler pipeline.</li>
 </ul>
 
@@ -479,7 +553,7 @@ Implementation habit must not overwrite architectural intent.
 
 <hr/>
 
-<h2 id="current-status-in-v01">12. Current Status in v0.1</h2>
+<h2 id="current-status-in-v01">13. Current Status in v0.1</h2>
 
 <p>
 In base v0.1, this directory should stay compact, explicit, and testable.
@@ -496,7 +570,7 @@ A good current success condition is:
   <li>derive the published open execution-facing IR,</li>
   <li>lower for the first backend family,</li>
   <li>emit a backend contract,</li>
-  <li>execute it in a minimal reference runtime and obtain the expected observable result or effect.</li>
+  <li>execute it through a minimal reference runtime path and obtain the expected observable result or effect.</li>
 </ul>
 
 <p>
@@ -511,7 +585,7 @@ It is to stabilize the published IR and show how disciplined FROG lowering can f
 
 <hr/>
 
-<h2 id="summary">13. Summary</h2>
+<h2 id="summary">14. Summary</h2>
 
 <p>
 This directory is the home of the non-normative FROG reference implementation workspace.
@@ -539,4 +613,11 @@ It is:
 It is also a bridge toward a future full compiler/runtime story,
 but it is not yet that final compiler pipeline.
 That distinction must remain explicit.
+</p>
+
+<p>
+In particular, this workspace may execute through different runtime-service bundles depending on the
+target posture and deployment mode under test.
+That flexibility is an implementation strength, not a license to blur the architectural boundaries
+between language meaning, IR, backend contract, and runtime realization.
 </p>
