@@ -20,21 +20,22 @@
   <li><a href="#non-goals">5. Non-Goals</a></li>
   <li><a href="#core-definition">6. Core Definition</a></li>
   <li><a href="#contract-parties">7. Contract Parties</a></li>
-  <li><a href="#contract-identity-and-backend-family">8. Contract Identity and Backend Family</a></li>
-  <li><a href="#contract-boundary">9. Contract Boundary</a></li>
-  <li><a href="#minimum-preconditions">10. Minimum Preconditions</a></li>
-  <li><a href="#required-contract-content">11. Required Contract Content</a></li>
-  <li><a href="#producer-obligations">12. Producer Obligations</a></li>
-  <li><a href="#consumer-obligations">13. Consumer Obligations</a></li>
-  <li><a href="#preservation-invariants">14. Preservation Invariants</a></li>
-  <li><a href="#control-state-and-boundaries">15. Control, State, and Boundaries</a></li>
-  <li><a href="#ui-participation">16. UI Participation</a></li>
-  <li><a href="#diagnostics-observability-and-fault-attribution">17. Diagnostics, Observability, and Fault Attribution</a></li>
-  <li><a href="#relation-with-libraries-profiles-and-conformance">18. Relation with Libraries, Profiles, and Conformance</a></li>
-  <li><a href="#minimal-conceptual-shape">19. Minimal Conceptual Shape</a></li>
-  <li><a href="#contract-lifecycle">20. Contract Lifecycle</a></li>
-  <li><a href="#out-of-scope-for-v01">21. Out of Scope for v0.1</a></li>
-  <li><a href="#summary">22. Summary</a></li>
+  <li><a href="#backend-family-target-profile-and-runtime-boundary">8. Backend Family, Target Profile, and Runtime Boundary</a></li>
+  <li><a href="#contract-identity-and-backend-family">9. Contract Identity and Backend Family</a></li>
+  <li><a href="#contract-boundary">10. Contract Boundary</a></li>
+  <li><a href="#minimum-preconditions">11. Minimum Preconditions</a></li>
+  <li><a href="#required-contract-content">12. Required Contract Content</a></li>
+  <li><a href="#producer-obligations">13. Producer Obligations</a></li>
+  <li><a href="#consumer-obligations">14. Consumer Obligations</a></li>
+  <li><a href="#preservation-invariants">15. Preservation Invariants</a></li>
+  <li><a href="#control-state-and-boundaries">16. Control, State, and Boundaries</a></li>
+  <li><a href="#ui-participation">17. UI Participation</a></li>
+  <li><a href="#diagnostics-observability-and-fault-attribution">18. Diagnostics, Observability, and Fault Attribution</a></li>
+  <li><a href="#relation-with-libraries-profiles-and-conformance">19. Relation with Libraries, Profiles, and Conformance</a></li>
+  <li><a href="#minimal-conceptual-shape">20. Minimal Conceptual Shape</a></li>
+  <li><a href="#contract-lifecycle">21. Contract Lifecycle</a></li>
+  <li><a href="#out-of-scope-for-v01">22. Out of Scope for v0.1</a></li>
+  <li><a href="#summary">23. Summary</a></li>
 </ul>
 
 <hr/>
@@ -47,7 +48,7 @@ This document defines the <strong>backend contract</strong> for FROG v0.1.
 
 <p>
 The backend contract is the first standardized <strong>consumer-facing handoff</strong> after lowering.
-It defines what a later compiler stage, backend stage, execution-preparation stage, or runtime intake stage
+It defines what a later compiler stage, backend stage, execution-preparation stage, deployment-preparation stage, or runtime intake stage
 may rely on when consuming a lowered FROG execution form.
 </p>
 
@@ -99,7 +100,7 @@ The backend contract is the standardized declaration by which a lowered executio
 
 <ul>
   <li>what executable content is being offered for consumption,</li>
-  <li>which assumptions are already fixed,</li>
+  <li>which backend-facing assumptions are already fixed,</li>
   <li>which capabilities are required,</li>
   <li>which execution-relevant distinctions remain explicit or encoded,</li>
   <li>which source-aligned attribution obligations still apply,</li>
@@ -166,7 +167,7 @@ Backend Contract
   - standardized consumable handoff
         |
         v
-compiler / backend / runtime realization
+compiler / backend / deployment / runtime realization
 </code></pre>
 
 <p>
@@ -238,7 +239,8 @@ This document does not define:
   <li>one mandatory JIT interface,</li>
   <li>one mandatory deployment package format,</li>
   <li>one mandatory debugging protocol,</li>
-  <li>one mandatory runtime-private state object model.</li>
+  <li>one mandatory runtime-private state object model,</li>
+  <li>one mandatory runtime-module layout.</li>
 </ul>
 
 <p>
@@ -274,7 +276,7 @@ A backend contract is the standardized handoff description by which a lowered FR
 <ul>
   <li>what executable content is consumable,</li>
   <li>which backend-family assumptions are already fixed,</li>
-  <li>which capabilities are required,</li>
+  <li>which additional capability assumptions are required,</li>
   <li>which execution-relevant distinctions are still meaningful,</li>
   <li>which source-aligned attribution obligations still apply,</li>
   <li>which remaining freedoms are left to the consumer.</li>
@@ -337,7 +339,92 @@ The backend contract exists so that those parties do not need to rely on undocum
 
 <hr/>
 
-<h2 id="contract-identity-and-backend-family">8. Contract Identity and Backend Family</h2>
+<h2 id="backend-family-target-profile-and-runtime-boundary">8. Backend Family, Target Profile, and Runtime Boundary</h2>
+
+<p>
+The backend contract sits at a boundary where several related concepts must remain distinct.
+</p>
+
+<h3>8.1 Backend family</h3>
+
+<p>
+A <strong>backend family</strong> is the downstream execution-consumption family that the lowered form is oriented toward.
+It identifies the class of consumer expected to accept the contract.
+</p>
+
+<p>
+A backend family is therefore a contract-facing classification.
+It is neither identical to the open Execution IR nor identical to one private runtime implementation.
+</p>
+
+<h3>8.2 Target profile</h3>
+
+<p>
+A <strong>target profile</strong> is a class of execution assumptions, constraints, and capability expectations relevant to the intended target posture.
+A target profile may influence lowering choices and may affect which backend families are viable.
+</p>
+
+<p>
+A target profile is not identical to a backend family.
+Different backend families may target the same broad target-profile class.
+Likewise, one backend family may admit more than one target posture if the contract states the assumptions explicitly enough.
+</p>
+
+<h3>8.3 Deployment mode</h3>
+
+<p>
+A <strong>deployment mode</strong> is a packaging and execution-exposure posture such as development-oriented execution,
+debug-oriented execution, release-oriented execution, self-contained delivery, or shared-runtime delivery.
+</p>
+
+<p>
+A deployment mode is not itself the program meaning and is not itself a backend family.
+It may, however, affect what later realization stages choose to bundle, expose, or omit.
+</p>
+
+<h3>8.4 Runtime-private realization</h3>
+
+<p>
+A <strong>runtime-private realization</strong> is the consumer-private execution machinery that eventually accepts the contract and makes execution happen.
+This may include runtime modules, host bindings, schedulers, retained state objects, transport adapters, or private support objects.
+</p>
+
+<p>
+Such realization details remain downstream from this document.
+They are not standardized here merely because they exist in an implementation.
+</p>
+
+<h3>8.5 Required distinction at the contract boundary</h3>
+
+<p>
+Accordingly:
+</p>
+
+<ul>
+  <li>a backend contract MAY declare backend-family orientation explicitly,</li>
+  <li>a backend contract MAY declare required target-profile assumptions explicitly,</li>
+  <li>a backend contract MAY declare deployment-relevant assumptions explicitly where they matter to correct consumption,</li>
+  <li>but a backend contract MUST NOT collapse backend family, target profile, deployment mode, and runtime-private realization into one undifferentiated concept.</li>
+</ul>
+
+<p>
+This distinction matters because the same validated FROG meaning may legitimately be consumed:
+</p>
+
+<ul>
+  <li>by different backend families,</li>
+  <li>for different target postures,</li>
+  <li>under different deployment modes,</li>
+  <li>through different runtime-private realizations.</li>
+</ul>
+
+<p>
+The contract boundary must therefore keep assumptions explicit without turning one private implementation layout into hidden language law.
+</p>
+
+<hr/>
+
+<h2 id="contract-identity-and-backend-family">9. Contract Identity and Backend Family</h2>
 
 <p>
 Every backend contract MUST identify:
@@ -350,13 +437,15 @@ Every backend contract MUST identify:
 </ul>
 
 <p>
-Every backend contract SHOULD also identify:
+Every backend contract SHOULD also identify, where useful:
 </p>
 
 <ul>
-  <li>its producer identity where useful,</li>
+  <li>its producer identity,</li>
   <li>its compatibility or expectation level,</li>
-  <li>its contract flavor or contract profile if one exists for that backend family.</li>
+  <li>its contract flavor or contract profile if one exists for that backend family,</li>
+  <li>its required target-profile assumptions,</li>
+  <li>its relevant deployment-mode assumptions when those materially affect correct consumption.</li>
 </ul>
 
 <p>
@@ -385,7 +474,7 @@ It only requires that the chosen backend-family orientation be explicit enough f
 
 <hr/>
 
-<h2 id="contract-boundary">9. Contract Boundary</h2>
+<h2 id="contract-boundary">10. Contract Boundary</h2>
 
 <p>
 The backend contract is the first stage where a lowered representation may legitimately say:
@@ -393,6 +482,8 @@ The backend contract is the first stage where a lowered representation may legit
 
 <ul>
   <li>which backend family it is oriented toward,</li>
+  <li>which target-profile assumptions are already required,</li>
+  <li>which deployment-relevant assumptions materially affect correct consumption,</li>
   <li>which scheduling assumptions are already fixed,</li>
   <li>which placement, partitioning, or storage choices are already specialized,</li>
   <li>which remaining freedoms are left to the consumer.</li>
@@ -420,6 +511,7 @@ Private realization
   - consumer-specific internals
   - runtime-private objects
   - backend-private scheduling machinery
+  - deployment-private bundling choices
 </code></pre>
 
 <p>
@@ -429,7 +521,7 @@ Undeclared assumptions remain outside the contract.
 
 <hr/>
 
-<h2 id="minimum-preconditions">10. Minimum Preconditions</h2>
+<h2 id="minimum-preconditions">11. Minimum Preconditions</h2>
 
 <p>
 A backend contract MUST only be emitted after:
@@ -462,14 +554,14 @@ No conforming backend contract claim
 
 <hr/>
 
-<h2 id="required-contract-content">11. Required Contract Content</h2>
+<h2 id="required-contract-content">12. Required Contract Content</h2>
 
 <p>
 A conforming backend contract MUST be representable through content semantically equivalent to the categories below,
 even if the exact transport shape differs across implementations.
 </p>
 
-<h3>11.1 Header</h3>
+<h3>12.1 Header</h3>
 
 <p>
 The header MUST identify:
@@ -481,7 +573,7 @@ The header MUST identify:
   <li>backend-family orientation.</li>
 </ul>
 
-<h3>11.2 Assumptions and capabilities</h3>
+<h3>12.2 Assumptions and capabilities</h3>
 
 <p>
 The contract MUST make explicit what the consumer is expected to support.
@@ -491,6 +583,8 @@ That SHOULD include, where relevant:
 <ul>
   <li>required intrinsic primitive references,</li>
   <li>required profile families,</li>
+  <li>required target-profile assumptions,</li>
+  <li>required deployment-relevant assumptions,</li>
   <li>required execution-domain assumptions,</li>
   <li>required data-representation assumptions,</li>
   <li>required state-handling assumptions,</li>
@@ -510,7 +604,7 @@ undeclared requirement
     MUST NOT be silently assumed
 </code></pre>
 
-<h3>11.3 Consumable executable units</h3>
+<h3>12.3 Consumable executable units</h3>
 
 <p>
 The contract MUST define what executable units or realizable units the consumer is actually being asked to consume.
@@ -527,7 +621,7 @@ That SHOULD identify, where relevant:
   <li>contract-visible UI interaction objects when present for that backend family.</li>
 </ul>
 
-<h3>11.4 Boundaries</h3>
+<h3>12.4 Boundaries</h3>
 
 <p>
 The contract MUST define how relevant boundaries have been specialized.
@@ -543,7 +637,7 @@ That SHOULD cover, where applicable:
   <li>UI interaction boundaries when they remain relevant to the backend family.</li>
 </ul>
 
-<h3>11.5 State and memory</h3>
+<h3>12.5 State and memory</h3>
 
 <p>
 The contract MUST define how explicit source-semantic memory has been carried into backend-facing form.
@@ -571,7 +665,7 @@ even if
 its storage realization becomes backend-specific
 </code></pre>
 
-<h3>11.6 Placement, scheduling, and domains</h3>
+<h3>12.6 Placement, scheduling, and domains</h3>
 
 <p>
 If lowering already fixed placement, work clustering, partitioning, or scheduling constraints,
@@ -580,7 +674,7 @@ If such decisions are not fixed yet,
 the contract SHOULD say so explicitly rather than leaving ambiguity.
 </p>
 
-<h3>11.7 Attribution and diagnostics</h3>
+<h3>12.7 Attribution and diagnostics</h3>
 
 <p>
 The contract MUST define what source-aligned attribution the consumer MUST preserve or remain able to reconstruct.
@@ -598,7 +692,7 @@ That SHOULD include information equivalent to:
   <li>UI-participation origin where relevant.</li>
 </ul>
 
-<h3>11.8 Unsupported features and rejection conditions</h3>
+<h3>12.8 Unsupported features and rejection conditions</h3>
 
 <p>
 A contract MUST be able to declare features that the intended consumer family:
@@ -617,7 +711,7 @@ Correct rejection is architecturally better than silent semantic laundering.
 
 <hr/>
 
-<h2 id="producer-obligations">12. Producer Obligations</h2>
+<h2 id="producer-obligations">13. Producer Obligations</h2>
 
 <p>
 A conforming producer of a backend contract MUST:
@@ -640,6 +734,7 @@ A producer MUST NOT:
   <li>hide semantic repair inside the contract,</li>
   <li>erase explicit local-memory meaning,</li>
   <li>collapse all boundaries into one opaque transport class,</li>
+  <li>collapse backend-family orientation, target-profile assumptions, deployment-mode assumptions, and runtime-private realization into one undifferentiated classification,</li>
   <li>collapse public interface participation, <code>widget_value</code> participation, and <code>widget_reference</code>-driven UI interaction into one undifferentiated class when the distinction still matters to consumption or attribution,</li>
   <li>claim that one private runtime graph is the normative FROG execution model,</li>
   <li>silently require undeclared profile capabilities.</li>
@@ -647,7 +742,7 @@ A producer MUST NOT:
 
 <hr/>
 
-<h2 id="consumer-obligations">13. Consumer Obligations</h2>
+<h2 id="consumer-obligations">14. Consumer Obligations</h2>
 
 <p>
 A conforming consumer of a backend contract MUST either:
@@ -679,6 +774,8 @@ A consumer MAY:
   <li>refine scheduling detail,</li>
   <li>refine storage realization,</li>
   <li>introduce backend-private support objects,</li>
+  <li>introduce deployment-private bundling choices,</li>
+  <li>select runtime modules privately,</li>
   <li>perform further family-specific specialization,</li>
   <li>hide private realization details from open layers.</li>
 </ul>
@@ -689,7 +786,7 @@ But it MAY do so only while respecting the contract’s preserved obligations.
 
 <hr/>
 
-<h2 id="preservation-invariants">14. Preservation Invariants</h2>
+<h2 id="preservation-invariants">15. Preservation Invariants</h2>
 
 <p>
 Across the backend contract boundary, the following invariants remain mandatory:
@@ -702,7 +799,8 @@ Across the backend contract boundary, the following invariants remain mandatory:
   <li>structure and region meaning MUST remain recoverable where relevant,</li>
   <li>UI participation meaning MUST remain recoverable where the contract claims support for it,</li>
   <li>source-aligned diagnostic anchors MUST remain preservable where relevant,</li>
-  <li>profile-owned capability requirements MUST remain explicit rather than implicit.</li>
+  <li>profile-owned capability requirements MUST remain explicit rather than implicit,</li>
+  <li>contract-facing target-profile assumptions MUST remain explicit rather than being silently deferred into runtime-private interpretation when they materially affect correct consumption.</li>
 </ul>
 
 <pre><code>semantic truth
@@ -723,9 +821,9 @@ source-aligned diagnosability
 
 <hr/>
 
-<h2 id="control-state-and-boundaries">15. Control, State, and Boundaries</h2>
+<h2 id="control-state-and-boundaries">16. Control, State, and Boundaries</h2>
 
-<h3>15.1 Structured control</h3>
+<h3>16.1 Structured control</h3>
 
 <p>
 A backend contract MAY expose lowered branch, dispatch, or loop machinery instead of source-shaped structures.
@@ -740,7 +838,7 @@ it MUST preserve enough information to relate those lowered elements back to:
   <li>loop-carried state origin.</li>
 </ul>
 
-<h3>15.2 Explicit memory</h3>
+<h3>16.2 Explicit memory</h3>
 
 <p>
 A backend contract MUST NOT erase the fact that valid feedback depended on explicit local memory.
@@ -761,7 +859,7 @@ private runtime freedom
    register / buffer slot / retained object / state cell
 </code></pre>
 
-<h3>15.3 Public boundaries</h3>
+<h3>16.3 Public boundaries</h3>
 
 <p>
 A backend contract MAY translate public boundaries into ABI arguments, transport endpoints, or domain endpoints.
@@ -775,17 +873,17 @@ But it MUST still preserve enough distinction that a consumer can tell:
   <li>which are external capability boundaries.</li>
 </ul>
 
-<h3>15.4 Boundary truth before private realization</h3>
+<h3>16.4 Boundary truth before private realization</h3>
 
 <p>
 The backend contract is the last standardized point before private realization.
-If a boundary distinction matters for correct execution, diagnosability, UI binding, or compatibility checking,
+If a boundary distinction matters for correct execution, diagnosability, UI binding, compatibility checking, or target-compatibility checking,
 it MUST still be explicit here rather than being deferred entirely into consumer-private interpretation.
 </p>
 
 <hr/>
 
-<h2 id="ui-participation">16. UI Participation</h2>
+<h2 id="ui-participation">17. UI Participation</h2>
 
 <p>
 Some backend families do not carry UI participation at all.
@@ -841,7 +939,7 @@ that support must be declared as a backend-family capability or as an external p
 
 <hr/>
 
-<h2 id="diagnostics-observability-and-fault-attribution">17. Diagnostics, Observability, and Fault Attribution</h2>
+<h2 id="diagnostics-observability-and-fault-attribution">18. Diagnostics, Observability, and Fault Attribution</h2>
 
 <p>
 This document does not define debugger UI, probe rendering, watch transport, or event protocol.
@@ -880,23 +978,28 @@ loss of source-aligned diagnosability
 
 <hr/>
 
-<h2 id="relation-with-libraries-profiles-and-conformance">18. Relation with Libraries, Profiles, and Conformance</h2>
+<h2 id="relation-with-libraries-profiles-and-conformance">19. Relation with Libraries, Profiles, and Conformance</h2>
 
-<h3>18.1 Relation with Libraries</h3>
+<h3>19.1 Relation with Libraries</h3>
 
 <p>
 A backend contract MUST NOT redefine intrinsic primitive catalogs.
 It MAY reference intrinsic primitive identities and lowered consumption consequences.
 </p>
 
-<h3>18.2 Relation with Profiles</h3>
+<h3>19.2 Relation with Profiles</h3>
 
 <p>
 A backend contract MUST NOT redefine profile-owned capability families.
 It MAY declare that specific profile support is required by the lowered form.
 </p>
 
-<h3>18.3 Relation with Conformance</h3>
+<p>
+When target-profile assumptions are relevant, the contract MAY reference profile-owned capability classes or equivalent declared assumptions,
+but it MUST NOT pretend that one backend family or one runtime-private realization exhausts the meaning of those profile classes.
+</p>
+
+<h3>19.3 Relation with Conformance</h3>
 
 <p>
 This document is not yet a full conformance policy.
@@ -911,12 +1014,13 @@ A future conformance layer MAY distinguish:
   <li>core FROG consumption,</li>
   <li>core FROG plus named profile consumption,</li>
   <li>backend-family-specific compatibility claims,</li>
+  <li>target-profile-specific compatibility claims,</li>
   <li>certified compatibility claims under steward policy.</li>
 </ul>
 
 <hr/>
 
-<h2 id="minimal-conceptual-shape">19. Minimal Conceptual Shape</h2>
+<h2 id="minimal-conceptual-shape">20. Minimal Conceptual Shape</h2>
 
 <p>
 This document does not freeze one mandatory serialized format.
@@ -929,6 +1033,8 @@ Still, a conforming backend contract SHOULD be representable in a conceptual sha
   "backend_family": "reference_host_runtime_ui_binding",
   "assumptions": {
     "profiles_required": [],
+    "target_profiles_required": [],
+    "deployment_mode_assumptions": [],
     "state_model": "explicit_local_memory_preserved",
     "scheduling": {
       "fixed": true,
@@ -989,7 +1095,7 @@ attribution and diagnostic support
 
 <hr/>
 
-<h2 id="contract-lifecycle">20. Contract Lifecycle</h2>
+<h2 id="contract-lifecycle">21. Contract Lifecycle</h2>
 
 <p>
 A useful mental model is:
@@ -1027,7 +1133,7 @@ This lifecycle matters because explicit rejection is preferable to silent reinte
 
 <hr/>
 
-<h2 id="out-of-scope-for-v01">21. Out of Scope for v0.1</h2>
+<h2 id="out-of-scope-for-v01">22. Out of Scope for v0.1</h2>
 
 <p>
 The following remain out of scope for this document in v0.1:
@@ -1035,6 +1141,8 @@ The following remain out of scope for this document in v0.1:
 
 <ul>
   <li>one frozen universal backend-family taxonomy,</li>
+  <li>one frozen universal target-profile taxonomy,</li>
+  <li>one frozen deployment-mode taxonomy,</li>
   <li>one frozen binary or JSON exchange format,</li>
   <li>one universal ABI descriptor model,</li>
   <li>one universal schedule encoding,</li>
@@ -1056,7 +1164,7 @@ without collapsing FROG into one implementation pipeline
 
 <hr/>
 
-<h2 id="summary">22. Summary</h2>
+<h2 id="summary">23. Summary</h2>
 
 <p>
 The FROG backend contract of v0.1 is the standardized consumption boundary after lowering.
@@ -1078,8 +1186,10 @@ It does not standardize private runtime realization.
 
 <p>
 It also fixes an important practical point for v0.1:
-a backend family may carry UI-relevant participation and UI-object interaction obligations forward into the contract,
-but doing so does not standardize one universal event model or one universal runtime UI implementation.
+a backend contract may carry backend-family orientation,
+may declare target-profile assumptions,
+and may declare deployment-relevant assumptions where they materially affect correct consumption,
+but doing so does not standardize one universal runtime shape or one universal runtime-module layout.
 </p>
 
 <pre><code>open Execution IR
