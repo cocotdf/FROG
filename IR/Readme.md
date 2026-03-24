@@ -85,6 +85,8 @@ open execution-facing IR
       -&gt;
 later specialization / lowering
       -&gt;
+backend-facing handoff
+      -&gt;
 private realization
 </code></pre>
 
@@ -211,6 +213,26 @@ The key architectural rule is:
   <li><code>IR/</code> MUST remain distinct from runtime-private realization.</li>
 </ul>
 
+<p>
+More precisely, the core open-IR bundle is:
+</p>
+
+<ul>
+  <li><code>Execution IR.md</code>,</li>
+  <li><code>Derivation rules.md</code>,</li>
+  <li><code>Construction rules.md</code>,</li>
+  <li><code>Identity and Mapping.md</code>.</li>
+</ul>
+
+<p>
+The downstream IR-adjacent documents are:
+</p>
+
+<ul>
+  <li><code>Lowering.md</code>,</li>
+  <li><code>Backend contract.md</code>.</li>
+</ul>
+
 <hr/>
 
 <h2 id="position-in-the-representation-pipeline">5. Position in the Representation Pipeline</h2>
@@ -277,6 +299,12 @@ validated authoring form or equivalent
 validated program meaning
     |
     v
+derivation
+    |
+    v
+construction
+    |
+    v
 open Execution IR
     |
     v
@@ -284,6 +312,23 @@ lowered / backend-facing forms
     |
     v
 compiler / runtime-private forms
+</code></pre>
+
+<p>
+This is the practical corridor that the IR layer now closes explicitly:
+</p>
+
+<pre><code>validated program meaning
+        -&gt;
+derivation
+        -&gt;
+recoverable IR identity and mapping
+        -&gt;
+material IR construction
+        -&gt;
+open Execution IR
+        -&gt;
+later lowering and backend-facing handoff
 </code></pre>
 
 <hr/>
@@ -424,6 +469,23 @@ IR/ answers:
 "How may that validated truth be represented
 for execution-facing use?"
 </code></pre>
+
+<p>
+The IR layer is therefore downstream from:
+</p>
+
+<ul>
+  <li><code>Language/Expression to validated meaning.md</code>,</li>
+</ul>
+
+<p>
+and upstream from:
+</p>
+
+<ul>
+  <li><code>IR/Lowering.md</code>,</li>
+  <li><code>IR/Backend contract.md</code>.</li>
+</ul>
 
 <h3 id="relation-with-libraries-and-profiles">8.3 Relation with Libraries and Profiles</h3>
 
@@ -645,13 +707,15 @@ A practical reading path is:
       -&gt;
 IR/Readme.md
       -&gt;
+Language/Expression to validated meaning.md
+      -&gt;
 IR/Execution IR.md
       -&gt;
 IR/Derivation rules.md
       -&gt;
-IR/Construction rules.md
-      -&gt;
 IR/Identity and Mapping.md
+      -&gt;
+IR/Construction rules.md
       -&gt;
 IR/Lowering.md
       -&gt;
@@ -673,10 +737,11 @@ That path is useful because:
 <ul>
   <li>the root README explains repository-wide architecture,</li>
   <li>this file defines the ownership boundary of the IR layer,</li>
+  <li><code>Language/Expression to validated meaning.md</code> closes the upstream semantic boundary,</li>
   <li><code>Execution IR.md</code> defines the open execution-facing model,</li>
   <li><code>Derivation rules.md</code> closes the validated-program-to-IR correspondence boundary,</li>
-  <li><code>Construction rules.md</code> closes the IR build boundary,</li>
-  <li><code>Identity and Mapping.md</code> explains attribution continuity and recoverability,</li>
+  <li><code>Identity and Mapping.md</code> closes attribution continuity and recoverability obligations,</li>
+  <li><code>Construction rules.md</code> closes the material IR build boundary,</li>
   <li><code>Lowering.md</code> explains where specialization begins,</li>
   <li><code>Backend contract.md</code> explains downstream backend-facing assumptions,</li>
   <li><code>Language/</code> remains the authority for semantic truth,</li>
@@ -699,10 +764,22 @@ The current closure of the directory is:
   <li>a clear architectural home for open execution-facing derived representations,</li>
   <li>a first concrete open Execution IR model,</li>
   <li>a derivation boundary from validated FROG to open Execution IR,</li>
-  <li>a construction boundary for building open Execution IR,</li>
   <li>an explicit identity and mapping boundary,</li>
+  <li>a construction boundary for building open Execution IR,</li>
   <li>a first documented lowering boundary,</li>
   <li>a first documented backend-facing contract boundary.</li>
+</ul>
+
+<p>
+The corridor from semantic truth to open IR is now explicitly structured as:
+</p>
+
+<ul>
+  <li>validated meaning,</li>
+  <li>derivation correspondence,</li>
+  <li>identity and mapping recoverability,</li>
+  <li>material construction,</li>
+  <li>open Execution IR.</li>
 </ul>
 
 <p>
@@ -765,6 +842,8 @@ In compact form:
 </p>
 
 <pre><code>🟩 validated program meaning
+      -&gt;
+🟨 derivation + identity + construction boundary
       -&gt;
 🟦 open execution-facing IR
       -&gt;
