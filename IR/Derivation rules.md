@@ -6,7 +6,7 @@
 
 <p align="center">
   <strong>Normative derivation rules from validated FROG program meaning to open Execution IR</strong><br />
-  FROG — Free Open Graphical Language
+  <em>FROG — Free Open Graphical Language</em>
 </p>
 
 <hr />
@@ -15,23 +15,24 @@
 <ul>
   <li><a href="#overview">1. Overview</a></li>
   <li><a href="#boundary-contract">2. Boundary Contract</a></li>
-  <li><a href="#scope">3. Scope</a></li>
-  <li><a href="#relation-with-other-specifications">4. Relation with Other Specifications</a></li>
-  <li><a href="#derivation-entry-condition">5. Derivation Entry Condition</a></li>
-  <li><a href="#derivation-result">6. Derivation Result</a></li>
-  <li><a href="#core-derivation-invariants">7. Core Derivation Invariants</a></li>
-  <li><a href="#derivation-relation-shapes">8. Derivation Relation Shapes</a></li>
-  <li><a href="#family-mapping-rules">9. Family Mapping Rules</a></li>
-  <li><a href="#identity-and-attribution">10. Identity and Attribution</a></li>
-  <li><a href="#connectivity-derivation">11. Connectivity Derivation</a></li>
-  <li><a href="#structured-control-derivation">12. Structured Control Derivation</a></li>
-  <li><a href="#interface-and-ui-derivation">13. Interface and UI Derivation</a></li>
-  <li><a href="#state-and-cycle-preservation">14. State and Cycle Preservation</a></li>
-  <li><a href="#allowed-normalization">15. Allowed Normalization</a></li>
-  <li><a href="#forbidden-derivation-outcomes">16. Forbidden Derivation Outcomes</a></li>
-  <li><a href="#relation-with-construction-lowering-and-backend-contract">17. Relation with Construction, Lowering, and Backend Contract</a></li>
-  <li><a href="#out-of-scope">18. Out of Scope</a></li>
-  <li><a href="#summary">19. Summary</a></li>
+  <li><a href="#position-in-the-architecture">3. Position in the Architecture</a></li>
+  <li><a href="#scope">4. Scope</a></li>
+  <li><a href="#relation-with-other-specifications">5. Relation with Other Specifications</a></li>
+  <li><a href="#derivation-entry-condition">6. Derivation Entry Condition</a></li>
+  <li><a href="#derivation-result">7. Derivation Result</a></li>
+  <li><a href="#core-derivation-invariants">8. Core Derivation Invariants</a></li>
+  <li><a href="#derivation-relation-shapes">9. Derivation Relation Shapes</a></li>
+  <li><a href="#family-mapping-rules">10. Family Mapping Rules</a></li>
+  <li><a href="#identity-and-attribution">11. Identity and Attribution</a></li>
+  <li><a href="#connectivity-derivation">12. Connectivity Derivation</a></li>
+  <li><a href="#structured-control-derivation">13. Structured Control Derivation</a></li>
+  <li><a href="#interface-and-ui-derivation">14. Interface and UI Derivation</a></li>
+  <li><a href="#state-and-cycle-preservation">15. State and Cycle Preservation</a></li>
+  <li><a href="#allowed-normalization">16. Allowed Normalization</a></li>
+  <li><a href="#forbidden-derivation-outcomes">17. Forbidden Derivation Outcomes</a></li>
+  <li><a href="#relation-with-construction-lowering-and-backend-contract">18. Relation with Construction, Lowering, and Backend Contract</a></li>
+  <li><a href="#out-of-scope">19. Out of Scope</a></li>
+  <li><a href="#summary">20. Summary</a></li>
 </ul>
 
 <hr />
@@ -49,8 +50,8 @@ It defines:
 
 <ul>
   <li>what may be derived from validated meaning,</li>
-  <li>what must remain recoverable at the derivation boundary,</li>
-  <li>which support objects may be introduced to make already-validated execution structure explicit,</li>
+  <li>what MUST remain recoverable at the derivation boundary,</li>
+  <li>which support objects MAY be introduced to make already-validated execution structure explicit,</li>
   <li>which source-visible or validation-relevant families do not become primary execution objects,</li>
   <li>which normalizations are allowed, and</li>
   <li>which transformations are forbidden because they would change meaning, erase attribution, or import private runtime assumptions too early.</li>
@@ -143,7 +144,60 @@ derivation decides:
 
 <hr />
 
-<h2 id="scope">3. Scope</h2>
+<h2 id="position-in-the-architecture">3. Position in the Architecture</h2>
+
+<p>
+The intended architecture is:
+</p>
+
+<pre><code>canonical .frog source
+        |
+        v
+validated program meaning
+        |
+        v
+Execution IR
+  - open
+  - inspectable
+  - source-attributable
+  - not backend-private
+        |
+        v
+Lowering
+  - specialization begins
+        |
+        v
+Backend Contract
+  - standardized consumable handoff
+        |
+        v
+compiler / backend / deployment / runtime realization
+</code></pre>
+
+<p>
+The key interpretation rule is:
+</p>
+
+<ul>
+  <li><strong>validated program meaning</strong> remains the semantic truth inherited from <code>Language/</code>,</li>
+  <li><strong>Execution IR</strong> remains the open execution-facing representation,</li>
+  <li><strong>derivation</strong> is the correspondence boundary between those two layers,</li>
+  <li><strong>lowering</strong> is where backend-oriented specialization begins,</li>
+  <li><strong>private realization</strong> remains downstream and is not standardized here.</li>
+</ul>
+
+<p>
+Derivation therefore sits:
+</p>
+
+<ul>
+  <li>after semantic validation has already succeeded,</li>
+  <li>before backend-family specialization begins.</li>
+</ul>
+
+<hr />
+
+<h2 id="scope">4. Scope</h2>
 
 <p>
 This document defines:
@@ -153,7 +207,7 @@ This document defines:
   <li>the entry condition for Execution IR derivation,</li>
   <li>the permitted derivation relation shapes,</li>
   <li>the normative correspondence between validated families and open Execution IR families,</li>
-  <li>the minimum attribution and recoverability obligations that must survive derivation,</li>
+  <li>the minimum attribution and recoverability obligations that MUST survive derivation,</li>
   <li>the allowed and forbidden forms of derivation-time explicitness and normalization.</li>
 </ul>
 
@@ -187,20 +241,20 @@ This document does not define:
 
 <hr />
 
-<h2 id="relation-with-other-specifications">4. Relation with Other Specifications</h2>
+<h2 id="relation-with-other-specifications">5. Relation with Other Specifications</h2>
 
 <p>
 Ownership remains:
 </p>
 
-<pre><code>Expression/        -&gt; canonical source shape
-Language/          -&gt; validated program meaning
-IR/Execution IR.md -&gt; open Execution IR architecture
-IR/Derivation      -&gt; correspondence from meaning to IR
-IR/Construction    -&gt; material IR construction
-IR/Identity and Mapping.md -&gt; cross-layer recoverability
-IR/Lowering.md     -&gt; later target-oriented specialization
-IR/Backend contract.md -&gt; later backend-facing handoff
+<pre><code>Expression/                 -&gt; canonical source shape
+Language/                   -&gt; validated program meaning
+IR/Execution IR.md          -&gt; open Execution IR architecture
+IR/Derivation rules.md      -&gt; correspondence from meaning to IR
+IR/Construction rules.md    -&gt; material IR construction
+IR/Identity and Mapping.md  -&gt; cross-layer recoverability
+IR/Lowering.md              -&gt; later target-oriented specialization
+IR/Backend contract.md      -&gt; later backend-facing handoff
 </code></pre>
 
 <p>
@@ -238,7 +292,7 @@ This document should be read together with:
 
 <hr />
 
-<h2 id="derivation-entry-condition">5. Derivation Entry Condition</h2>
+<h2 id="derivation-entry-condition">6. Derivation Entry Condition</h2>
 
 <p>
 Execution IR derivation begins <strong>only after validation has succeeded</strong>.
@@ -290,7 +344,7 @@ Derivation is therefore not the place where an implementation:
 
 <hr />
 
-<h2 id="derivation-result">6. Derivation Result</h2>
+<h2 id="derivation-result">7. Derivation Result</h2>
 
 <p>
 The result of derivation in base v0.1 is one <strong>open Execution IR execution unit</strong> for one validated FROG program.
@@ -348,7 +402,7 @@ The derivation result is not yet:
 
 <hr />
 
-<h2 id="core-derivation-invariants">7. Core Derivation Invariants</h2>
+<h2 id="core-derivation-invariants">8. Core Derivation Invariants</h2>
 
 <p>
 All conforming derivations in base v0.1 MUST satisfy the following invariants:
@@ -389,7 +443,7 @@ do not standardize private scheduler policy
 
 <hr />
 
-<h2 id="derivation-relation-shapes">8. Derivation Relation Shapes</h2>
+<h2 id="derivation-relation-shapes">9. Derivation Relation Shapes</h2>
 
 <p>
 Base v0.1 distinguishes four broad derivation relation shapes:
@@ -450,7 +504,7 @@ non-primary:
 
 <hr />
 
-<h2 id="family-mapping-rules">9. Family Mapping Rules</h2>
+<h2 id="family-mapping-rules">10. Family Mapping Rules</h2>
 
 <p>
 The rules below define the base v0.1 normative correspondence between validated families and open Execution IR families.
@@ -458,7 +512,7 @@ They are about <strong>execution-facing derivation</strong>.
 They do not imply that every source-visible family becomes a primary execution object.
 </p>
 
-<h3>9.1 Execution-relevant families</h3>
+<h3>10.1 Execution-relevant families</h3>
 
 <table>
   <thead>
@@ -595,7 +649,7 @@ They do not imply that every source-visible family becomes a primary execution o
   </tbody>
 </table>
 
-<h3>9.2 Source-visible families that do not become primary execution objects by themselves</h3>
+<h3>10.2 Source-visible families that do not become primary execution objects by themselves</h3>
 
 <p>
 The following source-visible families may matter for source durability,
@@ -685,7 +739,7 @@ or boundary correspondence.
 
 <hr />
 
-<h2 id="identity-and-attribution">10. Identity and Attribution</h2>
+<h2 id="identity-and-attribution">11. Identity and Attribution</h2>
 
 <p>
 Source attribution is mandatory.
@@ -745,7 +799,7 @@ Broader cross-stage identity architecture remains owned by <code>IR/Identity and
 
 <hr />
 
-<h2 id="connectivity-derivation">11. Connectivity Derivation</h2>
+<h2 id="connectivity-derivation">12. Connectivity Derivation</h2>
 
 <p>
 Execution-relevant connectivity MUST be explicit in the derived IR.
@@ -800,7 +854,7 @@ silently bypass structure boundary
 
 <hr />
 
-<h2 id="structured-control-derivation">12. Structured Control Derivation</h2>
+<h2 id="structured-control-derivation">13. Structured Control Derivation</h2>
 
 <p>
 Structured control remains explicit in the base open Execution IR.
@@ -872,7 +926,7 @@ opaque backend-shaped flattening
 
 <hr />
 
-<h2 id="interface-and-ui-derivation">13. Interface and UI Derivation</h2>
+<h2 id="interface-and-ui-derivation">14. Interface and UI Derivation</h2>
 
 <p>
 The open Execution IR MUST preserve the distinction between:
@@ -923,7 +977,7 @@ standardized UI-object primitive operation
 
 <hr />
 
-<h2 id="state-and-cycle-preservation">14. State and Cycle Preservation</h2>
+<h2 id="state-and-cycle-preservation">15. State and Cycle Preservation</h2>
 
 <p>
 Explicit local memory remains explicit in derivation.
@@ -963,7 +1017,7 @@ hidden implicit memory legalization
 
 <hr />
 
-<h2 id="allowed-normalization">15. Allowed Normalization</h2>
+<h2 id="allowed-normalization">16. Allowed Normalization</h2>
 
 <p>
 Derivation MAY normalize validated meaning in execution-facing ways that do not change semantic truth.
@@ -1021,7 +1075,7 @@ widget_reference / UI-primitive distinction preserved
 
 <hr />
 
-<h2 id="forbidden-derivation-outcomes">16. Forbidden Derivation Outcomes</h2>
+<h2 id="forbidden-derivation-outcomes">17. Forbidden Derivation Outcomes</h2>
 
 <p>
 The following outcomes are forbidden in the base open Execution IR of v0.1:
@@ -1060,7 +1114,7 @@ private scheduler policy as open IR
 
 <hr />
 
-<h2 id="relation-with-construction-lowering-and-backend-contract">17. Relation with Construction, Lowering, and Backend Contract</h2>
+<h2 id="relation-with-construction-lowering-and-backend-contract">18. Relation with Construction, Lowering, and Backend Contract</h2>
 
 <p>
 The output of derivation is the <strong>open Execution IR</strong>.
@@ -1076,7 +1130,7 @@ Accordingly:
   <li>material build procedure belongs to <code>IR/Construction rules.md</code>,</li>
   <li>later target-oriented specialization belongs to <code>IR/Lowering.md</code>,</li>
   <li>later consumer-facing assumptions belong to <code>IR/Backend contract.md</code>,</li>
-  <li>derivation MUST NOT prematurely encode backend-private scheduling, partitioning, storage layout, or target ABI policy as if those belonged to the base open IR.</li>
+  <li>derivation MUST NOT prematurely encode backend-private scheduling, partitioning, storage layout, target-profile assumptions, deployment-mode assumptions, or target ABI policy as if those belonged to the base open IR.</li>
 </ul>
 
 <p>
@@ -1123,7 +1177,7 @@ Those layers MUST NOT be collapsed into one another.
 
 <hr />
 
-<h2 id="out-of-scope">18. Out of Scope</h2>
+<h2 id="out-of-scope">19. Out of Scope</h2>
 
 <p>
 The following topics are out of scope for this document in base v0.1:
@@ -1152,7 +1206,7 @@ or IDE-facing specifications.
 
 <hr />
 
-<h2 id="summary">19. Summary</h2>
+<h2 id="summary">20. Summary</h2>
 
 <p>
 Execution IR derivation in FROG v0.1 is conservative by design.
