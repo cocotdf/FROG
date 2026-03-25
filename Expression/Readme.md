@@ -27,11 +27,12 @@
   <li><a href="#sections-overview">11. Sections Overview</a></li>
   <li><a href="#cross-cutting-subsystems">12. Cross-Cutting Subsystems</a></li>
   <li><a href="#interface-connector-diagram-and-front-panel">13. Interface, Connector, Diagram, and Front Panel</a></li>
-  <li><a href="#execution-relevance-validation-and-derivation-boundary">14. Execution Relevance, Validation, and Derivation Boundary</a></li>
-  <li><a href="#canonical-formatting-and-ordering">15. Canonical Formatting and Ordering</a></li>
-  <li><a href="#normative-terminology">16. Normative Terminology</a></li>
-  <li><a href="#status">17. Status</a></li>
-  <li><a href="#license">18. License</a></li>
+  <li><a href="#source-well-formedness-and-structural-validity">14. Source Well-Formedness and Structural Validity</a></li>
+  <li><a href="#execution-relevance-validation-and-derivation-boundary">15. Execution Relevance, Validation, and Derivation Boundary</a></li>
+  <li><a href="#canonical-formatting-and-ordering">16. Canonical Formatting and Ordering</a></li>
+  <li><a href="#normative-terminology">17. Normative Terminology</a></li>
+  <li><a href="#status">18. Status</a></li>
+  <li><a href="#license">19. License</a></li>
 </ul>
 
 <hr/>
@@ -60,7 +61,8 @@ The purpose of this directory is to define:
   <li>the canonical top-level structure of a <code>.frog</code> file,</li>
   <li>the required and optional source sections of that file,</li>
   <li>the source-level representation of those sections,</li>
-  <li>the source-visible families and cross-cutting source subsystems that appear in canonical source, including the type system, the widget model, the widget interaction model, and the source-facing representation of structures and local-memory constructs.</li>
+  <li>the source-visible families and cross-cutting source subsystems that appear in canonical source, including the type system, the widget model, the widget interaction model, and the source-facing representation of structures and local-memory constructs,</li>
+  <li>the structural validity boundary that a canonical <code>.frog</code> source file MUST satisfy before later semantic validation and execution-facing derivation.</li>
 </ul>
 
 <p>
@@ -84,6 +86,7 @@ Profiles/     -> optional standardized capability families
 IDE/          -> authoring, observability, debugging, inspection
 
 Expression/ owns source structure and source-visible object shape.
+Expression/ owns source well-formedness and structural validity.
 Expression/ does not own validated program meaning.
 Expression/ does not own open execution-facing derivation.
 </pre>
@@ -106,7 +109,7 @@ The Expression layer exists so that a FROG program can be:
   <li>read and diffed by humans,</li>
   <li>versioned in source control,</li>
   <li>loaded by different tools,</li>
-  <li>validated independently of one IDE implementation,</li>
+  <li>checked for source well-formedness and structural validity independently of one IDE implementation,</li>
   <li>used as the stable source basis for later semantic validation and execution-facing derivation.</li>
 </ul>
 
@@ -117,7 +120,8 @@ Without a dedicated source layer, important distinctions would collapse too easi
 <ul>
   <li>editor behavior could be confused with language structure,</li>
   <li>runtime behavior could be confused with source representation,</li>
-  <li>implementation details could leak into the canonical program artifact.</li>
+  <li>implementation details could leak into the canonical program artifact,</li>
+  <li>semantic rejection could be confused with malformed or structurally invalid source.</li>
 </ul>
 
 <p>
@@ -184,6 +188,7 @@ Expression/ answers:
 - Which sections are required?
 - How are source objects serialized?
 - Which source-level cross-cutting models apply?
+- What makes source structurally valid as canonical source?
 
 Expression/ does not answer by itself:
 
@@ -282,6 +287,7 @@ At the current repository stage, that includes:
 </p>
 
 <ul>
+  <li><code>Language/Expression to validated meaning.md</code> — the boundary from source expression to validated program meaning,</li>
   <li><code>Language/Control structures.md</code> — normative execution semantics for standard control structures,</li>
   <li><code>Language/State and cycles.md</code> — normative execution semantics for local memory and valid feedback cycles,</li>
   <li><code>Language/Execution model.md</code> — language-level execution concepts used to interpret validated program meaning,</li>
@@ -306,6 +312,7 @@ Expression/
    ├─ defines how source is written
    ├─ defines what sections exist
    ├─ defines how diagrams, widgets, and sections are serialized
+   ├─ defines source well-formedness and structural validity
    │
    ├─ relies on Language/ for validated program meaning
    ├─ relies on Libraries/ for intrinsic primitive meaning
@@ -317,6 +324,7 @@ A useful reading rule
 
 If the question is:
 - "How is it written in source?"           -> Expression/
+- "Is this canonical source structurally valid?" -> Expression/
 - "What does the validated program mean?"  -> Language/
 - "What does this intrinsic primitive do?" -> Libraries/
 - "What does this optional capability do?" -> Profiles/
@@ -978,7 +986,116 @@ front_panel widget declaration
 
 <hr/>
 
-<h2 id="execution-relevance-validation-and-derivation-boundary">14. Execution Relevance, Validation, and Derivation Boundary</h2>
+<h2 id="source-well-formedness-and-structural-validity">14. Source Well-Formedness and Structural Validity</h2>
+
+<p>
+The canonical <code>.frog</code> source layer MUST remain distinct from later semantic validation.
+Accordingly, this specification distinguishes three different questions:
+</p>
+
+<ul>
+  <li><strong>Is the file parseable as source?</strong></li>
+  <li><strong>Is the parsed source structurally valid as a canonical FROG Expression?</strong></li>
+  <li><strong>Does the structurally valid source yield accepted validated program meaning?</strong></li>
+</ul>
+
+<p>
+These questions MUST NOT be collapsed into one undifferentiated notion of “validity”.
+</p>
+
+<h3>14.1 Parseability</h3>
+
+<p>
+A candidate <code>.frog</code> file is parseable when it is syntactically readable as JSON and can be loaded as a top-level source object.
+Parseability alone does not make the file a conforming canonical FROG Expression.
+</p>
+
+<h3>14.2 Structural validity</h3>
+
+<p>
+A parsed source object is <strong>structurally valid</strong> when it satisfies the canonical source-shape rules owned by <code>Expression/</code>.
+That includes, as applicable:
+</p>
+
+<ul>
+  <li>required top-level section presence,</li>
+  <li>top-level object-shape expectations,</li>
+  <li>section-local structural rules,</li>
+  <li>identifier-shape and uniqueness rules owned by source documents,</li>
+  <li>source-level containment and placement rules,</li>
+  <li>source-level structural consistency of optional sections when they are present.</li>
+</ul>
+
+<p>
+Structural validity is still a source-level notion.
+It does not by itself imply accepted executable semantics.
+</p>
+
+<h3>14.3 Semantic acceptance</h3>
+
+<p>
+A structurally valid source file may still be rejected later during validation against:
+</p>
+
+<ul>
+  <li><code>Language/</code> semantic rules,</li>
+  <li>intrinsic primitive contracts in <code>Libraries/</code>,</li>
+  <li>optional capability contracts in <code>Profiles/</code>.</li>
+</ul>
+
+<p>
+Examples include type incompatibility, invalid cycle formation, invalid local-memory usage, unsupported primitive use, invalid structure semantics, or profile-related semantic rejection.
+Those are not structural-source failures merely because they are detected after parsing.
+</p>
+
+<h3>14.4 Ownership rule</h3>
+
+<pre>
+Source validity ownership
+
+Parseable JSON                       -> load/parsing concern
+Structurally valid canonical source  -> Expression/
+Accepted validated meaning           -> Language/ + Libraries/ + Profiles/
+Derived execution-facing form        -> IR/
+</pre>
+
+<h3>14.5 Conformance relevance</h3>
+
+<p>
+This distinction matters to public conformance.
+A public conformance surface SHOULD be able to distinguish at least:
+</p>
+
+<ul>
+  <li>malformed or non-loadable source,</li>
+  <li>parsed but structurally invalid canonical source,</li>
+  <li>structurally valid source later rejected semantically,</li>
+  <li>accepted source whose relevant truth is preserved across derivation and execution-facing handling.</li>
+</ul>
+
+<h3>14.6 Structural-source examples</h3>
+
+<p>
+Typical structural-source failures may include:
+</p>
+
+<ul>
+  <li>missing required top-level sections,</li>
+  <li>duplicate identifiers where source uniqueness is required,</li>
+  <li>an optional section present with the wrong object shape,</li>
+  <li>a widget tree violating explicit containment rules,</li>
+  <li>a connector object attempting to define new logical ports instead of projecting the public interface,</li>
+  <li>a source object placed in the wrong top-level section family.</li>
+</ul>
+
+<p>
+These are source-shape failures.
+They are not to be repaired by runtime behavior, implementation convenience, or post-hoc semantic interpretation.
+</p>
+
+<hr/>
+
+<h2 id="execution-relevance-validation-and-derivation-boundary">15. Execution Relevance, Validation, and Derivation Boundary</h2>
 
 <p>
 The canonical <code>.frog</code> source file is the authoritative source artifact of the program.
@@ -994,6 +1111,8 @@ A conforming toolchain SHOULD apply the following conceptual pipeline:
 Source-derived program content
     ↓ reconstruct as needed
 Program Model
+    ↓ structural checks owned by Expression/
+Structurally valid canonical source
     ↓ validate against Language/ + Libraries/ + Profiles/
 Validated program meaning
     ↓ derive
@@ -1034,6 +1153,7 @@ Boundary rule
 
 Expression/
    defines source-visible execution-relevant content
+   and source structural validity
 
 Language/
    defines validated meaning of that content
@@ -1050,6 +1170,8 @@ raw source
    ->
 source-derived program content
    ->
+structurally valid canonical source
+   ->
 validated program meaning
    ->
 open execution-facing representation
@@ -1062,14 +1184,14 @@ optional source decoration -> semantic override
 
 <hr/>
 
-<h2 id="canonical-formatting-and-ordering">15. Canonical Formatting and Ordering</h2>
+<h2 id="canonical-formatting-and-ordering">16. Canonical Formatting and Ordering</h2>
 
 <p>
 Canonical source is JSON.
 For interoperability and stable diffs, tools SHOULD preserve predictable formatting and section ordering.
 </p>
 
-<h3>15.1 Top-level ordering</h3>
+<h3>16.1 Top-level ordering</h3>
 
 <p>
 When tools emit canonical source, they SHOULD preserve this top-level order:
@@ -1096,7 +1218,7 @@ That ordering recommendation applies whether optional sections are present or ab
 Omitted optional sections SHOULD simply be omitted without changing the relative ordering of the remaining emitted sections.
 </p>
 
-<h3>15.2 Stable identifiers</h3>
+<h3>16.2 Stable identifiers</h3>
 
 <p>
 Tools SHOULD preserve stable identifiers for:
@@ -1110,7 +1232,7 @@ Tools SHOULD preserve stable identifiers for:
   <li>annotations where relevant.</li>
 </ul>
 
-<h3>15.3 Canonical local expressions</h3>
+<h3>16.3 Canonical local expressions</h3>
 
 <p>
 Tools SHOULD preserve canonical local forms for:
@@ -1125,7 +1247,7 @@ Tools SHOULD preserve canonical local forms for:
   <li>property names and method names defined by the active intrinsic or profile-owned capability surface.</li>
 </ul>
 
-<h3>15.4 Optional tool freedom</h3>
+<h3>16.4 Optional tool freedom</h3>
 
 <p>
 Pretty-printing details such as indentation width are not semantically significant.
@@ -1144,7 +1266,7 @@ But:
 
 <hr/>
 
-<h2 id="normative-terminology">16. Normative Terminology</h2>
+<h2 id="normative-terminology">17. Normative Terminology</h2>
 
 <p>
 The key words MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY in this specification are to be interpreted in their ordinary normative sense:
@@ -1158,7 +1280,7 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY in this specification 
 
 <hr/>
 
-<h2 id="status">17. Status</h2>
+<h2 id="status">18. Status</h2>
 
 <p>
 This document describes the FROG Expression for specification version <code>0.1</code>.
@@ -1166,7 +1288,7 @@ This document describes the FROG Expression for specification version <code>0.1<
 
 <p>
 FROG v0.1 is intentionally conservative.
-It prioritizes explicit canonical source semantics, long-term durability, and tool interoperability over premature expansion of the language surface.
+It prioritizes explicit canonical source semantics, structural validity clarity, long-term durability, and tool interoperability over premature expansion of the language surface.
 </p>
 
 <p>
@@ -1181,6 +1303,7 @@ Future revisions SHOULD also preserve the core architectural distinctions alread
 <ul>
   <li>source expression versus Program Model versus validated program meaning versus open execution-facing representation,</li>
   <li>canonical source representation versus normative execution semantics,</li>
+  <li>source structural validity versus semantic acceptance,</li>
   <li>intrinsic primitive vocabularies versus optional profile-owned capability families,</li>
   <li>public interface versus connector versus diagram versus optional front panel,</li>
   <li>natural widget value flow versus object-style widget interaction,</li>
@@ -1195,6 +1318,7 @@ Keep Expression/ as:
 - explicit
 - portable
 - source-owned
+- structurally checkable
 - durable
 
 Do not let Expression/ drift into:
@@ -1206,7 +1330,7 @@ Do not let Expression/ drift into:
 
 <hr/>
 
-<h2 id="license">18. License</h2>
+<h2 id="license">19. License</h2>
 
 <p>
 This specification is part of the FROG repository and follows the repository licensing and governance rules.
