@@ -55,6 +55,11 @@ This directory does not define the language.
 It makes the published language testable and publicly checkable.
 </p>
 
+<p>
+Conformance therefore belongs at the boundary between published repository law and observable implementation behavior.
+It turns architectural distinctions into explicit public expectations.
+</p>
+
 <hr/>
 
 <h2 id="core-purpose">2. Core Purpose</h2>
@@ -81,8 +86,11 @@ It MUST NOT vary in published accept / reject / preserve outcomes for the same p
 Conformance therefore prevents the following drift:
 </p>
 
-<pre><code>well-formed file
-        -/-> valid meaning
+<pre><code>parseable file
+        -/-> structurally valid canonical source
+
+structurally valid canonical source
+        -/-> validated meaning
 
 validated meaning
         -/-> arbitrary IR
@@ -123,7 +131,7 @@ It ensures that:
   <li>implementations do not silently diverge,</li>
   <li>semantic meaning is not reinterpreted implicitly,</li>
   <li>invalid constructs are rejected instead of silently repaired,</li>
-  <li>critical distinctions remain visible across validation, IR derivation, and later specialization.</li>
+  <li>critical distinctions remain visible across structural validation, semantic validation, IR derivation, and later specialization.</li>
 </ul>
 
 <p>
@@ -144,8 +152,9 @@ It includes:
 </p>
 
 <ul>
-  <li>source validation correctness,</li>
-  <li>semantic validation correctness,</li>
+  <li>correct rejection of malformed or non-loadable source where applicable,</li>
+  <li>correct source-structure validation,</li>
+  <li>correct semantic validation,</li>
   <li>correct rejection where validated meaning does not exist,</li>
   <li>correct preservation of distinctions across derivation into open Execution IR,</li>
   <li>correct preservation of required boundaries across later lowering and backend-facing handoff where applicable.</li>
@@ -171,6 +180,17 @@ Formalized:
   +
   correct rejection
 </code></pre>
+
+<p>
+A public conformance surface SHOULD make explicit whether a case is:
+</p>
+
+<ul>
+  <li>not loadable as source,</li>
+  <li>loadable but structurally invalid as canonical source,</li>
+  <li>structurally valid but semantically rejected,</li>
+  <li>accepted with preservation requirements.</li>
+</ul>
 
 <hr/>
 
@@ -219,7 +239,7 @@ Ownership remains:
 </p>
 
 <ul>
-  <li><code>Expression/</code> — source structure and canonical source shape,</li>
+  <li><code>Expression/</code> — source structure, canonical source shape, and structural validity,</li>
   <li><code>Language/</code> — semantic truth and validated meaning,</li>
   <li><code>Libraries/</code> — intrinsic primitive vocabularies,</li>
   <li><code>Profiles/</code> — optional standardized capability families,</li>
@@ -247,17 +267,21 @@ Never the reverse.
 <h2 id="critical-boundaries">7. Critical Boundaries</h2>
 
 <p>
-The most critical conformance boundary is:
+The first critical conformance boundary is not merely raw source to meaning.
+It is the staged progression:
 </p>
 
 <pre><code>.frog source
+      |
+      v
+structurally valid canonical source
       |
       v
 validated program meaning
 </code></pre>
 
 <p>
-Conformance must make this boundary observable.
+Conformance must make these boundaries observable.
 </p>
 
 <p>
@@ -265,8 +289,9 @@ This includes verifying:
 </p>
 
 <ul>
+  <li>what fails before canonical source is structurally valid,</li>
+  <li>what fails after source shape is accepted but before semantic meaning is established,</li>
   <li>what establishes semantic meaning,</li>
-  <li>what fails before meaning exists,</li>
   <li>what distinctions must survive validation,</li>
   <li>what distinctions must survive derivation into open Execution IR,</li>
   <li>what distinctions must remain explicit before later lowering and backend-facing handoff.</li>
@@ -296,17 +321,18 @@ lowering / backend-facing handoff
 Critical invariants therefore include:
 </p>
 
-<pre><code>front panel            != public interface
-widget_value           != widget_reference
-layout                 != execution
-adjacency              != dependency
-visual order           != execution order
-feedback shape         != state
-default inference      != explicit initialization
-validated meaning      != open Execution IR
-open Execution IR      != private runtime realization
-backend family         != target profile
-deployment mode        != runtime-private realization
+<pre><code>front panel                    != public interface
+widget_value                   != widget_reference
+layout                         != execution
+adjacency                      != dependency
+visual order                   != execution order
+feedback shape                 != state
+default inference              != explicit initialization
+structural validity            != semantic acceptance
+validated meaning              != open Execution IR
+open Execution IR              != private runtime realization
+backend family                 != target profile
+deployment mode                != runtime-private realization
 </code></pre>
 
 <p>
@@ -324,11 +350,13 @@ These invariants are enforced through explicit valid / invalid and preserve / re
 </code></pre>
 
 <p>
-Each case should define:
+Each case should define, as applicable:
 </p>
 
 <ul>
-  <li>expected validity,</li>
+  <li>expected loadability,</li>
+  <li>expected structural validity,</li>
+  <li>expected semantic acceptance,</li>
   <li>tested boundaries,</li>
   <li>preservation requirements,</li>
   <li>rejection reason if invalid.</li>
@@ -343,6 +371,10 @@ In practice, the directory serves three public roles:
   <li><strong>reject</strong> — what must fail explicitly,</li>
   <li><strong>preserve</strong> — what distinctions must remain explicit across later stages.</li>
 </ul>
+
+<p>
+For v0.1, published cases SHOULD remain small, sharply-owned, and explicit about the stage at which acceptance or rejection occurs.
+</p>
 
 <hr/>
 
@@ -379,7 +411,7 @@ The published mirrored progression currently includes:
 
 <pre><code>05 / 06   public interface participation != widget participation
 07 / 08   widget_reference != widget_value
-10 / 11   front-panel presence != execution meaning
+09 / 10   front-panel presence != execution meaning
 11 / 12   public interface declaration does not require widget existence
 13 / 14   explicit diagram participation != layout or adjacency
 15 / 16   explicit connectivity != inferred evaluation order
@@ -425,6 +457,16 @@ A published case defines public truth for the published repository state.
 A session draft that is not yet published does not.
 </p>
 
+<p>
+A case SHOULD also be read with stage discipline:
+</p>
+
+<pre><code>loadability
+   -&gt; structural validity
+   -&gt; semantic acceptance
+   -&gt; preservation expectations
+</code></pre>
+
 <hr/>
 
 <h2 id="expected-outcomes">10. Expected Outcomes</h2>
@@ -434,7 +476,8 @@ Each case expresses structured expectations such as:
 </p>
 
 <ul>
-  <li><strong>Expected:</strong> valid | invalid</li>
+  <li><strong>Expected loadability:</strong> loadable | not loadable</li>
+  <li><strong>Expected structural validity:</strong> valid | invalid</li>
   <li><strong>Expected meaning:</strong> established | not established</li>
   <li><strong>Expected preservation:</strong> required distinctions remain explicit</li>
   <li><strong>Expected rejection:</strong> explicit failure reason</li>
@@ -444,12 +487,20 @@ Each case expresses structured expectations such as:
 Examples:
 </p>
 
-<pre><code>Expected: valid
+<pre><code>Expected loadability: loadable
+Expected structural validity: valid
 Expected meaning: established
 Expected preservation:
   explicit state remains explicit
 
-Expected: invalid
+Expected loadability: loadable
+Expected structural validity: invalid
+Expected meaning: not established
+Expected rejection:
+  missing required source section
+
+Expected loadability: loadable
+Expected structural validity: valid
 Expected meaning: not established
 Expected rejection:
   illegal feedback without explicit memory
@@ -477,7 +528,7 @@ v0.1 focuses on architectural correctness, not broad feature coverage.
 Priorities are:
 </p>
 
-<pre><code>1. source validity
+<pre><code>1. source loadability and structural validity
 2. semantic validity
 3. preservation of distinctions
 4. explicit rejection of violations
@@ -489,6 +540,7 @@ The active public truth surface therefore emphasizes:
 </p>
 
 <ul>
+  <li>source structure versus semantic acceptance,</li>
   <li>interface versus widget participation,</li>
   <li>value versus reference participation,</li>
   <li>state versus inferred feedback,</li>
@@ -525,7 +577,10 @@ These roles must remain strictly separated.
 Likewise, the relation with the IR corridor is:
 </p>
 
-<pre><code>Language/
+<pre><code>Expression/
+   defines canonical source structure and structural validity
+
+Language/
    defines semantic truth
 
 IR/
@@ -563,6 +618,7 @@ Near-term future expansion areas include:
 </p>
 
 <ul>
+  <li>source-shape and schema rejection cases,</li>
   <li>type and value legality,</li>
   <li>state semantics and timing,</li>
   <li>structure legality,</li>
@@ -624,6 +680,8 @@ It exists to keep the most important public boundaries explicit:
 </p>
 
 <pre><code>.frog source
+   -&gt;
+structurally valid canonical source
    -&gt;
 validated meaning
    -&gt;
