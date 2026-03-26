@@ -1,0 +1,22 @@
+{
+  "spec_version": "0.1",
+  "metadata": {
+    "name": "minimal_canonical_frog",
+    "description": "Valid conformance case: minimal canonical FROG source with required sections only.",
+    "author": "FROG Conformance",
+    "version": "0.1.0",
+    "tags": [
+      "conformance",
+      "valid",
+      "minimal-canonical-source"
+    ]
+  },
+  "interface": {
+    "inputs": [],
+    "outputs": []
+  },
+  "diagram": {
+    "nodes": [],
+    "edges": []
+  }
+}
