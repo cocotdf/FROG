@@ -1,0 +1,19 @@
+{
+  "spec_version": "0.1",
+  "metadata": {
+    "name": "missing_required_section",
+    "description": "Invalid conformance case: missing required top-level diagram section.",
+    "author": "FROG Conformance",
+    "version": "0.1.0",
+    "tags": [
+      "conformance",
+      "invalid",
+      "source-shape",
+      "missing-required-section"
+    ]
+  },
+  "interface": {
+    "inputs": [],
+    "outputs": []
+  }
+}
