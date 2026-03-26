@@ -1,0 +1,44 @@
+{
+  "spec_version": "0.1",
+  "metadata": {
+    "name": "connector_references_unknown_interface_port",
+    "description": "Invalid conformance case: connector references a public port that does not exist in interface.",
+    "author": "FROG Conformance",
+    "version": "0.1.0",
+    "tags": [
+      "conformance",
+      "invalid",
+      "source-shape",
+      "connector",
+      "interface-consistency"
+    ]
+  },
+  "interface": {
+    "inputs": [
+      {
+        "id": "in_a",
+        "name": "a",
+        "type": "float64"
+      }
+    ],
+    "outputs": []
+  },
+  "connector": {
+    "ports": [
+      {
+        "id": "in_a",
+        "side": "left",
+        "label": "a"
+      },
+      {
+        "id": "in_b",
+        "side": "left",
+        "label": "b"
+      }
+    ]
+  },
+  "diagram": {
+    "nodes": [],
+    "edges": []
+  }
+}
