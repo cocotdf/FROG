@@ -1,0 +1,29 @@
+{
+  "spec_version": "0.1",
+  "metadata": {
+    "name": "malformed_front_panel_structure",
+    "description": "Invalid conformance case: malformed front_panel source structure.",
+    "author": "FROG Conformance",
+    "version": "0.1.0",
+    "tags": [
+      "conformance",
+      "invalid",
+      "source-shape",
+      "front-panel"
+    ]
+  },
+  "interface": {
+    "inputs": [],
+    "outputs": []
+  },
+  "diagram": {
+    "nodes": [],
+    "edges": []
+  },
+  "front_panel": [
+    {
+      "id": "widget_1",
+      "class": "frog.ui.numeric_control"
+    }
+  ]
+}
