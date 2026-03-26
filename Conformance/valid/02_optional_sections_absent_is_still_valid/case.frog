@@ -1,0 +1,23 @@
+{
+  "spec_version": "0.1",
+  "metadata": {
+    "name": "optional_sections_absent_is_still_valid",
+    "description": "Valid conformance case: optional top-level sections are intentionally absent and canonical source remains valid.",
+    "author": "FROG Conformance",
+    "version": "0.1.0",
+    "tags": [
+      "conformance",
+      "valid",
+      "optional-sections",
+      "canonical-source"
+    ]
+  },
+  "interface": {
+    "inputs": [],
+    "outputs": []
+  },
+  "diagram": {
+    "nodes": [],
+    "edges": []
+  }
+}
