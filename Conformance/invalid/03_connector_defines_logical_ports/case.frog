@@ -1,0 +1,44 @@
+{
+  "spec_version": "0.1",
+  "metadata": {
+    "name": "connector_defines_logical_ports",
+    "description": "Invalid conformance case: connector attempts to define a logical port not owned by interface.",
+    "author": "FROG Conformance",
+    "version": "0.1.0",
+    "tags": [
+      "conformance",
+      "invalid",
+      "source-shape",
+      "ownership-boundary",
+      "connector"
+    ]
+  },
+  "interface": {
+    "inputs": [
+      {
+        "id": "in_a",
+        "name": "a",
+        "type": "float64"
+      }
+    ],
+    "outputs": []
+  },
+  "connector": {
+    "ports": [
+      {
+        "id": "in_a",
+        "side": "left",
+        "label": "a"
+      },
+      {
+        "id": "in_b",
+        "side": "left",
+        "label": "b"
+      }
+    ]
+  },
+  "diagram": {
+    "nodes": [],
+    "edges": []
+  }
+}
