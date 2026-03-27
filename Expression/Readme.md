@@ -62,7 +62,8 @@ The purpose of this directory is to define:
   <li>the required and optional source sections of that file,</li>
   <li>the source-level representation of those sections,</li>
   <li>the source-visible families and cross-cutting source subsystems that appear in canonical source, including the type system, the widget model, the widget interaction model, and the source-facing representation of structures and local-memory constructs,</li>
-  <li>the structural validity boundary that a canonical <code>.frog</code> source file MUST satisfy before later semantic validation and execution-facing derivation.</li>
+  <li>the structural validity boundary that a canonical <code>.frog</code> source file MUST satisfy before later semantic validation and execution-facing derivation,</li>
+  <li>the source-schema posture under which parts of canonical source shape may be made machine-checkable without collapsing source structure into semantic validation or implementation-specific behavior.</li>
 </ul>
 
 <p>
@@ -87,6 +88,7 @@ IDE/          -> authoring, observability, debugging, inspection
 
 Expression/ owns source structure and source-visible object shape.
 Expression/ owns source well-formedness and structural validity.
+Expression/ owns source-schema posture for canonical source.
 Expression/ does not own validated program meaning.
 Expression/ does not own open execution-facing derivation.
 </pre>
@@ -110,6 +112,7 @@ The Expression layer exists so that a FROG program can be:
   <li>versioned in source control,</li>
   <li>loaded by different tools,</li>
   <li>checked for source well-formedness and structural validity independently of one IDE implementation,</li>
+  <li>checked, where appropriate, against repository-visible machine-checkable source-schema artifacts that remain subordinate to published specification ownership,</li>
   <li>used as the stable source basis for later semantic validation and execution-facing derivation.</li>
 </ul>
 
@@ -189,6 +192,7 @@ Expression/ answers:
 - How are source objects serialized?
 - Which source-level cross-cutting models apply?
 - What makes source structurally valid as canonical source?
+- What belongs to source-schema posture and machine-checkable source shape?
 
 Expression/ does not answer by itself:
 
@@ -210,6 +214,11 @@ The FROG Expression is defined through the following documents in this directory
 <pre><code>Expression/
 ├── Readme.md
 │   -> architectural entry point for the canonical source specification
+├── Schema.md
+│   -> source-schema posture and machine-checkable structural validation boundary
+├── schema/
+│   └── frog.schema.json
+│       -> conservative machine-checkable top-level canonical source schema
 ├── Metadata.md
 │   -> descriptive program metadata and non-executable identification fields
 ├── Type.md
@@ -239,12 +248,13 @@ The FROG Expression is defined through the following documents in this directory
 </code></pre>
 
 <p>
-The documents in this directory play two different roles:
+The documents in this directory play three different roles:
 </p>
 
 <ul>
   <li><strong>top-level source-section specifications</strong>,</li>
-  <li><strong>cross-cutting source subsystems</strong>.</li>
+  <li><strong>cross-cutting source subsystems</strong>,</li>
+  <li><strong>source-schema posture and machine-checkable structural support artifacts</strong>.</li>
 </ul>
 
 <h3>4.1 Top-level source-section specifications</h3>
@@ -279,7 +289,29 @@ In particular:
   <li><code>State and cycles.md</code> defines the source-facing representation of explicit local memory and feedback-cycle formation constraints.</li>
 </ul>
 
-<h3>4.3 Normative external dependencies</h3>
+<h3>4.3 Source-schema posture and machine-checkable support</h3>
+
+<p>
+This directory also publishes a source-schema posture for canonical source.
+That posture is defined normatively by <code>Schema.md</code>.
+</p>
+
+<p>
+Repository-visible machine-checkable artifacts MAY assist structural validation where appropriate.
+At the current repository stage, the conservative machine-checkable top-level source-shape artifact is:
+</p>
+
+<ul>
+  <li><code>schema/frog.schema.json</code> — a conservative machine-checkable schema for top-level canonical source shape and section-kind constraints.</li>
+</ul>
+
+<p>
+These artifacts assist structural validation.
+They do not replace specification ownership.
+If a machine-checkable artifact and the published specification disagree, the published specification remains authoritative until the repository is corrected coherently.
+</p>
+
+<h3>4.4 Normative external dependencies</h3>
 
 <p>
 The current source specification also depends on normative specifications defined outside this directory.
@@ -302,7 +334,7 @@ At the current repository stage, that includes:
 </ul>
 
 <p>
-Accordingly, <code>Expression/</code> is the canonical home of the source-format specification, while <code>Language/</code>, <code>Libraries/</code>, and <code>Profiles/</code> are normative external dependencies for the meaning of validated executable diagrams.
+Accordingly, <code>Expression/</code> is the canonical home of the source-format specification and source-schema posture, while <code>Language/</code>, <code>Libraries/</code>, and <code>Profiles/</code> are normative external dependencies for the meaning of validated executable diagrams.
 </p>
 
 <pre>
@@ -313,6 +345,7 @@ Expression/
    ├─ defines what sections exist
    ├─ defines how diagrams, widgets, and sections are serialized
    ├─ defines source well-formedness and structural validity
+   ├─ defines source-schema posture
    │
    ├─ relies on Language/ for validated program meaning
    ├─ relies on Libraries/ for intrinsic primitive meaning
@@ -323,12 +356,13 @@ Expression/
 A useful reading rule
 
 If the question is:
-- "How is it written in source?"           -> Expression/
+- "How is it written in source?"                 -> Expression/
 - "Is this canonical source structurally valid?" -> Expression/
-- "What does the validated program mean?"  -> Language/
-- "What does this intrinsic primitive do?" -> Libraries/
-- "What does this optional capability do?" -> Profiles/
-- "How does the IDE present it?"           -> IDE/
+- "What belongs to source-schema posture?"       -> Expression/
+- "What does the validated program mean?"        -> Language/
+- "What does this intrinsic primitive do?"       -> Libraries/
+- "What does this optional capability do?"       -> Profiles/
+- "How does the IDE present it?"                 -> IDE/
 </pre>
 
 <hr/>
@@ -598,6 +632,15 @@ No dedicated top-level:
 
 These concerns are embedded where they naturally belong.
 </pre>
+
+<p>
+For machine-checkable support of this top-level canonical source shape, see:
+</p>
+
+<ul>
+  <li><code>Schema.md</code></li>
+  <li><code>schema/frog.schema.json</code></li>
+</ul>
 
 <hr/>
 
@@ -1031,7 +1074,36 @@ Structural validity is still a source-level notion.
 It does not by itself imply accepted executable semantics.
 </p>
 
-<h3>14.3 Semantic acceptance</h3>
+<p>
+Structural validity may be assisted by repository-visible machine-checkable schema artifacts where appropriate.
+However, schema-assisted structural acceptance MUST remain distinct from later semantic acceptance.
+Likewise, not every structural rule is required to live inside one declarative machine artifact merely because it belongs to source structure.
+</p>
+
+<h3>14.3 Source-schema posture</h3>
+
+<p>
+The source-schema posture of canonical FROG source is owned by <code>Expression/Schema.md</code>.
+</p>
+
+<p>
+That posture exists so that machine-checkable structural validation can become repository-visible without collapsing:
+</p>
+
+<ul>
+  <li>canonical source structure into semantic validation,</li>
+  <li>published specification ownership into validator implementation folklore,</li>
+  <li>source shape into IR design,</li>
+  <li>source validity into runtime behavior.</li>
+</ul>
+
+<p>
+At the current repository stage, a conservative machine-checkable support artifact exists for top-level canonical source shape and section-kind constraints.
+That artifact assists the structural validation corridor.
+It does not replace the published source specification.
+</p>
+
+<h3>14.4 Semantic acceptance</h3>
 
 <p>
 A structurally valid source file may still be rejected later during validation against:
@@ -1048,7 +1120,7 @@ Examples include type incompatibility, invalid cycle formation, invalid local-me
 Those are not structural-source failures merely because they are detected after parsing.
 </p>
 
-<h3>14.4 Ownership rule</h3>
+<h3>14.5 Ownership rule</h3>
 
 <pre>
 Source validity ownership
@@ -1059,7 +1131,7 @@ Accepted validated meaning           -> Language/ + Libraries/ + Profiles/
 Derived execution-facing form        -> IR/
 </pre>
 
-<h3>14.5 Conformance relevance</h3>
+<h3>14.6 Conformance relevance</h3>
 
 <p>
 This distinction matters to public conformance.
@@ -1073,7 +1145,7 @@ A public conformance surface SHOULD be able to distinguish at least:
   <li>accepted source whose relevant truth is preserved across derivation and execution-facing handling.</li>
 </ul>
 
-<h3>14.6 Structural-source examples</h3>
+<h3>14.7 Structural-source examples</h3>
 
 <p>
 Typical structural-source failures may include:
@@ -1153,7 +1225,8 @@ Boundary rule
 
 Expression/
    defines source-visible execution-relevant content
-   and source structural validity
+   defines source structural validity
+   defines source-schema posture
 
 Language/
    defines validated meaning of that content
@@ -1180,6 +1253,7 @@ lower / compile / execute
 
 Never:
 optional source decoration -> semantic override
+schema-assisted structural acceptance -> semantic acceptance
 </pre>
 
 <hr/>
@@ -1288,7 +1362,7 @@ This document describes the FROG Expression for specification version <code>0.1<
 
 <p>
 FROG v0.1 is intentionally conservative.
-It prioritizes explicit canonical source semantics, structural validity clarity, long-term durability, and tool interoperability over premature expansion of the language surface.
+It prioritizes explicit canonical source semantics, structural validity clarity, source-schema posture, long-term durability, and tool interoperability over premature expansion of the language surface.
 </p>
 
 <p>
@@ -1304,6 +1378,7 @@ Future revisions SHOULD also preserve the core architectural distinctions alread
   <li>source expression versus Program Model versus validated program meaning versus open execution-facing representation,</li>
   <li>canonical source representation versus normative execution semantics,</li>
   <li>source structural validity versus semantic acceptance,</li>
+  <li>source-schema posture versus validator implementation behavior,</li>
   <li>intrinsic primitive vocabularies versus optional profile-owned capability families,</li>
   <li>public interface versus connector versus diagram versus optional front panel,</li>
   <li>natural widget value flow versus object-style widget interaction,</li>
@@ -1319,6 +1394,7 @@ Keep Expression/ as:
 - portable
 - source-owned
 - structurally checkable
+- schema-aware
 - durable
 
 Do not let Expression/ drift into:
