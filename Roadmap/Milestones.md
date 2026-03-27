@@ -112,14 +112,16 @@ M12 [ ] Practical open industrial graphical ecosystem with clear structural supe
 
 <ul>
   <li><strong>Status:</strong> [ ]</li>
-  <li><strong>Meaning:</strong> canonical source ownership is machine-checkable enough to support disciplined validation rather than documentation-only interpretation.</li>
-  <li><strong>Main consequence:</strong> structural validation becomes more explicit, more reproducible, and easier to compare across implementations.</li>
+  <li><strong>Meaning:</strong> canonical source ownership is explicit enough in both normative prose and machine-checkable form that disciplined structural validation no longer depends on documentation-only interpretation or private validator folklore.</li>
+  <li><strong>Main consequence:</strong> structural validation becomes more explicit, more reproducible, easier to compare across implementations, and better separated from later semantic validation and downstream derivation.</li>
   <li><strong>To close:</strong></li>
   <ul>
-    <li>source-shape/schema posture made explicit</li>
-    <li>validator expectations made repository-visible</li>
-    <li>machine-checkable structural validation story clarified</li>
+    <li>source-shape / schema posture published explicitly inside <code>Expression/</code></li>
+    <li>a conservative machine-checkable source-schema artifact published for canonical top-level source shape</li>
+    <li>conformance reading and case expectations made more explicit across loadability, structural validity, semantic acceptance, and preservation</li>
+    <li>reference-validator posture aligned with the distinction between schema-assisted structural validation and later semantic validation</li>
     <li>schema posture kept aligned with canonical source ownership rather than implementation convenience</li>
+    <li>the repository makes clear that schema artifacts assist structural validation but do not replace normative specification ownership</li>
   </ul>
 </ul>
 
