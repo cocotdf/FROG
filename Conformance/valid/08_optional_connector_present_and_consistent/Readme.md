@@ -2,10 +2,10 @@
   <img src="../../../FROG logo.svg" alt="FROG logo" width="140" />
 </p>
 
-<h1 align="center">Valid Case — Optional Connector Present and Consistent</h1>
+<h1 align="center">Valid Conformance Case 08</h1>
 
 <p align="center">
-  <strong>Structurally valid canonical source with a present <code>connector</code> section that consistently projects the declared public interface</strong><br/>
+  <strong>Optional connector presence is valid when it consistently projects the declared public interface</strong><br/>
   <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -35,8 +35,8 @@ This case defines a structurally valid canonical <code>.frog</code> source file 
 </p>
 
 <p>
-The case exists to show the positive structural rule for connector presence:
-a connector is valid when it remains a graphical node-side projection of the public logical boundary already owned by <code>interface</code>. :contentReference[oaicite:1]{index=1}
+The case exists to publish the positive structural rule for connector presence:
+a connector is valid when it remains a graphical node-side projection of the public logical boundary already owned by <code>interface</code>.
 </p>
 
 <hr/>
@@ -44,7 +44,7 @@ a connector is valid when it remains a graphical node-side projection of the pub
 <h2 id="case-purpose">2. Case Purpose</h2>
 
 <p>
-This case exists to verify that a conforming implementation accepts a source file where:
+This case verifies that a conforming implementation accepts a source file where:
 </p>
 
 <ul>
@@ -61,7 +61,7 @@ It makes the following truth explicit:
 <pre><code>connector present
 +
 connector consistent with interface
-      -&gt;
+   -&gt;
 canonical source valid
 </code></pre>
 
@@ -72,10 +72,11 @@ canonical source valid
 <ul>
   <li><strong>Case family:</strong> valid</li>
   <li><strong>Primary owner:</strong> <code>Expression/</code></li>
+  <li><strong>Primary boundary:</strong> canonical source structural validity</li>
   <li><strong>Case kind:</strong> canonical source acceptance with present consistent <code>connector</code></li>
   <li><strong>Expected loadability:</strong> loadable</li>
   <li><strong>Expected structural validity:</strong> valid</li>
-  <li><strong>Expected meaning:</strong> established</li>
+  <li><strong>Expected meaning:</strong> established or eligible to be established for the represented slice</li>
   <li><strong>Expected IR derivation:</strong> permitted to proceed according to the published downstream rules</li>
 </ul>
 
@@ -99,17 +100,17 @@ For FROG v0.1:
 </ul>
 
 <p>
-Therefore, a connector is structurally valid when it remains subordinate to and consistent with the public logical boundary declared in <code>interface</code>. :contentReference[oaicite:2]{index=2}
+Therefore, a connector is structurally valid when it remains subordinate to and consistent with the public logical boundary declared in <code>interface</code>.
 </p>
 
 <pre><code>interface
-    -> owns public logical ports
+   -&gt; owns public logical ports
 
 connector
-    -> graphically projects those ports
+   -&gt; graphically projects those ports
 
 connector consistent with interface
-    -> canonical source valid
+   -&gt; canonical source valid
 </code></pre>
 
 <hr/>
@@ -174,7 +175,7 @@ A representative valid shape is:
 
 <p>
 In this shape, the connector does not invent logical ports.
-It only projects the interface that already exists. :contentReference[oaicite:3]{index=3}
+It only projects the interface that already exists.
 </p>
 
 <hr/>
@@ -187,8 +188,10 @@ The expected outcome is:
 
 <pre><code>Expected loadability: loadable
 Expected structural validity: valid
-Expected meaning: established
-Expected preservation: connector remains a projection of interface rather than a second logical contract surface
+Expected meaning: established or eligible to be established for the represented slice
+Expected preservation:
+  connector remains a projection of interface
+  rather than a second logical contract surface
 </code></pre>
 
 <p>
@@ -226,7 +229,7 @@ This case must therefore pass because:
 connector present
 +
 connector references only declared interface ports
-    ->
+   -&gt;
 acceptance required
 </code></pre>
 
@@ -253,7 +256,7 @@ It only tests one boundary:
 </p>
 
 <pre><code>connector present
-      ->
+   -&gt;
 must remain consistent with interface ownership
 </code></pre>
 
@@ -277,14 +280,14 @@ It therefore protects the rule:
 </p>
 
 <pre><code>connector present
-      -/-> second interface definition
+   -/-> second interface definition
 
 graphical mapping
-      -/-> logical declaration
+   -/-> logical declaration
 </code></pre>
 
 <p>
-This matters because conformance must publish not only that invalid connector uses are rejected, but also that correct connector use is accepted. :contentReference[oaicite:4]{index=4}
+This matters because conformance must publish not only that invalid connector uses are rejected, but also that correct connector use is accepted.
 </p>
 
 <hr/>
@@ -322,12 +325,12 @@ This case establishes a focused positive truth:
 </p>
 
 <pre><code>connector present and consistent with interface
-    ->
+   -&gt;
 canonical source still valid
-    ->
+   -&gt;
 acceptance required
 </code></pre>
 
 <p>
-It anchors the positive side of the connector boundary in the FROG canonical source model. :contentReference[oaicite:5]{index=5}
+It anchors the positive side of the connector boundary in the FROG canonical source model.
 </p>
