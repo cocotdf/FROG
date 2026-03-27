@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://graiphic.github.io/FROG/Expression/schema/frog.schema.json",
+  "title": "FROG Canonical Source Schema",
+  "description": "Conservative machine-checkable structural schema for canonical .frog source. This schema covers top-level canonical source shape and section kind constraints only. It does not define full semantic validity, Execution IR, lowering, backend contracts, or runtime realization.",
+  "type": "object",
+  "required": [
+    "spec_version",
+    "metadata",
+    "interface",
+    "diagram"
+  ],
+  "properties": {
+    "spec_version": {
+      "description": "Specification version identifier for the canonical source file.",
+      "type": [
+        "string",
+        "number"
+      ]
+    },
+    "metadata": {
+      "description": "Metadata section. Section-local object structure is owned by Expression/Metadata.md.",
+      "type": "object"
+    },
+    "interface": {
+      "description": "Interface section. Section-local object structure is owned by Expression/Interface.md.",
+      "type": "object"
+    },
+    "diagram": {
+      "description": "Diagram section. Section-local object structure is owned by Expression/Diagram.md.",
+      "type": "object"
+    },
+    "connector": {
+      "description": "Optional connector section. Section-local object structure is owned by Expression/Connector.md.",
+      "type": "object"
+    },
+    "front_panel": {
+      "description": "Optional front_panel section. Section-local object structure is owned by Expression/Front panel.md.",
+      "type": "object"
+    },
+    "icon": {
+      "description": "Optional icon section. Section-local object structure is owned by Expression/Icon.md.",
+      "type": "object"
+    },
+    "ide": {
+      "description": "Optional IDE preferences section. Section-local object structure is owned by Expression/IDE preferences.md.",
+      "type": "object"
+    },
+    "cache": {
+      "description": "Optional cache section. Section-local object structure is owned by Expression/Cache.md.",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "spec_version": "0.1",
+      "metadata": {},
+      "interface": {},
+      "diagram": {}
+    },
+    {
+      "spec_version": "0.1",
+      "metadata": {},
+      "interface": {},
+      "diagram": {},
+      "connector": {},
+      "front_panel": {},
+      "icon": {},
+      "ide": {},
+      "cache": {}
+    }
+  ]
+}
