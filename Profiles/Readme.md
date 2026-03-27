@@ -19,14 +19,15 @@
   <li><a href="#architectural-role">3. Architectural Role</a></li>
   <li><a href="#scope">4. Scope of this Directory</a></li>
   <li><a href="#capability-taxonomy">5. Capability Taxonomy</a></li>
-  <li><a href="#what-profiles-may-define">6. What Profiles MAY Define</a></li>
-  <li><a href="#what-profiles-must-not-define">7. What Profiles MUST NOT Define</a></li>
-  <li><a href="#relation-with-other-specification-layers">8. Relation with Other Specification Layers</a></li>
-  <li><a href="#profile-identification-and-claims">9. Profile Identification and Claims</a></li>
-  <li><a href="#current-profile-specifications">10. Current Profile Specifications</a></li>
-  <li><a href="#core-conformance-profile-support-and-certification">11. Core Conformance, Profile Support, and Certification</a></li>
-  <li><a href="#profile-evolution">12. Profile Evolution</a></li>
-  <li><a href="#status">13. Status</a></li>
+  <li><a href="#profile-vs-runtime-boundary">6. Profile vs Runtime Boundary</a></li>
+  <li><a href="#what-profiles-may-define">7. What Profiles MAY Define</a></li>
+  <li><a href="#what-profiles-must-not-define">8. What Profiles MUST NOT Define</a></li>
+  <li><a href="#relation-with-other-specification-layers">9. Relation with Other Specification Layers</a></li>
+  <li><a href="#profile-identification-and-claims">10. Profile Identification and Claims</a></li>
+  <li><a href="#current-profile-specifications">11. Current Profile Specifications</a></li>
+  <li><a href="#core-conformance-profile-support-and-certification">12. Core Conformance, Profile Support, and Certification</a></li>
+  <li><a href="#profile-evolution">13. Profile Evolution</a></li>
+  <li><a href="#status">14. Status</a></li>
 </ul>
 
 <hr/>
@@ -57,7 +58,7 @@ Within the current repository architecture:
   <li><code>Expression/</code> owns canonical source representation,</li>
   <li><code>Language/</code> owns normative validated-program meaning and cross-cutting execution semantics,</li>
   <li><code>Libraries/</code> owns intrinsic standardized primitive vocabularies,</li>
-  <li><code>IR/</code> owns standardized derived execution-oriented representation,</li>
+  <li><code>IR/</code> owns standardized derived execution-oriented representation, backend contracts, and lowering-stage boundaries,</li>
   <li><code>Profiles/</code> owns optional standardized capability families,</li>
   <li><code>IDE/</code> owns authoring, observability, debugging, inspection, and related tooling responsibilities,</li>
   <li><code>Implementations/</code> owns non-normative executable realization workspaces.</li>
@@ -277,9 +278,102 @@ FROG profiles may define optional capability classes that influence runtime need
 cause one implementation runtime layout to become hidden language law.
 </p>
 
+<h3>5.6 Relationship summary</h3>
+
+<pre>
+validated program meaning
+    ->
+standardized FROG IR
+    ->
+lowering
+    ->
+backend contract
+    ->
+backend family consumption
+    ->
+deployment bundle realization
+    ->
+runtime services available on target
+
+Profiles/
+    may constrain or classify some of these assumptions
+    but do not replace IR/, backend contracts, or runtime realization
+</pre>
+
 <hr/>
 
-<h2 id="what-profiles-may-define">6. What Profiles MAY Define</h2>
+<h2 id="profile-vs-runtime-boundary">6. Profile vs Runtime Boundary</h2>
+
+<p>
+Profiles are an important architectural preparation layer for future compiler/runtime work, but they
+are not themselves the runtime layer.
+</p>
+
+<p>
+A profile may say:
+</p>
+
+<ul>
+  <li>what capability class is being targeted,</li>
+  <li>what deployment-style assumptions apply,</li>
+  <li>what runtime-facing services must be available in principle,</li>
+  <li>what remains optional or implementation-defined.</li>
+</ul>
+
+<p>
+A profile must <strong>not</strong> say:
+</p>
+
+<ul>
+  <li>the exact internal runtime object model,</li>
+  <li>the exact private scheduler design,</li>
+  <li>the exact host framework,</li>
+  <li>the exact GUI toolkit,</li>
+  <li>the exact logging substrate,</li>
+  <li>the exact process model,</li>
+  <li>the exact packaging trick used by one implementation.</li>
+</ul>
+
+<p>
+This distinction is especially important for UI-capable or interop-capable profiles.
+A profile may standardize that a capability family assumes some class of UI service, host interop,
+or environment support.
+It must not standardize one private realization of that service as if it were the meaning of FROG.
+</p>
+
+<pre>
+Profiles/
+    standardize capability classes and contracts
+
+IR/
+    standardizes derived execution-facing representation and backend-facing boundaries
+
+Implementations/
+    realize those capabilities through private runtime layouts and executable service bundles
+</pre>
+
+<p>
+In short:
+</p>
+
+<pre>
+profile
+    != runtime implementation
+
+profile
+    != backend family
+
+profile
+    != deployment bundle
+
+profile
+    may constrain
+    target / deployment / runtime-facing capability expectations
+</pre>
+
+<hr/>
+
+<h2 id="what-profiles-may-define">7. What Profiles MAY Define</h2>
 
 <p>
 A profile specification MAY define one or more of the following:
@@ -316,7 +410,7 @@ must support that profile.
 
 <hr/>
 
-<h2 id="what-profiles-must-not-define">7. What Profiles MUST NOT Define</h2>
+<h2 id="what-profiles-must-not-define">8. What Profiles MUST NOT Define</h2>
 
 <p>
 Profiles MUST NOT redefine the core ownership boundaries of the repository.
@@ -346,7 +440,7 @@ A profile MUST NOT mutate the meaning of the FROG core.
 
 <hr/>
 
-<h2 id="relation-with-other-specification-layers">8. Relation with Other Specification Layers</h2>
+<h2 id="relation-with-other-specification-layers">9. Relation with Other Specification Layers</h2>
 
 <p>
 Profile specifications are used together with the rest of the FROG specification.
@@ -356,7 +450,7 @@ Profile specifications are used together with the rest of the FROG specification
   <li><code>Expression/</code> defines canonical source representation and remains authoritative for source structure.</li>
   <li><code>Language/</code> defines validated-program meaning and cross-cutting execution semantics that remain authoritative across both core and profile-owned capabilities.</li>
   <li><code>Libraries/</code> remains the home of intrinsic standardized primitive vocabularies and MUST remain distinct from optional profile families.</li>
-  <li><code>IR/</code> defines the standardized derived execution-oriented representation and MUST remain distinct from both target-profile claims and runtime-private realization.</li>
+  <li><code>IR/</code> defines the standardized derived execution-oriented representation, backend contracts, and lowering-stage boundaries, and MUST remain distinct from both target-profile claims and runtime-private realization.</li>
   <li><code>IDE/</code> MAY surface supported profiles in palette organization, authoring assistance, validation feedback, deployment targeting, and observability tooling, but IDE presentation does not replace normative profile specifications.</li>
   <li><code>Implementations/</code> MAY realize profile support through one or more runtime modules, backend selections, deployment bundles, or private optimization strategies, but such realization choices do not by themselves define the profile normatively.</li>
   <li><code>GOVERNANCE.md</code> defines governance-facing distinctions such as core support, profile support, conformance, certification, and branding policy.</li>
@@ -370,7 +464,7 @@ These relationships can be summarized as follows:
 Expression/        - source representation
 Language/          - validated-program meaning
 Libraries/         - intrinsic primitive vocabularies
-IR/                - derived execution representation
+IR/                - derived execution representation and backend-facing boundaries
 Profiles/          - optional standardized capability families
 IDE/               - tooling and deployment surface
 Implementations/   - executable realization
@@ -383,7 +477,7 @@ They do not replace repository ownership boundaries established elsewhere.
 
 <hr/>
 
-<h2 id="profile-identification-and-claims">9. Profile Identification and Claims</h2>
+<h2 id="profile-identification-and-claims">10. Profile Identification and Claims</h2>
 
 <p>
 Each profile specification SHOULD define a stable profile identity and a clear capability boundary.
@@ -425,7 +519,7 @@ They do not automatically imply official certification, endorsement, or trademar
 
 <hr/>
 
-<h2 id="current-profile-specifications">10. Current Profile Specifications</h2>
+<h2 id="current-profile-specifications">11. Current Profile Specifications</h2>
 
 <p>
 This directory currently contains the following documents:
@@ -466,12 +560,12 @@ as standalone published profile specifications:
 </ul>
 
 <p>
-It means that the architectural distinction is now explicit and available for future profile work.
+It means that the architectural distinction is explicit and available for future profile work.
 </p>
 
 <hr/>
 
-<h2 id="core-conformance-profile-support-and-certification">11. Core Conformance, Profile Support, and Certification</h2>
+<h2 id="core-conformance-profile-support-and-certification">12. Core Conformance, Profile Support, and Certification</h2>
 
 <p>
 Core language conformance, profile support, and certification-related claims are related but distinct.
@@ -493,7 +587,7 @@ conformance or certification policies.
 
 <hr/>
 
-<h2 id="profile-evolution">12. Profile Evolution</h2>
+<h2 id="profile-evolution">13. Profile Evolution</h2>
 
 <p>
 Profiles SHOULD be introduced conservatively.
@@ -530,7 +624,7 @@ not by itself justify a normative profile.
 
 <hr/>
 
-<h2 id="status">13. Status</h2>
+<h2 id="status">14. Status</h2>
 
 <p>
 This directory defines an architectural layer intended to keep the FROG specification modular,
@@ -544,7 +638,7 @@ for optional standardized capability families that do not belong to the intrinsi
 </p>
 
 <p>
-This document now also makes explicit that FROG distinguishes:
+This document also makes explicit that FROG distinguishes:
 </p>
 
 <ul>
