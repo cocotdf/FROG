@@ -51,7 +51,7 @@ It is not a later semantic rejection.
 
 <p>
 The FROG Expression specification defines explicit top-level section families such as <code>metadata</code>, <code>interface</code>, <code>connector</code>, <code>diagram</code>, <code>front_panel</code>, <code>icon</code>, <code>ide</code>, and <code>cache</code>.
-Section-local objects belong to their owning section family and must not be accepted when placed under the wrong top-level section.
+Section-local objects belong to their owning section family and MUST NOT be accepted when placed under the wrong top-level section.
 </p>
 
 <p>
@@ -95,7 +95,7 @@ but is not structurally valid canonical source
 </code></pre>
 
 <p>
-A representative example is a widget declaration placed inside <code>diagram</code> as if front-panel widget composition were a diagram-owned top-level executable object family.
+A representative example is a widget declaration placed inside <code>diagram</code> as if front-panel widget composition were a diagram-owned executable source family.
 </p>
 
 <p>
@@ -103,13 +103,13 @@ Another representative example is an executable node-like object placed directly
 </p>
 
 <p>
-The exact concrete fixture may vary, but the expected classification must remain the same:
+The exact concrete fixture may vary, but the expected classification MUST remain the same:
 </p>
 
 <pre><code>loadable source
-   ->
+   -&gt;
 structurally invalid canonical source
-   ->
+   -&gt;
 meaning not established
 </code></pre>
 
@@ -254,9 +254,9 @@ It does not redefine the source specification.
 It makes the published structural boundary testable.
 </p>
 
-<pre><code>Expression/   -> owns the source-shape rule
-Conformance/  -> exposes the rejection publicly
-Implementation -> must reject accordingly
+<pre><code>Expression/    -&gt; owns the source-shape rule
+Conformance/   -&gt; exposes the rejection publicly
+Implementation -&gt; must reject accordingly
 </code></pre>
 
 <hr/>
