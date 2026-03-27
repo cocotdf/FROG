@@ -44,6 +44,9 @@ FROG closure sequence
 canonical .frog source
         |
         v
+loadability
+        |
+        v
 structural validation
         |
         v
@@ -163,6 +166,7 @@ That distinction matters:
   <li>Do not confuse roadmap planning with normative ownership.</li>
   <li>Keep the path from canonical <code>.frog</code> source to deployable execution explicit and inspectable.</li>
   <li>Use conformance as a public truth surface, not as commentary only.</li>
+  <li>Keep source-shape/schema closure distinct from later semantic validation.</li>
   <li>Only widen the ecosystem after enough closure exists to support that widening cleanly.</li>
 </ul>
 
@@ -217,9 +221,10 @@ A meaningful public foundation already exists.
   <li>[x] The strategic framing layer already exists through <code>Strategy/Heilmeier/</code>.</li>
   <li>[x] The roadmap layer already exists as a non-normative planning surface distinct from both strategy and specification.</li>
   <li>[x] The long-term chain remains explicit:
-    <code>.frog source -> validation -> FROG execution IR -> lowering -> backend contract -> backend/runtime</code>.
+    <code>.frog source -> loadability -> structural validation -> validated meaning -> FROG execution IR -> lowering -> backend contract -> backend/runtime</code>.
   </li>
   <li>[x] The distinction between backend family, target profile, deployment mode, and runtime-private realization is now explicit at the architectural level and no longer only implicit future intent.</li>
+  <li>[x] Source-shape/schema posture now has an explicit normative home inside <code>Expression/</code>.</li>
 </ul>
 
 <h3>Partially formed but not yet fully closed</h3>
@@ -229,7 +234,7 @@ A meaningful public foundation already exists.
   <li>[~] minimal primitive baseline closure</li>
   <li>[~] type / value / state semantic closure</li>
   <li>[~] execution-model and structure closure</li>
-  <li>[~] source-shape / schema and validator posture</li>
+  <li>[~] source-shape / schema and validator closure as a fully stable repository-level asset</li>
   <li>[~] conformance breadth and public completeness</li>
   <li>[~] repeatable reference execution path for a clearly bounded supported subset</li>
   <li>[~] explicit target-profile taxonomy beyond the now-established architectural distinction</li>
@@ -259,6 +264,7 @@ FROG today
    +-- early conformance posture
    +-- explicit non-normative reference path
    +-- explicit profile / backend / runtime separation
+   +-- source-schema posture is now explicit
    +-- no final production compiler stack yet
    +-- no serious full IDE yet
    +-- no mature deployment ecosystem yet
@@ -278,7 +284,7 @@ The project currently benefits most from the following closure order.
   <li>close the minimal primitive baseline,</li>
   <li>close type / value / state semantic ownership more tightly,</li>
   <li>close execution-model and structure semantics more tightly,</li>
-  <li>close source-shape/schema and validator posture,</li>
+  <li>close source-shape/schema and validator posture as a stable repository-level closure,</li>
   <li>expand conformance in a disciplined way,</li>
   <li>strengthen the repeatable reference execution path,</li>
   <li>prepare the first serious backend contract and lowering family,</li>
@@ -408,8 +414,9 @@ Turn the current baseline into a tighter, better owned, and more machine-checkab
   <li>[ ] Close the minimal serious primitive baseline.</li>
   <li>[ ] Close type / value / state semantic ownership more explicitly.</li>
   <li>[ ] Close execution-model and structure semantics more explicitly.</li>
-  <li>[ ] Publish a first disciplined source-shape/schema posture.</li>
-  <li>[ ] Publish validator expectations aligned with canonical source ownership.</li>
+  <li>[~] Publish a first disciplined source-shape/schema posture.</li>
+  <li>[~] Publish validator expectations aligned with canonical source ownership.</li>
+  <li>[ ] Stabilize the distinction between schema-assisted structural validation and later semantic validation across the relevant repository layers.</li>
   <li>[ ] Tighten conformance coverage around already published boundaries.</li>
   <li>[ ] Ensure every published example slice has an explicit expected-outcome posture.</li>
   <li>[x] Make the architectural distinction between backend family, target profile, deployment mode, and runtime-private realization explicit.</li>
@@ -425,6 +432,7 @@ A new reader should be able to understand, without ambiguity:
 
 <ul>
   <li>what is source truth,</li>
+  <li>what is structural validity and source-schema posture,</li>
   <li>what is semantic truth,</li>
   <li>what is derived execution form,</li>
   <li>what is a backend-family-facing handoff,</li>
@@ -452,14 +460,14 @@ Turn the first published slices into a reliable minimal reference path that prov
 <h3>Checklist</h3>
 
 <ul>
-  <li>[ ] Ensure each supported slice can be loaded, validated, derived, lowered, emitted, and executed through a consistent path.</li>
+  <li>[ ] Ensure each supported slice can be loaded, structurally validated, semantically validated, derived, lowered, emitted, and executed through a consistent path.</li>
   <li>[ ] Standardize the observable artifacts produced by the reference path for the supported subset.</li>
   <li>[ ] Make the CLI path and expected outputs easy to run and inspect.</li>
   <li>[ ] Keep the pipeline stages explicit:
-    <code>Loader -> Validator -> Deriver -> Lowerer -> ContractEmitter -> Runtime</code>.
+    <code>Loader -&gt; Validator -&gt; Deriver -&gt; Lowerer -&gt; ContractEmitter -&gt; Runtime</code>.
   </li>
   <li>[ ] Add new example slices only when they exercise a genuinely new boundary.</li>
-  <li>[ ] Expand conformance around preserve, reject, and unsupported situations.</li>
+  <li>[ ] Expand conformance around preserve, reject, unsupported, and stage-classification situations.</li>
   <li>[ ] Keep the runtime posture conservative and clearly non-normative.</li>
   <li>[ ] Prevent convenience scripts from silently becoming architecture.</li>
   <li>[ ] Demonstrate that different development and execution postures may legitimately use different runtime-service bundles without changing language meaning.</li>
@@ -721,8 +729,9 @@ FROG becomes a credible open industrial graphical programming platform with seri
 
 <ul>
   <li>[~] validation posture exists in principle</li>
-  <li>[ ] source-shape/schema closure is explicit and stable</li>
-  <li>[ ] validator expectations become repository-visible and machine-checkable</li>
+  <li>[~] source-shape/schema posture is now explicit and repository-visible</li>
+  <li>[~] validator expectations are becoming repository-visible and partially machine-checkable</li>
+  <li>[ ] source-shape/schema and validator closure becomes stable enough to count as a closed repository-level asset</li>
 </ul>
 
 <h3>4. Reference-path reproducibility</h3>
@@ -795,7 +804,9 @@ source
    -> open canonical .frog representation
 
 validation
+   -> explicit loadability
    -> explicit structural validation and source ownership
+   -> explicit distinction from later semantic validation
 
 meaning
    -> clean normative language semantics
