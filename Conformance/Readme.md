@@ -104,7 +104,7 @@ implementation convenience
 
 <hr/>
 
-<h2 id="why-this-directory-exists">3. Why this Directory Exists</h2>
+<h2 id="why-this-directory-exists">3. Why This Directory Exists</h2>
 
 <p>
 FROG is specification-first and implementation-independent.
@@ -131,7 +131,7 @@ It ensures that:
   <li>implementations do not silently diverge,</li>
   <li>semantic meaning is not reinterpreted implicitly,</li>
   <li>invalid constructs are rejected instead of silently repaired,</li>
-  <li>critical distinctions remain visible across structural validation, semantic validation, IR derivation, and later specialization.</li>
+  <li>critical distinctions remain visible across loadability, structural validation, semantic validation, IR derivation, and later specialization.</li>
 </ul>
 
 <p>
@@ -192,6 +192,21 @@ A public conformance surface SHOULD make explicit whether a case is:
   <li>accepted with preservation requirements.</li>
 </ul>
 
+<p>
+Where useful, a case MAY also make explicit whether it is:
+</p>
+
+<ul>
+  <li>schema-checkable at the source-shape level,</li>
+  <li>structurally valid only after rules that exceed a purely declarative schema artifact,</li>
+  <li>semantically invalid even though canonical source shape has already been accepted.</li>
+</ul>
+
+<p>
+This distinction matters because machine-checkable source schema is part of the structural validation corridor.
+It is not a replacement for semantic validation.
+</p>
+
 <hr/>
 
 <h2 id="non-goals">5. Non-Goals</h2>
@@ -239,7 +254,7 @@ Ownership remains:
 </p>
 
 <ul>
-  <li><code>Expression/</code> — source structure, canonical source shape, and structural validity,</li>
+  <li><code>Expression/</code> — source structure, canonical source shape, structural validity, and source-schema posture,</li>
   <li><code>Language/</code> — semantic truth and validated meaning,</li>
   <li><code>Libraries/</code> — intrinsic primitive vocabularies,</li>
   <li><code>Profiles/</code> — optional standardized capability families,</li>
@@ -252,15 +267,25 @@ Conformance cases must always map back to these owners.
 </p>
 
 <pre><code>specification
-      -&gt;
+      ->
 conformance
-      -&gt;
+      ->
 implementation
 </code></pre>
 
 <p>
 Never the reverse.
 </p>
+
+<p>
+In particular:
+</p>
+
+<ul>
+  <li>source-shape and schema-owned rejection cases map back to <code>Expression/</code>,</li>
+  <li>semantic rejection cases map back to <code>Language/</code>, <code>Libraries/</code>, or <code>Profiles/</code> as appropriate,</li>
+  <li>preservation cases across derivation and lowering map back to <code>IR/</code>.</li>
+</ul>
 
 <hr/>
 
@@ -272,6 +297,9 @@ It is the staged progression:
 </p>
 
 <pre><code>.frog source
+      |
+      v
+loadable source
       |
       v
 structurally valid canonical source
@@ -289,8 +317,9 @@ This includes verifying:
 </p>
 
 <ul>
-  <li>what fails before canonical source is structurally valid,</li>
-  <li>what fails after source shape is accepted but before semantic meaning is established,</li>
+  <li>what fails before the source is even loadable,</li>
+  <li>what fails at source-shape or schema-owned structural validation,</li>
+  <li>what fails after canonical source shape is accepted but before semantic meaning is established,</li>
   <li>what establishes semantic meaning,</li>
   <li>what distinctions must survive validation,</li>
   <li>what distinctions must survive derivation into open Execution IR,</li>
@@ -329,6 +358,7 @@ visual order                   != execution order
 feedback shape                 != state
 default inference              != explicit initialization
 structural validity            != semantic acceptance
+schema acceptance              != semantic acceptance
 validated meaning              != open Execution IR
 open Execution IR              != private runtime realization
 backend family                 != target profile
@@ -375,6 +405,17 @@ In practice, the directory serves three public roles:
 <p>
 For v0.1, published cases SHOULD remain small, sharply-owned, and explicit about the stage at which acceptance or rejection occurs.
 </p>
+
+<p>
+Where useful, cases SHOULD also be written so that the reader can tell whether the failure belongs to:
+</p>
+
+<ul>
+  <li>non-loadable source,</li>
+  <li>schema-owned or source-shape-owned structural invalidity,</li>
+  <li>semantic invalidity after structural acceptance,</li>
+  <li>preservation failure in later stages.</li>
+</ul>
 
 <hr/>
 
@@ -462,10 +503,23 @@ A case SHOULD also be read with stage discipline:
 </p>
 
 <pre><code>loadability
-   -&gt; structural validity
-   -&gt; semantic acceptance
-   -&gt; preservation expectations
+   ->
+source-shape / schema-owned structural validity
+   ->
+semantic acceptance
+   ->
+preservation expectations
 </code></pre>
+
+<p>
+A case SHOULD NOT blur:
+</p>
+
+<ul>
+  <li>schema-owned failure into semantic rejection,</li>
+  <li>semantic rejection into source malformedness,</li>
+  <li>implementation subset limitations into specification invalidity.</li>
+</ul>
 
 <hr/>
 
@@ -498,6 +552,12 @@ Expected structural validity: invalid
 Expected meaning: not established
 Expected rejection:
   missing required source section
+
+Expected loadability: loadable
+Expected structural validity: invalid
+Expected meaning: not established
+Expected rejection:
+  top-level source shape violates canonical schema posture
 
 Expected loadability: loadable
 Expected structural validity: valid
@@ -541,6 +601,7 @@ The active public truth surface therefore emphasizes:
 
 <ul>
   <li>source structure versus semantic acceptance,</li>
+  <li>schema-owned source shape versus later semantic legality,</li>
   <li>interface versus widget participation,</li>
   <li>value versus reference participation,</li>
   <li>state versus inferred feedback,</li>
@@ -564,9 +625,9 @@ no silent stage collapse
 
 <h2 id="relation-with-examples-ir-and-reference-implementation">12. Relation with Examples, IR, and Reference Implementation</h2>
 
-<pre><code>Examples/                   -&gt; illustrate and anchor named programs
-Conformance/                -&gt; define public expectations
-Implementations/Reference/  -&gt; try to execute correctly
+<pre><code>Examples/                   -> illustrate and anchor named programs
+Conformance/                -> define public expectations
+Implementations/Reference/  -> try to execute correctly
 </code></pre>
 
 <p>
@@ -574,11 +635,11 @@ These roles must remain strictly separated.
 </p>
 
 <p>
-Likewise, the relation with the IR corridor is:
+Likewise, the relation with the specification corridor is:
 </p>
 
 <pre><code>Expression/
-   defines canonical source structure and structural validity
+   defines canonical source structure, source-schema posture, and structural validity
 
 Language/
    defines semantic truth
@@ -595,6 +656,11 @@ An implementation passing a case does not redefine the language.
 It only demonstrates alignment with the published conformance surface.
 </p>
 
+<p>
+A machine-checkable schema artifact may assist source-structure validation.
+It does not replace the ownership boundary above.
+</p>
+
 <hr/>
 
 <h2 id="future-growth">13. Future Growth</h2>
@@ -608,9 +674,9 @@ Preferred pattern:
 </p>
 
 <pre><code>small case
--&gt; clear boundary
--&gt; clear expectation
--&gt; clear ownership
+-> clear boundary
+-> clear expectation
+-> clear ownership
 </code></pre>
 
 <p>
@@ -636,6 +702,17 @@ Growth should continue to prefer:
   <li>mirrored valid / invalid pairs where they clarify truth,</li>
   <li>additional standalone invalid cases where architecture requires them,</li>
   <li>explicit published expectations rather than implementation folklore.</li>
+</ul>
+
+<p>
+As source-schema closure grows, conformance SHOULD increasingly distinguish:
+</p>
+
+<ul>
+  <li>malformed source,</li>
+  <li>schema-level structural failure,</li>
+  <li>structural failure that exceeds a minimal declarative schema artifact but still belongs to <code>Expression/</code>,</li>
+  <li>semantic rejection after structural acceptance.</li>
 </ul>
 
 <hr/>
@@ -680,15 +757,17 @@ It exists to keep the most important public boundaries explicit:
 </p>
 
 <pre><code>.frog source
-   -&gt;
-structurally valid canonical source
-   -&gt;
+   ->
+loadable source
+   ->
+source-shape / schema-owned structural validity
+   ->
 validated meaning
-   -&gt;
+   ->
 open Execution IR
-   -&gt;
+   ->
 lowering / backend-facing handoff
-   -&gt;
+   ->
 private realization
 
 Conformance checks:
