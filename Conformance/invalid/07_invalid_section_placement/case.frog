@@ -1,0 +1,31 @@
+{
+  "spec_version": "0.1",
+  "metadata": {
+    "name": "invalid_section_placement",
+    "description": "Invalid conformance fixture: a widget declaration is misplaced under diagram instead of front_panel.",
+    "author": "Graiphic",
+    "version": "0.1.0",
+    "tags": [
+      "conformance",
+      "invalid",
+      "structural-validity",
+      "section-placement"
+    ]
+  },
+  "interface": {
+    "inputs": [],
+    "outputs": []
+  },
+  "diagram": {
+    "nodes": [],
+    "edges": [],
+    "widgets": [
+      {
+        "id": "w_numeric",
+        "class": "frog.ui.numeric",
+        "role": "control",
+        "label": "Misplaced numeric control"
+      }
+    ]
+  }
+}
