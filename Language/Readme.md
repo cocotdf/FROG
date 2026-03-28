@@ -44,6 +44,7 @@ It is not the source-format layer.<br/>
 It is not the structural-validation layer.<br/>
 It is not the execution-IR layer.<br/>
 It is not the lowering layer.<br/>
+It is not the backend-contract layer.<br/>
 It is not the runtime layer.<br/>
 It is not the IDE layer.
 </p>
@@ -52,13 +53,13 @@ It is not the IDE layer.
 The ownership rule is:
 </p>
 
-<pre><code>Expression/  -> what is written and structurally valid as canonical source
-Language/    -> what the validated program means
-IR/          -> what may be derived for execution
+<pre><code>Expression/  -&gt; what is written and structurally valid as canonical source
+Language/    -&gt; what the validated program means
+IR/          -&gt; what canonical execution-facing representation is derived from that meaning
 </code></pre>
 
 <p>
-The role of <code>Language/</code> is to define the semantic truth that exists after structural validation and semantic admission, and before execution-facing representation is derived.
+The role of <code>Language/</code> is to define the semantic truth that exists after structural validation and semantic admission, and before any canonical execution-facing representation is derived.
 </p>
 
 <hr/>
@@ -82,13 +83,13 @@ loadability
 structural validation
         |
         v
-validated language semantics
+validated program meaning
         |
         v
-standardized FROG execution IR
+canonical Execution IR Document
         |
         v
-backend-specific lowering
+lowering
         |
         v
 backend contract / backend-oriented handoff
@@ -104,7 +105,7 @@ deployable artifact
 <code>Language/</code> owns the semantic stage in that chain:
 </p>
 
-<pre><code>validated language semantics
+<pre><code>validated program meaning
 </code></pre>
 
 <p>
@@ -123,7 +124,7 @@ This also means that <code>Language/</code> must not blur the boundary between:
 <ul>
   <li>source-owned structural validity,</li>
   <li>semantic acceptance,</li>
-  <li>execution-facing derivation,</li>
+  <li>canonical execution-facing derivation,</li>
   <li>implementation-side realization.</li>
 </ul>
 
@@ -153,8 +154,10 @@ It defines:
   <li>canonical source serialization,</li>
   <li>source-schema posture or machine-checkable source shape,</li>
   <li>graphical source layout,</li>
-  <li>open execution IR structure,</li>
+  <li>canonical Execution IR structure,</li>
+  <li>IR canonical JSON schema posture,</li>
   <li>backend lowering policy,</li>
+  <li>backend contract shape,</li>
   <li>runtime-private realization,</li>
   <li>IDE authoring workflow,</li>
   <li>primitive-local intrinsic behavior catalogs,</li>
@@ -162,7 +165,7 @@ It defines:
 </ul>
 
 <p>
-That separation matters because the language must remain stable and inspectable even when implementations, runtimes, validators, and IDEs evolve independently.
+That separation matters because the language must remain stable and inspectable even when implementations, runtimes, validators, IR producers, and IDEs evolve independently.
 </p>
 
 <hr/>
@@ -173,12 +176,12 @@ That separation matters because the language must remain stable and inspectable 
 The surrounding repository architecture is:
 </p>
 
-<pre><code>Expression/  -> source and structural validity
-Language/    -> meaning
-IR/          -> derived execution-facing representation
-Libraries/   -> intrinsic primitives
-Profiles/    -> optional capabilities
-IDE/         -> tooling
+<pre><code>Expression/  -&gt; source and structural validity
+Language/    -&gt; meaning
+IR/          -&gt; canonical execution-facing representation derived from meaning
+Libraries/   -&gt; intrinsic primitives
+Profiles/    -&gt; optional capabilities
+IDE/         -&gt; tooling
 </code></pre>
 
 <p>
@@ -213,7 +216,7 @@ Control structures + State and cycles
 Execution control and observation boundaries
                   |
                   v
-              IR derivation
+        canonical IR derivation
 </code></pre>
 
 <p>
@@ -284,7 +287,7 @@ It therefore prevents several architectural failures:
   <li>structural validation being mistaken for semantic acceptance,</li>
   <li>validator behavior becoming hidden language law,</li>
   <li>front-panel composition being mistaken for public interface semantics,</li>
-  <li>execution-facing IR becoming the first semantic authority.</li>
+  <li>Execution IR becoming the first semantic authority.</li>
 </ul>
 
 <hr/>
@@ -324,7 +327,7 @@ Language/   defines what that structurally valid source means
 
 <p>
 The dedicated boundary document <code>Expression to validated meaning.md</code> makes that bridge explicit.
-It defines what successful semantic validation establishes as language-level meaning before any open execution-facing IR may be derived.
+It defines what successful semantic validation establishes as language-level meaning before any canonical execution-facing IR may be derived.
 </p>
 
 <hr/>
@@ -342,7 +345,7 @@ The relation is:
 <pre><code>validated program meaning
         |
         v
-open execution-facing IR
+canonical Execution IR Document
 </code></pre>
 
 <p>
@@ -355,13 +358,26 @@ This means:
 </ul>
 
 <p>
+More precisely:
+</p>
+<ul>
+  <li><code>Language/</code> defines the semantic truth of validated FROG programs,</li>
+  <li><code>IR/</code> defines the canonical execution-facing representation derived from that truth,</li>
+  <li><code>IR/</code> may make execution-facing consequences more explicit,</li>
+  <li><code>IR/</code> may not become the first owner of meaning,</li>
+  <li><code>IR/</code> may not collapse into one downstream compiler-family form.</li>
+</ul>
+
+<p>
 The repository intentionally prevents this collapse:
 </p>
 
 <pre><code>source               != semantics
 structural validity  != semantic acceptance
 semantics            != IR
-IR                   != runtime-private representation
+IR                   != lowering
+lowering             != backend contract
+backend contract     != runtime-private representation
 </code></pre>
 
 <p>
@@ -384,9 +400,9 @@ It also does not replace optional standardized capability behavior defined in <c
 The ownership rule is:
 </p>
 
-<pre><code>Libraries/  -> intrinsic primitive behavior
-Profiles/   -> optional standardized capability behavior
-Language/   -> cross-cutting semantic meaning of validated programs
+<pre><code>Libraries/  -&gt; intrinsic primitive behavior
+Profiles/   -&gt; optional standardized capability behavior
+Language/   -&gt; cross-cutting semantic meaning of validated programs
 </code></pre>
 
 <p>
@@ -437,7 +453,8 @@ Therefore:
   <li>a semantic validator does not become hidden repository ownership,</li>
   <li>a runtime does not define the meaning of the language,</li>
   <li>a reference implementation remains non-normative even when executable,</li>
-  <li>implementation convenience must not silently redefine semantics.</li>
+  <li>implementation convenience must not silently redefine semantics,</li>
+  <li>a downstream compiler-family path such as LLVM must not become the definition of FROG meaning.</li>
 </ul>
 
 <hr/>
@@ -455,7 +472,7 @@ At this stage:
   <li>canonical source structure and source-schema posture are already separated into <code>Expression/</code>,</li>
   <li>structural validity is already treated explicitly as a source-owned stage,</li>
   <li>semantic meaning is separated into <code>Language/</code>,</li>
-  <li>execution-facing derived representation is separated into <code>IR/</code>,</li>
+  <li>canonical execution-facing derived representation is separated into <code>IR/</code>,</li>
   <li>the repository already supports public examples, conformance material, and a non-normative reference implementation path.</li>
 </ul>
 
@@ -468,6 +485,16 @@ This means <code>Language/</code> must stay disciplined:
   <li>it must not absorb IR wire-shape concerns,</li>
   <li>it must not absorb implementation-private policy,</li>
   <li>it must make semantic truth explicit enough that later layers stay honest.</li>
+</ul>
+
+<p>
+More specifically, the semantic layer must remain strong enough that:
+</p>
+<ul>
+  <li>the canonical Execution IR Document can be derived without becoming the first owner of meaning,</li>
+  <li>lowering can specialize without laundering semantics,</li>
+  <li>backend contracts can declare assumptions without redefining language truth,</li>
+  <li>downstream compiler families can consume FROG without replacing it.</li>
 </ul>
 
 <p>
@@ -487,7 +514,7 @@ It sits:
 </p>
 <ul>
   <li>after canonical source and structural validation,</li>
-  <li>before open execution-facing IR,</li>
+  <li>before canonical execution-facing IR,</li>
   <li>before lowering, backend contract, runtime realization, and IDE workflow concerns.</li>
 </ul>
 
@@ -495,9 +522,9 @@ It sits:
 The essential reading rule remains:
 </p>
 
-<pre><code>Expression/  -> source and structural validity
-Language/    -> meaning
-IR/          -> derived execution-facing representation
+<pre><code>Expression/  -&gt; source and structural validity
+Language/    -&gt; meaning
+IR/          -&gt; canonical execution-facing representation
 </code></pre>
 
 <p>
