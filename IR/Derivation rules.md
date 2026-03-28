@@ -5,7 +5,7 @@
 <h1 align="center">FROG IR Derivation Rules</h1>
 
 <p align="center">
-  <strong>Normative derivation rules from validated FROG program meaning to open Execution IR</strong><br />
+  <strong>Normative derivation rules from validated FROG program meaning to the canonical Execution IR Document</strong><br />
   <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -30,7 +30,7 @@
   <li><a href="#state-and-cycle-preservation">15. State and Cycle Preservation</a></li>
   <li><a href="#allowed-normalization-during-derivation">16. Allowed Normalization During Derivation</a></li>
   <li><a href="#forbidden-derivation-outcomes">17. Forbidden Derivation Outcomes</a></li>
-  <li><a href="#relation-with-construction-lowering-and-backend-contract">18. Relation with Construction, Lowering, and Backend Contract</a></li>
+  <li><a href="#relation-with-construction-schema-lowering-and-backend-contract">18. Relation with Construction, Schema, Lowering, and Backend Contract</a></li>
   <li><a href="#out-of-scope-for-v01">19. Out of Scope for v0.1</a></li>
   <li><a href="#summary">20. Summary</a></li>
 </ul>
@@ -40,27 +40,33 @@
 <h2 id="overview">1. Overview</h2>
 
 <p>
-This document defines the normative derivation boundary between validated FROG program meaning and the open Execution IR.
+This document defines the normative derivation boundary between validated FROG program meaning and the
+<strong>canonical Execution IR Document</strong>.
 It specifies:
 </p>
 
 <ul>
-  <li>which validated execution-relevant source families derive to execution-facing IR families,</li>
+  <li>which validated execution-relevant families derive to execution-facing IR families,</li>
   <li>which source-side distinctions MUST remain recoverable at the derivation boundary,</li>
   <li>which support objects MAY be introduced to make already-validated execution structure explicit,</li>
-  <li>which source-visible families do not become primary execution objects in the open IR,</li>
+  <li>which source-visible families do not become primary execution objects in the canonical open IR,</li>
   <li>which transformations are allowed as derivation-time normalization, and</li>
   <li>which transformations are forbidden because they would blur ownership, erase attribution, or introduce runtime-private meaning too early.</li>
 </ul>
 
 <p>
 This document is intentionally about correspondence obligations.
-It is not the full source specification,
-not the full language semantics specification,
-not the complete Execution IR object-model specification,
-not the construction algorithm for every implementation,
-and not a runtime-private realization guide.
+It is not:
 </p>
+
+<ul>
+  <li>the full source specification,</li>
+  <li>the full language semantics specification,</li>
+  <li>the complete Execution IR object-model specification,</li>
+  <li>the construction algorithm for every implementation,</li>
+  <li>the schema definition itself,</li>
+  <li>or a runtime-private realization guide.</li>
+</ul>
 
 <p>
 Compact mental model:
@@ -75,7 +81,7 @@ validated program meaning
 derivation rules   &lt;-- this document
         |
         v
-open Execution IR
+canonical Execution IR Document
         |
         v
 lowering / specialization
@@ -127,9 +133,10 @@ This document defines:
 <ul>
   <li>the normative entry condition for Execution IR derivation,</li>
   <li>the relation shapes permitted at the derivation boundary,</li>
-  <li>the base v0.1 correspondence between validated execution-relevant source families and Execution IR families,</li>
+  <li>the base v0.1 correspondence between validated execution-relevant families and Execution IR families,</li>
   <li>the minimum attribution and recoverability obligations that MUST survive derivation,</li>
-  <li>the allowed and forbidden kinds of derivation-time explicitness and normalization.</li>
+  <li>the allowed and forbidden kinds of derivation-time explicitness and normalization,</li>
+  <li>the rule that one validated FROG program derives to one canonical Execution IR Document containing one execution unit in base v0.1.</li>
 </ul>
 
 <p>
@@ -141,6 +148,7 @@ This document does not define:
   <li>the full normative semantics of validated FROG programs,</li>
   <li>the full Execution IR object model in complete detail,</li>
   <li>the exact material build sequence of every implementation,</li>
+  <li>the JSON schema text of the canonical payload,</li>
   <li>the lowering strategy of every backend,</li>
   <li>the backend contract in full,</li>
   <li>the private scheduler, storage, or ABI policy of any runtime.</li>
@@ -151,13 +159,15 @@ This document does not define:
 - what must remain recoverable
 - what may be made explicit during derivation
 - what derivation must not silently change
+- that one validated program yields one canonical IR document
 
 This document does not define:
-- canonical source in full               -> Expression/
-- validated program meaning in full      -> Language/
-- full open IR model                     -> Execution IR.md
-- material payload construction          -> Construction rules.md
-- runtime-private realization            -> outside IR ownership
+- canonical source in full               -&gt; Expression/
+- validated program meaning in full      -&gt; Language/
+- full open IR model                     -&gt; Execution IR.md
+- material payload construction          -&gt; Construction rules.md
+- machine-checkable schema text          -&gt; Schema.md / IR/schema/
+- runtime-private realization            -&gt; outside IR ownership
 </code></pre>
 
 <hr />
@@ -168,14 +178,16 @@ This document does not define:
 Ownership remains:
 </p>
 
-<pre><code>Expression/                 -> canonical source shape and structural validity
-Language/                   -> validated program meaning
-IR/Execution IR.md          -> open Execution IR architecture
-IR/Derivation rules.md      -> correspondence from meaning to IR
-IR/Construction rules.md    -> material IR construction
-IR/Identity and Mapping.md  -> cross-layer recoverability
-IR/Lowering.md              -> later target-oriented specialization
-IR/Backend contract.md      -> later backend-facing handoff
+<pre><code>Expression/                 -&gt; canonical source shape and structural validity
+Language/                   -&gt; validated program meaning
+IR/Execution IR.md          -&gt; canonical open Execution IR architecture
+IR/Derivation rules.md      -&gt; correspondence from meaning to IR
+IR/Construction rules.md    -&gt; material IR construction and canonical JSON emission
+IR/Schema.md                -&gt; schema posture for canonical IR validation
+IR/schema/                  -&gt; machine-checkable schema artifacts
+IR/Identity and Mapping.md  -&gt; cross-layer recoverability
+IR/Lowering.md              -&gt; later target-oriented specialization
+IR/Backend contract.md      -&gt; later backend-facing handoff
 </code></pre>
 
 <p>
@@ -185,10 +197,10 @@ Accordingly:
 <ul>
   <li>this document MUST NOT redefine what a valid <code>.frog</code> file looks like,</li>
   <li>this document MUST NOT redefine what validated meaning is,</li>
-  <li>this document MUST NOT redefine the complete open Execution IR schema,</li>
+  <li>this document MUST NOT redefine the complete canonical IR schema,</li>
   <li>this document MUST NOT redefine construction as a universal procedural algorithm,</li>
   <li>this document MUST NOT redefine backend-private or runtime-private structures,</li>
-  <li>this document MUST define how validated meaning becomes open Execution IR.</li>
+  <li>this document MUST define how validated meaning becomes the canonical open Execution IR boundary artifact.</li>
 </ul>
 
 <p>
@@ -200,6 +212,7 @@ This document should be read together with:
   <li><code>IR/Execution IR.md</code>,</li>
   <li><code>IR/Identity and Mapping.md</code>,</li>
   <li><code>IR/Construction rules.md</code>,</li>
+  <li><code>IR/Schema.md</code>,</li>
   <li><code>Expression/Diagram.md</code>,</li>
   <li><code>Expression/Control structures.md</code>,</li>
   <li><code>Expression/State and cycles.md</code>,</li>
@@ -216,7 +229,8 @@ This document should be read together with:
 <h2 id="derivation-boundary">5. Derivation Boundary</h2>
 
 <p>
-Derivation is the normative correspondence boundary from validated program meaning to open Execution IR.
+Derivation is the normative correspondence boundary from validated program meaning to the
+<strong>canonical Execution IR Document</strong>.
 </p>
 
 <p>
@@ -234,7 +248,7 @@ Accordingly:
   whether meaning exists
 
 derivation decides:
-  how validated meaning becomes open Execution IR
+  how validated meaning becomes the canonical Execution IR Document
 </code></pre>
 
 <p>
@@ -284,10 +298,10 @@ An implementation MAY internally start from canonical source,
 a validated Program Model,
 or another validated internal form that is semantically equivalent.
 However,
-the open Execution IR it produces MUST be grounded in validated meaning rather than in editor-only convenience or runtime-private invention.
+the canonical Execution IR it derives MUST be grounded in validated meaning rather than in editor-only convenience or runtime-private invention.
 </p>
 
-<pre><code>raw source ------------> structural validity ------------> semantic validation ------------> derivation
+<pre><code>raw source ------------&gt; structural validity ------------&gt; semantic validation ------------&gt; derivation
                          outside this document             outside this document              this document
 </code></pre>
 
@@ -308,7 +322,8 @@ Derivation is therefore not the place where an implementation:
 <h2 id="derivation-result">7. Derivation Result</h2>
 
 <p>
-The result of derivation in base v0.1 is one <strong>open Execution IR execution unit</strong> for one validated FROG program.
+The result of derivation in base v0.1 is one <strong>canonical Execution IR Document</strong> for one validated FROG program.
+That document contains one <strong>execution unit</strong>.
 </p>
 
 <p>
@@ -327,28 +342,29 @@ That execution unit MUST contain enough information to represent:
 </ul>
 
 <p>
-This document does not require one frozen wire format.
-It requires a derivation result that is:
+The derivation result MUST be:
 </p>
 
 <ul>
   <li>semantically equivalent to validated meaning,</li>
   <li>mapping-compatible,</li>
   <li>inspectable,</li>
-  <li>compatible with <code>IR/Execution IR.md</code>.</li>
+  <li>compatible with <code>IR/Execution IR.md</code>,</li>
+  <li>constructible into the canonical JSON form defined by the IR layer.</li>
 </ul>
 
 <pre><code>one validated FROG
         |
         v
-one execution unit
-        ├── execution-facing objects
-        ├── typed ports / explicit terminals
-        ├── directed connections
-        ├── explicit regions where applicable
-        ├── explicit boundary participation
-        ├── support objects where required
-        └── source attribution
+one Execution IR Document
+        └── one execution unit
+            ├── execution-facing objects
+            ├── typed ports / explicit terminals
+            ├── directed connections
+            ├── explicit regions where applicable
+            ├── explicit boundary participation
+            ├── support objects where required
+            └── source attribution
 </code></pre>
 
 <p>
@@ -380,6 +396,7 @@ All conforming derivations in base v0.1 MUST satisfy the following invariants:
   <li>Derivation MUST preserve the distinction between <code>widget_value</code> participation and <code>widget_reference</code> participation.</li>
   <li>Derivation MUST preserve the distinction between <code>widget_reference</code> participation and standardized UI-object primitive operation.</li>
   <li>Derivation MUST preserve the distinction between <code>widget_value</code> participation and property-based access to a widget member named <code>value</code>.</li>
+  <li>Derivation MUST produce content compatible with one canonical Execution IR Document for one validated program.</li>
   <li>Derivation MUST NOT reinterpret non-execution source content as execution semantics merely because it exists in canonical source.</li>
   <li>Derivation MUST NOT import editor-only geometry, styling, annotation placement, or similar presentation state as execution semantics.</li>
   <li>Derivation MUST NOT standardize one runtime-private scheduler policy as though it were the open IR.</li>
@@ -396,6 +413,7 @@ preserve validated dependencies
 preserve interface / UI distinction
 preserve widget_value / widget_reference distinction
 preserve widget_reference / UI-primitive distinction
+preserve canonical-document compatibility
 
 do not promote non-execution source content
 do not import editor-only state
@@ -442,24 +460,24 @@ Examples:
 expanded:
   source object B
       |
-      +------> IR primary object B'
+      +------&gt; IR primary object B'
       |
-      +------> IR support object B1'
+      +------&gt; IR support object B1'
       |
-      +------> IR support object B2'
+      +------&gt; IR support object B2'
 
 restricted aggregated support:
   source object C -----\
-                        +----> IR support object Cx'
+                        +----&gt; IR support object Cx'
   source object D -----/
   with explicit contributor attribution to C and D
 
 non-primary:
   source object E
       |
-      +----> no primary execution object
+      +----&gt; no primary execution object
       |
-      +----> obligations may still survive through attribution
+      +----&gt; obligations may still survive through attribution
              or boundary correspondence
 </code></pre>
 
@@ -468,7 +486,7 @@ non-primary:
 <h2 id="source-to-ir-family-mapping">10. Source-to-IR Family Mapping</h2>
 
 <p>
-The rules below define the base v0.1 normative correspondence between validated families and open Execution IR families.
+The rules below define the base v0.1 normative correspondence between validated families and canonical Execution IR families.
 They are about <strong>execution-facing derivation</strong>.
 They do not imply that every source-visible family becomes a primary execution object.
 </p>
@@ -490,10 +508,10 @@ They do not imply that every source-visible family becomes a primary execution o
     <tr>
       <td>Whole validated FROG</td>
       <td>1 -&gt; 1</td>
-      <td>One execution unit</td>
-      <td>Unit-level attribution and classification records</td>
-      <td>Program identity and execution-unit identity relation</td>
-      <td>Split one validated FROG into multiple independent execution units in base v0.1</td>
+      <td>One Execution IR Document containing one execution unit</td>
+      <td>Document-level attribution and classification records; unit-level attribution and classification records</td>
+      <td>Program identity, document identity, and execution-unit identity relation</td>
+      <td>Split one validated FROG into multiple competing canonical documents or multiple independent execution units in base v0.1</td>
     </tr>
     <tr>
       <td>Top-level executable diagram</td>
@@ -514,7 +532,7 @@ They do not imply that every source-visible family becomes a primary execution o
     <tr>
       <td>Standardized UI-object primitive (<code>frog.ui.property_read</code>, <code>frog.ui.property_write</code>, <code>frog.ui.method_invoke</code>)</td>
       <td>1 -&gt; 1 or 1 -&gt; n</td>
-      <td>Primitive execution object of the standardized UI-operation family</td>
+      <td>UI-primitive execution object</td>
       <td>Resolved UI-port descriptors, resolved member or method descriptors, UI-operation classification records, source-map records</td>
       <td>Primitive identity, UI-operation family, referenced member or method semantics, required <code>widget_reference</code> participation, source correspondence</td>
       <td>Absorb the primitive into the widget-reference object itself or reinterpret it as unrestricted generic object execution</td>
@@ -725,6 +743,7 @@ base v0.1 requires recoverability of the following distinctions whenever they ar
 </p>
 
 <ul>
+  <li>document identity versus execution-unit identity,</li>
   <li><code>interface_input</code> versus <code>interface_output</code>,</li>
   <li><code>widget_value</code> versus <code>widget_reference</code>,</li>
   <li><code>widget_reference</code> participation versus standardized UI-object primitive operation,</li>
@@ -740,6 +759,7 @@ base v0.1 requires recoverability of the following distinctions whenever they ar
 
 <pre><code>Recoverability obligations
 
+document / execution-unit relation remains explicit
 interface_input / interface_output remain distinct
 widget_value / widget_reference remain distinct
 widget_reference / UI-object primitive remain distinct
@@ -865,7 +885,7 @@ the derived IR MUST preserve enough information to recover:
 
 <p>
 Base v0.1 does not require one universal nested-region encoding.
-It requires explicit structured ownership and semantic recoverability.
+It requires explicit structured ownership and semantic recoverability compatible with the canonical IR document model.
 </p>
 
 <pre><code>validated structure family
@@ -998,7 +1018,8 @@ Allowed normalization includes:
   <li>adding explicit source-attribution records,</li>
   <li>adding contributor records for permitted restricted aggregations,</li>
   <li>normalizing equivalent validated source spellings into one execution-facing canonical representation,</li>
-  <li>carrying validated execution-relevant metadata in normalized explicit form.</li>
+  <li>carrying validated execution-relevant metadata in normalized explicit form,</li>
+  <li>normalizing derivation output so that it is compatible with the canonical document and canonical JSON schema surface.</li>
 </ul>
 
 <p>
@@ -1023,6 +1044,7 @@ add explicit support objects
 add attribution structure
 add contributor structure where permitted
 normalize equivalent validated spellings
+normalize toward canonical document compatibility
 
 Only if:
 meaning preserved
@@ -1054,7 +1076,8 @@ The following outcomes are forbidden in the base open Execution IR of v0.1:
   <li>forcing non-participating source families into primary execution objects merely because they exist in canonical source,</li>
   <li>promoting layout, styling, annotation placement, or similar authoring convenience state into execution semantics,</li>
   <li>treating the open IR as a debugger trace, runtime history log, or event stream,</li>
-  <li>hard-coding one private runtime scheduling strategy as though it were the standardized open IR.</li>
+  <li>hard-coding one private runtime scheduling strategy as though it were the standardized open IR,</li>
+  <li>deriving multiple competing canonical Execution IR Documents for one validated program at the same open IR boundary.</li>
 </ul>
 
 <pre><code>Forbidden outcomes
@@ -1071,14 +1094,15 @@ forced executionization of non-participating source content
 editor-state semantics
 runtime trace substitution
 private scheduler policy as open IR
+multiple competing canonical IR documents
 </code></pre>
 
 <hr />
 
-<h2 id="relation-with-construction-lowering-and-backend-contract">18. Relation with Construction, Lowering, and Backend Contract</h2>
+<h2 id="relation-with-construction-schema-lowering-and-backend-contract">18. Relation with Construction, Schema, Lowering, and Backend Contract</h2>
 
 <p>
-The output of derivation is the <strong>open Execution IR</strong>.
+The output of derivation is the <strong>canonical Execution IR Document boundary result</strong>.
 It is not yet a lowered form and not yet a backend-facing contract artifact.
 </p>
 
@@ -1088,7 +1112,8 @@ Accordingly:
 
 <ul>
   <li>derivation MUST stop at the open IR boundary defined by <code>IR/Execution IR.md</code>,</li>
-  <li>material build procedure belongs to <code>IR/Construction rules.md</code>,</li>
+  <li>material build procedure and canonical JSON emission belong to <code>IR/Construction rules.md</code>,</li>
+  <li>machine-checkable payload validation belongs to <code>IR/Schema.md</code> and <code>IR/schema/</code>,</li>
   <li>later target-oriented specialization belongs to <code>IR/Lowering.md</code>,</li>
   <li>later consumer-facing assumptions belong to <code>IR/Backend contract.md</code>,</li>
   <li>derivation MUST NOT prematurely encode backend-private scheduling, partitioning, storage layout, target-profile assumptions, deployment-mode assumptions, or target ABI policy as if those belonged to the base open IR.</li>
@@ -1107,9 +1132,11 @@ but those later consumer expectations do not belong to this document.
 derivation
         |
         v
-open Execution IR
+canonical Execution IR boundary result
         |
-        +--> construction materializes conforming payloads
+        +-- construction materializes canonical JSON payload
+        |
+        +-- schema validates canonical JSON payload
         |
         v
 lowering
@@ -1128,6 +1155,7 @@ This separation matters because:
 <ul>
   <li>derivation is about correspondence,</li>
   <li>construction is about material build,</li>
+  <li>schema is about machine-checkable structural validation,</li>
   <li>lowering is about specialization,</li>
   <li>backend contract is about later standardized consumer expectations.</li>
 </ul>
@@ -1145,8 +1173,8 @@ The following topics are out of scope for this document in base v0.1:
 </p>
 
 <ul>
-  <li>one mandatory universal JSON transport schema for all implementations,</li>
   <li>the exact procedural construction order used by every implementation,</li>
+  <li>the full JSON schema text,</li>
   <li>mandatory SSA conversion,</li>
   <li>mandatory aggressive flattening of structured control,</li>
   <li>lowering to backend-facing contracts,</li>
@@ -1158,12 +1186,23 @@ The following topics are out of scope for this document in base v0.1:
 
 <p>
 Those concerns belong to construction,
+schema,
 identity and mapping,
 lowering,
 backend contract,
 runtime,
 or IDE-facing specifications.
 </p>
+
+<p>
+What is <strong>not</strong> out of scope anymore is:
+</p>
+
+<ul>
+  <li>the rule that one validated program derives to one canonical Execution IR Document,</li>
+  <li>the rule that the derivation result must be compatible with the canonical JSON open IR surface,</li>
+  <li>the rule that derivation must preserve the distinctions needed by the published schema-visible IR categories.</li>
+</ul>
 
 <hr />
 
@@ -1172,7 +1211,7 @@ or IDE-facing specifications.
 <p>
 Execution IR derivation in FROG v0.1 is conservative by design.
 It starts from <strong>validated program meaning</strong>, not from raw source convenience.
-It produces <strong>one execution unit per validated FROG</strong>.
+It produces <strong>one canonical Execution IR Document per validated FROG</strong>, with <strong>one execution unit</strong>.
 It preserves:
 </p>
 
@@ -1223,7 +1262,8 @@ and interface-side metadata as well.
    +-- preserve widget_value / widget_reference distinction
    +-- preserve widget_reference / UI-primitive distinction
    +-- do not executionize non-execution source content
+   +-- derive one canonical IR document with one execution unit
    |
    v
-open Execution IR
+canonical Execution IR Document
 </code></pre>
