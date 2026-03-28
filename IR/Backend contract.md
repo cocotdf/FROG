@@ -5,7 +5,7 @@
 <h1 align="center">FROG IR Backend Contract</h1>
 
 <p align="center">
-  <strong>Normative consumption contract for lowered execution forms in FROG v0.1</strong><br/>
+  <strong>Normative consumption contract for lowered execution forms downstream from the canonical Execution IR Document in FROG v0.1</strong><br/>
   <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -31,7 +31,7 @@
   <li><a href="#control-state-and-boundaries">16. Control, State, and Boundaries</a></li>
   <li><a href="#ui-participation">17. UI Participation</a></li>
   <li><a href="#diagnostics-observability-and-fault-attribution">18. Diagnostics, Observability, and Fault Attribution</a></li>
-  <li><a href="#relation-with-libraries-profiles-and-conformance">19. Relation with Libraries, Profiles, and Conformance</a></li>
+  <li><a href="#relation-with-libraries-profiles-conformance-and-compiler-families">19. Relation with Libraries, Profiles, Conformance, and Compiler Families</a></li>
   <li><a href="#minimal-conceptual-shape">20. Minimal Conceptual Shape</a></li>
   <li><a href="#contract-lifecycle">21. Contract Lifecycle</a></li>
   <li><a href="#out-of-scope-for-v01">22. Out of Scope for v0.1</a></li>
@@ -57,7 +57,7 @@ It exists to keep the following layers distinct:
 </p>
 
 <ul>
-  <li>the open, inspectable, source-attributable Execution IR,</li>
+  <li>the <strong>canonical Execution IR Document</strong>, which remains open, inspectable, and source-attributable,</li>
   <li>the specialization space of lowering,</li>
   <li>the standardized consumer-facing handoff,</li>
   <li>the private realization that follows.</li>
@@ -66,7 +66,7 @@ It exists to keep the following layers distinct:
 <pre><code>validated program meaning
         |
         v
-open Execution IR
+canonical Execution IR Document
         |
         v
 lowering
@@ -83,7 +83,7 @@ The backend contract is therefore:
 </p>
 
 <ul>
-  <li>not the open IR itself,</li>
+  <li>not the canonical Execution IR Document itself,</li>
   <li>not the whole lowering space,</li>
   <li>not one private runtime representation,</li>
   <li>not one vendor ABI,</li>
@@ -135,7 +135,7 @@ A backend contract may be:
 
 <p>
 What matters is not one transport syntax.
-What matters is the presence of a standardized, explicit consumer-facing handoff.
+What matters is the presence of a standardized, explicit consumer-facing handoff downstream from the canonical open IR boundary.
 </p>
 
 <hr/>
@@ -152,10 +152,11 @@ The intended architecture is:
 validated program meaning
         |
         v
-Execution IR
+canonical Execution IR Document
   - open
   - inspectable
   - source-attributable
+  - schema-checkable in canonical JSON form
   - not backend-private
         |
         v
@@ -175,7 +176,7 @@ The key interpretation rule is:
 </p>
 
 <ul>
-  <li><strong>Execution IR</strong> remains the open execution-facing representation.</li>
+  <li><strong>Execution IR</strong> remains the canonical open execution-facing representation.</li>
   <li><strong>Lowering</strong> is where specialization begins.</li>
   <li><strong>Backend Contract</strong> is where consumer assumptions become explicit.</li>
   <li><strong>Private realization</strong> remains downstream and is not standardized here.</li>
@@ -187,6 +188,7 @@ The backend contract therefore sits:
 
 <ul>
   <li>after lowering has begun,</li>
+  <li>after the canonical open IR boundary has already been established,</li>
   <li>before private realization takes over.</li>
 </ul>
 
@@ -240,7 +242,8 @@ This document does not define:
   <li>one mandatory deployment package format,</li>
   <li>one mandatory debugging protocol,</li>
   <li>one mandatory runtime-private state object model,</li>
-  <li>one mandatory runtime-module layout.</li>
+  <li>one mandatory runtime-module layout,</li>
+  <li>one mandatory compiler-family handoff such as LLVM.</li>
 </ul>
 
 <p>
@@ -284,20 +287,20 @@ A backend contract is the standardized handoff description by which a lowered FR
 
 <p>
 A backend contract is therefore not just a payload.
-It is an explicit statement of <strong>consumable truth</strong> for a backend-oriented consumer.
+It is an explicit statement of <strong>consumable truth</strong> for a backend-oriented consumer downstream from the canonical open IR boundary.
 </p>
 
-<pre><code>Execution IR
-   -> open execution-facing form
+<pre><code>canonical Execution IR Document
+   -&gt; open execution-facing form
 
 Lowering
-   -> specialization
+   -&gt; specialization
 
 Backend Contract
-   -> standardized consumable assumptions and obligations
+   -&gt; standardized consumable assumptions and obligations
 
 Private realization
-   -> consumer-specific execution machinery
+   -&gt; consumer-specific execution machinery
 </code></pre>
 
 <hr/>
@@ -354,7 +357,7 @@ It identifies the class of consumer expected to accept the contract.
 
 <p>
 A backend family is therefore a contract-facing classification.
-It is neither identical to the open Execution IR nor identical to one private runtime implementation.
+It is neither identical to the canonical Execution IR Document nor identical to one private runtime implementation.
 </p>
 
 <h3>8.2 Target profile</h3>
@@ -479,7 +482,8 @@ Examples of backend-family orientation may include:
   <li><code>distributed_message_oriented</code>,</li>
   <li><code>embedded_resource_constrained</code>,</li>
   <li><code>hybrid_interpretive</code>,</li>
-  <li><code>reference_host_runtime_ui_binding</code>.</li>
+  <li><code>reference_host_runtime_ui_binding</code>,</li>
+  <li><code>llvm_oriented_native_codegen</code>.</li>
 </ul>
 
 <p>
@@ -509,7 +513,7 @@ The backend contract is the first stage where a lowered representation may legit
 This boundary can be visualized as:
 </p>
 
-<pre><code>Execution IR
+<pre><code>canonical Execution IR Document
   - open
   - source-shaped enough for inspection
   - semantically close to validated meaning
@@ -545,7 +549,7 @@ A backend contract MUST only be emitted after:
 
 <ul>
   <li>the program has already been validated,</li>
-  <li>Execution IR construction was semantically legitimate,</li>
+  <li>canonical Execution IR construction was semantically legitimate,</li>
   <li>the performed lowering steps are semantically preserving,</li>
   <li>all declared assumptions relevant to the contract have been made explicit.</li>
 </ul>
@@ -606,7 +610,8 @@ That SHOULD include, where relevant:
   <li>required state-handling assumptions,</li>
   <li>required scheduling-model assumptions if fixed,</li>
   <li>required boundary or ABI conventions if already specialized,</li>
-  <li>required UI-binding assumptions when the backend family still carries UI participation semantics.</li>
+  <li>required UI-binding assumptions when the backend family still carries UI participation semantics,</li>
+  <li>required compiler-family assumptions when the contract is oriented toward a downstream compiler family such as LLVM.</li>
 </ul>
 
 <p>
@@ -753,7 +758,8 @@ A producer MUST NOT:
   <li>collapse backend-family orientation, target-profile assumptions, deployment-mode assumptions, profile-owned capability assumptions, and runtime-private realization into one undifferentiated classification,</li>
   <li>collapse public interface participation, <code>widget_value</code> participation, and <code>widget_reference</code>-driven UI interaction into one undifferentiated class when the distinction still matters to consumption or attribution,</li>
   <li>claim that one private runtime graph is the normative FROG execution model,</li>
-  <li>silently require undeclared profile capabilities.</li>
+  <li>silently require undeclared profile capabilities,</li>
+  <li>present a downstream compiler-family form such as LLVM IR as though it were the canonical FROG Execution IR.</li>
 </ul>
 
 <hr/>
@@ -779,7 +785,8 @@ A consumer MUST NOT:
   <li>erase source-aligned attribution that the contract declares necessary,</li>
   <li>change state semantics while claiming faithful consumption,</li>
   <li>erase required public-boundary, structure-origin, or UI-origin distinctions if later diagnostics depend on them,</li>
-  <li>reinterpret unsupported UI participation semantics as arbitrary runtime-private behavior while still claiming contract conformance.</li>
+  <li>reinterpret unsupported UI participation semantics as arbitrary runtime-private behavior while still claiming contract conformance,</li>
+  <li>treat compiler-family orientation as permission to redefine upstream FROG IR meaning.</li>
 </ul>
 
 <p>
@@ -817,7 +824,8 @@ Across the backend contract boundary, the following invariants remain mandatory:
   <li>source-aligned diagnostic anchors MUST remain preservable where relevant,</li>
   <li>profile-owned capability requirements MUST remain explicit rather than implicit,</li>
   <li>contract-facing target-profile assumptions MUST remain explicit rather than being silently deferred into runtime-private interpretation when they materially affect correct consumption,</li>
-  <li>contract-facing deployment assumptions MUST remain explicit when they materially affect correct consumption.</li>
+  <li>contract-facing deployment assumptions MUST remain explicit when they materially affect correct consumption,</li>
+  <li>compiler-family orientation MUST remain downstream from FROG rather than being treated as the definition of FROG execution semantics.</li>
 </ul>
 
 <pre><code>semantic truth
@@ -862,10 +870,10 @@ A backend contract MUST NOT erase the fact that valid feedback depended on expli
 </p>
 
 <pre><code>source-semantic idea
-   [frog.core.delay] --> [add] --> next
+   [frog.core.delay] --&gt; [add] --&gt; next
 
 lowered form
-   [state_read] --> [lowered_add] --> [state_commit]
+   [state_read] --&gt; [lowered_add] --&gt; [state_commit]
 
 backend contract truth
    state_read / state_commit
@@ -995,7 +1003,7 @@ loss of source-aligned diagnosability
 
 <hr/>
 
-<h2 id="relation-with-libraries-profiles-and-conformance">19. Relation with Libraries, Profiles, and Conformance</h2>
+<h2 id="relation-with-libraries-profiles-conformance-and-compiler-families">19. Relation with Libraries, Profiles, Conformance, and Compiler Families</h2>
 
 <h3>19.1 Relation with Libraries</h3>
 
@@ -1036,6 +1044,31 @@ A future conformance layer MAY distinguish:
   <li>deployment-mode-specific compatibility claims,</li>
   <li>certified compatibility claims under steward policy.</li>
 </ul>
+
+<h3>19.4 Relation with compiler families such as LLVM</h3>
+
+<p>
+A backend contract MAY orient consumption toward a compiler family such as LLVM.
+However:
+</p>
+
+<ul>
+  <li>LLVM remains downstream from FROG,</li>
+  <li>LLVM-facing contract orientation does not redefine the canonical FROG Execution IR,</li>
+  <li>a backend contract may prepare a consumer-facing handoff for LLVM-oriented consumers,</li>
+  <li>but the contract remains a FROG backend handoff document, not the definition of FROG itself.</li>
+</ul>
+
+<pre><code>canonical Execution IR Document
+      -&gt;
+lowering
+      -&gt;
+backend contract
+      -&gt;
+LLVM-oriented or other compiler-family consumer
+      -&gt;
+private realization
+</code></pre>
 
 <hr/>
 
@@ -1123,7 +1156,7 @@ A useful mental model is:
 <pre><code>validated meaning
         |
         v
-Execution IR
+canonical Execution IR Document
         |
         v
 Lowering step(s)
@@ -1135,12 +1168,12 @@ Lowering step(s)
         v
 Backend Contract
         |
-        +--> accepted by consumer
+        +--&gt; accepted by consumer
         |        |
         |        v
         |    private realization
         |
-        +--> rejected by consumer
+        +--&gt; rejected by consumer
                  |
                  v
             explicit incompatibility
@@ -1170,7 +1203,8 @@ The following remain out of scope for this document in v0.1:
   <li>one full cross-vendor conformance suite for all backend families,</li>
   <li>one universal deployment package model,</li>
   <li>one mandatory runtime-private representation,</li>
-  <li>one standardized first-class UI event execution model.</li>
+  <li>one standardized first-class UI event execution model,</li>
+  <li>one mandatory LLVM-oriented contract flavor.</li>
 </ul>
 
 <p>
@@ -1180,6 +1214,7 @@ The goal of v0.1 is narrower and more architectural:
 <pre><code>define a clean, explicit, durable handoff
 between lowering and later realization
 without collapsing FROG into one implementation pipeline
+or one downstream compiler family
 </code></pre>
 
 <hr/>
@@ -1200,7 +1235,7 @@ It declares:
 
 <p>
 It does not redefine the language.
-It does not replace the open Execution IR.
+It does not replace the canonical Execution IR Document.
 It does not standardize private runtime realization.
 </p>
 
@@ -1209,11 +1244,12 @@ It also fixes an important practical point for v0.1:
 a backend contract may carry backend-family orientation,
 may declare target-profile assumptions,
 may declare deployment-relevant assumptions,
-and may declare profile-owned capability requirements where they materially affect correct consumption,
-but doing so does not standardize one universal runtime shape or one universal runtime-module layout.
+may declare profile-owned capability requirements where they materially affect correct consumption,
+and may orient toward downstream compiler families such as LLVM,
+but doing so does not standardize one universal runtime shape, one universal runtime-module layout, or one compiler-family definition of FROG.
 </p>
 
-<pre><code>open Execution IR
+<pre><code>canonical Execution IR Document
         |
         v
 lowering
