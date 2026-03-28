@@ -54,11 +54,13 @@ They are deliberately practical, but they are <strong>not</strong> the normative
 <h2 id="why-this-directory-exists">2. Why this Directory Exists</h2>
 
 <p>
-The FROG repository defines a layered architecture:
+The FROG repository defines a layered execution corridor:
 </p>
 
 <ul>
   <li>canonical source,</li>
+  <li>loadability,</li>
+  <li>structural validity,</li>
   <li>validated program meaning,</li>
   <li>open execution-facing IR,</li>
   <li>lowering and backend-facing handoff,</li>
@@ -74,7 +76,7 @@ A dedicated examples directory is therefore needed to provide:
 <ul>
   <li>small canonical source programs,</li>
   <li>clear coverage of important distinctions,</li>
-  <li>testable slices of the specification pipeline,</li>
+  <li>testable slices of the published stage corridor,</li>
   <li>shared named programs for future implementations.</li>
 </ul>
 
@@ -93,7 +95,7 @@ Examples in this directory are intended to serve several purposes at once:
 
 <ul>
   <li><strong>reading support</strong> — they make specification boundaries easier to understand,</li>
-  <li><strong>implementation support</strong> — they provide small targets for loaders, validators, derivation stages, lowerers, contract emitters, and runtimes,</li>
+  <li><strong>implementation support</strong> — they provide small targets for loaders, structural validators, semantic validators, derivation stages, lowerers, contract emitters, and runtimes,</li>
   <li><strong>discussion support</strong> — they make architectural distinctions visible in concrete form,</li>
   <li><strong>regression support</strong> — they help reveal accidental architectural drift.</li>
 </ul>
@@ -105,7 +107,13 @@ A useful early pipeline is:
 <pre><code>example .frog
       |
       v
-validation
+loadability
+      |
+      v
+structural validation
+      |
+      v
+semantic validation
       |
       v
 Execution IR derivation
@@ -172,7 +180,7 @@ Ownership remains:
 </p>
 
 <ul>
-  <li><code>Expression/</code> — canonical source shape,</li>
+  <li><code>Expression/</code> — canonical source shape, source-schema posture, and structural validity,</li>
   <li><code>Language/</code> — validated semantic truth,</li>
   <li><code>Libraries/</code> — intrinsic primitive catalogs,</li>
   <li><code>Profiles/</code> — optional standardized capability families,</li>
@@ -250,7 +258,8 @@ The example README should normally explain:
   <li>the purpose of the example,</li>
   <li>the constructs used,</li>
   <li>which specification documents own those constructs,</li>
-  <li>what a validator is expected to accept,</li>
+  <li>whether the source is expected to be loadable and structurally valid,</li>
+  <li>what semantic validation is expected to accept,</li>
   <li>what derivation should preserve,</li>
   <li>what a lowering or backend handoff may later specialize,</li>
   <li>what a reference implementation is expected to do with the example.</li>
@@ -283,6 +292,7 @@ Together, these examples provide a compact first coverage set for:
 <ul>
   <li>interface boundaries,</li>
   <li>primitive execution,</li>
+  <li>structural and semantic passage through the early validation corridor,</li>
   <li>IR derivation,</li>
   <li>UI value participation,</li>
   <li>UI object-style interaction,</li>
@@ -306,6 +316,7 @@ A reader should normally approach each example in the following order:
 <ol>
   <li>read the example README,</li>
   <li>inspect the canonical <code>.frog</code> source,</li>
+  <li>check whether the source is merely loadable or also structurally valid canonical source,</li>
   <li>check which specification documents own the constructs being used,</li>
   <li>check the corresponding conformance material when available,</li>
   <li>run the example through validation, derivation, lowering, and execution tooling when available.</li>
@@ -353,8 +364,8 @@ Conformance/
    states expected accept / reject / preserve outcomes
 
 Implementations/Reference/
-   attempts to load, validate, derive, lower, emit contracts,
-   and eventually run those programs
+   attempts to load, structurally validate, semantically validate,
+   derive, lower, emit contracts, and eventually run those programs
 </code></pre>
 
 <p>
@@ -362,6 +373,20 @@ An example may be illustrative without being a full conformance statement.
 A conformance case may reference an example but still owns the explicit expectation.
 A reference implementation may execute an example correctly, but it does not become language law by doing so.
 </p>
+
+<p>
+A useful repository reading corridor is therefore:
+</p>
+
+<pre><code>Examples/
+   names and explains the program
+
+Conformance/
+   explains what must happen
+
+Implementations/Reference/
+   tries to do it correctly through explicit stages
+</code></pre>
 
 <hr/>
 
@@ -388,6 +413,10 @@ A good v0.1 example set should be:
   <li>clear enough to support future conformance work,</li>
   <li>stable enough to remain useful as the repository grows.</li>
 </ul>
+
+<p>
+In particular, examples should remain aligned with the published stage corridor rather than smuggling private implementation shortcuts into the public reading of the repository.
+</p>
 
 <hr/>
 
