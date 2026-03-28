@@ -49,7 +49,7 @@ This directory defines the architectural home of <strong>open execution-facing r
 
 <p>
 A FROG program is not authored directly as an execution IR.
-It is authored as canonical source, validated against the relevant semantic, intrinsic-library, and profile rules, and only then may be represented in one or more <strong>open execution-facing derived forms</strong>.
+It is authored as canonical source, admitted through structural validity, interpreted as validated program meaning, and only then may be represented in one or more <strong>open execution-facing derived forms</strong>.
 </p>
 
 <p>
@@ -58,6 +58,7 @@ The purpose of <code>IR/</code> is to ensure that execution-facing representatio
 
 <ul>
   <li>source-format documents,</li>
+  <li>source-schema artifacts,</li>
   <li>IDE-internal authoring models,</li>
   <li>cache payload examples,</li>
   <li>primitive or profile catalogs,</li>
@@ -78,15 +79,17 @@ This directory therefore provides the durable normative home for:
 </ul>
 
 <pre><code>canonical source
-      -&gt;
+      ->
+structural validity
+      ->
 validated program meaning
-      -&gt;
+      ->
 open execution-facing IR
-      -&gt;
+      ->
 later specialization / lowering
-      -&gt;
+      ->
 backend-facing handoff
-      -&gt;
+      ->
 private realization
 </code></pre>
 
@@ -121,6 +124,7 @@ FROG deliberately separates several architectural levels that are often conflate
 
 <ul>
   <li>the canonical saved source artifact,</li>
+  <li>the source-owned structural admission boundary,</li>
   <li>the IDE editable in-memory model,</li>
   <li>validated program meaning,</li>
   <li>the derived forms used to prepare execution,</li>
@@ -144,7 +148,7 @@ The IR layer exists to stop that drift and to give execution-facing representati
 </p>
 
 <pre><code>Expression/ says:
-"what is saved"
+"what is saved and structurally admitted as source"
 
 IDE/ says:
 "what is edited"
@@ -175,6 +179,7 @@ The shortest correct mental model of the surrounding architecture is:
 | Layer             | Primary question answered                        |
 +-------------------+--------------------------------------------------+
 | Expression/       | What is the canonical saved source?              |
+|                   | What counts as structurally valid source?        |
 | Language/         | What does the validated program mean?            |
 | Libraries/        | What intrinsic primitives exist?                 |
 | Profiles/         | What optional standardized capabilities exist?   |
@@ -251,13 +256,23 @@ canonical .frog source
         v
 Expression/
 
+Admission side
+--------------
+loadability
+        |
+        v
+structural validity
+        |
+        v
+Expression/
+
 Meaning side
 ------------
 validated program meaning
         |
-        +--&gt; Language/
-        +--&gt; Libraries/
-        +--&gt; Profiles/
+        +--> Language/
+        +--> Libraries/
+        +--> Profiles/
 
 IR side
 -------
@@ -287,10 +302,16 @@ The transition into <code>IR/</code> begins <strong>after</strong> the program h
 </p>
 
 <p>
-An implementation MAY derive IR directly from canonical source, from a validated Program Model, or from another equivalent validated internal form, but the resulting IR MUST remain semantically grounded in validated program meaning rather than in editor-only convenience state.
+An implementation MAY derive IR directly from canonical source, from a validated Program Model, or from another equivalent validated internal form, but the resulting IR MUST remain semantically grounded in validated program meaning rather than in parser-only acceptance, structural-source admission alone, or editor-only convenience state.
 </p>
 
 <pre><code>.frog source
+    |
+    v
+loadability
+    |
+    v
+structural validity
     |
     v
 validated authoring form or equivalent
@@ -315,19 +336,19 @@ compiler / runtime-private forms
 </code></pre>
 
 <p>
-This is the practical corridor that the IR layer now closes explicitly:
+This is the practical corridor that the IR layer closes explicitly:
 </p>
 
 <pre><code>validated program meaning
-        -&gt;
+        ->
 derivation
-        -&gt;
+        ->
 recoverable IR identity and mapping
-        -&gt;
+        ->
 material IR construction
-        -&gt;
+        ->
 open Execution IR
-        -&gt;
+        ->
 later lowering and backend-facing handoff
 </code></pre>
 
@@ -380,6 +401,7 @@ This directory does not define:
 
 <ul>
   <li>the canonical <code>.frog</code> source structure in full,</li>
+  <li>source-schema posture or machine-checkable source shape artifacts,</li>
   <li>the public interface source model in full,</li>
   <li>the front-panel source model in full,</li>
   <li>the complete widget source model in full,</li>
@@ -398,7 +420,7 @@ In particular:
 </p>
 
 <ul>
-  <li><code>Expression/</code> owns canonical source representation,</li>
+  <li><code>Expression/</code> owns canonical source representation and structural validity,</li>
   <li><code>Language/</code> owns validated program meaning,</li>
   <li><code>Libraries/</code> owns intrinsic primitive vocabularies and primitive-local behavior,</li>
   <li><code>Profiles/</code> owns optional standardized capability families,</li>
@@ -411,13 +433,14 @@ The IR layer <strong>MUST NOT</strong> absorb those ownerships.
 
 <pre><code>Ownership quick denial
 
-"What does a valid .frog file look like?"          -&gt; Expression/
-"What does this construct mean?"                   -&gt; Language/
-"What primitive exists and what are its ports?"    -&gt; Libraries/
-"What optional capability family defines this?"    -&gt; Profiles/
-"How does the IDE edit or present this?"           -&gt; IDE/
-"What debugger UI is shown to the user?"           -&gt; IDE/
-"What private scheduler graph does runtime X use?" -&gt; outside IR ownership
+"What does a valid .frog file look like?"           -> Expression/
+"What belongs to source-schema posture?"            -> Expression/
+"What does this construct mean?"                    -> Language/
+"What primitive exists and what are its ports?"     -> Libraries/
+"What optional capability family defines this?"     -> Profiles/
+"How does the IDE edit or present this?"            -> IDE/
+"What debugger UI is shown to the user?"            -> IDE/
+"What private scheduler graph does runtime X use?"  -> outside IR ownership
 </code></pre>
 
 <hr/>
@@ -427,7 +450,7 @@ The IR layer <strong>MUST NOT</strong> absorb those ownerships.
 <h3 id="relation-with-expression">8.1 Relation with Expression</h3>
 
 <p>
-<code>Expression/</code> defines the canonical serialized source artifact of a FROG program.
+<code>Expression/</code> defines the canonical serialized source artifact of a FROG program and the structural admission boundary for canonical source.
 The source file remains the durable authoritative saved representation of the program.
 An execution IR is a <strong>derived form</strong>, not the canonical source.
 </p>
@@ -446,6 +469,10 @@ execution IR
 execution IR
    is derived from
 validated program meaning
+
+structural validity
+   is not
+execution IR
 </code></pre>
 
 <h3 id="relation-with-language">8.2 Relation with Language</h3>
@@ -476,16 +503,27 @@ The IR layer is therefore downstream from:
 
 <ul>
   <li><code>Language/Expression to validated meaning.md</code>,</li>
+  <li>the semantic layer described by <code>Language/Readme.md</code>.</li>
 </ul>
 
 <p>
-and upstream from:
+And upstream from:
 </p>
 
 <ul>
   <li><code>IR/Lowering.md</code>,</li>
   <li><code>IR/Backend contract.md</code>.</li>
 </ul>
+
+<p>
+The repository intentionally prevents this collapse:
+</p>
+
+<pre><code>source               != semantics
+structural validity  != semantic acceptance
+semantics            != IR
+IR                   != runtime-private representation
+</code></pre>
 
 <h3 id="relation-with-libraries-and-profiles">8.3 Relation with Libraries and Profiles</h3>
 
@@ -508,9 +546,9 @@ The IDE Program Model is the authoritative editable in-memory representation dur
 The open Execution IR is not the Program Model.
 </p>
 
-<pre><code>Expression/   -&gt; what is saved
-Program Model -&gt; what is edited
-Execution IR  -&gt; what is prepared for execution
+<pre><code>Expression/   -> what is saved
+Program Model -> what is edited
+Execution IR  -> what is prepared for execution
 </code></pre>
 
 <p>
@@ -636,25 +674,25 @@ The ownership split inside this directory is:
 </ul>
 
 <pre><code>Readme.md
-   -&gt; layer architecture and ownership
+   -> layer architecture and ownership
 
 Execution IR.md
-   -&gt; open IR model
+   -> open IR model
 
 Derivation rules.md
-   -&gt; correspondence obligations
+   -> correspondence obligations
 
 Construction rules.md
-   -&gt; build obligations
+   -> build obligations
 
 Identity and Mapping.md
-   -&gt; recoverability obligations
+   -> recoverability obligations
 
 Lowering.md
-   -&gt; downstream specialization boundary
+   -> downstream specialization boundary
 
 Backend contract.md
-   -&gt; downstream consumer-facing boundary
+   -> downstream consumer-facing boundary
 </code></pre>
 
 <hr/>
@@ -666,32 +704,36 @@ When writing or reviewing documents in this layer, the following quick check SHO
 </p>
 
 <pre><code>Does this define canonical source syntax or section structure?
--&gt; move to Expression/
+-> move to Expression/
+
+Does this define source-schema posture or machine-checkable
+structural source shape?
+-> move to Expression/
 
 Does this define what validated behavior means?
--&gt; move to Language/
+-> move to Language/
 
 Does this define intrinsic primitive identity or primitive-local behavior?
--&gt; move to Libraries/
+-> move to Libraries/
 
 Does this define an optional standardized capability family?
--&gt; move to Profiles/
+-> move to Profiles/
 
 Does this define authoring UX, editing behavior, debugging UX,
 or IDE model behavior?
--&gt; move to IDE/
+-> move to IDE/
 
 Does this define an execution-facing derived representation
 built from validated meaning?
--&gt; it likely belongs in core IR
+-> it likely belongs in core IR
 
 Does this define recoverable correspondence between source and IR?
--&gt; it likely belongs in Identity and Mapping.md
+-> it likely belongs in Identity and Mapping.md
    and related IR documents
 
 Does this define later specialization, target assumptions,
 or a backend-facing handoff from IR?
--&gt; it likely belongs in downstream IR-adjacent documents
+-> it likely belongs in downstream IR-adjacent documents
 </code></pre>
 
 <hr/>
@@ -704,29 +746,29 @@ A practical reading path is:
 </p>
 
 <pre><code>root Readme.md
-      -&gt;
-IR/Readme.md
-      -&gt;
-Language/Expression to validated meaning.md
-      -&gt;
-IR/Execution IR.md
-      -&gt;
-IR/Derivation rules.md
-      -&gt;
-IR/Identity and Mapping.md
-      -&gt;
-IR/Construction rules.md
-      -&gt;
-IR/Lowering.md
-      -&gt;
-IR/Backend contract.md
-      -&gt;
-Language/Readme.md
-      -&gt;
+      ->
 Expression/Readme.md
-      -&gt;
+      ->
+Language/Readme.md
+      ->
+Language/Expression to validated meaning.md
+      ->
+IR/Readme.md
+      ->
+IR/Execution IR.md
+      ->
+IR/Derivation rules.md
+      ->
+IR/Identity and Mapping.md
+      ->
+IR/Construction rules.md
+      ->
+IR/Lowering.md
+      ->
+IR/Backend contract.md
+      ->
 Expression/Cache.md
-      -&gt;
+      ->
 IDE/ relevant observability and tooling documents
 </code></pre>
 
@@ -736,16 +778,15 @@ That path is useful because:
 
 <ul>
   <li>the root README explains repository-wide architecture,</li>
+  <li><code>Expression/</code> closes the canonical source and structural-validity boundary,</li>
+  <li><code>Language/</code> closes validated semantic meaning,</li>
   <li>this file defines the ownership boundary of the IR layer,</li>
-  <li><code>Language/Expression to validated meaning.md</code> closes the upstream semantic boundary,</li>
   <li><code>Execution IR.md</code> defines the open execution-facing model,</li>
   <li><code>Derivation rules.md</code> closes the validated-program-to-IR correspondence boundary,</li>
   <li><code>Identity and Mapping.md</code> closes attribution continuity and recoverability obligations,</li>
   <li><code>Construction rules.md</code> closes the material IR build boundary,</li>
   <li><code>Lowering.md</code> explains where specialization begins,</li>
-  <li><code>Backend contract.md</code> explains downstream backend-facing assumptions,</li>
-  <li><code>Language/</code> remains the authority for semantic truth,</li>
-  <li><code>Expression/</code> remains the authority for canonical source.</li>
+  <li><code>Backend contract.md</code> explains downstream backend-facing assumptions.</li>
 </ul>
 
 <hr/>
@@ -763,7 +804,7 @@ The current closure of the directory is:
 <ul>
   <li>a clear architectural home for open execution-facing derived representations,</li>
   <li>a first concrete open Execution IR model,</li>
-  <li>a derivation boundary from validated FROG to open Execution IR,</li>
+  <li>a derivation boundary from validated FROG meaning to open Execution IR,</li>
   <li>an explicit identity and mapping boundary,</li>
   <li>a construction boundary for building open Execution IR,</li>
   <li>a first documented lowering boundary,</li>
@@ -807,6 +848,7 @@ The directory is therefore closed enough to define the first coherent IR archite
 
 It is not:
 - the source
+- structural validity
 - the Program Model
 - the full language semantics
 - the debugger UX
@@ -834,7 +876,7 @@ The <code>IR/</code> layer is the architectural bridge between:
 </ul>
 
 <p>
-Its core responsibility is to define an <strong>open, execution-facing, attributable, and recoverable representation layer</strong> without collapsing that layer into source syntax, IDE authoring models, or runtime-private realization.
+Its core responsibility is to define an <strong>open, execution-facing, attributable, and recoverable representation layer</strong> without collapsing that layer into source syntax, source-schema posture, IDE authoring models, or runtime-private realization.
 </p>
 
 <p>
@@ -842,14 +884,14 @@ In compact form:
 </p>
 
 <pre><code>🟩 validated program meaning
-      -&gt;
+      ->
 🟨 derivation + identity + construction boundary
-      -&gt;
+      ->
 🟦 open execution-facing IR
-      -&gt;
+      ->
 🟧 later specialization
-      -&gt;
+      ->
 🟨 backend-facing handoff
-      -&gt;
+      ->
 🟥 private realization
 </code></pre>
