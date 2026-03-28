@@ -93,7 +93,7 @@ structurally valid canonical source
         -/-> validated meaning
 
 validated meaning
-        -/-> arbitrary IR
+        -/-> arbitrary execution-facing form
 
 implementation convenience
         -/-> language truth
@@ -161,7 +161,7 @@ It includes:
   <li>correct source-structure validation,</li>
   <li>correct semantic validation,</li>
   <li>correct rejection where validated meaning does not exist,</li>
-  <li>correct preservation of distinctions across derivation into open Execution IR,</li>
+  <li>correct preservation of distinctions across derivation into the canonical Execution IR Document,</li>
   <li>correct preservation of required boundaries across later lowering and backend-facing handoff where applicable.</li>
 </ul>
 
@@ -263,7 +263,7 @@ Ownership remains:
   <li><code>Language/</code> — semantic truth and validated meaning,</li>
   <li><code>Libraries/</code> — intrinsic primitive vocabularies,</li>
   <li><code>Profiles/</code> — optional standardized capability families,</li>
-  <li><code>IR/</code> — execution-facing representation, derivation, construction, lowering, and backend-facing boundaries,</li>
+  <li><code>IR/</code> — canonical execution-facing representation, derivation, construction, lowering, and backend-facing boundaries,</li>
   <li><code>IDE/</code> — tooling behavior and authoring-facing concerns.</li>
 </ul>
 
@@ -302,8 +302,7 @@ It is a public executable reading of already-published ownership.
 <h2 id="critical-boundaries">7. Critical Boundaries</h2>
 
 <p>
-The first critical conformance boundary is not merely raw source to meaning.
-It is the staged progression:
+The first critical conformance boundary is the staged progression:
 </p>
 
 <pre><code>.frog source
@@ -332,7 +331,7 @@ This includes verifying:
   <li>what fails after canonical source shape is accepted but before semantic meaning is established,</li>
   <li>what establishes semantic meaning,</li>
   <li>what distinctions must survive validation,</li>
-  <li>what distinctions must survive derivation into open Execution IR,</li>
+  <li>what distinctions must survive derivation into the canonical Execution IR Document,</li>
   <li>what distinctions must remain explicit before later lowering and backend-facing handoff.</li>
 </ul>
 
@@ -343,14 +342,14 @@ The second critical boundary is:
 <pre><code>validated program meaning
       |
       v
-open Execution IR
+canonical Execution IR Document
 </code></pre>
 
 <p>
 The third critical downstream boundary is:
 </p>
 
-<pre><code>open Execution IR
+<pre><code>canonical Execution IR Document
       |
       v
 lowering / backend-facing handoff
@@ -369,10 +368,12 @@ feedback shape                 != state
 default inference              != explicit initialization
 structural validity            != semantic acceptance
 schema acceptance              != semantic acceptance
-validated meaning              != open Execution IR
-open Execution IR              != private runtime realization
+validated meaning              != canonical Execution IR
+canonical Execution IR         != private runtime realization
+backend contract               != private runtime structure
 backend family                 != target profile
 deployment mode                != runtime-private realization
+compiler-family route          != FROG semantic truth
 </code></pre>
 
 <p>
@@ -535,7 +536,7 @@ The published mirrored progression currently includes pairs such as:
 33 / 34   explicit state merge boundary != inferred runtime reconciliation pass
 35 / 36   explicit state commit boundary != inferred stabilization phase
 37 / 38   source attribution must remain recoverable
-39 / 40   open Execution IR != private runtime realization
+39 / 40   canonical Execution IR != private runtime realization
 41 / 42   backend contract != private runtime structure
 43 / 44   target profile != backend family
 45 / 46   deployment mode != runtime-private scheduling structure
@@ -699,7 +700,7 @@ The active public truth surface therefore emphasizes:
   <li>execution versus layout,</li>
   <li>connectivity versus order,</li>
   <li>explicit state-family boundaries,</li>
-  <li>the fact that validated meaning, Execution IR, lowering, and backend-facing handoff are distinct stages rather than one blurred implementation pipeline.</li>
+  <li>the fact that validated meaning, canonical Execution IR, lowering, and backend-facing handoff are distinct stages rather than one blurred implementation pipeline.</li>
 </ul>
 
 <p>
@@ -736,7 +737,8 @@ Language/
    defines semantic truth
 
 IR/
-   defines derivation, identity, construction, lowering, and backend-facing boundaries
+   defines the canonical execution-facing artifact, derivation, identity,
+   construction, lowering, and backend-facing boundaries
 
 Conformance/
    tests whether those published boundaries are being respected
@@ -785,7 +787,7 @@ Near-term future expansion areas include:
   <li>type and value legality,</li>
   <li>state semantics and timing,</li>
   <li>structure legality,</li>
-  <li>validated meaning to open-IR preservation,</li>
+  <li>validated meaning to canonical-IR preservation,</li>
   <li>profile-dependent behavior,</li>
   <li>backend-family and target-profile rejection cases where applicable.</li>
 </ul>
@@ -861,7 +863,7 @@ source-shape / schema-owned structural validity
    ->
 validated meaning
    ->
-open Execution IR
+canonical Execution IR
    ->
 lowering / backend-facing handoff
    ->
