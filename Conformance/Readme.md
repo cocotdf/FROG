@@ -15,7 +15,7 @@
 <ul>
   <li><a href="#overview">1. Overview</a></li>
   <li><a href="#core-purpose">2. Core Purpose</a></li>
-  <li><a href="#why-this-directory-exists">3. Why this Directory Exists</a></li>
+  <li><a href="#why-this-directory-exists">3. Why This Directory Exists</a></li>
   <li><a href="#definition-of-conformance">4. Definition of Conformance</a></li>
   <li><a href="#non-goals">5. Non-Goals</a></li>
   <li><a href="#relation-with-specification-ownership">6. Relation with Specification Ownership</a></li>
@@ -23,7 +23,7 @@
   <li><a href="#directory-structure">8. Directory Structure</a></li>
   <li><a href="#published-cases">9. Published Cases</a></li>
   <li><a href="#expected-outcomes">10. Expected Outcomes</a></li>
-  <li><a href="#v01-focus">11. Active v0.1 Conformance Focus</a></li>
+  <li><a href="#active-v01-conformance-focus">11. Active v0.1 Conformance Focus</a></li>
   <li><a href="#relation-with-examples-ir-and-reference-implementation">12. Relation with Examples, IR, and Reference Implementation</a></li>
   <li><a href="#future-growth">13. Future Growth</a></li>
   <li><a href="#summary">14. Summary</a></li>
@@ -34,7 +34,7 @@
 <h2 id="overview">1. Overview</h2>
 
 <p>
-This directory defines the <strong>public conformance surface</strong> of the FROG repository.
+This directory defines the public conformance surface of the FROG repository.
 </p>
 
 <p>
@@ -56,7 +56,7 @@ It makes the published language testable and publicly checkable.
 </p>
 
 <p>
-Conformance therefore belongs at the boundary between published repository law and observable implementation behavior.
+Conformance therefore sits at the boundary between published repository law and observable implementation behavior.
 It turns architectural distinctions into explicit public expectations.
 </p>
 
@@ -65,7 +65,7 @@ It turns architectural distinctions into explicit public expectations.
 <h2 id="core-purpose">2. Core Purpose</h2>
 
 <p>
-The purpose of conformance is to transform specification rules into <strong>checkable public expectations</strong>.
+The purpose of conformance is to transform specification rules into checkable public expectations.
 </p>
 
 <p>
@@ -101,6 +101,11 @@ implementation convenience
 "it runs"
         -/-> "it is correct"
 </code></pre>
+
+<p>
+Conformance is therefore not a commentary layer.
+It is the public truth surface that makes published repository law observable, comparable, and reviewable.
+</p>
 
 <hr/>
 
@@ -198,7 +203,7 @@ Where useful, a case MAY also make explicit whether it is:
 
 <ul>
   <li>schema-checkable at the source-shape level,</li>
-  <li>structurally valid only after rules that exceed a purely declarative schema artifact,</li>
+  <li>structurally invalid for reasons that remain source-owned even when they exceed a minimal declarative schema artifact,</li>
   <li>semantically invalid even though canonical source shape has already been accepted.</li>
 </ul>
 
@@ -286,6 +291,11 @@ In particular:
   <li>semantic rejection cases map back to <code>Language/</code>, <code>Libraries/</code>, or <code>Profiles/</code> as appropriate,</li>
   <li>preservation cases across derivation and lowering map back to <code>IR/</code>.</li>
 </ul>
+
+<p>
+A case file is therefore not a second specification.
+It is a public executable reading of already-published ownership.
+</p>
 
 <hr/>
 
@@ -403,7 +413,7 @@ In practice, the directory serves three public roles:
 </ul>
 
 <p>
-For v0.1, published cases SHOULD remain small, sharply-owned, and explicit about the stage at which acceptance or rejection occurs.
+For v0.1, published cases SHOULD remain small, sharply owned, and explicit about the stage at which acceptance or rejection occurs.
 </p>
 
 <p>
@@ -417,6 +427,19 @@ Where useful, cases SHOULD also be written so that the reader can tell whether t
   <li>preservation failure in later stages.</li>
 </ul>
 
+<p>
+Recommended reading corridor:
+</p>
+
+<pre><code>loadability
+   ->
+source-shape / structural validity
+   ->
+semantic acceptance
+   ->
+preservation expectations
+</code></pre>
+
 <hr/>
 
 <h2 id="published-cases">9. Published Cases</h2>
@@ -426,12 +449,57 @@ The current published set combines:
 </p>
 
 <ul>
+  <li>an explicit top-level source-shape valid / invalid block,</li>
   <li>early positive executable anchor cases,</li>
-  <li>a mirrored valid / invalid boundary progression,</li>
-  <li>additional invalid architectural rejection cases.</li>
+  <li>a mirrored valid / invalid architectural boundary progression,</li>
+  <li>additional standalone invalid architectural rejection cases.</li>
 </ul>
 
-<h3>9.1 Early valid executable anchor cases</h3>
+<h3>9.1 Published top-level source-shape block</h3>
+
+<p>
+The published top-level source-shape block currently includes:
+</p>
+
+<pre><code>valid/
+01_minimal_canonical_frog
+02_optional_sections_absent_is_still_valid
+03_optional_front_panel_absent_is_still_valid
+04_optional_connector_absent_is_still_valid
+05_optional_icon_absent_is_still_valid
+06_optional_ide_absent_is_still_valid
+07_optional_cache_absent_is_still_valid
+08_optional_connector_present_and_consistent
+09_optional_front_panel_present_and_structurally_valid
+10_distinct_source_identifiers_are_valid
+
+invalid/
+01_missing_required_section
+02_wrong_top_level_section_type
+03_connector_defines_logical_ports
+04_malformed_front_panel_structure
+05_duplicate_source_identifier
+06_invalid_top_level_root_shape
+07_invalid_section_placement
+08_connector_references_unknown_interface_port
+</code></pre>
+
+<p>
+This block matters because it makes the first public structural corridor explicit:
+</p>
+
+<pre><code>loadable JSON
+   ->
+canonical top-level source shape
+   ->
+later semantic validation
+</code></pre>
+
+<p>
+These cases should be read primarily as <code>Expression/</code>-owned conformance around canonical source shape and structural validity.
+</p>
+
+<h3>9.2 Early valid executable anchor cases</h3>
 
 <pre><code>01_pure_addition
 02_ui_value_roundtrip
@@ -444,10 +512,10 @@ These anchor cases show that conformance is not only about abstract rejection.
 It also covers minimal positive executable slices that the published architecture is expected to support.
 </p>
 
-<h3>9.2 Mirrored boundary progression</h3>
+<h3>9.3 Mirrored architectural boundary progression</h3>
 
 <p>
-The published mirrored progression currently includes:
+The published mirrored progression currently includes pairs such as:
 </p>
 
 <pre><code>05 / 06   public interface participation != widget participation
@@ -465,6 +533,12 @@ The published mirrored progression currently includes:
 29 / 30   explicit state snapshot boundary != inferred runtime observation point
 31 / 32   explicit state version boundary != inferred runtime update epoch
 33 / 34   explicit state merge boundary != inferred runtime reconciliation pass
+35 / 36   explicit state commit boundary != inferred stabilization phase
+37 / 38   source attribution must remain recoverable
+39 / 40   open Execution IR != private runtime realization
+41 / 42   backend contract != private runtime structure
+43 / 44   target profile != backend family
+45 / 46   deployment mode != runtime-private scheduling structure
 </code></pre>
 
 <p>
@@ -476,7 +550,7 @@ rejection alone is insufficient
 both define truth
 </code></pre>
 
-<h3>9.3 Additional invalid architectural rejection cases</h3>
+<h3>9.4 Additional standalone invalid architectural rejection cases</h3>
 
 <p>
 The published invalid set also contains additional non-mirrored rejection cases such as:
@@ -491,7 +565,7 @@ ui_reference_without_ui_primitive
 These exist because some architectural failures are important enough to publish even when they are not yet part of one large mirrored numbering progression.
 </p>
 
-<h3>9.4 Reading rule for published cases</h3>
+<h3>9.5 Reading rule for published cases</h3>
 
 <p>
 A published case defines public truth for the published repository state.
@@ -576,9 +650,26 @@ For later-stage-sensitive cases, expectations may also include:
   <li>required backend-facing explicitness where applicable.</li>
 </ul>
 
+<p>
+A useful discipline rule is:
+</p>
+
+<pre><code>loadable
+does not imply
+structurally valid
+
+structurally valid
+does not imply
+semantically accepted
+
+accepted meaning
+does not remove
+preservation obligations
+</code></pre>
+
 <hr/>
 
-<h2 id="v01-focus">11. Active v0.1 Conformance Focus</h2>
+<h2 id="active-v01-conformance-focus">11. Active v0.1 Conformance Focus</h2>
 
 <p>
 v0.1 focuses on architectural correctness, not broad feature coverage.
@@ -661,6 +752,12 @@ A machine-checkable schema artifact may assist source-structure validation.
 It does not replace the ownership boundary above.
 </p>
 
+<p>
+The reference implementation therefore remains a downstream consumer of published conformance expectations.
+It is useful as a proof surface.
+It is not the owner of conformance truth.
+</p>
+
 <hr/>
 
 <h2 id="future-growth">13. Future Growth</h2>
@@ -698,7 +795,7 @@ Growth should continue to prefer:
 </p>
 
 <ul>
-  <li>small sharply-owned boundary cases,</li>
+  <li>small sharply owned boundary cases,</li>
   <li>mirrored valid / invalid pairs where they clarify truth,</li>
   <li>additional standalone invalid cases where architecture requires them,</li>
   <li>explicit published expectations rather than implementation folklore.</li>
