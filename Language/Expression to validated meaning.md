@@ -45,10 +45,10 @@ This document defines the normative transition from <strong>structurally valid c
 </p>
 
 <p>
-It establishes what MUST be true before any standardized FROG Execution IR may be derived.
+It establishes what MUST be true before any canonical FROG Execution IR may be derived.
 </p>
 
-<pre><code>Expression/  ->  Language/  ->  IR/
+<pre><code>Expression/  -&gt;  Language/  -&gt;  IR/
    source          meaning       execution
 </code></pre>
 
@@ -57,7 +57,7 @@ This document governs the first semantic transition:
 </p>
 
 <pre><code>structurally valid canonical source
-    ->
+    -&gt;
 validated program meaning
 </code></pre>
 
@@ -88,7 +88,7 @@ This boundary produces exactly one of two outcomes:
 </ul>
 
 <p>
-No conforming system may derive Execution IR without validated meaning.
+No conforming system may derive a canonical Execution IR Document without validated meaning.
 </p>
 
 <p>
@@ -116,7 +116,7 @@ The output of this boundary is not:
 </ul>
 
 <p>
-This document therefore defines the semantic admission contract that must be satisfied before any open execution-facing derivation can begin.
+This document therefore defines the semantic admission contract that must be satisfied before any canonical execution-facing derivation can begin.
 </p>
 
 <hr/>
@@ -139,7 +139,7 @@ structural validity
 validated program meaning
         |
         v
-standardized FROG execution IR
+canonical Execution IR Document
         |
         v
 lowering
@@ -168,7 +168,7 @@ Accordingly:
 <ul>
   <li><code>Expression/</code> owns source shape and structural validity,</li>
   <li><code>Language/</code> owns semantic truth,</li>
-  <li><code>IR/</code> owns execution-oriented derived form.</li>
+  <li><code>IR/</code> owns execution-oriented derived representation.</li>
 </ul>
 
 <p>
@@ -206,6 +206,7 @@ This document does not define:
   <li>source-schema posture or machine-checkable structural source shape,</li>
   <li>primitive implementation internals,</li>
   <li>Execution IR structure,</li>
+  <li>IR canonical JSON schema shape,</li>
   <li>lowering strategy,</li>
   <li>backend contract shape,</li>
   <li>runtime-private behavior.</li>
@@ -215,9 +216,9 @@ This document does not define:
 
 <h2 id="relation-with-other-specifications">5. Relation with Other Specifications</h2>
 
-<pre><code>Expression/   -> canonical source shape and structural validity
-Language/     -> semantic truth at the validated-program boundary
-IR/           -> execution-oriented derived representation
+<pre><code>Expression/   -&gt; canonical source shape and structural validity
+Language/     -&gt; semantic truth at the validated-program boundary
+IR/           -&gt; canonical execution-oriented derived representation
 </code></pre>
 
 <p>
@@ -232,7 +233,7 @@ In practical terms:
 <ul>
   <li><code>Expression/</code> answers: <em>what may be written canonically, and what counts as structurally valid source?</em></li>
   <li>this document answers: <em>what must be true for that structurally valid source to count as validated meaning?</em></li>
-  <li><code>IR/Derivation rules.md</code> answers: <em>how does validated meaning become Execution IR?</em></li>
+  <li><code>IR/Derivation rules.md</code> answers: <em>how does validated meaning become the canonical Execution IR Document?</em></li>
 </ul>
 
 <p>
@@ -300,7 +301,7 @@ Validated meaning MUST define, for every accepted program:
 
 <p>
 After this stage, semantic ambiguity MUST NOT remain for IR derivation.
-IR derivation may still expand, normalize, or specialize meaning later,
+IR derivation may still expand, normalize, or make execution-facing structure more explicit later,
 but it MUST NOT still be solving basic semantic uncertainty that should have been resolved here.
 </p>
 
@@ -457,7 +458,7 @@ At this boundary:
 state meaning
 
 explicit semantic memory
-    ->
+    -&gt;
 valid stateful recurrence
 </code></pre>
 
@@ -553,17 +554,18 @@ A conforming implementation MUST NOT accept semantic meaning in a way that destr
 
 <h2 id="forbidden-boundary-collapses">17. Forbidden Boundary Collapses</h2>
 
-<pre><code>loadable source         -/-> validated meaning
-structurally valid source -/-> IR
-source                  -/-> private runtime truth
-validator               -/-> language law
-front panel             -/-> public interface
-connector layout        -/-> public interface meaning
-layout                  -/-> execution dependency
-runtime policy          -/-> semantics
-IDE metadata            -/-> semantics
-cache                   -/-> semantics
-implementation habit    -/-> accepted program meaning
+<pre><code>loadable source            -/-> validated meaning
+structurally valid source  -/-> canonical Execution IR
+source                     -/-> private runtime truth
+validator                  -/-> language law
+front panel                -/-> public interface
+connector layout           -/-> public interface meaning
+layout                     -/-> execution dependency
+runtime policy             -/-> semantics
+IDE metadata               -/-> semantics
+cache                      -/-> semantics
+implementation habit       -/-> accepted program meaning
+compiler-family form       -/-> language meaning
 </code></pre>
 
 <p>
@@ -574,7 +576,8 @@ In addition:
   <li>source acceptance MUST NOT depend on undeclared runtime behavior,</li>
   <li>semantic legality MUST NOT depend on one implementation’s private executor,</li>
   <li>front-panel arrangement MUST NOT silently become interface truth,</li>
-  <li>support-only source families MUST NOT silently acquire semantic force by implementation convenience.</li>
+  <li>support-only source families MUST NOT silently acquire semantic force by implementation convenience,</li>
+  <li>downstream compiler-family expectations MUST NOT redefine the validated meaning boundary.</li>
 </ul>
 
 <hr/>
@@ -590,14 +593,14 @@ This document guarantees that IR derivation:
   <li>does not need to repair missing execution meaning,</li>
   <li>does not need to invent explicit state where none was validated,</li>
   <li>does not need to reinterpret support-only layout content as execution structure,</li>
-  <li>only needs to transform validated meaning into Execution IR.</li>
+  <li>only needs to transform validated meaning into the canonical Execution IR Document.</li>
 </ul>
 
 <pre><code>this document answers:
-"What must be true before Execution IR exists?"
+"What must be true before the canonical Execution IR Document exists?"
 
 IR/Derivation rules.md answers:
-"How does validated meaning become Execution IR?"
+"How does validated meaning become the canonical Execution IR Document?"
 </code></pre>
 
 <p>
@@ -614,6 +617,7 @@ not hidden inside derivation.
   <li>validator implementation architecture,</li>
   <li>private internal validator data structures,</li>
   <li>Execution IR format,</li>
+  <li>IR canonical JSON schema shape,</li>
   <li>lowering strategy,</li>
   <li>backend contract structure,</li>
   <li>runtime-private realization,</li>
@@ -638,12 +642,12 @@ It is:
   <li>fully explicit for execution-relevant meaning,</li>
   <li>non-ambiguous,</li>
   <li>attributable,</li>
-  <li>ready for Execution IR derivation.</li>
+  <li>ready for canonical Execution IR derivation.</li>
 </ul>
 
-<pre><code>Expression  ->  Language  ->  IR
+<pre><code>Expression  -&gt;  Language  -&gt;  IR
 
-source      ->  meaning   ->  execution
+source      -&gt;  meaning   -&gt;  execution
 </code></pre>
 
 <p>
@@ -651,6 +655,6 @@ A conforming system therefore follows this rule:
 </p>
 
 <pre><code>no validated meaning
-        ->
-no conforming Execution IR
+        -&gt;
+no conforming canonical Execution IR
 </code></pre>
