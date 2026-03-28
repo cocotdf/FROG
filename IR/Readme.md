@@ -49,7 +49,7 @@ This directory defines the architectural home of <strong>open execution-facing r
 
 <p>
 A FROG program is not authored directly as an execution IR.
-It is authored as canonical source, admitted through structural validity, interpreted as validated program meaning, and only then may be represented in one or more <strong>open execution-facing derived forms</strong>.
+It is authored as canonical source, admitted through structural validity, interpreted as validated program meaning, and only then represented as a <strong>canonical open execution intermediate representation</strong>.
 </p>
 
 <p>
@@ -71,30 +71,31 @@ This directory therefore provides the durable normative home for:
 </p>
 
 <ul>
-  <li>the <strong>open Execution IR</strong> itself,</li>
-  <li>the <strong>derivation boundary</strong> from validated program meaning to open IR,</li>
-  <li>the <strong>construction boundary</strong> for materially building conforming open IR payloads,</li>
+  <li>the <strong>canonical Execution IR Document</strong> itself,</li>
+  <li>the <strong>derivation boundary</strong> from validated program meaning to canonical open IR,</li>
+  <li>the <strong>construction boundary</strong> for materially building conforming canonical IR documents,</li>
   <li>the <strong>identity and mapping boundary</strong> that preserves attribution and recoverability,</li>
+  <li>the <strong>schema posture and machine-checkable validation surface</strong> of the canonical JSON IR form,</li>
   <li>the first downstream-adjacent boundaries toward lowering and backend-facing handoff.</li>
 </ul>
 
 <pre><code>canonical source
-      ->
+      -&gt;
 structural validity
-      ->
+      -&gt;
 validated program meaning
-      ->
-open execution-facing IR
-      ->
+      -&gt;
+canonical Execution IR Document
+      -&gt;
 later specialization / lowering
-      ->
+      -&gt;
 backend-facing handoff
-      ->
+      -&gt;
 private realization
 </code></pre>
 
 <p>
-The core of this layer is the open Execution IR bundle.
+The core of this layer is the canonical open Execution IR bundle.
 The directory also contains downstream-adjacent documents that define how open IR connects to later stages without collapsing the open IR layer into runtime-private form.
 </p>
 
@@ -108,7 +109,7 @@ The diagrams in this README use the following visual legend:
 
 <ul>
   <li>🟦 <strong>Open specification-facing layer or document</strong></li>
-  <li>🟨 <strong>Standardized boundary, correspondence, mapping, or handoff</strong></li>
+  <li>🟨 <strong>Standardized boundary, correspondence, mapping, schema, or handoff</strong></li>
   <li>🟧 <strong>Lowering or target-specialization zone</strong></li>
   <li>🟥 <strong>Implementation-private realization zone</strong></li>
   <li>🟩 <strong>Semantic truth, attribution, recoverability, or diagnostic obligation</strong></li>
@@ -127,7 +128,7 @@ FROG deliberately separates several architectural levels that are often conflate
   <li>the source-owned structural admission boundary,</li>
   <li>the IDE editable in-memory model,</li>
   <li>validated program meaning,</li>
-  <li>the derived forms used to prepare execution,</li>
+  <li>the canonical execution-facing representation used to prepare execution,</li>
   <li>the later forms used to specialize execution for a target.</li>
 </ul>
 
@@ -157,11 +158,11 @@ Language/ says:
 "what the validated program means"
 
 IR/ says:
-"what open execution-facing representation may be built
+"what canonical open execution-facing representation is built
 from that validated meaning"
 
 Lowering says:
-"how open IR may be specialized for a target"
+"how canonical open IR is specialized for a target"
 
 Runtime says:
 "how one implementation realizes execution internally"
@@ -184,8 +185,8 @@ The shortest correct mental model of the surrounding architecture is:
 | Libraries/        | What intrinsic primitives exist?                 |
 | Profiles/         | What optional standardized capabilities exist?   |
 | IDE/              | How is the program authored and observed?        |
-| IR/               | What open execution-facing representation        |
-|                   | may be built from validated meaning?             |
+| IR/               | What canonical open execution-facing             |
+|                   | representation is built from validated meaning?  |
 +-------------------+--------------------------------------------------+
 </code></pre>
 
@@ -196,10 +197,10 @@ A second boundary view is:
 <pre><code>validated program meaning
           |
           v
-open execution-facing IR
+canonical open Execution IR
           |
           v
-identity / mapping / construction / handoff boundary
+identity / mapping / derivation / construction / schema boundary
           |
           v
 lowering / backend preparation
@@ -214,6 +215,7 @@ The key architectural rule is:
 
 <ul>
   <li><code>IR/</code> begins <strong>after validated program meaning</strong>,</li>
+  <li><code>IR/</code> defines the <strong>canonical open execution IR boundary artifact</strong>,</li>
   <li><code>IR/</code> remains <strong>before lowering and backend-facing contract</strong>,</li>
   <li><code>IR/</code> MUST remain distinct from runtime-private realization.</li>
 </ul>
@@ -226,7 +228,9 @@ More precisely, the core open-IR bundle is:
   <li><code>Execution IR.md</code>,</li>
   <li><code>Derivation rules.md</code>,</li>
   <li><code>Construction rules.md</code>,</li>
-  <li><code>Identity and Mapping.md</code>.</li>
+  <li><code>Identity and Mapping.md</code>,</li>
+  <li><code>Schema.md</code>,</li>
+  <li><code>schema/</code>.</li>
 </ul>
 
 <p>
@@ -270,9 +274,9 @@ Meaning side
 ------------
 validated program meaning
         |
-        +--> Language/
-        +--> Libraries/
-        +--> Profiles/
+        +--&gt; Language/
+        +--&gt; Libraries/
+        +--&gt; Profiles/
 
 IR side
 -------
@@ -280,6 +284,7 @@ Execution IR
 Derivation rules
 Construction rules
 Identity and Mapping
+Schema
         |
         v
 IR/
@@ -323,10 +328,16 @@ validated program meaning
 derivation
     |
     v
+identity / mapping preservation
+    |
+    v
 construction
     |
     v
-open Execution IR
+canonical Execution IR Document
+    |
+    v
+canonical JSON validation
     |
     v
 lowered / backend-facing forms
@@ -340,15 +351,17 @@ This is the practical corridor that the IR layer closes explicitly:
 </p>
 
 <pre><code>validated program meaning
-        ->
+        -&gt;
 derivation
-        ->
+        -&gt;
 recoverable IR identity and mapping
-        ->
+        -&gt;
 material IR construction
-        ->
-open Execution IR
-        ->
+        -&gt;
+canonical Execution IR Document
+        -&gt;
+canonical JSON schema validation
+        -&gt;
 later lowering and backend-facing handoff
 </code></pre>
 
@@ -365,8 +378,9 @@ This directory is the normative home for questions such as:
   <li>What is the architectural boundary between validated program meaning and open IR?</li>
   <li>Which execution-facing properties are preserved from validated program meaning into IR?</li>
   <li>Which properties may be made more explicit in IR without changing semantic truth?</li>
-  <li>How is open Execution IR derived and constructed from validated program meaning?</li>
+  <li>How is the canonical Execution IR Document derived and constructed from validated program meaning?</li>
   <li>How are identity, attribution, and recoverability preserved between source-visible content and IR content?</li>
+  <li>How is the canonical JSON form of the Execution IR validated?</li>
   <li>Where does open IR stop and later specialization begin?</li>
   <li>What downstream handoff assumptions may be standardized without collapsing into runtime-private realization?</li>
 </ul>
@@ -384,7 +398,9 @@ This directory therefore contains both:
 - Execution IR model
 - derivation rules
 - construction rules
-- identity and mapping support
+- recoverable identity and mapping
+- schema posture
+- machine-checkable schema artifacts
 
 Downstream IR-adjacent documents
 - lowering
@@ -433,14 +449,14 @@ The IR layer <strong>MUST NOT</strong> absorb those ownerships.
 
 <pre><code>Ownership quick denial
 
-"What does a valid .frog file look like?"           -> Expression/
-"What belongs to source-schema posture?"            -> Expression/
-"What does this construct mean?"                    -> Language/
-"What primitive exists and what are its ports?"     -> Libraries/
-"What optional capability family defines this?"     -> Profiles/
-"How does the IDE edit or present this?"            -> IDE/
-"What debugger UI is shown to the user?"            -> IDE/
-"What private scheduler graph does runtime X use?"  -> outside IR ownership
+"What does a valid .frog file look like?"           -&gt; Expression/
+"What belongs to source-schema posture?"            -&gt; Expression/
+"What does this construct mean?"                    -&gt; Language/
+"What primitive exists and what are its ports?"     -&gt; Libraries/
+"What optional capability family defines this?"     -&gt; Profiles/
+"How does the IDE edit or present this?"            -&gt; IDE/
+"What debugger UI is shown to the user?"            -&gt; IDE/
+"What private scheduler graph does runtime X use?"  -&gt; outside IR ownership
 </code></pre>
 
 <hr/>
@@ -452,39 +468,39 @@ The IR layer <strong>MUST NOT</strong> absorb those ownerships.
 <p>
 <code>Expression/</code> defines the canonical serialized source artifact of a FROG program and the structural admission boundary for canonical source.
 The source file remains the durable authoritative saved representation of the program.
-An execution IR is a <strong>derived form</strong>, not the canonical source.
+The Execution IR is a <strong>derived canonical open artifact</strong>, not the canonical source.
 </p>
 
 <ul>
   <li>canonical source identity MUST remain owned by <code>Expression/</code>,</li>
-  <li>the existence of an execution IR MUST NOT redefine what a valid <code>.frog</code> file is,</li>
+  <li>the existence of an Execution IR document MUST NOT redefine what a valid <code>.frog</code> file is,</li>
   <li>the absence of an embedded or sidecar IR artifact MUST NOT invalidate canonical source,</li>
   <li>IR attribution SHOULD remain able to refer back to source-visible objects defined by <code>Expression/</code>.</li>
 </ul>
 
 <pre><code>.frog source
    is not
-execution IR
+Execution IR
 
-execution IR
+Execution IR
    is derived from
 validated program meaning
 
 structural validity
    is not
-execution IR
+Execution IR
 </code></pre>
 
 <h3 id="relation-with-language">8.2 Relation with Language</h3>
 
 <p>
 <code>Language/</code> defines what a validated FROG program means when it executes.
-That semantic layer remains authoritative even when one or more execution IRs exist.
+That semantic layer remains authoritative even when one or more execution IR artifacts exist.
 </p>
 
 <ul>
   <li><code>Language/</code> defines semantic truth,</li>
-  <li><code>IR/</code> defines open execution-facing representation,</li>
+  <li><code>IR/</code> defines canonical open execution-facing representation,</li>
   <li><code>IR/</code> MUST NOT silently change language meaning,</li>
   <li><code>IR/</code> MAY make semantic consequences more explicit where execution preparation requires it.</li>
 </ul>
@@ -493,8 +509,8 @@ That semantic layer remains authoritative even when one or more execution IRs ex
 "What is true?"
 
 IR/ answers:
-"How may that validated truth be represented
-for execution-facing use?"
+"What canonical open execution-facing representation
+is built from that validated truth?"
 </code></pre>
 
 <p>
@@ -529,7 +545,7 @@ IR                   != runtime-private representation
 
 <p>
 IR is not a replacement for primitive-library or profile definitions.
-When an IR refers to executable operations, it SHOULD preserve or reference the primitive and capability identities defined elsewhere rather than redefining them privately.
+When IR refers to executable operations, it SHOULD preserve or reference the primitive and capability identities defined elsewhere rather than redefining them privately.
 </p>
 
 <ul>
@@ -543,17 +559,17 @@ When an IR refers to executable operations, it SHOULD preserve or reference the 
 
 <p>
 The IDE Program Model is the authoritative editable in-memory representation during authoring.
-The open Execution IR is not the Program Model.
+The canonical Execution IR is not the Program Model.
 </p>
 
-<pre><code>Expression/   -> what is saved
-Program Model -> what is edited
-Execution IR  -> what is prepared for execution
+<pre><code>Expression/   -&gt; what is saved
+Program Model -&gt; what is edited
+Execution IR  -&gt; what is prepared for execution
 </code></pre>
 
 <p>
 The Program Model MAY preserve editor-side state useful for round-trip authoring.
-The open Execution IR SHOULD NOT depend on editor-only presentation state as if that state were part of validated program meaning.
+The canonical Execution IR SHOULD NOT depend on editor-only presentation state as if that state were part of validated program meaning.
 </p>
 
 <h3 id="relation-with-cache-artifacts">8.5 Relation with Cache Artifacts</h3>
@@ -565,10 +581,10 @@ It only provides a storage or transport location for derived artifacts.
 </p>
 
 <ul>
-  <li>cache entries such as <code>frog.ir</code> MAY carry execution-facing derived data,</li>
+  <li>cache entries such as <code>frog.ir</code> MAY carry serialized canonical Execution IR data,</li>
   <li>cache presence MUST NOT change canonical source meaning,</li>
   <li>cache metadata MUST NOT affect execution semantics,</li>
-  <li>the normative meaning of execution IR belongs in <code>IR/</code>, not in cache examples.</li>
+  <li>the normative meaning of Execution IR belongs in <code>IR/</code>, not in cache examples.</li>
 </ul>
 
 <pre><code>IR meaning
@@ -611,6 +627,7 @@ IR/
    - recoverable derived identity
    - mapping anchors
    - structure-preserving execution-facing anchors
+   - schema-visible identity carriers where needed
 
 IDE/
    owns:
@@ -625,22 +642,25 @@ IDE/
 <h2 id="internal-document-structure">9. Internal Document Structure</h2>
 
 <p>
-The current published structure of the IR layer is:
+The current intended structure of the IR layer is:
 </p>
 
 <pre><code>IR/
-├─ Readme.md                  Architectural role and ownership of the IR layer
-├─ Execution IR.md            Open execution-facing IR model
-├─ Derivation rules.md        Correspondence from validated program meaning to open Execution IR
-├─ Construction rules.md      Material construction rules for open Execution IR
-├─ Identity and Mapping.md    Recoverable identity and mapping boundary
-├─ Lowering.md                Boundary from open IR toward target-oriented specialization
-└─ Backend contract.md        Backend-facing contract boundary for later consumption
+├─ Readme.md                         Architectural role and ownership of the IR layer
+├─ Execution IR.md                   Canonical open execution IR model
+├─ Derivation rules.md               Correspondence from validated program meaning to canonical Execution IR
+├─ Construction rules.md             Material construction rules for the canonical Execution IR Document
+├─ Identity and Mapping.md           Recoverable identity and mapping boundary
+├─ Schema.md                         Schema posture for canonical IR validation
+├─ schema/
+│  └─ frog.execution-ir.schema.json  Machine-checkable schema for the canonical Execution IR Document
+├─ Lowering.md                       Boundary from canonical open IR toward target-oriented specialization
+└─ Backend contract.md               Backend-facing contract boundary for later consumption
 </code></pre>
 
 <p>
 These documents all belong to <code>IR/</code>, but they do not all sit at the same architectural depth.
-The open Execution IR bundle remains the core of the layer.
+The canonical open Execution IR bundle remains the core of the layer.
 Lowering and backend contract remain downstream from that core even when documented in the same directory.
 </p>
 
@@ -649,6 +669,8 @@ Lowering and backend contract remain downstream from that core even when documen
 - Derivation rules.md
 - Construction rules.md
 - Identity and Mapping.md
+- Schema.md
+- schema/frog.execution-ir.schema.json
 
 Downstream IR-adjacent documents
 - Lowering.md
@@ -665,34 +687,42 @@ The ownership split inside this directory is:
 
 <ul>
   <li><code>Readme.md</code> defines the layer boundary, scope, and internal map.</li>
-  <li><code>Execution IR.md</code> defines what the open Execution IR is at the architectural level.</li>
-  <li><code>Derivation rules.md</code> defines what must correspond between validated program meaning and open Execution IR.</li>
-  <li><code>Construction rules.md</code> defines how a conforming open Execution IR payload is materially built.</li>
-  <li><code>Identity and Mapping.md</code> defines how attribution, recoverability, and mapping continuity survive derivation.</li>
-  <li><code>Lowering.md</code> defines where open IR ends and target-oriented specialization begins.</li>
+  <li><code>Execution IR.md</code> defines what the canonical open Execution IR is at the architectural level.</li>
+  <li><code>Derivation rules.md</code> defines what must correspond between validated program meaning and the canonical Execution IR Document.</li>
+  <li><code>Construction rules.md</code> defines how a conforming canonical Execution IR Document is materially built.</li>
+  <li><code>Identity and Mapping.md</code> defines how attribution, recoverability, and mapping continuity survive derivation and construction.</li>
+  <li><code>Schema.md</code> defines the machine-checkable validation posture of the canonical JSON IR surface.</li>
+  <li><code>schema/</code> contains the published machine-checkable schema artifacts.</li>
+  <li><code>Lowering.md</code> defines where canonical open IR ends and target-oriented specialization begins.</li>
   <li><code>Backend contract.md</code> defines what later backend-facing stages may rely on once lowering has occurred.</li>
 </ul>
 
 <pre><code>Readme.md
-   -> layer architecture and ownership
+   -&gt; layer architecture and ownership
 
 Execution IR.md
-   -> open IR model
+   -&gt; canonical open IR model
 
 Derivation rules.md
-   -> correspondence obligations
+   -&gt; correspondence obligations
 
 Construction rules.md
-   -> build obligations
+   -&gt; build obligations
 
 Identity and Mapping.md
-   -> recoverability obligations
+   -&gt; recoverability obligations
+
+Schema.md
+   -&gt; schema posture
+
+schema/
+   -&gt; machine-checkable schema artifacts
 
 Lowering.md
-   -> downstream specialization boundary
+   -&gt; downstream specialization boundary
 
 Backend contract.md
-   -> downstream consumer-facing boundary
+   -&gt; downstream consumer-facing boundary
 </code></pre>
 
 <hr/>
@@ -704,36 +734,40 @@ When writing or reviewing documents in this layer, the following quick check SHO
 </p>
 
 <pre><code>Does this define canonical source syntax or section structure?
--> move to Expression/
+-&gt; move to Expression/
 
 Does this define source-schema posture or machine-checkable
 structural source shape?
--> move to Expression/
+-&gt; move to Expression/
 
 Does this define what validated behavior means?
--> move to Language/
+-&gt; move to Language/
 
 Does this define intrinsic primitive identity or primitive-local behavior?
--> move to Libraries/
+-&gt; move to Libraries/
 
 Does this define an optional standardized capability family?
--> move to Profiles/
+-&gt; move to Profiles/
 
 Does this define authoring UX, editing behavior, debugging UX,
 or IDE model behavior?
--> move to IDE/
+-&gt; move to IDE/
 
 Does this define an execution-facing derived representation
 built from validated meaning?
--> it likely belongs in core IR
+-&gt; it likely belongs in core IR
 
 Does this define recoverable correspondence between source and IR?
--> it likely belongs in Identity and Mapping.md
+-&gt; it likely belongs in Identity and Mapping.md
    and related IR documents
+
+Does this define the canonical JSON validation surface
+of the open IR?
+-&gt; it likely belongs in Schema.md or IR/schema/
 
 Does this define later specialization, target assumptions,
 or a backend-facing handoff from IR?
--> it likely belongs in downstream IR-adjacent documents
+-&gt; it likely belongs in downstream IR-adjacent documents
 </code></pre>
 
 <hr/>
@@ -746,29 +780,33 @@ A practical reading path is:
 </p>
 
 <pre><code>root Readme.md
-      ->
+      -&gt;
 Expression/Readme.md
-      ->
+      -&gt;
 Language/Readme.md
-      ->
+      -&gt;
 Language/Expression to validated meaning.md
-      ->
+      -&gt;
 IR/Readme.md
-      ->
+      -&gt;
 IR/Execution IR.md
-      ->
+      -&gt;
 IR/Derivation rules.md
-      ->
+      -&gt;
 IR/Identity and Mapping.md
-      ->
+      -&gt;
 IR/Construction rules.md
-      ->
+      -&gt;
+IR/Schema.md
+      -&gt;
+IR/schema/frog.execution-ir.schema.json
+      -&gt;
 IR/Lowering.md
-      ->
+      -&gt;
 IR/Backend contract.md
-      ->
+      -&gt;
 Expression/Cache.md
-      ->
+      -&gt;
 IDE/ relevant observability and tooling documents
 </code></pre>
 
@@ -781,10 +819,12 @@ That path is useful because:
   <li><code>Expression/</code> closes the canonical source and structural-validity boundary,</li>
   <li><code>Language/</code> closes validated semantic meaning,</li>
   <li>this file defines the ownership boundary of the IR layer,</li>
-  <li><code>Execution IR.md</code> defines the open execution-facing model,</li>
+  <li><code>Execution IR.md</code> defines the canonical open execution-facing model,</li>
   <li><code>Derivation rules.md</code> closes the validated-program-to-IR correspondence boundary,</li>
   <li><code>Identity and Mapping.md</code> closes attribution continuity and recoverability obligations,</li>
   <li><code>Construction rules.md</code> closes the material IR build boundary,</li>
+  <li><code>Schema.md</code> closes the schema-validation posture of the canonical JSON form,</li>
+  <li><code>schema/frog.execution-ir.schema.json</code> exposes the machine-checkable validation surface,</li>
   <li><code>Lowering.md</code> explains where specialization begins,</li>
   <li><code>Backend contract.md</code> explains downstream backend-facing assumptions.</li>
 </ul>
@@ -803,16 +843,17 @@ The current closure of the directory is:
 
 <ul>
   <li>a clear architectural home for open execution-facing derived representations,</li>
-  <li>a first concrete open Execution IR model,</li>
-  <li>a derivation boundary from validated FROG meaning to open Execution IR,</li>
+  <li>a canonical Execution IR Document model,</li>
+  <li>a derivation boundary from validated FROG meaning to canonical Execution IR,</li>
   <li>an explicit identity and mapping boundary,</li>
-  <li>a construction boundary for building open Execution IR,</li>
+  <li>a construction boundary for building canonical Execution IR documents,</li>
+  <li>a schema posture and machine-checkable schema surface for the canonical JSON IR form,</li>
   <li>a first documented lowering boundary,</li>
   <li>a first documented backend-facing contract boundary.</li>
 </ul>
 
 <p>
-The corridor from semantic truth to open IR is now explicitly structured as:
+The corridor from semantic truth to canonical open IR is now explicitly structured as:
 </p>
 
 <ul>
@@ -820,7 +861,19 @@ The corridor from semantic truth to open IR is now explicitly structured as:
   <li>derivation correspondence,</li>
   <li>identity and mapping recoverability,</li>
   <li>material construction,</li>
-  <li>open Execution IR.</li>
+  <li>canonical Execution IR Document,</li>
+  <li>canonical JSON schema validation.</li>
+</ul>
+
+<p>
+In base v0.1, the following points are now intentionally fixed:
+</p>
+
+<ul>
+  <li>one validated FROG program yields one canonical Execution IR Document,</li>
+  <li>that canonical IR document contains one execution unit,</li>
+  <li>the open wire form of that document is canonical JSON,</li>
+  <li>the canonical JSON form has a public machine-checkable schema surface.</li>
 </ul>
 
 <p>
@@ -828,8 +881,8 @@ What is still intentionally <strong>not</strong> frozen in v0.1 includes:
 </p>
 
 <ul>
-  <li>one universal serialized IR wire format,</li>
-  <li>one universal normalization pipeline shape,</li>
+  <li>one mandatory private in-memory compiler representation,</li>
+  <li>one mandatory SSA form,</li>
   <li>one mandatory lowering pipeline shape,</li>
   <li>one mandatory backend-family taxonomy,</li>
   <li>one mandatory runtime-private execution structure,</li>
@@ -837,13 +890,14 @@ What is still intentionally <strong>not</strong> frozen in v0.1 includes:
 </ul>
 
 <p>
-The directory is therefore closed enough to define the first coherent IR architecture, while still deliberately avoiding over-freezing implementation-private realization.
+The directory is therefore closed enough to define the first serious DFIR-like open IR architecture, while still deliberately avoiding over-freezing implementation-private realization.
 </p>
 
 <pre><code>IR is the published architectural home for:
-- open execution-facing representation
+- canonical open execution-facing representation
 - derivation and construction rules
 - recoverable identity and mapping
+- canonical JSON schema validation
 - downstream handoff boundaries
 
 It is not:
@@ -876,7 +930,7 @@ The <code>IR/</code> layer is the architectural bridge between:
 </ul>
 
 <p>
-Its core responsibility is to define an <strong>open, execution-facing, attributable, and recoverable representation layer</strong> without collapsing that layer into source syntax, source-schema posture, IDE authoring models, or runtime-private realization.
+Its core responsibility is to define a <strong>canonical, open, execution-facing, attributable, recoverable, and schema-checkable representation layer</strong> without collapsing that layer into source syntax, source-schema posture, IDE authoring models, or runtime-private realization.
 </p>
 
 <p>
@@ -884,14 +938,14 @@ In compact form:
 </p>
 
 <pre><code>🟩 validated program meaning
-      ->
-🟨 derivation + identity + construction boundary
-      ->
-🟦 open execution-facing IR
-      ->
+      -&gt;
+🟨 derivation + identity + construction + schema boundary
+      -&gt;
+🟦 canonical open Execution IR
+      -&gt;
 🟧 later specialization
-      ->
+      -&gt;
 🟨 backend-facing handoff
-      ->
+      -&gt;
 🟥 private realization
 </code></pre>
