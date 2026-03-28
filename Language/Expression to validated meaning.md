@@ -5,7 +5,7 @@
 <h1 align="center">FROG Expression to Validated Meaning</h1>
 
 <p align="center">
-  <strong>Normative boundary from canonical <code>.frog</code> source to validated program meaning</strong><br/>
+  <strong>Normative boundary from structurally valid canonical <code>.frog</code> source to validated program meaning</strong><br/>
   <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -40,7 +40,7 @@
 <h2 id="overview">1. Overview</h2>
 
 <p>
-This document defines the normative transition from canonical <code>.frog</code> source to
+This document defines the normative transition from <strong>structurally valid canonical <code>.frog</code> source</strong> to
 <strong>validated program meaning</strong>.
 </p>
 
@@ -48,22 +48,30 @@ This document defines the normative transition from canonical <code>.frog</code>
 It establishes what MUST be true before any standardized FROG Execution IR may be derived.
 </p>
 
-<pre><code>Expression/  -&gt;  Language/  -&gt;  IR/
+<pre><code>Expression/  ->  Language/  ->  IR/
    source          meaning       execution
 </code></pre>
 
 <p>
-This document governs the first transition:
+This document governs the first semantic transition:
 </p>
 
-<pre><code>.frog source
-    -&gt;
+<pre><code>structurally valid canonical source
+    ->
 validated program meaning
 </code></pre>
 
 <p>
 Its role is not to restate the full source model and not to define IR structure.
 Its role is to define the <strong>semantic closure boundary</strong> between those two layers.
+</p>
+
+<p>
+That distinction matters:
+a source file may be loadable,
+it may be structurally valid as canonical source,
+and it may still fail to produce validated meaning.
+This document governs only the final step in that sequence.
 </p>
 
 <hr/>
@@ -76,7 +84,7 @@ This boundary produces exactly one of two outcomes:
 
 <ul>
   <li>a valid, semantically closed program meaning, or</li>
-  <li>a rejection, meaning no validated meaning exists for that source.</li>
+  <li>a rejection, meaning no validated meaning exists for that accepted source.</li>
 </ul>
 
 <p>
@@ -107,6 +115,10 @@ The output of this boundary is not:
   <li>a backend-family-specific handoff.</li>
 </ul>
 
+<p>
+This document therefore defines the semantic admission contract that must be satisfied before any open execution-facing derivation can begin.
+</p>
+
 <hr/>
 
 <h2 id="position-in-the-architecture">3. Position in the Architecture</h2>
@@ -116,6 +128,12 @@ The intended architectural order is:
 </p>
 
 <pre><code>canonical .frog source
+        |
+        v
+loadability
+        |
+        v
+structural validity
         |
         v
 validated program meaning
@@ -134,10 +152,10 @@ private realization
 </code></pre>
 
 <p>
-This document owns the second line only:
+This document owns the semantic line only:
 </p>
 
-<pre><code>canonical .frog source
+<pre><code>structurally valid canonical source
         |
         v
 validated program meaning
@@ -148,14 +166,20 @@ Accordingly:
 </p>
 
 <ul>
-  <li><code>Expression/</code> owns source shape,</li>
+  <li><code>Expression/</code> owns source shape and structural validity,</li>
   <li><code>Language/</code> owns semantic truth,</li>
   <li><code>IR/</code> owns execution-oriented derived form.</li>
 </ul>
 
 <p>
-A conforming implementation MUST therefore not bypass validated meaning by jumping directly from source to IR or from source to private execution.
+A conforming implementation MUST therefore not:
 </p>
+
+<ul>
+  <li>bypass structural validity when attempting semantic admission,</li>
+  <li>bypass validated meaning by jumping directly from source to IR,</li>
+  <li>bypass validated meaning by jumping directly from source to private execution.</li>
+</ul>
 
 <hr/>
 
@@ -166,7 +190,7 @@ This document defines:
 </p>
 
 <ul>
-  <li>what validation MUST establish before semantic acceptance,</li>
+  <li>what semantic validation MUST establish before semantic acceptance,</li>
   <li>what becomes validated program meaning,</li>
   <li>which distinctions MUST remain explicit at the semantic boundary,</li>
   <li>what MUST remain attributable and recoverable,</li>
@@ -179,6 +203,7 @@ This document does not define:
 
 <ul>
   <li>source serialization syntax in general,</li>
+  <li>source-schema posture or machine-checkable structural source shape,</li>
   <li>primitive implementation internals,</li>
   <li>Execution IR structure,</li>
   <li>lowering strategy,</li>
@@ -190,9 +215,9 @@ This document does not define:
 
 <h2 id="relation-with-other-specifications">5. Relation with Other Specifications</h2>
 
-<pre><code>Expression/   -&gt; canonical source shape
-Language/     -&gt; semantic truth at the validated-program boundary
-IR/           -&gt; execution-oriented derived representation
+<pre><code>Expression/   -> canonical source shape and structural validity
+Language/     -> semantic truth at the validated-program boundary
+IR/           -> execution-oriented derived representation
 </code></pre>
 
 <p>
@@ -205,8 +230,8 @@ In practical terms:
 </p>
 
 <ul>
-  <li><code>Expression/</code> answers: <em>what may be written canonically?</em></li>
-  <li>this document answers: <em>what must be true for that source to count as validated meaning?</em></li>
+  <li><code>Expression/</code> answers: <em>what may be written canonically, and what counts as structurally valid source?</em></li>
+  <li>this document answers: <em>what must be true for that structurally valid source to count as validated meaning?</em></li>
   <li><code>IR/Derivation rules.md</code> answers: <em>how does validated meaning become Execution IR?</em></li>
 </ul>
 
@@ -231,12 +256,11 @@ This document also works together with:
 <h2 id="validation-inputs">6. Validation Inputs</h2>
 
 <p>
-Validation at this boundary MUST consider all source content that can affect semantic acceptance.
+Validation at this boundary MUST consider all structurally valid source content that can affect semantic acceptance.
 That includes, where present and relevant:
 </p>
 
 <ul>
-  <li>source structure,</li>
   <li>public interface declarations,</li>
   <li>diagram nodes and edges,</li>
   <li>type expressions and type compatibility,</li>
@@ -246,6 +270,11 @@ That includes, where present and relevant:
   <li>widget participation where execution-relevant,</li>
   <li>profile-owned capability requirements when explicitly used.</li>
 </ul>
+
+<p>
+Structural validation is upstream of this document.
+Semantic admission at this boundary MUST therefore assume structurally valid canonical source as input, not raw malformed or structurally rejected source.
+</p>
 
 <p>
 Validation is therefore cross-document and cross-layer in input, but its resulting semantic acceptance is owned here.
@@ -428,7 +457,7 @@ At this boundary:
 state meaning
 
 explicit semantic memory
-    -&gt;
+    ->
 valid stateful recurrence
 </code></pre>
 
@@ -524,16 +553,17 @@ A conforming implementation MUST NOT accept semantic meaning in a way that destr
 
 <h2 id="forbidden-boundary-collapses">17. Forbidden Boundary Collapses</h2>
 
-<pre><code>source                 -/-> IR
-source                 -/-> private runtime truth
-validator              -/-> language law
-front panel            -/-> public interface
-connector layout       -/-> public interface meaning
-layout                 -/-> execution dependency
-runtime policy         -/-> semantics
-IDE metadata           -/-> semantics
-cache                  -/-> semantics
-implementation habit   -/-> accepted program meaning
+<pre><code>loadable source         -/-> validated meaning
+structurally valid source -/-> IR
+source                  -/-> private runtime truth
+validator               -/-> language law
+front panel             -/-> public interface
+connector layout        -/-> public interface meaning
+layout                  -/-> execution dependency
+runtime policy          -/-> semantics
+IDE metadata            -/-> semantics
+cache                   -/-> semantics
+implementation habit    -/-> accepted program meaning
 </code></pre>
 
 <p>
@@ -604,16 +634,16 @@ It is:
 </p>
 
 <ul>
-  <li>the result of successful validation,</li>
+  <li>the result of successful semantic validation over structurally valid source,</li>
   <li>fully explicit for execution-relevant meaning,</li>
   <li>non-ambiguous,</li>
   <li>attributable,</li>
   <li>ready for Execution IR derivation.</li>
 </ul>
 
-<pre><code>Expression  -&gt;  Language  -&gt;  IR
+<pre><code>Expression  ->  Language  ->  IR
 
-source      -&gt;  meaning   -&gt;  execution
+source      ->  meaning   ->  execution
 </code></pre>
 
 <p>
@@ -621,6 +651,6 @@ A conforming system therefore follows this rule:
 </p>
 
 <pre><code>no validated meaning
-        -&gt;
+        ->
 no conforming Execution IR
 </code></pre>
