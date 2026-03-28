@@ -180,7 +180,8 @@ This directory focuses on the authoritative source form.
 </p>
 
 <p>
-Accordingly, this directory defines how a FROG is <strong>serialized</strong>, not every detail of how it is edited, semantically validated by a given tool, derived into IR, lowered, compiled, executed, or deployed.
+Accordingly, this directory defines how a FROG is <strong>serialized</strong>, how canonical source becomes <strong>structurally valid</strong>, and what belongs to the source-owned validation corridor before later semantic interpretation.
+It does not by itself define every detail of how a FROG is edited, semantically validated by a given tool, derived into IR, lowered, compiled, executed, or deployed.
 </p>
 
 <pre>
@@ -448,18 +449,19 @@ Optional sections
 <h2 id="representation-levels">6. Representation Levels</h2>
 
 <p>
-FROG distinguishes four related but distinct representation levels:
+FROG distinguishes five related but distinct representation levels:
 </p>
 
 <ul>
   <li><strong>FROG Expression</strong> — the serialized canonical source representation stored in a <code>.frog</code> file,</li>
+  <li><strong>Structural validity</strong> — the source-owned stage at which canonical source shape is accepted as valid FROG Expression,</li>
   <li><strong>FROG Program Model</strong> — the canonical editable in-memory representation reconstructed and maintained by tools during authoring,</li>
   <li><strong>Validated program meaning</strong> — the normative semantic state established after validation against the relevant language, library, and profile rules,</li>
   <li><strong>Open execution-facing representation</strong> — the IR-layer representation derived from validated program meaning.</li>
 </ul>
 
 <p>
-This directory primarily specifies the FROG Expression.
+This directory primarily specifies the FROG Expression and the structural validity boundary that canonical source must satisfy.
 Tooling MAY reconstruct a Program Model from the Expression and MAY derive an open execution-facing representation from validated program meaning.
 However, the canonical editable source of a FROG remains the <code>.frog</code> file itself.
 </p>
@@ -471,6 +473,9 @@ Representation pipeline
    |
    v
 FROG Expression
+   |
+   v
+structural validity
    |
    v
 Program Model
@@ -488,18 +493,20 @@ These levels are related but not identical:
 
 <ul>
   <li>the Expression is the durable source artifact,</li>
+  <li>structural validity is the source-owned admission boundary for canonical source,</li>
   <li>the Program Model is the editable in-memory tool model,</li>
   <li>validated program meaning is the semantic truth layer,</li>
   <li>the open execution-facing representation is the derived execution layer.</li>
 </ul>
 
 <pre>
-Think of the four levels like this
+Think of the five levels like this
 
-Expression     -> what is saved
-Program Model  -> what is edited
-Language       -> what is true
-IR             -> what is derived
+Expression          -> what is saved
+Structural validity -> what is source-accepted
+Program Model       -> what is edited
+Language            -> what is true
+IR                  -> what is derived
 </pre>
 
 <hr/>
@@ -895,7 +902,7 @@ FROG v0.1 includes source-facing representation rules for structures, explicit l
 
 <ul>
   <li><code>Control structures.md</code> defines the source-facing representation of structure families and their serialized form,</li>
-  <li><code>State and cycles.md</code> defines the source-facing representation of explicit local-memory elements and feedback-cycle constraints.</li>
+  <li><code>State and cycles.md</code> defines the source-facing representation of explicit local-memory elements and feedback-cycle formation constraints.</li>
 </ul>
 
 <p>
@@ -1181,8 +1188,6 @@ A conforming toolchain SHOULD apply the following conceptual pipeline:
 <pre><code>FROG Expression
     ↓ parse / load
 Source-derived program content
-    ↓ reconstruct as needed
-Program Model
     ↓ structural checks owned by Expression/
 Structurally valid canonical source
     ↓ validate against Language/ + Libraries/ + Profiles/
@@ -1192,20 +1197,25 @@ Open execution-facing representation
     ↓ lower / compile / execute</code></pre>
 
 <p>
+Tooling MAY reconstruct or maintain a Program Model while performing this work.
+However, the structural admission boundary remains source-owned, and validated meaning remains semantically owned outside <code>Expression/</code>.
+</p>
+
+<p>
 Validation includes, as applicable:
 </p>
 
 <ul>
   <li>top-level section presence and structure checks,</li>
-  <li>type-expression validation,</li>
+  <li>type-expression validation where the concern is source-shape and source-owned representation,</li>
   <li>interface consistency checks,</li>
   <li>connector consistency checks,</li>
-  <li>diagram graph validation,</li>
+  <li>diagram graph validation at the source-owned structural level,</li>
   <li>front-panel and widget validation when <code>front_panel</code> is present,</li>
-  <li>widget interaction validation,</li>
+  <li>widget interaction validation at the source-owned representation level,</li>
   <li>control-structure source validation,</li>
   <li>cycle and local-memory source validation,</li>
-  <li>primitive reference validation against the relevant intrinsic library catalogs and any relevant supported profile specifications.</li>
+  <li>primitive reference validation against the relevant intrinsic library catalogs and any relevant supported profile specifications where semantic ownership applies.</li>
 </ul>
 
 <p>
@@ -1375,7 +1385,7 @@ Future revisions SHOULD also preserve the core architectural distinctions alread
 </p>
 
 <ul>
-  <li>source expression versus Program Model versus validated program meaning versus open execution-facing representation,</li>
+  <li>source expression versus structural validity versus Program Model versus validated program meaning versus open execution-facing representation,</li>
   <li>canonical source representation versus normative execution semantics,</li>
   <li>source structural validity versus semantic acceptance,</li>
   <li>source-schema posture versus validator implementation behavior,</li>
