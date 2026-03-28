@@ -100,7 +100,7 @@ Its role is to provide a durable open foundation for future:
 
 <p>
 The repository also contains repository-level support material that helps make the specification inspectable in practice:
-named examples, early conformance material, and a non-normative reference implementation workspace.
+named examples, conformance material, and a non-normative reference implementation workspace.
 Those areas support the published specification, but they do not replace its ownership boundaries.
 </p>
 
@@ -133,12 +133,12 @@ These remain the primary ownership layers of the published language specificatio
 </p>
 
 <p>
-The repository also now contains three important repository-level support areas:
+The repository also contains three important repository-level support areas:
 </p>
 
 <ul>
   <li><strong><code>Examples/</code></strong> — named source examples and the first executable vertical slices,</li>
-  <li><strong><code>Conformance/</code></strong> — early conformance material describing what should validate, fail, be preserved, or be rejected,</li>
+  <li><strong><code>Conformance/</code></strong> — public accept / reject / preserve expectations for the published repository state,</li>
   <li><strong><code>Implementations/Reference/</code></strong> — a non-normative reference implementation workspace used to exercise a disciplined minimal execution path.</li>
 </ul>
 
@@ -154,8 +154,15 @@ The currently published example slices are:
 </ul>
 
 <p>
+The published repository now also makes the early source-validation corridor more explicit:
+canonical source ownership and source-schema posture are published in <code>Expression/</code>,
+conformance reading is staged across loadability, structural validity, semantic acceptance, and preservation,
+and the reference implementation posture is explicitly downstream from those stages.
+</p>
+
+<p>
 Together, these published materials show that the repository is no longer only architectural prose.
-It already exposes a first repository-visible reference path where a controlled published subset can be loaded, validated, derived into a standardized open execution-facing representation, lowered toward a backend family, emitted as a backend-facing contract, and consumed by a reference runtime experiment.
+It already exposes a first repository-visible reference path where a controlled published subset can be loaded, structurally validated, semantically validated, derived into a standardized open execution-facing representation, lowered toward a backend family, emitted as a backend-facing contract, and consumed by a reference runtime experiment.
 </p>
 
 <p>
@@ -171,7 +178,7 @@ That published reality does <strong>not</strong> yet mean that the repository al
 <p>
 The current repository state should therefore be read as:
 published architectural specification first,
-published early examples and conformance expectations,
+published source-schema and conformance posture for the current subset,
 and published non-normative executable reference prototypes for a controlled subset.
 </p>
 
@@ -463,7 +470,7 @@ The support areas exist to make that baseline more inspectable, testable, and ex
 
 <pre><code>FROG/
 │
-├── Conformance/                      Early conformance material and expected outcomes
+├── Conformance/                      Public accept / reject / preserve expectations
 ├── Examples/                         Named source examples and first executable vertical slices
 ├── Expression/                       Canonical source specification for .frog programs
 ├── IDE/                              IDE architecture, authoring, observability, debugging, and inspection
@@ -473,6 +480,9 @@ The support areas exist to make that baseline more inspectable, testable, and ex
 ├── Language/                         Normative execution semantics for validated program meaning
 ├── Libraries/                        Intrinsic standardized primitive-library specifications
 ├── Profiles/                         Optional standardized capability-family specifications
+├── Roadmap/                          Non-normative closure sequencing and milestone tracking
+├── Strategy/
+│   └── Heilmeier/                    Strategic framing layer distinct from normative ownership
 │
 ├── CLA.md                            Contributor license agreement requirements
 ├── CONTRIBUTING.md                   Contribution process and contribution rules
@@ -506,16 +516,38 @@ The current repository-level support areas are:
   <li><strong><code>Implementations/Reference/</code></strong> — non-normative prototype workspace used to exercise the current reference path.</li>
 </ul>
 
-<h3><code>Conformance/</code> — early conformance material</h3>
+<p>
+The repository also contains:
+</p>
+
+<ul>
+  <li><strong><code>Strategy/Heilmeier/</code></strong> — strategic framing that remains distinct from normative ownership,</li>
+  <li><strong><code>Roadmap/</code></strong> — non-normative sequencing and milestone tracking for project closure.</li>
+</ul>
+
+<h3><code>Conformance/</code> — public conformance material</h3>
 
 <p>
-This directory contains early conformance material for the published FROG specification.
+This directory contains the public conformance surface for the published FROG specification.
 Its role is to make expected outcomes explicit:
 what a conforming toolchain should accept,
 what it should reject,
 what distinctions must be preserved,
-and what unsupported situations must cause explicit rejection rather than silent reinterpretation.
+and what unsupported situations must be reported explicitly rather than silently reinterpreted.
 </p>
+
+<p>
+Its reading corridor is intentionally staged:
+</p>
+
+<pre><code>loadability
+   ->
+structural validity
+   ->
+semantic acceptance
+   ->
+preservation expectations
+</code></pre>
 
 <h3><code>Examples/</code> — named source examples and first executable slices</h3>
 
@@ -540,6 +572,11 @@ At the current published state, the first visible example slices are:
 <p>
 This directory defines the canonical <code>.frog</code> source format.
 It describes what a FROG source file contains, how source sections are represented, and how source-visible program objects are serialized.
+</p>
+
+<p>
+It also explicitly owns source-shape/schema posture and structural validity for canonical source.
+Repository-visible machine-checkable schema artifacts may assist structural reproducibility, but they remain downstream from the published prose ownership of <code>Expression/</code>.
 </p>
 
 <h3><code>Language/</code> — normative execution semantics</h3>
@@ -586,6 +623,14 @@ Within the current published repository, this workspace contains prototype compo
 <p>
 These executable slices are reference prototypes.
 They are serious implementation exercises, but they are not yet the final production compiler pipeline of FROG.
+</p>
+
+<p>
+The validator posture of this workspace is explicitly staged and downstream from the specification:
+loadability,
+structural validation,
+semantic validation,
+then derivation and later execution-preparation stages.
 </p>
 
 <h3><code>Libraries/</code> — intrinsic standardized primitive libraries</h3>
@@ -651,18 +696,37 @@ The map below summarizes the intended role of the Markdown documents in the curr
 │
 ├── Conformance/
 │   └── Readme.md
-│       -> early conformance material, expected outcomes, valid/invalid case posture,
-│          preservation obligations, rejection expectations, and relation with examples
+│       -> public conformance posture, staged expected outcomes,
+│          valid/invalid case posture, preservation obligations,
+│          rejection expectations, and relation with examples
 │
 ├── Implementations/
 │   └── Reference/
 │       └── Readme.md
 │           -> non-normative reference workspace, executable-slice purpose,
-│              prototype status, future compiler direction, and slice summary
+│              staged validator posture, prototype status,
+│              and future compiler direction
+│
+├── Roadmap/
+│   ├── Readme.md
+│   │   -> non-normative closure sequencing, current baseline interpretation,
+│   │      phase ordering, and project-level closure bias
+│   └── Milestones.md
+│       -> compact milestone tracking for repository-level closure progress
+│
+├── Strategy/
+│   └── Heilmeier/
+│       └── Readme.md
+│           -> strategic framing distinct from normative specification
 │
 ├── Expression/
 │   ├── Readme.md
 │   │   -> architectural entry point for canonical source representation
+│   ├── Schema.md
+│   │   -> source-schema posture and machine-checkable structural validation boundary
+│   ├── schema/
+│   │   └── frog.schema.json
+│   │       -> conservative machine-checkable canonical top-level source schema
 │   ├── Metadata.md
 │   │   -> descriptive program metadata and non-executable identification fields
 │   ├── Type.md
@@ -744,7 +808,9 @@ The map below summarizes the intended role of the Markdown documents in the curr
 │
 ├── Profiles/
 │   ├── Readme.md
-│   │   -> architectural entry point for optional standardized capability families
+│   │   -> architectural entry point for optional standardized capability families,
+│   │      including target profiles, deployment modes, backend families,
+│   │      and runtime modules as distinct categories
 │   └── Interop.md
 │       -> Interop profile specification for frog.connectivity.* and related
 │          optional foreign-runtime / SQL interoperability capability
@@ -791,6 +857,9 @@ Readme.md
 Expression/Readme.md
    |
    v
+Expression/Schema.md
+   |
+   v
 Language/Readme.md
    |
    v
@@ -812,6 +881,7 @@ This first path mirrors the current architectural baseline:
 
 <ul>
   <li><strong>Expression</strong> defines the canonical saved source form,</li>
+  <li><strong>Expression/Schema.md</strong> makes explicit what belongs to source-shape/schema posture and structural validity,</li>
   <li><strong>Language</strong> defines normative execution semantics for validated program meaning,</li>
   <li><strong>IR</strong> defines the open execution-facing representation derived from that validated meaning,</li>
   <li><strong>Libraries</strong> define the intrinsic standardized executable primitive vocabularies,</li>
@@ -885,7 +955,7 @@ The repository is intentionally split into distinct architectural layers:
 </p>
 
 <ul>
-  <li><strong>Expression</strong> — canonical source representation, source sections, and source serialization rules,</li>
+  <li><strong>Expression</strong> — canonical source representation, source sections, source serialization rules, source-schema posture, and structural validity,</li>
   <li><strong>Language</strong> — normative execution semantics for validated program meaning,</li>
   <li><strong>IR</strong> — open execution-facing representations derived from validated program meaning,</li>
   <li><strong>Libraries</strong> — intrinsic standardized primitive vocabularies and primitive-local behavior,</li>
@@ -904,7 +974,7 @@ different actors may later build compatible IDEs, validators, runtimes, compiler
 </p>
 
 <pre>
-Expression/   -> canonical source form
+Expression/   -> canonical source form and structural validity
 Language/     -> validated program meaning
 IR/           -> open execution-facing representation
 Libraries/    -> intrinsic standardized primitive vocabularies
@@ -956,7 +1026,7 @@ Those later areas are not yet closed top-level specification families in the sam
 <h2 id="program-representation">Program representation</h2>
 
 <p>
-FROG programs should be understood across <strong>four</strong> distinct representation levels.
+FROG programs should be understood across <strong>five</strong> distinct representation levels.
 </p>
 
 <h3>1. FROG Expression</h3>
@@ -1001,7 +1071,36 @@ The public interface remains independent from the front panel.
 The front panel remains optional and non-authoritative for public interface definition.
 </p>
 
-<h3>2. FROG Program Model</h3>
+<h3>2. Structural validity</h3>
+
+<p>
+A loadable JSON source file is not automatically a structurally valid canonical FROG source file.
+Structural validity is an explicit stage owned by <code>Expression/</code>.
+</p>
+
+<p>
+At this stage, the repository distinguishes:
+</p>
+
+<ul>
+  <li>raw loadability,</li>
+  <li>canonical top-level source shape,</li>
+  <li>source-owned structural requirements,</li>
+  <li>machine-checkable schema assistance where published.</li>
+</ul>
+
+<p>
+Structural validity is not yet semantic truth.
+A source file may therefore be:
+</p>
+
+<ul>
+  <li>not loadable,</li>
+  <li>loadable but structurally invalid,</li>
+  <li>structurally valid but semantically invalid.</li>
+</ul>
+
+<h3>3. FROG Program Model</h3>
 
 <p>
 The <strong>FROG Program Model</strong> is the canonical editable in-memory representation used by IDEs during authoring.
@@ -1027,7 +1126,7 @@ It is not the same thing as the raw serialized source file.
 It is also not, by itself, the normative execution-semantics layer of the language.
 </p>
 
-<h3>3. Validated program meaning</h3>
+<h3>4. Validated program meaning</h3>
 
 <p>
 A source-derived FROG program must first be validated against the relevant language, primitive-library, and profile rules.
@@ -1047,7 +1146,7 @@ At this level, the repository defines:
   <li>optional profile-owned capability behavior where applicable.</li>
 </ul>
 
-<h3>4. Open execution-facing representation</h3>
+<h3>5. Open execution-facing representation</h3>
 
 <p>
 A validated FROG is not executed directly from raw source text.
@@ -1068,10 +1167,13 @@ Within the current published architecture, the open Execution IR core may then b
 .frog source
     |
     v
-Expression
+loadability
     |
     v
-Program Model
+structural validity
+    |
+    v
+Program Model / validated source-derived program
     |
     v
 validated program meaning
@@ -1088,12 +1190,12 @@ lowering / backend-facing handoff
 <h2 id="execution-architecture">Execution architecture</h2>
 
 <p>
-A conforming FROG ecosystem should separate <strong>authoring</strong>, <strong>canonical source</strong>, <strong>validated program meaning</strong>, <strong>open execution-facing representation</strong>, and <strong>target-specific execution realization</strong>.
+A conforming FROG ecosystem should separate <strong>authoring</strong>, <strong>canonical source</strong>, <strong>structural validity</strong>, <strong>validated program meaning</strong>, <strong>open execution-facing representation</strong>, and <strong>target-specific execution realization</strong>.
 </p>
 
 <p>
 A FROG is <strong>not</strong> executed directly from raw source text.
-A toolchain edits a Program Model, serializes canonical source, validates program meaning against the relevant semantic, intrinsic-library, and profile rules, derives an open execution-facing representation, preserves recoverable attribution and mapping across that derivation, and only then proceeds toward lowering, backend preparation, compilation, or runtime realization.
+A toolchain edits a Program Model, serializes canonical source, validates structural source shape against the published source-owned rules, validates program meaning against the relevant semantic, intrinsic-library, and profile rules, derives an open execution-facing representation, preserves recoverable attribution and mapping across that derivation, and only then proceeds toward lowering, backend preparation, compilation, or runtime realization.
 </p>
 
 <pre>
@@ -1112,7 +1214,8 @@ A toolchain edits a Program Model, serializes canonical source, validates progra
                      v                           v
         🟩 OPEN SOURCE LAYER                Validation against
         🟩 FROG Expression                 +----------------------+
-        (.frog, canonical source)         | Language/            |
+        (.frog, canonical source)         | Expression/          |
+                                          | Language/            |
                                           | Libraries/           |
                                           | Profiles/            |
                                           +----------+-----------+
@@ -1166,6 +1269,7 @@ It also separates what remains <strong>normatively open and inspectable</strong>
 
 <ul>
   <li>canonical source remains open, durable, and authoritative,</li>
+  <li>structural validity remains source-owned and distinct from semantic acceptance,</li>
   <li>execution IR remains open, inspectable, and specification-facing,</li>
   <li>identity and mapping remain recoverable where required for attribution and diagnostics,</li>
   <li>lowering, backend preparation, compiler internals, runtime scheduling, and target realization MAY vary across implementations.</li>
@@ -1178,7 +1282,7 @@ They are source-aligned views and controls that allow implementations to project
 
 <pre>
 what is saved       -> Expression/
-what is validated   -> Language/ + Libraries/ + Profiles/
+what is validated   -> Expression/ + Language/ + Libraries/ + Profiles/
 what is derived     -> IR/
 what is executed    -> compiler / backend / runtime implementations
 what is observed    -> IDE-facing source-aligned observability and debugging
@@ -1364,6 +1468,7 @@ FROG is designed for interoperability at several levels:
 <ul>
   <li><strong>source interoperability</strong> — the canonical <code>.frog</code> file is readable, structured, and tool-independent,</li>
   <li><strong>editing interoperability</strong> — multiple IDEs may reconstruct equivalent Program Models,</li>
+  <li><strong>structural interoperability</strong> — canonical source shape can be checked against shared source-owned structural rules,</li>
   <li><strong>semantic interoperability</strong> — validated programs are interpreted against shared language, intrinsic-library, and profile specifications,</li>
   <li><strong>IR interoperability</strong> — multiple toolchains may derive compatible open execution-facing representations,</li>
   <li><strong>execution interoperability</strong> — multiple toolchains may target compatible artifacts and execution environments,</li>
@@ -1409,6 +1514,7 @@ FROG explicitly separates:
 <ul>
   <li>the language specification,</li>
   <li>the canonical source representation,</li>
+  <li>source-schema posture and structural validity,</li>
   <li>the editable program model,</li>
   <li>validated program meaning,</li>
   <li>the open execution-facing representation,</li>
@@ -1433,7 +1539,8 @@ At the modeling level, FROG also separates:
 
 <ul>
   <li>language from IDE,</li>
-  <li>source from IR,</li>
+  <li>source from structural validation,</li>
+  <li>structural validity from semantic truth,</li>
   <li>semantic truth from derived execution-facing representation,</li>
   <li>intrinsic libraries from optional profiles,</li>
   <li>IDE from runtime,</li>
@@ -1508,7 +1615,7 @@ Commercial implementations seeking official certification or branding MAY be sub
 
 <p>
 FROG is currently under active design, cleanup, and stabilization.
-The repository already contains substantial material across canonical source representation, language semantics, open execution-facing IR architecture, intrinsic standardized primitive libraries, optional profile architecture, and IDE architecture, but the overall specification is still converging toward a coherent v0.1 foundation.
+The repository already contains substantial material across canonical source representation, source-schema posture, language semantics, open execution-facing IR architecture, intrinsic standardized primitive libraries, optional profile architecture, and IDE architecture, but the overall specification is still converging toward a coherent v0.1 foundation.
 </p>
 
 <p>
@@ -1518,7 +1625,7 @@ It already contains:
 
 <ul>
   <li>a published <code>Examples/</code> directory with the first four repository-visible executable slices,</li>
-  <li>a published <code>Conformance/</code> directory with early valid/invalid structure and explicit expected-outcome posture,</li>
+  <li>a published <code>Conformance/</code> directory with explicit staged expected-outcome posture,</li>
   <li>a published <code>Implementations/Reference/</code> workspace whose current purpose is to exercise disciplined minimal executable vertical slices for a controlled subset.</li>
 </ul>
 
@@ -1539,6 +1646,7 @@ Current repository direction therefore includes both <strong>architectural stabi
 
 <ul>
   <li>stabilizing the canonical source specification,</li>
+  <li>stabilizing source-shape/schema posture and structural validation boundaries,</li>
   <li>stabilizing the separation between canonical source representation and normative execution semantics,</li>
   <li>stabilizing the separation between normative execution semantics and the open execution-facing IR layer,</li>
   <li>clarifying language semantics and execution behavior,</li>
