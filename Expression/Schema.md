@@ -27,7 +27,7 @@
   <li><a href="#schema-vs-semantic-validation">12. Schema vs Semantic Validation</a></li>
   <li><a href="#schema-vs-ir-vs-runtime">13. Schema vs IR vs Runtime</a></li>
   <li><a href="#validator-posture">14. Validator Posture</a></li>
-  <li><a href="#conformance-relation">15. Relation with Conformance</a></li>
+  <li><a href="#relation-with-conformance">15. Relation with Conformance</a></li>
   <li><a href="#representation-and-evolution-rules">16. Representation and Evolution Rules</a></li>
   <li><a href="#minimum-guarantees">17. Minimum Guarantees</a></li>
   <li><a href="#reading-rule">18. Reading Rule</a></li>
@@ -40,38 +40,45 @@
 <h2 id="overview">1. Overview</h2>
 
 <p>
-This document defines the schema posture of the canonical FROG source format.
+This document defines the schema posture of canonical FROG source.
 It specifies how machine-checkable structural validation relates to the published FROG Expression specification.
 </p>
 
 <p>
 In FROG, a schema is not the whole language.
 A schema is the machine-checkable structural contract of canonical <code>.frog</code> source.
-It exists to make source-shape validation explicit, reproducible, comparable across implementations, and clearly separated from later semantic validation, IR derivation, lowering, backend handoff, and private runtime realization.
+It exists so that source-shape validation becomes explicit, reproducible, implementation-comparable, and clearly separated from semantic validation, IR derivation, lowering, backend-facing handoff, and private runtime realization.
 </p>
 
 <p>
-This document therefore sits at the boundary between:
+This document therefore sits at the following boundary:
 </p>
 
 <pre><code>canonical source prose
         +
 machine-checkable structural rules
         -
-semantic meaning
+validated meaning
         -
-execution IR
+Execution IR
+        -
+lowering and backend contract
         -
 runtime-private realization
 </code></pre>
+
+<p>
+This is a source-ownership document.
+It defines what schema means in FROG, what schema is allowed to own, what schema must not own, and how machine-checkable source validation must remain disciplined as the repository grows.
+</p>
 
 <hr/>
 
 <h2 id="why-this-document-exists">2. Why This Document Exists</h2>
 
 <p>
-The FROG repository already defines canonical source structure in <code>Expression/</code>.
-However, source structure should not remain prose-only once the project reaches a stage where disciplined validators, conformance growth, and repeatable reference execution matter.
+The repository already defines canonical source structure in <code>Expression/</code>.
+However, once disciplined validators, conformance growth, and repeatable reference execution matter, structural validity must not remain prose-only or validator-folklore-only.
 </p>
 
 <p>
@@ -116,6 +123,8 @@ Accordingly:
   <li><code>Expression/</code> owns what is machine-checkable as source structure.</li>
   <li><code>Expression/</code> does not own validated meaning.</li>
   <li><code>Expression/</code> does not own Execution IR shape.</li>
+  <li><code>Expression/</code> does not own lowering.</li>
+  <li><code>Expression/</code> does not own backend contract content.</li>
   <li><code>Expression/</code> does not own private runtime representation.</li>
 </ul>
 
@@ -143,18 +152,25 @@ It may cover, for example:
   <li>section type constraints,</li>
   <li>required object properties for structurally defined source objects,</li>
   <li>allowed structural discriminators,</li>
-  <li>container kinds such as object / array / scalar where structurally relevant,</li>
+  <li>container kinds such as object, array, and scalar where structurally relevant,</li>
   <li>forbidden malformed placements that can be rejected without semantic interpretation.</li>
 </ul>
 
 <p>
 It does not automatically cover every rule that can be stated in prose.
-Some structural rules may remain validator logic rather than pure declarative schema if they are awkward to encode declaratively while still clearly belonging to source structure.
+Some structural rules may remain validator logic rather than pure declarative schema when they clearly belong to source structure but are awkward to encode declaratively without reducing clarity or recoverability.
 </p>
 
 <p>
-Therefore, “schema” in FROG is broader than one specific serialization technology and narrower than the whole language.
+Therefore, “schema” in FROG is:
 </p>
+
+<ul>
+  <li>broader than one serialization technology,</li>
+  <li>broader than one validator implementation,</li>
+  <li>narrower than the whole language,</li>
+  <li>strictly upstream from semantic validation and IR work.</li>
+</ul>
 
 <hr/>
 
@@ -174,7 +190,7 @@ Structural validation is the stage after loadability and before semantic validat
 </code></pre>
 
 <p>
-This document governs the second step only:
+This document governs the second step only.
 </p>
 
 <ul>
@@ -198,7 +214,10 @@ A source file may therefore be:
 </ul>
 
 <p>
-Those states must not be collapsed.
+These states MUST NOT be collapsed.
+A structural rejection is not a semantic rejection.
+A semantic rejection is not malformed source.
+An implementation subset limitation is not specification invalidity.
 </p>
 
 <hr/>
@@ -211,7 +230,7 @@ This document does not define:
 
 <ul>
   <li>the complete semantic interpretation of nodes, edges, structures, widgets, or state,</li>
-  <li>the complete legality of type/value combinations,</li>
+  <li>the complete legality of type and value combinations,</li>
   <li>the full primitive catalog,</li>
   <li>profile-owned optional capability semantics,</li>
   <li>Execution IR construction,</li>
@@ -234,7 +253,7 @@ The normative requirement is the published structural contract, not one implemen
 <h2 id="schema-layers">7. Schema Layers</h2>
 
 <p>
-FROG schema posture has three layers.
+FROG source-schema posture has three layers.
 </p>
 
 <h3>7.1 Normative structural prose</h3>
@@ -271,6 +290,20 @@ It must align with the published source contract.
 It must not silently expand language law.
 </p>
 
+<p>
+Useful reading rule:
+</p>
+
+<pre><code>published prose
+    owns structural truth
+
+machine-checkable artifact
+    assists structural reproducibility
+
+implementation validator
+    consumes the published contract
+</code></pre>
+
 <hr/>
 
 <h2 id="top-level-canonical-source-shape">8. Top-Level Canonical Source Shape</h2>
@@ -285,7 +318,8 @@ At the top level, a canonical <code>.frog</code> source file MUST satisfy the fo
   <li>the root MAY contain <code>connector</code>, <code>front_panel</code>, <code>icon</code>, <code>ide</code>, and <code>cache</code>,</li>
   <li>required and optional sections MUST appear at the top level only,</li>
   <li>top-level section names MUST follow the canonical section vocabulary defined by <code>Expression/</code>,</li>
-  <li>top-level section values MUST have the structural kind required by their owning section specification.</li>
+  <li>top-level section values MUST have the structural kind required by their owning section specification,</li>
+  <li>unexpected top-level sections MUST be rejected as structurally invalid canonical source.</li>
 </ul>
 
 <p>
@@ -313,11 +347,11 @@ Cache.md              - shape of cache section
 
 <p>
 This file does not centralize every sub-object definition into one giant prose table.
-Instead, it defines the posture under which those sections may be rendered into machine-checkable structural rules.
+Instead, it defines the posture under which those section-owned source rules may be rendered into machine-checkable structural artifacts.
 </p>
 
 <p>
-A useful rule:
+A useful ownership rule is:
 </p>
 
 <ul>
@@ -325,6 +359,11 @@ A useful rule:
   <li>section-local structural object shape is governed by the owning section document,</li>
   <li>cross-section semantic consistency is not automatically a schema concern.</li>
 </ul>
+
+<p>
+This avoids one of the main failure modes of growing schema systems:
+a central artifact silently becoming the hidden owner of many local section rules that it no longer explains well.
+</p>
 
 <hr/>
 
@@ -353,9 +392,14 @@ Example distinction:
 </p>
 
 <ul>
-  <li>“this object must contain a <code>kind</code> discriminator and an array named <code>ports</code>” may be schema-level,</li>
+  <li>“this object MUST contain a <code>kind</code> discriminator and an array named <code>ports</code>” may be schema-level,</li>
   <li>“this structure is semantically legal only when its selector type matches all branch expectations” is not automatically schema-level.</li>
 </ul>
+
+<p>
+Schema growth across cross-cutting subsystems should therefore remain selective and boundary-aware:
+encode structural shape where useful, but do not drag semantic legality upstream into source-shape validation.
+</p>
 
 <hr/>
 
@@ -380,7 +424,8 @@ It SHOULD NOT attempt to force every meaningful rule into one declarative format
   <li>blur the structural versus semantic boundary,</li>
   <li>smuggle execution meaning into source schema,</li>
   <li>encode implementation-specific convenience as if it were repository law,</li>
-  <li>make the published ownership harder to understand.</li>
+  <li>make published ownership harder to understand,</li>
+  <li>reduce recoverability of why a rule exists and where it is owned.</li>
 </ul>
 
 <p>
@@ -395,6 +440,28 @@ Accordingly, the machine-checkable schema posture in FROG is intentionally conse
   <li>leave IR construction to the IR corridor,</li>
   <li>leave runtime choices to implementations.</li>
 </ul>
+
+<p>
+At the current repository stage, the published machine-checkable posture may therefore be partial without being weak.
+Partial machine-checkability is acceptable when:
+</p>
+
+<ul>
+  <li>its limits are explicit,</li>
+  <li>ownership remains attributable,</li>
+  <li>structural versus semantic boundaries remain clear,</li>
+  <li>implementations are not forced to guess silently.</li>
+</ul>
+
+<p>
+The important rule is not “encode everything”.
+The important rule is:
+</p>
+
+<pre><code>encode what is structurally stable
+publish what remains prose-owned
+do not blur the boundary
+</code></pre>
 
 <hr/>
 
@@ -436,12 +503,21 @@ semantically valid
 </code></pre>
 
 <p>
-And the inverse is also important:
+And the inverse is equally important:
 </p>
 
 <pre><code>semantic rejection
 must not be mislabeled
 as malformed source
+</code></pre>
+
+<p>
+Likewise:
+</p>
+
+<pre><code>unsupported by one implementation subset
+does not mean
+invalid by repository law
 </code></pre>
 
 <hr/>
@@ -469,6 +545,7 @@ Therefore, the schema layer MUST NOT:
 
 <ul>
   <li>define Execution IR node identities,</li>
+  <li>define derivation results as if they were source shape,</li>
   <li>define lowering-time specialization,</li>
   <li>define backend-family assumptions,</li>
   <li>define runtime module composition,</li>
@@ -477,7 +554,10 @@ Therefore, the schema layer MUST NOT:
 </ul>
 
 <p>
-The schema layer only guarantees that canonical source is structurally shaped well enough to proceed to later stages.
+The schema layer only guarantees that canonical source is structurally well-formed enough to proceed to later stages.
+It does not guarantee semantic acceptance.
+It does not guarantee successful execution.
+It does not guarantee support in one implementation stack.
 </p>
 
 <hr/>
@@ -511,6 +591,17 @@ A validator SHOULD report at least:
 </ul>
 
 <p>
+A validator MAY use repository-visible machine-checkable artifacts to support structural validation.
+However:
+</p>
+
+<ul>
+  <li>a machine-checkable artifact does not override normative prose,</li>
+  <li>implementation convenience does not override published ownership,</li>
+  <li>a passed validator run does not redefine the language.</li>
+</ul>
+
+<p>
 A validator MUST NOT:
 </p>
 
@@ -523,16 +614,16 @@ A validator MUST NOT:
 
 <hr/>
 
-<h2 id="conformance-relation">15. Relation with Conformance</h2>
+<h2 id="relation-with-conformance">15. Relation with Conformance</h2>
 
 <p>
 This document defines schema posture.
 <code>Conformance/</code> defines public testable expectations against that posture.
 </p>
 
-<pre><code>Expression/   - structural contract is written
-Conformance/  - structural contract is tested
-Implementations/Reference/ - structural contract is consumed
+<pre><code>Expression/                  - structural contract is written
+Conformance/                 - structural contract is tested
+Implementations/Reference/   - structural contract is consumed
 </code></pre>
 
 <p>
@@ -542,12 +633,13 @@ Accordingly:
 <ul>
   <li>schema-owned rejection cases belong naturally in <code>Conformance/invalid/</code>,</li>
   <li>schema-owned acceptance cases belong naturally in <code>Conformance/valid/</code>,</li>
-  <li>conformance expectations SHOULD distinguish loadability from structural validity from semantic validity.</li>
+  <li>conformance expectations SHOULD distinguish loadability, structural validity, semantic acceptance, and preservation.</li>
 </ul>
 
 <p>
 Conformance does not redefine schema ownership.
 It makes it inspectable.
+A case passing in one implementation does not turn implementation behavior into repository law.
 </p>
 
 <hr/>
@@ -567,7 +659,7 @@ Therefore:
   <li>schema artifacts SHOULD be version-aware where <code>spec_version</code> materially affects allowed source structure,</li>
   <li>new schema constraints SHOULD be introduced conservatively,</li>
   <li>schema growth SHOULD prefer explicit ownership and recoverability over compact cleverness,</li>
-  <li>schema changes MUST NOT silently move semantic or IR ownership into <code>Expression/</code>.</li>
+  <li>schema changes MUST NOT silently move semantic, IR, or runtime ownership into <code>Expression/</code>.</li>
 </ul>
 
 <p>
@@ -576,12 +668,23 @@ Partial machine-checkability is acceptable.
 Silent ambiguity is not.
 </p>
 
+<p>
+Preferred growth pattern:
+</p>
+
+<pre><code>published ownership
+    -&gt; explicit structural rule
+    -&gt; repository-visible machine-checkable form
+    -&gt; conformance case
+    -&gt; implementation alignment
+</code></pre>
+
 <hr/>
 
 <h2 id="minimum-guarantees">17. Minimum Guarantees</h2>
 
 <p>
-At minimum, the FROG source schema posture MUST preserve the following guarantees:
+At minimum, the FROG source-schema posture MUST preserve the following guarantees:
 </p>
 
 <ul>
@@ -589,6 +692,7 @@ At minimum, the FROG source schema posture MUST preserve the following guarantee
   <li>required top-level sections are explicit,</li>
   <li>optional top-level sections are explicit,</li>
   <li>section placement rules are explicit,</li>
+  <li>unexpected top-level sections are structurally rejectable,</li>
   <li>section-local structural ownership remains attributable,</li>
   <li>structural validity remains distinct from semantic validity,</li>
   <li>schema artifacts remain downstream from normative prose,</li>
@@ -614,6 +718,15 @@ Use the following reading rule when deciding whether a question belongs to sourc
 - "How does one runtime realize it privately?"                     - implementation, not schema
 </code></pre>
 
+<p>
+Companion rule:
+</p>
+
+<pre><code>reject early when the source shape is wrong
+but do not use schema
+to answer semantic questions
+</code></pre>
+
 <hr/>
 
 <h2 id="status">19. Status</h2>
@@ -625,11 +738,18 @@ It defines the ownership model under which that closure can proceed without arch
 </p>
 
 <p>
+At the current repository stage, machine-checkable support is intentionally conservative.
+That conservatism is deliberate:
+it improves structural reproducibility without pretending that all structural prose has already been fully rendered into one artifact.
+</p>
+
+<p>
 Immediate consequence:
 </p>
 
 <pre><code>source shape
 can now be discussed
+tested
 and made machine-checkable
 as a first-class published concern
 inside Expression/
