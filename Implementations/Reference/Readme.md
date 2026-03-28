@@ -21,8 +21,8 @@
   <li><a href="#executable-reference-slices">6. Executable Reference Slices</a></li>
   <li><a href="#reference-pipeline">7. Reference Pipeline</a></li>
   <li><a href="#directory-posture">8. Directory Posture</a></li>
-  <li><a href="#relation-with-examples-and-conformance">9. Relation with Examples and Conformance</a></li>
-  <li><a href="#runtime-modules-deployment-modes-and-targets">10. Runtime Modules, Deployment Modes, and Targets</a></li>
+  <li><a href="#relation-with-examples-conformance-and-schema">9. Relation with Examples, Conformance, and Schema</a></li>
+  <li><a href="#runtime-modules-deployment-modes-target-profiles-and-backend-families">10. Runtime Modules, Deployment Modes, Target Profiles, and Backend Families</a></li>
   <li><a href="#runtime-posture-in-v01">11. Runtime Posture in v0.1</a></li>
   <li><a href="#what-this-directory-does-not-standardize">12. What this Directory Does Not Standardize</a></li>
   <li><a href="#current-status-in-v01">13. Current Status in v0.1</a></li>
@@ -44,7 +44,7 @@ Its practical role is to:
 
 <ul>
   <li>load canonical <code>.frog</code> source,</li>
-  <li>validate source against published rules,</li>
+  <li>distinguish loadability, structural validity, semantic acceptance, and unsupported-but-valid situations,</li>
   <li>derive the published open execution-facing FROG IR,</li>
   <li>perform controlled lowering for a selected backend family,</li>
   <li>emit a backend contract or equivalent execution handoff,</li>
@@ -71,12 +71,13 @@ Normative ownership remains in the specification layers:
 </p>
 
 <ul>
-  <li><code>Expression/</code> — canonical source representation,</li>
+  <li><code>Expression/</code> — canonical source representation, source-schema posture, and structural validity,</li>
   <li><code>Language/</code> — validated semantic truth,</li>
   <li><code>Libraries/</code> — intrinsic primitive identities and primitive-local contracts,</li>
-  <li><code>Profiles/</code> — optional standardized capability families,</li>
+  <li><code>Profiles/</code> — optional standardized capability families, target-profile taxonomy, deployment modes, runtime modules, and backend-family-facing distinctions,</li>
   <li><code>IR/</code> — derivation, identity, construction, lowering, and backend contract boundaries,</li>
-  <li><code>IDE/</code> — authoring, debugging, observability, and tool-facing concerns.</li>
+  <li><code>IDE/</code> — authoring, debugging, observability, and tool-facing concerns,</li>
+  <li><code>Conformance/</code> — public accept / reject / preserve expectations.</li>
 </ul>
 
 <p>
@@ -96,7 +97,10 @@ Its role is to consume already defined boundaries rather than to bypass them.
 <pre><code>.frog canonical source
     |
     v
-validation
+loadability
+    |
+    v
+structural validation
     |
     v
 validated program meaning
@@ -111,7 +115,7 @@ lowering
 backend contract / backend-oriented handoff
     |
     v
-runtime-side consumption on a selected target
+runtime-side consumption on a selected target posture
 </code></pre>
 
 <p>
@@ -146,7 +150,7 @@ Those slices are meant to prove that the following chain can be made real and in
 
 <ul>
   <li>canonical source can be loaded,</li>
-  <li>published validation rules can be applied,</li>
+  <li>published structural and semantic validation rules can be applied in the correct order,</li>
   <li>a published open execution-facing FROG IR can be derived,</li>
   <li>lowering can specialize that IR for a concrete backend family,</li>
   <li>a backend contract can be emitted,</li>
@@ -173,6 +177,7 @@ What they prove today is that the architecture can already support:
 
 <ul>
   <li>source loading,</li>
+  <li>structural validation for published canonical source shape,</li>
   <li>semantic validation for a controlled published subset,</li>
   <li>published execution-facing IR derivation,</li>
   <li>backend-family-oriented lowering,</li>
@@ -331,7 +336,7 @@ The exact CLI surface may evolve, but the implementation should preserve stage s
 </p>
 
 <ul>
-  <li><strong>validate</strong> — check that the source belongs to the supported validated subset,</li>
+  <li><strong>validate</strong> — distinguish loadability, structural validity, semantic acceptance, and unsupported-but-valid situations for the supported reference subset,</li>
   <li><strong>derive-ir</strong> — produce the published open execution-facing representation with recoverable source attribution,</li>
   <li><strong>lower</strong> — specialize the open IR for a selected backend family,</li>
   <li><strong>emit-contract</strong> — produce the handoff consumed by a runtime or backend,</li>
@@ -341,7 +346,7 @@ The exact CLI surface may evolve, but the implementation should preserve stage s
 <p>
 This directory may temporarily contain compact demonstration code for that pipeline, including early monolithic scripts used to prove first slices.
 Such code remains implementation-side convenience.
-It does not redefine the specification and does not eliminate the intended internal separation between loader, validator, derivation, lowering, contract emission, and runtime-side consumption.
+It does not redefine the specification and does not eliminate the intended internal separation between loader, structural validator, semantic validator, derivation, lowering, contract emission, and runtime-side consumption.
 </p>
 
 <hr/>
@@ -375,7 +380,7 @@ They are not additional language layers.
 <ul>
   <li><code>CLI/</code> — command entry points for the reference toolchain,</li>
   <li><code>Loader/</code> — canonical source intake, decoding, and structural loading,</li>
-  <li><code>Validator/</code> — supported-subset validation against published rules,</li>
+  <li><code>Validator/</code> — staged validation against published rules,</li>
   <li><code>Deriver/</code> — derivation of the published open execution-facing IR,</li>
   <li><code>Lowerer/</code> — backend-family-oriented specialization,</li>
   <li><code>ContractEmitter/</code> — backend contract emission,</li>
@@ -390,7 +395,7 @@ Early convenience must not become accidental architecture.
 
 <hr/>
 
-<h2 id="relation-with-examples-and-conformance">9. Relation with Examples and Conformance</h2>
+<h2 id="relation-with-examples-conformance-and-schema">9. Relation with Examples, Conformance, and Schema</h2>
 
 <p>
 This directory works together with:
@@ -398,7 +403,8 @@ This directory works together with:
 
 <ul>
   <li><code>Examples/</code> — published named source programs,</li>
-  <li><code>Conformance/</code> — expected acceptance, rejection, and preservation outcomes.</li>
+  <li><code>Conformance/</code> — expected acceptance, rejection, and preservation outcomes,</li>
+  <li><code>Expression/Schema.md</code> and repository-visible schema artifacts — published structural-validation posture for canonical source.</li>
 </ul>
 
 <p>
@@ -411,6 +417,9 @@ The relationship is intentionally simple:
 Conformance/
   states what is expected
 
+Expression/
+  defines source-shape ownership and structural validation posture
+
 Implementations/Reference/
   tries to do it correctly
 </code></pre>
@@ -421,13 +430,24 @@ A correct implementation should prove each published example path before widenin
 </p>
 
 <p>
-In practical terms, the first implementation milestones should be able to consume the published example slices, produce the expected intermediate artifacts, and return the expected observable results or effects.
+In practical terms, the first implementation milestones should be able to consume the published example slices, distinguish:
+</p>
+
+<ul>
+  <li>non-loadable source,</li>
+  <li>structurally invalid canonical source,</li>
+  <li>structurally valid but semantically rejected source,</li>
+  <li>accepted meaning with required preservation behavior,</li>
+  <li>unsupported-but-valid situations caused by a narrower implementation subset.</li>
+</ul>
+
+<p>
 Only after those paths are stable should the implementation widen further.
 </p>
 
 <hr/>
 
-<h2 id="runtime-modules-deployment-modes-and-targets">10. Runtime Modules, Deployment Modes, and Targets</h2>
+<h2 id="runtime-modules-deployment-modes-target-profiles-and-backend-families">10. Runtime Modules, Deployment Modes, Target Profiles, and Backend Families</h2>
 
 <p>
 This directory may realize execution through different runtime-service bundles depending on the target posture being exercised.
@@ -536,7 +556,7 @@ This directory must not:
 <ul>
   <li>pretend that one implementation becomes the language definition,</li>
   <li>silently redefine canonical source structure,</li>
-  <li>silently redefine semantic truth,</li>
+  <li>silently redefine structural validity or semantic truth,</li>
   <li>replace published IR boundaries with private shortcuts,</li>
   <li>merge open IR with runtime-private scheduling internals,</li>
   <li>treat backend contract as if it were identical to one private runtime representation,</li>
@@ -566,7 +586,7 @@ A good current success condition is:
 
 <ul>
   <li>load a published example <code>.frog</code> source,</li>
-  <li>validate the supported subset,</li>
+  <li>distinguish loadability, structural validity, and semantic acceptance correctly,</li>
   <li>derive the published open execution-facing IR,</li>
   <li>lower for the first backend family,</li>
   <li>emit a backend contract,</li>
@@ -590,8 +610,8 @@ It is to stabilize the published IR and show how disciplined FROG lowering can f
 <p>
 This directory is the home of the non-normative FROG reference implementation workspace.
 Its job is to make the published architecture executable through disciplined vertical slices:
-source,
-validation,
+source loading,
+staged validation,
 published execution IR derivation,
 lowering,
 backend contract emission,
@@ -619,5 +639,5 @@ That distinction must remain explicit.
 In particular, this workspace may execute through different runtime-service bundles depending on the
 target posture and deployment mode under test.
 That flexibility is an implementation strength, not a license to blur the architectural boundaries
-between language meaning, IR, backend contract, and runtime realization.
+between source validation, language meaning, IR, backend contract, and runtime realization.
 </p>
