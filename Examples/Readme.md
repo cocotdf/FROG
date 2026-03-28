@@ -62,7 +62,7 @@ The FROG repository defines a layered execution corridor:
   <li>loadability,</li>
   <li>structural validity,</li>
   <li>validated program meaning,</li>
-  <li>open execution-facing IR,</li>
+  <li>canonical Execution IR,</li>
   <li>lowering and backend-facing handoff,</li>
   <li>private realization by implementations.</li>
 </ul>
@@ -116,7 +116,7 @@ structural validation
 semantic validation
       |
       v
-Execution IR derivation
+canonical Execution IR derivation
       |
       v
 lowering
@@ -184,7 +184,7 @@ Ownership remains:
   <li><code>Language/</code> — validated semantic truth,</li>
   <li><code>Libraries/</code> — intrinsic primitive catalogs,</li>
   <li><code>Profiles/</code> — optional standardized capability families,</li>
-  <li><code>IR/</code> — open execution-facing representation and its derivation, construction, mapping, lowering, and backend handoff boundaries,</li>
+  <li><code>IR/</code> — canonical execution-facing representation and its derivation, construction, mapping, lowering, and backend handoff boundaries,</li>
   <li><code>IDE/</code> — authoring-facing and observability-facing tooling concerns.</li>
 </ul>
 
@@ -260,8 +260,8 @@ The example README should normally explain:
   <li>which specification documents own those constructs,</li>
   <li>whether the source is expected to be loadable and structurally valid,</li>
   <li>what semantic validation is expected to accept,</li>
-  <li>what derivation should preserve,</li>
-  <li>what a lowering or backend handoff may later specialize,</li>
+  <li>what derivation should preserve into the canonical Execution IR Document,</li>
+  <li>what lowering or backend handoff may later specialize,</li>
   <li>what a reference implementation is expected to do with the example.</li>
 </ul>
 
@@ -293,7 +293,7 @@ Together, these examples provide a compact first coverage set for:
   <li>interface boundaries,</li>
   <li>primitive execution,</li>
   <li>structural and semantic passage through the early validation corridor,</li>
-  <li>IR derivation,</li>
+  <li>canonical Execution IR derivation,</li>
   <li>UI value participation,</li>
   <li>UI object-style interaction,</li>
   <li>explicit local memory.</li>
@@ -397,6 +397,17 @@ In base v0.1, this directory is intentionally small.
 The goal is not breadth.
 The goal is to establish a <strong>clean, durable, implementation-useful starting set</strong>.
 </p>
+
+<p>
+The currently published early slices are:
+</p>
+
+<ul>
+  <li><code>01_pure_addition</code>,</li>
+  <li><code>02_ui_value_roundtrip</code>,</li>
+  <li><code>03_ui_property_write</code>,</li>
+  <li><code>04_stateful_feedback_delay</code>.</li>
+</ul>
 
 <p>
 More examples may be added later,
