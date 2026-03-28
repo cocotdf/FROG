@@ -14,24 +14,24 @@
 <h2>Contents</h2>
 <ul>
   <li><a href="#overview">1. Overview</a></li>
-  <li><a href="#boundary-contract">2. Boundary Contract</a></li>
-  <li><a href="#position-in-the-architecture">3. Position in the Architecture</a></li>
-  <li><a href="#scope">4. Scope</a></li>
-  <li><a href="#relation-with-other-specifications">5. Relation with Other Specifications</a></li>
-  <li><a href="#derivation-entry-condition">6. Derivation Entry Condition</a></li>
+  <li><a href="#reading-legend">2. Reading Legend</a></li>
+  <li><a href="#scope-of-this-document">3. Scope of this Document</a></li>
+  <li><a href="#relation-with-other-specifications">4. Relation with Other Specifications</a></li>
+  <li><a href="#derivation-boundary">5. Derivation Boundary</a></li>
+  <li><a href="#inputs-and-preconditions">6. Inputs and Preconditions</a></li>
   <li><a href="#derivation-result">7. Derivation Result</a></li>
   <li><a href="#core-derivation-invariants">8. Core Derivation Invariants</a></li>
   <li><a href="#derivation-relation-shapes">9. Derivation Relation Shapes</a></li>
-  <li><a href="#family-mapping-rules">10. Family Mapping Rules</a></li>
-  <li><a href="#identity-and-attribution">11. Identity and Attribution</a></li>
+  <li><a href="#source-to-ir-family-mapping">10. Source-to-IR Family Mapping</a></li>
+  <li><a href="#identity-and-attribution-rules">11. Identity and Attribution Rules</a></li>
   <li><a href="#connectivity-derivation">12. Connectivity Derivation</a></li>
   <li><a href="#structured-control-derivation">13. Structured Control Derivation</a></li>
   <li><a href="#interface-and-ui-derivation">14. Interface and UI Derivation</a></li>
   <li><a href="#state-and-cycle-preservation">15. State and Cycle Preservation</a></li>
-  <li><a href="#allowed-normalization">16. Allowed Normalization</a></li>
+  <li><a href="#allowed-normalization-during-derivation">16. Allowed Normalization During Derivation</a></li>
   <li><a href="#forbidden-derivation-outcomes">17. Forbidden Derivation Outcomes</a></li>
   <li><a href="#relation-with-construction-lowering-and-backend-contract">18. Relation with Construction, Lowering, and Backend Contract</a></li>
-  <li><a href="#out-of-scope">19. Out of Scope</a></li>
+  <li><a href="#out-of-scope-for-v01">19. Out of Scope for v0.1</a></li>
   <li><a href="#summary">20. Summary</a></li>
 </ul>
 
@@ -40,30 +40,30 @@
 <h2 id="overview">1. Overview</h2>
 
 <p>
-This document defines the normative boundary between <strong>validated FROG program meaning</strong>
-and the <strong>open Execution IR</strong>.
-</p>
-
-<p>
-It defines:
+This document defines the normative derivation boundary between validated FROG program meaning and the open Execution IR.
+It specifies:
 </p>
 
 <ul>
-  <li>what may be derived from validated meaning,</li>
-  <li>what MUST remain recoverable at the derivation boundary,</li>
+  <li>which validated execution-relevant source families derive to execution-facing IR families,</li>
+  <li>which source-side distinctions MUST remain recoverable at the derivation boundary,</li>
   <li>which support objects MAY be introduced to make already-validated execution structure explicit,</li>
-  <li>which source-visible or validation-relevant families do not become primary execution objects,</li>
-  <li>which normalizations are allowed, and</li>
-  <li>which transformations are forbidden because they would change meaning, erase attribution, or import private runtime assumptions too early.</li>
+  <li>which source-visible families do not become primary execution objects in the open IR,</li>
+  <li>which transformations are allowed as derivation-time normalization, and</li>
+  <li>which transformations are forbidden because they would blur ownership, erase attribution, or introduce runtime-private meaning too early.</li>
 </ul>
 
 <p>
-This document is about <strong>correspondence</strong>.
-It does not define the full source model,
-the full language semantics,
-the full Execution IR object model,
-the full construction procedure,
-or any runtime-private realization.
+This document is intentionally about correspondence obligations.
+It is not the full source specification,
+not the full language semantics specification,
+not the complete Execution IR object-model specification,
+not the construction algorithm for every implementation,
+and not a runtime-private realization guide.
+</p>
+
+<p>
+Compact mental model:
 </p>
 
 <pre><code>canonical source
@@ -78,10 +78,10 @@ derivation rules   &lt;-- this document
 open Execution IR
         |
         v
-lowering
+lowering / specialization
         |
         v
-backend contract
+backend-facing contract
         |
         v
 runtime-private realization
@@ -90,11 +90,11 @@ runtime-private realization
 <p>
 In base v0.1, derivation is intentionally conservative.
 It preserves validated meaning,
-recoverable identity,
-explicit structured control,
-explicit local memory,
-validated dependency structure,
-and the distinction between:
+preserves recoverable identity,
+preserves explicit structured control,
+preserves explicit local memory,
+preserves validated dependency structure,
+and preserves the distinction between:
 </p>
 
 <ul>
@@ -106,155 +106,76 @@ and the distinction between:
 
 <hr />
 
-<h2 id="boundary-contract">2. Boundary Contract</h2>
-
-<p>
-This boundary takes one validated FROG program meaning as input and produces one conforming open Execution IR result.
-</p>
-
-<p>
-That result MUST be:
-</p>
+<h2 id="reading-legend">2. Reading Legend</h2>
 
 <ul>
-  <li>semantically faithful,</li>
-  <li>execution-facing,</li>
-  <li>attributable,</li>
-  <li>recoverable across later stages,</li>
-  <li>free of runtime-private semantic invention.</li>
-</ul>
-
-<p>
-This boundary does not decide whether a program is valid.
-That decision has already been made upstream.
-This boundary does not invent missing semantics.
-It only derives execution-facing representation from already-validated meaning.
-</p>
-
-<p>
-Accordingly:
-</p>
-
-<pre><code>validation decides:
-  whether meaning exists
-
-derivation decides:
-  how validated meaning becomes open Execution IR
-</code></pre>
-
-<hr />
-
-<h2 id="position-in-the-architecture">3. Position in the Architecture</h2>
-
-<p>
-The intended architecture is:
-</p>
-
-<pre><code>canonical .frog source
-        |
-        v
-validated program meaning
-        |
-        v
-Execution IR
-  - open
-  - inspectable
-  - source-attributable
-  - not backend-private
-        |
-        v
-Lowering
-  - specialization begins
-        |
-        v
-Backend Contract
-  - standardized consumable handoff
-        |
-        v
-compiler / backend / deployment / runtime realization
-</code></pre>
-
-<p>
-The key interpretation rule is:
-</p>
-
-<ul>
-  <li><strong>validated program meaning</strong> remains the semantic truth inherited from <code>Language/</code>,</li>
-  <li><strong>Execution IR</strong> remains the open execution-facing representation,</li>
-  <li><strong>derivation</strong> is the correspondence boundary between those two layers,</li>
-  <li><strong>lowering</strong> is where backend-oriented specialization begins,</li>
-  <li><strong>private realization</strong> remains downstream and is not standardized here.</li>
-</ul>
-
-<p>
-Derivation therefore sits:
-</p>
-
-<ul>
-  <li>after semantic validation has already succeeded,</li>
-  <li>before backend-family specialization begins.</li>
+  <li>🟦 <strong>Open specification-facing representation or layer</strong></li>
+  <li>🟩 <strong>Semantic truth, attribution, recoverability, or validation result</strong></li>
+  <li>🟨 <strong>Boundary, correspondence, mapping, or standardized handoff</strong></li>
+  <li>🟧 <strong>Lowering, specialization, or target adaptation zone</strong></li>
+  <li>🟥 <strong>Implementation-private or runtime-private realization zone</strong></li>
 </ul>
 
 <hr />
 
-<h2 id="scope">4. Scope</h2>
+<h2 id="scope-of-this-document">3. Scope of this Document</h2>
 
 <p>
 This document defines:
 </p>
 
 <ul>
-  <li>the entry condition for Execution IR derivation,</li>
-  <li>the permitted derivation relation shapes,</li>
-  <li>the normative correspondence between validated families and open Execution IR families,</li>
+  <li>the normative entry condition for Execution IR derivation,</li>
+  <li>the relation shapes permitted at the derivation boundary,</li>
+  <li>the base v0.1 correspondence between validated execution-relevant source families and Execution IR families,</li>
   <li>the minimum attribution and recoverability obligations that MUST survive derivation,</li>
-  <li>the allowed and forbidden forms of derivation-time explicitness and normalization.</li>
+  <li>the allowed and forbidden kinds of derivation-time explicitness and normalization.</li>
 </ul>
 
 <p>
-This document does <strong>not</strong> define:
+This document does not define:
 </p>
 
 <ul>
   <li>the canonical source model in full,</li>
-  <li>validated program meaning in full,</li>
-  <li>the full open Execution IR schema,</li>
-  <li>the exact material construction order used by every implementation,</li>
-  <li>backend-specific lowering strategy,</li>
-  <li>the full backend contract,</li>
-  <li>runtime-private scheduler, storage, ABI, or deployment policy.</li>
+  <li>the full normative semantics of validated FROG programs,</li>
+  <li>the full Execution IR object model in complete detail,</li>
+  <li>the exact material build sequence of every implementation,</li>
+  <li>the lowering strategy of every backend,</li>
+  <li>the backend contract in full,</li>
+  <li>the private scheduler, storage, or ABI policy of any runtime.</li>
 </ul>
 
 <pre><code>This document defines:
 - what must correspond
 - what must remain recoverable
-- what may be made explicit
+- what may be made explicit during derivation
 - what derivation must not silently change
 
 This document does not define:
-- canonical source in full
-- language meaning in full
-- full Execution IR schema
-- universal construction algorithm
-- runtime-private realization
+- canonical source in full               -> Expression/
+- validated program meaning in full      -> Language/
+- full open IR model                     -> Execution IR.md
+- material payload construction          -> Construction rules.md
+- runtime-private realization            -> outside IR ownership
 </code></pre>
 
 <hr />
 
-<h2 id="relation-with-other-specifications">5. Relation with Other Specifications</h2>
+<h2 id="relation-with-other-specifications">4. Relation with Other Specifications</h2>
 
 <p>
 Ownership remains:
 </p>
 
-<pre><code>Expression/                 -&gt; canonical source shape
-Language/                   -&gt; validated program meaning
-IR/Execution IR.md          -&gt; open Execution IR architecture
-IR/Derivation rules.md      -&gt; correspondence from meaning to IR
-IR/Construction rules.md    -&gt; material IR construction
-IR/Identity and Mapping.md  -&gt; cross-layer recoverability
-IR/Lowering.md              -&gt; later target-oriented specialization
-IR/Backend contract.md      -&gt; later backend-facing handoff
+<pre><code>Expression/                 -> canonical source shape and structural validity
+Language/                   -> validated program meaning
+IR/Execution IR.md          -> open Execution IR architecture
+IR/Derivation rules.md      -> correspondence from meaning to IR
+IR/Construction rules.md    -> material IR construction
+IR/Identity and Mapping.md  -> cross-layer recoverability
+IR/Lowering.md              -> later target-oriented specialization
+IR/Backend contract.md      -> later backend-facing handoff
 </code></pre>
 
 <p>
@@ -292,10 +213,48 @@ This document should be read together with:
 
 <hr />
 
-<h2 id="derivation-entry-condition">6. Derivation Entry Condition</h2>
+<h2 id="derivation-boundary">5. Derivation Boundary</h2>
 
 <p>
-Execution IR derivation begins <strong>only after validation has succeeded</strong>.
+Derivation is the normative correspondence boundary from validated program meaning to open Execution IR.
+</p>
+
+<p>
+This boundary does not decide whether a program is valid.
+That decision has already been made upstream.
+This boundary does not invent missing semantics.
+It only derives execution-facing representation from already-validated meaning.
+</p>
+
+<p>
+Accordingly:
+</p>
+
+<pre><code>validation decides:
+  whether meaning exists
+
+derivation decides:
+  how validated meaning becomes open Execution IR
+</code></pre>
+
+<p>
+The derivation boundary MUST therefore preserve:
+</p>
+
+<ul>
+  <li>semantic faithfulness,</li>
+  <li>execution-facing explicitness where required,</li>
+  <li>source attribution,</li>
+  <li>cross-stage recoverability,</li>
+  <li>freedom from runtime-private semantic invention.</li>
+</ul>
+
+<hr />
+
+<h2 id="inputs-and-preconditions">6. Inputs and Preconditions</h2>
+
+<p>
+Execution IR derivation begins <strong>only after semantic validation has succeeded</strong>.
 </p>
 
 <p>
@@ -304,6 +263,8 @@ The derivation input is not:
 
 <ul>
   <li>raw serialized source as such,</li>
+  <li>merely loadable source,</li>
+  <li>merely structurally valid source,</li>
   <li>partially edited authoring state,</li>
   <li>editor convenience state,</li>
   <li>runtime speculation,</li>
@@ -326,8 +287,8 @@ However,
 the open Execution IR it produces MUST be grounded in validated meaning rather than in editor-only convenience or runtime-private invention.
 </p>
 
-<pre><code>raw source -----------&gt; validation -----------&gt; derivation
-                      outside this document      this document
+<pre><code>raw source ------------> structural validity ------------> semantic validation ------------> derivation
+                         outside this document             outside this document              this document
 </code></pre>
 
 <p>
@@ -481,30 +442,30 @@ Examples:
 expanded:
   source object B
       |
-      +------&gt; IR primary object B'
+      +------> IR primary object B'
       |
-      +------&gt; IR support object B1'
+      +------> IR support object B1'
       |
-      +------&gt; IR support object B2'
+      +------> IR support object B2'
 
 restricted aggregated support:
   source object C -----\
-                        +----&gt; IR support object Cx'
+                        +----> IR support object Cx'
   source object D -----/
   with explicit contributor attribution to C and D
 
 non-primary:
   source object E
       |
-      +----&gt; no primary execution object
+      +----> no primary execution object
       |
-      +----&gt; obligations may still survive through attribution
+      +----> obligations may still survive through attribution
              or boundary correspondence
 </code></pre>
 
 <hr />
 
-<h2 id="family-mapping-rules">10. Family Mapping Rules</h2>
+<h2 id="source-to-ir-family-mapping">10. Source-to-IR Family Mapping</h2>
 
 <p>
 The rules below define the base v0.1 normative correspondence between validated families and open Execution IR families.
@@ -739,7 +700,7 @@ or boundary correspondence.
 
 <hr />
 
-<h2 id="identity-and-attribution">11. Identity and Attribution</h2>
+<h2 id="identity-and-attribution-rules">11. Identity and Attribution Rules</h2>
 
 <p>
 Source attribution is mandatory.
@@ -1017,7 +978,7 @@ hidden implicit memory legalization
 
 <hr />
 
-<h2 id="allowed-normalization">16. Allowed Normalization</h2>
+<h2 id="allowed-normalization-during-derivation">16. Allowed Normalization During Derivation</h2>
 
 <p>
 Derivation MAY normalize validated meaning in execution-facing ways that do not change semantic truth.
@@ -1148,7 +1109,7 @@ derivation
         v
 open Execution IR
         |
-        +--&gt; construction materializes conforming payloads
+        +--> construction materializes conforming payloads
         |
         v
 lowering
@@ -1177,7 +1138,7 @@ Those layers MUST NOT be collapsed into one another.
 
 <hr />
 
-<h2 id="out-of-scope">19. Out of Scope</h2>
+<h2 id="out-of-scope-for-v01">19. Out of Scope for v0.1</h2>
 
 <p>
 The following topics are out of scope for this document in base v0.1:
