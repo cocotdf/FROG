@@ -15,7 +15,7 @@
 <ul>
   <li><a href="#overview">1. Overview</a></li>
   <li><a href="#boundary-contract">2. Boundary Contract</a></li>
-  <li><a href="#scope">3. Scope</a></li>
+  <li><a href="#scope-of-this-document">3. Scope of this Document</a></li>
   <li><a href="#position-in-the-pipeline">4. Position in the Pipeline</a></li>
   <li><a href="#identity-layers">5. Identity Layers</a></li>
   <li><a href="#general-mapping-model">6. General Mapping Model</a></li>
@@ -28,7 +28,7 @@
   <li><a href="#relation-with-observation-and-debugging">13. Relation with Observation and Debugging</a></li>
   <li><a href="#minimal-open-shape">14. Minimal Open Shape</a></li>
   <li><a href="#examples">15. Examples</a></li>
-  <li><a href="#out-of-scope">16. Out of Scope</a></li>
+  <li><a href="#out-of-scope-for-v01">16. Out of Scope for v0.1</a></li>
   <li><a href="#summary">17. Summary</a></li>
 </ul>
 
@@ -113,7 +113,7 @@ A conforming implementation MUST NOT treat identity as disposable convenience da
 
 <hr />
 
-<h2 id="scope">3. Scope</h2>
+<h2 id="scope-of-this-document">3. Scope of this Document</h2>
 
 <p>
 This document defines:
@@ -138,6 +138,21 @@ This document does not define:
   <li>the construction algorithm in full,</li>
   <li>runtime-private identity models.</li>
 </ul>
+
+<pre><code>This document defines:
+- identity layers relevant to open Execution IR
+- mapping relations between validated meaning and IR objects
+- recoverability obligations
+- identity-safe normalization
+- forbidden identity-breaking transformations
+
+This document does not define:
+- source shape
+- language semantics
+- the full open IR schema
+- construction in full
+- runtime-private identity models
+</code></pre>
 
 <hr />
 
@@ -177,6 +192,7 @@ This means:
 
 <ul>
   <li>derivation MUST establish recoverable open-IR identity,</li>
+  <li>construction MUST materialize that identity explicitly enough for open-IR validity,</li>
   <li>lowering MUST preserve required recoverability where later layers still depend on it,</li>
   <li>backend-facing consumption MUST NOT erase required attribution while still claiming faithful consumption.</li>
 </ul>
@@ -256,13 +272,13 @@ However, when later stages claim source-aligned diagnosability, their private id
 </p>
 
 <pre><code>source-visible
-      -&gt;
+      ->
 validated semantic
-      -&gt;
+      ->
 open IR
-      -&gt;
+      ->
 lowered
-      -&gt;
+      ->
 runtime / backend-private
 </code></pre>
 
@@ -328,7 +344,7 @@ Identity-preserving open Execution IR requires:
 </ul>
 
 <pre><code>no validation
-    -&gt;
+    ->
 no conforming identity-preserving open Execution IR
 </code></pre>
 
@@ -349,6 +365,7 @@ The following distinctions MUST remain recoverable whenever present and relevant
   <li><code>widget_value</code> versus <code>widget_reference</code>,</li>
   <li>standardized UI-object primitive versus widget-reference participation,</li>
   <li>public interface participation versus UI participation,</li>
+  <li><code>widget_value</code> participation versus property-based access to member <code>value</code>,</li>
   <li>structure family identity,</li>
   <li>regions and structure-owned boundaries,</li>
   <li>structure-terminal roles,</li>
@@ -466,6 +483,7 @@ The following transformations are forbidden:
   <li>opaque object collapse that destroys contributor recoverability,</li>
   <li>hidden memory insertion presented as though it had validated source origin,</li>
   <li>collapse of interface participation and UI participation into one undifferentiated identity class,</li>
+  <li>collapse of <code>widget_value</code> participation and property-based access to member <code>value</code> into one undifferentiated identity class,</li>
   <li>structure flattening that destroys family, region, or terminal recoverability,</li>
   <li>promotion of editor-only state into execution-facing identity,</li>
   <li>forced executionization of non-execution source content merely because it exists in source,</li>
@@ -592,14 +610,14 @@ What matters is the recoverable presence of equivalent information.
 <h3>15.1 1 -&gt; 1</h3>
 
 <pre><code>validated primitive contributor
-    -&gt;
+    ->
 primitive execution object
 </code></pre>
 
 <h3>15.2 1 -&gt; n</h3>
 
 <pre><code>validated structure contributor
-    -&gt;
+    ->
 structured execution object
     + region objects
     + terminal support objects
@@ -608,7 +626,7 @@ structured execution object
 <h3>15.3 n -&gt; 1</h3>
 
 <pre><code>multiple contributors
-    -&gt;
+    ->
 one support object
 with explicit contributor attribution
 </code></pre>
@@ -616,7 +634,7 @@ with explicit contributor attribution
 <h3>15.4 1 -&gt; 0</h3>
 
 <pre><code>non-participating widget declaration
-    -&gt;
+    ->
 no primary execution object
 but declaration correspondence may still remain recoverable
 </code></pre>
@@ -633,7 +651,7 @@ but they do not share one undifferentiated identity
 
 <hr />
 
-<h2 id="out-of-scope">16. Out of Scope</h2>
+<h2 id="out-of-scope-for-v01">16. Out of Scope for v0.1</h2>
 
 <ul>
   <li>a global cross-repository identifier system for every artifact class,</li>
