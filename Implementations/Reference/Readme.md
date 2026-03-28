@@ -45,7 +45,7 @@ Its practical role is to:
 <ul>
   <li>load canonical <code>.frog</code> source,</li>
   <li>distinguish loadability, structural validity, semantic acceptance, and unsupported-but-valid situations,</li>
-  <li>derive the published open execution-facing FROG IR,</li>
+  <li>derive the published <strong>canonical Execution IR Document</strong>,</li>
   <li>perform controlled lowering for a selected backend family,</li>
   <li>emit a backend contract or equivalent execution handoff,</li>
   <li>execute that handoff through one or more reference-side runtime service bundles.</li>
@@ -74,8 +74,8 @@ Normative ownership remains in the specification layers:
   <li><code>Expression/</code> — canonical source representation, source-schema posture, and structural validity,</li>
   <li><code>Language/</code> — validated semantic truth,</li>
   <li><code>Libraries/</code> — intrinsic primitive identities and primitive-local contracts,</li>
-  <li><code>Profiles/</code> — optional standardized capability families, target-profile taxonomy, deployment modes, runtime modules, and backend-family-facing distinctions,</li>
-  <li><code>IR/</code> — derivation, identity, construction, lowering, and backend contract boundaries,</li>
+  <li><code>Profiles/</code> — optional standardized capability families, target-profile-facing distinctions, deployment-mode-facing distinctions, and backend-family-facing distinctions where standardized,</li>
+  <li><code>IR/</code> — canonical Execution IR, derivation, identity, construction, lowering, and backend contract boundaries,</li>
   <li><code>IDE/</code> — authoring, debugging, observability, and tool-facing concerns,</li>
   <li><code>Conformance/</code> — public accept / reject / preserve expectations.</li>
 </ul>
@@ -106,7 +106,7 @@ structural validation
 validated program meaning
     |
     v
-standardized FROG execution IR
+canonical Execution IR Document
     |
     v
 lowering
@@ -125,7 +125,7 @@ This means:
 <ul>
   <li>the reference implementation is not the owner of source shape,</li>
   <li>it is not the owner of validated semantic meaning,</li>
-  <li>it is not the owner of the open IR model,</li>
+  <li>it is not the owner of the canonical IR model,</li>
   <li>it is not the owner of lowering law,</li>
   <li>it is not the owner of backend contract law,</li>
   <li>it is a practical consumer of those published layers.</li>
@@ -151,7 +151,7 @@ Those slices are meant to prove that the following chain can be made real and in
 <ul>
   <li>canonical source can be loaded,</li>
   <li>published structural and semantic validation rules can be applied in the correct order,</li>
-  <li>a published open execution-facing FROG IR can be derived,</li>
+  <li>a published canonical open execution-facing IR can be derived,</li>
   <li>lowering can specialize that IR for a concrete backend family,</li>
   <li>a backend contract can be emitted,</li>
   <li>a reference runtime path can accept and execute that contract on a selected target posture.</li>
@@ -179,7 +179,7 @@ What they prove today is that the architecture can already support:
   <li>source loading,</li>
   <li>structural validation for published canonical source shape,</li>
   <li>semantic validation for a controlled published subset,</li>
-  <li>published execution-facing IR derivation,</li>
+  <li>published canonical Execution IR derivation,</li>
   <li>backend-family-oriented lowering,</li>
   <li>backend contract emission,</li>
   <li>runtime-side contract consumption.</li>
@@ -206,7 +206,7 @@ The long-term direction remains:
 validated FROG semantics
     |
     v
-standardized FROG execution IR
+canonical Execution IR Document
     |
     v
 backend-specific lowering
@@ -220,6 +220,12 @@ known compiler/runtime backend
     v
 deployable artifact
 </code></pre>
+
+<p>
+A serious downstream compiler path MAY later target compiler families such as LLVM.
+However, such paths remain downstream consumers of lowered FROG forms.
+They do not redefine the canonical FROG Execution IR and they do not redefine FROG semantic truth.
+</p>
 
 <p>
 This directory therefore proves the stage boundaries first.
@@ -337,8 +343,8 @@ The exact CLI surface may evolve, but the implementation should preserve stage s
 
 <ul>
   <li><strong>validate</strong> — distinguish loadability, structural validity, semantic acceptance, and unsupported-but-valid situations for the supported reference subset,</li>
-  <li><strong>derive-ir</strong> — produce the published open execution-facing representation with recoverable source attribution,</li>
-  <li><strong>lower</strong> — specialize the open IR for a selected backend family,</li>
+  <li><strong>derive-ir</strong> — produce the published canonical Execution IR Document with recoverable source attribution,</li>
+  <li><strong>lower</strong> — specialize the canonical open IR for a selected backend family,</li>
   <li><strong>emit-contract</strong> — produce the handoff consumed by a runtime or backend,</li>
   <li><strong>run</strong> — execute through runtime-side contract consumption rather than by silently jumping from source straight to private execution.</li>
 </ul>
@@ -381,7 +387,7 @@ They are not additional language layers.
   <li><code>CLI/</code> — command entry points for the reference toolchain,</li>
   <li><code>Loader/</code> — canonical source intake, decoding, and structural loading,</li>
   <li><code>Validator/</code> — staged validation against published rules,</li>
-  <li><code>Deriver/</code> — derivation of the published open execution-facing IR,</li>
+  <li><code>Deriver/</code> — derivation of the published canonical Execution IR,</li>
   <li><code>Lowerer/</code> — backend-family-oriented specialization,</li>
   <li><code>ContractEmitter/</code> — backend contract emission,</li>
   <li><code>Runtime/</code> — runtime-side contract acceptance and execution services,</li>
@@ -404,7 +410,8 @@ This directory works together with:
 <ul>
   <li><code>Examples/</code> — published named source programs,</li>
   <li><code>Conformance/</code> — expected acceptance, rejection, and preservation outcomes,</li>
-  <li><code>Expression/Schema.md</code> and repository-visible schema artifacts — published structural-validation posture for canonical source.</li>
+  <li><code>Expression/Schema.md</code> and repository-visible schema artifacts — published structural-validation posture for canonical source,</li>
+  <li><code>IR/Schema.md</code> and <code>IR/schema/</code> — published canonical Execution IR validation posture for the open execution-facing boundary artifact.</li>
 </ul>
 
 <p>
@@ -419,6 +426,9 @@ Conformance/
 
 Expression/
   defines source-shape ownership and structural validation posture
+
+IR/
+  defines the canonical execution-facing artifact and its validation posture
 
 Implementations/Reference/
   tries to do it correctly
@@ -558,12 +568,13 @@ This directory must not:
   <li>silently redefine canonical source structure,</li>
   <li>silently redefine structural validity or semantic truth,</li>
   <li>replace published IR boundaries with private shortcuts,</li>
-  <li>merge open IR with runtime-private scheduling internals,</li>
+  <li>merge canonical open IR with runtime-private scheduling internals,</li>
   <li>treat backend contract as if it were identical to one private runtime representation,</li>
   <li>treat one chosen runtime-module layout as the universal FROG runtime architecture,</li>
   <li>treat one development convenience bundle as the mandatory deployment shape for every target,</li>
   <li>hide unsupported features behind silent reinterpretation,</li>
-  <li>pretend that current vertical slices already constitute the final production compiler pipeline.</li>
+  <li>pretend that current vertical slices already constitute the final production compiler pipeline,</li>
+  <li>treat a downstream compiler-family route such as LLVM as though it had become the definition of FROG.</li>
 </ul>
 
 <p>
@@ -587,7 +598,7 @@ A good current success condition is:
 <ul>
   <li>load a published example <code>.frog</code> source,</li>
   <li>distinguish loadability, structural validity, and semantic acceptance correctly,</li>
-  <li>derive the published open execution-facing IR,</li>
+  <li>derive the published canonical Execution IR Document,</li>
   <li>lower for the first backend family,</li>
   <li>emit a backend contract,</li>
   <li>execute it through a minimal reference runtime path and obtain the expected observable result or effect.</li>
@@ -612,7 +623,7 @@ This directory is the home of the non-normative FROG reference implementation wo
 Its job is to make the published architecture executable through disciplined vertical slices:
 source loading,
 staged validation,
-published execution IR derivation,
+canonical Execution IR derivation,
 lowering,
 backend contract emission,
 and runtime-side contract consumption.
