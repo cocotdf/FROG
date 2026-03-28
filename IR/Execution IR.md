@@ -61,15 +61,15 @@ It is <strong>not</strong> yet:
 </ul>
 
 <pre><code>canonical source
-      -&gt;
+      ->
 validated program meaning
-      -&gt;
+      ->
 open Execution IR
-      -&gt;
+      ->
 lowering / specialization
-      -&gt;
+      ->
 backend-facing contract
-      -&gt;
+      ->
 runtime-private realization
 </code></pre>
 
@@ -84,7 +84,7 @@ while already being explicit enough to support later specialization.
 <h2 id="boundary-contract">2. Boundary Contract</h2>
 
 <p>
-The open Execution IR is the standardized execution-facing representation produced <strong>after validation</strong> and <strong>before lowering</strong>.
+The open Execution IR is the standardized execution-facing representation produced <strong>after semantic validation</strong> and <strong>before lowering</strong>.
 </p>
 
 <p>
@@ -147,22 +147,22 @@ This document is intentionally narrower than:
 </ul>
 
 <pre><code>Execution IR.md
-   -&gt; what the open IR is
+   -> what the open IR is
 
 Identity and Mapping.md
-   -&gt; how source-aligned identity stays recoverable
+   -> how source-aligned identity stays recoverable
 
 Derivation rules.md
-   -&gt; what must correspond
+   -> what must correspond
 
 Construction rules.md
-   -&gt; how a conforming open IR is materially built
+   -> how a conforming open IR is materially built
 
 Lowering.md
-   -&gt; how later specialization may begin
+   -> how later specialization may begin
 
 Backend contract.md
-   -&gt; what a later backend-facing consumer may rely on
+   -> what a later backend-facing consumer may rely on
 </code></pre>
 
 <hr />
@@ -258,7 +258,7 @@ The Execution IR is the open execution-facing form built from that validated mea
 </p>
 
 <p>
-Execution IR therefore begins <strong>after validation</strong> and remains <strong>before lowering</strong>.
+Execution IR therefore begins <strong>after semantic validation</strong> and remains <strong>before lowering</strong>.
 It is also <strong>before backend contract emission</strong> and <strong>before private realization</strong>.
 </p>
 
@@ -298,11 +298,11 @@ The base Execution IR for v0.1 SHOULD be:
 
 <pre><code>Design balance
 
-open enough      -&gt; inspectable / portable / standard-friendly
-faithful enough  -&gt; semantically grounded
-attributable     -&gt; recoverable for later tooling
-strict enough    -&gt; useful for later lowering
-not frozen as    -&gt; one private runtime design
+open enough      -> inspectable / portable / standard-friendly
+faithful enough  -> semantically grounded
+attributable     -> recoverable for later tooling
+strict enough    -> useful for later lowering
+not frozen as    -> one private runtime design
 </code></pre>
 
 <hr />
@@ -324,6 +324,7 @@ The following invariants apply to the base open Execution IR of v0.1:
   <li>The Execution IR MUST preserve the distinction between public interface participation and UI participation.</li>
   <li>The Execution IR MUST preserve the distinction between <code>widget_value</code> participation and <code>widget_reference</code> participation.</li>
   <li>The Execution IR MUST preserve the distinction between <code>widget_reference</code> participation and standardized UI-object primitive operation.</li>
+  <li>The Execution IR MUST preserve the distinction between <code>widget_value</code> participation and property-based access to member <code>value</code>.</li>
   <li>The Execution IR MUST NOT encode editor-only presentation state as execution semantics.</li>
   <li>The Execution IR MUST NOT be treated as a runtime history, event trace, or debugger session log.</li>
 </ul>
@@ -340,6 +341,7 @@ structured-control preserving
 interface / UI distinction preserving
 widget_value / widget_reference distinction preserving
 widget_reference / UI-primitive distinction preserving
+widget_value / property(value) distinction preserving
 
 not editor-state semantics
 not runtime history
@@ -420,6 +422,7 @@ Those primary families include:
   <li>public interface boundary objects,</li>
   <li>widget-value participation objects,</li>
   <li>widget-reference participation objects where applicable,</li>
+  <li>standardized UI-object primitive execution objects where applicable,</li>
   <li>explicit local-memory-bearing objects where applicable.</li>
 </ul>
 
@@ -497,13 +500,13 @@ and the exact recoverability obligations belong to <code>Identity and Mapping.md
 <pre><code>Execution IR object roles
 
 primary execution-facing object
-   -&gt; directly carries execution-facing role
+   -> directly carries execution-facing role
 
 support object
-   -&gt; clarifies already-validated execution-facing structure
+   -> clarifies already-validated execution-facing structure
 
 source-visible content
-   -&gt; may remain non-primary at the open-IR boundary
+   -> may remain non-primary at the open-IR boundary
 </code></pre>
 
 <hr />
@@ -611,7 +614,8 @@ The Execution IR MUST preserve the distinction between:
 <ul>
   <li>public interface participation,</li>
   <li>widget primary-value participation,</li>
-  <li>widget object-style reference participation.</li>
+  <li>widget object-style reference participation,</li>
+  <li>standardized UI-object primitive operation.</li>
 </ul>
 
 <p>
@@ -622,7 +626,8 @@ Therefore:
   <li>public interface entry and exit semantics MUST remain represented explicitly,</li>
   <li>widget primary-value participation MUST remain distinguishable from public interface participation,</li>
   <li>widget-reference access MUST remain distinguishable from ordinary valueflow participation,</li>
-  <li>the open IR MUST NOT collapse those roles into one undifferentiated generic boundary concept.</li>
+  <li>standardized UI-object primitive operation MUST remain distinguishable from widget-reference participation itself,</li>
+  <li>the open IR MUST NOT collapse those roles into one undifferentiated generic boundary or generic object-access concept.</li>
 </ul>
 
 <p>
@@ -633,7 +638,8 @@ In base v0.1, a source-aligned implementation SHOULD preserve recognizable famil
   <li><code>interface_input</code>,</li>
   <li><code>interface_output</code>,</li>
   <li><code>widget_value</code>,</li>
-  <li><code>widget_reference</code>.</li>
+  <li><code>widget_reference</code>,</li>
+  <li>standardized UI-object primitive execution objects where applicable.</li>
 </ul>
 
 <pre><code>Boundary distinction
@@ -643,6 +649,8 @@ public interface participation
 widget primary-value participation
    !=
 widget object-style reference participation
+   !=
+standardized UI-object primitive operation
 </code></pre>
 
 <p>
@@ -652,6 +660,7 @@ This distinction matters because:
 <ul>
   <li>public reusable program boundaries are not the same thing as UI participation,</li>
   <li>widget valueflow is not the same thing as object-style widget interaction,</li>
+  <li>widget-reference participation is not the same thing as a property or method primitive executed through that reference,</li>
   <li>later lowering and backend-facing forms still need those distinctions to remain recoverable where required.</li>
 </ul>
 
@@ -726,10 +735,10 @@ The relationship is:
 </ul>
 
 <pre><code>Execution IR.md
-   -&gt; what execution-facing objects exist
+   -> what execution-facing objects exist
 
 Identity and Mapping.md
-   -&gt; how those objects remain recoverably connected
+   -> how those objects remain recoverably connected
       to validated meaning and source-visible origin
 </code></pre>
 
@@ -768,13 +777,13 @@ Those concerns belong to companion documents of the IR layer:
 </ul>
 
 <pre><code>Execution IR.md
-   -&gt; what the open IR is
+   -> what the open IR is
 
 Derivation rules.md
-   -&gt; what must correspond
+   -> what must correspond
 
 Construction rules.md
-   -&gt; how the open IR is built
+   -> how the open IR is built
 </code></pre>
 
 <p>
@@ -824,11 +833,11 @@ open Execution IR
 </code></pre>
 
 <pre><code>open IR
-      -&gt;
+      ->
 lowering / specialization
-      -&gt;
+      ->
 backend contract
-      -&gt;
+      ->
 private realization
 </code></pre>
 
@@ -952,6 +961,7 @@ It preserves:
   <li>structured control and explicit regions,</li>
   <li>public interface versus UI distinctions,</li>
   <li><code>widget_value</code> versus <code>widget_reference</code> distinctions,</li>
+  <li><code>widget_reference</code> versus standardized UI-object primitive operation distinctions,</li>
   <li>explicit local memory and valid stateful cycles,</li>
   <li>enough identity and structure to support later recoverability obligations.</li>
 </ul>
