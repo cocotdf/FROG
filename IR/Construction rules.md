@@ -5,7 +5,7 @@
 <h1 align="center">FROG IR Construction Rules</h1>
 
 <p align="center">
-  <strong>Normative construction rules for building open Execution IR from validated FROG program meaning</strong><br />
+  <strong>Normative construction rules for building the canonical Execution IR Document from validated FROG program meaning</strong><br />
   <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -21,20 +21,21 @@
   <li><a href="#construction-result">6. Construction Result</a></li>
   <li><a href="#construction-principles">7. Construction Principles</a></li>
   <li><a href="#construction-pipeline">8. Construction Pipeline</a></li>
-  <li><a href="#execution-unit-construction">9. Execution Unit Construction</a></li>
-  <li><a href="#primary-object-construction">10. Primary Object Construction</a></li>
-  <li><a href="#port-terminal-and-connection-construction">11. Port, Terminal, and Connection Construction</a></li>
-  <li><a href="#region-and-structure-construction">12. Region and Structure Construction</a></li>
-  <li><a href="#boundary-and-ui-construction">13. Boundary and UI Construction</a></li>
-  <li><a href="#state-and-cycle-construction">14. State and Cycle Construction</a></li>
-  <li><a href="#source-attribution-and-correspondence-construction">15. Source Attribution and Correspondence Construction</a></li>
-  <li><a href="#support-object-construction">16. Support Object Construction</a></li>
-  <li><a href="#non-primary-correspondence-handling">17. Non-Primary Correspondence Handling</a></li>
-  <li><a href="#minimal-open-payload-shape">18. Minimal Open Payload Shape</a></li>
-  <li><a href="#ir-validity-checks">19. IR Validity Checks</a></li>
-  <li><a href="#determinism-and-stability">20. Determinism and Stability</a></li>
-  <li><a href="#out-of-scope-for-v01">21. Out of Scope for v0.1</a></li>
-  <li><a href="#summary">22. Summary</a></li>
+  <li><a href="#execution-ir-document-construction">9. Execution IR Document Construction</a></li>
+  <li><a href="#execution-unit-construction">10. Execution Unit Construction</a></li>
+  <li><a href="#primary-object-construction">11. Primary Object Construction</a></li>
+  <li><a href="#port-terminal-and-connection-construction">12. Port, Terminal, and Connection Construction</a></li>
+  <li><a href="#region-and-structure-construction">13. Region and Structure Construction</a></li>
+  <li><a href="#boundary-and-ui-construction">14. Boundary and UI Construction</a></li>
+  <li><a href="#state-and-cycle-construction">15. State and Cycle Construction</a></li>
+  <li><a href="#source-attribution-and-correspondence-construction">16. Source Attribution and Correspondence Construction</a></li>
+  <li><a href="#support-object-construction">17. Support Object Construction</a></li>
+  <li><a href="#non-primary-correspondence-handling">18. Non-Primary Correspondence Handling</a></li>
+  <li><a href="#canonical-json-payload-shape">19. Canonical JSON Payload Shape</a></li>
+  <li><a href="#ir-validity-checks">20. IR Validity Checks</a></li>
+  <li><a href="#determinism-and-stability">21. Determinism and Stability</a></li>
+  <li><a href="#out-of-scope-for-v01">22. Out of Scope for v0.1</a></li>
+  <li><a href="#summary">23. Summary</a></li>
 </ul>
 
 <hr />
@@ -42,20 +43,20 @@
 <h2 id="overview">1. Overview</h2>
 
 <p>
-This document defines how a conforming implementation constructs an open Execution IR from
+This document defines how a conforming implementation constructs the <strong>canonical Execution IR Document</strong> from
 <strong>validated FROG program meaning</strong> in base v0.1.
 </p>
 
 <p>
-Where <code>IR/Derivation rules.md</code> defines <strong>what must correspond</strong> between validated meaning and open Execution IR,
+Where <code>IR/Derivation rules.md</code> defines <strong>what must correspond</strong> between validated meaning and Execution IR,
 this document defines <strong>how that corresponding IR is materially built</strong> in a way that remains conservative,
-attributable, structured, portable, and recoverable.
+attributable, structured, portable, schema-checkable, and suitable for later lowering.
 </p>
 
 <p>
 This document does not standardize one private compiler pipeline.
-It standardizes the minimum construction obligations that make a produced open Execution IR
-recognizable, inspectable, recoverable, and suitable for later lowering.
+It standardizes the construction obligations that make the produced Execution IR
+recognizable, inspectable, recoverable, serializable, and suitable for later specialization.
 </p>
 
 <pre><code>validated program meaning
@@ -64,7 +65,7 @@ recognizable, inspectable, recoverable, and suitable for later lowering.
 construction rules   &lt;-- this document
         |
         v
-open Execution IR
+canonical Execution IR Document
         |
         v
 lowering / specialization
@@ -84,7 +85,8 @@ It builds:
 <ul>
   <li>primary execution-facing objects for execution-relevant validated content,</li>
   <li>support objects only when they make already-validated execution-facing structure explicit,</li>
-  <li>recoverable correspondence for source-visible content that does not become a primary execution object in the open IR.</li>
+  <li>recoverable correspondence for source-visible content that does not become a primary execution object in the open IR,</li>
+  <li>one canonical JSON-serializable Execution IR Document for one validated program.</li>
 </ul>
 
 <hr />
@@ -109,11 +111,13 @@ This document defines:
 
 <ul>
   <li>the construction entry condition,</li>
-  <li>the minimum construction stages of the open Execution IR,</li>
-  <li>the obligations for building execution units, primary objects, support objects, ports, terminals, connections, and regions,</li>
+  <li>the minimum construction stages of the canonical Execution IR Document,</li>
+  <li>the obligations for building the top-level IR document and its single execution unit,</li>
+  <li>the obligations for building primary objects, support objects, ports, terminals, connections, and regions,</li>
   <li>the obligations for building explicit source attribution and correspondence records,</li>
   <li>the conditions under which support objects MAY be introduced,</li>
-  <li>the minimum validity properties of the constructed IR payload.</li>
+  <li>the canonical JSON payload categories that a conforming implementation MUST be able to emit,</li>
+  <li>the minimum validity properties of the constructed IR document.</li>
 </ul>
 
 <p>
@@ -124,12 +128,12 @@ This document does not fully define:
   <li>the canonical source representation,</li>
   <li>the semantic meaning of language constructs,</li>
   <li>the full cross-stage identity model,</li>
-  <li>one universal mandatory wire format for all implementations,</li>
-  <li>backend-specific lowering or runtime-private realization.</li>
+  <li>backend-specific lowering or runtime-private realization,</li>
+  <li>the full field-by-field machine-checkable schema.</li>
 </ul>
 
 <pre><code>This document defines:
-how a conforming open IR is materially built
+how a conforming canonical open IR document is materially built
 
 This document does not define:
 source shape
@@ -137,6 +141,7 @@ language semantics
 full cross-stage identity contract
 lowering
 private realization
+full schema text
 </code></pre>
 
 <hr />
@@ -151,11 +156,12 @@ This document depends on the following ownership boundaries:
   <li><code>Expression/</code> owns canonical source structure and source-visible object presence.</li>
   <li><code>Language/</code> owns validated program meaning.</li>
   <li><code>Libraries/</code> and <code>Profiles/</code> own primitive and optional capability identities.</li>
-  <li><code>IR/Execution IR.md</code> owns the architectural invariants of the open Execution IR.</li>
+  <li><code>IR/Execution IR.md</code> owns the architectural invariants of the canonical Execution IR boundary.</li>
   <li><code>IR/Derivation rules.md</code> owns the normative source-to-IR correspondence.</li>
   <li><code>IR/Identity and Mapping.md</code> owns recoverability obligations.</li>
   <li><code>IR/Lowering.md</code> owns later specialization boundaries.</li>
   <li><code>IR/Backend contract.md</code> owns later backend-facing handoff assumptions.</li>
+  <li><code>IR/Schema.md</code> and <code>IR/schema/</code> own the machine-checkable schema layer when published.</li>
 </ul>
 
 <p>
@@ -167,33 +173,26 @@ Accordingly:
   <li>this document MUST NOT redefine language semantics,</li>
   <li>this document MUST NOT replace derivation rules with implementation-private heuristics,</li>
   <li>this document MUST NOT replace identity and mapping rules with opaque construction shortcuts,</li>
-  <li>this document MUST define how a conforming open Execution IR payload is materially built once derivation eligibility is satisfied.</li>
+  <li>this document MUST define how a conforming canonical Execution IR Document is materially built once derivation eligibility is satisfied.</li>
 </ul>
 
-<p>
-This document should be read together with:
-</p>
-
-<ul>
-  <li><code>Language/Expression to validated meaning.md</code>,</li>
-  <li><code>IR/Derivation rules.md</code>,</li>
-  <li><code>IR/Identity and Mapping.md</code>,</li>
-  <li><code>IR/Execution IR.md</code>,</li>
-  <li><code>Expression/Diagram.md</code>,</li>
-  <li><code>Expression/Control structures.md</code>,</li>
-  <li><code>Expression/State and cycles.md</code>,</li>
-  <li><code>Expression/Interface.md</code>,</li>
-  <li><code>Expression/Front panel.md</code>,</li>
-  <li><code>Expression/Widget.md</code>,</li>
-  <li><code>Expression/Widget interaction.md</code>.</li>
-</ul>
+<pre><code>Expression/         -&gt; source shape
+Language/           -&gt; semantic truth
+Derivation rules    -&gt; correspondence obligations
+Execution IR        -&gt; open IR model
+Construction rules  -&gt; build obligations
+Identity / Mapping  -&gt; recoverable cross-layer identity
+Schema              -&gt; machine-checkable payload form
+Lowering            -&gt; later specialization
+Backend contract    -&gt; later consumer-facing handoff
+</code></pre>
 
 <hr />
 
 <h2 id="construction-entry-condition">5. Construction Entry Condition</h2>
 
 <p>
-Open Execution IR construction begins only after the program has <strong>validated program meaning</strong>.
+Execution IR construction begins only after the program has <strong>validated program meaning</strong>.
 Construction MUST NOT be claimed for a program that has not already satisfied the applicable validation rules.
 </p>
 
@@ -223,7 +222,7 @@ An implementation MAY internally start construction from:
 </ul>
 
 <p>
-However, the constructed open Execution IR MUST remain grounded in validated program meaning rather than in editor-only convenience state.
+However, the constructed Execution IR MUST remain grounded in validated program meaning rather than in editor-only convenience state.
 </p>
 
 <pre><code>raw or editable form
@@ -240,15 +239,17 @@ construction starts here
 <h2 id="construction-result">6. Construction Result</h2>
 
 <p>
-The construction result in base v0.1 is one open Execution IR payload describing one validated FROG program as one
+The construction result in base v0.1 is one <strong>canonical Execution IR Document</strong> describing one validated FROG program as one
 <strong>execution unit</strong>.
 </p>
 
 <p>
-That execution unit MUST contain enough constructed content to expose:
+That document MUST contain enough constructed content to expose:
 </p>
 
 <ul>
+  <li>document identity and classification,</li>
+  <li>execution-unit identity,</li>
   <li>execution-facing object identity,</li>
   <li>object-family classification,</li>
   <li>primary objects,</li>
@@ -273,18 +274,19 @@ A conforming implementation MAY carry additional execution-relevant metadata, pr
 <pre><code>one validated FROG
         |
         v
-one execution unit
-        ├── primary execution-facing objects
-        ├── support objects where needed
-        ├── typed ports / explicit terminals
-        ├── directed connections
-        ├── regions where applicable
-        ├── boundary participation
-        └── source attribution / correspondence
+one Execution IR Document
+        └── one execution unit
+            ├── primary execution-facing objects
+            ├── support objects where needed
+            ├── typed ports / explicit terminals
+            ├── directed connections
+            ├── regions where applicable
+            ├── boundary participation
+            └── source attribution / correspondence
 </code></pre>
 
 <p>
-The construction result is the open IR payload that later stages MAY consume.
+The construction result is the canonical open IR document that later stages MAY consume.
 It is not yet a lowered target-facing form and not yet a backend-facing contract artifact.
 </p>
 
@@ -293,7 +295,7 @@ It is not yet a lowered target-facing form and not yet a backend-facing contract
 <h2 id="construction-principles">7. Construction Principles</h2>
 
 <p>
-All conforming open Execution IR construction in base v0.1 MUST follow the following principles:
+All conforming Execution IR construction in base v0.1 MUST follow the following principles:
 </p>
 
 <ul>
@@ -305,6 +307,8 @@ All conforming open Execution IR construction in base v0.1 MUST follow the follo
   <li><strong>structured</strong> — structured control remains explicit in the open IR,</li>
   <li><strong>portable</strong> — construction MUST not assume one private backend architecture,</li>
   <li><strong>execution-facing</strong> — construction MAY make execution-relevant facts explicit, but MUST not invent new semantic truth,</li>
+  <li><strong>canonical-document-producing</strong> — construction MUST end in one canonical Execution IR Document for one validated program,</li>
+  <li><strong>canonical-json-emitting</strong> — a conforming implementation MUST be able to emit the canonical JSON serialization of that document,</li>
   <li><strong>non-forcing</strong> — construction MUST not force non-participating source content into primary execution objects merely because it exists in source.</li>
 </ul>
 
@@ -317,6 +321,8 @@ mapping-compatible
 structured
 execution-facing
 portable
+canonical-document-producing
+canonical-json-emitting
 non-forcing of non-primary source content
 
 not backend-private by assumption
@@ -334,34 +340,40 @@ but the resulting construction MUST be equivalent to the following conceptual pi
 <pre><code>validated program meaning
         |
         v
-(1) create execution unit
+(1) create Execution IR Document
         |
         v
-(2) construct primary execution-facing objects
+(2) create execution unit
         |
         v
-(3) construct ports and explicit terminal interfaces
+(3) construct primary execution-facing objects
         |
         v
-(4) construct directed connections
+(4) construct ports and explicit terminal interfaces
         |
         v
-(5) construct explicit regions and structure-owned boundaries
+(5) construct directed connections
         |
         v
-(6) construct source attribution and correspondence relations
+(6) construct explicit regions and structure-owned boundaries
         |
         v
-(7) construct support objects where needed
+(7) construct source attribution and correspondence relations
         |
         v
-(8) record intentional non-primary correspondence where applicable
+(8) construct support objects where needed
         |
         v
-(9) verify IR validity invariants
+(9) record intentional non-primary correspondence where applicable
         |
         v
-open Execution IR payload
+(10) verify IR validity invariants
+        |
+        v
+(11) emit canonical JSON serialization
+        |
+        v
+canonical Execution IR Document
 </code></pre>
 
 <p>
@@ -376,10 +388,48 @@ Lowering, backend-contract shaping, scheduling, partitioning, or runtime realiza
 
 <hr />
 
-<h2 id="execution-unit-construction">9. Execution Unit Construction</h2>
+<h2 id="execution-ir-document-construction">9. Execution IR Document Construction</h2>
 
 <p>
-Construction MUST begin by creating one execution unit for the validated FROG program being constructed.
+Construction MUST begin by creating one top-level <strong>Execution IR Document</strong> for the validated program being constructed.
+</p>
+
+<p>
+That document MUST:
+</p>
+
+<ul>
+  <li>identify itself as an Execution IR artifact,</li>
+  <li>carry the applicable IR version,</li>
+  <li>contain exactly one top-level execution unit in base v0.1,</li>
+  <li>provide the owning container for all open IR content that belongs to that validated program.</li>
+</ul>
+
+<p>
+The top-level document is the canonical open execution artifact of the program at the Execution IR boundary.
+A conforming implementation MUST NOT emit multiple competing top-level canonical IR documents for one validated program at that same boundary.
+</p>
+
+<pre><code>Rule:
+one validated FROG
+   -&gt;
+one Execution IR Document
+   -&gt;
+one execution unit
+</code></pre>
+
+<p>
+Additional implementation-private artifacts MAY exist.
+They MUST remain downstream, auxiliary, or private.
+They do not replace the canonical status of the Execution IR Document.
+</p>
+
+<hr />
+
+<h2 id="execution-unit-construction">10. Execution Unit Construction</h2>
+
+<p>
+After creating the top-level document, construction MUST create one execution unit for the validated FROG program.
 </p>
 
 <p>
@@ -388,7 +438,7 @@ The execution unit MUST provide the owning scope for:
 
 <ul>
   <li>all constructed primary execution-facing objects,</li>
-  <li>all constructed support objects that belong to the open IR payload,</li>
+  <li>all constructed support objects that belong to the open IR document,</li>
   <li>all constructed connections,</li>
   <li>all region objects,</li>
   <li>all explicit source-attribution records,</li>
@@ -396,8 +446,9 @@ The execution unit MUST provide the owning scope for:
 </ul>
 
 <p>
-The execution unit MUST carry a stable unit identity within the payload.
-That identity does not require one globally fixed syntax, but it MUST be stable enough for inspection, diagnostics, cross-record reference, and recoverable mapping inside the payload.
+The execution unit MUST carry a stable unit identity within the document.
+That identity does not require one globally fixed human-readable syntax,
+but it MUST be stable enough for inspection, diagnostics, cross-record reference, and recoverable mapping inside the document.
 </p>
 
 <p>
@@ -413,16 +464,11 @@ The open IR does not yet standardize multi-unit partitioning, distributed unit p
    - regions
    - source attribution
    - correspondence records
-
-Rule:
-one validated FROG
-   ->
-one execution unit
 </code></pre>
 
 <hr />
 
-<h2 id="primary-object-construction">10. Primary Object Construction</h2>
+<h2 id="primary-object-construction">11. Primary Object Construction</h2>
 
 <p>
 Primary execution-facing objects MUST be constructed from validated executable or boundary-participating content according to the derivation rules.
@@ -477,7 +523,7 @@ opaque unattributable primary merging
 
 <hr />
 
-<h2 id="port-terminal-and-connection-construction">11. Port, Terminal, and Connection Construction</h2>
+<h2 id="port-terminal-and-connection-construction">12. Port, Terminal, and Connection Construction</h2>
 
 <p>
 Execution-relevant connectivity MUST be constructed explicitly.
@@ -539,7 +585,7 @@ hidden cross-boundary bypass
 
 <hr />
 
-<h2 id="region-and-structure-construction">12. Region and Structure Construction</h2>
+<h2 id="region-and-structure-construction">13. Region and Structure Construction</h2>
 
 <p>
 Structured control remains explicit in the base open Execution IR.
@@ -598,7 +644,7 @@ unrecoverable structural flattening
 
 <hr />
 
-<h2 id="boundary-and-ui-construction">13. Boundary and UI Construction</h2>
+<h2 id="boundary-and-ui-construction">14. Boundary and UI Construction</h2>
 
 <p>
 Construction MUST preserve the distinction between:
@@ -653,7 +699,7 @@ one untyped generic endpoint role
 
 <hr />
 
-<h2 id="state-and-cycle-construction">14. State and Cycle Construction</h2>
+<h2 id="state-and-cycle-construction">15. State and Cycle Construction</h2>
 
 <p>
 Construction MUST preserve explicit local memory as explicit attributable execution-facing content.
@@ -696,7 +742,7 @@ hidden implicit-memory legalization
 
 <hr />
 
-<h2 id="source-attribution-and-correspondence-construction">15. Source Attribution and Correspondence Construction</h2>
+<h2 id="source-attribution-and-correspondence-construction">16. Source Attribution and Correspondence Construction</h2>
 
 <p>
 Source attribution is mandatory.
@@ -704,7 +750,7 @@ Construction MUST produce explicit attribution information sufficient to recover
 </p>
 
 <p>
-At minimum, the constructed payload MUST support:
+At minimum, the constructed document MUST support:
 </p>
 
 <ul>
@@ -754,7 +800,7 @@ It requires a construction result that remains compatible with the recoverabilit
 
 <hr />
 
-<h2 id="support-object-construction">16. Support Object Construction</h2>
+<h2 id="support-object-construction">17. Support Object Construction</h2>
 
 <p>
 Construction MAY introduce support objects when doing so makes validated execution-facing structure more explicit without changing semantic meaning.
@@ -807,7 +853,7 @@ smuggle runtime-private policy
 
 <hr />
 
-<h2 id="non-primary-correspondence-handling">17. Non-Primary Correspondence Handling</h2>
+<h2 id="non-primary-correspondence-handling">18. Non-Primary Correspondence Handling</h2>
 
 <p>
 Some source-visible content does not become a primary execution object in the open IR of base v0.1.
@@ -863,18 +909,29 @@ accidental silent omission of required correspondence
 
 <hr />
 
-<h2 id="minimal-open-payload-shape">18. Minimal Open Payload Shape</h2>
+<h2 id="canonical-json-payload-shape">19. Canonical JSON Payload Shape</h2>
 
 <p>
-This document does not freeze one mandatory universal JSON wire format for every implementation.
-However, a conforming open payload SHOULD be representable in a broadly equivalent open shape such as:
+A conforming implementation MUST be able to emit the canonical JSON serialization of the Execution IR Document.
+</p>
+
+<p>
+This canonical JSON serialization is the normative open wire format of the Execution IR in base v0.1.
+Internal in-memory forms MAY differ.
+Private downstream forms MAY differ.
+Neither replaces the normative status of the canonical JSON Execution IR Document.
+</p>
+
+<p>
+At minimum, the canonical JSON payload MUST contain top-level categories equivalent to:
 </p>
 
 <pre><code>{
   "ir_version": "0.1",
   "kind": "execution_ir",
+  "document_id": "…",
   "unit": {
-    "id": "main",
+    "id": "…",
     "objects": [],
     "connections": [],
     "regions": [],
@@ -885,49 +942,59 @@ However, a conforming open payload SHOULD be representable in a broadly equivale
 </code></pre>
 
 <p>
-This example is an <strong>illustrative minimal open payload skeleton</strong>, not a claim that every conforming implementation must emit this exact JSON syntax.
+The example above shows the minimum canonical category shape.
+The schema layer MAY later refine exact required fields, enumeration values, and structural constraints.
 </p>
 
 <p>
-In a minimally open payload:
+In the canonical JSON payload:
 </p>
 
 <ul>
-  <li><code>ir_version</code> SHOULD identify the IR schema or version family being emitted,</li>
-  <li><code>kind</code> SHOULD classify the payload as open execution IR,</li>
-  <li><code>unit</code> MUST identify the execution unit being described,</li>
-  <li><code>objects</code> MUST carry primary execution-facing objects and support objects, with clear classification,</li>
+  <li><code>ir_version</code> MUST identify the applicable IR version family,</li>
+  <li><code>kind</code> MUST classify the payload as an Execution IR document,</li>
+  <li><code>document_id</code> MUST identify the top-level IR document,</li>
+  <li><code>unit</code> MUST identify the single execution unit being described,</li>
+  <li><code>objects</code> MUST carry primary execution-facing objects and support objects with clear classification,</li>
   <li><code>connections</code> MUST carry explicit directed connectivity,</li>
   <li><code>regions</code> MUST carry explicit structured region information where applicable,</li>
-  <li><code>source_map</code> or an equivalent mechanism MUST carry recoverable attribution,</li>
-  <li><code>correspondence</code> or an equivalent mechanism MAY carry declaration linkage and intentional non-primary correspondence where needed.</li>
+  <li><code>source_map</code> or an equivalent explicit category MUST carry recoverable attribution,</li>
+  <li><code>correspondence</code> or an equivalent explicit category MUST carry declaration linkage and intentional non-primary correspondence where needed.</li>
 </ul>
 
 <p>
-An implementation MAY extend this shape with additional execution-relevant metadata,
+A conforming implementation MAY extend this canonical shape with additional execution-relevant metadata,
 provided that such metadata does not redefine language semantics or freeze runtime-private realization details as though they were open IR standard.
 </p>
 
-<pre><code>Minimal open payload intent
+<pre><code>Canonical JSON payload intent
 
-unit
-├── objects
-├── connections
-├── regions
-├── source attribution
-└── correspondence where needed
+document
+└── unit
+    ├── objects
+    ├── connections
+    ├── regions
+    ├── source attribution
+    └── correspondence where needed
 </code></pre>
+
+<p>
+This document defines the canonical category-level payload structure.
+The machine-checkable schema belongs to the dedicated schema material of the IR layer.
+</p>
 
 <hr />
 
-<h2 id="ir-validity-checks">19. IR Validity Checks</h2>
+<h2 id="ir-validity-checks">20. IR Validity Checks</h2>
 
 <p>
-Before a constructed payload is claimed to be a valid open Execution IR,
+Before a constructed document is claimed to be a valid canonical Execution IR,
 it MUST satisfy the following minimum checks:
 </p>
 
 <ul>
+  <li>exactly one top-level Execution IR Document exists for the validated program at the open IR boundary,</li>
+  <li>that document contains exactly one execution unit in base v0.1,</li>
   <li>all execution-visible objects are classifiable,</li>
   <li>all execution-visible objects are attributable,</li>
   <li>all primary objects are distinguishable from support objects,</li>
@@ -937,16 +1004,19 @@ it MUST satisfy the following minimum checks:
   <li>all explicit local-memory objects remain explicit and attributable,</li>
   <li>required declaration-to-participation correspondence remains recoverable where applicable,</li>
   <li>intentional non-primary correspondence is not confused with accidental identity loss,</li>
+  <li>the document is serializable in canonical JSON form,</li>
   <li>the payload does not contain editor-only presentation state as execution semantics,</li>
   <li>the payload does not require hidden undocumented runtime policy to be interpreted as open IR.</li>
 </ul>
 
 <p>
-If those checks are not satisfied, the implementation MUST NOT claim that the emitted payload is a conforming open Execution IR for base v0.1.
+If those checks are not satisfied, the implementation MUST NOT claim that the emitted document is a conforming Execution IR for base v0.1.
 </p>
 
 <pre><code>IR validity checks
 
+one document
+one unit
 classifiable objects
 attributable objects
 primary / support distinction
@@ -956,6 +1026,7 @@ recoverable interface / UI distinctions
 explicit attributable memory
 recoverable declaration correspondence where required
 non-primary correspondence not confused with identity loss
+canonical JSON serializability
 
 no editor-only execution semantics
 no hidden runtime-policy dependency
@@ -963,7 +1034,7 @@ no hidden runtime-policy dependency
 
 <hr />
 
-<h2 id="determinism-and-stability">20. Determinism and Stability</h2>
+<h2 id="determinism-and-stability">21. Determinism and Stability</h2>
 
 <p>
 Construction SHOULD be stable for semantically identical validated inputs under the same implementation configuration.
@@ -971,14 +1042,14 @@ Construction SHOULD be stable for semantically identical validated inputs under 
 
 <p>
 This does not require identical payload byte layout across all tools.
-It does require that the emitted open IR remain:
+It does require that the emitted Execution IR remain:
 </p>
 
 <ul>
   <li>structurally coherent,</li>
   <li>attribution-stable,</li>
   <li>semantically equivalent,</li>
-  <li>sufficiently predictable for inspection, diagnostics, caching, and future lowering.</li>
+  <li>sufficiently predictable for inspection, diagnostics, caching, schema validation, and future lowering.</li>
 </ul>
 
 <p>
@@ -987,6 +1058,7 @@ However, a conforming implementation SHOULD avoid unnecessary instability in:
 </p>
 
 <ul>
+  <li>document identity assignment,</li>
   <li>object identity assignment,</li>
   <li>region identity assignment,</li>
   <li>connection identity assignment,</li>
@@ -1009,57 +1081,69 @@ identical byte-for-byte payload across all tools
 
 <hr />
 
-<h2 id="out-of-scope-for-v01">21. Out of Scope for v0.1</h2>
+<h2 id="out-of-scope-for-v01">22. Out of Scope for v0.1</h2>
 
 <p>
 The following are out of scope for this document in base v0.1:
 </p>
 
 <ul>
-  <li>one universally mandatory procedural build algorithm,</li>
-  <li>one universally mandatory binary or JSON transport syntax,</li>
+  <li>one universally mandatory procedural in-memory build algorithm,</li>
   <li>mandatory SSA construction,</li>
   <li>mandatory CFG flattening of structured control,</li>
   <li>backend-specific lowering rules,</li>
   <li>compiled artifact formats,</li>
   <li>runtime-private scheduler graph construction,</li>
   <li>distributed or multi-unit execution packaging,</li>
-  <li>debugger event streams, trace payloads, or observability protocols.</li>
+  <li>debugger event streams, trace payloads, or observability protocols,</li>
+  <li>the complete field-level schema text of the canonical JSON payload.</li>
 </ul>
 
 <p>
-Those concerns belong to later documents such as lowering, backend contract, runtime, deployment, and IDE-facing observability specifications.
+Those concerns belong to later documents such as lowering, backend contract, runtime, deployment, IDE-facing observability, and dedicated IR schema specifications.
 </p>
+
+<p>
+What is <strong>not</strong> out of scope anymore is:
+</p>
+
+<ul>
+  <li>the existence of one canonical Execution IR Document,</li>
+  <li>the rule that one validated program yields one such document,</li>
+  <li>the rule that a conforming implementation MUST be able to emit that document in canonical JSON form.</li>
+</ul>
 
 <hr />
 
-<h2 id="summary">22. Summary</h2>
+<h2 id="summary">23. Summary</h2>
 
 <p>
-Open Execution IR construction in FROG v0.1 is intentionally conservative.
-It starts from <strong>validated program meaning</strong>, creates <strong>one execution unit</strong>, constructs
-<strong>primary execution-facing objects</strong>, <strong>typed ports</strong>, <strong>directed connections</strong>,
-<strong>structured regions</strong>, <strong>support objects where justified</strong>, and
+Execution IR construction in FROG v0.1 is intentionally conservative and explicitly standardized.
+It starts from <strong>validated program meaning</strong>, creates <strong>one Execution IR Document</strong>, creates
+<strong>one execution unit</strong>, constructs <strong>primary execution-facing objects</strong>, <strong>typed ports</strong>,
+<strong>directed connections</strong>, <strong>structured regions</strong>, <strong>support objects where justified</strong>, and
 <strong>mandatory source attribution and correspondence</strong>,
-then verifies that the resulting payload remains structured, attributable, portable, and free from runtime-private leakage.
+then verifies that the resulting document remains structured, attributable, portable, and free from runtime-private leakage.
 </p>
 
 <p>
 It is also intentionally upstream of later stages:
-construction closes the material build boundary for open Execution IR,
+construction closes the material build boundary for the canonical open Execution IR,
 while lowering, backend-facing contracts, and private realization remain later concerns.
 </p>
 
 <pre><code>validated program meaning
    |
-   +-- construct execution unit
+   +-- create Execution IR Document
+   +-- create execution unit
    +-- construct primary objects
    +-- construct ports and connections
    +-- construct regions and boundaries
    +-- construct attribution and support objects
    +-- record non-primary correspondence where needed
    +-- verify invariants
+   +-- emit canonical JSON serialization
    |
    v
-open Execution IR
+canonical Execution IR Document
 </code></pre>
