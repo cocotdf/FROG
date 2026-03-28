@@ -5,7 +5,7 @@
 <h1 align="center">FROG IR Identity and Mapping</h1>
 
 <p align="center">
-  <strong>Normative identity, attribution, and recoverability rules for open Execution IR</strong><br />
+  <strong>Normative identity, attribution, and recoverability rules for the canonical Execution IR Document</strong><br />
   <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -22,14 +22,17 @@
   <li><a href="#preconditions">7. Preconditions</a></li>
   <li><a href="#required-recoverability">8. Required Recoverability</a></li>
   <li><a href="#mapping-rules">9. Mapping Rules</a></li>
-  <li><a href="#allowed-normalization">10. Allowed Normalization</a></li>
-  <li><a href="#forbidden-transformations">11. Forbidden Transformations</a></li>
-  <li><a href="#relation-with-lowering-and-backend-contract">12. Relation with Lowering and Backend Contract</a></li>
-  <li><a href="#relation-with-observation-and-debugging">13. Relation with Observation and Debugging</a></li>
-  <li><a href="#minimal-open-shape">14. Minimal Open Shape</a></li>
-  <li><a href="#examples">15. Examples</a></li>
-  <li><a href="#out-of-scope-for-v01">16. Out of Scope for v0.1</a></li>
-  <li><a href="#summary">17. Summary</a></li>
+  <li><a href="#document-unit-and-object-identity">10. Document, Unit, and Object Identity</a></li>
+  <li><a href="#ports-terminals-connections-and-regions">11. Ports, Terminals, Connections, and Regions</a></li>
+  <li><a href="#attribution-and-correspondence-records">12. Attribution and Correspondence Records</a></li>
+  <li><a href="#allowed-normalization">13. Allowed Normalization</a></li>
+  <li><a href="#forbidden-transformations">14. Forbidden Transformations</a></li>
+  <li><a href="#relation-with-schema-construction-lowering-and-backend-contract">15. Relation with Schema, Construction, Lowering, and Backend Contract</a></li>
+  <li><a href="#relation-with-observation-and-debugging">16. Relation with Observation and Debugging</a></li>
+  <li><a href="#canonical-json-shape-posture">17. Canonical JSON Shape Posture</a></li>
+  <li><a href="#examples">18. Examples</a></li>
+  <li><a href="#out-of-scope-for-v01">19. Out of Scope for v0.1</a></li>
+  <li><a href="#summary">20. Summary</a></li>
 </ul>
 
 <hr />
@@ -43,11 +46,12 @@ This document defines the identity and mapping rules that connect:
 <ul>
   <li>validated source-visible contributors,</li>
   <li>validated program meaning,</li>
-  <li>execution-facing IR identity.</li>
+  <li>the canonical Execution IR Document,</li>
+  <li>execution-facing IR identities inside that document.</li>
 </ul>
 
 <p>
-Its purpose is to ensure that open Execution IR remains:
+Its purpose is to ensure that the canonical open Execution IR remains:
 </p>
 
 <ul>
@@ -59,7 +63,7 @@ Its purpose is to ensure that open Execution IR remains:
 
 <p>
 This document does not define semantic truth.
-It defines how identity, attribution, and recoverability MUST survive projection into open Execution IR.
+It defines how identity, attribution, and recoverability MUST survive projection into the canonical Execution IR Document.
 </p>
 
 <pre><code>validated source-visible contributors
@@ -68,7 +72,10 @@ It defines how identity, attribution, and recoverability MUST survive projection
 validated program meaning
                 |
                 v
-open Execution IR identity
+canonical Execution IR Document
+                |
+                v
+execution-facing IR identity
                 |
                 v
 lowering / backend contract / private realization
@@ -90,15 +97,16 @@ Every conforming mapping MUST allow recovery of:
   <li>its validated source-visible contributor or contributors,</li>
   <li>its semantic role,</li>
   <li>its derivation relation,</li>
-  <li>its object-family classification where relevant.</li>
+  <li>its object-family classification where relevant,</li>
+  <li>its place inside the canonical Execution IR Document.</li>
 </ul>
 
 <p>
 Identity is therefore not optional metadata.
-It is part of the correctness of open Execution IR.
+It is part of the correctness of the canonical open Execution IR.
 </p>
 
-<pre><code>valid IR
+<pre><code>valid canonical IR
    =
 correct execution-facing correspondence
    +
@@ -120,9 +128,9 @@ This document defines:
 </p>
 
 <ul>
-  <li>identity layers relevant to open Execution IR,</li>
+  <li>identity layers relevant to the canonical Execution IR Document,</li>
   <li>mapping relations between validated meaning and IR objects,</li>
-  <li>recoverability obligations that MUST survive derivation,</li>
+  <li>recoverability obligations that MUST survive derivation and construction,</li>
   <li>identity-safe normalization,</li>
   <li>identity-breaking forbidden transformations.</li>
 </ul>
@@ -134,13 +142,13 @@ This document does not define:
 <ul>
   <li>the full source schema,</li>
   <li>language semantics in full,</li>
-  <li>the complete Execution IR schema,</li>
+  <li>the complete Execution IR schema text,</li>
   <li>the construction algorithm in full,</li>
   <li>runtime-private identity models.</li>
 </ul>
 
 <pre><code>This document defines:
-- identity layers relevant to open Execution IR
+- identity layers relevant to the canonical Execution IR Document
 - mapping relations between validated meaning and IR objects
 - recoverability obligations
 - identity-safe normalization
@@ -149,7 +157,7 @@ This document does not define:
 This document does not define:
 - source shape
 - language semantics
-- the full open IR schema
+- the full canonical IR schema text
 - construction in full
 - runtime-private identity models
 </code></pre>
@@ -170,7 +178,7 @@ validated meaning
 identity + derivation constraints
   |
   v
-open Execution IR
+canonical Execution IR Document
   |
   v
 lowering
@@ -192,7 +200,8 @@ This means:
 
 <ul>
   <li>derivation MUST establish recoverable open-IR identity,</li>
-  <li>construction MUST materialize that identity explicitly enough for open-IR validity,</li>
+  <li>construction MUST materialize that identity explicitly enough for canonical open-IR validity,</li>
+  <li>schema validation MUST validate the structural carriers of that identity where published,</li>
   <li>lowering MUST preserve required recoverability where later layers still depend on it,</li>
   <li>backend-facing consumption MUST NOT erase required attribution while still claiming faithful consumption.</li>
 </ul>
@@ -240,14 +249,35 @@ This layer is authoritative for derivation.
 A conforming derivation MUST be grounded in validated identity, not in pre-validation ambiguity.
 </p>
 
-<h3>5.3 Open Execution IR identity</h3>
+<h3>5.3 Canonical Execution IR document identity</h3>
 
 <p>
-This is the identity of objects inside one execution unit:
+This is the identity of the top-level canonical Execution IR artifact for one validated FROG program.
+</p>
+
+<p>
+In base v0.1:
 </p>
 
 <ul>
-  <li>unique within the relevant unit scope,</li>
+  <li>one validated FROG program yields one canonical Execution IR Document,</li>
+  <li>that document carries its own identity,</li>
+  <li>that document contains one execution unit.</li>
+</ul>
+
+<p>
+Document identity is distinct from source identity and distinct from execution-object identity.
+It identifies the open IR artifact itself.
+</p>
+
+<h3>5.4 Open Execution IR unit and object identity</h3>
+
+<p>
+This is the identity of the execution unit and of the objects inside it:
+</p>
+
+<ul>
+  <li>unique within the relevant document or unit scope,</li>
   <li>stable for the lifetime of that IR instance,</li>
   <li>mapped to validated meaning through explicit correspondence.</li>
 </ul>
@@ -257,14 +287,14 @@ IR identity is execution-facing representation identity.
 It is not yet runtime activation identity.
 </p>
 
-<h3>5.4 Lowered identity</h3>
+<h3>5.5 Lowered identity</h3>
 
 <p>
 Lowering may later introduce additional identities or refined object partitions.
-That lowered identity remains downstream from this document, but it MUST respect recoverability obligations inherited from open Execution IR where later stages still claim faithful mapping.
+That lowered identity remains downstream from this document, but it MUST respect recoverability obligations inherited from the canonical open IR where later stages still claim faithful mapping.
 </p>
 
-<h3>5.5 Runtime or backend-private identity</h3>
+<h3>5.6 Runtime or backend-private identity</h3>
 
 <p>
 Dynamic execution identity such as activations, instances, handles, retained state cells, or backend-private objects is downstream and out of scope here.
@@ -272,13 +302,15 @@ However, when later stages claim source-aligned diagnosability, their private id
 </p>
 
 <pre><code>source-visible
-      ->
+      -&gt;
 validated semantic
-      ->
-open IR
-      ->
+      -&gt;
+canonical IR document
+      -&gt;
+execution unit / object identity
+      -&gt;
 lowered
-      ->
+      -&gt;
 runtime / backend-private
 </code></pre>
 
@@ -313,7 +345,8 @@ Every execution-facing IR object MUST expose or imply, in a recoverable way:
   <li>its semantic origin,</li>
   <li>its validated source-visible contributor or contributors,</li>
   <li>its mapping relation,</li>
-  <li>its object-family role where relevant.</li>
+  <li>its object-family role where relevant,</li>
+  <li>its owning document and unit relation where relevant.</li>
 </ul>
 
 <p>
@@ -331,7 +364,7 @@ Restricted aggregation is permitted only when:
 <h2 id="preconditions">7. Preconditions</h2>
 
 <p>
-Identity-preserving open Execution IR requires:
+Identity-preserving canonical Execution IR requires:
 </p>
 
 <ul>
@@ -344,8 +377,8 @@ Identity-preserving open Execution IR requires:
 </ul>
 
 <pre><code>no validation
-    ->
-no conforming identity-preserving open Execution IR
+    -&gt;
+no conforming identity-preserving canonical Execution IR
 </code></pre>
 
 <p>
@@ -361,6 +394,7 @@ The following distinctions MUST remain recoverable whenever present and relevant
 </p>
 
 <ul>
+  <li>document identity versus execution-unit identity,</li>
   <li><code>interface_input</code> versus <code>interface_output</code>,</li>
   <li><code>widget_value</code> versus <code>widget_reference</code>,</li>
   <li>standardized UI-object primitive versus widget-reference participation,</li>
@@ -377,7 +411,7 @@ The following distinctions MUST remain recoverable whenever present and relevant
 <pre><code>recoverability set
     =
 minimal invariant surface
-for open Execution IR correspondence
+for canonical Execution IR correspondence
 </code></pre>
 
 <p>
@@ -438,7 +472,134 @@ These recoverability requirements are the minimum architectural surface that lat
 
 <hr />
 
-<h2 id="allowed-normalization">10. Allowed Normalization</h2>
+<h2 id="document-unit-and-object-identity">10. Document, Unit, and Object Identity</h2>
+
+<p>
+The canonical Execution IR identity model in base v0.1 has at least three open-IR levels:
+</p>
+
+<ul>
+  <li><strong>document identity</strong> — the identity of the canonical Execution IR Document,</li>
+  <li><strong>unit identity</strong> — the identity of the single execution unit contained in that document,</li>
+  <li><strong>object identity</strong> — the identity of execution-facing objects inside that unit.</li>
+</ul>
+
+<p>
+Accordingly:
+</p>
+
+<ul>
+  <li>every canonical Execution IR Document MUST carry a document identity,</li>
+  <li>every execution unit MUST carry a unit identity,</li>
+  <li>every execution-visible object MUST carry an object identity unique within the owning execution unit,</li>
+  <li>support objects MUST remain distinguishable from primary objects by recoverable identity-bearing classification,</li>
+  <li>document identity MUST NOT be reused as a substitute for unit or object identity,</li>
+  <li>unit identity MUST NOT be reused as a substitute for object identity.</li>
+</ul>
+
+<pre><code>canonical Execution IR Document
+└── document identity
+    └── execution unit identity
+        ├── object identity
+        ├── connection identity
+        ├── region identity
+        └── attribution / correspondence record identity where applicable
+</code></pre>
+
+<p>
+This layered identity model exists so that tools can answer different questions without ambiguity:
+</p>
+
+<ul>
+  <li>Which canonical IR artifact is this?</li>
+  <li>Which execution unit does this record belong to?</li>
+  <li>Which execution-facing object is this?</li>
+  <li>Is this object primary, support, or only referenced through correspondence?</li>
+</ul>
+
+<hr />
+
+<h2 id="ports-terminals-connections-and-regions">11. Ports, Terminals, Connections, and Regions</h2>
+
+<p>
+Identity obligations do not stop at object level.
+Where those categories are made explicit in the canonical IR, they MUST also remain recoverable as structured identity-bearing records or equivalent explicit references.
+</p>
+
+<p>
+Accordingly:
+</p>
+
+<ul>
+  <li>every explicit port or terminal MUST remain attached to an owning execution-facing object,</li>
+  <li>every explicit connection MUST remain attached to attributable source and destination endpoints,</li>
+  <li>every explicit region MUST remain attached to an owning structure object,</li>
+  <li>where structure-boundary terminals are materialized explicitly, they MUST remain distinguishable from ordinary ports,</li>
+  <li>where structure terminals are materialized explicitly, their structure-intrinsic role MUST remain recoverable.</li>
+</ul>
+
+<p>
+If a conforming implementation chooses not to materialize a given helper category as a first-class record, equivalent recoverability MUST still remain possible through explicit references or explicit structured membership.
+</p>
+
+<pre><code>object
+  ├── ports / terminals
+  ├── region membership where applicable
+  └── attributable connectivity
+
+structure
+  ├── owned regions
+  ├── boundary roles
+  └── structure-terminal roles
+</code></pre>
+
+<hr />
+
+<h2 id="attribution-and-correspondence-records">12. Attribution and Correspondence Records</h2>
+
+<p>
+Attribution and correspondence are not merely diagnostic conveniences.
+They are part of the canonical open IR boundary.
+</p>
+
+<p>
+At minimum, a conforming canonical Execution IR representation MUST support:
+</p>
+
+<ul>
+  <li><strong>attribution</strong> — which validated contributor or contributors gave rise to this IR-side record,</li>
+  <li><strong>correspondence</strong> — how a validated source-visible contributor relates to primary objects, support objects, or intentional non-primary outcomes.</li>
+</ul>
+
+<p>
+Accordingly:
+</p>
+
+<ul>
+  <li>a directly preserved object SHOULD expose direct attribution,</li>
+  <li>a support object derived from multiple contributors MUST expose explicit contributor attribution,</li>
+  <li>intentional non-primary outcomes MUST remain distinguishable from accidental identity loss,</li>
+  <li>declaration-reference relations MUST remain distinguishable from primary execution-object identity,</li>
+  <li>attribution and correspondence MAY be inline, table-based, or represented through equivalent explicit records.</li>
+</ul>
+
+<pre><code>primary object
+   -&gt; direct attribution
+
+support object
+   -&gt; contributor attribution
+
+non-primary source-visible contributor
+   -&gt; correspondence without forced primary execution identity
+</code></pre>
+
+<p>
+A conforming implementation MUST NOT rely on undocumented ordering conventions or positional coincidence as the only mapping mechanism.
+</p>
+
+<hr />
+
+<h2 id="allowed-normalization">13. Allowed Normalization</h2>
 
 <p>
 The following are allowed when semantic equivalence and recoverability are preserved:
@@ -446,6 +607,7 @@ The following are allowed when semantic equivalence and recoverability are prese
 
 <ul>
   <li>making ports, types, and directions explicit,</li>
+  <li>making document and unit identity explicit,</li>
   <li>making regions and terminals explicit,</li>
   <li>adding support objects,</li>
   <li>introducing canonical IR identifiers,</li>
@@ -472,7 +634,7 @@ Loss of identity relation is not.
 
 <hr />
 
-<h2 id="forbidden-transformations">11. Forbidden Transformations</h2>
+<h2 id="forbidden-transformations">14. Forbidden Transformations</h2>
 
 <p>
 The following transformations are forbidden:
@@ -484,11 +646,12 @@ The following transformations are forbidden:
   <li>hidden memory insertion presented as though it had validated source origin,</li>
   <li>collapse of interface participation and UI participation into one undifferentiated identity class,</li>
   <li>collapse of <code>widget_value</code> participation and property-based access to member <code>value</code> into one undifferentiated identity class,</li>
+  <li>collapse of document identity, unit identity, and object identity into one ambiguous identifier role,</li>
   <li>structure flattening that destroys family, region, or terminal recoverability,</li>
   <li>promotion of editor-only state into execution-facing identity,</li>
   <li>forced executionization of non-execution source content merely because it exists in source,</li>
   <li>rewriting support objects as though they were independently authored semantic truth,</li>
-  <li>treating one runtime-private identity model as though it were the open IR identity model.</li>
+  <li>treating one runtime-private identity model as though it were the canonical open IR identity model.</li>
 </ul>
 
 <pre><code>forbidden
@@ -499,11 +662,11 @@ or destroys required recoverability
 
 <hr />
 
-<h2 id="relation-with-lowering-and-backend-contract">12. Relation with Lowering and Backend Contract</h2>
+<h2 id="relation-with-schema-construction-lowering-and-backend-contract">15. Relation with Schema, Construction, Lowering, and Backend Contract</h2>
 
 <p>
-This document defines recoverability obligations at the open-IR boundary.
-Lowering and backend contract remain downstream.
+This document defines recoverability obligations at the canonical open-IR boundary.
+Schema, construction, lowering, and backend contract remain distinct concerns.
 </p>
 
 <p>
@@ -511,6 +674,8 @@ Accordingly:
 </p>
 
 <ul>
+  <li>construction MUST materialize the required identity and mapping carriers,</li>
+  <li>schema MAY validate the structural presence of those carriers where published,</li>
   <li>lowering MAY refine or expand identity,</li>
   <li>backend contract MAY carry consumer-facing identity anchors,</li>
   <li>runtime or backend-private realization MAY introduce private handles or activation identities,</li>
@@ -522,14 +687,22 @@ In particular:
 </p>
 
 <ul>
-  <li>backend-family orientation is not itself an open-IR identity class,</li>
+  <li>backend-family orientation is not itself a canonical open-IR identity class,</li>
   <li>target-profile assumptions are not themselves a substitute for source-attributable object identity,</li>
   <li>deployment-mode assumptions are not themselves a substitute for semantic identity,</li>
-  <li>runtime-private realization identity is not the normative identity model of open Execution IR.</li>
+  <li>runtime-private realization identity is not the normative identity model of the canonical Execution IR Document.</li>
 </ul>
 
 <pre><code>open IR identity
       constrains
+safe construction
+
+safe construction
+      constrains
+schema-valid canonical payloads
+
+schema-valid canonical payloads
+      constrain
 safe lowering
 
 safe lowering
@@ -543,10 +716,10 @@ later diagnosable realization
 
 <hr />
 
-<h2 id="relation-with-observation-and-debugging">13. Relation with Observation and Debugging</h2>
+<h2 id="relation-with-observation-and-debugging">16. Relation with Observation and Debugging</h2>
 
 <p>
-Open Execution IR is not:
+The canonical Execution IR is not:
 </p>
 
 <ul>
@@ -574,72 +747,87 @@ This document therefore supports observation indirectly by preserving the identi
 
 <hr />
 
-<h2 id="minimal-open-shape">14. Minimal Open Shape</h2>
+<h2 id="canonical-json-shape-posture">17. Canonical JSON Shape Posture</h2>
 
 <p>
-A conforming execution-facing IR object SHOULD expose or imply information equivalent to:
+The canonical JSON Execution IR form SHOULD expose or imply information equivalent to:
 </p>
 
 <ul>
-  <li>IR identity,</li>
+  <li>document identity,</li>
+  <li>unit identity,</li>
+  <li>IR-side object identity,</li>
   <li>object classification,</li>
   <li>mapping relation,</li>
   <li>semantic origin identity,</li>
-  <li>source attribution.</li>
+  <li>source attribution,</li>
+  <li>correspondence where needed.</li>
 </ul>
 
 <pre><code>{
-  "ir_id": "...",
-  "kind": "...",
-  "role": "...",
-  "mapping_relation": "...",
-  "semantic_identity": "...",
-  "source_attribution": [...]
+  "document_id": "...",
+  "unit": {
+    "id": "...",
+    "objects": [
+      {
+        "id": "...",
+        "family": "...",
+        "role": "...",
+        "attribution": { ... },
+        "correspondence_refs": [ ... ]
+      }
+    ],
+    "source_map": [ ... ],
+    "correspondence": [ ... ]
+  }
 }
 </code></pre>
 
 <p>
-The exact field names are illustrative only.
-What matters is the recoverable presence of equivalent information.
+The exact field names above are illustrative only.
+What matters here is the recoverable presence of equivalent information.
+The machine-checkable schema layer owns the exact published payload validation surface.
 </p>
 
 <hr />
 
-<h2 id="examples">15. Examples</h2>
+<h2 id="examples">18. Examples</h2>
 
-<h3>15.1 1 -&gt; 1</h3>
+<h3>18.1 1 -&gt; 1</h3>
 
 <pre><code>validated primitive contributor
-    ->
+    -&gt;
 primitive execution object
+with direct attribution
 </code></pre>
 
-<h3>15.2 1 -&gt; n</h3>
+<h3>18.2 1 -&gt; n</h3>
 
 <pre><code>validated structure contributor
-    ->
+    -&gt;
 structured execution object
     + region objects
     + terminal support objects
+with recoverable ownership and attribution
 </code></pre>
 
-<h3>15.3 n -&gt; 1</h3>
+<h3>18.3 n -&gt; 1</h3>
 
 <pre><code>multiple contributors
-    ->
+    -&gt;
 one support object
 with explicit contributor attribution
 </code></pre>
 
-<h3>15.4 1 -&gt; 0</h3>
+<h3>18.4 1 -&gt; 0</h3>
 
 <pre><code>non-participating widget declaration
-    ->
+    -&gt;
 no primary execution object
 but declaration correspondence may still remain recoverable
 </code></pre>
 
-<h3>15.5 Distinction preservation</h3>
+<h3>18.5 Distinction preservation</h3>
 
 <pre><code>widget_reference contributor
     !=
@@ -649,9 +837,22 @@ both may be related
 but they do not share one undifferentiated identity
 </code></pre>
 
+<h3>18.6 Document versus unit versus object</h3>
+
+<pre><code>validated FROG
+   -&gt; Execution IR Document D
+      -&gt; execution unit U
+         -&gt; object O1
+         -&gt; object O2
+
+D != U
+U != O1
+O1 != O2
+</code></pre>
+
 <hr />
 
-<h2 id="out-of-scope-for-v01">16. Out of Scope for v0.1</h2>
+<h2 id="out-of-scope-for-v01">19. Out of Scope for v0.1</h2>
 
 <ul>
   <li>a global cross-repository identifier system for every artifact class,</li>
@@ -664,10 +865,10 @@ but they do not share one undifferentiated identity
 
 <hr />
 
-<h2 id="summary">17. Summary</h2>
+<h2 id="summary">20. Summary</h2>
 
 <p>
-A conforming open Execution IR MUST:
+A conforming canonical Execution IR MUST:
 </p>
 
 <ul>
@@ -677,7 +878,7 @@ A conforming open Execution IR MUST:
 </ul>
 
 <p>
-Its identity model exists so that open Execution IR remains:
+Its identity model exists so that the canonical Execution IR Document remains:
 </p>
 
 <ul>
@@ -690,7 +891,10 @@ Its identity model exists so that open Execution IR remains:
 <pre><code>validated meaning
         |
         v
-recoverable open IR identity
+recoverable canonical IR identity
+        |
+        v
+safe construction and schema validation
         |
         v
 safe specialization
