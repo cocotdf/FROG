@@ -20,7 +20,7 @@
   <li><a href="#non-goals">5. Non-Goals</a></li>
   <li><a href="#core-definition">6. Core Definition</a></li>
   <li><a href="#contract-parties">7. Contract Parties</a></li>
-  <li><a href="#backend-family-target-profile-and-runtime-boundary">8. Backend Family, Target Profile, Deployment Mode, and Runtime Boundary</a></li>
+  <li><a href="#backend-family-target-profile-deployment-mode-and-runtime-boundary">8. Backend Family, Target Profile, Deployment Mode, and Runtime Boundary</a></li>
   <li><a href="#contract-identity-and-backend-family">9. Contract Identity and Backend Family</a></li>
   <li><a href="#contract-boundary">10. Contract Boundary</a></li>
   <li><a href="#minimum-preconditions">11. Minimum Preconditions</a></li>
@@ -339,7 +339,7 @@ The backend contract exists so that those parties do not need to rely on undocum
 
 <hr/>
 
-<h2 id="backend-family-target-profile-and-runtime-boundary">8. Backend Family, Target Profile, Deployment Mode, and Runtime Boundary</h2>
+<h2 id="backend-family-target-profile-deployment-mode-and-runtime-boundary">8. Backend Family, Target Profile, Deployment Mode, and Runtime Boundary</h2>
 
 <p>
 The backend contract sits at a boundary where several related concepts must remain distinct.
@@ -382,7 +382,19 @@ A deployment mode is not itself the program meaning and is not itself a backend 
 It may, however, affect what later realization stages choose to bundle, expose, or omit.
 </p>
 
-<h3>8.4 Runtime-private realization</h3>
+<h3>8.4 Profile-owned capability requirement</h3>
+
+<p>
+A <strong>profile-owned capability requirement</strong> is a requirement that depends on optional standardized capability families owned by <code>Profiles/</code>.
+These requirements may materially affect correct consumption of a lowered form.
+</p>
+
+<p>
+A backend contract may therefore declare that one or more profile-owned capability families are required by the consumer.
+However, the contract does not move normative ownership of those capability families into <code>IR/</code>.
+</p>
+
+<h3>8.5 Runtime-private realization</h3>
 
 <p>
 A <strong>runtime-private realization</strong> is the consumer-private execution machinery that eventually accepts the contract and makes execution happen.
@@ -392,15 +404,6 @@ This may include runtime modules, host bindings, schedulers, retained state obje
 <p>
 Such realization details remain downstream from this document.
 They are not standardized here merely because they exist in an implementation.
-</p>
-
-<h3>8.5 Profile relation</h3>
-
-<p>
-Target profiles, deployment modes, and runtime-facing capability contracts may be classified or constrained by
-<code>Profiles/</code>.
-A backend contract may reference those declared profile-side classes or requirements,
-but it does not move their normative ownership into <code>IR/</code>.
 </p>
 
 <h3>8.6 Required distinction at the contract boundary</h3>
@@ -413,8 +416,8 @@ Accordingly:
   <li>a backend contract MAY declare backend-family orientation explicitly,</li>
   <li>a backend contract MAY declare required target-profile assumptions explicitly,</li>
   <li>a backend contract MAY declare deployment-relevant assumptions explicitly where they matter to correct consumption,</li>
-  <li>a backend contract MAY declare required runtime-facing capability assumptions explicitly,</li>
-  <li>but a backend contract MUST NOT collapse backend family, target profile, deployment mode, profile-owned capability contract, and runtime-private realization into one undifferentiated concept.</li>
+  <li>a backend contract MAY declare required profile-owned capability assumptions explicitly,</li>
+  <li>but a backend contract MUST NOT collapse backend family, target profile, deployment mode, profile-owned capability requirement, and runtime-private realization into one undifferentiated concept.</li>
 </ul>
 
 <p>
