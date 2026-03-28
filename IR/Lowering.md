@@ -5,8 +5,8 @@
 <h1 align="center">FROG IR Lowering</h1>
 
 <p align="center">
-  <strong>Normative lowering boundary and transformation rules for execution-facing IR in FROG v0.1</strong><br/>
-  FROG — Free Open Graphical Language
+  <strong>Normative lowering boundary and specialization rules downstream from the canonical Execution IR Document in FROG v0.1</strong><br/>
+  <em>FROG — Free Open Graphical Language</em>
 </p>
 
 <hr/>
@@ -33,12 +33,13 @@
   <li><a href="#data-representation-storage-and-layout">18. Data Representation, Storage, and Layout</a></li>
   <li><a href="#scheduling-placement-and-partitioning">19. Scheduling, Placement, and Partitioning</a></li>
   <li><a href="#attribution-and-mapping-across-lowering">20. Attribution and Mapping Across Lowering</a></li>
-  <li><a href="#relation-with-observation-debugging-and-diagnostics">21. Relation with Observation, Debugging, and Diagnostics</a></li>
-  <li><a href="#conceptual-lowered-products">22. Conceptual Lowered Products</a></li>
-  <li><a href="#minimal-conceptual-shape">23. Minimal Conceptual Shape</a></li>
-  <li><a href="#examples">24. Examples</a></li>
-  <li><a href="#out-of-scope-for-v01">25. Out of Scope for v0.1</a></li>
-  <li><a href="#summary">26. Summary</a></li>
+  <li><a href="#relation-with-backend-families-and-llvm-oriented-paths">21. Relation with Backend Families and LLVM-Oriented Paths</a></li>
+  <li><a href="#relation-with-observation-debugging-and-diagnostics">22. Relation with Observation, Debugging, and Diagnostics</a></li>
+  <li><a href="#conceptual-lowered-products">23. Conceptual Lowered Products</a></li>
+  <li><a href="#minimal-conceptual-shape">24. Minimal Conceptual Shape</a></li>
+  <li><a href="#examples">25. Examples</a></li>
+  <li><a href="#out-of-scope-for-v01">26. Out of Scope for v0.1</a></li>
+  <li><a href="#summary">27. Summary</a></li>
 </ul>
 
 <hr/>
@@ -50,14 +51,14 @@ This document defines the normative architectural boundary called <strong>loweri
 </p>
 
 <p>
-Lowering begins after an open execution-facing IR has been derived and constructed from validated FROG program meaning.
-Lowering exists to transform that open IR into more target-oriented, backend-oriented, or realization-oriented specialized forms without redefining:
+Lowering begins only after a <strong>canonical Execution IR Document</strong> has been derived and constructed from validated FROG program meaning.
+Lowering exists to transform that canonical open IR into more target-oriented, backend-oriented, or realization-oriented specialized forms without redefining:
 </p>
 
 <ul>
   <li>canonical source,</li>
   <li>language semantics,</li>
-  <li>the open execution-facing role of the base IR,</li>
+  <li>the canonical open execution-facing role of the Execution IR,</li>
   <li>the architectural distinction between open representation and private realization.</li>
 </ul>
 
@@ -68,16 +69,19 @@ In short:
 <pre><code>validated meaning
       |
       v
-open Execution IR
+canonical Execution IR Document
       |
       v
 lowering
       |
       v
-specialized derived form(s)
+specialized lowered form(s)
       |
       v
-backend-facing contract and/or private realization
+backend-facing contract
+      |
+      v
+private realization
 </code></pre>
 
 <p>
@@ -92,7 +96,7 @@ It defines what kind of transformation space belongs to lowering, what lowering 
 <ul>
   <li>🟦 <strong>Open specification-facing representation or layer</strong></li>
   <li>🟩 <strong>Semantic truth, attribution, or recoverability obligation</strong></li>
-  <li>🟨 <strong>Boundary, mapping, or standardized handoff</strong></li>
+  <li>🟨 <strong>Boundary, mapping, schema-visible identity carrier, or standardized handoff</strong></li>
   <li>🟧 <strong>Lowering / specialization / target adaptation zone</strong></li>
   <li>🟥 <strong>Implementation-private or runtime-private realization zone</strong></li>
 </ul>
@@ -106,11 +110,12 @@ Without a dedicated lowering boundary, repositories tend to accumulate architect
 </p>
 
 <ul>
-  <li>treating the open IR as if it were already a target-specific graph,</li>
-  <li>smuggling private scheduler decisions into the normative IR,</li>
+  <li>treating the canonical open IR as if it were already a target-specific graph,</li>
+  <li>smuggling private scheduler decisions into the normative open IR,</li>
   <li>flattening execution structure too early and losing source-faithful attribution,</li>
   <li>confusing backend contracts with lowering transformations,</li>
-  <li>mixing portable execution structure with deployment-specific or ABI-specific details.</li>
+  <li>mixing portable execution structure with deployment-specific or ABI-specific details,</li>
+  <li>confusing downstream compiler families with the definition of FROG itself.</li>
 </ul>
 
 <p>
@@ -122,7 +127,7 @@ This document therefore exists to answer one precise question:
 </p>
 
 <p>
-<strong>What transformations are allowed when moving from open execution-facing IR toward target-specific execution preparation, while keeping the architecture sound?</strong>
+<strong>What transformations are allowed when moving from the canonical open Execution IR toward target-specific execution preparation, while keeping the architecture sound?</strong>
 </p>
 
 <hr/>
@@ -142,13 +147,13 @@ Expression/
 validated program meaning
         |
         v
-open Execution IR
+canonical Execution IR Document
         |
         v
 lowering
         |
         v
-specialized derived forms
+specialized lowered forms
         |
         v
 backend contract
@@ -162,14 +167,14 @@ Key rule:
 </p>
 
 <ul>
-  <li><strong>Execution IR</strong> = open, inspectable, source-attributable execution-facing representation</li>
-  <li><strong>Lowering</strong> = specialization boundary</li>
+  <li><strong>Execution IR</strong> = canonical, open, inspectable, source-attributable execution-facing representation</li>
+  <li><strong>Lowering</strong> = specialization boundary downstream from the canonical open IR</li>
   <li><strong>Backend contract</strong> = later explicit consumer-facing handoff</li>
   <li><strong>Runtime</strong> = private realization</li>
 </ul>
 
 <p>
-Lowering therefore begins <strong>after</strong> open IR exists and remains <strong>before</strong> backend contract emission or runtime-private execution machinery.
+Lowering therefore begins <strong>after</strong> the canonical Execution IR Document exists and remains <strong>before</strong> backend contract emission or runtime-private execution machinery.
 </p>
 
 <hr/>
@@ -193,7 +198,7 @@ This document does not fully define:
 </p>
 
 <ul>
-  <li>the open Execution IR object model in full,</li>
+  <li>the canonical Execution IR object model in full,</li>
   <li>the backend contract in full,</li>
   <li>one mandatory target-specific lowered representation,</li>
   <li>one mandatory runtime representation,</li>
@@ -210,10 +215,12 @@ This document does <strong>not</strong> define:
 
 <ul>
   <li>one compiler architecture,</li>
-  <li>one IR format after lowering,</li>
+  <li>one lowered IR format,</li>
   <li>one scheduler model,</li>
   <li>one ABI,</li>
-  <li>one runtime representation.</li>
+  <li>one runtime representation,</li>
+  <li>one LLVM-only lowering route,</li>
+  <li>one mandatory backend-family taxonomy.</li>
 </ul>
 
 <p>
@@ -225,7 +232,7 @@ It also does not grant permission to treat backend-private choices as though the
 <h2 id="what-lowering-means-in-frog">7. What "Lowering" Means in FROG</h2>
 
 <p>
-In FROG, <strong>lowering</strong> means the transformation of open Execution IR into forms that are closer to execution realization while still remaining semantically faithful to the validated program.
+In FROG, <strong>lowering</strong> means the transformation of the canonical Execution IR Document into forms that are closer to execution realization while still remaining semantically faithful to the validated program.
 </p>
 
 <p>
@@ -244,7 +251,7 @@ Typical lowering goals include:
 
 <p>
 Lowering is therefore not one specific pass.
-It is the whole transformation corridor in which open execution-facing representation becomes more target-shaped and less source-shaped while remaining correct and recoverable where required.
+It is the whole transformation corridor in which canonical open execution-facing representation becomes more target-shaped and less source-shaped while remaining correct and recoverable where required.
 </p>
 
 <hr/>
@@ -253,11 +260,12 @@ It is the whole transformation corridor in which open execution-facing represent
 
 <pre><code>OPEN ZONE
 ---------
-Execution IR
+canonical Execution IR Document
   - structured
   - attributable
   - portable
   - specification-facing
+  - schema-checkable in canonical JSON form
 
 LOWERING
 ---------
@@ -268,7 +276,7 @@ SPECIALIZED ZONE
 lowered forms
   - target-oriented
   - less source-shaped
-  - possibly backend-specific
+  - possibly backend-family-specific
   - still constrained by semantic faithfulness
 </code></pre>
 
@@ -277,18 +285,23 @@ The critical architectural rule is:
 </p>
 
 <ul>
-  <li>the open IR remains the last fully open execution-facing representation,</li>
+  <li>the canonical open IR remains the last fully open execution-facing representation,</li>
   <li>lowering is where irreversible target-oriented specialization may begin,</li>
   <li>backend contract is later than lowering,</li>
   <li>runtime-private realization is later than both.</li>
 </ul>
+
+<p>
+Lowering therefore consumes the canonical open IR.
+It does not redefine it.
+</p>
 
 <hr/>
 
 <h2 id="minimum-preconditions">9. Minimum Preconditions</h2>
 
 <p>
-Lowering requires a fully validated program and a conforming open Execution IR.
+Lowering requires a fully validated program and a conforming canonical Execution IR Document.
 </p>
 
 <p>
@@ -299,7 +312,7 @@ Lowering MUST NOT:
   <li>fix invalid graphs,</li>
   <li>inject hidden semantics,</li>
   <li>legalize invalid cycles,</li>
-  <li>resolve semantic ambiguity that should already have been resolved before or at the open-IR boundary.</li>
+  <li>resolve semantic ambiguity that should already have been resolved before or at the canonical open-IR boundary.</li>
 </ul>
 
 <p>
@@ -308,8 +321,9 @@ Preconditions therefore include:
 
 <ul>
   <li>validated program meaning already exists,</li>
-  <li>the open Execution IR is already semantically grounded,</li>
-  <li>required attribution and recoverability are already established at the open boundary.</li>
+  <li>the canonical Execution IR is already semantically grounded,</li>
+  <li>required attribution and recoverability are already established at the open boundary,</li>
+  <li>the open IR boundary artifact is already distinguishable from both source and runtime-private realization.</li>
 </ul>
 
 <hr/>
@@ -319,7 +333,7 @@ Preconditions therefore include:
 <h3>10.1 Stage A — IR-conservative lowering</h3>
 
 <p>
-This stage remains relatively close to the open Execution IR.
+This stage remains relatively close to the canonical Execution IR Document.
 It may:
 </p>
 
@@ -328,7 +342,7 @@ It may:
   <li>prepare target-facing forms,</li>
   <li>refine memory, control, or boundary structure,</li>
   <li>add backend-relevant support records,</li>
-  <li>remain substantially inspectable against open-IR structure.</li>
+  <li>remain substantially inspectable against the canonical open-IR structure.</li>
 </ul>
 
 <h3>10.2 Stage B — backend-oriented lowering</h3>
@@ -380,6 +394,7 @@ All lowering in base v0.1 MUST preserve the following invariants:
   <li>explicit memory MUST remain semantically explicit,</li>
   <li>required boundaries MUST remain distinguishable or recoverable,</li>
   <li>validated dependency meaning MUST be preserved,</li>
+  <li>lowering MUST remain downstream from the canonical open IR boundary rather than redefining that boundary,</li>
   <li>lowering MUST NOT silently convert optional implementation convenience into normative meaning.</li>
 </ul>
 
@@ -397,7 +412,7 @@ Lowering MUST preserve:
   <li>state semantics,</li>
   <li>boundary roles,</li>
   <li>source attribution,</li>
-  <li>recoverability of the minimal distinction surface required by open IR and downstream diagnostics.</li>
+  <li>recoverability of the minimal distinction surface required by the canonical open IR and downstream diagnostics.</li>
 </ul>
 
 <p>
@@ -413,7 +428,8 @@ In particular, lowering MUST preserve, where relevant:
   <li><code>widget_value</code> participation versus <code>widget_reference</code> participation,</li>
   <li>standardized UI-object primitive operation versus widget-reference participation,</li>
   <li>explicit structure ownership and region relation,</li>
-  <li>explicit local memory as the basis of valid feedback.</li>
+  <li>explicit local memory as the basis of valid feedback,</li>
+  <li>the mapping relation from lowered forms back to canonical Execution IR identity where later layers still depend on it.</li>
 </ul>
 
 <hr/>
@@ -432,7 +448,8 @@ The following lowering classes are allowed when semantic faithfulness and requir
   <li>scheduling → ordering, clustering, or planning forms,</li>
   <li>data representation refinement → concrete layout, width, alignment, or storage policy,</li>
   <li>support-object generation for backend preparation,</li>
-  <li>target-profile-aware specialization when it remains downstream from open semantic truth.</li>
+  <li>target-profile-aware specialization when it remains downstream from open semantic truth,</li>
+  <li>preparation of forms intended for later compiler-family handoff, including LLVM-oriented downstream paths, provided the lowered form is not misrepresented as the definition of FROG.</li>
 </ul>
 
 <p>
@@ -455,7 +472,8 @@ The following are forbidden:
   <li>loss of attribution where later layers still require diagnosability or mapping,</li>
   <li>invalid program repair disguised as lowering,</li>
   <li>promotion of editor-only presentation information into execution meaning,</li>
-  <li>presenting one backend-private form as though it were normative FROG IR truth.</li>
+  <li>presenting one backend-private form as though it were normative FROG IR truth,</li>
+  <li>treating a downstream compiler-family IR such as LLVM IR as though it were the canonical Execution IR Document itself.</li>
 </ul>
 
 <hr/>
@@ -606,7 +624,7 @@ Lowering MAY prepare execution through:
 </ul>
 
 <p>
-These are legitimate lowering concerns because they adapt open execution-facing structure toward realization.
+These are legitimate lowering concerns because they adapt canonical execution-facing structure toward realization.
 However:
 </p>
 
@@ -625,8 +643,8 @@ However:
 Lowering commonly expands objects:
 </p>
 
-<pre><code>open IR object
-   ->
+<pre><code>canonical IR object
+   -&gt;
 multiple lowered objects
 </code></pre>
 
@@ -635,10 +653,10 @@ When this happens, lowering MUST preserve enough mapping information to recover:
 </p>
 
 <ul>
-  <li>the origin open-IR object or objects,</li>
+  <li>the origin canonical-IR object or objects,</li>
   <li>the validated semantic origin,</li>
   <li>the transformation relation where relevant,</li>
-  <li>whether a lowered object is primary, support-derived, split-derived, or generated for backend preparation.</li>
+  <li>whether a lowered object is primary-derived, support-derived, split-derived, or generated for backend preparation.</li>
 </ul>
 
 <p>
@@ -648,7 +666,42 @@ What matters is that required diagnosability, conformance reasoning, and source-
 
 <hr/>
 
-<h2 id="relation-with-observation-debugging-and-diagnostics">21. Relation with Observation, Debugging, and Diagnostics</h2>
+<h2 id="relation-with-backend-families-and-llvm-oriented-paths">21. Relation with Backend Families and LLVM-Oriented Paths</h2>
+
+<p>
+FROG lowering MAY target different backend families.
+A serious downstream path MAY include LLVM-oriented compiler families.
+</p>
+
+<p>
+However, the following architectural rules apply:
+</p>
+
+<ul>
+  <li>LLVM is downstream from FROG,</li>
+  <li>LLVM IR is not the definition of FROG IR,</li>
+  <li>a lowering pipeline MAY eventually emit forms suitable for LLVM-oriented consumers,</li>
+  <li>but the canonical Execution IR Document remains upstream and architecturally distinct from such downstream compiler-family forms.</li>
+</ul>
+
+<pre><code>canonical Execution IR Document
+      -&gt;
+lowering
+      -&gt;
+backend-family preparation
+      -&gt;
+LLVM-oriented or other compiler-family handoff
+      -&gt;
+private compilation / realization
+</code></pre>
+
+<p>
+This separation exists so that FROG remains an open language stack with its own canonical execution-facing layer rather than becoming a thin source syntax over one downstream compiler family.
+</p>
+
+<hr/>
+
+<h2 id="relation-with-observation-debugging-and-diagnostics">22. Relation with Observation, Debugging, and Diagnostics</h2>
 
 <p>
 Lowering MUST remain compatible with:
@@ -658,7 +711,7 @@ Lowering MUST remain compatible with:
   <li>source-level debugging,</li>
   <li>traceability,</li>
   <li>fault attribution,</li>
-  <li>recoverable mapping from specialized forms back to open-IR and source-facing concepts where later tooling still depends on it.</li>
+  <li>recoverable mapping from specialized forms back to canonical-IR and source-facing concepts where later tooling still depends on it.</li>
 </ul>
 
 <p>
@@ -670,13 +723,13 @@ loss of diagnosability forbidden
 </code></pre>
 
 <p>
-This does not mean every lowered form must remain as readable as the open IR.
+This does not mean every lowered form must remain as readable as the canonical open IR.
 It means that lowering MUST not destroy the mapping surface required for trustworthy later tooling and diagnostics.
 </p>
 
 <hr/>
 
-<h2 id="conceptual-lowered-products">22. Conceptual Lowered Products</h2>
+<h2 id="conceptual-lowered-products">23. Conceptual Lowered Products</h2>
 
 <p>
 Conceptual lowered products may include:
@@ -690,7 +743,8 @@ Conceptual lowered products may include:
   <li>placement form,</li>
   <li>schedule form,</li>
   <li>backend-preparation form,</li>
-  <li>consumer-facing contract-preparation form.</li>
+  <li>consumer-facing contract-preparation form,</li>
+  <li>compiler-family handoff form.</li>
 </ul>
 
 <p>
@@ -699,7 +753,7 @@ These are conceptual product classes, not one mandatory taxonomy for every imple
 
 <hr/>
 
-<h2 id="minimal-conceptual-shape">23. Minimal Conceptual Shape</h2>
+<h2 id="minimal-conceptual-shape">24. Minimal Conceptual Shape</h2>
 
 <p>
 This document does not define one mandatory lowered wire format.
@@ -724,51 +778,64 @@ What matters is that a lowered form remains:
   <li>target-oriented,</li>
   <li>semantically faithful,</li>
   <li>mapping-compatible where required,</li>
-  <li>distinguishable from both open Execution IR and backend contract.</li>
+  <li>distinguishable from both the canonical Execution IR Document and the backend contract.</li>
 </ul>
 
 <hr/>
 
-<h2 id="examples">24. Examples</h2>
+<h2 id="examples">25. Examples</h2>
 
-<h3>24.1 Structured control lowering</h3>
+<h3>25.1 Structured control lowering</h3>
 
 <pre><code>structured execution object
-    ->
+    -&gt;
 backend-oriented branch / loop preparation
 with preserved control semantics
 </code></pre>
 
-<h3>24.2 State lowering</h3>
+<h3>25.2 State lowering</h3>
 
 <pre><code>explicit delay object
-    ->
+    -&gt;
 state cell + initialization form
 with preserved explicit state semantics
 </code></pre>
 
-<h3>24.3 Interface lowering</h3>
+<h3>25.3 Interface lowering</h3>
 
 <pre><code>public interface boundary object
-    ->
+    -&gt;
 ABI-facing or endpoint-facing lowered boundary form
 with preserved public boundary role
 </code></pre>
 
-<h3>24.4 Partitioning</h3>
+<h3>25.4 Partitioning</h3>
 
-<pre><code>open IR graph
-    ->
+<pre><code>canonical IR graph
+    -&gt;
 device / thread / domain partitioned lowered graph
 with preserved dependency meaning
 </code></pre>
 
-<h3>24.5 Forbidden example</h3>
+<h3>25.5 LLVM-oriented downstream path</h3>
+
+<pre><code>canonical Execution IR Document
+    -&gt;
+backend-family preparation
+    -&gt;
+LLVM-oriented handoff form
+</code></pre>
+
+<p>
+This is allowed because LLVM-oriented compilation remains downstream from FROG lowering rather than redefining the canonical open IR.
+</p>
+
+<h3>25.6 Forbidden example</h3>
 
 <pre><code>invalid feedback path
-    ->
+    -&gt;
 hidden injected storage
-    ->
+    -&gt;
 "valid" lowered form
 </code></pre>
 
@@ -778,7 +845,7 @@ This is forbidden because lowering is not allowed to repair invalid meaning by i
 
 <hr/>
 
-<h2 id="out-of-scope-for-v01">25. Out of Scope for v0.1</h2>
+<h2 id="out-of-scope-for-v01">26. Out of Scope for v0.1</h2>
 
 <ul>
   <li>one universal IR after lowering,</li>
@@ -787,7 +854,8 @@ This is forbidden because lowering is not allowed to repair invalid meaning by i
   <li>one ABI,</li>
   <li>one mandatory multi-stage compiler architecture,</li>
   <li>one mandatory target-family taxonomy,</li>
-  <li>one universal deployment representation.</li>
+  <li>one universal deployment representation,</li>
+  <li>one mandatory LLVM-oriented lowering route.</li>
 </ul>
 
 <p>
@@ -796,10 +864,10 @@ Those concerns remain implementation-specific or belong to later, more specializ
 
 <hr/>
 
-<h2 id="summary">26. Summary</h2>
+<h2 id="summary">27. Summary</h2>
 
 <p>
-Lowering is the specialization boundary after open Execution IR.
+Lowering is the specialization boundary after the canonical Execution IR Document.
 </p>
 
 <p>
@@ -807,14 +875,15 @@ It:
 </p>
 
 <ul>
-  <li>adapts IR for execution,</li>
+  <li>adapts canonical open IR for execution preparation,</li>
   <li>preserves semantic truth,</li>
   <li>preserves attribution and required recoverability,</li>
   <li>does not redefine the language,</li>
-  <li>does not collapse open IR into private realization by normative shortcut.</li>
+  <li>does not collapse canonical open IR into private realization by normative shortcut,</li>
+  <li>may prepare downstream compiler-family handoff paths, including LLVM-oriented ones, without making those families the definition of FROG.</li>
 </ul>
 
-<pre><code>open Execution IR
+<pre><code>canonical Execution IR Document
         |
         v
 lowering
