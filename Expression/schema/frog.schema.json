@@ -2,7 +2,8 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://graiphic.github.io/FROG/Expression/schema/frog.schema.json",
   "title": "FROG Canonical Source Schema",
-  "description": "Conservative machine-checkable structural schema for canonical .frog source. This schema covers top-level canonical source shape and section kind constraints only. It does not define full semantic validity, Execution IR, lowering, backend contracts, or runtime realization.",
+  "description": "Conservative machine-checkable structural schema for canonical .frog source. This artifact covers top-level canonical source shape, allowed top-level section vocabulary, required-versus-optional top-level sections, and section kind constraints only. It does not define full structural ownership for every section-local object, semantic validity, validated meaning, Execution IR, lowering, backend contract content, or runtime realization.",
+  "$comment": "Normative ownership remains in Expression/ prose. This schema is a repository-visible machine-checkable aid for structural reproducibility and must not be treated as the owner of the language.",
   "type": "object",
   "required": [
     "spec_version",
@@ -13,21 +14,25 @@
   "properties": {
     "spec_version": {
       "description": "Specification version identifier for the canonical source file.",
-      "type": [
-        "string",
-        "number"
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "number"
+        }
       ]
     },
     "metadata": {
-      "description": "Metadata section. Section-local object structure is owned by Expression/Metadata.md.",
+      "description": "Required metadata section. Section-local object structure is owned by Expression/Metadata.md.",
       "type": "object"
     },
     "interface": {
-      "description": "Interface section. Section-local object structure is owned by Expression/Interface.md.",
+      "description": "Required interface section. Section-local object structure is owned by Expression/Interface.md.",
       "type": "object"
     },
     "diagram": {
-      "description": "Diagram section. Section-local object structure is owned by Expression/Diagram.md.",
+      "description": "Required diagram section. Section-local object structure is owned by Expression/Diagram.md.",
       "type": "object"
     },
     "connector": {
@@ -43,7 +48,7 @@
       "type": "object"
     },
     "ide": {
-      "description": "Optional IDE preferences section. Section-local object structure is owned by Expression/IDE preferences.md.",
+      "description": "Optional ide section. Section-local object structure is owned by Expression/IDE preferences.md.",
       "type": "object"
     },
     "cache": {
