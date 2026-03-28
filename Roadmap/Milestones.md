@@ -24,7 +24,7 @@ M3  [x] Root repository recontextualized around the published state
 M4  [x] Strategic framing layer published
 M5  [~] Roadmap layer published inside the repository
 M6  [ ] v0.1 foundation closed
-M7  [ ] Source schema / validator closure established
+M7  [~] Source schema / validator closure materially established but not yet fully closed
 M8  [ ] Stable repeatable reference execution path for the supported subset
 M9  [ ] First serious backend-oriented compiler path
 M10 [ ] First serious FROG IDE foundation
@@ -108,20 +108,27 @@ M12 [ ] Practical open industrial graphical ecosystem with clear structural supe
   </ul>
 </ul>
 
-<h3>M7 — Source schema / validator closure established</h3>
+<h3>M7 — Source schema / validator closure materially established but not yet fully closed</h3>
 
 <ul>
-  <li><strong>Status:</strong> [ ]</li>
-  <li><strong>Meaning:</strong> canonical source ownership is explicit enough in both normative prose and machine-checkable form that disciplined structural validation no longer depends on documentation-only interpretation or private validator folklore.</li>
-  <li><strong>Main consequence:</strong> structural validation becomes more explicit, more reproducible, easier to compare across implementations, and better separated from later semantic validation and downstream derivation.</li>
+  <li><strong>Status:</strong> [~]</li>
+  <li><strong>Meaning:</strong> canonical source ownership is now explicit enough in published prose and repository-visible machine-checkable form that structural validation is no longer only prose interpretation or private validator folklore, but the repository is not yet at full section-local or fully stabilized validator closure.</li>
+  <li><strong>Main consequence:</strong> structural validation is now materially more explicit, more reproducible, easier to compare across implementations, and better separated from later semantic validation and downstream derivation.</li>
+  <li><strong>Already established:</strong></li>
+  <ul>
+    <li>source-shape / schema posture is published explicitly inside <code>Expression/</code></li>
+    <li>a conservative machine-checkable source-schema artifact exists for canonical top-level source shape</li>
+    <li>conformance reading and case expectations are now more explicit across loadability, structural validity, semantic acceptance, and preservation</li>
+    <li>the reference implementation posture now reflects staged validation rather than a blurred validator story</li>
+    <li>the repository makes clear that schema artifacts assist structural validation but do not replace normative specification ownership</li>
+  </ul>
   <li><strong>To close:</strong></li>
   <ul>
-    <li>source-shape / schema posture published explicitly inside <code>Expression/</code></li>
-    <li>a conservative machine-checkable source-schema artifact published for canonical top-level source shape</li>
-    <li>conformance reading and case expectations made more explicit across loadability, structural validity, semantic acceptance, and preservation</li>
-    <li>reference-validator posture aligned with the distinction between schema-assisted structural validation and later semantic validation</li>
-    <li>schema posture kept aligned with canonical source ownership rather than implementation convenience</li>
-    <li>the repository makes clear that schema artifacts assist structural validation but do not replace normative specification ownership</li>
+    <li>stabilize whether additional section-local structural rules should remain prose-owned or become repository-visible machine-checkable assets</li>
+    <li>make the supported validator posture explicit enough that structural validation outcomes are easy to compare across implementations for the published subset</li>
+    <li>decide whether the top-level source-shape block is sufficient for M7 closure or whether one more small section-local closure step is required</li>
+    <li>keep schema posture, conformance wording, and reference-validator posture synchronized as the published subset expands</li>
+    <li>avoid letting implementation-side convenience become the hidden definition of structural validity</li>
   </ul>
 </ul>
 
@@ -134,6 +141,7 @@ M12 [ ] Practical open industrial graphical ecosystem with clear structural supe
   <li><strong>To close:</strong></li>
   <ul>
     <li>supported subset explicitly bounded</li>
+    <li>loadability, structural validity, semantic acceptance, and unsupported-but-valid outcomes surfaced consistently in the reference path</li>
     <li>intermediate artifacts standardized</li>
     <li>CLI execution path made easy to run and inspect</li>
     <li>end-to-end repeatability demonstrated</li>
@@ -216,7 +224,7 @@ M12 [ ] Practical open industrial graphical ecosystem with clear structural supe
 2. primitive baseline closure
 3. type / value / state closure
 4. execution-model and structure closure
-5. source schema / validator closure
+5. stabilize the remaining M7 closure frontier
 6. conformance growth
 7. reference-path hardening
 8. backend-contract preparation
