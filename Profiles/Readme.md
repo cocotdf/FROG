@@ -58,7 +58,7 @@ Within the current repository architecture:
   <li><code>Expression/</code> owns canonical source representation,</li>
   <li><code>Language/</code> owns normative validated-program meaning and cross-cutting execution semantics,</li>
   <li><code>Libraries/</code> owns intrinsic standardized primitive vocabularies,</li>
-  <li><code>IR/</code> owns standardized derived execution-oriented representation, backend contracts, and lowering-stage boundaries,</li>
+  <li><code>IR/</code> owns standardized derived execution-oriented representation, lowering boundaries, and backend contracts,</li>
   <li><code>Profiles/</code> owns optional standardized capability families,</li>
   <li><code>IDE/</code> owns authoring, observability, debugging, inspection, and related tooling responsibilities,</li>
   <li><code>Implementations/</code> owns non-normative executable realization workspaces.</li>
@@ -121,7 +121,7 @@ FROG specification architecture
 Expression/        - canonical source form
 Language/          - normative validated-program meaning
 Libraries/         - intrinsic standardized primitive vocabularies
-IR/                - standardized derived execution representation
+IR/                - standardized derived execution representation and backend-facing boundaries
 Profiles/          - optional standardized capability families
 IDE/               - authoring and observability tooling
 Implementations/   - non-normative executable realizations
@@ -237,8 +237,8 @@ Examples of deployment-mode families that MAY later be specified include:
 
 <p>
 A profile MAY define <strong>runtime-facing capability contracts</strong>.
-These describe what classes of runtime service availability, execution support, or platform support
-are assumed or required for that profile.
+These describe what classes of runtime service availability, execution support, platform support,
+or host-service availability are assumed or required for that profile.
 </p>
 
 <p>
@@ -256,6 +256,7 @@ standardized FROG meaning and standardized FROG IR have already been established
 <p>
 Backend families are not owned by <code>Profiles/</code> as such, but profiles may impose capability
 constraints that affect which backend families are viable.
+A backend family is primarily a backend-contract-facing and realization-facing classification.
 </p>
 
 <h3>5.5 Runtime modules</h3>
@@ -346,7 +347,8 @@ Profiles/
     standardize capability classes and contracts
 
 IR/
-    standardizes derived execution-facing representation and backend-facing boundaries
+    standardizes derived execution-facing representation, lowering boundaries,
+    and backend-facing contracts
 
 Implementations/
     realize those capabilities through private runtime layouts and executable service bundles
@@ -429,7 +431,7 @@ In particular, a profile specification MUST NOT:
   <li>turn <code>Libraries/</code> into a catch-all bucket for ecosystem-specific capability growth,</li>
   <li>treat one vendor, runtime, operating system, database engine, host framework, or deployment model as the mandatory baseline for FROG itself,</li>
   <li>standardize one private runtime layout as though it were the language definition,</li>
-  <li>collapse target profiles, deployment modes, backend families, and runtime modules into one undifferentiated concept,</li>
+  <li>collapse target profiles, deployment modes, backend families, backend-contract assumptions, and runtime modules into one undifferentiated concept,</li>
   <li>use optional capability support as a hidden requirement for core language conformance.</li>
 </ul>
 
@@ -450,7 +452,7 @@ Profile specifications are used together with the rest of the FROG specification
   <li><code>Expression/</code> defines canonical source representation and remains authoritative for source structure.</li>
   <li><code>Language/</code> defines validated-program meaning and cross-cutting execution semantics that remain authoritative across both core and profile-owned capabilities.</li>
   <li><code>Libraries/</code> remains the home of intrinsic standardized primitive vocabularies and MUST remain distinct from optional profile families.</li>
-  <li><code>IR/</code> defines the standardized derived execution-oriented representation, backend contracts, and lowering-stage boundaries, and MUST remain distinct from both target-profile claims and runtime-private realization.</li>
+  <li><code>IR/</code> defines the standardized derived execution-oriented representation, lowering boundaries, and backend contracts, and MUST remain distinct from both target-profile claims and runtime-private realization.</li>
   <li><code>IDE/</code> MAY surface supported profiles in palette organization, authoring assistance, validation feedback, deployment targeting, and observability tooling, but IDE presentation does not replace normative profile specifications.</li>
   <li><code>Implementations/</code> MAY realize profile support through one or more runtime modules, backend selections, deployment bundles, or private optimization strategies, but such realization choices do not by themselves define the profile normatively.</li>
   <li><code>GOVERNANCE.md</code> defines governance-facing distinctions such as core support, profile support, conformance, certification, and branding policy.</li>
@@ -618,8 +620,8 @@ It belongs here only when optional standardization is architecturally justified.
 <p>
 Likewise, an implementation convenience SHOULD NOT be standardized as a profile merely because it is
 widely reused.
-If it is only a private runtime layout, packaging trick, or implementation bundling choice, it does
-not by itself justify a normative profile.
+If it is only a private runtime layout, packaging trick, private ABI choice, private scheduler shape,
+or implementation bundling choice, it does not by itself justify a normative profile.
 </p>
 
 <hr/>
