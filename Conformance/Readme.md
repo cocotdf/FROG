@@ -60,6 +60,24 @@ Conformance therefore sits at the boundary between published repository law and 
 It turns architectural distinctions into explicit public expectations.
 </p>
 
+<p>
+In base v0.1, that public truth surface is no longer limited to source acceptance or semantic rejection alone.
+It also includes preservation obligations across the published corridor:
+</p>
+
+<pre><code>.frog source
+   -&gt;
+loadability
+   -&gt;
+structural validity
+   -&gt;
+validated meaning
+   -&gt;
+canonical Execution IR Document
+   -&gt;
+later lowering / backend-facing handoff where applicable
+</code></pre>
+
 <hr/>
 
 <h2 id="core-purpose">2. Core Purpose</h2>
@@ -136,7 +154,7 @@ It ensures that:
   <li>implementations do not silently diverge,</li>
   <li>semantic meaning is not reinterpreted implicitly,</li>
   <li>invalid constructs are rejected instead of silently repaired,</li>
-  <li>critical distinctions remain visible across loadability, structural validation, semantic validation, IR derivation, and later specialization.</li>
+  <li>critical distinctions remain visible across loadability, structural validation, semantic validation, IR derivation, IR construction, canonical JSON validation, and later specialization.</li>
 </ul>
 
 <p>
@@ -162,6 +180,7 @@ It includes:
   <li>correct semantic validation,</li>
   <li>correct rejection where validated meaning does not exist,</li>
   <li>correct preservation of distinctions across derivation into the canonical Execution IR Document,</li>
+  <li>correct canonical-IR construction and canonical JSON compatibility where the case reaches that stage,</li>
   <li>correct preservation of required boundaries across later lowering and backend-facing handoff where applicable.</li>
 </ul>
 
@@ -194,6 +213,7 @@ A public conformance surface SHOULD make explicit whether a case is:
   <li>not loadable as source,</li>
   <li>loadable but structurally invalid as canonical source,</li>
   <li>structurally valid but semantically rejected,</li>
+  <li>semantically accepted but preservation-invalid at the IR boundary,</li>
   <li>accepted with preservation requirements.</li>
 </ul>
 
@@ -204,12 +224,14 @@ Where useful, a case MAY also make explicit whether it is:
 <ul>
   <li>schema-checkable at the source-shape level,</li>
   <li>structurally invalid for reasons that remain source-owned even when they exceed a minimal declarative schema artifact,</li>
-  <li>semantically invalid even though canonical source shape has already been accepted.</li>
+  <li>semantically invalid even though canonical source shape has already been accepted,</li>
+  <li>IR-schema-invalid even though semantic meaning was previously established.</li>
 </ul>
 
 <p>
-This distinction matters because machine-checkable source schema is part of the structural validation corridor.
+This distinction matters because machine-checkable schema is part of the validation corridor.
 It is not a replacement for semantic validation.
+Likewise, canonical JSON IR validity is not a replacement for semantic validity or IR architectural validity.
 </p>
 
 <hr/>
@@ -263,7 +285,7 @@ Ownership remains:
   <li><code>Language/</code> — semantic truth and validated meaning,</li>
   <li><code>Libraries/</code> — intrinsic primitive vocabularies,</li>
   <li><code>Profiles/</code> — optional standardized capability families,</li>
-  <li><code>IR/</code> — canonical execution-facing representation, derivation, construction, lowering, and backend-facing boundaries,</li>
+  <li><code>IR/</code> — canonical execution-facing representation, derivation, identity, construction, schema posture, lowering, and backend-facing boundaries,</li>
   <li><code>IDE/</code> — tooling behavior and authoring-facing concerns.</li>
 </ul>
 
@@ -289,7 +311,7 @@ In particular:
 <ul>
   <li>source-shape and schema-owned rejection cases map back to <code>Expression/</code>,</li>
   <li>semantic rejection cases map back to <code>Language/</code>, <code>Libraries/</code>, or <code>Profiles/</code> as appropriate,</li>
-  <li>preservation cases across derivation and lowering map back to <code>IR/</code>.</li>
+  <li>preservation cases across derivation, identity, construction, and canonical JSON IR validation map back to <code>IR/</code>.</li>
 </ul>
 
 <p>
@@ -332,6 +354,7 @@ This includes verifying:
   <li>what establishes semantic meaning,</li>
   <li>what distinctions must survive validation,</li>
   <li>what distinctions must survive derivation into the canonical Execution IR Document,</li>
+  <li>what identity, attribution, and correspondence carriers must remain explicit at the canonical JSON IR boundary,</li>
   <li>what distinctions must remain explicit before later lowering and backend-facing handoff.</li>
 </ul>
 
@@ -370,6 +393,9 @@ structural validity            != semantic acceptance
 schema acceptance              != semantic acceptance
 validated meaning              != canonical Execution IR
 canonical Execution IR         != private runtime realization
+source_map presence            != semantic validity by itself
+correspondence presence        != semantic validity by itself
+intentional non-primary        != accidental identity loss
 backend contract               != private runtime structure
 backend family                 != target profile
 deployment mode                != runtime-private realization
@@ -398,6 +424,8 @@ Each case should define, as applicable:
   <li>expected loadability,</li>
   <li>expected structural validity,</li>
   <li>expected semantic acceptance,</li>
+  <li>expected IR eligibility,</li>
+  <li>expected canonical JSON IR validity where relevant,</li>
   <li>tested boundaries,</li>
   <li>preservation requirements,</li>
   <li>rejection reason if invalid.</li>
@@ -425,7 +453,8 @@ Where useful, cases SHOULD also be written so that the reader can tell whether t
   <li>non-loadable source,</li>
   <li>schema-owned or source-shape-owned structural invalidity,</li>
   <li>semantic invalidity after structural acceptance,</li>
-  <li>preservation failure in later stages.</li>
+  <li>IR preservation failure after semantic acceptance,</li>
+  <li>canonical JSON IR schema failure after otherwise valid IR construction intent.</li>
 </ul>
 
 <p>
@@ -438,7 +467,9 @@ source-shape / structural validity
    ->
 semantic acceptance
    ->
-preservation expectations
+IR derivation / identity / construction preservation
+   ->
+canonical JSON IR validation where relevant
 </code></pre>
 
 <hr/>
@@ -583,7 +614,9 @@ source-shape / schema-owned structural validity
    ->
 semantic acceptance
    ->
-preservation expectations
+IR preservation expectations
+   ->
+canonical JSON IR expectations where relevant
 </code></pre>
 
 <p>
@@ -593,6 +626,7 @@ A case SHOULD NOT blur:
 <ul>
   <li>schema-owned failure into semantic rejection,</li>
   <li>semantic rejection into source malformedness,</li>
+  <li>IR preservation failure into source invalidity,</li>
   <li>implementation subset limitations into specification invalidity.</li>
 </ul>
 
@@ -608,6 +642,8 @@ Each case expresses structured expectations such as:
   <li><strong>Expected loadability:</strong> loadable | not loadable</li>
   <li><strong>Expected structural validity:</strong> valid | invalid</li>
   <li><strong>Expected meaning:</strong> established | not established</li>
+  <li><strong>Expected IR result:</strong> derivable | not derivable</li>
+  <li><strong>Expected IR schema result:</strong> schema-valid | not schema-valid</li>
   <li><strong>Expected preservation:</strong> required distinctions remain explicit</li>
   <li><strong>Expected rejection:</strong> explicit failure reason</li>
 </ul>
@@ -619,6 +655,7 @@ Examples:
 <pre><code>Expected loadability: loadable
 Expected structural validity: valid
 Expected meaning: established
+Expected IR result: derivable
 Expected preservation:
   explicit state remains explicit
 
@@ -629,16 +666,18 @@ Expected rejection:
   missing required source section
 
 Expected loadability: loadable
-Expected structural validity: invalid
-Expected meaning: not established
-Expected rejection:
-  top-level source shape violates canonical schema posture
-
-Expected loadability: loadable
 Expected structural validity: valid
 Expected meaning: not established
 Expected rejection:
   illegal feedback without explicit memory
+
+Expected loadability: loadable
+Expected structural validity: valid
+Expected meaning: established
+Expected IR result: derivable
+Expected IR schema result: not schema-valid
+Expected rejection:
+  canonical IR omitted required correspondence carrier
 </code></pre>
 
 <p>
@@ -647,6 +686,7 @@ For later-stage-sensitive cases, expectations may also include:
 
 <ul>
   <li>required IR-side recoverability,</li>
+  <li>required source attribution and non-primary correspondence category,</li>
   <li>required lowering-side distinction preservation,</li>
   <li>required backend-facing explicitness where applicable.</li>
 </ul>
@@ -664,8 +704,12 @@ does not imply
 semantically accepted
 
 accepted meaning
-does not remove
-preservation obligations
+does not imply
+arbitrary IR shape
+
+schema-valid IR
+does not imply
+semantic correctness by itself
 </code></pre>
 
 <hr/>
@@ -685,6 +729,7 @@ Priorities are:
 3. preservation of distinctions
 4. explicit rejection of violations
 5. conservative correctness across the IR corridor
+6. canonical JSON IR carrier discipline where published
 </code></pre>
 
 <p>
@@ -700,7 +745,9 @@ The active public truth surface therefore emphasizes:
   <li>execution versus layout,</li>
   <li>connectivity versus order,</li>
   <li>explicit state-family boundaries,</li>
-  <li>the fact that validated meaning, canonical Execution IR, lowering, and backend-facing handoff are distinct stages rather than one blurred implementation pipeline.</li>
+  <li>the fact that validated meaning, canonical Execution IR, lowering, and backend-facing handoff are distinct stages rather than one blurred implementation pipeline,</li>
+  <li>the fact that explicit <code>source_map[]</code> and <code>correspondence[]</code> carriers belong to the canonical IR boundary rather than to implementation folklore when that published IR posture is in scope,</li>
+  <li>the fact that intentional non-primary correspondence is not the same thing as accidental identity loss.</li>
 </ul>
 
 <p>
@@ -738,7 +785,7 @@ Language/
 
 IR/
    defines the canonical execution-facing artifact, derivation, identity,
-   construction, lowering, and backend-facing boundaries
+   construction, schema posture, lowering, and backend-facing boundaries
 
 Conformance/
    tests whether those published boundaries are being respected
@@ -752,6 +799,8 @@ It only demonstrates alignment with the published conformance surface.
 <p>
 A machine-checkable schema artifact may assist source-structure validation.
 It does not replace the ownership boundary above.
+Likewise, a machine-checkable IR schema artifact may assist canonical JSON IR validation.
+It does not replace the ownership of semantic truth or IR architectural validity.
 </p>
 
 <p>
@@ -788,6 +837,8 @@ Near-term future expansion areas include:
   <li>state semantics and timing,</li>
   <li>structure legality,</li>
   <li>validated meaning to canonical-IR preservation,</li>
+  <li>IR identity, attribution, and correspondence carrier discipline,</li>
+  <li>IR canonical JSON schema-valid versus non-schema-valid cases,</li>
   <li>profile-dependent behavior,</li>
   <li>backend-family and target-profile rejection cases where applicable.</li>
 </ul>
@@ -812,6 +863,18 @@ As source-schema closure grows, conformance SHOULD increasingly distinguish:
   <li>schema-level structural failure,</li>
   <li>structural failure that exceeds a minimal declarative schema artifact but still belongs to <code>Expression/</code>,</li>
   <li>semantic rejection after structural acceptance.</li>
+</ul>
+
+<p>
+As IR closure grows, conformance SHOULD also increasingly distinguish:
+</p>
+
+<ul>
+  <li>semantically accepted programs that derive to valid canonical IR,</li>
+  <li>IR preservation failures,</li>
+  <li>canonical JSON IR schema failures,</li>
+  <li>valid intentional non-primary correspondence,</li>
+  <li>invalid attribution loss disguised as omission.</li>
 </ul>
 
 <hr/>
@@ -864,6 +927,8 @@ source-shape / schema-owned structural validity
 validated meaning
    ->
 canonical Execution IR
+   ->
+canonical JSON IR validation where relevant
    ->
 lowering / backend-facing handoff
    ->
