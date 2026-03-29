@@ -50,7 +50,7 @@ It specifies:
   <li>which source-side distinctions MUST remain recoverable at the derivation boundary,</li>
   <li>which support objects MAY be introduced to make already-validated execution structure explicit,</li>
   <li>which source-visible families do not become primary execution objects in the canonical open IR,</li>
-  <li>which transformations are allowed as derivation-time normalization, and</li>
+  <li>which explicit attribution and correspondence carriers MUST remain compatible with the canonical JSON IR boundary, and</li>
   <li>which transformations are forbidden because they would blur ownership, erase attribution, or introduce runtime-private meaning too early.</li>
 </ul>
 
@@ -135,6 +135,7 @@ This document defines:
   <li>the relation shapes permitted at the derivation boundary,</li>
   <li>the base v0.1 correspondence between validated execution-relevant families and Execution IR families,</li>
   <li>the minimum attribution and recoverability obligations that MUST survive derivation,</li>
+  <li>the preferred explicit canonical JSON posture for attribution and correspondence carriers,</li>
   <li>the allowed and forbidden kinds of derivation-time explicitness and normalization,</li>
   <li>the rule that one validated FROG program derives to one canonical Execution IR Document containing one execution unit in base v0.1.</li>
 </ul>
@@ -158,6 +159,7 @@ This document does not define:
 - what must correspond
 - what must remain recoverable
 - what may be made explicit during derivation
+- what canonical attribution / correspondence posture must remain compatible
 - what derivation must not silently change
 - that one validated program yields one canonical IR document
 
@@ -338,7 +340,8 @@ That execution unit MUST contain enough information to represent:
   <li>structured regions where applicable,</li>
   <li>public boundary participation and UI participation where applicable,</li>
   <li>support objects where needed to make already-validated execution structure explicit,</li>
-  <li>mandatory attribution to validated source-visible execution content.</li>
+  <li>mandatory attribution to validated source-visible execution content,</li>
+  <li>mandatory correspondence for declaration linkage and intentional non-primary outcomes where required.</li>
 </ul>
 
 <p>
@@ -364,7 +367,8 @@ one Execution IR Document
             ├── explicit regions where applicable
             ├── explicit boundary participation
             ├── support objects where required
-            └── source attribution
+            ├── source attribution
+            └── correspondence where needed
 </code></pre>
 
 <p>
@@ -396,6 +400,7 @@ All conforming derivations in base v0.1 MUST satisfy the following invariants:
   <li>Derivation MUST preserve the distinction between <code>widget_value</code> participation and <code>widget_reference</code> participation.</li>
   <li>Derivation MUST preserve the distinction between <code>widget_reference</code> participation and standardized UI-object primitive operation.</li>
   <li>Derivation MUST preserve the distinction between <code>widget_value</code> participation and property-based access to a widget member named <code>value</code>.</li>
+  <li>Derivation MUST preserve the distinction between direct primary correspondence, support derivation, declaration reference, intentional non-primary outcome, and true non-participation where those distinctions are required for recoverability.</li>
   <li>Derivation MUST produce content compatible with one canonical Execution IR Document for one validated program.</li>
   <li>Derivation MUST NOT reinterpret non-execution source content as execution semantics merely because it exists in canonical source.</li>
   <li>Derivation MUST NOT import editor-only geometry, styling, annotation placement, or similar presentation state as execution semantics.</li>
@@ -414,6 +419,7 @@ preserve interface / UI distinction
 preserve widget_value / widget_reference distinction
 preserve widget_reference / UI-primitive distinction
 preserve canonical-document compatibility
+preserve non-primary correspondence distinctions where required
 
 do not promote non-execution source content
 do not import editor-only state
@@ -477,8 +483,8 @@ non-primary:
       |
       +----&gt; no primary execution object
       |
-      +----&gt; obligations may still survive through attribution
-             or boundary correspondence
+      +----&gt; obligations may still survive through source_map
+             or correspondence records
 </code></pre>
 
 <hr />
@@ -581,14 +587,14 @@ They do not imply that every source-visible family becomes a primary execution o
       <td><code>structure</code> node</td>
       <td>1 -&gt; n</td>
       <td>Structured execution object</td>
-      <td>Explicit region objects, boundary-terminal records, structure-terminal records, structured-port descriptors, source-map records</td>
+      <td>Explicit region records, boundary-terminal records, structure-terminal records, structured-port descriptors, source-map records</td>
       <td>Structure family, owned regions, boundary crossing, structure-terminal roles, source correspondence</td>
       <td>Flatten it immediately into backend-shaped opaque control machinery in a way that makes family identity or region ownership unrecoverable</td>
     </tr>
     <tr>
       <td>Structure region</td>
       <td>1 -&gt; 1</td>
-      <td>Region object</td>
+      <td>Region record</td>
       <td>Region-local attribution records, region classification records</td>
       <td>Region identity, owning structure, source-region identity, region-local graph ownership</td>
       <td>Hide region ownership or allow region-local content to lose source-region attribution</td>
@@ -733,7 +739,7 @@ Accordingly:
   <li>a directly preserved object SHOULD carry one stable source-identity relation,</li>
   <li>a 1 -&gt; n derivation MUST preserve which support objects belong to which primary contributor,</li>
   <li>an n -&gt; 1 restricted aggregation MUST preserve explicit contributor attribution,</li>
-  <li>a 1 -&gt; 0 omission is allowed only for content that does not become a primary execution object,</li>
+  <li>a 1 -&gt; 0 outcome is allowed only for content that does not become a primary execution object,</li>
   <li>a conforming implementation MUST NOT collapse multiple independently attributable execution-visible contributors into one opaque generated object.</li>
 </ul>
 
@@ -754,7 +760,10 @@ base v0.1 requires recoverability of the following distinctions whenever they ar
   <li>structure-boundary participation,</li>
   <li>explicit structure-terminal roles,</li>
   <li>explicit local-memory identity,</li>
-  <li>sub-FROG invocation identity.</li>
+  <li>sub-FROG invocation identity,</li>
+  <li>direct primary correspondence versus support derivation,</li>
+  <li>declaration reference versus primary execution identity,</li>
+  <li>intentional non-primary outcome versus true non-participation where that distinction matters.</li>
 </ul>
 
 <pre><code>Recoverability obligations
@@ -770,7 +779,17 @@ regions remain attributable
 structure terminals remain classifiable
 explicit memory remains explicit
 invocation identity remains recoverable
+non-primary correspondence categories remain distinguishable
 </code></pre>
+
+<p>
+In the preferred canonical JSON posture of base v0.1, explicit attribution and correspondence carriers are exposed through:
+</p>
+
+<ul>
+  <li><code>unit.source_map</code>,</li>
+  <li><code>unit.correspondence</code>.</li>
+</ul>
 
 <p>
 This document does not freeze one identifier syntax.
@@ -1016,10 +1035,11 @@ Allowed normalization includes:
   <li>making region ownership explicit,</li>
   <li>materializing support objects for execution-facing classification,</li>
   <li>adding explicit source-attribution records,</li>
+  <li>adding explicit correspondence records,</li>
   <li>adding contributor records for permitted restricted aggregations,</li>
   <li>normalizing equivalent validated source spellings into one execution-facing canonical representation,</li>
   <li>carrying validated execution-relevant metadata in normalized explicit form,</li>
-  <li>normalizing derivation output so that it is compatible with the canonical document and canonical JSON schema surface.</li>
+  <li>normalizing derivation output so that it is compatible with the canonical document and canonical JSON schema surface, including the preferred <code>source_map[]</code> and <code>correspondence[]</code> record-array posture of base v0.1.</li>
 </ul>
 
 <p>
@@ -1042,6 +1062,7 @@ Allowed normalization is subject to all of the following conditions:
 make already-validated facts explicit
 add explicit support objects
 add attribution structure
+add correspondence structure
 add contributor structure where permitted
 normalize equivalent validated spellings
 normalize toward canonical document compatibility
@@ -1067,6 +1088,7 @@ The following outcomes are forbidden in the base open Execution IR of v0.1:
 <ul>
   <li>changing validated execution meaning,</li>
   <li>removing attribution for execution-visible objects,</li>
+  <li>removing required correspondence for declaration linkage or intentional non-primary outcomes,</li>
   <li>collapsing multiple independently attributable execution-visible contributors into one opaque unattributable generated object,</li>
   <li>replacing explicit memory with hidden scheduler-private state,</li>
   <li>flattening structured control so aggressively that family identity, region correspondence, or boundary-terminal correspondence is no longer recoverable,</li>
@@ -1084,6 +1106,7 @@ The following outcomes are forbidden in the base open Execution IR of v0.1:
 
 semantic drift
 lost attribution
+lost required correspondence
 opaque unattributable aggregation
 hidden scheduler-private memory
 unrecoverable control flattening
@@ -1116,13 +1139,15 @@ Accordingly:
   <li>machine-checkable payload validation belongs to <code>IR/Schema.md</code> and <code>IR/schema/</code>,</li>
   <li>later target-oriented specialization belongs to <code>IR/Lowering.md</code>,</li>
   <li>later consumer-facing assumptions belong to <code>IR/Backend contract.md</code>,</li>
+  <li>derivation MUST remain compatible with the canonical JSON schema posture of the IR layer, including explicit recoverable attribution and correspondence carriers where published,</li>
   <li>derivation MUST NOT prematurely encode backend-private scheduling, partitioning, storage layout, target-profile assumptions, deployment-mode assumptions, or target ABI policy as if those belonged to the base open IR.</li>
 </ul>
 
 <p>
 Later layers MAY consume support metadata,
 classification records,
-or source-attribution records introduced during derivation,
+source-attribution records,
+or correspondence records introduced during derivation,
 but those later consumer expectations do not belong to this document.
 </p>
 
@@ -1224,7 +1249,8 @@ It preserves:
   <li>validated dependency structure,</li>
   <li>the distinction between interface participation and UI participation,</li>
   <li>the distinction between <code>widget_value</code> and <code>widget_reference</code>,</li>
-  <li>the distinction between <code>widget_reference</code> and standardized UI-object primitive operation.</li>
+  <li>the distinction between <code>widget_reference</code> and standardized UI-object primitive operation,</li>
+  <li>required declaration linkage and intentional non-primary correspondence.</li>
 </ul>
 
 <p>
@@ -1236,6 +1262,7 @@ but it forbids:
   <li>semantic drift,</li>
   <li>opaque collapse,</li>
   <li>loss of attribution,</li>
+  <li>loss of required correspondence,</li>
   <li>runtime-private leakage.</li>
 </ul>
 
@@ -1261,6 +1288,7 @@ and interface-side metadata as well.
    +-- preserve interface / UI distinction
    +-- preserve widget_value / widget_reference distinction
    +-- preserve widget_reference / UI-primitive distinction
+   +-- preserve required non-primary correspondence where applicable
    +-- do not executionize non-execution source content
    +-- derive one canonical IR document with one execution unit
    |
