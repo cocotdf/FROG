@@ -106,12 +106,12 @@ The goal is to make the structural contract repository-visible in both normative
 This document belongs to <code>Expression/</code> because schema ownership is source ownership.
 </p>
 
-<pre><code>Expression/   - canonical source structure and structural validity
-Language/     - validated program meaning
-IR/           - derived open execution-facing representation
-Libraries/    - intrinsic primitive meaning
-Profiles/     - optional capability meaning
-IDE/          - authoring, presentation, debugging, observability
+<pre><code>Expression/   -> canonical source structure and structural validity
+Language/     -> validated program meaning
+IR/           -> derived open execution-facing representation
+Libraries/    -> intrinsic primitive meaning
+Profiles/     -> optional capability meaning
+IDE/          -> authoring, presentation, debugging, observability
 </code></pre>
 
 <p>
@@ -181,12 +181,12 @@ Structural validation is the stage after loadability and before semantic validat
 </p>
 
 <pre><code>bytes / text
-    -&gt; loadable JSON source
-    -&gt; structurally valid canonical source
-    -&gt; validated program meaning
-    -&gt; open execution-facing derivation
-    -&gt; lowering / backend-facing handoff
-    -&gt; private realization
+    -> loadable JSON source
+    -> structurally valid canonical source
+    -> validated program meaning
+    -> open execution-facing derivation
+    -> lowering / backend-facing handoff
+    -> private realization
 </code></pre>
 
 <p>
@@ -335,14 +335,14 @@ Section-specific structural detail remains owned by the corresponding specificat
 Section-level schema ownership remains local and explicit.
 </p>
 
-<pre><code>Metadata.md           - shape of metadata section
-Interface.md          - shape of interface section
-Connector.md          - shape of connector section
-Diagram.md            - shape of diagram section
-Front panel.md        - shape of front_panel section
-Icon.md               - shape of icon section
-IDE preferences.md    - shape of ide section
-Cache.md              - shape of cache section
+<pre><code>Metadata.md           -> shape of metadata section
+Interface.md          -> shape of interface section
+Connector.md          -> shape of connector section
+Diagram.md            -> shape of diagram section
+Front panel.md        -> shape of front_panel section
+Icon.md               -> shape of icon section
+IDE preferences.md    -> shape of ide section
+Cache.md              -> shape of cache section
 </code></pre>
 
 <p>
@@ -529,14 +529,14 @@ The schema layer must remain upstream from the IR corridor.
 </p>
 
 <pre><code>.frog source
-    -&gt; source schema / structural validation
-    -&gt; validated meaning
-    -&gt; Execution IR
-    -&gt; lowering
-    -&gt; backend contract
-    -&gt; backend-family consumption
-    -&gt; deployment realization
-    -&gt; runtime services on target
+    -> source schema / structural validation
+    -> validated meaning
+    -> Execution IR
+    -> lowering
+    -> backend contract
+    -> backend-family consumption
+    -> deployment realization
+    -> runtime services on target
 </code></pre>
 
 <p>
@@ -570,9 +570,9 @@ It may be split internally into stages such as:
 </p>
 
 <pre><code>loader
-    -&gt; source-shape checker
-    -&gt; structural validator
-    -&gt; semantic validator
+    -> source-shape checker
+    -> structural validator
+    -> semantic validator
 </code></pre>
 
 <p>
@@ -621,9 +621,9 @@ This document defines schema posture.
 <code>Conformance/</code> defines public testable expectations against that posture.
 </p>
 
-<pre><code>Expression/                  - structural contract is written
-Conformance/                 - structural contract is tested
-Implementations/Reference/   - structural contract is consumed
+<pre><code>Expression/                  -> structural contract is written
+Conformance/                 -> structural contract is tested
+Implementations/Reference/   -> structural contract is consumed
 </code></pre>
 
 <p>
@@ -673,10 +673,10 @@ Preferred growth pattern:
 </p>
 
 <pre><code>published ownership
-    -&gt; explicit structural rule
-    -&gt; repository-visible machine-checkable form
-    -&gt; conformance case
-    -&gt; implementation alignment
+    -> explicit structural rule
+    -> repository-visible machine-checkable form
+    -> conformance case
+    -> implementation alignment
 </code></pre>
 
 <hr/>
@@ -708,14 +708,14 @@ Use the following reading rule when deciding whether a question belongs to sourc
 </p>
 
 <pre><code>If the question is:
-- "Can this be rejected without semantic interpretation?"          - likely schema / structural validity
-- "Is this the correct top-level source shape?"                    - schema / structural validity
-- "Is this source object missing structurally required fields?"    - schema / structural validity
-- "What does this validated program mean?"                         - Language/
-- "What does this primitive do?"                                   - Libraries/
-- "What does this optional capability mean?"                       - Profiles/
-- "What does the open execution-facing form look like?"            - IR/
-- "How does one runtime realize it privately?"                     - implementation, not schema
+- "Can this be rejected without semantic interpretation?"          -> likely schema / structural validity
+- "Is this the correct top-level source shape?"                    -> schema / structural validity
+- "Is this source object missing structurally required fields?"    -> schema / structural validity
+- "What does this validated program mean?"                         -> Language/
+- "What does this primitive do?"                                   -> Libraries/
+- "What does this optional capability mean?"                       -> Profiles/
+- "What does the open execution-facing form look like?"            -> IR/
+- "How does one runtime realize it privately?"                     -> implementation, not schema
 </code></pre>
 
 <p>
