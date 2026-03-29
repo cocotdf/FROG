@@ -28,6 +28,7 @@
   <li><a href="#relation-with-ir-lowering-and-backend-contract">12. Relation with IR, Lowering, and Backend Contract</a></li>
   <li><a href="#library-evolution">13. Library Evolution</a></li>
   <li><a href="#status">14. Status</a></li>
+  <li><a href="#summary">15. Summary</a></li>
 </ul>
 
 <hr/>
@@ -58,7 +59,7 @@ In the current repository architecture:
   <li><code>Language/</code> defines cross-cutting execution semantics for validated programs,</li>
   <li><code>Libraries/</code> defines intrinsic standardized primitive vocabularies and primitive-local contracts,</li>
   <li><code>Profiles/</code> defines optional standardized capability families beyond the intrinsic core,</li>
-  <li><code>IR/</code> defines the open execution-facing representation derived from validated meaning together with lowering and backend-facing boundaries,</li>
+  <li><code>IR/</code> defines the canonical execution-facing representation derived from validated meaning together with lowering and backend-facing boundaries,</li>
   <li><code>IDE/</code> may expose primitives in palettes and authoring flows without redefining them.</li>
 </ul>
 
@@ -151,7 +152,7 @@ This directory does <strong>not</strong> define:
   <li>the widget object model,</li>
   <li>front-panel serialization,</li>
   <li>cross-cutting execution semantics for validated programs,</li>
-  <li>the open Execution IR object model,</li>
+  <li>the canonical Execution IR object model,</li>
   <li>lowering strategy,</li>
   <li>backend contract content,</li>
   <li>IDE palette organization or authoring workflows,</li>
@@ -171,21 +172,20 @@ Those concerns are normatively owned elsewhere in the repository.
 The position of <code>Libraries/</code> inside the repository architecture is intentionally narrow and explicit:
 </p>
 
-<pre>
-Repository architecture around Libraries/
+<pre><code>Repository architecture around Libraries/
 
-Expression/   -&gt; canonical source form
-Language/     -&gt; normative execution meaning
-Libraries/    -&gt; intrinsic primitive vocabularies
-Profiles/     -&gt; optional standardized capability families
-IR/           -&gt; open execution-facing representation and downstream boundaries
-IDE/          -&gt; authoring, palette, observability, debugging, inspection
+Expression/   -> canonical source form
+Language/     -> normative execution meaning
+Libraries/    -> intrinsic primitive vocabularies
+Profiles/     -> optional standardized capability families
+IR/           -> canonical execution-facing representation and downstream boundaries
+IDE/          -> authoring, palette, observability, debugging, inspection
 
-Libraries/ owns intrinsic primitive definitions referenced by executable diagrams.
-Libraries/ does not own source structure, cross-cutting execution semantics,
+Libraries/ own intrinsic primitive definitions referenced by executable diagrams.
+Libraries/ do not own source structure, cross-cutting execution semantics,
 optional capability profiles, IR derivation, lowering, backend contracts,
 or IDE behavior.
-</pre>
+</code></pre>
 
 <p>
 This separation matters because the same primitive identity may be:
@@ -197,7 +197,7 @@ This separation matters because the same primitive identity may be:
   <li>executed under broader constraints described by <code>Language/</code>,</li>
   <li>represented later in execution-facing form by <code>IR/</code>,</li>
   <li>surfaced to users by <code>IDE/Palette.md</code>,</li>
-  <li>complemented by optional capability contracts defined in <code>Profiles/</code>.</li>
+  <li>constrained by optional capability contracts defined in <code>Profiles/</code>.</li>
 </ul>
 
 <p>
@@ -213,8 +213,7 @@ the authoritative normative home for <code>frog.connectivity.*</code> is now the
 The following diagram summarizes how an intrinsic primitive node is interpreted:
 </p>
 
-<pre>
-Canonical source (.frog)
+<pre><code>Canonical source (.frog)
         |
         v
 Expression/Diagram.md
@@ -232,12 +231,12 @@ Language/
 applies cross-cutting execution semantics
         |
         v
-Validated executable interpretation
+validated executable meaning
         |
         v
 IR/
-may derive open execution-facing representation
-</pre>
+may derive canonical execution-facing representation
+</code></pre>
 
 <p>
 Primitive meaning is therefore <strong>composed</strong>, not collapsed into one document:
@@ -245,7 +244,7 @@ Primitive meaning is therefore <strong>composed</strong>, not collapsed into one
 
 <ul>
   <li><code>Expression/</code> owns representation,</li>
-  <li><code>Libraries/</code> owns intrinsic primitive identity and primitive-local contract,</li>
+  <li><code>Libraries/</code> own intrinsic primitive identity and primitive-local contract,</li>
   <li><code>Language/</code> owns cross-cutting execution meaning,</li>
   <li><code>IR/</code> owns derived execution-facing representation after validated meaning already exists.</li>
 </ul>
@@ -254,8 +253,7 @@ Primitive meaning is therefore <strong>composed</strong>, not collapsed into one
 For <code>frog.ui.*</code>, this composition also depends on the widget-side source model:
 </p>
 
-<pre>
-Expression/Widget.md
+<pre><code>Expression/Widget.md
          +
 Expression/Widget interaction.md
          +
@@ -264,7 +262,7 @@ Libraries/UI.md
 Language/
          =
 validated executable meaning of UI interaction
-</pre>
+</code></pre>
 
 <hr/>
 
@@ -296,10 +294,9 @@ It is retained only for repository continuity, navigation stability, and explici
 In practice:
 </p>
 
-<pre>
-Libraries/Connectivity.md   -&gt; transition note only
-Profiles/Interop.md         -&gt; authoritative normative home
-</pre>
+<pre><code>Libraries/Connectivity.md   -> transition note only
+Profiles/Interop.md         -> authoritative normative home
+</code></pre>
 
 <hr/>
 
@@ -323,15 +320,14 @@ At the current repository stage, the intrinsic standardized primitive taxonomy i
 The taxonomy can also be read as a simple mental map:
 </p>
 
-<pre>
-frog.core.*         -&gt; foundational execution building blocks
-frog.math.*         -&gt; scalar numeric operations
-frog.collections.*  -&gt; collection manipulation
-frog.text.*         -&gt; text processing
-frog.io.*           -&gt; file/path/resource/byte I/O
-frog.signal.*       -&gt; signal-oriented operations
-frog.ui.*           -&gt; object-style widget interaction in execution
-</pre>
+<pre><code>frog.core.*         -> foundational execution building blocks
+frog.math.*         -> scalar numeric operations
+frog.collections.*  -> collection manipulation
+frog.text.*         -> text processing
+frog.io.*           -> file/path/resource/byte I/O
+frog.signal.*       -> signal-oriented operations
+frog.ui.*           -> object-style widget interaction in execution
+</code></pre>
 
 <p>
 Additional intrinsic library families MAY be standardized later, but they are not part of the intrinsic standardized surface unless a corresponding specification exists in this directory and is published as such.
@@ -354,8 +350,7 @@ One of the most important architectural rules in the repository is the separatio
 The distinction is simple:
 </p>
 
-<pre>
-If a capability is:
+<pre><code>If a capability is:
 - generic,
 - portable,
 - intrinsic to the language surface,
@@ -367,18 +362,18 @@ If a capability is:
 - optional,
 - environment-dependent,
 - tied to foreign runtimes, host ABIs, managed platforms, databases,
-  protocols, services, or comparable external assumptions,
+  protocols, services, target-profile classes, deployment-mode classes,
+  or comparable external assumptions,
 - standardized but not intrinsic to the minimal core,
 
 then it belongs in Profiles/.
-</pre>
+</code></pre>
 
 <p>
 Decision sketch:
 </p>
 
-<pre>
-                    New capability
+<pre><code>                    New capability
                           |
                           v
          +--------------------------------------+
@@ -391,7 +386,7 @@ Decision sketch:
                              v
                        Libraries/   -----> evaluate as Profiles/
                                             or implementation-specific extension
-</pre>
+</code></pre>
 
 <p>
 Examples:
@@ -451,15 +446,14 @@ Architectural ownership is defined by the specification layer that normatively o
 In practice:
 </p>
 
-<pre>
-Namespace prefix alone is not enough.
+<pre><code>Namespace prefix alone is not enough.
 
 "frog.something.*"
 does not automatically mean
 "intrinsic library namespace".
 
 Normative ownership still matters.
-</pre>
+</code></pre>
 
 <hr/>
 
@@ -483,15 +477,14 @@ The intrinsic standardized library families in this directory are intentionally 
 Boundary sketch:
 </p>
 
-<pre>
-frog.core.*         -&gt; foundational primitives only
-frog.math.*         -&gt; math only
-frog.collections.*  -&gt; collections only
-frog.text.*         -&gt; text only
-frog.io.*           -&gt; I/O only
-frog.signal.*       -&gt; signal only
-frog.ui.*           -&gt; executable UI interaction only
-</pre>
+<pre><code>frog.core.*         -> foundational primitives only
+frog.math.*         -> math only
+frog.collections.*  -> collections only
+frog.text.*         -> text only
+frog.io.*           -> I/O only
+frog.signal.*       -> signal only
+frog.ui.*           -> executable UI interaction only
+</code></pre>
 
 <p>
 Therefore:
@@ -500,7 +493,7 @@ Therefore:
 <ul>
   <li><code>frog.core.*</code> MUST NOT become a generic bucket for unrelated future functionality.</li>
   <li><code>frog.io.*</code> MUST remain distinct from foreign-runtime interoperability, deployment, database access, and broader external integration concerns unless those are explicitly standardized as intrinsic libraries.</li>
-  <li><code>frog.ui.*</code> MUST remain distinct from front-panel serialization, widget catalog definition, broader IDE UI editing concerns, and backend-family-specific UI binding contracts.</li>
+  <li><code>frog.ui.*</code> MUST remain distinct from front-panel serialization, widget catalog definition, broader IDE UI editing concerns, target-profile classes, deployment-mode classes, and backend-family-specific UI binding contracts.</li>
   <li><code>frog.text.*</code> MUST remain distinct from file, path, and external-service semantics.</li>
   <li><code>frog.collections.*</code> MUST remain distinct from future specialized families unless those are explicitly standardized.</li>
   <li><code>frog.signal.*</code> MUST remain distinct from broader acquisition, streaming, tensor, or specialized domain families unless those are explicitly standardized.</li>
@@ -512,15 +505,14 @@ Therefore:
 The main anti-pattern to avoid is this:
 </p>
 
-<pre>
-Useful capability
-      -&gt;
+<pre><code>Useful capability
+      ->
 "put it in Libraries/"
-      -&gt;
+      ->
 Libraries becomes a catch-all ecosystem bucket
-      -&gt;
+      ->
 intrinsic language surface loses clarity
-</pre>
+</code></pre>
 
 <p>
 This repository explicitly rejects that drift.
@@ -548,14 +540,13 @@ In particular:
 These relationships can be visualized as follows:
 </p>
 
-<pre>
-Expression/Diagram.md
+<pre><code>Expression/Diagram.md
         |
         |  references primitive nodes
         v
     Libraries/
         |
-        |  provides primitive-local normative contracts
+        |  provide primitive-local normative contracts
         v
     Language/
         |
@@ -565,7 +556,7 @@ validated executable meaning
 
 Profiles/
         |
-        |  adds optional standardized capability families
+        |  add optional standardized capability families
         v
 
 IDE/Palette.md
@@ -573,7 +564,7 @@ IDE/Palette.md
         |  exposes discoverability and insertion
         v
 does not redefine primitive semantics
-</pre>
+</code></pre>
 
 <p>
 Accordingly, a library specification is one normative input used to interpret intrinsic primitive nodes inside a validated executable graph.
@@ -604,12 +595,11 @@ In particular:
 The governing rule is:
 </p>
 
-<pre>
-Libraries/
+<pre><code>Libraries/
     own intrinsic primitive identity and primitive-local contract
 
 IR/
-    may represent those primitives in execution-facing derived form
+    may represent those primitives in canonical execution-facing derived form
 
 Lowering/
     may specialize execution-facing primitive representation
@@ -619,7 +609,7 @@ Backend contract/
 
 Implementations/
     may realize those primitives privately
-</pre>
+</code></pre>
 
 <p>
 Therefore:
@@ -636,7 +626,7 @@ This separation is essential because primitive identity must remain stable even 
 </p>
 
 <ul>
-  <li>the open IR introduces execution-facing explicitness,</li>
+  <li>the canonical IR introduces execution-facing explicitness,</li>
   <li>lowering changes storage, scheduling, or control realization,</li>
   <li>backend contracts declare family-specific assumptions,</li>
   <li>private runtimes choose different internal layouts.</li>
@@ -673,7 +663,7 @@ Additional intrinsic library families MAY be added later where they remain:
   <li>generic,</li>
   <li>portable,</li>
   <li>intrinsic to the language surface,</li>
-  <li>not dependent on one specific foreign runtime, managed platform, database stack, host ABI, protocol family, target-profile family, deployment-mode family, or vendor technology.</li>
+  <li>not dependent on one specific foreign runtime, managed platform, database stack, host ABI, protocol family, target-profile family, deployment-mode family, backend-family consumption model, or vendor technology.</li>
 </ul>
 
 <p>
@@ -719,8 +709,7 @@ Its role is to anchor the normative primitive vocabulary consumed by executable 
 The current direction can be summarized simply:
 </p>
 
-<pre>
-Libraries/ should stay:
+<pre><code>Libraries/ should stay:
 - intrinsic
 - portable
 - explicit
@@ -736,8 +725,48 @@ Libraries/ should not become:
 - a runtime bucket
 - a vendor bucket
 - a generic ecosystem dumping ground
-</pre>
+</code></pre>
 
 <p>
 This directory is expected to evolve as the language matures, but that evolution MUST preserve explicit namespace ownership, clear architectural boundaries, and conservative integration with the rest of the specification.
 </p>
+
+<hr/>
+
+<h2 id="summary">15. Summary</h2>
+
+<p>
+<code>Libraries/</code> is the architectural home of intrinsic standardized primitive vocabularies in FROG.
+</p>
+
+<p>
+It exists to make primitive identity, ports, primitive-local metadata, and primitive-local behavior explicit and portable without corrupting the ownership boundaries of:
+</p>
+
+<ul>
+  <li><code>Expression/</code>,</li>
+  <li><code>Language/</code>,</li>
+  <li><code>Profiles/</code>,</li>
+  <li><code>IR/</code>,</li>
+  <li><code>IDE/</code>.</li>
+</ul>
+
+<p>
+Intrinsic libraries stay intrinsic.
+Optional capability growth stays in profiles.
+Execution-facing representation stays in IR.
+Runtime realization stays implementation-private.
+</p>
+
+<pre><code>Libraries/
+    own intrinsic primitive truth
+
+Profiles/
+    own optional capability families
+
+IR/
+    owns the canonical execution-facing bridge
+
+Implementations/
+    own private realization
+</code></pre>
