@@ -3,6 +3,7 @@
   "$id": "https://graiphic.github.io/frog/schema/ir/frog.execution-ir.schema.json",
   "title": "FROG Execution IR Document",
   "description": "Canonical JSON schema for the FROG Execution IR Document (base v0.1).",
+  "$comment": "This schema validates the canonical open JSON form of the FROG Execution IR Document. It is normative for structural validation only and does not replace semantic validation, IR construction validation, or downstream lowering checks.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -27,25 +28,24 @@
     },
     "unit": {
       "$ref": "#/$defs/executionUnit"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Optional document-level non-semantic metadata.",
+      "additionalProperties": true
     }
   },
   "$defs": {
     "identifier": {
       "type": "string",
       "minLength": 1,
-      "pattern": "^[A-Za-z0-9._:/#-]+$"
+      "pattern": "^[A-Za-z0-9._:/#-]+$",
+      "description": "Portable identifier token used by the canonical open JSON IR form."
     },
 
     "nonEmptyString": {
       "type": "string",
       "minLength": 1
-    },
-
-    "stringArray": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
     },
 
     "typeRef": {
@@ -95,6 +95,29 @@
       }
     },
 
+    "sourceRefArray": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/sourceRef"
+      }
+    },
+
+    "identifierArray": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/identifier"
+      }
+    },
+
+    "uniqueIdentifierArray": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/identifier"
+      }
+    },
+
     "attribution": {
       "type": "object",
       "additionalProperties": false,
@@ -103,11 +126,7 @@
       ],
       "properties": {
         "sources": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "$ref": "#/$defs/sourceRef"
-          }
+          "$ref": "#/$defs/sourceRefArray"
         },
         "mode": {
           "type": "string",
@@ -207,7 +226,7 @@
         },
         "kind": {
           "type": "string",
-          "description": "Normalized object-specific kind."
+          "description": "Optional normalized object-specific kind."
         },
         "ports": {
           "type": "array",
@@ -219,10 +238,7 @@
           "$ref": "#/$defs/attribution"
         },
         "correspondence_refs": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/identifier"
-          }
+          "$ref": "#/$defs/uniqueIdentifierArray"
         },
         "metadata": {
           "type": "object",
@@ -278,11 +294,8 @@
               ]
             },
             "region_ids": {
-              "type": "array",
-              "minItems": 1,
-              "items": {
-                "$ref": "#/$defs/identifier"
-              }
+              "$ref": "#/$defs/uniqueIdentifierArray",
+              "minItems": 1
             }
           },
           "required": [
@@ -428,7 +441,9 @@
                 "other_explicit_memory"
               ]
             },
-            "initial": {}
+            "initial": {
+              "description": "Optional explicit initial-state payload when carried in canonical open IR."
+            }
           },
           "required": [
             "memory_kind"
@@ -542,16 +557,10 @@
           "$ref": "#/$defs/identifier"
         },
         "member_object_ids": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/identifier"
-          }
+          "$ref": "#/$defs/uniqueIdentifierArray"
         },
         "member_connection_ids": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/identifier"
-          }
+          "$ref": "#/$defs/uniqueIdentifierArray"
         },
         "attribution": {
           "$ref": "#/$defs/attribution"
@@ -575,11 +584,7 @@
           "$ref": "#/$defs/identifier"
         },
         "sources": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "$ref": "#/$defs/sourceRef"
-          }
+          "$ref": "#/$defs/sourceRefArray"
         }
       }
     },
@@ -609,10 +614,7 @@
           "$ref": "#/$defs/sourceRef"
         },
         "ir_refs": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/identifier"
-          }
+          "$ref": "#/$defs/uniqueIdentifierArray"
         },
         "metadata": {
           "type": "object",
