@@ -5,7 +5,7 @@
 <h1 align="center">FROG Execution IR Schema</h1>
 
 <p align="center">
-  <strong>Schema posture and machine-checkable validation surface for the canonical FROG Execution IR Document</strong><br />
+  <strong>Schema posture and machine-checkable structural validation surface for the canonical FROG Execution IR Document</strong><br />
   <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -29,11 +29,12 @@
   <li><a href="#connection-category-posture">14. Connection Category Posture</a></li>
   <li><a href="#region-category-posture">15. Region Category Posture</a></li>
   <li><a href="#source-map-and-correspondence-posture">16. Source Map and Correspondence Posture</a></li>
-  <li><a href="#extensibility-posture">17. Extensibility Posture</a></li>
-  <li><a href="#validation-usage">18. Validation Usage</a></li>
-  <li><a href="#conformance-reading-rule">19. Conformance Reading Rule</a></li>
-  <li><a href="#out-of-scope">20. Out of Scope</a></li>
-  <li><a href="#summary">21. Summary</a></li>
+  <li><a href="#referential-integrity-boundary">17. Referential Integrity Boundary</a></li>
+  <li><a href="#extensibility-posture">18. Extensibility Posture</a></li>
+  <li><a href="#validation-usage">19. Validation Usage</a></li>
+  <li><a href="#conformance-reading-rule">20. Conformance Reading Rule</a></li>
+  <li><a href="#out-of-scope">21. Out of Scope</a></li>
+  <li><a href="#summary">22. Summary</a></li>
 </ul>
 
 <hr />
@@ -47,7 +48,7 @@ This document defines the schema posture for the <strong>canonical FROG Executio
 <p>
 The Execution IR is not only an architectural layer.
 It is also a canonical open artifact that a conforming implementation MUST be able to emit as JSON.
-This document defines how that canonical JSON form is machine-checkable.
+This document defines how that canonical JSON form is validated structurally.
 </p>
 
 <p>
@@ -223,11 +224,12 @@ At minimum, that includes:
   <li>presence and structural category of regions,</li>
   <li>presence and structural category of source attribution support,</li>
   <li>presence and structural category of correspondence support,</li>
-  <li>basic required fields for category-level validation.</li>
+  <li>basic required fields for category-level validation,</li>
+  <li>published discriminators and enumerations where the base schema defines them explicitly.</li>
 </ul>
 
 <p>
-The schema may also validate selected enumerated families, required arrays, required maps, and basic identifier-bearing records where the schema layer publishes them explicitly.
+The schema may also validate selected identifier-bearing records, endpoint shapes, required arrays, required maps, and selected conservative extension points where the schema layer publishes them explicitly.
 </p>
 
 <hr />
@@ -246,6 +248,7 @@ Even when a payload is schema-valid, the following may still require separate va
   <li>cycle validity,</li>
   <li>port-type compatibility,</li>
   <li>region behavior legality,</li>
+  <li>cross-record identity uniqueness beyond the guarantees of the chosen schema constraints,</li>
   <li>full recoverability obligations,</li>
   <li>lowering legality,</li>
   <li>backend-specific requirements.</li>
@@ -368,6 +371,10 @@ At the top level, the schema MUST validate a document equivalent in category to:
   <li><code>document_id</code></li>
   <li><code>unit</code></li>
 </ul>
+
+<p>
+The schema MAY also allow conservative document-level metadata when that metadata remains execution-relevant and non-semantic.
+</p>
 
 <p>
 These categories exist to guarantee that the payload is clearly:
@@ -500,13 +507,44 @@ In base v0.1, these appear as:
 </ul>
 
 <p>
+The preferred base v0.1 posture is explicit record arrays for both categories.
+That keeps the canonical JSON form simple, portable, diffable, and straightforward to inspect with ordinary JSON tooling.
+</p>
+
+<p>
 The schema does not by itself define the full semantics of those records.
 It defines the required structural presence of explicit machine-checkable categories so that attribution and non-primary correspondence are not left to undocumented convention.
 </p>
 
 <hr />
 
-<h2 id="extensibility-posture">17. Extensibility Posture</h2>
+<h2 id="referential-integrity-boundary">17. Referential Integrity Boundary</h2>
+
+<p>
+The schema layer may validate local record shape, published discriminators, and selected direct references.
+However, full referential integrity across the complete document remains larger than the schema layer by itself.
+</p>
+
+<p>
+In particular, the following may require additional validator logic beyond base JSON Schema constraints:
+</p>
+
+<ul>
+  <li>that every referenced object identifier resolves exactly once,</li>
+  <li>that every referenced region identifier resolves exactly once,</li>
+  <li>that endpoint ports exist on the referenced owning object,</li>
+  <li>that region ownership and membership remain semantically consistent,</li>
+  <li>that correspondence references are complete where recoverability requires them.</li>
+</ul>
+
+<p>
+This is not a weakness of the schema layer.
+It is the normal boundary between structural schema validation and full IR validation.
+</p>
+
+<hr />
+
+<h2 id="extensibility-posture">18. Extensibility Posture</h2>
 
 <p>
 The schema MAY allow conservative extension points.
@@ -531,7 +569,7 @@ The base schema should therefore remain strict on required structure and conserv
 
 <hr />
 
-<h2 id="validation-usage">18. Validation Usage</h2>
+<h2 id="validation-usage">19. Validation Usage</h2>
 
 <p>
 The schema is intended to be used by:
@@ -563,7 +601,7 @@ claim schema-valid canonical IR document
 
 <hr />
 
-<h2 id="conformance-reading-rule">19. Conformance Reading Rule</h2>
+<h2 id="conformance-reading-rule">20. Conformance Reading Rule</h2>
 
 <p>
 Conformance must be read in layers.
@@ -596,7 +634,7 @@ A tool MUST NOT claim that schema validity alone replaces the rest of specificat
 
 <hr />
 
-<h2 id="out-of-scope">20. Out of Scope</h2>
+<h2 id="out-of-scope">21. Out of Scope</h2>
 
 <p>
 The following remain out of scope for this document:
@@ -613,7 +651,7 @@ The following remain out of scope for this document:
 
 <hr />
 
-<h2 id="summary">21. Summary</h2>
+<h2 id="summary">22. Summary</h2>
 
 <p>
 The FROG IR schema layer makes the canonical Execution IR Document machine-checkable.
