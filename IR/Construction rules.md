@@ -440,7 +440,7 @@ The execution unit MUST provide the owning scope for:
   <li>all constructed primary execution-facing objects,</li>
   <li>all constructed support objects that belong to the open IR document,</li>
   <li>all constructed connections,</li>
-  <li>all region objects,</li>
+  <li>all region records,</li>
   <li>all explicit source-attribution records,</li>
   <li>all explicit correspondence records.</li>
 </ul>
@@ -761,18 +761,20 @@ At minimum, the constructed document MUST support:
 </ul>
 
 <p>
-A conforming implementation MAY represent attribution and correspondence:
+In base v0.1, the preferred canonical JSON posture is explicit record arrays for:
 </p>
 
 <ul>
-  <li>inline on each object,</li>
-  <li>through a dedicated source map table,</li>
-  <li>through a dedicated correspondence table,</li>
-  <li>through an equivalent explicit mechanism.</li>
+  <li><code>unit.source_map</code>,</li>
+  <li><code>unit.correspondence</code>.</li>
 </ul>
 
 <p>
-Whatever representation is used, attribution MUST remain explicit and recoverable.
+Inline attribution on objects and connections remains allowed where the published schema and IR documents permit it,
+but the canonical document MUST still preserve explicit recoverable attribution and correspondence in a form compatible with the published IR schema posture.
+</p>
+
+<p>
 Construction MUST NOT rely on unstated positional assumptions or undocumented ordering conventions as the sole attribution mechanism.
 </p>
 
@@ -783,19 +785,17 @@ multi-contributor attribution where needed
 declaration-to-participation correspondence where needed
 stable diagnostic references
 
-Allowed representations:
-- inline attribution
-- source_map table
-- correspondence table
-- equivalent explicit mechanism
+Preferred canonical JSON posture in v0.1:
+- source_map as explicit record array
+- correspondence as explicit record array
 
 Forbidden:
 implicit undocumented positional attribution only
 </code></pre>
 
 <p>
-This document does not require one universal attribution encoding.
-It requires a construction result that remains compatible with the recoverability obligations defined elsewhere in the IR layer.
+This document does not require one universal internal attribution encoding.
+It requires a construction result that remains compatible with the recoverability obligations defined elsewhere in the IR layer and with the published canonical schema posture.
 </p>
 
 <hr />
@@ -935,15 +935,14 @@ At minimum, the canonical JSON payload MUST contain top-level categories equival
     "objects": [],
     "connections": [],
     "regions": [],
-    "source_map": {},
-    "correspondence": {}
+    "source_map": [],
+    "correspondence": []
   }
 }
 </code></pre>
 
 <p>
-The example above shows the minimum canonical category shape.
-The schema layer MAY later refine exact required fields, enumeration values, and structural constraints.
+The example above shows the minimum canonical category shape in a form aligned with the base v0.1 schema posture.
 </p>
 
 <p>
@@ -958,8 +957,8 @@ In the canonical JSON payload:
   <li><code>objects</code> MUST carry primary execution-facing objects and support objects with clear classification,</li>
   <li><code>connections</code> MUST carry explicit directed connectivity,</li>
   <li><code>regions</code> MUST carry explicit structured region information where applicable,</li>
-  <li><code>source_map</code> or an equivalent explicit category MUST carry recoverable attribution,</li>
-  <li><code>correspondence</code> or an equivalent explicit category MUST carry declaration linkage and intentional non-primary correspondence where needed.</li>
+  <li><code>source_map</code> MUST carry recoverable attribution support as an explicit record array in the canonical JSON form of base v0.1,</li>
+  <li><code>correspondence</code> MUST carry declaration linkage and intentional non-primary correspondence where needed as an explicit record array in the canonical JSON form of base v0.1.</li>
 </ul>
 
 <p>
@@ -974,8 +973,8 @@ document
     ├── objects
     ├── connections
     ├── regions
-    ├── source attribution
-    └── correspondence where needed
+    ├── source_map[]
+    └── correspondence[]
 </code></pre>
 
 <p>
@@ -1005,6 +1004,7 @@ it MUST satisfy the following minimum checks:
   <li>required declaration-to-participation correspondence remains recoverable where applicable,</li>
   <li>intentional non-primary correspondence is not confused with accidental identity loss,</li>
   <li>the document is serializable in canonical JSON form,</li>
+  <li>the payload shape remains compatible with the published IR schema family,</li>
   <li>the payload does not contain editor-only presentation state as execution semantics,</li>
   <li>the payload does not require hidden undocumented runtime policy to be interpreted as open IR.</li>
 </ul>
@@ -1027,6 +1027,7 @@ explicit attributable memory
 recoverable declaration correspondence where required
 non-primary correspondence not confused with identity loss
 canonical JSON serializability
+schema-family compatibility
 
 no editor-only execution semantics
 no hidden runtime-policy dependency
@@ -1123,7 +1124,7 @@ It starts from <strong>validated program meaning</strong>, creates <strong>one E
 <strong>one execution unit</strong>, constructs <strong>primary execution-facing objects</strong>, <strong>typed ports</strong>,
 <strong>directed connections</strong>, <strong>structured regions</strong>, <strong>support objects where justified</strong>, and
 <strong>mandatory source attribution and correspondence</strong>,
-then verifies that the resulting document remains structured, attributable, portable, and free from runtime-private leakage.
+then verifies that the resulting document remains structured, attributable, portable, schema-compatible, and free from runtime-private leakage.
 </p>
 
 <p>
