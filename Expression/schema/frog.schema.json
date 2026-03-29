@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://graiphic.github.io/FROG/Expression/schema/frog.schema.json",
   "title": "FROG Canonical Source Schema",
-  "description": "Conservative machine-checkable structural schema for canonical .frog source. This artifact covers top-level canonical source shape, allowed top-level section vocabulary, required-versus-optional top-level sections, and section kind constraints only. It does not define full structural ownership for every section-local object, semantic validity, validated meaning, Execution IR, lowering, backend contract content, or runtime realization.",
+  "description": "Conservative machine-checkable structural schema for canonical .frog source in FROG v0.1. This artifact covers top-level canonical source shape, allowed top-level section vocabulary, required-versus-optional top-level sections, and section kind constraints only. It does not define full section-local structural ownership, semantic validity, validated meaning, Execution IR, lowering, backend contract content, or runtime realization.",
   "$comment": "Normative ownership remains in Expression/ prose. This schema is a repository-visible machine-checkable aid for structural reproducibility and must not be treated as the owner of the language.",
   "type": "object",
   "required": [
@@ -13,50 +13,113 @@
   ],
   "properties": {
     "spec_version": {
-      "description": "Specification version identifier for the canonical source file.",
-      "anyOf": [
+      "description": "Specification version identifier for the canonical source file. In repository state v0.1, canonical source is expected to declare version 0.1.",
+      "oneOf": [
         {
-          "type": "string"
+          "type": "string",
+          "enum": ["0.1"]
         },
         {
-          "type": "number"
+          "type": "number",
+          "enum": [0.1]
         }
       ]
     },
     "metadata": {
-      "description": "Required metadata section. Section-local object structure is owned by Expression/Metadata.md.",
-      "type": "object"
+      "$ref": "#/$defs/metadataSection"
     },
     "interface": {
-      "description": "Required interface section. Section-local object structure is owned by Expression/Interface.md.",
-      "type": "object"
+      "$ref": "#/$defs/interfaceSection"
     },
     "diagram": {
-      "description": "Required diagram section. Section-local object structure is owned by Expression/Diagram.md.",
-      "type": "object"
+      "$ref": "#/$defs/diagramSection"
     },
     "connector": {
-      "description": "Optional connector section. Section-local object structure is owned by Expression/Connector.md.",
-      "type": "object"
+      "$ref": "#/$defs/connectorSection"
     },
     "front_panel": {
-      "description": "Optional front_panel section. Section-local object structure is owned by Expression/Front panel.md.",
-      "type": "object"
+      "$ref": "#/$defs/frontPanelSection"
     },
     "icon": {
-      "description": "Optional icon section. Section-local object structure is owned by Expression/Icon.md.",
-      "type": "object"
+      "$ref": "#/$defs/iconSection"
     },
     "ide": {
-      "description": "Optional ide section. Section-local object structure is owned by Expression/IDE preferences.md.",
-      "type": "object"
+      "$ref": "#/$defs/ideSection"
     },
     "cache": {
-      "description": "Optional cache section. Section-local object structure is owned by Expression/Cache.md.",
-      "type": "object"
+      "$ref": "#/$defs/cacheSection"
     }
   },
   "additionalProperties": false,
+  "$defs": {
+    "genericSectionObject": {
+      "type": "object"
+    },
+    "metadataSection": {
+      "description": "Required metadata section. Section-local object structure is owned by Expression/Metadata.md.",
+      "allOf": [
+        {
+          "$ref": "#/$defs/genericSectionObject"
+        }
+      ]
+    },
+    "interfaceSection": {
+      "description": "Required interface section. Section-local object structure is owned by Expression/Interface.md.",
+      "allOf": [
+        {
+          "$ref": "#/$defs/genericSectionObject"
+        }
+      ]
+    },
+    "diagramSection": {
+      "description": "Required diagram section. Section-local object structure is owned by Expression/Diagram.md.",
+      "allOf": [
+        {
+          "$ref": "#/$defs/genericSectionObject"
+        }
+      ]
+    },
+    "connectorSection": {
+      "description": "Optional connector section. Section-local object structure is owned by Expression/Connector.md.",
+      "allOf": [
+        {
+          "$ref": "#/$defs/genericSectionObject"
+        }
+      ]
+    },
+    "frontPanelSection": {
+      "description": "Optional front_panel section. Section-local object structure is owned by Expression/Front panel.md.",
+      "allOf": [
+        {
+          "$ref": "#/$defs/genericSectionObject"
+        }
+      ]
+    },
+    "iconSection": {
+      "description": "Optional icon section. Section-local object structure is owned by Expression/Icon.md.",
+      "allOf": [
+        {
+          "$ref": "#/$defs/genericSectionObject"
+        }
+      ]
+    },
+    "ideSection": {
+      "description": "Optional ide section. Section-local object structure is owned by Expression/IDE preferences.md.",
+      "allOf": [
+        {
+          "$ref": "#/$defs/genericSectionObject"
+        }
+      ]
+    },
+    "cacheSection": {
+      "description": "Optional cache section. Section-local object structure is owned by Expression/Cache.md.",
+      "allOf": [
+        {
+          "$ref": "#/$defs/genericSectionObject"
+        }
+      ]
+    }
+  },
   "examples": [
     {
       "spec_version": "0.1",
