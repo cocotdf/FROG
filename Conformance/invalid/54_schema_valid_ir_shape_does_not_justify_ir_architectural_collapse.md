@@ -50,6 +50,23 @@ Typical anti-patterns include:
 
 <p><strong>Expected:</strong> invalid</p>
 
+<p><strong>Expected loadability:</strong> loadable</p>
+
+<p><strong>Expected structural validity:</strong> valid</p>
+
+<p><strong>Expected meaning:</strong> established or otherwise assumed by the invalid claim</p>
+
+<p><strong>Expected IR result:</strong> not derivable as conforming canonical IR</p>
+
+<p><strong>Expected IR schema result:</strong> not sufficient even if schema-valid shape is claimed</p>
+
+<p><strong>Expected IR architectural result:</strong> invalid</p>
+
+<p>
+<strong>Expected rejection:</strong>
+schema-compatible shape has been used to justify an IR architectural collapse.
+</p>
+
 <hr />
 
 <h2 id="intended-anti-pattern">3. Intended Anti-Pattern</h2>
