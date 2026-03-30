@@ -52,6 +52,8 @@ Case:
 
 <p><strong>Expected IR schema result:</strong> schema-valid</p>
 
+<p><strong>Expected IR architectural result:</strong> valid</p>
+
 <p>
 <strong>Expected preservation:</strong>
 a source-visible declaration that does not become a primary execution object remains explicitly recoverable through canonical correspondence carriers rather than through silence or private implementation convention.
@@ -161,7 +163,8 @@ It is valid because:
   <li>language-level meaning is established,</li>
   <li>the declaration-side contributor is still relevant to recoverability,</li>
   <li>the canonical IR keeps that relevance explicit through correspondence rather than through silent absence,</li>
-  <li>the resulting IR remains compatible with the published canonical JSON IR posture.</li>
+  <li>the resulting IR remains compatible with the published canonical JSON IR posture,</li>
+  <li>the resulting IR remains architecturally faithful.</li>
 </ul>
 
 <p>
@@ -263,7 +266,8 @@ A conforming implementation must preserve all of the following:
   <li>the distinction between declaration identity and execution-object identity,</li>
   <li>the distinction between primary execution participation and non-primary correspondence,</li>
   <li>the explicit recoverability of the declaration-side contributor,</li>
-  <li>compatibility with published canonical IR carriers such as <code>source_map[]</code> and <code>correspondence[]</code>.</li>
+  <li>compatibility with published canonical IR carriers such as <code>source_map[]</code> and <code>correspondence[]</code>,</li>
+  <li>the IR architectural distinction between declaration reference and accidental omission.</li>
 </ul>
 
 <p>
@@ -343,6 +347,7 @@ A minimal conforming reading of this case is:
   <li>language-level meaning is established,</li>
   <li>a source-visible contributor does not become a second primary execution object,</li>
   <li>that non-primary outcome remains explicitly recoverable in canonical Execution IR,</li>
+  <li>the resulting IR is schema-valid and architecturally valid,</li>
   <li>the distinction between non-primary correspondence and identity loss remains explicit.</li>
 </ul>
 
