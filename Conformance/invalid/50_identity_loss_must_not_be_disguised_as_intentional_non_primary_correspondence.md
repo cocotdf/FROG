@@ -63,12 +63,29 @@ Base FROG v0.1 does not allow that equivalence.
 
 <p><strong>Expected:</strong> invalid</p>
 
+<p><strong>Expected loadability:</strong> loadable</p>
+
+<p><strong>Expected structural validity:</strong> valid</p>
+
+<p><strong>Expected meaning:</strong> established or otherwise assumed by the invalid claim</p>
+
+<p><strong>Expected IR result:</strong> not derivable as conforming canonical IR</p>
+
+<p><strong>Expected IR schema result:</strong> not sufficient even if schema-valid shape is claimed</p>
+
+<p><strong>Expected IR architectural result:</strong> invalid</p>
+
+<p>
+<strong>Expected rejection:</strong>
+identity loss has been disguised as intentional non-primary correspondence.
+</p>
+
 <hr />
 
 <h2 id="intended-anti-pattern">3. Intended Anti-Pattern</h2>
 
 <p>
-The invalid intent is any source shape, validator behavior, derivation behavior, construction behavior, or canonical IR emission behavior that relies on omission where explicit recoverability is still required.
+The invalid intent is any source shape, validator behavior, derivation behavior, or canonical IR emission behavior that relies on omission where explicit recoverability is still required.
 </p>
 
 <p>
@@ -131,7 +148,8 @@ More precisely, it is invalid because:
   <li>non-primary does not mean unrecoverable,</li>
   <li>declaration-side contributors may remain outside the primary execution-object set, but their relation must still be explicit when required,</li>
   <li>canonical IR must not leave tools unable to distinguish intentional omission from accidental source-identity loss,</li>
-  <li>the published IR posture now includes explicit recoverability carriers such as <code>source_map[]</code> and <code>correspondence[]</code> when that boundary is in scope.</li>
+  <li>the published IR posture includes explicit recoverability carriers such as <code>source_map[]</code> and <code>correspondence[]</code> when that boundary is in scope,</li>
+  <li>schema-visible carrier presence alone would still not rescue an architecturally invalid omission.</li>
 </ul>
 
 <p>
@@ -159,7 +177,8 @@ It should report that at least one of the following boundaries has been violated
   <li>required source attribution or correspondence has been lost,</li>
   <li>non-primary outcome has not been made explicitly recoverable,</li>
   <li>declaration linkage has been replaced by silence,</li>
-  <li>canonical IR carrier expectations have been violated where the published IR schema posture is in scope.</li>
+  <li>canonical IR carrier expectations have been violated where the published IR schema posture is in scope,</li>
+  <li>the resulting IR is architecturally invalid even if some structural shape is still present.</li>
 </ul>
 
 <p>
