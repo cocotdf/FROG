@@ -50,6 +50,23 @@ Typical anti-patterns include:
 
 <p><strong>Expected:</strong> invalid</p>
 
+<p><strong>Expected loadability:</strong> loadable</p>
+
+<p><strong>Expected structural validity:</strong> valid</p>
+
+<p><strong>Expected meaning:</strong> established</p>
+
+<p><strong>Expected IR result:</strong> not yet established by that fact alone</p>
+
+<p><strong>Expected IR schema result:</strong> not established by that fact alone</p>
+
+<p><strong>Expected IR architectural result:</strong> not established by that fact alone</p>
+
+<p>
+<strong>Expected rejection:</strong>
+semantic acceptance has been incorrectly used as a substitute for later IR derivation, construction, and schema validation stages.
+</p>
+
 <hr />
 
 <h2 id="intended-anti-pattern">3. Intended Anti-Pattern</h2>
