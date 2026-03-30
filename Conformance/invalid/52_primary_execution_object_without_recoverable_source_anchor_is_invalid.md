@@ -63,6 +63,23 @@ Base FROG v0.1 does not allow that equivalence at the canonical IR boundary.
 
 <p><strong>Expected:</strong> invalid</p>
 
+<p><strong>Expected loadability:</strong> loadable</p>
+
+<p><strong>Expected structural validity:</strong> valid</p>
+
+<p><strong>Expected meaning:</strong> established or otherwise assumed by the invalid claim</p>
+
+<p><strong>Expected IR result:</strong> not derivable as conforming canonical IR</p>
+
+<p><strong>Expected IR schema result:</strong> not sufficient even if schema-valid shape is claimed</p>
+
+<p><strong>Expected IR architectural result:</strong> invalid</p>
+
+<p>
+<strong>Expected rejection:</strong>
+a primary execution object has been left without explicit recoverable source anchoring.
+</p>
+
 <hr />
 
 <h2 id="intended-anti-pattern">3. Intended Anti-Pattern</h2>
@@ -129,7 +146,8 @@ More precisely, it is invalid because:
   <li>primary execution objects are part of the public open-IR truth surface,</li>
   <li>their source-side origin must remain recoverable,</li>
   <li>private hidden attribution is not a substitute for canonical explicit attribution,</li>
-  <li>the published IR posture now includes explicit attribution carriers such as <code>source_map[]</code> when that boundary is in scope.</li>
+  <li>the published IR posture includes explicit attribution carriers such as <code>source_map[]</code> when that boundary is in scope,</li>
+  <li>schema-visible shape would still be insufficient if the IR remains architecturally source-orphaned.</li>
 </ul>
 
 <p>
@@ -156,7 +174,8 @@ It should report that at least one of the following boundaries has been violated
 <ul>
   <li>required source attribution for a primary execution object has been lost,</li>
   <li>canonical IR no longer preserves a recoverable source-side anchor,</li>
-  <li>published attribution carrier expectations have been violated where the canonical IR JSON posture is in scope.</li>
+  <li>published attribution carrier expectations have been violated where the canonical IR JSON posture is in scope,</li>
+  <li>the resulting IR is architecturally invalid even if some structural shape is still present.</li>
 </ul>
 
 <p>
