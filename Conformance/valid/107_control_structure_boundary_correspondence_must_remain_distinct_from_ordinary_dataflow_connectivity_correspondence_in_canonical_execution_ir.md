@@ -1,0 +1,189 @@
+<p align="center">
+  <img src="../../FROG logo.svg" alt="FROG logo" width="140" />
+</p>
+
+<h1 align="center">FROG Conformance Case 107</h1>
+
+<p align="center">
+  <strong>Control-structure boundary correspondence must remain distinct from ordinary dataflow-connectivity correspondence in canonical execution IR</strong><br/>
+  <em>FROG — Free Open Graphical Language</em>
+</p>
+
+<hr/>
+
+<h2>Contents</h2>
+<ul>
+  <li><a href="#case-name">1. Case Name</a></li>
+  <li><a href="#expected">2. Expected</a></li>
+  <li><a href="#why">3. Why</a></li>
+  <li><a href="#boundary-being-preserved">4. Boundary Being Preserved</a></li>
+  <li><a href="#scenario">5. Scenario</a></li>
+  <li><a href="#what-must-remain-true">6. What Must Remain True</a></li>
+  <li><a href="#why-control-structure-boundary-cannot-be-collapsed-into-ordinary-dataflow-connectivity-correspondence">7. Why Control-Structure Boundary Cannot Be Collapsed into Ordinary Dataflow Connectivity Correspondence</a></li>
+  <li><a href="#expected-conformance-result">8. Expected Conformance Result</a></li>
+  <li><a href="#rationale">9. Rationale</a></li>
+  <li><a href="#minimum-conformance-reading">10. Minimum Conformance Reading</a></li>
+</ul>
+
+<hr/>
+
+<h2 id="case-name">1. Case Name</h2>
+<p>Case: <code>107_control_structure_boundary_correspondence_must_remain_distinct_from_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir</code></p>
+
+<hr/>
+
+<h2 id="expected">2. Expected</h2>
+<p><strong>Expected loadability:</strong> loadable</p>
+<p><strong>Expected structural validity:</strong> valid</p>
+<p><strong>Expected meaning:</strong> established</p>
+<p><strong>Expected IR result:</strong> derivable</p>
+<p><strong>Expected IR schema result:</strong> schema-valid where applicable</p>
+<p><strong>Expected IR architectural result:</strong> valid</p>
+<p><strong>Expected preservation:</strong> preserved</p>
+
+<p><strong>Expected preservation basis:</strong> where canonical execution IR preserves correspondence to control-structure boundary participation and also preserves correspondence to ordinary dataflow connectivity, those correspondences must remain explicitly distinct and recoverable rather than being normalized into one generic graph-edge, dependency, or region-crossing relation.</p>
+
+<hr/>
+
+<h2 id="why">3. Why</h2>
+<p>This case protects a critical distinction between internal structure semantics and ordinary graph connectivity:</p>
+
+<pre><code>control-structure boundary
+            !=
+ordinary dataflow connectivity
+</code></pre>
+
+<p>Both may appear as connection-like structure in a graph-shaped representation. They do not express the same architectural meaning.</p>
+
+<p>The preserved rule is:</p>
+
+<pre><code>control-structure-boundary correspondence
+            !=
+ordinary dataflow-connectivity correspondence
+</code></pre>
+
+<hr/>
+
+<h2 id="boundary-being-preserved">4. Boundary Being Preserved</h2>
+<p>This case preserves the distinction between:</p>
+
+<ul>
+  <li>correspondence to ordinary control-structure boundary participation, and</li>
+  <li>correspondence to ordinary dataflow-connectivity participation.</li>
+</ul>
+
+<p>They answer different questions:</p>
+
+<ul>
+  <li><strong>Control-structure-boundary correspondence</strong> answers which structure-owned entry, exit, or boundary-crossing participation remains part of canonical execution semantics.</li>
+  <li><strong>Ordinary dataflow-connectivity correspondence</strong> answers which ordinary internal dependency or value-transfer relation remains part of canonical execution structure.</li>
+</ul>
+
+<p>These categories may coexist in one program and may interact through broader execution paths. They must not be conflated.</p>
+
+<hr/>
+
+<h2 id="scenario">5. Scenario</h2>
+<p>A validated program contains both:</p>
+
+<ul>
+  <li>ordinary control structures with explicit regions, terminals, or structure-boundary crossings, and</li>
+  <li>ordinary internal dataflow connectivity between execution-facing objects.</li>
+</ul>
+
+<p>In the valid case:</p>
+
+<ul>
+  <li>canonical execution IR preserves control-structure-boundary correspondence as control-structure-boundary correspondence,</li>
+  <li>canonical execution IR preserves ordinary dataflow-connectivity correspondence as ordinary-connectivity correspondence,</li>
+  <li>the reader can distinguish structure-owned boundary participation from ordinary internal graph connectivity,</li>
+  <li>that distinction remains recoverable without runtime-private reconstruction.</li>
+</ul>
+
+<hr/>
+
+<h2 id="what-must-remain-true">6. What Must Remain True</h2>
+<p>The following must remain true:</p>
+
+<ul>
+  <li>control-structure-boundary correspondence remains recoverable as control-structure-boundary correspondence,</li>
+  <li>ordinary dataflow-connectivity correspondence remains recoverable as ordinary-connectivity correspondence,</li>
+  <li>structure-boundary participation is not reclassified as ordinary internal connectivity merely because both may appear as graph-carried relations,</li>
+  <li>ordinary internal connectivity is not used as the sole surviving explanation of control-structure boundary participation when such boundary participation is in scope,</li>
+  <li>the canonical execution IR remains sufficient for a conforming reader to distinguish the two correspondence families directly.</li>
+</ul>
+
+<p>The preserved form is:</p>
+
+<pre><code>control-structure-boundary relation
++
+ordinary dataflow-connectivity relation
++
+explicit distinction between them
+                -&gt;
+valid canonical execution IR
+</code></pre>
+
+<hr/>
+
+<h2 id="why-control-structure-boundary-cannot-be-collapsed-into-ordinary-dataflow-connectivity-correspondence">7. Why Control-Structure Boundary Cannot Be Collapsed into Ordinary Dataflow Connectivity Correspondence</h2>
+<p>Control-structure boundary cannot be collapsed into ordinary dataflow-connectivity correspondence because structure-owned execution semantics are not the same architectural relation as ordinary internal dependency or value transfer.</p>
+
+<ul>
+  <li>Control-structure-boundary correspondence identifies ordinary structure-owned execution participation.</li>
+  <li>Ordinary dataflow-connectivity correspondence identifies ordinary internal graph connectivity.</li>
+</ul>
+
+<p>If those categories are blurred together:</p>
+
+<ul>
+  <li>structure-owned execution semantics can be mistaken for ordinary connectivity,</li>
+  <li>ordinary connectivity can be mistaken for structure-owned semantics,</li>
+  <li>execution interpretation becomes less precise,</li>
+  <li>canonical execution IR loses part of its structural discipline.</li>
+</ul>
+
+<hr/>
+
+<h2 id="expected-conformance-result">8. Expected Conformance Result</h2>
+<p>This case must be accepted as valid.</p>
+
+<p>Acceptance means that canonical execution IR preserves a recoverable and explicit distinction between:</p>
+
+<ul>
+  <li>control-structure-boundary correspondence, and</li>
+  <li>ordinary dataflow-connectivity correspondence.</li>
+</ul>
+
+<hr/>
+
+<h2 id="rationale">9. Rationale</h2>
+<p>This case extends the already-established distinction line around:</p>
+
+<ul>
+  <li>explicit structure boundaries versus layout grouping or nesting,</li>
+  <li>structure terminals versus inferred region crossing,</li>
+  <li>ordinary dataflow connectivity versus explicit UI sequencing,</li>
+  <li>public-interface-boundary correspondence versus internal execution-side correspondence,</li>
+  <li>execution-facing correspondence categories inside canonical execution IR.</li>
+</ul>
+
+<p>It closes the next local gap:</p>
+
+<pre><code>execution-facing correspondence is not sufficiently preserved
+if control-structure-boundary relation
+is collapsed into ordinary dataflow-connectivity relation
+</code></pre>
+
+<hr/>
+
+<h2 id="minimum-conformance-reading">10. Minimum Conformance Reading</h2>
+<p>A minimal conforming reading of this case is:</p>
+
+<ul>
+  <li>the source is valid,</li>
+  <li>meaning is established,</li>
+  <li>canonical execution IR preserves control-structure-boundary relation and ordinary dataflow-connectivity relation,</li>
+  <li>those relations remain explicitly distinct,</li>
+  <li>the case is valid.</li>
+</ul>
