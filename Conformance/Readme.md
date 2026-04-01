@@ -32,9 +32,9 @@
 <hr/>
 
 <h2 id="overview">1. Overview</h2>
-<p>This directory defines the public conformance surface of the FROG repository.</p>
+<p>This directory defines the public conformance surface of the published FROG repository.</p>
 
-<p>It publishes explicit cases that make the specification testable across implementations.</p>
+<p>It publishes explicit cases that make the specification testable, reviewable, and comparable across independent implementations.</p>
 
 <p>It answers three fundamental questions:</p>
 
@@ -43,11 +43,11 @@ What must be rejected?
 What must be preserved?
 </code></pre>
 
-<p>This directory does not define the language. It makes the published language testable and publicly checkable.</p>
+<p>This directory does not define the language by itself. It makes already-published language law operationally checkable.</p>
 
-<p>Conformance therefore sits at the boundary between published repository law and observable implementation behavior. It turns architectural distinctions into explicit public expectations.</p>
+<p>Conformance therefore sits at the boundary between repository truth and observable implementation behavior. It turns architectural distinctions into public expectations.</p>
 
-<p>In base v0.1, that public truth surface is no longer limited to source acceptance or semantic rejection alone. It also includes preservation obligations across the published corridor:</p>
+<p>In v0.1, that public truth surface is not limited to source acceptance or semantic rejection alone. It also includes preservation obligations across the published execution corridor:</p>
 
 <pre><code>.frog source
    -&gt;
@@ -58,6 +58,8 @@ structural validity
 validated meaning
    -&gt;
 canonical Execution IR Document
+   -&gt;
+canonical JSON IR validation where applicable
    -&gt;
 later lowering / backend-facing handoff where applicable
 </code></pre>
@@ -162,6 +164,7 @@ one shared public validation surface
   <li>loadable but structurally invalid as canonical source,</li>
   <li>structurally valid but semantically rejected,</li>
   <li>semantically accepted but preservation-invalid at the IR boundary,</li>
+  <li>semantically accepted but canonical-IR-schema-invalid,</li>
   <li>accepted with preservation requirements.</li>
 </ul>
 
@@ -210,7 +213,7 @@ Implementation follows
 <ul>
   <li><code>Expression/</code> — source structure, canonical source shape, structural validity, and source-schema posture,</li>
   <li><code>Language/</code> — semantic truth and validated meaning,</li>
-  <li><code>Libraries/</code> — intrinsic primitive vocabularies,</li>
+  <li><code>Libraries/</code> — intrinsic primitive vocabularies and primitive-local behavioral law,</li>
   <li><code>Profiles/</code> — optional standardized capability families,</li>
   <li><code>IR/</code> — canonical execution-facing representation, derivation, identity, construction, schema posture, lowering, and backend-facing boundaries,</li>
   <li><code>IDE/</code> — tooling behavior and authoring-facing concerns.</li>
@@ -232,7 +235,7 @@ Never the reverse.
 <ul>
   <li>source-shape and schema-owned rejection cases map back to <code>Expression/</code>,</li>
   <li>semantic rejection cases map back to <code>Language/</code>, <code>Libraries/</code>, or <code>Profiles/</code> as appropriate,</li>
-  <li>preservation cases across derivation, identity, construction, and canonical JSON IR validation map back to <code>IR/</code>.</li>
+  <li>preservation cases across derivation, identity, attribution, correspondence, construction, and canonical JSON IR validation map back to <code>IR/</code>.</li>
 </ul>
 
 <p>A case file is therefore not a second specification. It is a public executable reading of already-published ownership.</p>
@@ -287,24 +290,41 @@ lowering / backend-facing handoff
 
 <p>Critical invariants therefore include:</p>
 
-<pre><code>front panel                    != public interface
-widget_value                   != widget_reference
-layout                         != execution
-adjacency                      != dependency
-visual order                   != execution order
-feedback shape                 != state
-default inference              != explicit initialization
-structural validity            != semantic acceptance
-schema acceptance              != semantic acceptance
-validated meaning              != canonical Execution IR
-canonical Execution IR         != private runtime realization
-source_map presence            != semantic validity by itself
-correspondence presence        != semantic validity by itself
-intentional non-primary        != accidental identity loss
-backend contract               != private runtime structure
-backend family                 != target profile
-deployment mode                != runtime-private realization
-compiler-family route          != FROG semantic truth
+<pre><code>front panel                              != public interface
+widget_value                             != widget_reference
+widget reference                         != UI-object operation
+property read                            != property write
+method invocation                        != property write
+property read                            != method invocation
+ui_in                                    != ui_out
+layout                                   != execution
+adjacency                                != dependency
+visual order                             != execution order
+feedback shape                           != state
+default inference                        != explicit initialization
+structural validity                      != semantic acceptance
+schema acceptance                        != semantic acceptance
+validated meaning                        != canonical Execution IR
+canonical Execution IR                   != private runtime realization
+source_map presence                      != semantic validity by itself
+correspondence presence                  != semantic validity by itself
+intentional non-primary                  != accidental identity loss
+primary source attribution               != public-interface participation
+primary source attribution               != ordinary connectivity
+primary source attribution               != structure-boundary participation
+primary source attribution               != explicit state participation
+multi-contributor attribution            != public-interface participation
+multi-contributor attribution            != ordinary connectivity
+ordinary connectivity                    != public-interface participation
+ordinary connectivity                    != structure-boundary participation
+explicit UI sequencing                   != ordinary connectivity
+explicit UI sequencing                   != structure-boundary participation
+explicit UI sequencing                   != explicit state participation
+explicit UI sequencing                   != public-interface participation
+backend contract                         != private runtime structure
+backend family                           != target profile
+deployment mode                          != runtime-private realization
+compiler-family route                    != FROG semantic truth
 </code></pre>
 
 <p>These invariants are enforced through explicit valid / invalid and preserve / reject expectations.</p>
@@ -373,7 +393,8 @@ canonical JSON IR validation where relevant
   <li>an explicit top-level source-shape valid / invalid block,</li>
   <li>early positive executable anchor cases,</li>
   <li>a mirrored valid / invalid architectural boundary progression,</li>
-  <li>additional standalone invalid architectural rejection cases.</li>
+  <li>additional standalone invalid architectural rejection cases,</li>
+  <li>an extended IR recoverability and correspondence-disentanglement progression.</li>
 </ul>
 
 <h3>9.1 Published top-level source-shape block</h3>
@@ -423,7 +444,7 @@ later semantic validation
 <p>These anchor cases show that conformance is not only about abstract rejection. It also covers minimal positive executable slices that the published architecture is expected to support.</p>
 
 <h3>9.3 Mirrored architectural boundary progression</h3>
-<p>The published mirrored progression currently includes pairs such as:</p>
+<p>The published mirrored progression begins with the foundational distinction families:</p>
 
 <pre><code>05 / 06   public interface participation != widget participation
 07 / 08   widget_reference != widget_value
@@ -453,11 +474,7 @@ later semantic validation
 55 / 56   semantic acceptance != canonical IR schema validity
 57 / 58   region ownership must remain recoverable
 59 / 60   structure-boundary terminal recoverability must remain explicit
-</code></pre>
-
-<p>The currently published valid set also extends with one further local recoverability case:</p>
-
-<pre><code>61         structure terminal roles must remain recoverable in canonical execution IR
+61 / 62   structure terminal roles must remain recoverable / must not be lost
 </code></pre>
 
 <p>This pairing strategy is intentional:</p>
@@ -467,7 +484,25 @@ rejection alone is insufficient
 both define truth
 </code></pre>
 
-<h3>9.4 Additional standalone invalid architectural rejection cases</h3>
+<h3>9.4 Extended IR recoverability and correspondence-disentanglement progression</h3>
+<p>The published conformance set now also extends the IR-side progression through additional families such as:</p>
+
+<ul>
+  <li>multi-contributor attribution,</li>
+  <li>declaration reference versus primary execution identity,</li>
+  <li>explicit memory identity recoverability,</li>
+  <li>structure-family identity recoverability,</li>
+  <li>correspondence-category recoverability,</li>
+  <li>primary / non-primary / contributor correspondence separation,</li>
+  <li>public-interface-boundary versus UI-side correspondence,</li>
+  <li>UI-side correspondence disentanglement,</li>
+  <li>explicit UI sequencing versus other execution-side categories,</li>
+  <li>primary and multi-contributor attribution versus public-boundary, state, structure, and ordinary-connectivity categories.</li>
+</ul>
+
+<p>These later families matter because conformance in v0.1 no longer stops at “accepted meaning exists.” It also checks whether canonical Execution IR remains architecturally readable, attributable, and category-safe after derivation.</p>
+
+<h3>9.5 Additional standalone invalid architectural rejection cases</h3>
 <p>The published invalid set also contains additional non-mirrored rejection cases such as:</p>
 
 <pre><code>illegal_feedback_without_explicit_memory
@@ -477,7 +512,7 @@ ui_reference_without_ui_primitive
 
 <p>These exist because some architectural failures are important enough to publish even when they are not yet part of one large mirrored numbering progression.</p>
 
-<h3>9.5 Reading rule for published cases</h3>
+<h3>9.6 Reading rule for published cases</h3>
 <p>A published case defines public truth for the published repository state. A session draft that is not yet published does not.</p>
 
 <p>A case SHOULD also be read with stage discipline:</p>
@@ -551,9 +586,9 @@ Expected rejection:
 
 <ul>
   <li>required IR-side recoverability,</li>
-  <li>required source attribution and non-primary correspondence category,</li>
-  <li>required lowering-side distinction preservation,</li>
-  <li>required backend-facing explicitness where applicable.</li>
+  <li>required attribution and correspondence category preservation,</li>
+  <li>required distinction between primary and non-primary relations,</li>
+  <li>required preservation of execution-side category boundaries before lowering.</li>
 </ul>
 
 <p>A useful discipline rule is:</p>
@@ -607,7 +642,8 @@ semantic correctness by itself
   <li>the fact that open execution IR observation surface is not the same thing as private runtime debug state,</li>
   <li>the fact that schema-valid canonical IR shape is not the same thing as IR architectural validity,</li>
   <li>the fact that semantic acceptance by itself does not establish schema-valid canonical IR,</li>
-  <li>the fact that region ownership and structure-terminal recoverability must remain explicit at the canonical IR layer.</li>
+  <li>the fact that region ownership, terminal recoverability, role recoverability, attribution recoverability, and correspondence-category recoverability all belong to the canonical IR preservation surface,</li>
+  <li>the fact that UI-side sequencing, UI-object operations, public-interface participation, ordinary connectivity, control-structure boundaries, and state boundaries are not interchangeable correspondence families.</li>
 </ul>
 
 <p>Rule:</p>
@@ -666,6 +702,7 @@ Conformance/
 <p>Near-term future expansion areas include:</p>
 
 <ul>
+  <li>remaining correspondence disentanglement families,</li>
   <li>source-shape and schema rejection cases,</li>
   <li>type and value legality,</li>
   <li>state semantics and timing,</li>
@@ -702,7 +739,9 @@ Conformance/
   <li>IR preservation failures,</li>
   <li>canonical JSON IR schema failures,</li>
   <li>valid intentional non-primary correspondence,</li>
-  <li>invalid attribution loss disguised as omission.</li>
+  <li>invalid attribution loss disguised as omission,</li>
+  <li>valid recoverable correspondence categories,</li>
+  <li>invalid category collapse across attribution, boundary, connectivity, state, structure, and UI-side relation families.</li>
 </ul>
 
 <hr/>
