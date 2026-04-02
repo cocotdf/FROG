@@ -91,18 +91,18 @@ foreach ($token in @(
 }
 
 foreach ($token in @(
-    '](#/Readme.md)',
-    '](#/Expression/Readme.md)',
-    '](#/Language/Readme.md)',
-    '](#/IR/Readme.md)',
-    '](#/Libraries/Readme.md)',
-    '](#/Profiles/Readme.md)',
-    '](#/IDE/Readme.md)',
-    '](#/Examples/Readme.md)',
-    '](#/Conformance/Readme.md)',
-    '](#/Implementations/Reference/Readme.md)',
-    '](#/Roadmap/Readme.md)',
-    '](#/Strategy/Heilmeier/Readme.md)'
+    '](/)',
+    '](/Expression/Readme.md)',
+    '](/Language/Readme.md)',
+    '](/IR/Readme.md)',
+    '](/Libraries/Readme.md)',
+    '](/Profiles/Readme.md)',
+    '](/IDE/Readme.md)',
+    '](/Examples/Readme.md)',
+    '](/Conformance/Readme.md)',
+    '](/Implementations/Reference/Readme.md)',
+    '](/Roadmap/Readme.md)',
+    '](/Strategy/Heilmeier/Readme.md)'
 )) {
     if ($sidebar -notmatch [regex]::Escape($token)) {
         throw "_sidebar.md is missing expected navigation token: $token"
@@ -110,14 +110,27 @@ foreach ($token in @(
 }
 
 foreach ($token in @(
-    '](#/Readme.md)',
-    '](#/Examples/Readme.md)',
-    '](#/Conformance/Readme.md)',
-    '](#/GOVERNANCE.md)',
-    '](#/CONTRIBUTING.md)'
+    '](/)',
+    '](/Examples/Readme.md)',
+    '](/Conformance/Readme.md)',
+    '](/GOVERNANCE.md)',
+    '](/CONTRIBUTING.md)'
 )) {
     if ($navbar -notmatch [regex]::Escape($token)) {
         throw "_navbar.md is missing expected navigation token: $token"
+    }
+}
+
+foreach ($token in @(
+    '](#/',
+    '#/?id='
+)) {
+    if ($sidebar -match [regex]::Escape($token)) {
+        throw "_sidebar.md still contains legacy broken navigation syntax: $token"
+    }
+
+    if ($navbar -match [regex]::Escape($token)) {
+        throw "_navbar.md still contains legacy broken navigation syntax: $token"
     }
 }
 
