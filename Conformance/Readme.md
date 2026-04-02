@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="../FROG logo.svg" alt="FROG logo" width="200" />
+  <img src="../FROG logo.svg" alt="FROG logo" width="140" />
 </p>
 
 <h1 align="center">FROG Conformance</h1>
@@ -23,7 +23,7 @@
   <li><a href="#directory-structure">8. Directory Structure</a></li>
   <li><a href="#published-cases">9. Published Cases</a></li>
   <li><a href="#expected-outcomes">10. Expected Outcomes</a></li>
-  <li><a href="#active-v01-conformance-focus">11. Active v0.1 Conformance Focus</a></li>
+  <li><a href="#compiler-corridor-reading">11. Compiler-Corridor Reading</a></li>
   <li><a href="#relation-with-examples-ir-and-reference-implementation">12. Relation with Examples, IR, and Reference Implementation</a></li>
   <li><a href="#future-growth">13. Future Growth</a></li>
   <li><a href="#summary">14. Summary</a></li>
@@ -32,22 +32,33 @@
 <hr/>
 
 <h2 id="overview">1. Overview</h2>
-<p>This directory defines the public conformance surface of the published FROG repository.</p>
 
-<p>It publishes explicit cases that make the specification testable, reviewable, and comparable across independent implementations.</p>
+<p>
+This directory defines the public conformance surface of the published FROG repository.
+</p>
 
-<p>It answers three fundamental questions:</p>
+<p>
+It publishes explicit cases that make the specification testable, reviewable, and comparable across independent implementations.
+</p>
+
+<p>
+It answers three fundamental questions:
+</p>
 
 <pre><code>What must be accepted?
 What must be rejected?
-What must be preserved?
-</code></pre>
+What must be preserved?</code></pre>
 
-<p>This directory does not define the language by itself. It makes already-published language law operationally checkable.</p>
+<p>
+This directory does not define the language by itself. It makes already-published language law operationally checkable.
+Conformance therefore sits at the boundary between repository truth and observable implementation behavior.
+It turns architectural distinctions into public expectations.
+</p>
 
-<p>Conformance therefore sits at the boundary between repository truth and observable implementation behavior. It turns architectural distinctions into public expectations.</p>
-
-<p>In v0.1, that public truth surface is not limited to source acceptance or semantic rejection alone. It also includes preservation obligations across the published execution corridor:</p>
+<p>
+In v0.1, that public truth surface is not limited to source acceptance or semantic rejection alone.
+It also includes preservation obligations across the published execution corridor:
+</p>
 
 <pre><code>.frog source
    -&gt;
@@ -61,58 +72,81 @@ canonical Execution IR Document
    -&gt;
 canonical JSON IR validation where applicable
    -&gt;
-later lowering / backend-facing handoff where applicable
-</code></pre>
+later lowering / backend-facing handoff where applicable</code></pre>
+
+<p>
+Conformance therefore already matters to the compiler corridor, even when the downstream compilation route is still being consolidated.
+A future industrial compilation chain must remain compatible with the same public accept / reject / preserve truth surface.
+</p>
 
 <hr/>
 
 <h2 id="core-purpose">2. Core Purpose</h2>
-<p>The purpose of conformance is to transform specification rules into checkable public expectations.</p>
 
-<p>The repository-level model is:</p>
+<p>
+The purpose of conformance is to transform specification rules into checkable public expectations.
+</p>
+
+<p>
+The repository-level model is:
+</p>
 
 <pre><code>Specification   = defines the rules
 Conformance     = exposes testable cases
-Implementation  = must behave accordingly
-</code></pre>
+Implementation  = must behave accordingly</code></pre>
 
-<p>A conforming implementation MAY vary internally. It MUST NOT vary in published accept / reject / preserve outcomes for the same published case while still claiming conformance to the same published repository state.</p>
+<p>
+A conforming implementation MAY vary internally.
+It MUST NOT vary in published accept / reject / preserve outcomes for the same published case while still claiming conformance to the same published repository state.
+</p>
 
-<p>Conformance therefore prevents the following drift:</p>
+<p>
+Conformance therefore prevents the following drift:
+</p>
 
 <pre><code>parseable file
-        -/-> structurally valid canonical source
+        -/-&gt; structurally valid canonical source
 
 structurally valid canonical source
-        -/-> validated meaning
+        -/-&gt; validated meaning
 
 validated meaning
-        -/-> arbitrary execution-facing form
+        -/-&gt; arbitrary execution-facing form
 
 implementation convenience
-        -/-> language truth
+        -/-&gt; language truth
 
 "it runs"
-        -/-> "it is correct"
-</code></pre>
+        -/-&gt; "it is correct"</code></pre>
 
-<p>Conformance is therefore not a commentary layer. It is the public truth surface that makes published repository law observable, comparable, and reviewable.</p>
+<p>
+Conformance is therefore not commentary.
+It is the public truth surface that makes published repository law observable, comparable, and reviewable.
+</p>
 
 <hr/>
 
 <h2 id="why-this-directory-exists">3. Why This Directory Exists</h2>
-<p>FROG is specification-first and implementation-independent.</p>
 
-<p>That creates a requirement:</p>
+<p>
+FROG is specification-first and implementation-independent.
+</p>
+
+<p>
+That creates a requirement:
+</p>
 
 <pre><code>multiple independent implementations
             require
-one shared public validation surface
-</code></pre>
+one shared public validation surface</code></pre>
 
-<p>This directory provides that surface.</p>
+<p>
+This directory provides that surface.
+</p>
 
-<p>It ensures that:</p>
+<p>
+It ensures that:
+</p>
 
 <ul>
   <li>implementations do not silently diverge,</li>
@@ -121,14 +155,22 @@ one shared public validation surface
   <li>critical distinctions remain visible across loadability, structural validation, semantic validation, IR derivation, IR construction, canonical JSON validation, and later specialization.</li>
 </ul>
 
-<p>Conformance is therefore not commentary. It is the public truth surface that turns specification architecture into comparable observable behavior.</p>
+<p>
+Conformance is therefore not commentary.
+It is the public truth surface that turns specification architecture into comparable observable behavior.
+</p>
 
 <hr/>
 
 <h2 id="definition-of-conformance">4. Definition of Conformance</h2>
-<p>Conformance is alignment with the published specification across the relevant architectural stages.</p>
 
-<p>It includes:</p>
+<p>
+Conformance is alignment with the published specification across the relevant architectural stages.
+</p>
+
+<p>
+It includes:
+</p>
 
 <ul>
   <li>correct rejection of malformed or non-loadable source where applicable,</li>
@@ -140,24 +182,29 @@ one shared public validation surface
   <li>correct preservation of required boundaries across later lowering and backend-facing handoff where applicable.</li>
 </ul>
 
-<p>Conformance therefore requires both:</p>
+<p>
+Conformance therefore requires both:
+</p>
 
 <ul>
   <li>accept / reject correctness, and</li>
   <li>preservation correctness.</li>
 </ul>
 
-<p>Formalized:</p>
+<p>
+Formalized:
+</p>
 
 <pre><code>Conformance =
   correct interpretation
   +
   correct preservation
   +
-  correct rejection
-</code></pre>
+  correct rejection</code></pre>
 
-<p>A public conformance surface SHOULD make explicit whether a case is:</p>
+<p>
+A public conformance surface SHOULD make explicit whether a case is:
+</p>
 
 <ul>
   <li>not loadable as source,</li>
@@ -168,47 +215,71 @@ one shared public validation surface
   <li>accepted with preservation requirements.</li>
 </ul>
 
-<p>Where useful, a case MAY also make explicit whether it is:</p>
+<p>
+Where useful, a case MAY also make explicit whether it is:
+</p>
 
 <ul>
   <li>schema-checkable at the source-shape level,</li>
   <li>structurally invalid for reasons that remain source-owned even when they exceed a minimal declarative schema artifact,</li>
   <li>semantically invalid even though canonical source shape has already been accepted,</li>
-  <li>IR-schema-invalid even though semantic meaning was previously established.</li>
+  <li>IR-schema-invalid even though semantic meaning was previously established,</li>
+  <li>lowering-sensitive or backend-handoff-sensitive after canonical IR has already been established.</li>
 </ul>
 
-<p>This distinction matters because machine-checkable schema is part of the validation corridor. It is not a replacement for semantic validation. Likewise, canonical JSON IR validity is not a replacement for semantic validity or IR architectural validity.</p>
+<p>
+This distinction matters because machine-checkable schema is part of the validation corridor.
+It is not a replacement for semantic validation.
+Likewise, canonical JSON IR validity is not a replacement for semantic validity or IR architectural validity.
+Later backend-oriented success is not a replacement for upstream correctness either.
+</p>
 
 <hr/>
 
 <h2 id="non-goals">5. Non-Goals</h2>
-<p>This directory does not define:</p>
+
+<p>
+This directory does not define:
+</p>
 
 <ul>
   <li>a certification program,</li>
   <li>a universal implementation compatibility matrix,</li>
   <li>a full execution-performance suite,</li>
   <li>a debugger validation framework in full,</li>
-  <li>a deployment validation system in full.</li>
+  <li>a deployment validation system in full,</li>
+  <li>a private runtime architecture,</li>
+  <li>a compiler-family-specific optimization strategy.</li>
 </ul>
 
-<p>It also does not introduce new language rules.</p>
+<p>
+It also does not introduce new language rules.
+</p>
 
-<p>Rule:</p>
+<p>
+Rule:
+</p>
 
 <pre><code>Specification defines
 Conformance exposes
-Implementation follows
-</code></pre>
+Implementation follows</code></pre>
 
-<p>Conformance must never become the place where missing language law is invented retroactively. When a case reveals ambiguity, the owning specification document must be clarified.</p>
+<p>
+Conformance must never become the place where missing language law is invented retroactively.
+When a case reveals ambiguity, the owning specification document must be clarified.
+</p>
 
 <hr/>
 
 <h2 id="relation-with-specification-ownership">6. Relation with Specification Ownership</h2>
-<p>Conformance does not own language truth.</p>
 
-<p>Ownership remains:</p>
+<p>
+Conformance does not own language truth.
+</p>
+
+<p>
+Ownership remains:
+</p>
 
 <ul>
   <li><code>Expression/</code> — source structure, canonical source shape, structural validity, and source-schema posture,</li>
@@ -219,7 +290,9 @@ Implementation follows
   <li><code>IDE/</code> — tooling behavior and authoring-facing concerns.</li>
 </ul>
 
-<p>Conformance cases must always map back to these owners.</p>
+<p>
+Conformance cases must always map back to these owners.
+</p>
 
 <pre><code>specification
       -&gt;
@@ -227,23 +300,31 @@ conformance
       -&gt;
 implementation
 
-Never the reverse.
-</code></pre>
+Never the reverse.</code></pre>
 
-<p>In particular:</p>
+<p>
+In particular:
+</p>
 
 <ul>
   <li>source-shape and schema-owned rejection cases map back to <code>Expression/</code>,</li>
   <li>semantic rejection cases map back to <code>Language/</code>, <code>Libraries/</code>, or <code>Profiles/</code> as appropriate,</li>
-  <li>preservation cases across derivation, identity, attribution, correspondence, construction, and canonical JSON IR validation map back to <code>IR/</code>.</li>
+  <li>preservation cases across derivation, identity, attribution, correspondence, construction, and canonical JSON IR validation map back to <code>IR/</code>,</li>
+  <li>future compilation-corridor-sensitive cases must still map back first to <code>IR/</code> and only then to any downstream non-normative consumer.</li>
 </ul>
 
-<p>A case file is therefore not a second specification. It is a public executable reading of already-published ownership.</p>
+<p>
+A case file is therefore not a second specification.
+It is a public executable reading of already-published ownership.
+</p>
 
 <hr/>
 
 <h2 id="critical-boundaries">7. Critical Boundaries</h2>
-<p>The first critical conformance boundary is the staged progression:</p>
+
+<p>
+The first critical conformance boundary is the staged progression:
+</p>
 
 <pre><code>.frog source
       |
@@ -254,12 +335,15 @@ loadable source
 structurally valid canonical source
       |
       v
-validated program meaning
-</code></pre>
+validated program meaning</code></pre>
 
-<p>Conformance must make these boundaries observable.</p>
+<p>
+Conformance must make these boundaries observable.
+</p>
 
-<p>This includes verifying:</p>
+<p>
+This includes verifying:
+</p>
 
 <ul>
   <li>what fails before the source is even loadable,</li>
@@ -272,23 +356,27 @@ validated program meaning
   <li>what distinctions must remain explicit before later lowering and backend-facing handoff.</li>
 </ul>
 
-<p>The second critical boundary is:</p>
+<p>
+The second critical boundary is:
+</p>
 
 <pre><code>validated program meaning
       |
       v
-canonical Execution IR Document
-</code></pre>
+canonical Execution IR Document</code></pre>
 
-<p>The third critical downstream boundary is:</p>
+<p>
+The third critical downstream boundary is:
+</p>
 
 <pre><code>canonical Execution IR Document
       |
       v
-lowering / backend-facing handoff
-</code></pre>
+lowering / backend-facing handoff</code></pre>
 
-<p>Critical invariants therefore include:</p>
+<p>
+Critical invariants therefore include:
+</p>
 
 <pre><code>front panel                              != public interface
 widget_value                             != widget_reference
@@ -324,21 +412,24 @@ explicit UI sequencing                   != public-interface participation
 backend contract                         != private runtime structure
 backend family                           != target profile
 deployment mode                          != runtime-private realization
-compiler-family route                    != FROG semantic truth
-</code></pre>
+compiler-family route                    != FROG semantic truth</code></pre>
 
-<p>These invariants are enforced through explicit valid / invalid and preserve / reject expectations.</p>
+<p>
+These invariants are enforced through explicit valid / invalid and preserve / reject expectations.
+</p>
 
 <hr/>
 
 <h2 id="directory-structure">8. Directory Structure</h2>
+
 <pre><code>Conformance/
 ├── Readme.md
 ├── valid/
-└── invalid/
-</code></pre>
+└── invalid/</code></pre>
 
-<p>Each case should define, as applicable:</p>
+<p>
+Each case should define, as applicable:
+</p>
 
 <ul>
   <li>expected loadability,</li>
@@ -348,10 +439,13 @@ compiler-family route                    != FROG semantic truth
   <li>expected canonical JSON IR validity where relevant,</li>
   <li>tested boundaries,</li>
   <li>preservation requirements,</li>
-  <li>rejection reason if invalid.</li>
+  <li>rejection reason if invalid,</li>
+  <li>downstream sensitivity if the case materially constrains lowering or backend-facing handoff.</li>
 </ul>
 
-<p>In practice, the directory serves three public roles:</p>
+<p>
+In practice, the directory serves three public roles:
+</p>
 
 <ul>
   <li>accept — what must validate and remain correct,</li>
@@ -359,19 +453,26 @@ compiler-family route                    != FROG semantic truth
   <li>preserve — what distinctions must remain explicit across later stages.</li>
 </ul>
 
-<p>For v0.1, published cases SHOULD remain small, sharply owned, and explicit about the stage at which acceptance or rejection occurs.</p>
+<p>
+For v0.1, published cases SHOULD remain small, sharply owned, and explicit about the stage at which acceptance or rejection occurs.
+</p>
 
-<p>Where useful, cases SHOULD also be written so that the reader can tell whether the failure belongs to:</p>
+<p>
+Where useful, cases SHOULD also be written so that the reader can tell whether the failure belongs to:
+</p>
 
 <ul>
   <li>non-loadable source,</li>
   <li>schema-owned or source-shape-owned structural invalidity,</li>
   <li>semantic invalidity after structural acceptance,</li>
   <li>IR preservation failure after semantic acceptance,</li>
-  <li>canonical JSON IR schema failure after otherwise valid IR construction intent.</li>
+  <li>canonical JSON IR schema failure after otherwise valid IR construction intent,</li>
+  <li>future lowering or backend-handoff failure after canonical IR acceptance.</li>
 </ul>
 
-<p>Recommended reading corridor:</p>
+<p>
+Recommended reading corridor:
+</p>
 
 <pre><code>loadability
    -&gt;
@@ -382,12 +483,16 @@ semantic acceptance
 IR derivation / identity / construction preservation
    -&gt;
 canonical JSON IR validation where relevant
-</code></pre>
+   -&gt;
+later lowering / backend-facing handoff where relevant</code></pre>
 
 <hr/>
 
 <h2 id="published-cases">9. Published Cases</h2>
-<p>The current published set combines:</p>
+
+<p>
+The current published set combines:
+</p>
 
 <ul>
   <li>an explicit top-level source-shape valid / invalid block,</li>
@@ -398,7 +503,10 @@ canonical JSON IR validation where relevant
 </ul>
 
 <h3>9.1 Published top-level source-shape block</h3>
-<p>The published top-level source-shape block currently includes:</p>
+
+<p>
+The published top-level source-shape block currently includes:
+</p>
 
 <pre><code>valid/
 01_minimal_canonical_frog
@@ -420,31 +528,55 @@ invalid/
 05_duplicate_source_identifier
 06_invalid_top_level_root_shape
 07_invalid_section_placement
-08_connector_references_unknown_interface_port
-</code></pre>
+08_connector_references_unknown_interface_port</code></pre>
 
-<p>This block matters because it makes the first public structural corridor explicit:</p>
+<p>
+This block matters because it makes the first public structural corridor explicit:
+</p>
 
 <pre><code>loadable JSON
    -&gt;
 canonical top-level source shape
    -&gt;
-later semantic validation
-</code></pre>
+later semantic validation</code></pre>
 
-<p>These cases should be read primarily as <code>Expression/</code>-owned conformance around canonical source shape and structural validity.</p>
+<p>
+These cases should be read primarily as <code>Expression/</code>-owned conformance around canonical source shape and structural validity.
+They are upstream of IR derivation and therefore upstream of any serious compilation route.
+</p>
 
 <h3>9.2 Early valid executable anchor cases</h3>
+
 <pre><code>01_pure_addition
 02_ui_value_roundtrip
 03_ui_property_write
-04_stateful_feedback_delay
-</code></pre>
+04_stateful_feedback_delay</code></pre>
 
-<p>These anchor cases show that conformance is not only about abstract rejection. It also covers minimal positive executable slices that the published architecture is expected to support.</p>
+<p>
+These anchor cases show that conformance is not only about abstract rejection.
+It also covers minimal positive executable slices that the published architecture is expected to support.
+</p>
+
+<p>
+These cases are especially important because they already span:
+</p>
+
+<ul>
+  <li>a pure dataflow slice,</li>
+  <li>a UI value path slice,</li>
+  <li>a UI object-operation slice,</li>
+  <li>an explicit state / delay slice.</li>
+</ul>
+
+<p>
+Together they already constrain the future compilation corridor by proving that the repository truth surface is not limited to syntax or abstract semantics alone.
+</p>
 
 <h3>9.3 Mirrored architectural boundary progression</h3>
-<p>The published mirrored progression begins with the foundational distinction families:</p>
+
+<p>
+The published mirrored progression begins with the foundational distinction families:
+</p>
 
 <pre><code>05 / 06   public interface participation != widget participation
 07 / 08   widget_reference != widget_value
@@ -467,92 +599,76 @@ later semantic validation
 41 / 42   backend contract != private runtime structure
 43 / 44   target profile != backend family
 45 / 46   deployment mode != runtime-private scheduling structure
-47 / 48   open execution IR observation surface != private runtime debug state
-49 / 50   intentional non-primary correspondence != disguised identity loss
-51 / 52   primary execution object must keep recoverable source attribution
-53 / 54   schema-valid canonical IR shape != IR architectural validity
-55 / 56   semantic acceptance != canonical IR schema validity
-57 / 58   region ownership must remain recoverable
-59 / 60   structure-boundary terminal recoverability must remain explicit
-61 / 62   structure terminal roles must remain recoverable / must not be lost
-</code></pre>
+47 / 48   open execution IR observation surface != private runtime debug state</code></pre>
 
-<p>This pairing strategy is intentional:</p>
+<p>
+This progression matters because it forces a public mirrored reading:
+</p>
 
-<pre><code>acceptance alone is insufficient
-rejection alone is insufficient
-both define truth
-</code></pre>
+<pre><code>valid case
+   -&gt; explicit accepted distinction
 
-<h3>9.4 Extended IR recoverability and correspondence-disentanglement progression</h3>
-<p>The published conformance set now also extends the IR-side progression through additional families such as:</p>
+invalid case
+   -&gt; explicit rejected collapse of that distinction</code></pre>
 
-<ul>
-  <li>multi-contributor attribution,</li>
-  <li>declaration reference versus primary execution identity,</li>
-  <li>explicit memory identity recoverability,</li>
-  <li>structure-family identity recoverability,</li>
-  <li>correspondence-category recoverability,</li>
-  <li>primary / non-primary / contributor correspondence separation,</li>
-  <li>public-interface-boundary versus UI-side correspondence,</li>
-  <li>UI-side correspondence disentanglement,</li>
-  <li>explicit UI sequencing versus other execution-side categories,</li>
-  <li>primary and multi-contributor attribution versus public-boundary, state, structure, and ordinary-connectivity categories.</li>
-</ul>
+<p>
+These cases are not decorative.
+They prevent execution-side categories from collapsing into convenience-driven implementation shortcuts.
+That matters directly for IR correctness, later lowering discipline, and any credible LLVM-oriented downstream path.
+</p>
 
-<p>These later families matter because conformance in v0.1 no longer stops at “accepted meaning exists.” It also checks whether canonical Execution IR remains architecturally readable, attributable, and category-safe after derivation.</p>
+<h3>9.4 Additional standalone invalid architectural rejections</h3>
 
-<h3>9.5 Additional standalone invalid architectural rejection cases</h3>
-<p>The published invalid set also contains additional non-mirrored rejection cases such as:</p>
+<p>
+The published set also includes standalone invalid cases that reinforce architectural boundaries outside the simplest mirrored progression.
+These cases should be read as focused rejection anchors for category collapse, illicit inference, missing explicit carriers, or ownership confusion.
+</p>
 
-<pre><code>illegal_feedback_without_explicit_memory
-interface_widget_role_confusion
-ui_reference_without_ui_primitive
-</code></pre>
+<h3>9.5 Extended IR recoverability and correspondence-disentanglement progression</h3>
 
-<p>These exist because some architectural failures are important enough to publish even when they are not yet part of one large mirrored numbering progression.</p>
+<p>
+The published set also extends into recoverability and correspondence discipline at the IR boundary.
+This matters because canonical IR is not just an execution-facing graph.
+It is an open, attributable, recoverable representation with explicit category discipline.
+</p>
 
-<h3>9.6 Reading rule for published cases</h3>
-<p>A published case defines public truth for the published repository state. A session draft that is not yet published does not.</p>
-
-<p>A case SHOULD also be read with stage discipline:</p>
-
-<pre><code>loadability
-   -&gt;
-source-shape / schema-owned structural validity
-   -&gt;
-semantic acceptance
-   -&gt;
-IR preservation expectations
-   -&gt;
-canonical JSON IR expectations where relevant
-</code></pre>
-
-<p>A case SHOULD NOT blur:</p>
+<p>
+That progression should be read as enforcing at least the following public expectations:
+</p>
 
 <ul>
-  <li>schema-owned failure into semantic rejection,</li>
-  <li>semantic rejection into source malformedness,</li>
-  <li>IR preservation failure into source invalidity,</li>
-  <li>implementation subset limitations into specification invalidity.</li>
+  <li>source attribution remains recoverable after semantic acceptance,</li>
+  <li>primary attribution does not collapse into ordinary connectivity or boundary participation,</li>
+  <li>multi-contributor correspondence does not erase category ownership,</li>
+  <li>canonical JSON shape alone is not enough when architectural distinction has already been lost,</li>
+  <li>recoverability obligations remain in force before later lowering and backend-facing handoff.</li>
 </ul>
+
+<p>
+This is one of the most important current published areas for the future compiler corridor, because a serious backend cannot be allowed to consume an IR that has already lost attribution, ownership, or distinction boundaries.
+</p>
 
 <hr/>
 
 <h2 id="expected-outcomes">10. Expected Outcomes</h2>
-<p>Each case expresses structured expectations such as:</p>
+
+<p>
+Each case expresses structured expectations such as:
+</p>
 
 <ul>
-  <li>Expected loadability: loadable | not loadable</li>
-  <li>Expected structural validity: valid | invalid</li>
-  <li>Expected meaning: established | not established</li>
-  <li>Expected IR result: derivable | not derivable</li>
-  <li>Expected IR schema result: schema-valid | not schema-valid</li>
+  <li>Expected loadability: <code>loadable</code> | <code>not loadable</code></li>
+  <li>Expected structural validity: <code>valid</code> | <code>invalid</code></li>
+  <li>Expected meaning: <code>established</code> | <code>not established</code></li>
+  <li>Expected IR result: <code>derivable</code> | <code>not derivable</code></li>
+  <li>Expected IR schema result: <code>schema-valid</code> | <code>not schema-valid</code></li>
   <li>Expected preservation: required distinctions remain explicit</li>
   <li>Expected rejection: explicit failure reason</li>
 </ul>
 
-<p>Examples:</p>
+<p>
+Examples:
+</p>
 
 <pre><code>Expected loadability: loadable
 Expected structural validity: valid
@@ -579,19 +695,23 @@ Expected meaning: established
 Expected IR result: derivable
 Expected IR schema result: not schema-valid
 Expected rejection:
-  canonical IR omitted required correspondence carrier
-</code></pre>
+  canonical IR omitted required correspondence carrier</code></pre>
 
-<p>For later-stage-sensitive cases, expectations may also include:</p>
+<p>
+For later-stage-sensitive cases, expectations may also include:
+</p>
 
 <ul>
   <li>required IR-side recoverability,</li>
   <li>required attribution and correspondence category preservation,</li>
   <li>required distinction between primary and non-primary relations,</li>
-  <li>required preservation of execution-side category boundaries before lowering.</li>
+  <li>required preservation of execution-side category boundaries before lowering,</li>
+  <li>required preservation of backend-relevant distinctions before backend-facing handoff.</li>
 </ul>
 
-<p>A useful discipline rule is:</p>
+<p>
+A useful discipline rule is:
+</p>
 
 <pre><code>loadable
 does not imply
@@ -608,191 +728,227 @@ arbitrary IR shape
 schema-valid IR
 does not imply
 semantic correctness by itself
-</code></pre>
+
+backend-consumable form
+does not imply
+normative correctness by itself</code></pre>
 
 <hr/>
 
-<h2 id="active-v01-conformance-focus">11. Active v0.1 Conformance Focus</h2>
-<p>v0.1 focuses on architectural correctness, not broad feature coverage.</p>
+<h2 id="compiler-corridor-reading">11. Compiler-Corridor Reading</h2>
 
-<p>Priorities are:</p>
+<p>
+The current published conformance set should now be read not only as a validation suite, but also as the upstream truth surface of a future industrial compilation chain.
+</p>
 
-<pre><code>1. source loadability and structural validity
-2. semantic validity
-3. preservation of distinctions
-4. explicit rejection of violations
-5. conservative correctness across the IR corridor
-6. canonical JSON IR carrier discipline where published
-</code></pre>
+<p>
+That reading corridor is:
+</p>
 
-<p>The active public truth surface therefore emphasizes:</p>
+<pre><code>.frog source
+   -&gt;
+loadability
+   -&gt;
+structural validity
+   -&gt;
+validated meaning
+   -&gt;
+canonical Execution IR Document
+   -&gt;
+canonical JSON IR validation where applicable
+   -&gt;
+later lowering / backend-facing handoff where applicable
+   -&gt;
+downstream compiler-family consumption where applicable</code></pre>
+
+<p>
+In that corridor:
+</p>
 
 <ul>
-  <li>source structure versus semantic acceptance,</li>
-  <li>schema-owned source shape versus later semantic legality,</li>
-  <li>interface versus widget participation,</li>
-  <li>value versus reference participation,</li>
-  <li>state versus inferred feedback,</li>
-  <li>execution versus layout,</li>
-  <li>connectivity versus order,</li>
-  <li>explicit state-family boundaries,</li>
-  <li>the fact that validated meaning, canonical Execution IR, lowering, and backend-facing handoff are distinct stages rather than one blurred implementation pipeline,</li>
-  <li>the fact that explicit <code>source_map[]</code> and <code>correspondence[]</code> carriers belong to the canonical IR boundary rather than to implementation folklore when that published IR posture is in scope,</li>
-  <li>the fact that intentional non-primary correspondence is not the same thing as accidental identity loss,</li>
-  <li>the fact that open execution IR observation surface is not the same thing as private runtime debug state,</li>
-  <li>the fact that schema-valid canonical IR shape is not the same thing as IR architectural validity,</li>
-  <li>the fact that semantic acceptance by itself does not establish schema-valid canonical IR,</li>
-  <li>the fact that region ownership, terminal recoverability, role recoverability, attribution recoverability, and correspondence-category recoverability all belong to the canonical IR preservation surface,</li>
-  <li>the fact that UI-side sequencing, UI-object operations, public-interface participation, ordinary connectivity, control-structure boundaries, and state boundaries are not interchangeable correspondence families.</li>
+  <li><code>Conformance/</code> does not define LLVM,</li>
+  <li><code>Conformance/</code> does not define private runtime realization,</li>
+  <li><code>Conformance/</code> does define the public accept / reject / preserve surface that any LLVM-oriented route must still respect.</li>
 </ul>
 
-<p>Rule:</p>
+<p>
+The practical consequence is:
+</p>
 
-<pre><code>no implicit meaning
-no silent repair
-no hidden interpretation
-no silent stage collapse
-</code></pre>
+<pre><code>future compilation success
+must remain downstream from
+published conformance truth</code></pre>
+
+<p>
+This means:
+</p>
+
+<ul>
+  <li>a compiler route MUST NOT repair semantically invalid source silently,</li>
+  <li>a compiler route MUST NOT collapse explicit state into inferred persistence,</li>
+  <li>a compiler route MUST NOT erase attribution and recoverability carriers required by the published IR corridor before the permitted downstream boundary,</li>
+  <li>a compiler route MUST NOT treat backend convenience as specification law,</li>
+  <li>a backend family MUST remain downstream from the canonical open IR boundary.</li>
+</ul>
+
+<p>
+The current published corpus is therefore already relevant to a future path such as:
+</p>
+
+<pre><code>.frog
+   -&gt;
+validated semantics
+   -&gt;
+canonical FROG Execution IR
+   -&gt;
+lowering
+   -&gt;
+backend contract
+   -&gt;
+LLVM-oriented native backend</code></pre>
+
+<p>
+The conformance corpus does not yet claim that this whole downstream route is fully closed for every published feature.
+It does claim that any such route must remain faithful to the same upstream truth surface.
+</p>
 
 <hr/>
 
 <h2 id="relation-with-examples-ir-and-reference-implementation">12. Relation with Examples, IR, and Reference Implementation</h2>
-<pre><code>Examples/                   -&gt; illustrate and anchor named programs
-Conformance/                -&gt; define public expectations
-Implementations/Reference/  -&gt; try to execute correctly
-</code></pre>
 
-<p>These roles must remain strictly separated.</p>
+<p>
+This directory must be read together with nearby repository areas, but without ownership collapse.
+</p>
 
-<p>Likewise, the relation with the specification corridor is:</p>
+<ul>
+  <li><code>Examples/</code> provides illustrative named slices. Examples do not become hidden language law.</li>
+  <li><code>IR/</code> owns canonical execution-facing representation, derivation, identity, construction, schema posture, lowering, and backend-facing boundaries.</li>
+  <li><code>Implementations/Reference/</code> is a non-normative executable workspace. It does not become hidden semantic truth.</li>
+</ul>
 
-<pre><code>Expression/
-   defines canonical source structure, source-schema posture, and structural validity
+<p>
+The practical relation is:
+</p>
 
-Language/
-   defines semantic truth
+<pre><code>Examples
+   -&gt; illustrate
 
-IR/
-   defines the canonical execution-facing artifact, derivation, identity,
-   construction, schema posture, lowering, and backend-facing boundaries
+Conformance
+   -&gt; expose public expectations
 
-Conformance/
-   tests whether those published boundaries are being respected
-</code></pre>
+IR
+   -&gt; define canonical execution-facing law
 
-<p>An implementation passing a case does not redefine the language. It only demonstrates alignment with the published conformance surface.</p>
+Reference implementation
+   -&gt; consume the published layers without owning them</code></pre>
 
-<p>A machine-checkable schema artifact may assist source-structure validation. It does not replace the ownership boundary above. Likewise, a machine-checkable IR schema artifact may assist canonical JSON IR validation. It does not replace the ownership of semantic truth or IR architectural validity.</p>
+<p>
+Where a case materially constrains IR derivation, identity, recoverability, lowering, or backend-facing handoff, the reader should cross-check:
+</p>
 
-<p>The reference implementation therefore remains a downstream consumer of published conformance expectations. It is useful as a proof surface. It is not the owner of conformance truth.</p>
+<ul>
+  <li><code>IR/Readme.md</code>,</li>
+  <li><code>IR/Execution IR.md</code>,</li>
+  <li><code>IR/Derivation rules.md</code>,</li>
+  <li><code>IR/Identity and Mapping.md</code>,</li>
+  <li><code>IR/Construction rules.md</code>,</li>
+  <li><code>IR/Schema.md</code>,</li>
+  <li><code>IR/Lowering.md</code>,</li>
+  <li><code>IR/Backend contract.md</code>.</li>
+</ul>
+
+<p>
+Where a case materially constrains executable reference slices, the reader should also cross-check <code>Implementations/Reference/Readme.md</code> and the reference pipeline staging.
+</p>
 
 <hr/>
 
 <h2 id="future-growth">13. Future Growth</h2>
-<p>Growth must remain controlled and architecture-driven.</p>
 
-<p>Preferred pattern:</p>
+<p>
+Future growth should remain disciplined.
+This directory SHOULD expand by closing coherent corridors rather than by accumulating disconnected examples.
+</p>
 
-<pre><code>small case
--&gt; clear boundary
--&gt; clear expectation
--&gt; clear ownership
-</code></pre>
-
-<p>Near-term future expansion areas include:</p>
+<p>
+Near-term growth should prioritize:
+</p>
 
 <ul>
-  <li>remaining correspondence disentanglement families,</li>
-  <li>source-shape and schema rejection cases,</li>
-  <li>type and value legality,</li>
-  <li>state semantics and timing,</li>
-  <li>structure legality,</li>
-  <li>validated meaning to canonical-IR preservation,</li>
-  <li>IR identity, attribution, and correspondence carrier discipline,</li>
-  <li>IR canonical JSON schema-valid versus non-schema-valid cases,</li>
-  <li>profile-dependent behavior,</li>
-  <li>backend-family and target-profile rejection cases where applicable.</li>
+  <li>continued alignment with the real published case set,</li>
+  <li>stronger read-across to IR identity, derivation, and recoverability law,</li>
+  <li>explicit distinction between canonical IR validity and later backend-facing success,</li>
+  <li>eventual compiler-corridor-sensitive cases once lowering and backend contract are further consolidated.</li>
 </ul>
 
-<p>Growth should continue to prefer:</p>
+<p>
+A useful growth order is:
+</p>
 
-<ul>
-  <li>small sharply owned boundary cases,</li>
-  <li>mirrored valid / invalid pairs where they clarify truth,</li>
-  <li>additional standalone invalid cases where architecture requires them,</li>
-  <li>explicit published expectations rather than implementation folklore.</li>
-</ul>
+<pre><code>source-shape closure
+   -&gt;
+semantic rejection closure
+   -&gt;
+IR preservation closure
+   -&gt;
+canonical JSON IR validation closure
+   -&gt;
+lowering-sensitive conformance
+   -&gt;
+backend-handoff-sensitive conformance</code></pre>
 
-<p>As source-schema closure grows, conformance SHOULD increasingly distinguish:</p>
+<p>
+That order preserves the architecture:
+</p>
 
-<ul>
-  <li>malformed source,</li>
-  <li>schema-level structural failure,</li>
-  <li>structural failure that exceeds a minimal declarative schema artifact but still belongs to <code>Expression/</code>,</li>
-  <li>semantic rejection after structural acceptance.</li>
-</ul>
-
-<p>As IR closure grows, conformance SHOULD also increasingly distinguish:</p>
-
-<ul>
-  <li>semantically accepted programs that derive to valid canonical IR,</li>
-  <li>IR preservation failures,</li>
-  <li>canonical JSON IR schema failures,</li>
-  <li>valid intentional non-primary correspondence,</li>
-  <li>invalid attribution loss disguised as omission,</li>
-  <li>valid recoverable correspondence categories,</li>
-  <li>invalid category collapse across attribution, boundary, connectivity, state, structure, and UI-side relation families.</li>
-</ul>
+<pre><code>upstream truth first
+downstream specialization second</code></pre>
 
 <hr/>
 
 <h2 id="summary">14. Summary</h2>
-<p>This directory is the public truth surface of FROG conformance.</p>
 
-<p>It defines:</p>
+<p>
+`Conformance/` is the public accept / reject / preserve truth surface of the published FROG repository.
+</p>
+
+<p>
+It does not replace specification ownership.
+It exposes it.
+</p>
+
+<p>
+Its current published corpus already covers:
+</p>
 
 <ul>
-  <li>what must be accepted,</li>
-  <li>what must be rejected,</li>
-  <li>what must be preserved.</li>
+  <li>top-level canonical source-shape acceptance and rejection,</li>
+  <li>positive executable anchor slices,</li>
+  <li>architectural distinction preservation,</li>
+  <li>IR recoverability and correspondence discipline,</li>
+  <li>downstream-sensitive boundaries relevant to lowering and backend-facing handoff.</li>
 </ul>
 
-<p>Core rule:</p>
-
-<pre><code>Specification defines truth
-Conformance exposes truth
-Implementations must align
-</code></pre>
-
-<p>Or more directly:</p>
-
-<pre><code>rules are written
-cases make them testable
-tools must follow
-</code></pre>
-
-<p>In v0.1, conformance is intentionally conservative and architecture-first. It exists to keep the most important public boundaries explicit:</p>
+<p>
+It should therefore be read as a public truth surface for the full published corridor:
+</p>
 
 <pre><code>.frog source
    -&gt;
-loadable source
+loadability
    -&gt;
-source-shape / schema-owned structural validity
+structural validity
    -&gt;
 validated meaning
    -&gt;
-canonical Execution IR
+canonical Execution IR Document
    -&gt;
-canonical JSON IR validation where relevant
+canonical JSON IR validation where applicable
    -&gt;
-lowering / backend-facing handoff
-   -&gt;
-private realization
-</code></pre>
+later lowering / backend-facing handoff where applicable</code></pre>
 
-<p>Conformance checks:</p>
-
-<pre><code>accept
-reject
-preserve
-</code></pre>
+<p>
+As the repository moves toward a more industrial compiler corridor, this directory remains one of the key public anchors.
+A future LLVM-oriented route may be downstream.
+It must still remain faithful to the same published conformance truth.
+</p>
