@@ -774,12 +774,28 @@
       return "text";
     }
 
+    function formatCodeDocumentSource(path, sourceText) {
+      var normalizedPath = normalizeDisplayPath(path);
+      var normalizedSource = String(sourceText || "").replace(/\r\n/g, "\n").replace(/\s+$/, "");
+
+      if (/\.frog$/i.test(normalizedPath)) {
+        try {
+          var parsedCodeDocument = JSON.parse(sourceText);
+          return JSON.stringify(parsedCodeDocument, null, 2);
+        } catch (error) {
+          return normalizedSource;
+        }
+      }
+
+      return normalizedSource;
+    }
+
     function wrapCodeDocumentMarkdown(currentFile, sourceText) {
       var normalizedPath = normalizeDisplayPath(currentFile);
       var relativePath = normalizedPath.replace(/^\//, "");
       var fileName = relativePath.split("/").pop() || relativePath;
       var fence = sourceText.indexOf("```") === -1 ? "```" : "````";
-      var trimmedSource = String(sourceText || "").replace(/\r\n/g, "\n").replace(/\s+$/, "");
+      var trimmedSource = formatCodeDocumentSource(normalizedPath, sourceText);
 
       return [
         "# " + fileName,
