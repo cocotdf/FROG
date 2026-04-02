@@ -8,7 +8,8 @@ $requiredFiles = @(
     "404.html",
     "_sidebar.md",
     "_navbar.md",
-    "Readme.md"
+    "Readme.md",
+    "scripts/build-sidebar.ps1"
 )
 
 $requiredDocs = @(
@@ -44,6 +45,7 @@ if ($missing.Count -gt 0) {
 $rootReadme = Get-Content -LiteralPath (Join-Path $repoRoot "Readme.md") -Raw
 $indexHtml = Get-Content -LiteralPath (Join-Path $repoRoot "index.html") -Raw
 $sidebar = Get-Content -LiteralPath (Join-Path $repoRoot "_sidebar.md") -Raw
+$sidebarLines = Get-Content -LiteralPath (Join-Path $repoRoot "_sidebar.md")
 $navbar = Get-Content -LiteralPath (Join-Path $repoRoot "_navbar.md") -Raw
 $notFound = Get-Content -LiteralPath (Join-Path $repoRoot "404.html") -Raw
 
@@ -112,20 +114,67 @@ foreach ($token in @(
 foreach ($token in @(
     '](/)',
     '](/Expression/Readme.md)',
+    '](/Expression/Cache.md)',
+    '](/Expression/Control%20structures.md)',
+    '](/Examples/Readme.md)',
+    '](/Examples/01_pure_addition/Readme.md)',
     '](/Language/Readme.md)',
+    '](/Language/Execution%20model.md)',
     '](/IR/Readme.md)',
+    '](/IR/Execution%20IR.md)',
     '](/Libraries/Readme.md)',
+    '](/Libraries/UI.md)',
     '](/Profiles/Readme.md)',
     '](/IDE/Readme.md)',
-    '](/Examples/Readme.md)',
     '](/Conformance/Readme.md)',
+    '](/Conformance/valid/01_pure_addition.md)',
+    '](/Conformance/invalid/06_widget_must_not_be_promoted_to_public_interface.md)',
     '](/Implementations/Reference/Readme.md)',
+    '](/Implementations/Reference/CLI/frogc.md)',
     '](/Roadmap/Readme.md)',
+    '](/Roadmap/Milestones.md)',
     '](/Strategy/Heilmeier/Readme.md)'
 )) {
     if ($sidebar -notmatch [regex]::Escape($token)) {
         throw "_sidebar.md is missing expected navigation token: $token"
     }
+}
+
+$expectedSidebarOrder = @(
+    "- [Home](/)",
+    "- [Expression](/Expression/Readme.md)",
+    "- [Examples](/Examples/Readme.md)",
+    "- [Language](/Language/Readme.md)",
+    "- [IR](/IR/Readme.md)",
+    "- [Libraries](/Libraries/Readme.md)",
+    "- [Profiles](/Profiles/Readme.md)",
+    "- [IDE](/IDE/Readme.md)",
+    "- [Conformance](/Conformance/Readme.md)",
+    "- [Reference Implementation](/Implementations/Reference/Readme.md)",
+    "- [Roadmap](/Roadmap/Readme.md)",
+    "- [Strategy](/Strategy/Heilmeier/Readme.md)",
+    "- [Governance](/GOVERNANCE.md)",
+    "- [Contributing](/CONTRIBUTING.md)",
+    "- [CLA](/CLA.md)"
+)
+
+$indexedSidebarLines = @{}
+for ($index = 0; $index -lt $sidebarLines.Count; $index++) {
+    $indexedSidebarLines[$sidebarLines[$index].Trim()] = $index
+}
+
+$lastIndex = -1
+foreach ($line in $expectedSidebarOrder) {
+    if (-not $indexedSidebarLines.ContainsKey($line)) {
+        throw "_sidebar.md is missing ordered root navigation line: $line"
+    }
+
+    $lineIndex = $indexedSidebarLines[$line]
+    if ($lineIndex -lt $lastIndex) {
+        throw "_sidebar.md root navigation order is incorrect near: $line"
+    }
+
+    $lastIndex = $lineIndex
 }
 
 foreach ($token in @(
