@@ -82,6 +82,22 @@ foreach ($token in @(
 }
 
 foreach ($token in @(
+    "#0d1117",
+    "#161b22",
+    "#30363d",
+    "#e6edf3",
+    "#8b949e",
+    "#58a6ff",
+    "#21262d",
+    "rgba(88, 166, 255, 0.06)",
+    "rgba(139, 148, 158, 0.04)"
+)) {
+    if ($indexHtml -notmatch [regex]::Escape($token)) {
+        throw "index.html is missing expected GitHub dark theme token: $token"
+    }
+}
+
+foreach ($token in @(
     'window.location.replace',
     '#/'
 )) {
