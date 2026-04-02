@@ -802,6 +802,30 @@
       });
     }
 
+    function getNavigationChildren(node) {
+      var children = Array.isArray(node && node.children) ? node.children.slice() : [];
+      if (!node || !node.path || !children.length) {
+        return children;
+      }
+
+      var normalizedPath = normalizeDisplayPath(node.path);
+      var hasOverviewChild = children.some(function (child) {
+        return !!(child && child.path) && normalizeDisplayPath(child.path) === normalizedPath;
+      });
+
+      if (hasOverviewChild) {
+        return children;
+      }
+
+      return [{
+        key: (node.key || normalizedPath) + "/overview",
+        title: "Overview",
+        path: normalizedPath,
+        kind: "page",
+        children: []
+      }].concat(children);
+    }
+
     function renderNavigationNodes(nodes, currentFile, depth, parentPath) {
       if (!nodes || !nodes.length) {
         return "";
@@ -813,7 +837,7 @@
       return (
         '<ul class="' + listClass + '">' +
         nodes.map(function (node, index) {
-          var children = Array.isArray(node.children) ? node.children : [];
+          var children = getNavigationChildren(node);
           var hasChildren = children.length > 0;
           var statePath = nodeStatePath(node, parentPath, index);
           var active = !!node.path && normalizeDisplayPath(node.path) === currentFile;
@@ -842,7 +866,12 @@
           var labelClass = "graiphic-nav-link " + (hasChildren ? "is-category" : "is-page") + (active ? " is-active" : "");
           var labelHtml = "";
 
-          if (node.path) {
+          if (hasChildren) {
+            labelHtml =
+              '<button class="' + labelClass + ' graiphic-nav-label-button' + (activeTrail ? " is-active" : "") + '" type="button" data-nav-path="' + escapeHtml(statePath) + '">' +
+                escapeHtml(node.title) +
+              "</button>";
+          } else if (node.path) {
             labelHtml =
               '<a class="' + labelClass + '" href="' + docsifyRouteForPath(node.path) + '">' +
                 escapeHtml(node.title) +
