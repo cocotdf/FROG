@@ -1009,6 +1009,26 @@
       return { sections: [], searchPaths: [] };
     }
 
+    function loadVirtualCodeRoute(path, next) {
+      var normalizedPath = normalizeDisplayPath(path);
+      var request = new XMLHttpRequest();
+      var resolvedUrl = new URL(normalizedPath.replace(/^\//, ""), window.location.href.split("#")[0]).href;
+
+      request.open("GET", resolvedUrl, true);
+      request.onload = function () {
+        if (request.status >= 200 && request.status < 300) {
+          next(request.responseText);
+          return;
+        }
+
+        next(false);
+      };
+      request.onerror = function () {
+        next(false);
+      };
+      request.send();
+    }
+
     function resolveLocalDocLink(rawHref, currentFile) {
       if (!rawHref) {
         return null;
@@ -1398,6 +1418,14 @@
       homepage: "Readme.md",
       loadSidebar: false,
       loadNavbar: true,
+      routes: {
+        "/(.*)\\.frog": function (path, match, next) {
+          loadVirtualCodeRoute(path, next);
+        },
+        "/(.*)\\.py": function (path, match, next) {
+          loadVirtualCodeRoute(path, next);
+        }
+      },
       auto2top: true,
       subMaxLevel: 2,
       maxLevel: 3,
