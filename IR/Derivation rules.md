@@ -1,21 +1,21 @@
 <p align="center">
-  <img src="../FROG logo.svg" alt="FROG logo" width="200" />
+  <img src="../FROG logo.svg" alt="FROG logo" width="140" />
 </p>
 
 <h1 align="center">FROG IR Derivation Rules</h1>
 
 <p align="center">
-  <strong>Normative derivation rules from validated FROG program meaning to the canonical Execution IR Document</strong><br />
+  <strong>Normative derivation rules from validated FROG program meaning to the canonical Execution IR Document</strong><br/>
   <em>FROG — Free Open Graphical Language</em>
 </p>
 
-<hr />
+<hr/>
 
 <h2>Contents</h2>
 <ul>
   <li><a href="#overview">1. Overview</a></li>
   <li><a href="#reading-legend">2. Reading Legend</a></li>
-  <li><a href="#scope-of-this-document">3. Scope of this Document</a></li>
+  <li><a href="#scope-of-this-document">3. Scope of This Document</a></li>
   <li><a href="#relation-with-other-specifications">4. Relation with Other Specifications</a></li>
   <li><a href="#derivation-boundary">5. Derivation Boundary</a></li>
   <li><a href="#inputs-and-preconditions">6. Inputs and Preconditions</a></li>
@@ -35,37 +35,40 @@
   <li><a href="#summary">20. Summary</a></li>
 </ul>
 
-<hr />
+<hr/>
 
 <h2 id="overview">1. Overview</h2>
 
 <p>
-This document defines the normative derivation boundary between validated FROG program meaning and the
-<strong>canonical Execution IR Document</strong>.
+This document defines the normative derivation boundary between validated FROG program meaning and the canonical Execution IR Document.
+</p>
+
+<p>
 It specifies:
 </p>
 
 <ul>
   <li>which validated execution-relevant families derive to execution-facing IR families,</li>
-  <li>which source-side distinctions MUST remain recoverable at the derivation boundary,</li>
+  <li>which validated distinctions MUST remain recoverable at the derivation boundary,</li>
   <li>which support objects MAY be introduced to make already-validated execution structure explicit,</li>
   <li>which source-visible families do not become primary execution objects in the canonical open IR,</li>
-  <li>which explicit attribution and correspondence carriers MUST remain compatible with the canonical JSON IR boundary, and</li>
-  <li>which transformations are forbidden because they would blur ownership, erase attribution, or introduce runtime-private meaning too early.</li>
+  <li>which attribution and correspondence carriers MUST remain preserved and compatible with the canonical JSON IR boundary,</li>
+  <li>which transformations are forbidden because they blur ownership, erase recoverability, or introduce downstream-private meaning too early.</li>
 </ul>
 
 <p>
-This document is intentionally about correspondence obligations.
+This document is intentionally about derivation law.
 It is not:
 </p>
 
 <ul>
   <li>the full source specification,</li>
   <li>the full language semantics specification,</li>
-  <li>the complete Execution IR object-model specification,</li>
-  <li>the construction algorithm for every implementation,</li>
-  <li>the schema definition itself,</li>
-  <li>or a runtime-private realization guide.</li>
+  <li>the complete Execution IR object model specification,</li>
+  <li>the full construction procedure of every implementation,</li>
+  <li>the canonical schema text itself,</li>
+  <li>the lowering strategy of every backend family,</li>
+  <li>a runtime-private realization guide.</li>
 </ul>
 
 <p>
@@ -90,17 +93,11 @@ lowering / specialization
 backend-facing contract
         |
         v
-runtime-private realization
-</code></pre>
+runtime-private realization</code></pre>
 
 <p>
 In base v0.1, derivation is intentionally conservative.
-It preserves validated meaning,
-preserves recoverable identity,
-preserves explicit structured control,
-preserves explicit local memory,
-preserves validated dependency structure,
-and preserves the distinction between:
+It preserves validated meaning, preserves attribution, preserves recoverable identity, preserves explicit structured control, preserves explicit local memory, preserves validated dependency structure, and preserves the distinction between:
 </p>
 
 <ul>
@@ -110,21 +107,21 @@ and preserves the distinction between:
   <li>standardized UI-object primitive operation.</li>
 </ul>
 
-<hr />
+<hr/>
 
 <h2 id="reading-legend">2. Reading Legend</h2>
 
 <ul>
-  <li>🟦 <strong>Open specification-facing representation or layer</strong></li>
-  <li>🟩 <strong>Semantic truth, attribution, recoverability, or validation result</strong></li>
-  <li>🟨 <strong>Boundary, correspondence, mapping, or standardized handoff</strong></li>
-  <li>🟧 <strong>Lowering, specialization, or target adaptation zone</strong></li>
-  <li>🟥 <strong>Implementation-private or runtime-private realization zone</strong></li>
+  <li>Open specification-facing representation or layer</li>
+  <li>Semantic truth, attribution, recoverability, or validation result</li>
+  <li>Boundary, correspondence, mapping, or standardized handoff</li>
+  <li>Lowering, specialization, or target adaptation zone</li>
+  <li>Implementation-private or runtime-private realization zone</li>
 </ul>
 
-<hr />
+<hr/>
 
-<h2 id="scope-of-this-document">3. Scope of this Document</h2>
+<h2 id="scope-of-this-document">3. Scope of This Document</h2>
 
 <p>
 This document defines:
@@ -150,7 +147,7 @@ This document does not define:
   <li>the full Execution IR object model in complete detail,</li>
   <li>the exact material build sequence of every implementation,</li>
   <li>the JSON schema text of the canonical payload,</li>
-  <li>the lowering strategy of every backend,</li>
+  <li>the lowering strategy of every backend family,</li>
   <li>the backend contract in full,</li>
   <li>the private scheduler, storage, or ABI policy of any runtime.</li>
 </ul>
@@ -159,20 +156,19 @@ This document does not define:
 - what must correspond
 - what must remain recoverable
 - what may be made explicit during derivation
-- what canonical attribution / correspondence posture must remain compatible
+- what attribution / correspondence posture must remain compatible
 - what derivation must not silently change
 - that one validated program yields one canonical IR document
 
 This document does not define:
 - canonical source in full               -&gt; Expression/
-- validated program meaning in full      -&gt; Language/
-- full open IR model                     -&gt; Execution IR.md
-- material payload construction          -&gt; Construction rules.md
-- machine-checkable schema text          -&gt; Schema.md / IR/schema/
-- runtime-private realization            -&gt; outside IR ownership
-</code></pre>
+- validated program meaning in full     -&gt; Language/
+- full open IR model                    -&gt; Execution IR.md
+- material payload construction         -&gt; Construction rules.md
+- machine-checkable schema text         -&gt; Schema.md / IR/schema/
+- runtime-private realization           -&gt; outside IR ownership</code></pre>
 
-<hr />
+<hr/>
 
 <h2 id="relation-with-other-specifications">4. Relation with Other Specifications</h2>
 
@@ -187,10 +183,9 @@ IR/Derivation rules.md      -&gt; correspondence from meaning to IR
 IR/Construction rules.md    -&gt; material IR construction and canonical JSON emission
 IR/Schema.md                -&gt; schema posture for canonical IR validation
 IR/schema/                  -&gt; machine-checkable schema artifacts
-IR/Identity and Mapping.md  -&gt; cross-layer recoverability
+IR/Identity and Mapping.md  -&gt; cross-layer identity, attribution, and recoverability law
 IR/Lowering.md              -&gt; later target-oriented specialization
-IR/Backend contract.md      -&gt; later backend-facing handoff
-</code></pre>
+IR/Backend contract.md      -&gt; later backend-facing handoff</code></pre>
 
 <p>
 Accordingly:
@@ -226,13 +221,12 @@ This document should be read together with:
   <li><code>Language/State and cycles.md</code>.</li>
 </ul>
 
-<hr />
+<hr/>
 
 <h2 id="derivation-boundary">5. Derivation Boundary</h2>
 
 <p>
-Derivation is the normative correspondence boundary from validated program meaning to the
-<strong>canonical Execution IR Document</strong>.
+Derivation is the normative correspondence boundary from validated program meaning to the canonical Execution IR Document.
 </p>
 
 <p>
@@ -242,16 +236,11 @@ This boundary does not invent missing semantics.
 It only derives execution-facing representation from already-validated meaning.
 </p>
 
-<p>
-Accordingly:
-</p>
-
 <pre><code>validation decides:
   whether meaning exists
 
 derivation decides:
-  how validated meaning becomes the canonical Execution IR Document
-</code></pre>
+  how validated meaning becomes the canonical Execution IR Document</code></pre>
 
 <p>
 The derivation boundary MUST therefore preserve:
@@ -265,12 +254,24 @@ The derivation boundary MUST therefore preserve:
   <li>freedom from runtime-private semantic invention.</li>
 </ul>
 
-<hr />
+<p>
+Derivation is therefore neither:
+</p>
+
+<ul>
+  <li>a second semantic validation stage,</li>
+  <li>a source repair stage,</li>
+  <li>a lowering stage,</li>
+  <li>a backend-family adaptation stage,</li>
+  <li>a runtime realization stage.</li>
+</ul>
+
+<hr/>
 
 <h2 id="inputs-and-preconditions">6. Inputs and Preconditions</h2>
 
 <p>
-Execution IR derivation begins <strong>only after semantic validation has succeeded</strong>.
+Execution IR derivation begins only after semantic validation has succeeded.
 </p>
 
 <p>
@@ -296,16 +297,12 @@ The derivation input is:
 </ul>
 
 <p>
-An implementation MAY internally start from canonical source,
-a validated Program Model,
-or another validated internal form that is semantically equivalent.
-However,
-the canonical Execution IR it derives MUST be grounded in validated meaning rather than in editor-only convenience or runtime-private invention.
+An implementation MAY internally start from canonical source, a validated Program Model, or another validated internal form that is semantically equivalent.
+However, the canonical Execution IR it derives MUST be grounded in validated meaning rather than in editor-only convenience or runtime-private invention.
 </p>
 
 <pre><code>raw source ------------&gt; structural validity ------------&gt; semantic validation ------------&gt; derivation
-                         outside this document             outside this document              this document
-</code></pre>
+                         outside this document             outside this document            this document</code></pre>
 
 <p>
 Derivation is therefore not the place where an implementation:
@@ -319,13 +316,26 @@ Derivation is therefore not the place where an implementation:
   <li>promotes presentation metadata into execution semantics.</li>
 </ul>
 
-<hr />
+<p>
+Preconditions for conforming derivation include:
+</p>
+
+<ul>
+  <li>semantic acceptance of the program subset being derived,</li>
+  <li>resolved execution-relevant type legality,</li>
+  <li>resolved structure legality,</li>
+  <li>resolved boundary legality,</li>
+  <li>resolved cycle legality,</li>
+  <li>resolved distinction between execution-relevant and non-execution source content.</li>
+</ul>
+
+<hr/>
 
 <h2 id="derivation-result">7. Derivation Result</h2>
 
 <p>
-The result of derivation in base v0.1 is one <strong>canonical Execution IR Document</strong> for one validated FROG program.
-That document contains one <strong>execution unit</strong>.
+The result of derivation in base v0.1 is one canonical Execution IR Document for one validated FROG program.
+That document contains one execution unit.
 </p>
 
 <p>
@@ -368,8 +378,7 @@ one Execution IR Document
             ├── explicit boundary participation
             ├── support objects where required
             ├── source attribution
-            └── correspondence where needed
-</code></pre>
+            └── correspondence where needed</code></pre>
 
 <p>
 The derivation result is not yet:
@@ -381,7 +390,7 @@ The derivation result is not yet:
   <li>a runtime-private artifact.</li>
 </ul>
 
-<hr />
+<hr/>
 
 <h2 id="core-derivation-invariants">8. Core Derivation Invariants</h2>
 
@@ -400,11 +409,14 @@ All conforming derivations in base v0.1 MUST satisfy the following invariants:
   <li>Derivation MUST preserve the distinction between <code>widget_value</code> participation and <code>widget_reference</code> participation.</li>
   <li>Derivation MUST preserve the distinction between <code>widget_reference</code> participation and standardized UI-object primitive operation.</li>
   <li>Derivation MUST preserve the distinction between <code>widget_value</code> participation and property-based access to a widget member named <code>value</code>.</li>
+  <li>Derivation MUST preserve the distinction between ordinary connectivity and boundary participation.</li>
+  <li>Derivation MUST preserve the distinction between public-interface-boundary participation, structure-boundary participation, explicit state participation, and explicit UI sequencing where those distinctions are semantically relevant.</li>
   <li>Derivation MUST preserve the distinction between direct primary correspondence, support derivation, declaration reference, intentional non-primary outcome, and true non-participation where those distinctions are required for recoverability.</li>
   <li>Derivation MUST produce content compatible with one canonical Execution IR Document for one validated program.</li>
   <li>Derivation MUST NOT reinterpret non-execution source content as execution semantics merely because it exists in canonical source.</li>
   <li>Derivation MUST NOT import editor-only geometry, styling, annotation placement, or similar presentation state as execution semantics.</li>
   <li>Derivation MUST NOT standardize one runtime-private scheduler policy as though it were the open IR.</li>
+  <li>Derivation MUST NOT erase attribution or correspondence that the canonical open-IR boundary still requires.</li>
 </ul>
 
 <pre><code>Core invariants
@@ -418,15 +430,15 @@ preserve validated dependencies
 preserve interface / UI distinction
 preserve widget_value / widget_reference distinction
 preserve widget_reference / UI-primitive distinction
+preserve ordinary connectivity / boundary distinction
 preserve canonical-document compatibility
 preserve non-primary correspondence distinctions where required
-
 do not promote non-execution source content
 do not import editor-only state
 do not standardize private scheduler policy
-</code></pre>
+do not erase required correspondence early</code></pre>
 
-<hr />
+<hr/>
 
 <h2 id="derivation-relation-shapes">9. Derivation Relation Shapes</h2>
 
@@ -450,285 +462,95 @@ The fourth applies to content that remains respected at the boundary without bec
 Examples:
 </p>
 
-<ul>
-  <li>a <code>primitive</code> node commonly derives by 1 -&gt; 1 direct preservation,</li>
-  <li>a <code>structure</code> node commonly derives by 1 -&gt; n expansion,</li>
-  <li>a validated interface declaration may derive as support-only correspondence rather than as a primary execution object,</li>
-  <li>a non-participating widget declaration is typically 1 -&gt; 0 with respect to primary execution objects.</li>
-</ul>
+<pre><code>validated arithmetic primitive
+   -&gt; one primary execution object
 
-<pre><code>direct:
-  source object A
-      |
-      v
-  IR object A'
+validated explicit state construct
+   -&gt; one primary execution object
+   + support object(s)
 
-expanded:
-  source object B
-      |
-      +------&gt; IR primary object B'
-      |
-      +------&gt; IR support object B1'
-      |
-      +------&gt; IR support object B2'
+multiple validated contributors
+   -&gt; one aggregated support object
+   only if all contributors remain attributable
 
-restricted aggregated support:
-  source object C -----\
-                        +----&gt; IR support object Cx'
-  source object D -----/
-  with explicit contributor attribution to C and D
+validated source-visible declaration
+   -&gt; no primary execution object
+   but correspondence remains explicit</code></pre>
 
-non-primary:
-  source object E
-      |
-      +----&gt; no primary execution object
-      |
-      +----&gt; obligations may still survive through source_map
-             or correspondence records
-</code></pre>
+<p>
+A conforming implementation MUST NOT use an accidental omission where an explicit <code>1 -&gt; 0</code> non-primary relation is required for recoverability.
+</p>
 
-<hr />
+<p>
+A conforming implementation MUST NOT aggregate multiple contributors into one object if that aggregation destroys contributor attribution, role distinctions, or category-safe recoverability.
+</p>
+
+<hr/>
 
 <h2 id="source-to-ir-family-mapping">10. Source-to-IR Family Mapping</h2>
 
 <p>
-The rules below define the base v0.1 normative correspondence between validated families and canonical Execution IR families.
-They are about <strong>execution-facing derivation</strong>.
-They do not imply that every source-visible family becomes a primary execution object.
+This section defines the base v0.1 correspondence posture from validated execution-relevant families to canonical open IR families.
 </p>
 
-<h3>10.1 Execution-relevant families</h3>
+<h3>10.1 Primitive execution contributors</h3>
 
-<table>
-  <thead>
-    <tr>
-      <th>Validated family</th>
-      <th>Derivation shape</th>
-      <th>Primary IR result</th>
-      <th>Permitted support objects</th>
-      <th>What MUST remain recoverable</th>
-      <th>What derivation MUST NOT do</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Whole validated FROG</td>
-      <td>1 -&gt; 1</td>
-      <td>One Execution IR Document containing one execution unit</td>
-      <td>Document-level attribution and classification records; unit-level attribution and classification records</td>
-      <td>Program identity, document identity, and execution-unit identity relation</td>
-      <td>Split one validated FROG into multiple competing canonical documents or multiple independent execution units in base v0.1</td>
-    </tr>
-    <tr>
-      <td>Top-level executable diagram</td>
-      <td>1 -&gt; 1 or 1 -&gt; n</td>
-      <td>Top-level execution graph content of the execution unit</td>
-      <td>Explicit top-level graph scope records if needed</td>
-      <td>Top-level scope identity and contained-object attribution</td>
-      <td>Hide top-level graph ownership or reinterpret it as opaque backend-only graph material</td>
-    </tr>
-    <tr>
-      <td><code>primitive</code> node</td>
-      <td>1 -&gt; 1 or 1 -&gt; n</td>
-      <td>Primitive execution object</td>
-      <td>Resolved port descriptors, attribution records, execution-facing classification records</td>
-      <td>Primitive identity, resolved ports, execution-relevant metadata, source correspondence</td>
-      <td>Replace the primitive with opaque runtime-private machinery or erase primitive identity in the open IR</td>
-    </tr>
-    <tr>
-      <td>Standardized UI-object primitive (<code>frog.ui.property_read</code>, <code>frog.ui.property_write</code>, <code>frog.ui.method_invoke</code>)</td>
-      <td>1 -&gt; 1 or 1 -&gt; n</td>
-      <td>UI-primitive execution object</td>
-      <td>Resolved UI-port descriptors, resolved member or method descriptors, UI-operation classification records, source-map records</td>
-      <td>Primitive identity, UI-operation family, referenced member or method semantics, required <code>widget_reference</code> participation, source correspondence</td>
-      <td>Absorb the primitive into the widget-reference object itself or reinterpret it as unrestricted generic object execution</td>
-    </tr>
-    <tr>
-      <td><code>subfrog</code> node</td>
-      <td>1 -&gt; 1 or 1 -&gt; n</td>
-      <td>Sub-FROG invocation object</td>
-      <td>Resolved invocation-boundary descriptors, source-map records</td>
-      <td>Referenced FROG identity, invocation identity, invocation boundary, resolved ports</td>
-      <td>Inline or flatten invocation so aggressively that invocation identity becomes non-recoverable in the base open IR</td>
-    </tr>
-    <tr>
-      <td><code>interface_input</code> node</td>
-      <td>1 -&gt; 1 or 1 -&gt; n</td>
-      <td>Public interface entry boundary object</td>
-      <td>Resolved interface-port descriptors, unit-boundary classification records, support-only policy metadata where execution-relevant</td>
-      <td>Public API role, referenced interface input, value direction, source correspondence</td>
-      <td>Merge it into an undifferentiated endpoint concept together with widget participation</td>
-    </tr>
-    <tr>
-      <td><code>interface_output</code> node</td>
-      <td>1 -&gt; 1 or 1 -&gt; n</td>
-      <td>Public interface exit boundary object</td>
-      <td>Resolved interface-port descriptors, unit-boundary classification records</td>
-      <td>Public API role, referenced interface output, value direction, source correspondence</td>
-      <td>Merge it into an undifferentiated endpoint concept together with widget participation</td>
-    </tr>
-    <tr>
-      <td><code>widget_value</code> node</td>
-      <td>1 -&gt; 1 or 1 -&gt; n</td>
-      <td>Widget-value participation object</td>
-      <td>Resolved widget-value descriptors, widget-role classification records</td>
-      <td>Referenced widget identity, primary-value participation role, control/indicator directionality, source correspondence</td>
-      <td>Collapse it with public interface participation, reinterpret it as object-style reference participation, or normalize it into property access on member <code>value</code></td>
-    </tr>
-    <tr>
-      <td><code>widget_reference</code> node</td>
-      <td>1 -&gt; 1 or 1 -&gt; n</td>
-      <td>Widget-reference participation object</td>
-      <td>Resolved widget-reference descriptors, object-style access classification records</td>
-      <td>Referenced widget identity, object-style access role, source correspondence</td>
-      <td>Collapse it into ordinary valueflow participation, reinterpret it as unrestricted general-purpose storage, or absorb all standardized UI-object operations into the reference object itself</td>
-    </tr>
-    <tr>
-      <td><code>structure</code> node</td>
-      <td>1 -&gt; n</td>
-      <td>Structured execution object</td>
-      <td>Explicit region records, boundary-terminal records, structure-terminal records, structured-port descriptors, source-map records</td>
-      <td>Structure family, owned regions, boundary crossing, structure-terminal roles, source correspondence</td>
-      <td>Flatten it immediately into backend-shaped opaque control machinery in a way that makes family identity or region ownership unrecoverable</td>
-    </tr>
-    <tr>
-      <td>Structure region</td>
-      <td>1 -&gt; 1</td>
-      <td>Region record</td>
-      <td>Region-local attribution records, region classification records</td>
-      <td>Region identity, owning structure, source-region identity, region-local graph ownership</td>
-      <td>Hide region ownership or allow region-local content to lose source-region attribution</td>
-    </tr>
-    <tr>
-      <td>Structure boundary input/output entry</td>
-      <td>1 -&gt; 1 or 1 -&gt; n</td>
-      <td>Explicit boundary terminal or equivalent structured boundary-port form</td>
-      <td>Terminal descriptors, attribution records, structured-boundary records</td>
-      <td>Boundary crossing role, type, owning structure, source-side identity</td>
-      <td>Allow cross-scope communication to bypass the structure wall implicitly</td>
-    </tr>
-    <tr>
-      <td>Structure terminal entry</td>
-      <td>1 -&gt; 1 or 1 -&gt; n</td>
-      <td>Explicit structure terminal or equivalent structured terminal-port form</td>
-      <td>Terminal descriptors, structure-terminal classification records</td>
-      <td>Terminal role, type, owning structure, visibility relation, standardized terminal distinction</td>
-      <td>Erase distinctions such as selector, loop count, loop condition, iteration index, or equivalent standardized terminal roles</td>
-    </tr>
-    <tr>
-      <td>Diagram edge</td>
-      <td>1 -&gt; 1</td>
-      <td>Directed connection</td>
-      <td>Resolved endpoint descriptors if needed</td>
-      <td>Endpoint attribution, endpoint direction, validated dependency relation</td>
-      <td>Detach connections from attributable objects or silently redirect connectivity through hidden scheduler-private objects</td>
-    </tr>
-    <tr>
-      <td>Explicit local-memory primitive</td>
-      <td>1 -&gt; 1 or 1 -&gt; n</td>
-      <td>Attributable stateful execution object</td>
-      <td>Resolved state descriptors, explicit initialization records, source-map records</td>
-      <td>Explicit memory identity, explicit initial state, cycle-legality role, source correspondence</td>
-      <td>Legalize a cycle by inserting hidden implicit memory or erase the attribution of explicit memory</td>
-    </tr>
-  </tbody>
-</table>
+<ul>
+  <li>Validated intrinsic primitive invocations MUST derive to primary execution-facing IR objects.</li>
+  <li>The derived object MUST preserve primitive-family identity and enough typing/interface information for later construction and lowering compatibility.</li>
+</ul>
 
-<h3>10.2 Source-visible families that do not become primary execution objects by themselves</h3>
+<h3>10.2 Sub-FROG invocation contributors</h3>
 
-<p>
-The following source-visible families may matter for source durability,
-validation,
-authoring,
-or correspondence,
-but do <strong>not</strong> become primary execution objects merely because they exist.
-</p>
+<ul>
+  <li>Validated sub-FROG invocations MUST derive to primary execution-facing IR objects or equivalent callable execution-facing boundary objects.</li>
+  <li>The callable boundary MUST remain recoverable as callable boundary participation, not collapsed into ordinary local primitive identity.</li>
+</ul>
 
-<table>
-  <thead>
-    <tr>
-      <th>Source-visible family</th>
-      <th>Default derivation shape</th>
-      <th>Open-IR consequence</th>
-      <th>What MUST remain respected</th>
-      <th>What derivation MUST NOT do</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Interface declaration entry in <code>interface.inputs</code> / <code>interface.outputs</code></td>
-      <td>1 -&gt; 0 or support-only</td>
-      <td>No standalone primary execution object is required merely for the declaration record itself</td>
-      <td>Public-port identity, type, connection-policy meaning where execution-relevant after validation, and consistency with interface-boundary participation</td>
-      <td>Drop interface-port correspondence or invent independent execution meaning unrelated to interface participation</td>
-    </tr>
-    <tr>
-      <td>Input default or interface-side connection-policy metadata</td>
-      <td>1 -&gt; 0 or support-only</td>
-      <td>No standalone primary execution object is required merely for the metadata record itself</td>
-      <td>Its validated relation to interface participation and boundary semantics where applicable</td>
-      <td>Invent runtime-private semantics not justified by validated meaning or silently erase required execution-relevant boundary metadata</td>
-    </tr>
-    <tr>
-      <td><code>front_panel</code> container</td>
-      <td>1 -&gt; 0 or support-only</td>
-      <td>No primary execution object is required for the source container itself</td>
-      <td>Its ownership relation to widget declarations and its distinction from executable diagram content</td>
-      <td>Promote the front-panel container itself to a primary execution object merely because the source owns widgets</td>
-    </tr>
-    <tr>
-      <td>Front-panel widget declaration with no validated execution participation</td>
-      <td>1 -&gt; 0</td>
-      <td>No primary execution object is required</td>
-      <td>Its non-participation must not be misread as execution semantics</td>
-      <td>Force every widget into execution-facing IR merely because it exists in source</td>
-    </tr>
-    <tr>
-      <td>Front-panel widget declaration later referenced through <code>widget_value</code> or <code>widget_reference</code></td>
-      <td>1 -&gt; 0 or support-only</td>
-      <td>The widget declaration itself need not become a primary execution object; its identity may be referenced by derived UI participation objects</td>
-      <td>Referenced widget identity and correspondence between declaration and participation</td>
-      <td>Collapse declaration identity or confuse declaration identity with participation identity</td>
-    </tr>
-    <tr>
-      <td>Layout, geometry, styling, and annotation placement records</td>
-      <td>1 -&gt; 0</td>
-      <td>No execution-facing object</td>
-      <td>Authoring information may remain in source-oriented tooling layers</td>
-      <td>Promote editor-only presentation state into execution semantics</td>
-    </tr>
-    <tr>
-      <td>Icon, documentation, tags, and other non-execution descriptive records</td>
-      <td>1 -&gt; 0</td>
-      <td>No execution-facing object</td>
-      <td>Non-execution descriptive meaning remains in its owning source or documentation layer</td>
-      <td>Convert descriptive metadata into execution-visible semantics without separate normative authorization</td>
-    </tr>
-    <tr>
-      <td>Editor-only preferences, cache, or transient tooling records</td>
-      <td>1 -&gt; 0</td>
-      <td>No execution-facing object</td>
-      <td>Their absence from open IR must not change validated execution meaning</td>
-      <td>Treat editor or cache state as part of validated execution truth</td>
-    </tr>
-  </tbody>
-</table>
+<h3>10.3 Public interface contributors</h3>
 
-<p>
-The absence of a family from the execution-relevant table does not make it execution-relevant.
-Conversely,
-a family that does not derive to a primary execution object may still matter for validation,
-attribution,
-or boundary correspondence.
-</p>
+<ul>
+  <li>Validated public interface participation that is execution-relevant MUST derive to explicit public-interface-boundary participation in the canonical Execution IR.</li>
+  <li>Public interface participation MUST NOT collapse into front-panel participation, layout, or UI declaration presence.</li>
+</ul>
 
-<hr />
+<h3>10.4 Widget-related contributors</h3>
+
+<ul>
+  <li><code>widget_value</code> participation MUST derive as <code>widget_value</code> participation.</li>
+  <li><code>widget_reference</code> participation MUST derive as <code>widget_reference</code> participation.</li>
+  <li>Standardized UI-object primitive operations MUST derive as standardized UI-object primitive operations.</li>
+  <li>These families MUST remain distinct.</li>
+</ul>
+
+<h3>10.5 Structured control contributors</h3>
+
+<ul>
+  <li>Validated structure families such as case-like or loop-like forms MUST derive to structure-preserving IR families with explicit regions and explicit boundary roles where applicable.</li>
+  <li>Structured control MUST NOT be flattened into ordinary unordered node sets if region or boundary semantics would be lost.</li>
+</ul>
+
+<h3>10.6 State contributors</h3>
+
+<ul>
+  <li>Validated explicit local-memory contributors MUST derive as explicit local-memory participation.</li>
+  <li>Initialization carriers MUST remain explicit when semantically required.</li>
+  <li>State participation MUST NOT be rewritten as inferred persistence.</li>
+</ul>
+
+<h3>10.7 Non-primary source-visible contributors</h3>
+
+<ul>
+  <li>Some source-visible contributors MAY remain non-primary at the canonical execution boundary.</li>
+  <li>When they still matter for declaration linkage, attribution, recoverability, or validation explanation, their correspondence MUST remain explicit.</li>
+</ul>
+
+<hr/>
 
 <h2 id="identity-and-attribution-rules">11. Identity and Attribution Rules</h2>
 
 <p>
-Source attribution is mandatory.
-Every execution-visible IR object MUST preserve enough information to identify the validated source-visible contributor or contributors from which it was derived.
+Derivation MUST remain compatible with <code>IR/Identity and Mapping.md</code>.
 </p>
 
 <p>
@@ -736,562 +558,437 @@ Accordingly:
 </p>
 
 <ul>
-  <li>a directly preserved object SHOULD carry one stable source-identity relation,</li>
-  <li>a 1 -&gt; n derivation MUST preserve which support objects belong to which primary contributor,</li>
-  <li>an n -&gt; 1 restricted aggregation MUST preserve explicit contributor attribution,</li>
-  <li>a 1 -&gt; 0 outcome is allowed only for content that does not become a primary execution object,</li>
-  <li>a conforming implementation MUST NOT collapse multiple independently attributable execution-visible contributors into one opaque generated object.</li>
+  <li>every primary execution-facing object MUST be attributable to validated contributor or contributor-group meaning permitted by the specification,</li>
+  <li>support objects MUST remain attributable,</li>
+  <li>non-primary outcomes MUST remain distinguishable from accidental loss,</li>
+  <li>declaration-reference correspondence MUST remain distinguishable from primary execution-object identity,</li>
+  <li>multi-contributor attribution MUST remain distinguishable from ordinary one-to-one attribution where that distinction matters.</li>
 </ul>
 
 <p>
-At minimum,
-base v0.1 requires recoverability of the following distinctions whenever they are present:
+Derivation MUST preserve enough information so that the canonical open IR can answer:
 </p>
 
 <ul>
-  <li>document identity versus execution-unit identity,</li>
-  <li><code>interface_input</code> versus <code>interface_output</code>,</li>
-  <li><code>widget_value</code> versus <code>widget_reference</code>,</li>
-  <li><code>widget_reference</code> participation versus standardized UI-object primitive operation,</li>
-  <li>public interface participation versus UI participation,</li>
-  <li><code>widget_value</code> participation versus property-based access to member <code>value</code>,</li>
-  <li>structured family identity,</li>
-  <li>owned region identity,</li>
-  <li>structure-boundary participation,</li>
-  <li>explicit structure-terminal roles,</li>
-  <li>explicit local-memory identity,</li>
-  <li>sub-FROG invocation identity,</li>
-  <li>direct primary correspondence versus support derivation,</li>
-  <li>declaration reference versus primary execution identity,</li>
-  <li>intentional non-primary outcome versus true non-participation where that distinction matters.</li>
+  <li>which validated contributor or contributors gave rise to this object,</li>
+  <li>whether the object is primary, support, or correspondence-only,</li>
+  <li>which category it belongs to,</li>
+  <li>which boundary role it participates in where applicable.</li>
 </ul>
 
-<pre><code>Recoverability obligations
-
-document / execution-unit relation remains explicit
-interface_input / interface_output remain distinct
-widget_value / widget_reference remain distinct
-widget_reference / UI-object primitive remain distinct
-public interface / UI participation remain distinct
-widget_value / property(value) remain distinct
-structure family remains distinct
-regions remain attributable
-structure terminals remain classifiable
-explicit memory remains explicit
-invocation identity remains recoverable
-non-primary correspondence categories remain distinguishable
-</code></pre>
-
 <p>
-In the preferred canonical JSON posture of base v0.1, explicit attribution and correspondence carriers are exposed through:
+Preferred canonical JSON posture in base v0.1:
 </p>
 
 <ul>
-  <li><code>unit.source_map</code>,</li>
-  <li><code>unit.correspondence</code>.</li>
+  <li><code>unit.source_map</code> carries attribution-oriented mapping records,</li>
+  <li><code>unit.correspondence</code> carries declaration-reference and non-primary outcome correspondence records,</li>
+  <li>objects MAY also carry inline attribution-compatible anchors where permitted by construction and schema rules.</li>
 </ul>
 
-<p>
-This document does not freeze one identifier syntax.
-It requires recoverable cross-layer identity at the derivation boundary.
-Broader cross-stage identity architecture remains owned by <code>IR/Identity and Mapping.md</code>.
-</p>
+<pre><code>primary object
+   -&gt; attribution required
 
-<hr />
+support object
+   -&gt; attribution required
+
+non-primary outcome
+   -&gt; correspondence required where relevant
+
+accidental omission
+   -/&gt; acceptable substitute for correspondence</code></pre>
+
+<hr/>
 
 <h2 id="connectivity-derivation">12. Connectivity Derivation</h2>
 
 <p>
-Execution-relevant connectivity MUST be explicit in the derived IR.
+Validated dependency structure MUST derive to explicit execution-facing connectivity.
 </p>
 
 <p>
-Accordingly:
+Connectivity derivation MUST preserve:
 </p>
 
 <ul>
-  <li>every derived execution-facing object MUST expose explicit typed ports or equivalent explicit terminal interfaces,</li>
-  <li>port direction MUST be explicit,</li>
-  <li>directed connections MUST be explicit,</li>
-  <li>connection endpoints MUST resolve to attributable execution-facing objects and attributable ports or terminals,</li>
-  <li>the derived connectivity graph MUST preserve the validated dependency structure of the program.</li>
+  <li>directionality,</li>
+  <li>typed compatibility as already validated upstream,</li>
+  <li>the difference between ordinary connectivity and boundary participation,</li>
+  <li>the attributable relation between connected contributors and derived execution objects.</li>
 </ul>
 
 <p>
-Derivation MAY make the following already-validated facts explicit:
+Connectivity derivation MUST NOT treat:
 </p>
 
 <ul>
-  <li>resolved port type,</li>
-  <li>resolved port direction,</li>
-  <li>resolved boundary-terminal classification,</li>
-  <li>resolved interface-boundary role,</li>
-  <li>resolved widget participation role,</li>
-  <li>resolved structured-boundary ownership,</li>
-  <li>resolved standardized UI-object primitive role.</li>
+  <li>layout adjacency,</li>
+  <li>visual ordering,</li>
+  <li>editor grouping,</li>
+  <li>rendering proximity</li>
 </ul>
 
 <p>
-Cross-scope communication MUST remain explicit.
-A region-local connection MUST NOT silently bypass the structure boundary.
-A connection involving structure-boundary participation MUST preserve which side of the structured boundary it belongs to.
-A connection involving standardized UI-object primitives MUST remain attributable both to the primitive operation and to the participating widget-reference path.
+as substitutes for validated dependency structure.
 </p>
 
-<pre><code>validated dependency structure
-        |
-        v
-explicit ports / terminals
-explicit direction
-explicit directed connections
-attributable endpoints
+<p>
+Allowed derivation-time explicitness includes:
+</p>
 
-Cross-scope rule:
-region-local content
-   MUST NOT
-silently bypass structure boundary
-</code></pre>
+<ul>
+  <li>making port-level or terminal-level endpoints explicit,</li>
+  <li>introducing support-side connection carriers,</li>
+  <li>materializing boundary-crossing relations explicitly.</li>
+</ul>
 
-<hr />
+<p>
+Forbidden outcomes include:
+</p>
+
+<ul>
+  <li>rewriting ordinary connectivity as public-interface participation,</li>
+  <li>rewriting ordinary connectivity as structure-boundary participation,</li>
+  <li>rewriting ordinary connectivity as explicit UI sequencing,</li>
+  <li>losing endpoint attribution through opaque connection collapse.</li>
+</ul>
+
+<hr/>
 
 <h2 id="structured-control-derivation">13. Structured Control Derivation</h2>
 
 <p>
-Structured control remains explicit in the base open Execution IR.
+Validated structured control MUST derive as structured control.
 </p>
 
 <p>
-A validated <code>structure</code> node MUST derive to one structured execution object that preserves:
+This means derivation MUST preserve, where relevant:
 </p>
 
 <ul>
-  <li>the standardized structure family,</li>
-  <li>owned executable regions,</li>
-  <li>structure-boundary inputs and outputs,</li>
-  <li>structure terminals where applicable,</li>
-  <li>source attribution for region-local execution content.</li>
+  <li>structure family identity,</li>
+  <li>region ownership,</li>
+  <li>region boundaries,</li>
+  <li>structure-terminal roles,</li>
+  <li>entry, exit, selector, iteration, or condition participation according to the validated structure family.</li>
 </ul>
 
 <p>
-For base v0.1:
+Allowed explicitness includes:
 </p>
 
 <ul>
-  <li><code>case</code> MUST remain distinguishable as a structured region-selection object,</li>
-  <li><code>for_loop</code> MUST remain distinguishable as a counted-iteration object,</li>
-  <li><code>while_loop</code> MUST remain distinguishable as a condition-governed iteration object.</li>
+  <li>making implicit region carriers explicit in the IR representation,</li>
+  <li>introducing structure-owned support objects,</li>
+  <li>making structure-boundary crossing explicit.</li>
 </ul>
 
 <p>
-The open IR MUST NOT flatten those structure families into target-specific branch graphs,
-generic CFG nodes,
-or backend-private loop machinery in a way that makes family identity,
-region correspondence,
-or structure-terminal correspondence non-recoverable.
-</p>
-
-<p>
-For structures with region-specific metadata,
-the derived IR MUST preserve enough information to recover:
+Forbidden outcomes include:
 </p>
 
 <ul>
-  <li>which regions belong to which structure,</li>
-  <li>which boundary terminals cross the structure wall,</li>
-  <li>which terminals are structure-intrinsic rather than ordinary boundary values,</li>
-  <li>which region-local graph content belongs to which source region.</li>
+  <li>flattening structure families into ordinary node bags when region semantics would be lost,</li>
+  <li>deriving apparent visual grouping as though it were a validated structure family,</li>
+  <li>replacing explicit structure terminals with inferred scheduler behavior,</li>
+  <li>erasing structure ownership before lowering.</li>
 </ul>
 
-<p>
-Base v0.1 does not require one universal nested-region encoding.
-It requires explicit structured ownership and semantic recoverability compatible with the canonical IR document model.
-</p>
+<pre><code>validated structure
+   -&gt; structure-preserving IR family
+   -&gt; explicit regions where applicable
+   -&gt; explicit terminal / boundary roles where applicable
 
-<pre><code>validated structure family
-        |
-        v
-structured execution object
-        ├── explicit owned regions
-        ├── explicit boundary terminals or equivalent structured ports
-        ├── explicit structure terminals where applicable
-        └── region-local attribution
+never
+   -&gt; ordinary graph only
+   if structured semantics would be lost</code></pre>
 
-Allowed:
-explicit structured IR
-support objects that clarify regions or terminals
-
-Forbidden:
-opaque backend-shaped flattening
-</code></pre>
-
-<hr />
+<hr/>
 
 <h2 id="interface-and-ui-derivation">14. Interface and UI Derivation</h2>
 
 <p>
-The open Execution IR MUST preserve the distinction between:
+Public interface and UI families are both execution-relevant in some cases, but they are not the same thing and MUST NOT collapse during derivation.
 </p>
 
+<h3>14.1 Public interface derivation</h3>
+
 <ul>
-  <li>public interface participation,</li>
-  <li>widget primary-value participation,</li>
-  <li>widget object-style reference participation,</li>
-  <li>standardized UI-object primitive operation performed through a widget reference.</li>
+  <li>Validated public interface participation MUST derive to explicit public-interface-boundary participation.</li>
+  <li>It MUST remain recoverable as public boundary participation rather than widget presence or visual declaration convenience.</li>
+</ul>
+
+<h3>14.2 <code>widget_value</code> derivation</h3>
+
+<ul>
+  <li>Validated <code>widget_value</code> participation MUST derive as <code>widget_value</code> participation.</li>
+  <li>It MUST remain distinct from property-based access to a member named <code>value</code>.</li>
+</ul>
+
+<h3>14.3 <code>widget_reference</code> derivation</h3>
+
+<ul>
+  <li>Validated <code>widget_reference</code> participation MUST derive as <code>widget_reference</code> participation.</li>
+  <li>It MUST remain distinct from standardized UI-object primitive operation.</li>
+</ul>
+
+<h3>14.4 Standardized UI-object primitive operation derivation</h3>
+
+<ul>
+  <li>Validated UI-object primitive operations such as property read, property write, or method invocation MUST derive as explicit standardized UI-object primitive operations.</li>
+  <li>These operation families MUST remain distinct from widget declaration identity and from widget-reference participation identity.</li>
+</ul>
+
+<h3>14.5 Explicit UI sequencing</h3>
+
+<ul>
+  <li>Where validated meaning establishes explicit UI sequencing, derivation MUST preserve it as explicit UI sequencing.</li>
+  <li>Explicit UI sequencing MUST remain distinct from ordinary connectivity, structure-boundary participation, explicit state participation, and public-interface-boundary participation.</li>
 </ul>
 
 <p>
-Therefore:
+Forbidden category collapses include:
 </p>
 
 <ul>
-  <li><code>interface_input</code> and <code>interface_output</code> MUST remain recognizable as public boundary participation,</li>
-  <li><code>widget_value</code> MUST remain recognizable as front-panel primary-value participation,</li>
-  <li><code>widget_reference</code> MUST remain recognizable as object-style widget access participation,</li>
-  <li><code>frog.ui.property_read</code>, <code>frog.ui.property_write</code>, and <code>frog.ui.method_invoke</code> MUST remain recognizable as primitive execution objects rather than being absorbed into reference participation,</li>
-  <li>derivation MUST NOT merge those families into one undifferentiated endpoint or generic object-access model without preserving their distinct semantic roles.</li>
+  <li>public interface participation = widget participation,</li>
+  <li><code>widget_value</code> = <code>widget_reference</code>,</li>
+  <li><code>widget_reference</code> = UI-object operation,</li>
+  <li>property read = property write,</li>
+  <li>method invocation = property write,</li>
+  <li>property read = method invocation,</li>
+  <li><code>ui_in</code> = <code>ui_out</code>.</li>
 </ul>
 
-<p>
-Additional rules:
-</p>
-
-<ul>
-  <li>interface declarations and diagram-side interface nodes MUST remain coherently related,</li>
-  <li>front-panel widgets that do not participate in validated meaning MUST NOT be forced into primary execution-facing IR objects merely because they exist in source,</li>
-  <li>the <code>front_panel</code> source container itself MUST NOT become a primary execution-facing object merely because it owns widget declarations,</li>
-  <li>widget declarations referenced by validated participation MUST remain recoverably linked to their participation objects,</li>
-  <li>widget references used together with <code>frog.ui.property_read</code>, <code>frog.ui.property_write</code>, or <code>frog.ui.method_invoke</code> MUST remain distinguishable from ordinary dataflow values,</li>
-  <li>the base widget-reference token MUST NOT be reinterpreted as unrestricted general-purpose storage or computation unless a future specification explicitly standardizes that meaning,</li>
-  <li><code>widget_value</code> MUST NOT be normalized into property-based access to member <code>value</code>,</li>
-  <li>property-based access to member <code>value</code> MUST NOT be normalized into <code>widget_value</code> participation.</li>
-</ul>
-
-<pre><code>public interface participation
-   !=
-widget primary-value participation
-   !=
-widget object-style reference participation
-   !=
-standardized UI-object primitive operation
-</code></pre>
-
-<hr />
+<hr/>
 
 <h2 id="state-and-cycle-preservation">15. State and Cycle Preservation</h2>
 
 <p>
-Explicit local memory remains explicit in derivation.
+Validated explicit local memory MUST derive as explicit local memory.
 </p>
 
 <p>
-Accordingly:
+Derivation MUST preserve:
 </p>
 
 <ul>
-  <li>a validated local-memory primitive such as <code>frog.core.delay</code> MUST derive to an explicit attributable execution-facing object,</li>
-  <li>required execution-relevant configuration such as mandatory explicit initial state MUST remain recoverable,</li>
-  <li>a valid feedback path remains valid in the IR only because explicit memory remains present,</li>
-  <li>derivation MUST NOT legalize an otherwise invalid combinational cycle by silently inserting hidden implicit memory,</li>
-  <li>derivation MUST NOT erase the attribution of explicit memory in a valid stateful cycle.</li>
+  <li>the existence of explicit state,</li>
+  <li>the distinction between state and ordinary dataflow,</li>
+  <li>initialization carriers when required,</li>
+  <li>read-side versus write-side state participation where semantically relevant,</li>
+  <li>the legality boundary that allowed the cycle or state construct upstream.</li>
 </ul>
 
 <p>
-The open IR inherits validated cycle legality from the language-level rules.
-It does not invent a new cycle-validity rule.
+Derivation MUST NOT:
 </p>
 
-<pre><code>valid feedback
-   requires
-explicit local memory
+<ul>
+  <li>invent hidden state where no validated explicit state existed,</li>
+  <li>erase validated explicit state into inferred persistence,</li>
+  <li>replace explicit initialization with guessed defaulting,</li>
+  <li>present scheduler timing guesses as state semantics.</li>
+</ul>
 
-therefore
+<pre><code>validated explicit state
+   -&gt; explicit state in canonical IR
 
-derived IR
-   must preserve
-explicit memory identity
-explicit initial-state recoverability
+validated initialization
+   -&gt; explicit initialization carrier where required
 
-Forbidden:
-hidden implicit memory legalization
-</code></pre>
+never
+   -&gt; inferred hidden persistence as a substitute</code></pre>
 
-<hr />
+<p>
+If a cycle was accepted only because explicit local memory made it legal, the derived canonical IR MUST continue to show the explicit state participation that makes that legality recoverable.
+</p>
+
+<hr/>
 
 <h2 id="allowed-normalization-during-derivation">16. Allowed Normalization During Derivation</h2>
 
 <p>
-Derivation MAY normalize validated meaning in execution-facing ways that do not change semantic truth.
+Derivation MAY introduce additional explicitness when all of the following remain true:
 </p>
+
+<ul>
+  <li>validated meaning is preserved,</li>
+  <li>attribution is preserved,</li>
+  <li>recoverability is preserved,</li>
+  <li>category distinctions are preserved,</li>
+  <li>the result remains a canonical open-IR artifact rather than a lowered private form.</li>
+</ul>
 
 <p>
 Allowed normalization includes:
 </p>
 
 <ul>
-  <li>making resolved port types explicit,</li>
-  <li>making resolved port directions explicit,</li>
-  <li>making structure-boundary terminals explicit,</li>
-  <li>making structure-terminal roles explicit,</li>
-  <li>making region ownership explicit,</li>
-  <li>materializing support objects for execution-facing classification,</li>
-  <li>adding explicit source-attribution records,</li>
-  <li>adding explicit correspondence records,</li>
-  <li>adding contributor records for permitted restricted aggregations,</li>
-  <li>normalizing equivalent validated source spellings into one execution-facing canonical representation,</li>
-  <li>carrying validated execution-relevant metadata in normalized explicit form,</li>
-  <li>normalizing derivation output so that it is compatible with the canonical document and canonical JSON schema surface, including the preferred <code>source_map[]</code> and <code>correspondence[]</code> record-array posture of base v0.1.</li>
+  <li>making ports, terminal roles, or directionality explicit,</li>
+  <li>making regions explicit,</li>
+  <li>introducing support objects,</li>
+  <li>introducing canonical object identifiers,</li>
+  <li>introducing explicit attribution and correspondence carriers,</li>
+  <li>making boundary participation explicit,</li>
+  <li>normalizing equivalent validated forms into one canonical execution-facing representation.</li>
 </ul>
 
 <p>
-Allowed normalization is subject to all of the following conditions:
+Normalization MUST remain conservative:
 </p>
 
-<ul>
-  <li>semantic equivalence MUST be preserved,</li>
-  <li>source attribution MUST remain recoverable,</li>
-  <li>explicit memory MUST remain explicit,</li>
-  <li>structured control MUST remain structurally recoverable,</li>
-  <li>public interface participation and UI participation MUST remain distinguishable,</li>
-  <li><code>widget_value</code> participation and property-based member access MUST remain distinguishable,</li>
-  <li><code>widget_reference</code> participation and standardized UI-object primitives MUST remain distinguishable,</li>
-  <li>support objects MUST NOT be used as a loophole for semantic transformation.</li>
-</ul>
+<pre><code>allowed normalization
+   =
+more explicit open IR
+without
+semantic change
+or
+recoverability loss</code></pre>
 
-<pre><code>Allowed normalization
+<p>
+Lowering-readiness MAY motivate additional explicitness.
+It MUST NOT justify early erasure of required open-IR distinctions.
+</p>
 
-make already-validated facts explicit
-add explicit support objects
-add attribution structure
-add correspondence structure
-add contributor structure where permitted
-normalize equivalent validated spellings
-normalize toward canonical document compatibility
-
-Only if:
-meaning preserved
-attribution preserved
-explicit memory preserved
-structured control recoverable
-interface / UI distinction preserved
-widget_value / property(value) distinction preserved
-widget_reference / UI-primitive distinction preserved
-</code></pre>
-
-<hr />
+<hr/>
 
 <h2 id="forbidden-derivation-outcomes">17. Forbidden Derivation Outcomes</h2>
 
 <p>
-The following outcomes are forbidden in the base open Execution IR of v0.1:
+The following derivation outcomes are forbidden:
 </p>
 
 <ul>
-  <li>changing validated execution meaning,</li>
-  <li>removing attribution for execution-visible objects,</li>
-  <li>removing required correspondence for declaration linkage or intentional non-primary outcomes,</li>
-  <li>collapsing multiple independently attributable execution-visible contributors into one opaque unattributable generated object,</li>
-  <li>replacing explicit memory with hidden scheduler-private state,</li>
-  <li>flattening structured control so aggressively that family identity, region correspondence, or boundary-terminal correspondence is no longer recoverable,</li>
-  <li>collapsing public interface participation, widget-value participation, widget-reference participation, and standardized UI-object primitive operation into one undifferentiated concept,</li>
-  <li>normalizing <code>widget_value</code> participation into property access to member <code>value</code>,</li>
-  <li>normalizing property access to member <code>value</code> into <code>widget_value</code> participation,</li>
-  <li>forcing non-participating source families into primary execution objects merely because they exist in canonical source,</li>
-  <li>promoting layout, styling, annotation placement, or similar authoring convenience state into execution semantics,</li>
-  <li>treating the open IR as a debugger trace, runtime history log, or event stream,</li>
-  <li>hard-coding one private runtime scheduling strategy as though it were the standardized open IR,</li>
-  <li>deriving multiple competing canonical Execution IR Documents for one validated program at the same open IR boundary.</li>
+  <li>loss of semantic faithfulness,</li>
+  <li>loss of source attribution for execution-facing objects,</li>
+  <li>loss of required correspondence for non-primary outcomes,</li>
+  <li>collapse of public interface participation and UI participation,</li>
+  <li>collapse of <code>widget_value</code> and <code>widget_reference</code>,</li>
+  <li>collapse of <code>widget_reference</code> and standardized UI-object primitive operation,</li>
+  <li>collapse of ordinary connectivity and boundary participation,</li>
+  <li>collapse of public-interface-boundary participation, structure-boundary participation, explicit state participation, and explicit UI sequencing into one undifferentiated boundary category,</li>
+  <li>flattening structured control into ordinary graph content where semantics would be lost,</li>
+  <li>rewriting explicit state as inferred persistence,</li>
+  <li>promoting non-execution source content into execution semantics,</li>
+  <li>importing editor-only geometry, styling, or presentation state as execution truth,</li>
+  <li>introducing runtime-private scheduler policy as though it were canonical IR law,</li>
+  <li>introducing backend-family partitions as though they were canonical open-IR categories,</li>
+  <li>using derivation to perform lowering, target adaptation, or ABI commitment too early.</li>
 </ul>
 
-<pre><code>Forbidden outcomes
+<pre><code>forbidden
+   =
+anything that changes validated meaning
+or destroys the recoverable open-IR boundary</code></pre>
 
-semantic drift
-lost attribution
-lost required correspondence
-opaque unattributable aggregation
-hidden scheduler-private memory
-unrecoverable control flattening
-collapsed interface / UI roles
-collapsed widget_reference / UI-primitive roles
-widget_value / property(value) collapse
-forced executionization of non-participating source content
-editor-state semantics
-runtime trace substitution
-private scheduler policy as open IR
-multiple competing canonical IR documents
-</code></pre>
-
-<hr />
+<hr/>
 
 <h2 id="relation-with-construction-schema-lowering-and-backend-contract">18. Relation with Construction, Schema, Lowering, and Backend Contract</h2>
 
 <p>
-The output of derivation is the <strong>canonical Execution IR Document boundary result</strong>.
-It is not yet a lowered form and not yet a backend-facing contract artifact.
+Derivation is only one stage in the IR corridor.
+It is upstream from construction, schema validation, lowering, and backend-facing handoff.
 </p>
+
+<pre><code>validated meaning
+   -&gt; derivation
+   -&gt; canonical IR construction
+   -&gt; canonical JSON validation where applicable
+   -&gt; lowering
+   -&gt; backend-facing contract</code></pre>
 
 <p>
 Accordingly:
 </p>
 
 <ul>
-  <li>derivation MUST stop at the open IR boundary defined by <code>IR/Execution IR.md</code>,</li>
-  <li>material build procedure and canonical JSON emission belong to <code>IR/Construction rules.md</code>,</li>
-  <li>machine-checkable payload validation belongs to <code>IR/Schema.md</code> and <code>IR/schema/</code>,</li>
-  <li>later target-oriented specialization belongs to <code>IR/Lowering.md</code>,</li>
-  <li>later consumer-facing assumptions belong to <code>IR/Backend contract.md</code>,</li>
-  <li>derivation MUST remain compatible with the canonical JSON schema posture of the IR layer, including explicit recoverable attribution and correspondence carriers where published,</li>
-  <li>derivation MUST NOT prematurely encode backend-private scheduling, partitioning, storage layout, target-profile assumptions, deployment-mode assumptions, or target ABI policy as if those belonged to the base open IR.</li>
+  <li>derivation defines what must correspond from validated meaning to canonical IR,</li>
+  <li>construction defines how those correspondences are materially built into a canonical IR payload,</li>
+  <li>schema defines how the canonical JSON shape is machine-checked,</li>
+  <li>lowering defines later target-oriented specialization,</li>
+  <li>backend contract defines later backend-facing handoff.</li>
 </ul>
 
 <p>
-Later layers MAY consume support metadata,
-classification records,
-source-attribution records,
-or correspondence records introduced during derivation,
-but those later consumer expectations do not belong to this document.
-</p>
-
-<pre><code>validated program meaning
-        |
-        v
-derivation
-        |
-        v
-canonical Execution IR boundary result
-        |
-        +-- construction materializes canonical JSON payload
-        |
-        +-- schema validates canonical JSON payload
-        |
-        v
-lowering
-        |
-        v
-backend contract
-        |
-        v
-private realization
-</code></pre>
-
-<p>
-This separation matters because:
+Derivation MUST therefore produce an IR that is:
 </p>
 
 <ul>
-  <li>derivation is about correspondence,</li>
-  <li>construction is about material build,</li>
-  <li>schema is about machine-checkable structural validation,</li>
-  <li>lowering is about specialization,</li>
-  <li>backend contract is about later standardized consumer expectations.</li>
+  <li>construction-compatible,</li>
+  <li>schema-compatible in principle,</li>
+  <li>identity-compatible,</li>
+  <li>fit for later lowering,</li>
+  <li>still distinct from lowered form and backend-facing contract.</li>
 </ul>
 
 <p>
-Those layers MUST NOT be collapsed into one another.
+This distinction matters directly to an industrial compiler corridor.
+A future LLVM-oriented consumer remains downstream from:
 </p>
 
-<hr />
+<ul>
+  <li>validated meaning,</li>
+  <li>canonical derivation,</li>
+  <li>canonical open IR identity and correspondence law.</li>
+</ul>
+
+<p>
+LLVM or any other backend family MUST NOT become the place where missing derivation law is invented retroactively.
+</p>
+
+<hr/>
 
 <h2 id="out-of-scope-for-v01">19. Out of Scope for v0.1</h2>
 
 <p>
-The following topics are out of scope for this document in base v0.1:
+The following are out of scope for this document in base v0.1:
 </p>
 
 <ul>
-  <li>the exact procedural construction order used by every implementation,</li>
-  <li>the full JSON schema text,</li>
-  <li>mandatory SSA conversion,</li>
-  <li>mandatory aggressive flattening of structured control,</li>
-  <li>lowering to backend-facing contracts,</li>
-  <li>runtime-private scheduler structures,</li>
-  <li>compiled artifact formats,</li>
-  <li>deployment packaging,</li>
-  <li>debugger transport, eventing, or live observability protocols.</li>
+  <li>multi-document derivation sets,</li>
+  <li>multi-unit canonical IR documents,</li>
+  <li>backend-family-specific derivation branches,</li>
+  <li>runtime activation identities,</li>
+  <li>private scheduler token models,</li>
+  <li>ABI-level lowering commitments,</li>
+  <li>full debug-information emission standards,</li>
+  <li>cross-build persistent identity guarantees.</li>
 </ul>
 
 <p>
-Those concerns belong to construction,
-schema,
-identity and mapping,
-lowering,
-backend contract,
-runtime,
-or IDE-facing specifications.
+These may be specified later.
+They do not weaken the current derivation obligations at the canonical open-IR boundary.
 </p>
 
-<p>
-What is <strong>not</strong> out of scope anymore is:
-</p>
-
-<ul>
-  <li>the rule that one validated program derives to one canonical Execution IR Document,</li>
-  <li>the rule that the derivation result must be compatible with the canonical JSON open IR surface,</li>
-  <li>the rule that derivation must preserve the distinctions needed by the published schema-visible IR categories.</li>
-</ul>
-
-<hr />
+<hr/>
 
 <h2 id="summary">20. Summary</h2>
 
 <p>
-Execution IR derivation in FROG v0.1 is conservative by design.
-It starts from <strong>validated program meaning</strong>, not from raw source convenience.
-It produces <strong>one canonical Execution IR Document per validated FROG</strong>, with <strong>one execution unit</strong>.
-It preserves:
+This document defines the normative derivation rules from validated FROG program meaning to the canonical Execution IR Document.
+</p>
+
+<p>
+Its core rules are:
 </p>
 
 <ul>
-  <li>validated executable meaning,</li>
-  <li>source attribution,</li>
-  <li>recoverable identity,</li>
-  <li>structured control,</li>
-  <li>explicit memory,</li>
-  <li>validated dependency structure,</li>
-  <li>the distinction between interface participation and UI participation,</li>
-  <li>the distinction between <code>widget_value</code> and <code>widget_reference</code>,</li>
-  <li>the distinction between <code>widget_reference</code> and standardized UI-object primitive operation,</li>
-  <li>required declaration linkage and intentional non-primary correspondence.</li>
+  <li>derivation starts only from validated meaning,</li>
+  <li>derivation preserves semantic faithfulness,</li>
+  <li>derivation preserves attribution and recoverability,</li>
+  <li>derivation preserves structured control, explicit state, validated dependency structure, and execution-category distinctions,</li>
+  <li>derivation may add explicitness but may not perform downstream specialization too early,</li>
+  <li>derivation yields one canonical Execution IR Document containing one execution unit in base v0.1.</li>
 </ul>
 
 <p>
-It allows execution-facing explicitness and normalization,
-but it forbids:
+The canonical open IR is therefore not an arbitrary implementation artifact.
+It is the normalized, attributable, recoverable execution-facing representation derived from validated meaning.
 </p>
-
-<ul>
-  <li>semantic drift,</li>
-  <li>opaque collapse,</li>
-  <li>loss of attribution,</li>
-  <li>loss of required correspondence,</li>
-  <li>runtime-private leakage.</li>
-</ul>
 
 <p>
-It also fixes an important boundary in base v0.1:
-not every source-visible family becomes a primary execution object.
-Some families derive directly,
-some derive with support objects,
-and some remain source-visible but non-primary at the open-IR boundary.
-That is true for front-panel ownership,
-widget declarations,
-and interface-side metadata as well.
+A serious downstream compilation path depends on this discipline.
+FROG may later lower toward backend-facing consumers, including LLVM-oriented routes.
+That downstream route must still begin from a canonical Execution IR whose derivation law was already satisfied correctly.
 </p>
-
-<pre><code>validated FROG
-   |
-   +-- preserve executable meaning
-   +-- preserve source attribution
-   +-- preserve recoverable identity
-   +-- preserve explicit memory
-   +-- preserve structured control
-   +-- preserve validated dependencies
-   +-- preserve interface / UI distinction
-   +-- preserve widget_value / widget_reference distinction
-   +-- preserve widget_reference / UI-primitive distinction
-   +-- preserve required non-primary correspondence where applicable
-   +-- do not executionize non-execution source content
-   +-- derive one canonical IR document with one execution unit
-   |
-   v
-canonical Execution IR Document
-</code></pre>
