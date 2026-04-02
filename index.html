@@ -159,6 +159,13 @@
       color: var(--muted-color);
     }
 
+    .frog-search-target {
+      border-radius: 0.6rem;
+      background: color-mix(in srgb, var(--theme-color) 18%, transparent);
+      box-shadow: 0 0 0 1px color-mix(in srgb, var(--theme-color) 28%, transparent);
+      transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
     .sidebar-nav {
       padding: 0.7rem 0 1.45rem;
     }
@@ -932,6 +939,274 @@
       return rewrittenHref;
     }
 
+    var pendingSearchNavigationStorageKey = "graiphic-frog-pending-search-navigation";
+
+    function normalizeSearchText(value) {
+      var normalized = String(value || "").toLowerCase();
+
+      if (normalized.normalize) {
+        normalized = normalized.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      }
+
+      return normalized;
+    }
+
+    function getSearchTerms(rawValue) {
+      var trimmed = String(rawValue || "").trim();
+      if (!trimmed) {
+        return [];
+      }
+
+      var terms = [trimmed];
+      trimmed.split(/[\s\-_/\\]+/).forEach(function (part) {
+        if (part.length >= 3 && terms.indexOf(part) === -1) {
+          terms.push(part);
+        }
+      });
+
+      return terms
+        .map(normalizeSearchText)
+        .filter(function (term, index, values) {
+          return !!term && values.indexOf(term) === index;
+        })
+        .sort(function (left, right) {
+          return right.length - left.length;
+        });
+    }
+
+    function extractDocsifyHrefParts(rawHref) {
+      if (!rawHref) {
+        return null;
+      }
+
+      var hash = rawHref;
+      try {
+        if (!rawHref.startsWith("#")) {
+          hash = new URL(rawHref, window.location.href).hash || rawHref;
+        }
+      } catch (error) {
+      }
+
+      if (!hash.startsWith("#/")) {
+        return null;
+      }
+
+      var route = hash.slice(1);
+      var routeParts = route.split("?", 2);
+      var searchParams = new URLSearchParams(routeParts.length > 1 ? routeParts[1] : "");
+
+      return {
+        path: normalizeDocPath(routeParts[0]),
+        anchorId: searchParams.get("id") || ""
+      };
+    }
+
+    function readPendingSearchNavigation() {
+      try {
+        var rawValue = window.sessionStorage.getItem(pendingSearchNavigationStorageKey);
+        if (!rawValue) {
+          return null;
+        }
+
+        var parsed = JSON.parse(rawValue);
+        if (!parsed || typeof parsed !== "object") {
+          return null;
+        }
+
+        if (!parsed.createdAt || (Date.now() - parsed.createdAt) > 120000) {
+          window.sessionStorage.removeItem(pendingSearchNavigationStorageKey);
+          return null;
+        }
+
+        return parsed;
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function writePendingSearchNavigation(href, rawSearchValue) {
+      var hrefParts = extractDocsifyHrefParts(href);
+      var searchValue = String(rawSearchValue || "").trim();
+
+      if (!hrefParts || !searchValue) {
+        return;
+      }
+
+      try {
+        window.sessionStorage.setItem(
+          pendingSearchNavigationStorageKey,
+          JSON.stringify({
+            path: hrefParts.path,
+            anchorId: hrefParts.anchorId,
+            searchValue: searchValue,
+            createdAt: Date.now()
+          })
+        );
+      } catch (error) {
+      }
+    }
+
+    function clearPendingSearchNavigation() {
+      try {
+        window.sessionStorage.removeItem(pendingSearchNavigationStorageKey);
+      } catch (error) {
+      }
+    }
+
+    function bindSearchResultNavigation() {
+      var resultsPanel = document.querySelector(".search .results-panel");
+      if (!resultsPanel || resultsPanel.dataset.frogSearchNavigationBound === "true") {
+        return;
+      }
+
+      resultsPanel.addEventListener("click", function (event) {
+        var anchor = event.target.closest(".matching-post a[href]");
+        if (!anchor) {
+          return;
+        }
+
+        var searchInput = document.querySelector(".search input[type='search']");
+        writePendingSearchNavigation(anchor.getAttribute("href"), searchInput ? searchInput.value : "");
+      });
+
+      resultsPanel.dataset.frogSearchNavigationBound = "true";
+    }
+
+    function currentSearchAnchorId(vm) {
+      if (!vm || !vm.route || !vm.route.query || typeof vm.route.query.id !== "string") {
+        return "";
+      }
+
+      return vm.route.query.id;
+    }
+
+    function searchScopeSelector() {
+      return "p, li, blockquote, td, th, pre, code, h1, h2, h3, h4, h5, h6";
+    }
+
+    function findSearchAnchorElement(root, anchorId) {
+      if (!root || !anchorId) {
+        return null;
+      }
+
+      if (window.CSS && typeof window.CSS.escape === "function") {
+        var escaped = window.CSS.escape(anchorId);
+        return root.querySelector("#" + escaped) || document.getElementById(anchorId);
+      }
+
+      return document.getElementById(anchorId);
+    }
+
+    function getScopedSearchCandidates(root, anchorId) {
+      if (!root) {
+        return [];
+      }
+
+      var selector = searchScopeSelector();
+      if (!anchorId) {
+        return Array.prototype.slice.call(root.querySelectorAll(selector));
+      }
+
+      var anchorElement = findSearchAnchorElement(root, anchorId);
+      var heading = anchorElement && anchorElement.closest ? (anchorElement.closest("h1, h2, h3, h4, h5, h6") || anchorElement) : null;
+      if (!heading || !root.contains(heading) || !/^H[1-6]$/i.test(heading.tagName)) {
+        return Array.prototype.slice.call(root.querySelectorAll(selector));
+      }
+
+      var level = parseInt(heading.tagName.slice(1), 10);
+      var candidates = [];
+      var cursor = heading;
+
+      while (cursor) {
+        if (cursor !== heading && /^H[1-6]$/i.test(cursor.tagName) && parseInt(cursor.tagName.slice(1), 10) <= level) {
+          break;
+        }
+
+        if (cursor.matches && cursor.matches(selector)) {
+          candidates.push(cursor);
+        }
+
+        if (cursor.querySelectorAll) {
+          candidates = candidates.concat(Array.prototype.slice.call(cursor.querySelectorAll(selector)));
+        }
+
+        cursor = cursor.nextElementSibling;
+      }
+
+      return candidates.filter(function (candidate, index, allCandidates) {
+        return allCandidates.indexOf(candidate) === index;
+      });
+    }
+
+    function findMatchingSearchTarget(candidates, searchTerms) {
+      for (var termIndex = 0; termIndex < searchTerms.length; termIndex += 1) {
+        var searchTerm = searchTerms[termIndex];
+
+        for (var candidateIndex = 0; candidateIndex < candidates.length; candidateIndex += 1) {
+          var candidate = candidates[candidateIndex];
+          var candidateText = normalizeSearchText(candidate.textContent || "");
+          if (candidateText && candidateText.indexOf(searchTerm) !== -1) {
+            return candidate;
+          }
+        }
+      }
+
+      return null;
+    }
+
+    function highlightSearchTarget(target) {
+      document.querySelectorAll(".frog-search-target").forEach(function (element) {
+        element.classList.remove("frog-search-target");
+      });
+
+      if (!target) {
+        return;
+      }
+
+      target.classList.add("frog-search-target");
+      window.setTimeout(function () {
+        target.classList.remove("frog-search-target");
+      }, 2200);
+    }
+
+    function applyPendingSearchNavigation(vm) {
+      var pendingNavigation = readPendingSearchNavigation();
+      if (!pendingNavigation) {
+        return;
+      }
+
+      if (pendingNavigation.path !== currentFileFromRoute(vm)) {
+        return;
+      }
+
+      var root = document.querySelector(".markdown-section");
+      var searchTerms = getSearchTerms(pendingNavigation.searchValue);
+      if (!root || !searchTerms.length) {
+        clearPendingSearchNavigation();
+        return;
+      }
+
+      var anchorId = pendingNavigation.anchorId || currentSearchAnchorId(vm);
+      var scopedCandidates = getScopedSearchCandidates(root, anchorId);
+      var fallbackCandidates = Array.prototype.slice.call(root.querySelectorAll(searchScopeSelector()));
+      var target = findMatchingSearchTarget(scopedCandidates, searchTerms) || findMatchingSearchTarget(fallbackCandidates, searchTerms);
+
+      clearPendingSearchNavigation();
+
+      if (!target) {
+        return;
+      }
+
+      window.requestAnimationFrame(function () {
+        target.scrollIntoView({
+          block: "center",
+          inline: "nearest",
+          behavior: "auto"
+        });
+        highlightSearchTarget(target);
+      });
+    }
+
     window.$docsify = {
       name: "FROG",
       repo: "Graiphic/FROG",
@@ -1002,7 +1277,9 @@
             });
 
             window.requestAnimationFrame(function () {
+              bindSearchResultNavigation();
               decorateSidebarWithToggles();
+              applyPendingSearchNavigation(vm);
             });
           });
         }
