@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="../../FROG logo.svg" alt="FROG logo" width="140" />
+  <img src="../../FROG logo.svg" alt="FROG logo" width="200" />
 </p>
 
 <h1>Conformance Case — 11 Public Interface Declaration Does Not Require Front-Panel Widget Existence</h1>

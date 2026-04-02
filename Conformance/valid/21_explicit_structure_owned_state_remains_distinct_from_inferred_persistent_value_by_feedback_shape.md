@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="../../FROG logo.svg" alt="FROG logo" width="140" />
+  <img src="../../FROG logo.svg" alt="FROG logo" width="200" />
 </p>
 
 <h1>Conformance Case — 21 Explicit Structure-Owned State Remains Distinct from Inferred Persistent Value by Feedback Shape</h1>

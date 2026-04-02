@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="../../../FROG logo.svg" alt="FROG logo" width="140" />
+  <img src="../../../FROG logo.svg" alt="FROG logo" width="200" />
 </p>
 
 <h1 align="center">Invalid Case — Invalid Top-Level Root Shape</h1>

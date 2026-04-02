@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="../../FROG logo.svg" alt="FROG logo" width="140" />
+  <img src="../../FROG logo.svg" alt="FROG logo" width="200" />
 </p>
 
 <h1>Conformance Case — 13 Explicit Diagram Participation Remains Distinct from Layout or Adjacency</h1>
