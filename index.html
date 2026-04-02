@@ -238,8 +238,10 @@
     }
 
     .frog-nav-entry > a,
+    .frog-nav-entry > button,
     .frog-nav-entry > p,
     .sidebar-nav li > a,
+    .sidebar-nav li > button,
     .sidebar-nav li > p {
       flex: 1 1 auto;
       min-width: 0;
@@ -249,9 +251,40 @@
       overflow-wrap: anywhere;
     }
 
+    .graiphic-nav-link,
+    .graiphic-nav-label-button {
+      color: var(--body-color);
+      background: transparent;
+      border: 0;
+      font: inherit;
+      font-size: 0.98rem;
+      font-weight: 500;
+      text-align: left;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .graiphic-nav-link:hover,
+    .graiphic-nav-label-button:hover {
+      color: var(--theme-color);
+      text-decoration: none;
+    }
+
+    .graiphic-nav-link.is-category,
+    .graiphic-nav-label-button.is-category {
+      font-weight: 600;
+    }
+
+    .graiphic-nav-link.is-active,
+    .graiphic-nav-label-button.is-active {
+      color: var(--theme-color);
+    }
+
     .frog-nav-branch > .frog-nav-entry > a,
+    .frog-nav-branch > .frog-nav-entry > button,
     .frog-nav-branch > .frog-nav-entry > p,
     .frog-nav-leaf > .frog-nav-entry > a,
+    .frog-nav-leaf > .frog-nav-entry > button,
     .frog-nav-leaf > .frog-nav-entry > p {
       padding-left: 0;
     }
@@ -263,10 +296,17 @@
     }
 
     .frog-nav-branch.is-active-trail > .frog-nav-entry > a,
+    .frog-nav-branch.is-active-trail > .frog-nav-entry > button,
     .frog-nav-branch.is-active-trail > .frog-nav-entry > p,
     .frog-nav-leaf.is-active-trail > .frog-nav-entry > a,
+    .frog-nav-leaf.is-active-trail > .frog-nav-entry > button,
     .frog-nav-leaf.is-active-trail > .frog-nav-entry > p {
       color: var(--theme-color);
+    }
+
+    .markdown-section a.frog-home-logo-link {
+      display: inline-block;
+      text-decoration: none;
     }
 
     .sidebar ul li a,
@@ -581,244 +621,243 @@
 
     ensureThemeToggle();
 
-    function normalizeDocPath(path) {
-      var normalized = path || "/Readme.md";
+    function buildKnownPathMap(navData) {
+      var map = {};
+      var searchPaths = navData && Array.isArray(navData.searchPaths) ? navData.searchPaths : [];
+
+      function registerKnownPath(rawPath) {
+        if (!rawPath) {
+          return;
+        }
+
+        var normalized = String(rawPath).replace(/\/+/g, "/");
+        if (normalized === "/") {
+          normalized = "/Readme.md";
+        }
+
+        if (!normalized.startsWith("/")) {
+          normalized = "/" + normalized;
+        }
+
+        map[normalized.toLowerCase()] = normalized;
+
+        if (/\.md$/i.test(normalized)) {
+          map[normalized.replace(/\.md$/i, "").toLowerCase()] = normalized;
+          map[normalized.replace(/\/Readme\.md$/i, "").toLowerCase() || "/"] = normalized;
+          map[normalized.replace(/\/Readme\.md$/i, "/Readme").toLowerCase()] = normalized;
+        }
+      }
+
+      searchPaths.forEach(registerKnownPath);
+      registerKnownPath("/Readme.md");
+      return map;
+    }
+
+    function normalizeDisplayPath(path) {
+      var normalized = String(path || "/Readme.md");
+
+      if (normalized.startsWith("#")) {
+        normalized = normalized.slice(1);
+      }
+
       normalized = normalized.split("?")[0].split("#")[0];
 
       if (!normalized.startsWith("/")) {
         normalized = "/" + normalized;
       }
 
-      if (!/\.md$/i.test(normalized)) {
-        if (!normalized.endsWith("/")) {
-          normalized += "/";
+      normalized = normalized.replace(/\/+/g, "/");
+
+      var knownPaths = window.__GRAIPHIC_KNOWN_PATHS__ || {};
+      var directMatch = knownPaths[normalized.toLowerCase()];
+      if (directMatch) {
+        return directMatch;
+      }
+
+      if (/\.(md|frog|py)$/i.test(normalized)) {
+        return normalized;
+      }
+
+      if (!normalized.endsWith("/")) {
+        var segments = normalized.split("/").filter(Boolean);
+        var lastSegment = segments.length ? segments[segments.length - 1] : "";
+
+        if (/^readme$/i.test(lastSegment)) {
+          normalized += ".md";
+        } else {
+          normalized += "/Readme.md";
         }
+      } else {
         normalized += "Readme.md";
       }
 
-      return normalized.replace(/\/+/g, "/");
+      normalized = normalized.replace(/\/+/g, "/");
+      return knownPaths[normalized.toLowerCase()] || normalized;
     }
 
     function currentFileFromRoute(vm) {
       var current = vm.route && (vm.route.file || vm.route.path) ? (vm.route.file || vm.route.path) : "/Readme.md";
-      return normalizeDocPath(current);
+      return normalizeDisplayPath(current);
     }
 
-    var sidebarToggleStorageKey = "graiphic-frog-sidebar-state";
+    function docsifyRouteForPath(path) {
+      var normalized = normalizeDisplayPath(path);
+      return normalized === "/Readme.md" ? "#/" : ("#" + normalized);
+    }
 
-    function readSidebarToggleState() {
-      try {
-        var rawState = window.localStorage.getItem(sidebarToggleStorageKey);
-        if (!rawState) {
-          return {};
-        }
-
-        var parsedState = JSON.parse(rawState);
-        return parsedState && typeof parsedState === "object" ? parsedState : {};
-      } catch (error) {
-        return {};
+    function displayDirectoryPrefix(path) {
+      var normalized = normalizeDisplayPath(path);
+      if (/\/Readme\.md$/i.test(normalized)) {
+        return normalized.replace(/Readme\.md$/i, "");
       }
+      return normalized.replace(/[^/]*$/, "");
     }
 
-    function writeSidebarToggleState(state) {
-      try {
-        window.localStorage.setItem(sidebarToggleStorageKey, JSON.stringify(state || {}));
-      } catch (error) {
+    function isBranchOpen(path, currentFile) {
+      var normalized = normalizeDisplayPath(path);
+      if (normalized === currentFile) {
+        return true;
       }
+      if (/\/Readme\.md$/i.test(normalized)) {
+        return currentFile.startsWith(displayDirectoryPrefix(normalized));
+      }
+      return false;
     }
 
-    function slugifySidebarLabel(label) {
-      return String(label || "")
-        .trim()
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-+|-+$/g, "");
+    function escapeHtml(text) {
+      return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
     }
 
-    function normalizeSidebarBranchHref(rawHref) {
-      if (!rawHref) {
-        return "";
+    var codeLanguageByExtension = {
+      ".frog": "json",
+      ".py": "python"
+    };
+
+    function inferCodeLanguage(path) {
+      var normalized = normalizeDisplayPath(path);
+      if (/\.frog$/i.test(normalized)) {
+        return codeLanguageByExtension[".frog"];
+      }
+      if (/\.py$/i.test(normalized)) {
+        return codeLanguageByExtension[".py"];
+      }
+      return "text";
+    }
+
+    function wrapCodeDocumentMarkdown(currentFile, sourceText) {
+      var normalizedPath = normalizeDisplayPath(currentFile);
+      var relativePath = normalizedPath.replace(/^\//, "");
+      var fileName = relativePath.split("/").pop() || relativePath;
+      var fence = sourceText.indexOf("```") === -1 ? "```" : "````";
+      var trimmedSource = String(sourceText || "").replace(/\r\n/g, "\n").replace(/\s+$/, "");
+
+      return [
+        "# " + fileName,
+        "",
+        "`" + relativePath + "`",
+        "",
+        fence + inferCodeLanguage(normalizedPath),
+        trimmedSource,
+        fence,
+        ""
+      ].join("\n");
+    }
+
+    function nodeStatePath(node, parentPath, index) {
+      if (node && node.path) {
+        return normalizeDisplayPath(node.path);
       }
 
-      var candidate = rawHref.trim();
-      if (candidate.startsWith("#/")) {
-        candidate = candidate.slice(1);
-      }
-
-      if (!candidate.startsWith("/")) {
-        return "";
-      }
-
-      return normalizeDocPath(candidate);
+      var keyPart = node && node.key ? String(node.key) : ("branch-" + (index || 0));
+      return "node:" + (parentPath ? (parentPath + "/" + keyPart) : keyPart).toLowerCase();
     }
 
-    function buildSidebarBranchKey(parentKey, label, rawHref, index) {
-      var normalizedHref = normalizeSidebarBranchHref(rawHref);
-      var keyPart = normalizedHref || ((slugifySidebarLabel(label) || "section") + "#" + index);
-      return parentKey ? (parentKey + ">" + keyPart) : keyPart;
-    }
-
-    function branchHasActiveTrail(branchElement, labelElement) {
-      if (!branchElement) {
+    function nodeContainsCurrentFile(node, currentFile) {
+      if (!node) {
         return false;
       }
 
-      if (branchElement.classList.contains("active")) {
+      if (node.path && isBranchOpen(node.path, currentFile)) {
         return true;
       }
 
-      if (labelElement && labelElement.classList.contains("active")) {
-        return true;
-      }
-
-      return !!branchElement.querySelector(":scope > ul .active");
-    }
-
-    function branchShouldBeOpen(branchKey, hasActiveTrail, toggleState) {
-      var branchState = toggleState ? toggleState[branchKey] : null;
-
-      if (branchState === "expanded") {
-        return true;
-      }
-
-      if (branchState === "collapsed") {
-        return false;
-      }
-
-      return hasActiveTrail;
-    }
-
-    function ensureSidebarEntryWrapper(item, labelElement) {
-      var entry = item.querySelector(":scope > .frog-nav-entry");
-      if (!entry) {
-        entry = document.createElement("div");
-        entry.className = "frog-nav-entry";
-        item.insertBefore(entry, labelElement);
-      }
-
-      if (labelElement.parentElement !== entry) {
-        entry.appendChild(labelElement);
-      }
-
-      return entry;
-    }
-
-    function ensureSidebarSpacer(entry) {
-      var spacer = entry.querySelector(":scope > .frog-nav-spacer");
-      var existingToggle = entry.querySelector(":scope > .frog-nav-toggle");
-
-      if (existingToggle) {
-        existingToggle.remove();
-      }
-
-      if (!spacer) {
-        spacer = document.createElement("span");
-        spacer.className = "frog-nav-spacer";
-        spacer.setAttribute("aria-hidden", "true");
-        entry.insertBefore(spacer, entry.firstChild);
-      }
-    }
-
-    function ensureSidebarToggle(entry) {
-      var toggle = entry.querySelector(":scope > .frog-nav-toggle");
-      var existingSpacer = entry.querySelector(":scope > .frog-nav-spacer");
-
-      if (existingSpacer) {
-        existingSpacer.remove();
-      }
-
-      if (!toggle) {
-        toggle = document.createElement("button");
-        toggle.className = "frog-nav-toggle";
-        toggle.type = "button";
-        entry.insertBefore(toggle, entry.firstChild);
-      }
-
-      return toggle;
-    }
-
-    function applySidebarBranchState(branchElement, isOpen, branchKey) {
-      var toggle = branchElement.querySelector(":scope > .frog-nav-entry > .frog-nav-toggle");
-      var childList = branchElement.querySelector(":scope > ul");
-
-      branchElement.classList.toggle("is-open", !!isOpen);
-      branchElement.classList.toggle("is-collapsed", !isOpen);
-
-      if (toggle) {
-        toggle.textContent = isOpen ? "-" : "+";
-        toggle.setAttribute("aria-expanded", String(!!isOpen));
-        toggle.setAttribute("aria-label", isOpen ? "Collapse section" : "Expand section");
-        toggle.setAttribute("title", isOpen ? "Collapse section" : "Expand section");
-        toggle.setAttribute("data-branch-key", branchKey);
-      }
-
-      if (childList) {
-        childList.hidden = !isOpen;
-      }
-    }
-
-    function decorateSidebarBranch(item, toggleState, parentKey, index) {
-      if (!(item instanceof HTMLElement) || item.tagName !== "LI") {
-        return;
-      }
-
-      var labelElement = item.querySelector(":scope > a, :scope > p");
-      if (!labelElement) {
-        return;
-      }
-
-      var entry = ensureSidebarEntryWrapper(item, labelElement);
-      var childList = item.querySelector(":scope > ul");
-      var branchKey = buildSidebarBranchKey(parentKey, labelElement.textContent, labelElement.getAttribute("href"), index);
-      var isActiveTrail = branchHasActiveTrail(item, labelElement);
-
-      item.dataset.branchKey = branchKey;
-      item.classList.toggle("is-active-trail", isActiveTrail);
-
-      if (childList) {
-        item.classList.add("frog-nav-branch");
-        item.classList.remove("frog-nav-leaf");
-
-        var toggle = ensureSidebarToggle(entry);
-        var isOpen = branchShouldBeOpen(branchKey, isActiveTrail, toggleState);
-        applySidebarBranchState(item, isOpen, branchKey);
-
-        Array.prototype.forEach.call(childList.children, function (childItem, childIndex) {
-          decorateSidebarBranch(childItem, toggleState, branchKey, childIndex);
-        });
-
-        return;
-      }
-
-      item.classList.remove("frog-nav-branch", "is-open", "is-collapsed");
-      item.classList.add("frog-nav-leaf");
-      ensureSidebarSpacer(entry);
-    }
-
-    function decorateSidebarWithToggles() {
-      var navRoot = document.querySelector(".sidebar-nav");
-      if (!navRoot) {
-        return;
-      }
-
-      var rootList = navRoot.querySelector(":scope > ul");
-      if (!rootList) {
-        return;
-      }
-
-      var toggleState = readSidebarToggleState();
-      navRoot.classList.add("frog-collapsible-sidebar");
-
-      Array.prototype.forEach.call(rootList.children, function (item, index) {
-        decorateSidebarBranch(item, toggleState, "root", index);
+      var children = Array.isArray(node.children) ? node.children : [];
+      return children.some(function (child) {
+        return nodeContainsCurrentFile(child, currentFile);
       });
+    }
 
-      if (navRoot.dataset.frogNavToggleBound === "true") {
+    function renderNavigationNodes(nodes, currentFile, depth, parentPath) {
+      if (!nodes || !nodes.length) {
+        return "";
+      }
+
+      var navState = window.__GRAIPHIC_NAV_STATE__ || { expandedPaths: {}, collapsedPaths: {} };
+      var listClass = depth === 0 ? "graiphic-nav-list" : "graiphic-nav-children";
+
+      return (
+        '<ul class="' + listClass + '">' +
+        nodes.map(function (node, index) {
+          var children = Array.isArray(node.children) ? node.children : [];
+          var hasChildren = children.length > 0;
+          var statePath = nodeStatePath(node, parentPath, index);
+          var active = !!node.path && normalizeDisplayPath(node.path) === currentFile;
+          var activeTrail = hasChildren && nodeContainsCurrentFile(node, currentFile);
+          var manuallyExpanded = !!navState.expandedPaths[statePath];
+          var manuallyCollapsed = !!navState.collapsedPaths[statePath];
+          var open = hasChildren && !manuallyCollapsed && (activeTrail || manuallyExpanded);
+          var itemClasses = [hasChildren ? "frog-nav-branch" : "frog-nav-leaf"];
+
+          if (hasChildren) {
+            itemClasses.push(open ? "is-open" : "is-collapsed");
+          }
+
+          if (active || activeTrail) {
+            itemClasses.push("is-active-trail");
+          }
+
+          if (active) {
+            itemClasses.push("is-active");
+          }
+
+          var toggleHtml = hasChildren
+            ? '<button class="frog-nav-toggle graiphic-nav-toggle-button" type="button" data-nav-path="' + escapeHtml(statePath) + '" aria-expanded="' + String(open) + '" aria-label="' + escapeHtml(open ? "Collapse section" : "Expand section") + '">' + (open ? "-" : "+") + "</button>"
+            : '<span class="frog-nav-spacer" aria-hidden="true"></span>';
+
+          var labelClass = "graiphic-nav-link " + (hasChildren ? "is-category" : "is-page") + (active ? " is-active" : "");
+          var labelHtml = "";
+
+          if (node.path) {
+            labelHtml =
+              '<a class="' + labelClass + '" href="' + docsifyRouteForPath(node.path) + '">' +
+                escapeHtml(node.title) +
+              "</a>";
+          } else {
+            labelHtml =
+              '<button class="' + labelClass + ' graiphic-nav-label-button' + (activeTrail ? " is-active" : "") + '" type="button" data-nav-path="' + escapeHtml(statePath) + '">' +
+                escapeHtml(node.title) +
+              "</button>";
+          }
+
+          var childrenHtml = open ? renderNavigationNodes(children, currentFile, depth + 1, statePath) : "";
+          return '<li class="' + itemClasses.join(" ") + '" data-nav-path="' + escapeHtml(statePath) + '"><div class="frog-nav-entry">' + toggleHtml + labelHtml + "</div>" + childrenHtml + "</li>";
+        }).join("") +
+        "</ul>"
+      );
+    }
+
+    function bindSidebarNavigation(vm, navRoot) {
+      if (!navRoot || navRoot.__graiphicBound) {
         return;
       }
 
       navRoot.addEventListener("click", function (event) {
-        var toggle = event.target.closest(".frog-nav-toggle[data-branch-key]");
+        var toggle = event.target.closest(".graiphic-nav-toggle-button[data-nav-path], .graiphic-nav-label-button[data-nav-path]");
         if (!toggle) {
           return;
         }
@@ -830,14 +869,134 @@
           return;
         }
 
-        var branchKey = toggle.getAttribute("data-branch-key");
-        var toggleState = readSidebarToggleState();
-        toggleState[branchKey] = branchElement.classList.contains("is-open") ? "collapsed" : "expanded";
-        writeSidebarToggleState(toggleState);
-        decorateSidebarWithToggles();
+        var path = toggle.getAttribute("data-nav-path");
+        var navState = window.__GRAIPHIC_NAV_STATE__ || (window.__GRAIPHIC_NAV_STATE__ = { expandedPaths: {}, collapsedPaths: {} });
+        var activeTrail = branchElement.classList.contains("is-active-trail");
+        var manuallyExpanded = !!navState.expandedPaths[path];
+        var manuallyCollapsed = !!navState.collapsedPaths[path];
+        var currentlyOpen = !manuallyCollapsed && (activeTrail || manuallyExpanded);
+
+        if (currentlyOpen) {
+          if (activeTrail) {
+            navState.collapsedPaths[path] = true;
+          } else {
+            delete navState.expandedPaths[path];
+          }
+        } else {
+          delete navState.collapsedPaths[path];
+          navState.expandedPaths[path] = true;
+        }
+
+        renderSidebarNavigation(vm);
       });
 
-      navRoot.dataset.frogNavToggleBound = "true";
+      navRoot.__graiphicBound = true;
+    }
+
+    function placeSidebarSearch(attempt) {
+      var sidebar = document.querySelector(".sidebar");
+      if (!sidebar) {
+        return;
+      }
+
+      var search = document.querySelector("div.search");
+      var appName = sidebar.querySelector(".app-name");
+
+      if (!search) {
+        if ((attempt || 0) < 12) {
+          window.setTimeout(function () {
+            placeSidebarSearch((attempt || 0) + 1);
+          }, 120);
+        }
+        return;
+      }
+
+      if (appName) {
+        if (search.previousElementSibling !== null || sidebar.firstElementChild !== search || search.nextElementSibling !== appName) {
+          sidebar.insertBefore(search, appName);
+        }
+        return;
+      }
+
+      if (sidebar.firstElementChild !== search) {
+        sidebar.insertBefore(search, sidebar.firstElementChild);
+      }
+    }
+
+    function renderSidebarNavigation(vm) {
+      var navData = window.__GRAIPHIC_NAV__;
+      if (!navData || !Array.isArray(navData.sections)) {
+        return;
+      }
+
+      var sidebar = document.querySelector(".sidebar");
+      if (!sidebar) {
+        return;
+      }
+
+      var navRoot = sidebar.querySelector(".sidebar-nav");
+      if (!navRoot) {
+        navRoot = document.createElement("nav");
+        navRoot.className = "sidebar-nav";
+        sidebar.appendChild(navRoot);
+      }
+
+      var currentFile = currentFileFromRoute(vm);
+      bindSidebarNavigation(vm, navRoot);
+
+      var html =
+        '<div class="graiphic-nav">' +
+        navData.sections.map(function (section) {
+          var children = Array.isArray(section.children) ? section.children : [];
+          var sectionTitle = section.title
+            ? '<div class="graiphic-nav-section-title">' + escapeHtml(section.title) + "</div>"
+            : "";
+
+          return (
+            '<section class="graiphic-nav-section">' +
+              sectionTitle +
+              renderNavigationNodes(children, currentFile, 0, null) +
+            "</section>"
+          );
+        }).join("") +
+        "</div>";
+
+      navRoot.innerHTML = html;
+      placeSidebarSearch(0);
+    }
+
+    function bindFrogLogoHomeLinks() {
+      document.querySelectorAll('.markdown-section img[alt="FROG logo"]').forEach(function (image) {
+        var existingLink = image.closest("a");
+        if (existingLink) {
+          existingLink.setAttribute("href", "#/");
+          existingLink.removeAttribute("target");
+          existingLink.removeAttribute("rel");
+          existingLink.classList.add("frog-home-logo-link");
+          return;
+        }
+
+        var link = document.createElement("a");
+        link.href = "#/";
+        link.className = "frog-home-logo-link";
+        image.parentNode.insertBefore(link, image);
+        link.appendChild(image);
+      });
+    }
+
+    function loadNavigationManifest() {
+      try {
+        var request = new XMLHttpRequest();
+        request.open("GET", "nav-tree.json", false);
+        request.send(null);
+
+        if (request.status >= 200 && request.status < 300 && request.responseText) {
+          return JSON.parse(request.responseText);
+        }
+      } catch (error) {
+      }
+
+      return { sections: [], searchPaths: [] };
     }
 
     function resolveLocalDocLink(rawHref, currentFile) {
@@ -862,18 +1021,13 @@
         return null;
       }
 
-      if (/\.md$/i.test(pathPart)) {
-      } else if (/\/$/.test(pathPart)) {
-        pathPart += "Readme.md";
-      } else if (!/\.[a-z0-9]+$/i.test(pathPart)) {
-        pathPart += "/Readme.md";
-      } else {
+      if (/\.[a-z0-9]+$/i.test(pathPart) && !/\.(md|frog|py)$/i.test(pathPart)) {
         return null;
       }
 
-      var currentDir = currentFile.replace(/[^/]*$/, "");
+      var currentDir = normalizeDisplayPath(currentFile).replace(/[^/]*$/, "");
       var resolved = new URL(pathPart, "https://frog.local" + currentDir).pathname.replace(/\/+/g, "/");
-      var docsifyHref = "#" + resolved;
+      var docsifyHref = docsifyRouteForPath(resolved);
 
       if (anchorPart) {
         docsifyHref += "?id=" + encodeURIComponent(anchorPart);
@@ -892,7 +1046,7 @@
         return null;
       }
 
-      return "#" + normalizeDocPath(currentFile) + "?id=" + encodeURIComponent(anchorId);
+      return docsifyRouteForPath(currentFile) + "?id=" + encodeURIComponent(anchorId);
     }
 
     function resolveLocalAssetUrl(rawUrl, currentFile) {
@@ -909,7 +1063,7 @@
         return null;
       }
 
-      var currentDir = currentFile.replace(/[^/]*$/, "");
+      var currentDir = normalizeDisplayPath(currentFile).replace(/[^/]*$/, "");
       var resolvedPath = new URL(rawUrl, "https://frog.local" + currentDir).pathname.replace(/\/+/g, "/");
       return new URL(resolvedPath.replace(/^\//, ""), window.location.href.split("#")[0]).href;
     }
@@ -935,7 +1089,7 @@
       var pathPart = parts[0];
       var anchorPart = parts.length > 1 ? parts[1] : "";
 
-      if (!pathPart || /\.md$/i.test(pathPart) || !/\.[a-z0-9]+$/i.test(pathPart)) {
+      if (!pathPart || /\.(md|frog|py)$/i.test(pathPart) || !/\.[a-z0-9]+$/i.test(pathPart)) {
         return null;
       }
 
@@ -1008,7 +1162,7 @@
       var searchParams = new URLSearchParams(routeParts.length > 1 ? routeParts[1] : "");
 
       return {
-        path: normalizeDocPath(routeParts[0]),
+        path: normalizeDisplayPath(routeParts[0]),
         anchorId: searchParams.get("id") || ""
       };
     }
@@ -1219,29 +1373,42 @@
       });
     }
 
+    var navigationManifest = loadNavigationManifest();
+    window.__GRAIPHIC_NAV__ = navigationManifest;
+    window.__GRAIPHIC_NAV_STATE__ = window.__GRAIPHIC_NAV_STATE__ || { expandedPaths: {}, collapsedPaths: {} };
+    window.__GRAIPHIC_KNOWN_PATHS__ = buildKnownPathMap(navigationManifest);
+
+    var navigationSearchPaths = (navigationManifest.searchPaths || []).map(function (path) {
+      return path === "/" ? "/Readme.md" : normalizeDisplayPath(path);
+    });
+
     window.$docsify = {
       name: "FROG",
       repo: "Graiphic/FROG",
       homepage: "Readme.md",
-      loadSidebar: true,
+      loadSidebar: false,
       loadNavbar: true,
       auto2top: true,
       subMaxLevel: 2,
       maxLevel: 3,
       relativePath: false,
       alias: {
-        "/.*/_sidebar.md": "/_sidebar.md",
         "/.*/_navbar.md": "/_navbar.md"
       },
       search: {
         placeholder: "Search the FROG spec",
         noData: "No matching section found.",
-        depth: 3
+        depth: 3,
+        paths: navigationSearchPaths
       },
       plugins: [
         function (hook, vm) {
           hook.beforeEach(function (markdown) {
             var currentFile = currentFileFromRoute(vm);
+
+            if (/\.(frog|py)$/i.test(currentFile)) {
+              return wrapCodeDocumentMarkdown(currentFile, markdown);
+            }
 
             return markdown.replace(
               /(<img\b[^>]*\bsrc=["'])([^"']+)(["'][^>]*>)/gi,
@@ -1290,7 +1457,8 @@
 
             window.requestAnimationFrame(function () {
               bindSearchResultNavigation();
-              decorateSidebarWithToggles();
+              renderSidebarNavigation(vm);
+              bindFrogLogoHomeLinks();
               applyPendingSearchNavigation(vm);
             });
           });
