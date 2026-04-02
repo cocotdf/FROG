@@ -118,6 +118,18 @@ foreach ($token in @(
 }
 
 foreach ($token in @(
+    '--nav-shift-left: 8.75rem;',
+    '.markdown-section pre,',
+    '.markdown-section pre > code,',
+    '.markdown-section pre > code *',
+    'color: var(--body-color) !important;'
+)) {
+    if ($indexHtml -notmatch [regex]::Escape($token)) {
+        throw "index.html is missing expected readability/nav token: $token"
+    }
+}
+
+foreach ($token in @(
     'window.location.replace',
     '#/'
 )) {

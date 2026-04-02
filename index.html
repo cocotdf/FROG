@@ -17,8 +17,8 @@
       --muted-color: #556861;
       --link-color: #1d7a46;
       --nav-safe-right: 12rem;
-      --nav-shift-left: 6.5rem;
-      --nav-shift-up: 0.45rem;
+      --nav-shift-left: 8.75rem;
+      --nav-shift-up: 0.55rem;
       --nav-link-size: 1.2rem;
       --nav-link-weight: 700;
       --sidebar-width: 330px;
@@ -323,13 +323,20 @@
       background: var(--code-bg);
     }
 
+    .markdown-section pre,
+    .markdown-section pre > code,
+    .markdown-section pre > code * {
+      color: var(--body-color) !important;
+    }
+
     .markdown-section pre {
       background: var(--panel-bg);
       border: 1px solid var(--surface-border);
       box-shadow: 0 12px 30px var(--surface-shadow);
     }
 
-    .markdown-section pre > code {
+    .markdown-section pre > code,
+    .markdown-section pre > code * {
       background: transparent;
     }
 
