@@ -554,108 +554,9 @@
                                                                                                      ]
                                                                                     },
                                                                                     {
-                                                                                        "key":  "conformance/invalid/100_ordinary_dataflow_connectivity_correspondence_must_not_be_collapsed_into_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
-                                                                                        "title":  "100 ordinary dataflow connectivity correspondence must not be collapsed into public interface boundary correspondence in canonical execution ir",
-                                                                                        "path":  "/Conformance/invalid/100_ordinary_dataflow_connectivity_correspondence_must_not_be_collapsed_into_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
-                                                                                        "kind":  "page",
-                                                                                        "children":  [
-
-                                                                                                     ]
-                                                                                    },
-                                                                                    {
-                                                                                        "key":  "conformance/invalid/102_control_structure_boundary_correspondence_must_not_be_collapsed_into_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
-                                                                                        "title":  "102 control structure boundary correspondence must not be collapsed into public interface boundary correspondence in canonical execution ir",
-                                                                                        "path":  "/Conformance/invalid/102_control_structure_boundary_correspondence_must_not_be_collapsed_into_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
-                                                                                        "kind":  "page",
-                                                                                        "children":  [
-
-                                                                                                     ]
-                                                                                    },
-                                                                                    {
-                                                                                        "key":  "conformance/invalid/104_explicit_state_boundary_correspondence_must_not_be_collapsed_into_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
-                                                                                        "title":  "104 explicit state boundary correspondence must not be collapsed into public interface boundary correspondence in canonical execution ir",
-                                                                                        "path":  "/Conformance/invalid/104_explicit_state_boundary_correspondence_must_not_be_collapsed_into_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
-                                                                                        "kind":  "page",
-                                                                                        "children":  [
-
-                                                                                                     ]
-                                                                                    },
-                                                                                    {
-                                                                                        "key":  "conformance/invalid/106_explicit_state_boundary_correspondence_must_not_be_collapsed_into_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
-                                                                                        "title":  "106 explicit state boundary correspondence must not be collapsed into ordinary dataflow connectivity correspondence in canonical execution ir",
-                                                                                        "path":  "/Conformance/invalid/106_explicit_state_boundary_correspondence_must_not_be_collapsed_into_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
-                                                                                        "kind":  "page",
-                                                                                        "children":  [
-
-                                                                                                     ]
-                                                                                    },
-                                                                                    {
-                                                                                        "key":  "conformance/invalid/108_control_structure_boundary_correspondence_must_not_be_collapsed_into_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
-                                                                                        "title":  "108 control structure boundary correspondence must not be collapsed into ordinary dataflow connectivity correspondence in canonical execution ir",
-                                                                                        "path":  "/Conformance/invalid/108_control_structure_boundary_correspondence_must_not_be_collapsed_into_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
-                                                                                        "kind":  "page",
-                                                                                        "children":  [
-
-                                                                                                     ]
-                                                                                    },
-                                                                                    {
-                                                                                        "key":  "conformance/invalid/110_primary_source_attribution_correspondence_must_not_be_collapsed_into_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
-                                                                                        "title":  "110 primary source attribution correspondence must not be collapsed into public interface boundary correspondence in canonical execution ir",
-                                                                                        "path":  "/Conformance/invalid/110_primary_source_attribution_correspondence_must_not_be_collapsed_into_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
-                                                                                        "kind":  "page",
-                                                                                        "children":  [
-
-                                                                                                     ]
-                                                                                    },
-                                                                                    {
-                                                                                        "key":  "conformance/invalid/112_primary_source_attribution_correspondence_must_not_be_collapsed_into_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
-                                                                                        "title":  "112 primary source attribution correspondence must not be collapsed into ordinary dataflow connectivity correspondence in canonical execution ir",
-                                                                                        "path":  "/Conformance/invalid/112_primary_source_attribution_correspondence_must_not_be_collapsed_into_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
-                                                                                        "kind":  "page",
-                                                                                        "children":  [
-
-                                                                                                     ]
-                                                                                    },
-                                                                                    {
-                                                                                        "key":  "conformance/invalid/114_primary_source_attribution_correspondence_must_not_be_collapsed_into_control_structure_boundary_correspondence_in_canonical_execution_ir.md",
-                                                                                        "title":  "114 primary source attribution correspondence must not be collapsed into control structure boundary correspondence in canonical execution ir",
-                                                                                        "path":  "/Conformance/invalid/114_primary_source_attribution_correspondence_must_not_be_collapsed_into_control_structure_boundary_correspondence_in_canonical_execution_ir.md",
-                                                                                        "kind":  "page",
-                                                                                        "children":  [
-
-                                                                                                     ]
-                                                                                    },
-                                                                                    {
-                                                                                        "key":  "conformance/invalid/116_primary_source_attribution_correspondence_must_not_be_collapsed_into_explicit_state_boundary_correspondence_in_canonical_execution_ir.md",
-                                                                                        "title":  "116 primary source attribution correspondence must not be collapsed into explicit state boundary correspondence in canonical execution ir",
-                                                                                        "path":  "/Conformance/invalid/116_primary_source_attribution_correspondence_must_not_be_collapsed_into_explicit_state_boundary_correspondence_in_canonical_execution_ir.md",
-                                                                                        "kind":  "page",
-                                                                                        "children":  [
-
-                                                                                                     ]
-                                                                                    },
-                                                                                    {
-                                                                                        "key":  "conformance/invalid/118_multi_contributor_attribution_correspondence_must_not_be_collapsed_into_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
-                                                                                        "title":  "118 multi contributor attribution correspondence must not be collapsed into public interface boundary correspondence in canonical execution ir",
-                                                                                        "path":  "/Conformance/invalid/118_multi_contributor_attribution_correspondence_must_not_be_collapsed_into_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
-                                                                                        "kind":  "page",
-                                                                                        "children":  [
-
-                                                                                                     ]
-                                                                                    },
-                                                                                    {
                                                                                         "key":  "conformance/invalid/12_public_interface_declaration_must_not_require_front_panel_widget_existence.md",
                                                                                         "title":  "12 public interface declaration must not require front panel widget existence",
                                                                                         "path":  "/Conformance/invalid/12_public_interface_declaration_must_not_require_front_panel_widget_existence.md",
-                                                                                        "kind":  "page",
-                                                                                        "children":  [
-
-                                                                                                     ]
-                                                                                    },
-                                                                                    {
-                                                                                        "key":  "conformance/invalid/120_multi_contributor_attribution_correspondence_must_not_be_collapsed_into_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
-                                                                                        "title":  "120 multi contributor attribution correspondence must not be collapsed into ordinary dataflow connectivity correspondence in canonical execution ir",
-                                                                                        "path":  "/Conformance/invalid/120_multi_contributor_attribution_correspondence_must_not_be_collapsed_into_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
                                                                                         "kind":  "page",
                                                                                         "children":  [
 
@@ -1049,6 +950,105 @@
                                                                                                      ]
                                                                                     },
                                                                                     {
+                                                                                        "key":  "conformance/invalid/100_ordinary_dataflow_connectivity_correspondence_must_not_be_collapsed_into_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
+                                                                                        "title":  "100 ordinary dataflow connectivity correspondence must not be collapsed into public interface boundary correspondence in canonical execution ir",
+                                                                                        "path":  "/Conformance/invalid/100_ordinary_dataflow_connectivity_correspondence_must_not_be_collapsed_into_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
+                                                                                        "kind":  "page",
+                                                                                        "children":  [
+
+                                                                                                     ]
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "conformance/invalid/102_control_structure_boundary_correspondence_must_not_be_collapsed_into_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
+                                                                                        "title":  "102 control structure boundary correspondence must not be collapsed into public interface boundary correspondence in canonical execution ir",
+                                                                                        "path":  "/Conformance/invalid/102_control_structure_boundary_correspondence_must_not_be_collapsed_into_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
+                                                                                        "kind":  "page",
+                                                                                        "children":  [
+
+                                                                                                     ]
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "conformance/invalid/104_explicit_state_boundary_correspondence_must_not_be_collapsed_into_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
+                                                                                        "title":  "104 explicit state boundary correspondence must not be collapsed into public interface boundary correspondence in canonical execution ir",
+                                                                                        "path":  "/Conformance/invalid/104_explicit_state_boundary_correspondence_must_not_be_collapsed_into_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
+                                                                                        "kind":  "page",
+                                                                                        "children":  [
+
+                                                                                                     ]
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "conformance/invalid/106_explicit_state_boundary_correspondence_must_not_be_collapsed_into_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
+                                                                                        "title":  "106 explicit state boundary correspondence must not be collapsed into ordinary dataflow connectivity correspondence in canonical execution ir",
+                                                                                        "path":  "/Conformance/invalid/106_explicit_state_boundary_correspondence_must_not_be_collapsed_into_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
+                                                                                        "kind":  "page",
+                                                                                        "children":  [
+
+                                                                                                     ]
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "conformance/invalid/108_control_structure_boundary_correspondence_must_not_be_collapsed_into_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
+                                                                                        "title":  "108 control structure boundary correspondence must not be collapsed into ordinary dataflow connectivity correspondence in canonical execution ir",
+                                                                                        "path":  "/Conformance/invalid/108_control_structure_boundary_correspondence_must_not_be_collapsed_into_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
+                                                                                        "kind":  "page",
+                                                                                        "children":  [
+
+                                                                                                     ]
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "conformance/invalid/110_primary_source_attribution_correspondence_must_not_be_collapsed_into_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
+                                                                                        "title":  "110 primary source attribution correspondence must not be collapsed into public interface boundary correspondence in canonical execution ir",
+                                                                                        "path":  "/Conformance/invalid/110_primary_source_attribution_correspondence_must_not_be_collapsed_into_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
+                                                                                        "kind":  "page",
+                                                                                        "children":  [
+
+                                                                                                     ]
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "conformance/invalid/112_primary_source_attribution_correspondence_must_not_be_collapsed_into_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
+                                                                                        "title":  "112 primary source attribution correspondence must not be collapsed into ordinary dataflow connectivity correspondence in canonical execution ir",
+                                                                                        "path":  "/Conformance/invalid/112_primary_source_attribution_correspondence_must_not_be_collapsed_into_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
+                                                                                        "kind":  "page",
+                                                                                        "children":  [
+
+                                                                                                     ]
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "conformance/invalid/114_primary_source_attribution_correspondence_must_not_be_collapsed_into_control_structure_boundary_correspondence_in_canonical_execution_ir.md",
+                                                                                        "title":  "114 primary source attribution correspondence must not be collapsed into control structure boundary correspondence in canonical execution ir",
+                                                                                        "path":  "/Conformance/invalid/114_primary_source_attribution_correspondence_must_not_be_collapsed_into_control_structure_boundary_correspondence_in_canonical_execution_ir.md",
+                                                                                        "kind":  "page",
+                                                                                        "children":  [
+
+                                                                                                     ]
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "conformance/invalid/116_primary_source_attribution_correspondence_must_not_be_collapsed_into_explicit_state_boundary_correspondence_in_canonical_execution_ir.md",
+                                                                                        "title":  "116 primary source attribution correspondence must not be collapsed into explicit state boundary correspondence in canonical execution ir",
+                                                                                        "path":  "/Conformance/invalid/116_primary_source_attribution_correspondence_must_not_be_collapsed_into_explicit_state_boundary_correspondence_in_canonical_execution_ir.md",
+                                                                                        "kind":  "page",
+                                                                                        "children":  [
+
+                                                                                                     ]
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "conformance/invalid/118_multi_contributor_attribution_correspondence_must_not_be_collapsed_into_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
+                                                                                        "title":  "118 multi contributor attribution correspondence must not be collapsed into public interface boundary correspondence in canonical execution ir",
+                                                                                        "path":  "/Conformance/invalid/118_multi_contributor_attribution_correspondence_must_not_be_collapsed_into_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
+                                                                                        "kind":  "page",
+                                                                                        "children":  [
+
+                                                                                                     ]
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "conformance/invalid/120_multi_contributor_attribution_correspondence_must_not_be_collapsed_into_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
+                                                                                        "title":  "120 multi contributor attribution correspondence must not be collapsed into ordinary dataflow connectivity correspondence in canonical execution ir",
+                                                                                        "path":  "/Conformance/invalid/120_multi_contributor_attribution_correspondence_must_not_be_collapsed_into_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
+                                                                                        "kind":  "page",
+                                                                                        "children":  [
+
+                                                                                                     ]
+                                                                                    },
+                                                                                    {
                                                                                         "key":  "conformance/invalid/illegal_feedback_without_explicit_memory.md",
                                                                                         "title":  "illegal feedback without explicit memory",
                                                                                         "path":  "/Conformance/invalid/illegal_feedback_without_explicit_memory.md",
@@ -1284,99 +1284,9 @@
                                                                                                      ]
                                                                                     },
                                                                                     {
-                                                                                        "key":  "conformance/valid/101_control_structure_boundary_correspondence_must_remain_distinct_from_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
-                                                                                        "title":  "101 control structure boundary correspondence must remain distinct from public interface boundary correspondence in canonical execution ir",
-                                                                                        "path":  "/Conformance/valid/101_control_structure_boundary_correspondence_must_remain_distinct_from_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
-                                                                                        "kind":  "page",
-                                                                                        "children":  [
-
-                                                                                                     ]
-                                                                                    },
-                                                                                    {
-                                                                                        "key":  "conformance/valid/103_explicit_state_boundary_correspondence_must_remain_distinct_from_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
-                                                                                        "title":  "103 explicit state boundary correspondence must remain distinct from public interface boundary correspondence in canonical execution ir",
-                                                                                        "path":  "/Conformance/valid/103_explicit_state_boundary_correspondence_must_remain_distinct_from_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
-                                                                                        "kind":  "page",
-                                                                                        "children":  [
-
-                                                                                                     ]
-                                                                                    },
-                                                                                    {
-                                                                                        "key":  "conformance/valid/105_explicit_state_boundary_correspondence_must_remain_distinct_from_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
-                                                                                        "title":  "105 explicit state boundary correspondence must remain distinct from ordinary dataflow connectivity correspondence in canonical execution ir",
-                                                                                        "path":  "/Conformance/valid/105_explicit_state_boundary_correspondence_must_remain_distinct_from_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
-                                                                                        "kind":  "page",
-                                                                                        "children":  [
-
-                                                                                                     ]
-                                                                                    },
-                                                                                    {
-                                                                                        "key":  "conformance/valid/107_control_structure_boundary_correspondence_must_remain_distinct_from_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
-                                                                                        "title":  "107 control structure boundary correspondence must remain distinct from ordinary dataflow connectivity correspondence in canonical execution ir",
-                                                                                        "path":  "/Conformance/valid/107_control_structure_boundary_correspondence_must_remain_distinct_from_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
-                                                                                        "kind":  "page",
-                                                                                        "children":  [
-
-                                                                                                     ]
-                                                                                    },
-                                                                                    {
-                                                                                        "key":  "conformance/valid/109_primary_source_attribution_correspondence_must_remain_distinct_from_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
-                                                                                        "title":  "109 primary source attribution correspondence must remain distinct from public interface boundary correspondence in canonical execution ir",
-                                                                                        "path":  "/Conformance/valid/109_primary_source_attribution_correspondence_must_remain_distinct_from_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
-                                                                                        "kind":  "page",
-                                                                                        "children":  [
-
-                                                                                                     ]
-                                                                                    },
-                                                                                    {
                                                                                         "key":  "conformance/valid/11_public_interface_declaration_does_not_require_front_panel_widget_existence.md",
                                                                                         "title":  "11 public interface declaration does not require front panel widget existence",
                                                                                         "path":  "/Conformance/valid/11_public_interface_declaration_does_not_require_front_panel_widget_existence.md",
-                                                                                        "kind":  "page",
-                                                                                        "children":  [
-
-                                                                                                     ]
-                                                                                    },
-                                                                                    {
-                                                                                        "key":  "conformance/valid/111_primary_source_attribution_correspondence_must_remain_distinct_from_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
-                                                                                        "title":  "111 primary source attribution correspondence must remain distinct from ordinary dataflow connectivity correspondence in canonical execution ir",
-                                                                                        "path":  "/Conformance/valid/111_primary_source_attribution_correspondence_must_remain_distinct_from_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
-                                                                                        "kind":  "page",
-                                                                                        "children":  [
-
-                                                                                                     ]
-                                                                                    },
-                                                                                    {
-                                                                                        "key":  "conformance/valid/113_primary_source_attribution_correspondence_must_remain_distinct_from_control_structure_boundary_correspondence_in_canonical_execution_ir.md",
-                                                                                        "title":  "113 primary source attribution correspondence must remain distinct from control structure boundary correspondence in canonical execution ir",
-                                                                                        "path":  "/Conformance/valid/113_primary_source_attribution_correspondence_must_remain_distinct_from_control_structure_boundary_correspondence_in_canonical_execution_ir.md",
-                                                                                        "kind":  "page",
-                                                                                        "children":  [
-
-                                                                                                     ]
-                                                                                    },
-                                                                                    {
-                                                                                        "key":  "conformance/valid/115_primary_source_attribution_correspondence_must_remain_distinct_from_explicit_state_boundary_correspondence_in_canonical_execution_ir.md",
-                                                                                        "title":  "115 primary source attribution correspondence must remain distinct from explicit state boundary correspondence in canonical execution ir",
-                                                                                        "path":  "/Conformance/valid/115_primary_source_attribution_correspondence_must_remain_distinct_from_explicit_state_boundary_correspondence_in_canonical_execution_ir.md",
-                                                                                        "kind":  "page",
-                                                                                        "children":  [
-
-                                                                                                     ]
-                                                                                    },
-                                                                                    {
-                                                                                        "key":  "conformance/valid/117_multi_contributor_attribution_correspondence_must_remain_distinct_from_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
-                                                                                        "title":  "117 multi contributor attribution correspondence must remain distinct from public interface boundary correspondence in canonical execution ir",
-                                                                                        "path":  "/Conformance/valid/117_multi_contributor_attribution_correspondence_must_remain_distinct_from_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
-                                                                                        "kind":  "page",
-                                                                                        "children":  [
-
-                                                                                                     ]
-                                                                                    },
-                                                                                    {
-                                                                                        "key":  "conformance/valid/119_multi_contributor_attribution_correspondence_must_remain_distinct_from_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
-                                                                                        "title":  "119 multi contributor attribution correspondence must remain distinct from ordinary dataflow connectivity correspondence in canonical execution ir",
-                                                                                        "path":  "/Conformance/valid/119_multi_contributor_attribution_correspondence_must_remain_distinct_from_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
                                                                                         "kind":  "page",
                                                                                         "children":  [
 
@@ -1773,6 +1683,96 @@
                                                                                         "key":  "conformance/valid/99_ordinary_dataflow_connectivity_correspondence_must_remain_distinct_from_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
                                                                                         "title":  "99 ordinary dataflow connectivity correspondence must remain distinct from public interface boundary correspondence in canonical execution ir",
                                                                                         "path":  "/Conformance/valid/99_ordinary_dataflow_connectivity_correspondence_must_remain_distinct_from_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
+                                                                                        "kind":  "page",
+                                                                                        "children":  [
+
+                                                                                                     ]
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "conformance/valid/101_control_structure_boundary_correspondence_must_remain_distinct_from_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
+                                                                                        "title":  "101 control structure boundary correspondence must remain distinct from public interface boundary correspondence in canonical execution ir",
+                                                                                        "path":  "/Conformance/valid/101_control_structure_boundary_correspondence_must_remain_distinct_from_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
+                                                                                        "kind":  "page",
+                                                                                        "children":  [
+
+                                                                                                     ]
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "conformance/valid/103_explicit_state_boundary_correspondence_must_remain_distinct_from_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
+                                                                                        "title":  "103 explicit state boundary correspondence must remain distinct from public interface boundary correspondence in canonical execution ir",
+                                                                                        "path":  "/Conformance/valid/103_explicit_state_boundary_correspondence_must_remain_distinct_from_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
+                                                                                        "kind":  "page",
+                                                                                        "children":  [
+
+                                                                                                     ]
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "conformance/valid/105_explicit_state_boundary_correspondence_must_remain_distinct_from_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
+                                                                                        "title":  "105 explicit state boundary correspondence must remain distinct from ordinary dataflow connectivity correspondence in canonical execution ir",
+                                                                                        "path":  "/Conformance/valid/105_explicit_state_boundary_correspondence_must_remain_distinct_from_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
+                                                                                        "kind":  "page",
+                                                                                        "children":  [
+
+                                                                                                     ]
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "conformance/valid/107_control_structure_boundary_correspondence_must_remain_distinct_from_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
+                                                                                        "title":  "107 control structure boundary correspondence must remain distinct from ordinary dataflow connectivity correspondence in canonical execution ir",
+                                                                                        "path":  "/Conformance/valid/107_control_structure_boundary_correspondence_must_remain_distinct_from_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
+                                                                                        "kind":  "page",
+                                                                                        "children":  [
+
+                                                                                                     ]
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "conformance/valid/109_primary_source_attribution_correspondence_must_remain_distinct_from_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
+                                                                                        "title":  "109 primary source attribution correspondence must remain distinct from public interface boundary correspondence in canonical execution ir",
+                                                                                        "path":  "/Conformance/valid/109_primary_source_attribution_correspondence_must_remain_distinct_from_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
+                                                                                        "kind":  "page",
+                                                                                        "children":  [
+
+                                                                                                     ]
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "conformance/valid/111_primary_source_attribution_correspondence_must_remain_distinct_from_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
+                                                                                        "title":  "111 primary source attribution correspondence must remain distinct from ordinary dataflow connectivity correspondence in canonical execution ir",
+                                                                                        "path":  "/Conformance/valid/111_primary_source_attribution_correspondence_must_remain_distinct_from_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
+                                                                                        "kind":  "page",
+                                                                                        "children":  [
+
+                                                                                                     ]
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "conformance/valid/113_primary_source_attribution_correspondence_must_remain_distinct_from_control_structure_boundary_correspondence_in_canonical_execution_ir.md",
+                                                                                        "title":  "113 primary source attribution correspondence must remain distinct from control structure boundary correspondence in canonical execution ir",
+                                                                                        "path":  "/Conformance/valid/113_primary_source_attribution_correspondence_must_remain_distinct_from_control_structure_boundary_correspondence_in_canonical_execution_ir.md",
+                                                                                        "kind":  "page",
+                                                                                        "children":  [
+
+                                                                                                     ]
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "conformance/valid/115_primary_source_attribution_correspondence_must_remain_distinct_from_explicit_state_boundary_correspondence_in_canonical_execution_ir.md",
+                                                                                        "title":  "115 primary source attribution correspondence must remain distinct from explicit state boundary correspondence in canonical execution ir",
+                                                                                        "path":  "/Conformance/valid/115_primary_source_attribution_correspondence_must_remain_distinct_from_explicit_state_boundary_correspondence_in_canonical_execution_ir.md",
+                                                                                        "kind":  "page",
+                                                                                        "children":  [
+
+                                                                                                     ]
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "conformance/valid/117_multi_contributor_attribution_correspondence_must_remain_distinct_from_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
+                                                                                        "title":  "117 multi contributor attribution correspondence must remain distinct from public interface boundary correspondence in canonical execution ir",
+                                                                                        "path":  "/Conformance/valid/117_multi_contributor_attribution_correspondence_must_remain_distinct_from_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
+                                                                                        "kind":  "page",
+                                                                                        "children":  [
+
+                                                                                                     ]
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "conformance/valid/119_multi_contributor_attribution_correspondence_must_remain_distinct_from_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
+                                                                                        "title":  "119 multi contributor attribution correspondence must remain distinct from ordinary dataflow connectivity correspondence in canonical execution ir",
+                                                                                        "path":  "/Conformance/valid/119_multi_contributor_attribution_correspondence_must_remain_distinct_from_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
                                                                                         "kind":  "page",
                                                                                         "children":  [
 
@@ -2421,18 +2421,7 @@
                         "/Conformance/invalid/06_widget_must_not_be_promoted_to_public_interface.md",
                         "/Conformance/invalid/08_widget_reference_must_not_be_treated_as_widget_value.md",
                         "/Conformance/invalid/10_front_panel_presence_must_not_be_treated_as_execution_meaning.md",
-                        "/Conformance/invalid/100_ordinary_dataflow_connectivity_correspondence_must_not_be_collapsed_into_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
-                        "/Conformance/invalid/102_control_structure_boundary_correspondence_must_not_be_collapsed_into_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
-                        "/Conformance/invalid/104_explicit_state_boundary_correspondence_must_not_be_collapsed_into_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
-                        "/Conformance/invalid/106_explicit_state_boundary_correspondence_must_not_be_collapsed_into_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
-                        "/Conformance/invalid/108_control_structure_boundary_correspondence_must_not_be_collapsed_into_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
-                        "/Conformance/invalid/110_primary_source_attribution_correspondence_must_not_be_collapsed_into_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
-                        "/Conformance/invalid/112_primary_source_attribution_correspondence_must_not_be_collapsed_into_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
-                        "/Conformance/invalid/114_primary_source_attribution_correspondence_must_not_be_collapsed_into_control_structure_boundary_correspondence_in_canonical_execution_ir.md",
-                        "/Conformance/invalid/116_primary_source_attribution_correspondence_must_not_be_collapsed_into_explicit_state_boundary_correspondence_in_canonical_execution_ir.md",
-                        "/Conformance/invalid/118_multi_contributor_attribution_correspondence_must_not_be_collapsed_into_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
                         "/Conformance/invalid/12_public_interface_declaration_must_not_require_front_panel_widget_existence.md",
-                        "/Conformance/invalid/120_multi_contributor_attribution_correspondence_must_not_be_collapsed_into_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
                         "/Conformance/invalid/14_layout_or_adjacency_must_not_be_treated_as_executable_participation.md",
                         "/Conformance/invalid/16_inferred_evaluation_order_must_not_be_treated_as_dependency_or_connectivity.md",
                         "/Conformance/invalid/18_layout_grouping_or_apparent_nesting_must_not_be_treated_as_structure_boundary.md",
@@ -2476,6 +2465,17 @@
                         "/Conformance/invalid/94_explicit_ui_sequencing_correspondence_must_not_be_collapsed_into_control_structure_boundary_correspondence_in_canonical_execution_ir.md",
                         "/Conformance/invalid/96_explicit_ui_sequencing_correspondence_must_not_be_collapsed_into_explicit_state_boundary_correspondence_in_canonical_execution_ir.md",
                         "/Conformance/invalid/98_explicit_ui_sequencing_correspondence_must_not_be_collapsed_into_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
+                        "/Conformance/invalid/100_ordinary_dataflow_connectivity_correspondence_must_not_be_collapsed_into_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
+                        "/Conformance/invalid/102_control_structure_boundary_correspondence_must_not_be_collapsed_into_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
+                        "/Conformance/invalid/104_explicit_state_boundary_correspondence_must_not_be_collapsed_into_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
+                        "/Conformance/invalid/106_explicit_state_boundary_correspondence_must_not_be_collapsed_into_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
+                        "/Conformance/invalid/108_control_structure_boundary_correspondence_must_not_be_collapsed_into_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
+                        "/Conformance/invalid/110_primary_source_attribution_correspondence_must_not_be_collapsed_into_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
+                        "/Conformance/invalid/112_primary_source_attribution_correspondence_must_not_be_collapsed_into_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
+                        "/Conformance/invalid/114_primary_source_attribution_correspondence_must_not_be_collapsed_into_control_structure_boundary_correspondence_in_canonical_execution_ir.md",
+                        "/Conformance/invalid/116_primary_source_attribution_correspondence_must_not_be_collapsed_into_explicit_state_boundary_correspondence_in_canonical_execution_ir.md",
+                        "/Conformance/invalid/118_multi_contributor_attribution_correspondence_must_not_be_collapsed_into_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
+                        "/Conformance/invalid/120_multi_contributor_attribution_correspondence_must_not_be_collapsed_into_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
                         "/Conformance/invalid/illegal_feedback_without_explicit_memory.md",
                         "/Conformance/invalid/interface_widget_role_confusion.md",
                         "/Conformance/invalid/ui_reference_without_ui_primitive.md",
@@ -2502,17 +2502,7 @@
                         "/Conformance/valid/04_stateful_feedback_delay.md",
                         "/Conformance/valid/05_public_interface_and_widget_participation_distinct.md",
                         "/Conformance/valid/07_widget_reference_remains_distinct_from_widget_value.md",
-                        "/Conformance/valid/101_control_structure_boundary_correspondence_must_remain_distinct_from_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
-                        "/Conformance/valid/103_explicit_state_boundary_correspondence_must_remain_distinct_from_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
-                        "/Conformance/valid/105_explicit_state_boundary_correspondence_must_remain_distinct_from_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
-                        "/Conformance/valid/107_control_structure_boundary_correspondence_must_remain_distinct_from_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
-                        "/Conformance/valid/109_primary_source_attribution_correspondence_must_remain_distinct_from_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
                         "/Conformance/valid/11_public_interface_declaration_does_not_require_front_panel_widget_existence.md",
-                        "/Conformance/valid/111_primary_source_attribution_correspondence_must_remain_distinct_from_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
-                        "/Conformance/valid/113_primary_source_attribution_correspondence_must_remain_distinct_from_control_structure_boundary_correspondence_in_canonical_execution_ir.md",
-                        "/Conformance/valid/115_primary_source_attribution_correspondence_must_remain_distinct_from_explicit_state_boundary_correspondence_in_canonical_execution_ir.md",
-                        "/Conformance/valid/117_multi_contributor_attribution_correspondence_must_remain_distinct_from_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
-                        "/Conformance/valid/119_multi_contributor_attribution_correspondence_must_remain_distinct_from_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
                         "/Conformance/valid/13_explicit_diagram_participation_remains_distinct_from_layout_or_adjacency.md",
                         "/Conformance/valid/15_explicit_connectivity_remains_distinct_from_inferred_evaluation_order.md",
                         "/Conformance/valid/17_explicit_structure_boundaries_remain_distinct_from_layout_grouping_or_nesting.md",
@@ -2557,6 +2547,16 @@
                         "/Conformance/valid/95_explicit_ui_sequencing_correspondence_must_remain_distinct_from_explicit_state_boundary_correspondence_in_canonical_execution_ir.md",
                         "/Conformance/valid/97_explicit_ui_sequencing_correspondence_must_remain_distinct_from_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
                         "/Conformance/valid/99_ordinary_dataflow_connectivity_correspondence_must_remain_distinct_from_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
+                        "/Conformance/valid/101_control_structure_boundary_correspondence_must_remain_distinct_from_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
+                        "/Conformance/valid/103_explicit_state_boundary_correspondence_must_remain_distinct_from_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
+                        "/Conformance/valid/105_explicit_state_boundary_correspondence_must_remain_distinct_from_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
+                        "/Conformance/valid/107_control_structure_boundary_correspondence_must_remain_distinct_from_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
+                        "/Conformance/valid/109_primary_source_attribution_correspondence_must_remain_distinct_from_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
+                        "/Conformance/valid/111_primary_source_attribution_correspondence_must_remain_distinct_from_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
+                        "/Conformance/valid/113_primary_source_attribution_correspondence_must_remain_distinct_from_control_structure_boundary_correspondence_in_canonical_execution_ir.md",
+                        "/Conformance/valid/115_primary_source_attribution_correspondence_must_remain_distinct_from_explicit_state_boundary_correspondence_in_canonical_execution_ir.md",
+                        "/Conformance/valid/117_multi_contributor_attribution_correspondence_must_remain_distinct_from_public_interface_boundary_correspondence_in_canonical_execution_ir.md",
+                        "/Conformance/valid/119_multi_contributor_attribution_correspondence_must_remain_distinct_from_ordinary_dataflow_connectivity_correspondence_in_canonical_execution_ir.md",
                         "/Conformance/valid/01_minimal_canonical_frog/case.frog",
                         "/Conformance/valid/01_minimal_canonical_frog/Readme.md",
                         "/Conformance/valid/02_optional_sections_absent_is_still_valid/case.frog",
