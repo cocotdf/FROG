@@ -1,3 +1,9 @@
+<div class="go-pages-link" data-render-target="github">
+  <a href="https://graiphic.github.io/FROG/">
+    <img src="./assets/open-github-pages-banner.svg" alt="Open the GitHub Pages version" />
+  </a>
+</div>
+
 <p align="center">
   <img src="FROG logo.svg" alt="FROG logo" width="140" />
 </p>

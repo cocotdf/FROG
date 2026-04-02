@@ -9,6 +9,7 @@ $requiredFiles = @(
     "_sidebar.md",
     "_navbar.md",
     "Readme.md",
+    "assets/open-github-pages-banner.svg",
     "scripts/build-sidebar.ps1"
 )
 
@@ -50,6 +51,9 @@ $navbar = Get-Content -LiteralPath (Join-Path $repoRoot "_navbar.md") -Raw
 $notFound = Get-Content -LiteralPath (Join-Path $repoRoot "404.html") -Raw
 
 foreach ($token in @(
+    '<div class="go-pages-link" data-render-target="github">',
+    'https://graiphic.github.io/FROG/',
+    './assets/open-github-pages-banner.svg',
     "FROG",
     "Free Open Graphical Language",
     "repository structure",
@@ -65,6 +69,7 @@ foreach ($token in @(
     'homepage: "Readme.md"',
     'loadSidebar: true',
     'loadNavbar: true',
+    '.markdown-section .go-pages-link',
     'function resolveSamePageAnchorHref',
     'function resolveLocalAssetUrl',
     'function resolveLocalDocLink',
