@@ -1,20 +1,20 @@
 <p align="center">
-  <img src="../FROG logo.svg" alt="FROG logo" width="200" />
+  <img src="../FROG logo.svg" alt="FROG logo" width="140" />
 </p>
 
-<h1 align="center">FROG Execution IR Schema</h1>
+<h1 align="center">FROG IR Schema Posture</h1>
 
 <p align="center">
-  <strong>Schema posture and machine-checkable structural validation surface for the canonical FROG Execution IR Document</strong><br />
+  <strong>Normative schema posture for the canonical JSON Execution IR Document</strong><br/>
   <em>FROG — Free Open Graphical Language</em>
 </p>
 
-<hr />
+<hr/>
 
 <h2>Contents</h2>
 <ul>
   <li><a href="#overview">1. Overview</a></li>
-  <li><a href="#why-this-document-exists">2. Why this Document Exists</a></li>
+  <li><a href="#why-this-document-exists">2. Why This Document Exists</a></li>
   <li><a href="#scope">3. Scope</a></li>
   <li><a href="#relation-with-other-ir-documents">4. Relation with Other IR Documents</a></li>
   <li><a href="#normative-posture">5. Normative Posture</a></li>
@@ -29,20 +29,19 @@
   <li><a href="#connection-category-posture">14. Connection Category Posture</a></li>
   <li><a href="#region-category-posture">15. Region Category Posture</a></li>
   <li><a href="#source-map-and-correspondence-posture">16. Source Map and Correspondence Posture</a></li>
-  <li><a href="#referential-integrity-boundary">17. Referential Integrity Boundary</a></li>
-  <li><a href="#extensibility-posture">18. Extensibility Posture</a></li>
-  <li><a href="#validation-usage">19. Validation Usage</a></li>
-  <li><a href="#conformance-reading-rule">20. Conformance Reading Rule</a></li>
-  <li><a href="#out-of-scope">21. Out of Scope</a></li>
-  <li><a href="#summary">22. Summary</a></li>
+  <li><a href="#identity-and-recoverability-posture">17. Identity and Recoverability Posture</a></li>
+  <li><a href="#schema-validity-versus-architectural-validity">18. Schema Validity Versus Architectural Validity</a></li>
+  <li><a href="#forbidden-misreadings">19. Forbidden Misreadings</a></li>
+  <li><a href="#relation-with-lowering-and-backend-contract">20. Relation with Lowering and Backend Contract</a></li>
+  <li><a href="#summary">21. Summary</a></li>
 </ul>
 
-<hr />
+<hr/>
 
 <h2 id="overview">1. Overview</h2>
 
 <p>
-This document defines the schema posture for the <strong>canonical FROG Execution IR Document</strong> in base v0.1.
+This document defines the schema posture for the canonical FROG Execution IR Document in base v0.1.
 </p>
 
 <p>
@@ -52,64 +51,77 @@ This document defines how that canonical JSON form is validated structurally.
 </p>
 
 <p>
-Accordingly, the IR schema exists to provide:
+Accordingly, the schema exists to provide:
 </p>
 
 <ul>
-  <li>a public validation surface for the canonical Execution IR Document,</li>
-  <li>a stable machine-checkable structural contract for tools and tests,</li>
-  <li>a portable baseline for inspection, caching, comparison, and conformance checking,</li>
-  <li>a schema boundary that remains upstream of lowering and runtime-private realization.</li>
+  <li>a machine-checkable structural boundary for canonical JSON IR emission,</li>
+  <li>a stable validation surface for interchange, tooling, regression testing, and conformance reasoning,</li>
+  <li>a companion to the architectural, derivation, identity, and construction law of the IR layer,</li>
+  <li>a disciplined boundary between canonical open IR and later downstream specialization.</li>
 </ul>
+
+<p>
+The schema is therefore part of the open IR corridor:
+</p>
 
 <pre><code>validated program meaning
-      -&gt;
+   -&gt;
 canonical Execution IR Document
-      -&gt;
-canonical JSON serialization
-      -&gt;
-schema validation
-      -&gt;
-later lowering / specialization
-</code></pre>
-
-<hr />
-
-<h2 id="why-this-document-exists">2. Why this Document Exists</h2>
+   -&gt;
+canonical JSON validation
+   -&gt;
+later lowering
+   -&gt;
+backend-facing handoff
+   -&gt;
+private realization</code></pre>
 
 <p>
-Without a schema surface, a canonical JSON requirement remains incomplete.
-Tools may agree that a canonical JSON form exists while still disagreeing about:
+This document does not say that JSON schema replaces architectural law.
+It says that canonical JSON IR must be machine-checkable in a way that remains aligned with architectural law.
+</p>
+
+<hr/>
+
+<h2 id="why-this-document-exists">2. Why This Document Exists</h2>
+
+<p>
+A canonical open IR is only durable if it is:
 </p>
 
 <ul>
-  <li>which top-level categories are mandatory,</li>
-  <li>which category names are stable,</li>
-  <li>how one execution unit is represented,</li>
-  <li>how objects, connections, regions, attribution, and correspondence are carried,</li>
-  <li>which structural mistakes count as invalid emitted IR.</li>
+  <li>architecturally defined,</li>
+  <li>derivable from validated meaning,</li>
+  <li>recoverable and attributable,</li>
+  <li>materially constructible,</li>
+  <li>machine-checkable as a canonical artifact.</li>
 </ul>
 
 <p>
-This document exists to prevent that ambiguity.
-It makes the Execution IR boundary not only architecturally defined, but also <strong>machine-checkable</strong>.
+Without a schema posture, the canonical JSON form would drift into:
 </p>
+
+<ul>
+  <li>implementation-specific payload conventions,</li>
+  <li>unstated omissions,</li>
+  <li>shape ambiguity,</li>
+  <li>non-portable inspection tooling,</li>
+  <li>backend-driven accidental formats.</li>
+</ul>
 
 <p>
-In other words:
+This document therefore exists to ensure that:
 </p>
 
-<pre><code>Execution IR.md
-   -&gt; what the canonical open IR is
+<ul>
+  <li>the canonical JSON Execution IR form is a real public artifact,</li>
+  <li>implementations can be compared at the structural JSON boundary,</li>
+  <li>construction remains aligned with a machine-checkable target,</li>
+  <li>schema validity is clearly separated from deeper architectural validity.</li>
+</ul>
 
-Construction rules.md
-   -&gt; how the canonical open IR document is built
-
-Schema.md
-   -&gt; how the canonical JSON form is validated structurally
-</code></pre>
-
-<hr />
+<hr/>
 
 <h2 id="scope">3. Scope</h2>
 
@@ -118,43 +130,63 @@ This document defines:
 </p>
 
 <ul>
-  <li>the role of the IR schema in the FROG stack,</li>
-  <li>the normative posture of the machine-checkable schema,</li>
-  <li>the relationship between architectural IR and canonical JSON payload validation,</li>
-  <li>the structural categories that a conforming canonical IR document must expose,</li>
-  <li>the intended validation boundary of the schema artifacts published in <code>IR/schema/</code>.</li>
+  <li>the normative posture of the canonical JSON IR schema artifacts,</li>
+  <li>what structural categories the schema validates,</li>
+  <li>how the canonical IR document family is framed in JSON,</li>
+  <li>the required presence of the principal top-level and execution-unit categories in base v0.1,</li>
+  <li>the posture of <code>source_map</code> and <code>correspondence</code> as explicit schema-validated record arrays,</li>
+  <li>the distinction between schema-validity and deeper architectural validity.</li>
 </ul>
 
 <p>
-This document does <strong>not</strong> define:
+This document does not define:
 </p>
 
 <ul>
-  <li>the semantic meaning of FROG programs,</li>
-  <li>the derivation obligations from source to IR,</li>
-  <li>the full procedural build rules for constructing IR documents,</li>
-  <li>the complete identity and mapping contract,</li>
-  <li>lowering rules,</li>
-  <li>backend contracts,</li>
-  <li>runtime-private representations.</li>
+  <li>validated language meaning,</li>
+  <li>the full execution semantics of any object family,</li>
+  <li>the full derivation law from meaning to IR,</li>
+  <li>the full identity and recoverability law in isolation,</li>
+  <li>the full material construction procedure for every implementation,</li>
+  <li>backend-specific lowered forms,</li>
+  <li>runtime-private execution artifacts.</li>
 </ul>
 
-<hr />
+<hr/>
 
 <h2 id="relation-with-other-ir-documents">4. Relation with Other IR Documents</h2>
 
 <p>
-The ownership split is:
+This document MUST be read together with the rest of the IR layer.
 </p>
 
-<ul>
-  <li><code>Execution IR.md</code> defines the architectural identity of the canonical open IR.</li>
-  <li><code>Construction rules.md</code> defines how a conforming canonical IR document is built.</li>
-  <li><code>Derivation rules.md</code> defines what must correspond between validated meaning and IR content.</li>
-  <li><code>Identity and Mapping.md</code> defines recoverability and cross-layer identity obligations.</li>
-  <li><code>Schema.md</code> defines the posture of machine-checkable structural validation for the canonical JSON IR form.</li>
-  <li><code>IR/schema/</code> contains the actual machine-checkable schema artifacts.</li>
-</ul>
+<p>
+Ownership remains:
+</p>
+
+<pre><code>Execution IR.md
+   -&gt; architectural identity of the canonical open IR
+
+Derivation rules.md
+   -&gt; what must correspond from validated meaning to IR content
+
+Identity and Mapping.md
+   -&gt; attribution, correspondence, and recoverability law
+
+Construction rules.md
+   -&gt; how conforming canonical IR payloads are materially built
+
+Schema.md
+   -&gt; schema posture for machine-checkable structural validation
+
+IR/schema/
+   -&gt; machine-checkable schema artifacts
+
+Lowering.md
+   -&gt; later target-oriented specialization
+
+Backend contract.md
+   -&gt; later backend-facing handoff</code></pre>
 
 <p>
 This document therefore MUST be read as a schema companion to the architectural and construction material rather than as a replacement for them.
@@ -163,6 +195,12 @@ This document therefore MUST be read as a schema companion to the architectural 
 <pre><code>Architecture
    -&gt; Execution IR.md
 
+Derivation
+   -&gt; Derivation rules.md
+
+Identity / recoverability
+   -&gt; Identity and Mapping.md
+
 Construction
    -&gt; Construction rules.md
 
@@ -170,15 +208,14 @@ Schema posture
    -&gt; Schema.md
 
 Machine-checkable schema
-   -&gt; IR/schema/
-</code></pre>
+   -&gt; IR/schema/</code></pre>
 
-<hr />
+<hr/>
 
 <h2 id="normative-posture">5. Normative Posture</h2>
 
 <p>
-The schema artifacts published in <code>IR/schema/</code> are <strong>normative for structural validation of the canonical JSON Execution IR Document</strong>.
+The schema artifacts published in <code>IR/schema/</code> are normative for structural validation of the canonical JSON Execution IR Document in the matching schema version.
 </p>
 
 <p>
@@ -186,10 +223,10 @@ Accordingly:
 </p>
 
 <ul>
-  <li>a conforming implementation MUST be able to emit a canonical JSON Execution IR Document that satisfies the published schema,</li>
+  <li>a conforming implementation MUST be able to emit a canonical JSON Execution IR Document that satisfies the published schema for the claimed version,</li>
   <li>a payload that fails the published schema MUST NOT be claimed as a schema-valid canonical Execution IR Document for that schema version,</li>
-  <li>schema validity alone does not imply full semantic validity,</li>
-  <li>schema compliance must be interpreted together with the rest of the IR and Language specifications.</li>
+  <li>schema validity alone does not imply full semantic validity, derivation correctness, or architectural sufficiency,</li>
+  <li>schema compliance MUST be interpreted together with the rest of the IR and Language specifications.</li>
 </ul>
 
 <p>
@@ -197,133 +234,180 @@ The schema is therefore:
 </p>
 
 <ul>
-  <li>normative for structural form,</li>
-  <li>not sufficient by itself for full semantic conformance,</li>
-  <li>upstream of lowering and runtime-private realization.</li>
+  <li>normative for structural JSON validity,</li>
+  <li>non-sufficient for full architectural correctness,</li>
+  <li>downstream from derivation law,</li>
+  <li>upstream from lowering and backend-facing specialization.</li>
 </ul>
 
-<hr />
+<hr/>
 
 <h2 id="what-the-schema-validates">6. What the Schema Validates</h2>
 
 <p>
-The IR schema validates the structural form of the canonical JSON Execution IR Document.
+The schema validates the structural JSON boundary of the canonical Execution IR Document.
 </p>
 
 <p>
-At minimum, that includes:
+In base v0.1, this includes at least:
 </p>
 
 <ul>
-  <li>top-level document classification,</li>
-  <li>IR version presence,</li>
-  <li>document identity presence,</li>
-  <li>presence of exactly one execution unit category in base v0.1,</li>
-  <li>presence and structural category of objects,</li>
-  <li>presence and structural category of connections,</li>
-  <li>presence and structural category of regions,</li>
-  <li>presence and structural category of source attribution support,</li>
-  <li>presence and structural category of correspondence support,</li>
-  <li>basic required fields for category-level validation,</li>
-  <li>published discriminators and enumerations where the base schema defines them explicitly.</li>
+  <li>top-level document shape,</li>
+  <li>required document categories,</li>
+  <li>execution-unit shape,</li>
+  <li>required execution-unit arrays and records,</li>
+  <li>object, connection, and region record families,</li>
+  <li>identifier-bearing fields where published,</li>
+  <li>source attribution and correspondence support categories,</li>
+  <li>enum-style structural category restrictions where published by the schema artifacts.</li>
 </ul>
 
 <p>
-The schema may also validate selected identifier-bearing records, endpoint shapes, required arrays, required maps, and selected conservative extension points where the schema layer publishes them explicitly.
+The schema therefore answers questions such as:
 </p>
 
-<hr />
+<ul>
+  <li>Is this a structurally valid canonical JSON Execution IR payload?</li>
+  <li>Does the execution unit include the required major categories?</li>
+  <li>Are object, connection, region, source-map, and correspondence carriers present at the required structural level?</li>
+  <li>Do records satisfy the machine-checkable field and category constraints of the claimed schema version?</li>
+</ul>
+
+<hr/>
 
 <h2 id="what-the-schema-does-not-validate">7. What the Schema Does Not Validate</h2>
 
 <p>
-The IR schema does not replace semantic validation.
-Even when a payload is schema-valid, the following may still require separate validation logic:
+The schema does not validate everything that matters.
+</p>
+
+<p>
+The schema does not by itself prove:
 </p>
 
 <ul>
-  <li>type meaning beyond structural encoding,</li>
-  <li>primitive legality,</li>
-  <li>structure-family semantic legality,</li>
-  <li>cycle validity,</li>
-  <li>port-type compatibility,</li>
-  <li>region behavior legality,</li>
-  <li>cross-record identity uniqueness beyond the guarantees of the chosen schema constraints,</li>
-  <li>full recoverability obligations,</li>
-  <li>lowering legality,</li>
-  <li>backend-specific requirements.</li>
+  <li>that semantic validation upstream was correct,</li>
+  <li>that derivation preserved validated meaning correctly,</li>
+  <li>that identity and mapping obligations were satisfied in the strong architectural sense,</li>
+  <li>that all category distinctions remain recoverable in the way required by the IR architecture,</li>
+  <li>that a schema-valid payload is suitable for every later lowering route,</li>
+  <li>that a backend-facing contract derived later will be correct.</li>
 </ul>
 
+<p>
+In particular:
+</p>
+
 <pre><code>schema-valid
-   !=
-semantically valid by itself
+   does not imply
+semantically valid
 
 schema-valid
-   !=
-lowering-ready by itself
+   does not imply
+architecturally sufficient
 
 schema-valid
-   !=
-runtime-private correctness proof
-</code></pre>
+   does not imply
+identity-correct in every deeper sense
 
-<hr />
+schema-valid
+   does not imply
+lowering-correct
+
+schema-valid
+   does not imply
+backend-correct</code></pre>
+
+<p>
+The schema validates structural admissibility of the canonical JSON form.
+It does not replace the rest of the specification.
+</p>
+
+<hr/>
 
 <h2 id="canonical-document-boundary">8. Canonical Document Boundary</h2>
 
 <p>
-The schema validates the <strong>canonical Execution IR Document</strong> at the open IR boundary.
-</p>
-
-<p>
-It does not validate:
+In base v0.1, the canonical JSON IR posture is intentionally conservative:
 </p>
 
 <ul>
-  <li>the canonical <code>.frog</code> source,</li>
-  <li>the IDE Program Model,</li>
-  <li>private in-memory compiler forms,</li>
-  <li>private scheduler graphs,</li>
-  <li>backend-private lowered forms,</li>
-  <li>runtime-private execution artifacts.</li>
+  <li>one canonical Execution IR Document,</li>
+  <li>one execution unit inside that document,</li>
+  <li>one principal open-boundary document family,</li>
+  <li>one primary schema artifact rooted at the document level.</li>
 </ul>
 
 <p>
-This boundary is important.
-The schema protects the open IR surface from being silently replaced by implementation-private payloads.
+That posture exists so the open IR boundary remains:
 </p>
 
-<hr />
+<ul>
+  <li>portable,</li>
+  <li>inspectable,</li>
+  <li>diffable,</li>
+  <li>stable across conforming implementations.</li>
+</ul>
+
+<p>
+The canonical document boundary is therefore not:
+</p>
+
+<ul>
+  <li>a bag of backend-private fragments,</li>
+  <li>a runtime snapshot,</li>
+  <li>a private scheduler graph dump,</li>
+  <li>a target-family-specific lowered artifact.</li>
+</ul>
+
+<hr/>
 
 <h2 id="canonical-json-posture">9. Canonical JSON Posture</h2>
 
 <p>
-The canonical open wire format of the Execution IR is JSON.
-The schema published in <code>IR/schema/</code> validates that canonical JSON form.
+The preferred base v0.1 canonical posture is explicit and regular.
 </p>
 
 <p>
-This does <strong>not</strong> mean that implementations must use JSON internally.
-It means that:
+At the JSON boundary, the canonical Execution IR Document SHOULD expose clearly separated categories rather than relying on positional conventions or implementation-private packing.
+</p>
+
+<p>
+The preferred posture is:
+</p>
+
+<pre><code>{
+  "document_id": "...",
+  "unit": {
+    "id": "...",
+    "objects": [ ... ],
+    "connections": [ ... ],
+    "regions": [ ... ],
+    "source_map": [ ... ],
+    "correspondence": [ ... ],
+    "metadata": { ... }
+  }
+}</code></pre>
+
+<p>
+The exact schema-owned fields and constraints belong to the published JSON Schema artifacts.
+The architectural posture here is that canonical JSON IR remains explicit, stable, and category-oriented.
+</p>
+
+<p>
+This posture supports:
 </p>
 
 <ul>
-  <li>the open conformance-visible emitted form is canonical JSON,</li>
-  <li>the schema validates that emitted form,</li>
-  <li>private internal forms remain allowed but non-normative at the open IR boundary.</li>
+  <li>ordinary JSON validation tools,</li>
+  <li>repository diffability,</li>
+  <li>portable inspection,</li>
+  <li>clear separation between execution structure and attribution support structure,</li>
+  <li>future lowering without forcing lowering details into the canonical open IR payload.</li>
 </ul>
 
-<pre><code>internal implementation form
-      MAY differ
-
-canonical open IR form
-      MUST be JSON
-
-IR/schema/
-      validates that canonical JSON form
-</code></pre>
-
-<hr />
+<hr/>
 
 <h2 id="schema-family">10. Schema Family</h2>
 
@@ -337,18 +421,21 @@ The base v0.1 IR schema family is rooted in:
 
 <p>
 That file is the primary machine-checkable schema artifact for the canonical Execution IR Document in base v0.1.
-Future versions MAY add:
+</p>
+
+<p>
+Future versions MAY introduce:
 </p>
 
 <ul>
   <li>versioned schema families,</li>
   <li>split component schemas,</li>
   <li>referenced sub-schemas,</li>
-  <li>future schema bundles for later IR evolution.</li>
+  <li>later schema bundles for future IR evolution.</li>
 </ul>
 
 <p>
-For base v0.1, the preferred posture is conservative:
+For base v0.1, the posture remains conservative:
 </p>
 
 <ul>
@@ -357,139 +444,175 @@ For base v0.1, the preferred posture is conservative:
   <li>one execution-unit model at the open boundary.</li>
 </ul>
 
-<hr />
+<hr/>
 
 <h2 id="top-level-document-categories">11. Top-Level Document Categories</h2>
 
 <p>
-At the top level, the schema MUST validate a document equivalent in category to:
+At the top level, the canonical JSON IR document MUST expose a document-level identity boundary and an execution-unit carrier compatible with the published schema family.
+</p>
+
+<p>
+The top-level posture exists so that:
 </p>
 
 <ul>
-  <li><code>ir_version</code></li>
-  <li><code>kind</code></li>
-  <li><code>document_id</code></li>
-  <li><code>unit</code></li>
+  <li>the IR artifact is identifiable as one canonical document,</li>
+  <li>the execution-bearing content is grouped as one explicit unit in base v0.1,</li>
+  <li>document identity remains distinct from unit identity,</li>
+  <li>later tooling can reason about the document as an artifact rather than only about anonymous arrays.</li>
 </ul>
 
 <p>
-The schema MAY also allow conservative document-level metadata when that metadata remains execution-relevant and non-semantic.
+A conforming implementation MUST NOT collapse document identity and execution-unit identity into one ambiguous structural role if the published schema version keeps them distinct.
 </p>
 
-<p>
-These categories exist to guarantee that the payload is clearly:
-</p>
-
-<ul>
-  <li>identified as IR,</li>
-  <li>versioned,</li>
-  <li>document-addressable,</li>
-  <li>rooted in a single execution-unit container.</li>
-</ul>
-
-<p>
-A payload lacking those top-level categories MUST NOT be treated as a conforming canonical Execution IR Document for base v0.1.
-</p>
-
-<hr />
+<hr/>
 
 <h2 id="execution-unit-categories">12. Execution Unit Categories</h2>
 
 <p>
-Within the top-level document, the schema MUST validate one execution unit category containing at minimum:
+The execution unit is the principal structural container of canonical execution-facing content.
+</p>
+
+<p>
+In base v0.1, the machine-checkable posture requires that the execution unit carry explicit major categories including:
 </p>
 
 <ul>
-  <li><code>id</code></li>
-  <li><code>objects</code></li>
-  <li><code>connections</code></li>
-  <li><code>regions</code></li>
-  <li><code>source_map</code></li>
-  <li><code>correspondence</code></li>
+  <li><code>objects</code>,</li>
+  <li><code>connections</code>,</li>
+  <li><code>regions</code>,</li>
+  <li><code>source_map</code>,</li>
+  <li><code>correspondence</code>.</li>
 </ul>
 
 <p>
-Those categories define the minimum published structural surface of the open Execution IR in base v0.1.
+This posture matters because it prevents accidental collapse of:
 </p>
+
+<ul>
+  <li>execution-facing objects,</li>
+  <li>execution-facing relations,</li>
+  <li>region-owned structure,</li>
+  <li>source attribution support,</li>
+  <li>recoverable correspondence support.</li>
+</ul>
 
 <p>
-Equivalent richer shapes may exist only if they remain compatible with the schema family and do not erase those structural responsibilities.
+These categories are therefore not optional conveniences.
+At the schema boundary in base v0.1, they are part of the canonical structural surface.
 </p>
 
-<hr />
+<hr/>
 
 <h2 id="object-category-posture">13. Object Category Posture</h2>
 
 <p>
-The schema MUST validate that the execution unit contains an <code>objects</code> array.
-Each object record must be machine-checkable as an identifiable execution-facing object record.
+Objects are the primary execution-facing carriers inside the execution unit.
 </p>
 
 <p>
-At minimum, object validation is expected to cover:
+The schema posture for objects exists to ensure that canonical JSON IR can express:
 </p>
 
 <ul>
-  <li>record identity presence,</li>
-  <li>family classification presence,</li>
-  <li>port category presence,</li>
-  <li>attribution category presence,</li>
-  <li>distinguishability of primary versus support role where the schema publishes that distinction.</li>
+  <li>execution-facing identity,</li>
+  <li>object family classification,</li>
+  <li>typed interface or equivalent terminal structure,</li>
+  <li>object-local metadata where permitted,</li>
+  <li>compatibility with attribution and correspondence references where relevant.</li>
 </ul>
 
 <p>
-The schema does not need to flatten all object-family semantics into one file-level prose rule.
-Its role is to guarantee stable structural expectations for object records.
+The schema MAY validate object-level category fields, enum values, and required record structure.
 </p>
 
-<hr />
+<p>
+However, the schema does not by itself prove that the chosen object family is semantically correct.
+That remains downstream from validated meaning and derivation law.
+</p>
+
+<p>
+The posture rule is:
+</p>
+
+<pre><code>object structure
+   is schema-validated
+
+object meaning
+   is not created by schema</code></pre>
+
+<hr/>
 
 <h2 id="connection-category-posture">14. Connection Category Posture</h2>
 
 <p>
-The schema MUST validate that the execution unit contains a <code>connections</code> array.
-Each connection record must be machine-checkable as an explicit directed connectivity record.
+Connections are execution-facing relation carriers.
 </p>
 
 <p>
-At minimum, connection validation is expected to cover:
+The schema posture for connections exists so that canonical JSON IR can machine-check:
 </p>
 
 <ul>
-  <li>connection identity presence,</li>
-  <li>source endpoint presence,</li>
-  <li>destination endpoint presence,</li>
-  <li>basic endpoint structural shape.</li>
+  <li>that connection records exist explicitly,</li>
+  <li>that endpoint-related structure is present in the expected schema-owned form,</li>
+  <li>that connection identity and metadata posture are structurally consistent where published.</li>
 </ul>
 
 <p>
-This keeps the open IR aligned with the rule that execution-relevant connectivity must remain explicit and inspectable.
+The schema does not by itself prove that every connection preserves the deeper architectural distinction between:
 </p>
 
-<hr />
+<ul>
+  <li>ordinary connectivity,</li>
+  <li>public-interface-boundary participation,</li>
+  <li>structure-boundary participation,</li>
+  <li>explicit state participation,</li>
+  <li>explicit UI sequencing.</li>
+</ul>
+
+<p>
+That distinction remains governed by derivation and identity law.
+The schema only validates the structural carrier boundary that makes such distinctions expressible and inspectable.
+</p>
+
+<hr/>
 
 <h2 id="region-category-posture">15. Region Category Posture</h2>
 
 <p>
-The schema MUST validate that the execution unit contains a <code>regions</code> array.
-Each region record must be machine-checkable as a region-bearing record suitable for structured control ownership.
+Regions are explicit structural carriers needed for structured execution forms.
 </p>
 
 <p>
-At minimum, region validation is expected to cover:
+The schema posture for regions exists so that canonical JSON IR can machine-check:
 </p>
 
 <ul>
-  <li>region identity presence,</li>
-  <li>owner reference presence,</li>
-  <li>basic membership or equivalent region-local content support.</li>
+  <li>the existence of explicit region records,</li>
+  <li>their identity-bearing structure,</li>
+  <li>their place inside the execution unit,</li>
+  <li>their compatibility with structure-owned execution families.</li>
 </ul>
 
 <p>
-This protects the rule that structured control remains structured in the open IR rather than being silently flattened away.
+The schema does not by itself prove that structure ownership, boundary roles, or terminal roles are semantically correct.
+Those remain governed by validated meaning, derivation rules, and recoverability law.
 </p>
 
-<hr />
+<p>
+The posture rule is:
+</p>
+
+<pre><code>region record presence
+   is schema-checkable
+
+correct structured-control meaning
+   is not created by schema alone</code></pre>
+
+<hr/>
 
 <h2 id="source-map-and-correspondence-posture">16. Source Map and Correspondence Posture</h2>
 
@@ -508,47 +631,148 @@ In base v0.1, these appear as:
 
 <p>
 The preferred base v0.1 posture is explicit record arrays for both categories.
-That keeps the canonical JSON form simple, portable, diffable, and straightforward to inspect with ordinary JSON tooling.
-</p>
-
-<p>
-The schema does not by itself define the full semantics of those records.
-It defines the required structural presence of explicit machine-checkable categories so that attribution and non-primary correspondence are not left to undocumented convention.
-</p>
-
-<hr />
-
-<h2 id="referential-integrity-boundary">17. Referential Integrity Boundary</h2>
-
-<p>
-The schema layer may validate local record shape, published discriminators, and selected direct references.
-However, full referential integrity across the complete document remains larger than the schema layer by itself.
-</p>
-
-<p>
-In particular, the following may require additional validator logic beyond base JSON Schema constraints:
+That keeps the canonical JSON form:
 </p>
 
 <ul>
-  <li>that every referenced object identifier resolves exactly once,</li>
-  <li>that every referenced region identifier resolves exactly once,</li>
-  <li>that endpoint ports exist on the referenced owning object,</li>
-  <li>that region ownership and membership remain semantically consistent,</li>
-  <li>that correspondence references are complete where recoverability requires them.</li>
+  <li>simple,</li>
+  <li>portable,</li>
+  <li>diffable,</li>
+  <li>straightforward to inspect with ordinary JSON tooling.</li>
 </ul>
 
 <p>
-This is not a weakness of the schema layer.
-It is the normal boundary between structural schema validation and full IR validation.
+This posture also prevents a common failure mode:
 </p>
 
-<hr />
-
-<h2 id="extensibility-posture">18. Extensibility Posture</h2>
+<pre><code>execution objects exist
+but
+attribution and non-primary correspondence are only implicit
+or
+buried in implementation-private conventions</code></pre>
 
 <p>
-The schema MAY allow conservative extension points.
-However, extensibility must remain subordinate to the canonical open IR boundary.
+The schema therefore supports a canonical JSON IR where attribution and correspondence are visible as first-class structural categories rather than inferred after the fact.
+</p>
+
+<hr/>
+
+<h2 id="identity-and-recoverability-posture">17. Identity and Recoverability Posture</h2>
+
+<p>
+Schema posture must remain compatible with the stronger identity and recoverability law of the IR layer.
+</p>
+
+<p>
+This means the schema-owned JSON boundary SHOULD support explicit or equivalent structural carriers for:
+</p>
+
+<ul>
+  <li>document identity,</li>
+  <li>execution-unit identity,</li>
+  <li>object identity,</li>
+  <li>connection identity where published,</li>
+  <li>region identity where published,</li>
+  <li>source attribution records,</li>
+  <li>correspondence records.</li>
+</ul>
+
+<p>
+The schema does not need to encode every semantic explanation.
+It does need to keep the canonical JSON form structurally capable of carrying the recoverability surface required by the open IR boundary.
+</p>
+
+<p>
+Accordingly, a schema evolution MUST NOT simplify the JSON form by erasing the structural possibility of:
+</p>
+
+<ul>
+  <li>attribution,</li>
+  <li>non-primary correspondence,</li>
+  <li>document-versus-unit identity,</li>
+  <li>explicit object / connection / region categorization.</li>
+</ul>
+
+<hr/>
+
+<h2 id="schema-validity-versus-architectural-validity">18. Schema Validity Versus Architectural Validity</h2>
+
+<p>
+This distinction is critical.
+</p>
+
+<p>
+A payload may be:
+</p>
+
+<ul>
+  <li>schema-valid but architecturally insufficient,</li>
+  <li>schema-valid but derivation-wrong,</li>
+  <li>schema-valid but attribution-poor in ways that only deeper specification checks can detect,</li>
+  <li>schema-valid but not acceptable for a later backend corridor because upstream distinctions were already lost.</li>
+</ul>
+
+<p>
+Conversely, a conceptually intended IR may be architecturally plausible but still fail the canonical JSON schema if required structural carriers are missing.
+</p>
+
+<p>
+Therefore:
+</p>
+
+<pre><code>architectural law
+   is broader than
+schema law
+
+schema law
+   is stricter than
+informal JSON convenience
+
+schema-valid
+   is necessary
+but not sufficient
+for full canonical IR correctness</code></pre>
+
+<p>
+This section must remain explicit because the repository now already uses conformance material to distinguish not only semantic rejection, but also IR architectural preservation and schema-valid versus architecturally valid outcomes.
+</p>
+
+<hr/>
+
+<h2 id="forbidden-misreadings">19. Forbidden Misreadings</h2>
+
+<p>
+The following interpretations are forbidden:
+</p>
+
+<ul>
+  <li>“If the JSON validates, the IR is automatically correct in every deeper sense.”</li>
+  <li>“The schema replaces derivation law.”</li>
+  <li>“The schema replaces identity and mapping law.”</li>
+  <li>“The schema may erase attribution and correspondence as long as objects still exist.”</li>
+  <li>“The schema may be specialized around one backend family and still define canonical open IR.”</li>
+  <li>“The canonical JSON schema may collapse the open IR boundary into a lowered or runtime-private form.”</li>
+</ul>
+
+<p>
+The correct reading is:
+</p>
+
+<pre><code>schema
+   validates canonical JSON structure
+
+it does not replace
+validated meaning
+or derivation
+or identity / recoverability
+or lowering boundaries</code></pre>
+
+<hr/>
+
+<h2 id="relation-with-lowering-and-backend-contract">20. Relation with Lowering and Backend Contract</h2>
+
+<p>
+The schema boundary is upstream from lowering and backend-facing handoff.
 </p>
 
 <p>
@@ -556,126 +780,79 @@ Accordingly:
 </p>
 
 <ul>
-  <li>extensions MUST NOT remove required canonical categories,</li>
-  <li>extensions MUST NOT redefine language meaning,</li>
-  <li>extensions MUST NOT smuggle runtime-private scheduler policy into the canonical open surface,</li>
-  <li>extensions SHOULD remain additive and execution-relevant,</li>
-  <li>extensions SHOULD remain stable enough to preserve inspection and conformance usefulness.</li>
+  <li>the canonical JSON IR must remain an open IR artifact,</li>
+  <li>it must not be prematurely shaped around one backend family,</li>
+  <li>it must not encode runtime-private realization as though that were canonical open IR truth,</li>
+  <li>it must remain suitable as the machine-checkable output of the canonical IR stage before later specialization.</li>
 </ul>
 
 <p>
-The base schema should therefore remain strict on required structure and conservative on extension freedom.
-</p>
-
-<hr />
-
-<h2 id="validation-usage">19. Validation Usage</h2>
-
-<p>
-The schema is intended to be used by:
+This matters directly to a future industrial compiler corridor.
+A later LLVM-oriented route remains valid only if it starts from a canonical IR boundary that:
 </p>
 
 <ul>
-  <li>emitters of canonical Execution IR Documents,</li>
-  <li>validators,</li>
-  <li>conformance tooling,</li>
-  <li>inspection tooling,</li>
-  <li>cache integrity tooling,</li>
-  <li>future lowering-entry tooling.</li>
+  <li>is schema-valid,</li>
+  <li>is architecturally valid,</li>
+  <li>preserves attribution and recoverability,</li>
+  <li>has not already collapsed into backend-private assumptions.</li>
 </ul>
 
 <p>
-Typical use is:
+The schema therefore supports the compiler corridor indirectly:
 </p>
 
-<pre><code>validated program meaning
-      -&gt;
-construct canonical Execution IR Document
-      -&gt;
-emit canonical JSON
-      -&gt;
-validate against IR schema
-      -&gt;
-claim schema-valid canonical IR document
-</code></pre>
-
-<hr />
-
-<h2 id="conformance-reading-rule">20. Conformance Reading Rule</h2>
+<pre><code>validated meaning
+   -&gt;
+canonical open IR
+   -&gt;
+canonical JSON schema-valid artifact
+   -&gt;
+later lowering
+   -&gt;
+backend-facing contract
+   -&gt;
+LLVM-oriented or other downstream consumer</code></pre>
 
 <p>
-Conformance must be read in layers.
+The schema does not define LLVM.
+It protects the open IR JSON boundary that LLVM-oriented lowering must remain downstream from.
+</p>
+
+<hr/>
+
+<h2 id="summary">21. Summary</h2>
+
+<p>
+This document defines the schema posture for the canonical JSON Execution IR Document in base v0.1.
+</p>
+
+<p>
+Its core rules are:
 </p>
 
 <ul>
-  <li><strong>Schema-valid</strong> means the emitted canonical JSON matches the published machine-checkable structural contract.</li>
-  <li><strong>IR-valid</strong> means the document also satisfies the architectural and construction rules of the IR layer.</li>
-  <li><strong>Semantically valid</strong> means the program meaning itself satisfies the Language layer.</li>
+  <li>the published schema artifacts are normative for structural JSON validity,</li>
+  <li>the canonical JSON IR boundary remains explicit and category-oriented,</li>
+  <li>the execution unit carries explicit structural categories including objects, connections, regions, source_map, and correspondence,</li>
+  <li>schema validity is necessary but not sufficient for full canonical IR correctness,</li>
+  <li>schema posture must remain aligned with derivation, identity, recoverability, construction, and later lowering boundaries.</li>
 </ul>
 
 <p>
-Therefore:
-</p>
-
-<pre><code>semantic validity
-   remains owned by Language/
-
-IR architectural validity
-   remains owned by IR/Execution IR.md
-   and IR/Construction rules.md
-
-schema validity
-   is owned by IR/schema/
-</code></pre>
-
-<p>
-A tool MUST NOT claim that schema validity alone replaces the rest of specification conformance.
-</p>
-
-<hr />
-
-<h2 id="out-of-scope">21. Out of Scope</h2>
-
-<p>
-The following remain out of scope for this document:
+The canonical JSON Execution IR is therefore a real public artifact:
 </p>
 
 <ul>
-  <li>the full prose semantics of all IR records,</li>
-  <li>all future IR versions beyond base v0.1,</li>
-  <li>lowering schemas,</li>
-  <li>backend contract schemas,</li>
-  <li>runtime-private schemas,</li>
-  <li>trace, debug, or observability payload schemas.</li>
-</ul>
-
-<hr />
-
-<h2 id="summary">22. Summary</h2>
-
-<p>
-The FROG IR schema layer makes the canonical Execution IR Document machine-checkable.
-It gives the open IR boundary a public structural validation surface that is:
-</p>
-
-<ul>
-  <li>canonical,</li>
-  <li>JSON-based,</li>
+  <li>machine-checkable,</li>
   <li>portable,</li>
-  <li>conformance-friendly,</li>
-  <li>upstream of lowering and runtime-private realization.</li>
+  <li>inspectable,</li>
+  <li>stable enough for conformance and tooling,</li>
+  <li>still distinct from lowered form and backend-private realization.</li>
 </ul>
 
 <p>
-Its role is not to replace semantic validation.
-Its role is to ensure that the canonical JSON IR artifact has a stable public structural contract.
+As the repository moves toward a more industrial compilation corridor, this document keeps the structural JSON boundary honest.
+A future LLVM-oriented route may be downstream.
+It must still begin from a canonical IR artifact whose JSON shape remains faithful to the open FROG IR boundary.
 </p>
-
-<pre><code>architectural IR
-      -&gt;
-canonical JSON IR document
-      -&gt;
-machine-checkable schema validation
-      -&gt;
-portable open IR surface
-</code></pre>
