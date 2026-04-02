@@ -107,6 +107,109 @@
       padding: 0.75rem 0.9rem;
     }
 
+    .sidebar-nav {
+      padding: 0.7rem 0 1.45rem;
+    }
+
+    .sidebar-nav ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .sidebar-nav li {
+      margin: 0;
+    }
+
+    .sidebar-nav li > ul {
+      margin-left: 1.1rem;
+      padding-left: 0.55rem;
+      border-left: 1px solid color-mix(in srgb, var(--surface-border) 78%, transparent);
+    }
+
+    .sidebar-nav li > ul[hidden] {
+      display: none !important;
+    }
+
+    .frog-nav-entry {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.42rem;
+      width: 100%;
+    }
+
+    .frog-nav-toggle,
+    .frog-nav-spacer {
+      flex: 0 0 1.15rem;
+      width: 1.15rem;
+      height: 1.15rem;
+      margin: 0.38rem 0 0 0.85rem;
+    }
+
+    .frog-nav-spacer {
+      display: inline-block;
+    }
+
+    .frog-nav-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--surface-border);
+      border-radius: 0.35rem;
+      background: var(--button-bg);
+      color: var(--heading-color);
+      box-shadow: 0 4px 12px var(--surface-shadow);
+      font: inherit;
+      font-size: 0.88rem;
+      font-weight: 800;
+      line-height: 1;
+      cursor: pointer;
+      transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+    }
+
+    .frog-nav-toggle:hover {
+      transform: translateY(-1px);
+      background: var(--button-bg-hover);
+      border-color: var(--button-border);
+    }
+
+    .frog-nav-toggle:focus-visible {
+      outline: 2px solid var(--theme-color);
+      outline-offset: 2px;
+    }
+
+    .frog-nav-entry > a,
+    .frog-nav-entry > p,
+    .sidebar-nav li > a,
+    .sidebar-nav li > p {
+      flex: 1 1 auto;
+      min-width: 0;
+      margin: 0;
+      padding: 0.28rem 1rem 0.28rem 0;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+
+    .frog-nav-branch > .frog-nav-entry > a,
+    .frog-nav-branch > .frog-nav-entry > p,
+    .frog-nav-leaf > .frog-nav-entry > a,
+    .frog-nav-leaf > .frog-nav-entry > p {
+      padding-left: 0;
+    }
+
+    .frog-nav-branch.is-open > .frog-nav-entry > .frog-nav-toggle {
+      background: var(--button-bg-hover);
+      border-color: var(--button-border);
+      color: var(--theme-color);
+    }
+
+    .frog-nav-branch.is-active-trail > .frog-nav-entry > a,
+    .frog-nav-branch.is-active-trail > .frog-nav-entry > p,
+    .frog-nav-leaf.is-active-trail > .frog-nav-entry > a,
+    .frog-nav-leaf.is-active-trail > .frog-nav-entry > p {
+      color: var(--theme-color);
+    }
+
     .sidebar ul li a,
     .sidebar ul li p,
     .app-name,
@@ -423,6 +526,242 @@
       return normalizeDocPath(current);
     }
 
+    var sidebarToggleStorageKey = "graiphic-frog-sidebar-state";
+
+    function readSidebarToggleState() {
+      try {
+        var rawState = window.localStorage.getItem(sidebarToggleStorageKey);
+        if (!rawState) {
+          return {};
+        }
+
+        var parsedState = JSON.parse(rawState);
+        return parsedState && typeof parsedState === "object" ? parsedState : {};
+      } catch (error) {
+        return {};
+      }
+    }
+
+    function writeSidebarToggleState(state) {
+      try {
+        window.localStorage.setItem(sidebarToggleStorageKey, JSON.stringify(state || {}));
+      } catch (error) {
+      }
+    }
+
+    function slugifySidebarLabel(label) {
+      return String(label || "")
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+    }
+
+    function normalizeSidebarBranchHref(rawHref) {
+      if (!rawHref) {
+        return "";
+      }
+
+      var candidate = rawHref.trim();
+      if (candidate.startsWith("#/")) {
+        candidate = candidate.slice(1);
+      }
+
+      if (!candidate.startsWith("/")) {
+        return "";
+      }
+
+      return normalizeDocPath(candidate);
+    }
+
+    function buildSidebarBranchKey(parentKey, label, rawHref, index) {
+      var normalizedHref = normalizeSidebarBranchHref(rawHref);
+      var keyPart = normalizedHref || ((slugifySidebarLabel(label) || "section") + "#" + index);
+      return parentKey ? (parentKey + ">" + keyPart) : keyPart;
+    }
+
+    function branchHasActiveTrail(branchElement, labelElement) {
+      if (!branchElement) {
+        return false;
+      }
+
+      if (branchElement.classList.contains("active")) {
+        return true;
+      }
+
+      if (labelElement && labelElement.classList.contains("active")) {
+        return true;
+      }
+
+      return !!branchElement.querySelector(":scope > ul .active");
+    }
+
+    function branchShouldBeOpen(branchKey, hasActiveTrail, toggleState) {
+      var branchState = toggleState ? toggleState[branchKey] : null;
+
+      if (branchState === "expanded") {
+        return true;
+      }
+
+      if (branchState === "collapsed") {
+        return false;
+      }
+
+      return hasActiveTrail;
+    }
+
+    function ensureSidebarEntryWrapper(item, labelElement) {
+      var entry = item.querySelector(":scope > .frog-nav-entry");
+      if (!entry) {
+        entry = document.createElement("div");
+        entry.className = "frog-nav-entry";
+        item.insertBefore(entry, labelElement);
+      }
+
+      if (labelElement.parentElement !== entry) {
+        entry.appendChild(labelElement);
+      }
+
+      return entry;
+    }
+
+    function ensureSidebarSpacer(entry) {
+      var spacer = entry.querySelector(":scope > .frog-nav-spacer");
+      var existingToggle = entry.querySelector(":scope > .frog-nav-toggle");
+
+      if (existingToggle) {
+        existingToggle.remove();
+      }
+
+      if (!spacer) {
+        spacer = document.createElement("span");
+        spacer.className = "frog-nav-spacer";
+        spacer.setAttribute("aria-hidden", "true");
+        entry.insertBefore(spacer, entry.firstChild);
+      }
+    }
+
+    function ensureSidebarToggle(entry) {
+      var toggle = entry.querySelector(":scope > .frog-nav-toggle");
+      var existingSpacer = entry.querySelector(":scope > .frog-nav-spacer");
+
+      if (existingSpacer) {
+        existingSpacer.remove();
+      }
+
+      if (!toggle) {
+        toggle = document.createElement("button");
+        toggle.className = "frog-nav-toggle";
+        toggle.type = "button";
+        entry.insertBefore(toggle, entry.firstChild);
+      }
+
+      return toggle;
+    }
+
+    function applySidebarBranchState(branchElement, isOpen, branchKey) {
+      var toggle = branchElement.querySelector(":scope > .frog-nav-entry > .frog-nav-toggle");
+      var childList = branchElement.querySelector(":scope > ul");
+
+      branchElement.classList.toggle("is-open", !!isOpen);
+      branchElement.classList.toggle("is-collapsed", !isOpen);
+
+      if (toggle) {
+        toggle.textContent = isOpen ? "-" : "+";
+        toggle.setAttribute("aria-expanded", String(!!isOpen));
+        toggle.setAttribute("aria-label", isOpen ? "Collapse section" : "Expand section");
+        toggle.setAttribute("title", isOpen ? "Collapse section" : "Expand section");
+        toggle.setAttribute("data-branch-key", branchKey);
+      }
+
+      if (childList) {
+        childList.hidden = !isOpen;
+      }
+    }
+
+    function decorateSidebarBranch(item, toggleState, parentKey, index) {
+      if (!(item instanceof HTMLElement) || item.tagName !== "LI") {
+        return;
+      }
+
+      var labelElement = item.querySelector(":scope > a, :scope > p");
+      if (!labelElement) {
+        return;
+      }
+
+      var entry = ensureSidebarEntryWrapper(item, labelElement);
+      var childList = item.querySelector(":scope > ul");
+      var branchKey = buildSidebarBranchKey(parentKey, labelElement.textContent, labelElement.getAttribute("href"), index);
+      var isActiveTrail = branchHasActiveTrail(item, labelElement);
+
+      item.dataset.branchKey = branchKey;
+      item.classList.toggle("is-active-trail", isActiveTrail);
+
+      if (childList) {
+        item.classList.add("frog-nav-branch");
+        item.classList.remove("frog-nav-leaf");
+
+        var toggle = ensureSidebarToggle(entry);
+        var isOpen = branchShouldBeOpen(branchKey, isActiveTrail, toggleState);
+        applySidebarBranchState(item, isOpen, branchKey);
+
+        Array.prototype.forEach.call(childList.children, function (childItem, childIndex) {
+          decorateSidebarBranch(childItem, toggleState, branchKey, childIndex);
+        });
+
+        return;
+      }
+
+      item.classList.remove("frog-nav-branch", "is-open", "is-collapsed");
+      item.classList.add("frog-nav-leaf");
+      ensureSidebarSpacer(entry);
+    }
+
+    function decorateSidebarWithToggles() {
+      var navRoot = document.querySelector(".sidebar-nav");
+      if (!navRoot) {
+        return;
+      }
+
+      var rootList = navRoot.querySelector(":scope > ul");
+      if (!rootList) {
+        return;
+      }
+
+      var toggleState = readSidebarToggleState();
+      navRoot.classList.add("frog-collapsible-sidebar");
+
+      Array.prototype.forEach.call(rootList.children, function (item, index) {
+        decorateSidebarBranch(item, toggleState, "root", index);
+      });
+
+      if (navRoot.dataset.frogNavToggleBound === "true") {
+        return;
+      }
+
+      navRoot.addEventListener("click", function (event) {
+        var toggle = event.target.closest(".frog-nav-toggle[data-branch-key]");
+        if (!toggle) {
+          return;
+        }
+
+        event.preventDefault();
+
+        var branchElement = toggle.closest(".frog-nav-branch");
+        if (!branchElement) {
+          return;
+        }
+
+        var branchKey = toggle.getAttribute("data-branch-key");
+        var toggleState = readSidebarToggleState();
+        toggleState[branchKey] = branchElement.classList.contains("is-open") ? "collapsed" : "expanded";
+        writeSidebarToggleState(toggleState);
+        decorateSidebarWithToggles();
+      });
+
+      navRoot.dataset.frogNavToggleBound = "true";
+    }
+
     function resolveLocalDocLink(rawHref, currentFile) {
       if (!rawHref) {
         return null;
@@ -601,6 +940,10 @@
               if (rewrittenSrc) {
                 image.setAttribute("src", rewrittenSrc);
               }
+            });
+
+            window.requestAnimationFrame(function () {
+              decorateSidebarWithToggles();
             });
           });
         }
