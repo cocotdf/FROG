@@ -107,6 +107,58 @@
       padding: 0.75rem 0.9rem;
     }
 
+    .search .results-panel {
+      margin-top: 0.55rem;
+      border: 1px solid var(--surface-border);
+      border-radius: 12px;
+      background: var(--sidebar-bg);
+      box-shadow: 0 12px 30px var(--surface-shadow);
+      color: var(--body-color);
+      overflow: hidden;
+    }
+
+    .search .matching-post {
+      border-bottom: 1px solid var(--surface-border);
+      background: transparent;
+    }
+
+    .search .matching-post:last-child {
+      border-bottom: 0;
+    }
+
+    .search .matching-post a {
+      color: var(--body-color) !important;
+      background: transparent;
+    }
+
+    .search .matching-post a:hover {
+      background: var(--panel-bg-soft);
+    }
+
+    .search .matching-post h2,
+    .search .matching-post p,
+    .search .matching-post li,
+    .search .matching-post ul,
+    .search .matching-post strong,
+    .search .matching-post em,
+    .search .matching-post span,
+    .search .results-panel .empty {
+      color: var(--body-color) !important;
+    }
+
+    .search .matching-post h2 {
+      color: var(--heading-color) !important;
+    }
+
+    .search .search-keyword {
+      color: var(--theme-color) !important;
+      font-weight: 700;
+    }
+
+    .search .clear-button {
+      color: var(--muted-color);
+    }
+
     .sidebar-nav {
       padding: 0.7rem 0 1.45rem;
     }
