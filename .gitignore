@@ -1,0 +1,4 @@
+# Local Codex work artifacts
+docs/superpowers/
+scripts/build-sidebar.ps1
+scripts/verify-github-pages.ps1
