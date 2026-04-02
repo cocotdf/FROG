@@ -10,6 +10,7 @@ $requiredFiles = @(
     "_navbar.md",
     "Readme.md",
     "assets/open-github-pages-banner.svg",
+    "assets/cla-assistant-badge.svg",
     "scripts/build-sidebar.ps1"
 )
 
@@ -54,6 +55,8 @@ foreach ($token in @(
     '<div class="go-pages-link" data-render-target="github">',
     'https://graiphic.github.io/FROG/',
     './assets/open-github-pages-banner.svg',
+    './assets/cla-assistant-badge.svg',
+    'https://cla-assistant.io/Graiphic/FROG',
     "FROG",
     "Free Open Graphical Language",
     "repository structure",
@@ -63,6 +66,10 @@ foreach ($token in @(
     if ($rootReadme -notmatch [regex]::Escape($token)) {
         throw "Readme.md is missing expected content token: $token"
     }
+}
+
+if ($rootReadme -match [regex]::Escape('https://cla-assistant.io/readme/badge/Graiphic/FROG')) {
+    throw "Readme.md still references the fragile external CLA badge URL."
 }
 
 foreach ($token in @(

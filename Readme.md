@@ -1751,7 +1751,7 @@ Repository stewardship, governance direction, and ecosystem positioning are desc
 
 <p align="center">
   <a href="https://cla-assistant.io/Graiphic/FROG">
-    <img src="https://cla-assistant.io/readme/badge/Graiphic/FROG" alt="CLA Assistant" />
+    <img src="./assets/cla-assistant-badge.svg" alt="CLA Assistant" />
   </a>
 </p>
 
