@@ -461,6 +461,19 @@
       return docsifyHref;
     }
 
+    function resolveSamePageAnchorHref(rawHref, currentFile) {
+      if (!rawHref || !rawHref.startsWith("#") || rawHref.startsWith("#/")) {
+        return null;
+      }
+
+      var anchorId = rawHref.slice(1);
+      if (!anchorId) {
+        return null;
+      }
+
+      return "#" + normalizeDocPath(currentFile) + "?id=" + encodeURIComponent(anchorId);
+    }
+
     function resolveLocalAssetUrl(rawUrl, currentFile) {
       if (!rawUrl) {
         return null;
@@ -558,6 +571,12 @@
 
             document.querySelectorAll(".markdown-section a[href], .cover-main a[href], .app-nav a[href], .sidebar-nav a[href]").forEach(function (anchor) {
               var rawHref = anchor.getAttribute("href");
+              var rewrittenAnchorHref = resolveSamePageAnchorHref(rawHref, currentFile);
+              if (rewrittenAnchorHref) {
+                anchor.setAttribute("href", rewrittenAnchorHref);
+                return;
+              }
+
               var rewrittenAssetHref = resolveLocalAssetHref(rawHref, currentFile);
               if (rewrittenAssetHref) {
                 anchor.setAttribute("href", rewrittenAssetHref);

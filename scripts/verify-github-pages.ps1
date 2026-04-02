@@ -63,6 +63,7 @@ foreach ($token in @(
     'homepage: "Readme.md"',
     'loadSidebar: true',
     'loadNavbar: true',
+    'function resolveSamePageAnchorHref',
     'function resolveLocalAssetUrl',
     'function resolveLocalDocLink',
     'function resolveLocalAssetHref',
@@ -74,7 +75,9 @@ foreach ($token in @(
     'function applyTheme',
     'function ensureThemeToggle',
     'repo: "Graiphic/FROG"',
-    'Loading FROG documentation'
+    'Loading FROG documentation',
+    'rawHref.startsWith("#")',
+    '?id='
 )) {
     if ($indexHtml -notmatch [regex]::Escape($token)) {
         throw "index.html is missing expected token: $token"
