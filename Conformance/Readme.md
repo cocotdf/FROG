@@ -23,7 +23,7 @@
   <li><a href="#directory-structure">8. Directory Structure</a></li>
   <li><a href="#published-cases">9. Published Cases</a></li>
   <li><a href="#expected-outcomes">10. Expected Outcomes</a></li>
-  <li><a href="#compiler-corridor-reading">11. Compiler-Corridor Reading</a></li>
+  <li><a href="#active-v01-conformance-focus">11. Active v0.1 Conformance Focus</a></li>
   <li><a href="#relation-with-examples-ir-and-reference-implementation">12. Relation with Examples, IR, and Reference Implementation</a></li>
   <li><a href="#future-growth">13. Future Growth</a></li>
   <li><a href="#summary">14. Summary</a></li>
@@ -72,7 +72,9 @@ canonical Execution IR Document
    -&gt;
 canonical JSON IR validation where applicable
    -&gt;
-later lowering / backend-facing handoff where applicable</code></pre>
+later lowering / backend-facing handoff where applicable
+   -&gt;
+declared compiler-family consumption where applicable</code></pre>
 
 <p>
 Conformance therefore already matters to the compiler corridor, even when the downstream compilation route is still being consolidated.
@@ -120,7 +122,7 @@ implementation convenience
         -/-&gt; "it is correct"</code></pre>
 
 <p>
-Conformance is therefore not commentary.
+Conformance is therefore not a commentary layer.
 It is the public truth surface that makes published repository law observable, comparable, and reviewable.
 </p>
 
@@ -152,7 +154,7 @@ It ensures that:
   <li>implementations do not silently diverge,</li>
   <li>semantic meaning is not reinterpreted implicitly,</li>
   <li>invalid constructs are rejected instead of silently repaired,</li>
-  <li>critical distinctions remain visible across loadability, structural validation, semantic validation, IR derivation, IR construction, canonical JSON validation, and later specialization.</li>
+  <li>critical distinctions remain visible across loadability, structural validation, semantic validation, IR derivation, IR construction, canonical JSON validation, lowering, backend-facing handoff, and declared compiler-corridor consumption where applicable.</li>
 </ul>
 
 <p>
@@ -179,7 +181,8 @@ It includes:
   <li>correct rejection where validated meaning does not exist,</li>
   <li>correct preservation of distinctions across derivation into the canonical Execution IR Document,</li>
   <li>correct canonical-IR construction and canonical JSON compatibility where the case reaches that stage,</li>
-  <li>correct preservation of required boundaries across later lowering and backend-facing handoff where applicable.</li>
+  <li>correct preservation of required boundaries across later lowering and backend-facing handoff where applicable,</li>
+  <li>correct staged acceptance or rejection across declared compiler-corridor stages where applicable.</li>
 </ul>
 
 <p>
@@ -212,6 +215,7 @@ A public conformance surface SHOULD make explicit whether a case is:
   <li>structurally valid but semantically rejected,</li>
   <li>semantically accepted but preservation-invalid at the IR boundary,</li>
   <li>semantically accepted but canonical-IR-schema-invalid,</li>
+  <li>semantically accepted and IR-valid but rejected at a later lowering, backend-contract, or declared backend-family consumer boundary,</li>
   <li>accepted with preservation requirements.</li>
 </ul>
 
@@ -224,7 +228,7 @@ Where useful, a case MAY also make explicit whether it is:
   <li>structurally invalid for reasons that remain source-owned even when they exceed a minimal declarative schema artifact,</li>
   <li>semantically invalid even though canonical source shape has already been accepted,</li>
   <li>IR-schema-invalid even though semantic meaning was previously established,</li>
-  <li>lowering-sensitive or backend-handoff-sensitive after canonical IR has already been established.</li>
+  <li>lowering-sensitive, backend-contract-sensitive, or declared-backend-consumer-sensitive after canonical IR has already been established.</li>
 </ul>
 
 <p>
@@ -310,7 +314,7 @@ In particular:
   <li>source-shape and schema-owned rejection cases map back to <code>Expression/</code>,</li>
   <li>semantic rejection cases map back to <code>Language/</code>, <code>Libraries/</code>, or <code>Profiles/</code> as appropriate,</li>
   <li>preservation cases across derivation, identity, attribution, correspondence, construction, and canonical JSON IR validation map back to <code>IR/</code>,</li>
-  <li>future compilation-corridor-sensitive cases must still map back first to <code>IR/</code> and only then to any downstream non-normative consumer.</li>
+  <li>compiler-corridor-sensitive cases must still map back first to <code>IR/</code> and to any declared profile surface before they map to a downstream consumer family.</li>
 </ul>
 
 <p>
@@ -353,7 +357,8 @@ This includes verifying:
   <li>what distinctions must survive validation,</li>
   <li>what distinctions must survive derivation into the canonical Execution IR Document,</li>
   <li>what identity, attribution, and correspondence carriers must remain explicit at the canonical JSON IR boundary,</li>
-  <li>what distinctions must remain explicit before later lowering and backend-facing handoff.</li>
+  <li>what distinctions must remain explicit before later lowering and backend-facing handoff,</li>
+  <li>what later-stage rejection boundaries remain explicit once a compiler corridor is declared.</li>
 </ul>
 
 <p>
@@ -373,6 +378,15 @@ The third critical downstream boundary is:
       |
       v
 lowering / backend-facing handoff</code></pre>
+
+<p>
+The fourth critical downstream boundary, where declared by a case, is:
+</p>
+
+<pre><code>backend-facing handoff
+      |
+      v
+declared backend-family consumption</code></pre>
 
 <p>
 Critical invariants therefore include:
@@ -425,7 +439,14 @@ These invariants are enforced through explicit valid / invalid and preserve / re
 <pre><code>Conformance/
 ├── Readme.md
 ├── valid/
-└── invalid/</code></pre>
+│   └── compiler/
+└── invalid/
+    └── compiler/</code></pre>
+
+<p>
+The root valid / invalid directories remain the primary home of the published conformance corpus.
+The nested <code>compiler/</code> families extend that corpus along a later compiler-corridor reading without replacing the root valid / invalid structure.
+</p>
 
 <p>
 Each case should define, as applicable:
@@ -440,7 +461,7 @@ Each case should define, as applicable:
   <li>tested boundaries,</li>
   <li>preservation requirements,</li>
   <li>rejection reason if invalid,</li>
-  <li>downstream sensitivity if the case materially constrains lowering or backend-facing handoff.</li>
+  <li>downstream sensitivity if the case materially constrains lowering, backend-facing handoff, or declared backend-family consumption.</li>
 </ul>
 
 <p>
@@ -467,7 +488,9 @@ Where useful, cases SHOULD also be written so that the reader can tell whether t
   <li>semantic invalidity after structural acceptance,</li>
   <li>IR preservation failure after semantic acceptance,</li>
   <li>canonical JSON IR schema failure after otherwise valid IR construction intent,</li>
-  <li>future lowering or backend-handoff failure after canonical IR acceptance.</li>
+  <li>lowering failure after canonical IR acceptance,</li>
+  <li>backend-contract failure after lowering eligibility,</li>
+  <li>declared backend-family consumer rejection after contract emission.</li>
 </ul>
 
 <p>
@@ -484,14 +507,16 @@ IR derivation / identity / construction preservation
    -&gt;
 canonical JSON IR validation where relevant
    -&gt;
-later lowering / backend-facing handoff where relevant</code></pre>
+later lowering / backend-facing handoff where relevant
+   -&gt;
+declared backend-family consumption where relevant</code></pre>
 
 <hr/>
 
 <h2 id="published-cases">9. Published Cases</h2>
 
 <p>
-The current published set combines:
+The current published and newly-opened conformance set combines:
 </p>
 
 <ul>
@@ -499,7 +524,8 @@ The current published set combines:
   <li>early positive executable anchor cases,</li>
   <li>a mirrored valid / invalid architectural boundary progression,</li>
   <li>additional standalone invalid architectural rejection cases,</li>
-  <li>an extended IR recoverability and correspondence-disentanglement progression.</li>
+  <li>an extended IR recoverability and correspondence-disentanglement progression,</li>
+  <li>a newly-opened valid / invalid compiler-corridor family for downstream compilation-stage reading.</li>
 </ul>
 
 <h3>9.1 Published top-level source-shape block</h3>
@@ -648,6 +674,47 @@ That progression should be read as enforcing at least the following public expec
 This is one of the most important current published areas for the future compiler corridor, because a serious backend cannot be allowed to consume an IR that has already lost attribution, ownership, or distinction boundaries.
 </p>
 
+<h3>9.6 Compiler-corridor families</h3>
+
+<p>
+The conformance tree now also opens two nested compiler-corridor families:
+</p>
+
+<pre><code>valid/compiler/
+invalid/compiler/</code></pre>
+
+<p>
+These families extend the public truth surface beyond ordinary language validity and IR correctness by making later corridor stages readable and testable:
+</p>
+
+<pre><code>semantic acceptance
+   -&gt;
+IR derivation
+   -&gt;
+canonical JSON IR validity where applicable
+   -&gt;
+lowering eligibility
+   -&gt;
+backend-contract eligibility
+   -&gt;
+declared backend-family consumability</code></pre>
+
+<p>
+The positive side exists to publish cases that are not only language-valid, but also lowerable and handoff-ready for a declared compilation corridor.
+The negative side exists to publish staged rejections such as:
+</p>
+
+<ul>
+  <li>language-valid but profile-rejected,</li>
+  <li>IR-derivable but not lowerable,</li>
+  <li>lowerable but not backend-contract-emittable,</li>
+  <li>contract-emittable but rejected by the declared backend-family consumer.</li>
+</ul>
+
+<p>
+For v0.1, the first intended downstream profile target for these families is the conservative subset of <code>native_cpu_llvm</code>.
+</p>
+
 <hr/>
 
 <h2 id="expected-outcomes">10. Expected Outcomes</h2>
@@ -662,6 +729,9 @@ Each case expresses structured expectations such as:
   <li>Expected meaning: <code>established</code> | <code>not established</code></li>
   <li>Expected IR result: <code>derivable</code> | <code>not derivable</code></li>
   <li>Expected IR schema result: <code>schema-valid</code> | <code>not schema-valid</code></li>
+  <li>Expected lowering result: <code>lowerable</code> | <code>rejected</code> | <code>not applicable</code></li>
+  <li>Expected backend-contract result: <code>emittable</code> | <code>not emittable</code> | <code>not applicable</code></li>
+  <li>Expected backend-family consumption: <code>consumable</code> | <code>rejected</code> | <code>not applicable</code></li>
   <li>Expected preservation: required distinctions remain explicit</li>
   <li>Expected rejection: explicit failure reason</li>
 </ul>
@@ -695,19 +765,25 @@ Expected meaning: established
 Expected IR result: derivable
 Expected IR schema result: not schema-valid
 Expected rejection:
-  canonical IR omitted required correspondence carrier</code></pre>
+  canonical IR omitted required correspondence carrier
 
-<p>
-For later-stage-sensitive cases, expectations may also include:
-</p>
+Expected loadability: loadable
+Expected structural validity: valid
+Expected meaning: established
+Expected IR result: derivable
+Expected lowering result: rejected
+Expected rejection:
+  faithful lowering unavailable for declared profile
 
-<ul>
-  <li>required IR-side recoverability,</li>
-  <li>required attribution and correspondence category preservation,</li>
-  <li>required distinction between primary and non-primary relations,</li>
-  <li>required preservation of execution-side category boundaries before lowering,</li>
-  <li>required preservation of backend-relevant distinctions before backend-facing handoff.</li>
-</ul>
+Expected loadability: loadable
+Expected structural validity: valid
+Expected meaning: established
+Expected IR result: derivable
+Expected lowering result: lowerable
+Expected backend-contract result: emittable
+Expected backend-family consumption: rejected
+Expected rejection:
+  declared backend-family consumer cannot honor required capabilities</code></pre>
 
 <p>
 A useful discipline rule is:
@@ -729,88 +805,67 @@ schema-valid IR
 does not imply
 semantic correctness by itself
 
-backend-consumable form
+lowerable
 does not imply
-normative correctness by itself</code></pre>
+backend-contract-emittable
+
+backend-contract-emittable
+does not imply
+backend-family consumable</code></pre>
 
 <hr/>
 
-<h2 id="compiler-corridor-reading">11. Compiler-Corridor Reading</h2>
+<h2 id="active-v01-conformance-focus">11. Active v0.1 Conformance Focus</h2>
 
 <p>
-The current published conformance set should now be read not only as a validation suite, but also as the upstream truth surface of a future industrial compilation chain.
-</p>
-
-<p>
-That reading corridor is:
-</p>
-
-<pre><code>.frog source
-   -&gt;
-loadability
-   -&gt;
-structural validity
-   -&gt;
-validated meaning
-   -&gt;
-canonical Execution IR Document
-   -&gt;
-canonical JSON IR validation where applicable
-   -&gt;
-later lowering / backend-facing handoff where applicable
-   -&gt;
-downstream compiler-family consumption where applicable</code></pre>
-
-<p>
-In that corridor:
+The active v0.1 conformance focus is now split across two tightly related fronts:
 </p>
 
 <ul>
-  <li><code>Conformance/</code> does not define LLVM,</li>
-  <li><code>Conformance/</code> does not define private runtime realization,</li>
-  <li><code>Conformance/</code> does define the public accept / reject / preserve surface that any LLVM-oriented route must still respect.</li>
+  <li>maintaining coherence of the already-published source / semantic / IR truth surface,</li>
+  <li>opening the first explicit compiler-corridor reading without collapsing FROG into a backend-private model.</li>
 </ul>
 
 <p>
-The practical consequence is:
-</p>
-
-<pre><code>future compilation success
-must remain downstream from
-published conformance truth</code></pre>
-
-<p>
-This means:
+Near-term focus therefore remains:
 </p>
 
 <ul>
-  <li>a compiler route MUST NOT repair semantically invalid source silently,</li>
-  <li>a compiler route MUST NOT collapse explicit state into inferred persistence,</li>
-  <li>a compiler route MUST NOT erase attribution and recoverability carriers required by the published IR corridor before the permitted downstream boundary,</li>
-  <li>a compiler route MUST NOT treat backend convenience as specification law,</li>
-  <li>a backend family MUST remain downstream from the canonical open IR boundary.</li>
+  <li>top-level source-shape validity and invalidity,</li>
+  <li>semantic rejection clarity,</li>
+  <li>IR preservation, attribution, and correspondence discipline,</li>
+  <li>canonical JSON IR validity versus deeper architectural validity,</li>
+  <li>first compiler-corridor positive and negative family structure.</li>
 </ul>
 
 <p>
-The current published corpus is therefore already relevant to a future path such as:
+For v0.1, compiler-corridor work should remain conservative and preferentially target the first bounded compilation profile:
 </p>
 
-<pre><code>.frog
-   -&gt;
-validated semantics
-   -&gt;
-canonical FROG Execution IR
-   -&gt;
-lowering
-   -&gt;
-backend contract
-   -&gt;
-LLVM-oriented native backend</code></pre>
+<pre><code>native_cpu_llvm</code></pre>
 
 <p>
-The conformance corpus does not yet claim that this whole downstream route is fully closed for every published feature.
-It does claim that any such route must remain faithful to the same upstream truth surface.
+That means the active compiler-corridor focus is not “all compilation”.
+It is:
 </p>
+
+<pre><code>close one serious conservative downstream route first</code></pre>
+
+<p>
+The preferred growth order is therefore:
+</p>
+
+<pre><code>source-shape closure
+   -&gt;
+semantic rejection closure
+   -&gt;
+IR preservation closure
+   -&gt;
+canonical JSON IR validation closure
+   -&gt;
+compiler-corridor valid / invalid family closure
+   -&gt;
+later corridor expansion</code></pre>
 
 <hr/>
 
@@ -858,6 +913,15 @@ Where a case materially constrains IR derivation, identity, recoverability, lowe
 </ul>
 
 <p>
+Where a case materially constrains a declared compilation profile or backend-family route, the reader should also cross-check:
+</p>
+
+<ul>
+  <li><code>Profiles/Readme.md</code>,</li>
+  <li><code>Profiles/Native CPU LLVM.md</code> where relevant.</li>
+</ul>
+
+<p>
 Where a case materially constrains executable reference slices, the reader should also cross-check <code>Implementations/Reference/Readme.md</code> and the reference pipeline staging.
 </p>
 
@@ -878,7 +942,7 @@ Near-term growth should prioritize:
   <li>continued alignment with the real published case set,</li>
   <li>stronger read-across to IR identity, derivation, and recoverability law,</li>
   <li>explicit distinction between canonical IR validity and later backend-facing success,</li>
-  <li>eventual compiler-corridor-sensitive cases once lowering and backend contract are further consolidated.</li>
+  <li>mirrored compiler-corridor-sensitive cases as lowering and backend contract continue to consolidate.</li>
 </ul>
 
 <p>
@@ -893,9 +957,11 @@ IR preservation closure
    -&gt;
 canonical JSON IR validation closure
    -&gt;
-lowering-sensitive conformance
+compiler-corridor positive closure
    -&gt;
-backend-handoff-sensitive conformance</code></pre>
+compiler-corridor mirrored rejection closure
+   -&gt;
+later profile-specific corridor growth</code></pre>
 
 <p>
 That order preserves the architecture:
@@ -909,7 +975,7 @@ downstream specialization second</code></pre>
 <h2 id="summary">14. Summary</h2>
 
 <p>
-`Conformance/` is the public accept / reject / preserve truth surface of the published FROG repository.
+<code>Conformance/</code> is the public accept / reject / preserve truth surface of the published FROG repository.
 </p>
 
 <p>
@@ -918,7 +984,7 @@ It exposes it.
 </p>
 
 <p>
-Its current published corpus already covers:
+Its current published and newly-opened corpus covers:
 </p>
 
 <ul>
@@ -926,7 +992,8 @@ Its current published corpus already covers:
   <li>positive executable anchor slices,</li>
   <li>architectural distinction preservation,</li>
   <li>IR recoverability and correspondence discipline,</li>
-  <li>downstream-sensitive boundaries relevant to lowering and backend-facing handoff.</li>
+  <li>downstream-sensitive boundaries relevant to lowering and backend-facing handoff,</li>
+  <li>first valid / invalid compiler-corridor family structure for declared downstream compilation routes.</li>
 </ul>
 
 <p>
@@ -945,7 +1012,9 @@ canonical Execution IR Document
    -&gt;
 canonical JSON IR validation where applicable
    -&gt;
-later lowering / backend-facing handoff where applicable</code></pre>
+later lowering / backend-facing handoff where applicable
+   -&gt;
+declared backend-family consumption where applicable</code></pre>
 
 <p>
 As the repository moves toward a more industrial compiler corridor, this directory remains one of the key public anchors.
