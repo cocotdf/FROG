@@ -527,6 +527,91 @@
                                                                    "kind":  "category",
                                                                    "children":  [
                                                                                     {
+                                                                                        "key":  "conformance/invalid/01_missing_required_section/",
+                                                                                        "title":  "01 missing required section",
+                                                                                        "path":  "/Conformance/invalid/01_missing_required_section/Readme.md",
+                                                                                        "kind":  "category",
+                                                                                        "children":  [
+                                                                                                         {
+                                                                                                             "key":  "conformance/invalid/01_missing_required_section/case.frog",
+                                                                                                             "title":  "case.frog",
+                                                                                                             "path":  "/Conformance/invalid/01_missing_required_section/case.frog",
+                                                                                                             "kind":  "code",
+                                                                                                             "children":  [
+
+                                                                                                                          ]
+                                                                                                         }
+                                                                                                     ]
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "conformance/invalid/02_wrong_top_level_section_type/",
+                                                                                        "title":  "02 wrong top level section type",
+                                                                                        "path":  "/Conformance/invalid/02_wrong_top_level_section_type/Readme.md",
+                                                                                        "kind":  "category",
+                                                                                        "children":  [
+                                                                                                         {
+                                                                                                             "key":  "conformance/invalid/02_wrong_top_level_section_type/case.frog",
+                                                                                                             "title":  "case.frog",
+                                                                                                             "path":  "/Conformance/invalid/02_wrong_top_level_section_type/case.frog",
+                                                                                                             "kind":  "code",
+                                                                                                             "children":  [
+
+                                                                                                                          ]
+                                                                                                         }
+                                                                                                     ]
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "conformance/invalid/03_connector_defines_logical_ports/",
+                                                                                        "title":  "03 connector defines logical ports",
+                                                                                        "path":  "/Conformance/invalid/03_connector_defines_logical_ports/Readme.md",
+                                                                                        "kind":  "category",
+                                                                                        "children":  [
+                                                                                                         {
+                                                                                                             "key":  "conformance/invalid/03_connector_defines_logical_ports/case.frog",
+                                                                                                             "title":  "case.frog",
+                                                                                                             "path":  "/Conformance/invalid/03_connector_defines_logical_ports/case.frog",
+                                                                                                             "kind":  "code",
+                                                                                                             "children":  [
+
+                                                                                                                          ]
+                                                                                                         }
+                                                                                                     ]
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "conformance/invalid/04_malformed_front_panel_structure/",
+                                                                                        "title":  "04 malformed front panel structure",
+                                                                                        "path":  "/Conformance/invalid/04_malformed_front_panel_structure/Readme.md",
+                                                                                        "kind":  "category",
+                                                                                        "children":  [
+                                                                                                         {
+                                                                                                             "key":  "conformance/invalid/04_malformed_front_panel_structure/case.frog",
+                                                                                                             "title":  "case.frog",
+                                                                                                             "path":  "/Conformance/invalid/04_malformed_front_panel_structure/case.frog",
+                                                                                                             "kind":  "code",
+                                                                                                             "children":  [
+
+                                                                                                                          ]
+                                                                                                         }
+                                                                                                     ]
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "conformance/invalid/05_duplicate_source_identifier/",
+                                                                                        "title":  "05 duplicate source identifier",
+                                                                                        "path":  "/Conformance/invalid/05_duplicate_source_identifier/Readme.md",
+                                                                                        "kind":  "category",
+                                                                                        "children":  [
+                                                                                                         {
+                                                                                                             "key":  "conformance/invalid/05_duplicate_source_identifier/case.frog",
+                                                                                                             "title":  "case.frog",
+                                                                                                             "path":  "/Conformance/invalid/05_duplicate_source_identifier/case.frog",
+                                                                                                             "kind":  "code",
+                                                                                                             "children":  [
+
+                                                                                                                          ]
+                                                                                                         }
+                                                                                                     ]
+                                                                                    },
+                                                                                    {
                                                                                         "key":  "conformance/invalid/06_widget_must_not_be_promoted_to_public_interface.md",
                                                                                         "title":  "06 widget must not be promoted to public interface",
                                                                                         "path":  "/Conformance/invalid/06_widget_must_not_be_promoted_to_public_interface.md",
@@ -536,12 +621,73 @@
                                                                                                      ]
                                                                                     },
                                                                                     {
+                                                                                        "key":  "conformance/invalid/06_invalid_top_level_root_shape/",
+                                                                                        "title":  "06 invalid top level root shape",
+                                                                                        "path":  "/Conformance/invalid/06_invalid_top_level_root_shape/Readme.md",
+                                                                                        "kind":  "category",
+                                                                                        "children":  [
+
+                                                                                                     ]
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "conformance/invalid/07_invalid_section_placement/",
+                                                                                        "title":  "07 invalid section placement",
+                                                                                        "path":  "/Conformance/invalid/07_invalid_section_placement/Readme.md",
+                                                                                        "kind":  "category",
+                                                                                        "children":  [
+                                                                                                         {
+                                                                                                             "key":  "conformance/invalid/07_invalid_section_placement/expected.md",
+                                                                                                             "title":  "expected",
+                                                                                                             "path":  "/Conformance/invalid/07_invalid_section_placement/expected.md",
+                                                                                                             "kind":  "page",
+                                                                                                             "children":  [
+
+                                                                                                                          ]
+                                                                                                         },
+                                                                                                         {
+                                                                                                             "key":  "conformance/invalid/07_invalid_section_placement/case.frog",
+                                                                                                             "title":  "case.frog",
+                                                                                                             "path":  "/Conformance/invalid/07_invalid_section_placement/case.frog",
+                                                                                                             "kind":  "code",
+                                                                                                             "children":  [
+
+                                                                                                                          ]
+                                                                                                         }
+                                                                                                     ]
+                                                                                    },
+                                                                                    {
                                                                                         "key":  "conformance/invalid/08_widget_reference_must_not_be_treated_as_widget_value.md",
                                                                                         "title":  "08 widget reference must not be treated as widget value",
                                                                                         "path":  "/Conformance/invalid/08_widget_reference_must_not_be_treated_as_widget_value.md",
                                                                                         "kind":  "page",
                                                                                         "children":  [
 
+                                                                                                     ]
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "conformance/invalid/08_connector_references_unknown_interface_port/",
+                                                                                        "title":  "08 connector references unknown interface port",
+                                                                                        "path":  "/Conformance/invalid/08_connector_references_unknown_interface_port/Readme.md",
+                                                                                        "kind":  "category",
+                                                                                        "children":  [
+                                                                                                         {
+                                                                                                             "key":  "conformance/invalid/08_connector_references_unknown_interface_port/expected.md",
+                                                                                                             "title":  "expected",
+                                                                                                             "path":  "/Conformance/invalid/08_connector_references_unknown_interface_port/expected.md",
+                                                                                                             "kind":  "page",
+                                                                                                             "children":  [
+
+                                                                                                                          ]
+                                                                                                         },
+                                                                                                         {
+                                                                                                             "key":  "conformance/invalid/08_connector_references_unknown_interface_port/case.frog",
+                                                                                                             "title":  "case.frog",
+                                                                                                             "path":  "/Conformance/invalid/08_connector_references_unknown_interface_port/case.frog",
+                                                                                                             "kind":  "code",
+                                                                                                             "children":  [
+
+                                                                                                                          ]
+                                                                                                         }
                                                                                                      ]
                                                                                     },
                                                                                     {
@@ -1073,152 +1219,6 @@
                                                                                         "kind":  "page",
                                                                                         "children":  [
 
-                                                                                                     ]
-                                                                                    },
-                                                                                    {
-                                                                                        "key":  "conformance/invalid/01_missing_required_section/",
-                                                                                        "title":  "01 missing required section",
-                                                                                        "path":  "/Conformance/invalid/01_missing_required_section/Readme.md",
-                                                                                        "kind":  "category",
-                                                                                        "children":  [
-                                                                                                         {
-                                                                                                             "key":  "conformance/invalid/01_missing_required_section/case.frog",
-                                                                                                             "title":  "case.frog",
-                                                                                                             "path":  "/Conformance/invalid/01_missing_required_section/case.frog",
-                                                                                                             "kind":  "code",
-                                                                                                             "children":  [
-
-                                                                                                                          ]
-                                                                                                         }
-                                                                                                     ]
-                                                                                    },
-                                                                                    {
-                                                                                        "key":  "conformance/invalid/02_wrong_top_level_section_type/",
-                                                                                        "title":  "02 wrong top level section type",
-                                                                                        "path":  "/Conformance/invalid/02_wrong_top_level_section_type/Readme.md",
-                                                                                        "kind":  "category",
-                                                                                        "children":  [
-                                                                                                         {
-                                                                                                             "key":  "conformance/invalid/02_wrong_top_level_section_type/case.frog",
-                                                                                                             "title":  "case.frog",
-                                                                                                             "path":  "/Conformance/invalid/02_wrong_top_level_section_type/case.frog",
-                                                                                                             "kind":  "code",
-                                                                                                             "children":  [
-
-                                                                                                                          ]
-                                                                                                         }
-                                                                                                     ]
-                                                                                    },
-                                                                                    {
-                                                                                        "key":  "conformance/invalid/03_connector_defines_logical_ports/",
-                                                                                        "title":  "03 connector defines logical ports",
-                                                                                        "path":  "/Conformance/invalid/03_connector_defines_logical_ports/Readme.md",
-                                                                                        "kind":  "category",
-                                                                                        "children":  [
-                                                                                                         {
-                                                                                                             "key":  "conformance/invalid/03_connector_defines_logical_ports/case.frog",
-                                                                                                             "title":  "case.frog",
-                                                                                                             "path":  "/Conformance/invalid/03_connector_defines_logical_ports/case.frog",
-                                                                                                             "kind":  "code",
-                                                                                                             "children":  [
-
-                                                                                                                          ]
-                                                                                                         }
-                                                                                                     ]
-                                                                                    },
-                                                                                    {
-                                                                                        "key":  "conformance/invalid/04_malformed_front_panel_structure/",
-                                                                                        "title":  "04 malformed front panel structure",
-                                                                                        "path":  "/Conformance/invalid/04_malformed_front_panel_structure/Readme.md",
-                                                                                        "kind":  "category",
-                                                                                        "children":  [
-                                                                                                         {
-                                                                                                             "key":  "conformance/invalid/04_malformed_front_panel_structure/case.frog",
-                                                                                                             "title":  "case.frog",
-                                                                                                             "path":  "/Conformance/invalid/04_malformed_front_panel_structure/case.frog",
-                                                                                                             "kind":  "code",
-                                                                                                             "children":  [
-
-                                                                                                                          ]
-                                                                                                         }
-                                                                                                     ]
-                                                                                    },
-                                                                                    {
-                                                                                        "key":  "conformance/invalid/05_duplicate_source_identifier/",
-                                                                                        "title":  "05 duplicate source identifier",
-                                                                                        "path":  "/Conformance/invalid/05_duplicate_source_identifier/Readme.md",
-                                                                                        "kind":  "category",
-                                                                                        "children":  [
-                                                                                                         {
-                                                                                                             "key":  "conformance/invalid/05_duplicate_source_identifier/case.frog",
-                                                                                                             "title":  "case.frog",
-                                                                                                             "path":  "/Conformance/invalid/05_duplicate_source_identifier/case.frog",
-                                                                                                             "kind":  "code",
-                                                                                                             "children":  [
-
-                                                                                                                          ]
-                                                                                                         }
-                                                                                                     ]
-                                                                                    },
-                                                                                    {
-                                                                                        "key":  "conformance/invalid/06_invalid_top_level_root_shape/",
-                                                                                        "title":  "06 invalid top level root shape",
-                                                                                        "path":  "/Conformance/invalid/06_invalid_top_level_root_shape/Readme.md",
-                                                                                        "kind":  "category",
-                                                                                        "children":  [
-
-                                                                                                     ]
-                                                                                    },
-                                                                                    {
-                                                                                        "key":  "conformance/invalid/07_invalid_section_placement/",
-                                                                                        "title":  "07 invalid section placement",
-                                                                                        "path":  "/Conformance/invalid/07_invalid_section_placement/Readme.md",
-                                                                                        "kind":  "category",
-                                                                                        "children":  [
-                                                                                                         {
-                                                                                                             "key":  "conformance/invalid/07_invalid_section_placement/expected.md",
-                                                                                                             "title":  "expected",
-                                                                                                             "path":  "/Conformance/invalid/07_invalid_section_placement/expected.md",
-                                                                                                             "kind":  "page",
-                                                                                                             "children":  [
-
-                                                                                                                          ]
-                                                                                                         },
-                                                                                                         {
-                                                                                                             "key":  "conformance/invalid/07_invalid_section_placement/case.frog",
-                                                                                                             "title":  "case.frog",
-                                                                                                             "path":  "/Conformance/invalid/07_invalid_section_placement/case.frog",
-                                                                                                             "kind":  "code",
-                                                                                                             "children":  [
-
-                                                                                                                          ]
-                                                                                                         }
-                                                                                                     ]
-                                                                                    },
-                                                                                    {
-                                                                                        "key":  "conformance/invalid/08_connector_references_unknown_interface_port/",
-                                                                                        "title":  "08 connector references unknown interface port",
-                                                                                        "path":  "/Conformance/invalid/08_connector_references_unknown_interface_port/Readme.md",
-                                                                                        "kind":  "category",
-                                                                                        "children":  [
-                                                                                                         {
-                                                                                                             "key":  "conformance/invalid/08_connector_references_unknown_interface_port/expected.md",
-                                                                                                             "title":  "expected",
-                                                                                                             "path":  "/Conformance/invalid/08_connector_references_unknown_interface_port/expected.md",
-                                                                                                             "kind":  "page",
-                                                                                                             "children":  [
-
-                                                                                                                          ]
-                                                                                                         },
-                                                                                                         {
-                                                                                                             "key":  "conformance/invalid/08_connector_references_unknown_interface_port/case.frog",
-                                                                                                             "title":  "case.frog",
-                                                                                                             "path":  "/Conformance/invalid/08_connector_references_unknown_interface_port/case.frog",
-                                                                                                             "kind":  "code",
-                                                                                                             "children":  [
-
-                                                                                                                          ]
-                                                                                                         }
                                                                                                      ]
                                                                                     }
                                                                                 ]
@@ -2418,8 +2418,25 @@
                         "/IDE/Snippet.md",
                         "/IDE/Watch.md",
                         "/IDE/Readme.md",
+                        "/Conformance/invalid/01_missing_required_section/case.frog",
+                        "/Conformance/invalid/01_missing_required_section/Readme.md",
+                        "/Conformance/invalid/02_wrong_top_level_section_type/case.frog",
+                        "/Conformance/invalid/02_wrong_top_level_section_type/Readme.md",
+                        "/Conformance/invalid/03_connector_defines_logical_ports/case.frog",
+                        "/Conformance/invalid/03_connector_defines_logical_ports/Readme.md",
+                        "/Conformance/invalid/04_malformed_front_panel_structure/case.frog",
+                        "/Conformance/invalid/04_malformed_front_panel_structure/Readme.md",
+                        "/Conformance/invalid/05_duplicate_source_identifier/case.frog",
+                        "/Conformance/invalid/05_duplicate_source_identifier/Readme.md",
                         "/Conformance/invalid/06_widget_must_not_be_promoted_to_public_interface.md",
+                        "/Conformance/invalid/06_invalid_top_level_root_shape/Readme.md",
+                        "/Conformance/invalid/07_invalid_section_placement/expected.md",
+                        "/Conformance/invalid/07_invalid_section_placement/case.frog",
+                        "/Conformance/invalid/07_invalid_section_placement/Readme.md",
                         "/Conformance/invalid/08_widget_reference_must_not_be_treated_as_widget_value.md",
+                        "/Conformance/invalid/08_connector_references_unknown_interface_port/expected.md",
+                        "/Conformance/invalid/08_connector_references_unknown_interface_port/case.frog",
+                        "/Conformance/invalid/08_connector_references_unknown_interface_port/Readme.md",
                         "/Conformance/invalid/10_front_panel_presence_must_not_be_treated_as_execution_meaning.md",
                         "/Conformance/invalid/12_public_interface_declaration_must_not_require_front_panel_widget_existence.md",
                         "/Conformance/invalid/14_layout_or_adjacency_must_not_be_treated_as_executable_participation.md",
@@ -2479,23 +2496,6 @@
                         "/Conformance/invalid/illegal_feedback_without_explicit_memory.md",
                         "/Conformance/invalid/interface_widget_role_confusion.md",
                         "/Conformance/invalid/ui_reference_without_ui_primitive.md",
-                        "/Conformance/invalid/01_missing_required_section/case.frog",
-                        "/Conformance/invalid/01_missing_required_section/Readme.md",
-                        "/Conformance/invalid/02_wrong_top_level_section_type/case.frog",
-                        "/Conformance/invalid/02_wrong_top_level_section_type/Readme.md",
-                        "/Conformance/invalid/03_connector_defines_logical_ports/case.frog",
-                        "/Conformance/invalid/03_connector_defines_logical_ports/Readme.md",
-                        "/Conformance/invalid/04_malformed_front_panel_structure/case.frog",
-                        "/Conformance/invalid/04_malformed_front_panel_structure/Readme.md",
-                        "/Conformance/invalid/05_duplicate_source_identifier/case.frog",
-                        "/Conformance/invalid/05_duplicate_source_identifier/Readme.md",
-                        "/Conformance/invalid/06_invalid_top_level_root_shape/Readme.md",
-                        "/Conformance/invalid/07_invalid_section_placement/expected.md",
-                        "/Conformance/invalid/07_invalid_section_placement/case.frog",
-                        "/Conformance/invalid/07_invalid_section_placement/Readme.md",
-                        "/Conformance/invalid/08_connector_references_unknown_interface_port/expected.md",
-                        "/Conformance/invalid/08_connector_references_unknown_interface_port/case.frog",
-                        "/Conformance/invalid/08_connector_references_unknown_interface_port/Readme.md",
                         "/Conformance/valid/01_pure_addition.md",
                         "/Conformance/valid/02_ui_value_roundtrip.md",
                         "/Conformance/valid/03_ui_property_write.md",
