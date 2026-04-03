@@ -1646,6 +1646,13 @@
                       "path": "/Conformance/valid/compiler/01_pure_arithmetic_is_consumable.md",
                       "kind": "page",
                       "children": []
+                    },
+                    {
+                      "key": "conformance/valid/compiler/02_structured_control_is_consumable.md",
+                      "title": "02 structured control is consumable",
+                      "path": "/Conformance/valid/compiler/02_structured_control_is_consumable.md",
+                      "kind": "page",
+                      "children": []
                     }
                   ]
                 }
@@ -2209,6 +2216,7 @@
     "/Conformance/valid/10_distinct_source_identifiers_are_valid/case.frog",
     "/Conformance/valid/10_distinct_source_identifiers_are_valid/Readme.md",
     "/Conformance/valid/compiler/01_pure_arithmetic_is_consumable.md",
+    "/Conformance/valid/compiler/02_structured_control_is_consumable.md",
     "/Conformance/valid/compiler/Readme.md",
     "/Conformance/Readme.md",
     "/Implementations/Reference/example-artifact-requirements.md",

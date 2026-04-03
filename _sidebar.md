@@ -231,6 +231,7 @@
       - [case.frog](/Conformance/valid/10_distinct_source_identifiers_are_valid/case.frog)
     - [compiler](/Conformance/valid/compiler/Readme.md)
       - [01 pure arithmetic is consumable](/Conformance/valid/compiler/01_pure_arithmetic_is_consumable.md)
+      - [02 structured control is consumable](/Conformance/valid/compiler/02_structured_control_is_consumable.md)
 - [Reference Implementation](/Implementations/Reference/Readme.md)
   - [example-artifact-requirements](/Implementations/Reference/example-artifact-requirements.md)
   - [frogc](/Implementations/Reference/frogc.md)
