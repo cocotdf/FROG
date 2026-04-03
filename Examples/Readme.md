@@ -1,11 +1,11 @@
 <p align="center">
-  <img src="../FROG logo.svg" alt="FROG logo" width="200" />
+  <img src="../FROG logo.svg" alt="FROG logo" width="140" />
 </p>
 
 <h1 align="center">FROG Examples</h1>
 
 <p align="center">
-  <strong>Minimal example programs for the published FROG specification</strong><br/>
+  <strong>Illustrative named slices of the published FROG specification</strong><br/>
   <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -14,17 +14,14 @@
 <h2>Contents</h2>
 <ul>
   <li><a href="#overview">1. Overview</a></li>
-  <li><a href="#why-this-directory-exists">2. Why this Directory Exists</a></li>
-  <li><a href="#what-examples-are-for">3. What Examples Are For</a></li>
+  <li><a href="#why-this-directory-exists">2. Why This Directory Exists</a></li>
+  <li><a href="#what-examples-are">3. What Examples Are</a></li>
   <li><a href="#what-examples-are-not">4. What Examples Are Not</a></li>
-  <li><a href="#relation-with-the-specification">5. Relation with the Specification</a></li>
-  <li><a href="#example-design-rules">6. Example Design Rules</a></li>
-  <li><a href="#recommended-example-shape">7. Recommended Example Shape</a></li>
-  <li><a href="#first-example-slices">8. First Example Slices</a></li>
-  <li><a href="#how-to-read-an-example">9. How to Read an Example</a></li>
-  <li><a href="#relation-with-conformance-and-reference-implementation">10. Relation with Conformance and Reference Implementation</a></li>
-  <li><a href="#status-in-v01">11. Status in v0.1</a></li>
-  <li><a href="#summary">12. Summary</a></li>
+  <li><a href="#relation-with-conformance">5. Relation with Conformance</a></li>
+  <li><a href="#relation-with-ir-and-profiles">6. Relation with IR and Profiles</a></li>
+  <li><a href="#published-example-families">7. Published Example Families</a></li>
+  <li><a href="#compiler-corridor-positive-mirror">8. Compiler-Corridor Positive Mirror</a></li>
+  <li><a href="#summary">9. Summary</a></li>
 </ul>
 
 <hr/>
@@ -32,432 +29,166 @@
 <h2 id="overview">1. Overview</h2>
 
 <p>
-This directory contains <strong>minimal example FROG programs</strong> used to illustrate and exercise the published specification.
-Each example is intended to be small, readable, architecturally meaningful, and directly tied to one or more boundaries already defined elsewhere in the repository.
+This directory provides illustrative named slices of the published FROG specification.
 </p>
 
 <p>
-Examples exist to make the specification easier to read, easier to discuss, easier to implement, and easier to inspect through early toolchains.
-They are deliberately practical, but they are <strong>not</strong> the normative source of language truth.
-</p>
-
-<pre><code>Examples/
-   |
-   +-- small published programs
-   +-- readable slices of the specification
-   +-- early implementation targets
-   +-- support material for conformance
-</code></pre>
-
-<hr/>
-
-<h2 id="why-this-directory-exists">2. Why this Directory Exists</h2>
-
-<p>
-The FROG repository defines a layered execution corridor:
-</p>
-
-<ul>
-  <li>canonical source,</li>
-  <li>loadability,</li>
-  <li>structural validity,</li>
-  <li>validated program meaning,</li>
-  <li>canonical Execution IR,</li>
-  <li>lowering and backend-facing handoff,</li>
-  <li>private realization by implementations.</li>
-</ul>
-
-<p>
-That architecture is intentionally explicit.
-However, architectural precision alone is not enough to support early validators, early execution experiments, or a future reference implementation.
-A dedicated examples directory is therefore needed to provide:
-</p>
-
-<ul>
-  <li>small canonical source programs,</li>
-  <li>clear coverage of important distinctions,</li>
-  <li>testable slices of the published stage corridor,</li>
-  <li>shared named programs for future implementations.</li>
-</ul>
-
-<p>
-Without examples, the repository would remain readable in principle but harder to approach in practice.
-Examples are the smallest public bridge between specification text and executable experimentation.
+Examples are intended to make the specification easier to read, easier to compare, and easier to discuss across layers without turning prose alone into the only reading surface.
 </p>
 
 <hr/>
 
-<h2 id="what-examples-are-for">3. What Examples Are For</h2>
+<h2 id="why-this-directory-exists">2. Why This Directory Exists</h2>
 
 <p>
-Examples in this directory are intended to serve several purposes at once:
+A specification stack becomes easier to understand when readers can see small named slices that correspond to recognizable architectural situations.
+</p>
+
+<p>
+Examples therefore exist to:
 </p>
 
 <ul>
-  <li><strong>reading support</strong> — they make specification boundaries easier to understand,</li>
-  <li><strong>implementation support</strong> — they provide small targets for loaders, structural validators, semantic validators, derivation stages, lowerers, contract emitters, and runtimes,</li>
-  <li><strong>discussion support</strong> — they make architectural distinctions visible in concrete form,</li>
-  <li><strong>regression support</strong> — they help reveal accidental architectural drift.</li>
+  <li>illustrate published structures,</li>
+  <li>illustrate published semantic boundaries,</li>
+  <li>illustrate published IR consequences,</li>
+  <li>illustrate declared profile corridors where relevant.</li>
 </ul>
 
-<p>
-A useful early pipeline is:
-</p>
+<hr/>
 
-<pre><code>example .frog
-      |
-      v
-loadability
-      |
-      v
-structural validation
-      |
-      v
-semantic validation
-      |
-      v
-canonical Execution IR derivation
-      |
-      v
-lowering
-      |
-      v
-backend contract emission
-      |
-      v
-reference runtime experimentation
-</code></pre>
+<h2 id="what-examples-are">3. What Examples Are</h2>
 
 <p>
-Examples therefore help turn repository architecture into something inspectable and runnable without claiming that the example itself owns the meaning of the language.
+Examples are illustrative repository-visible slices.
+They may be small, focused, named, and architecture-oriented.
 </p>
+
+<p>
+An example may illustrate:
+</p>
+
+<ul>
+  <li>a source shape,</li>
+  <li>a semantic pattern,</li>
+  <li>a control pattern,</li>
+  <li>a state pattern,</li>
+  <li>a declared profile corridor.</li>
+</ul>
 
 <hr/>
 
 <h2 id="what-examples-are-not">4. What Examples Are Not</h2>
 
 <p>
-Examples in this directory are <strong>not</strong>:
+Examples do not become hidden semantic law.
+</p>
+
+<p>
+The rule remains:
+</p>
+
+<pre><code>Specification defines
+Conformance tests
+Examples illustrate</code></pre>
+
+<p>
+An example therefore does not replace the owning documents in:
 </p>
 
 <ul>
-  <li>a replacement for the normative specification,</li>
-  <li>a conformance decision surface,</li>
-  <li>a complete tutorial curriculum,</li>
-  <li>a frozen implementation test suite,</li>
-  <li>a hidden source of semantics that should have lived in <code>Expression/</code>, <code>Language/</code>, or <code>IR/</code>.</li>
+  <li><code>Expression/</code>,</li>
+  <li><code>Language/</code>,</li>
+  <li><code>Libraries/</code>,</li>
+  <li><code>IR/</code>,</li>
+  <li><code>Profiles/</code>.</li>
 </ul>
-
-<p>
-If an example appears to define language truth by itself, the owning specification layer should be clarified instead.
-</p>
-
-<p>
-The core distinction is:
-</p>
-
-<pre><code>Examples
-    illustrate
-
-Conformance
-    declares expected accept / reject / preserve outcomes
-
-Specification
-    owns the rules
-</code></pre>
 
 <hr/>
 
-<h2 id="relation-with-the-specification">5. Relation with the Specification</h2>
+<h2 id="relation-with-conformance">5. Relation with Conformance</h2>
 
 <p>
-This directory must be read as <strong>downstream support material</strong> for the published specification.
-It does not own semantic or architectural law.
-</p>
-
-<p>
-Ownership remains:
+Examples and conformance are related but distinct.
 </p>
 
 <ul>
-  <li><code>Expression/</code> — canonical source shape, source-schema posture, and structural validity,</li>
-  <li><code>Language/</code> — validated semantic truth,</li>
-  <li><code>Libraries/</code> — intrinsic primitive catalogs,</li>
-  <li><code>Profiles/</code> — optional standardized capability families,</li>
-  <li><code>IR/</code> — canonical execution-facing representation and its derivation, construction, mapping, lowering, and backend handoff boundaries,</li>
-  <li><code>IDE/</code> — authoring-facing and observability-facing tooling concerns.</li>
+  <li>Examples illustrate named slices.</li>
+  <li>Conformance exposes accept / reject / preserve truth.</li>
 </ul>
 
 <p>
-Examples may illustrate those layers.
-They must not silently replace them.
+A useful reading model is:
 </p>
 
-<p>
-The reading rule is:
-</p>
-
-<pre><code>specification defines
-examples illustrate
-implementations consume
-</code></pre>
+<pre><code>example slice
+   -&gt;
+conformance case
+   -&gt;
+IR / profile reading where relevant</code></pre>
 
 <hr/>
 
-<h2 id="example-design-rules">6. Example Design Rules</h2>
+<h2 id="relation-with-ir-and-profiles">6. Relation with IR and Profiles</h2>
 
 <p>
-Examples in this directory should follow the rules below:
+Examples may mirror:
 </p>
 
 <ul>
-  <li>Each example should be small enough to understand quickly.</li>
-  <li>Each example should highlight one architectural point or one compact cluster of related points.</li>
-  <li>Each example should remain close to canonical source rather than to one implementation-private form.</li>
-  <li>Each example should avoid unnecessary decorative complexity.</li>
-  <li>Each example should state clearly which constructs it is exercising.</li>
-  <li>Each example should remain useful to future conformance and implementation work.</li>
+  <li>core source / semantic slices,</li>
+  <li>IR-relevant slices,</li>
+  <li>profile-relevant slices.</li>
 </ul>
 
 <p>
-Preferred style:
-</p>
-
-<pre><code>small
-explicit
-single-purpose
-architecturally meaningful
-easy to validate
-easy to derive
-easy to run in a reference pipeline
-</code></pre>
-
-<p>
-The goal is not to show everything.
-The goal is to show one thing clearly enough that later layers can exercise it without ambiguity.
+Where a declared compiler corridor is involved, examples should remain bounded and conservative.
 </p>
 
 <hr/>
 
-<h2 id="recommended-example-shape">7. Recommended Example Shape</h2>
+<h2 id="published-example-families">7. Published Example Families</h2>
 
 <p>
-Each example directory should usually contain:
+The first coherent example growth should remain small and architecture-first.
 </p>
 
-<ul>
-  <li><code>Readme.md</code> — human-readable explanation of the example,</li>
-  <li><code>main.frog</code> — canonical source artifact for the example.</li>
-</ul>
-
 <p>
-The example README should normally explain:
-</p>
-
-<ul>
-  <li>the purpose of the example,</li>
-  <li>the constructs used,</li>
-  <li>which specification documents own those constructs,</li>
-  <li>whether the source is expected to be loadable and structurally valid,</li>
-  <li>what semantic validation is expected to accept,</li>
-  <li>what derivation should preserve into the canonical Execution IR Document,</li>
-  <li>what lowering or backend handoff may later specialize,</li>
-  <li>what a reference implementation is expected to do with the example.</li>
-</ul>
-
-<p>
-A compact example shape is usually better than a broad one.
-An example should be easy to inspect as source first, then easy to carry through later stages.
+A suitable first family is the positive compiler-corridor mirror for the conservative <code>native_cpu_llvm</code> route.
 </p>
 
 <hr/>
 
-<h2 id="first-example-slices">8. First Example Slices</h2>
+<h2 id="compiler-corridor-positive-mirror">8. Compiler-Corridor Positive Mirror</h2>
 
 <p>
-For the first executable vertical slices of FROG v0.1, the recommended initial examples are:
+The initial positive mirror is:
+</p>
+
+<pre><code>Examples/compiler/
+01_pure_arithmetic.md
+02_structured_control.md
+03_explicit_state.md</code></pre>
+
+<p>
+These examples correspond to the first named positive conformance corridor:
 </p>
 
 <ul>
-  <li><strong>pure addition</strong> — public interface input to primitive to public interface output,</li>
-  <li><strong>UI value roundtrip</strong> — <code>widget_value</code> participation through ordinary execution,</li>
-  <li><strong>UI property write</strong> — <code>widget_reference</code> plus standardized UI-object primitive operation,</li>
-  <li><strong>stateful feedback with explicit delay</strong> — legal feedback requiring explicit local memory.</li>
+  <li>pure computation,</li>
+  <li>structured control,</li>
+  <li>explicit state.</li>
 </ul>
-
-<p>
-Together, these examples provide a compact first coverage set for:
-</p>
-
-<ul>
-  <li>interface boundaries,</li>
-  <li>primitive execution,</li>
-  <li>structural and semantic passage through the early validation corridor,</li>
-  <li>canonical Execution IR derivation,</li>
-  <li>UI value participation,</li>
-  <li>UI object-style interaction,</li>
-  <li>explicit local memory.</li>
-</ul>
-
-<p>
-These examples are intentionally small but architecturally dense.
-They are not chosen for breadth.
-They are chosen because they expose critical distinctions early.
-</p>
 
 <hr/>
 
-<h2 id="how-to-read-an-example">9. How to Read an Example</h2>
+<h2 id="summary">9. Summary</h2>
 
 <p>
-A reader should normally approach each example in the following order:
-</p>
-
-<ol>
-  <li>read the example README,</li>
-  <li>inspect the canonical <code>.frog</code> source,</li>
-  <li>check whether the source is merely loadable or also structurally valid canonical source,</li>
-  <li>check which specification documents own the constructs being used,</li>
-  <li>check the corresponding conformance material when available,</li>
-  <li>run the example through validation, derivation, lowering, and execution tooling when available.</li>
-</ol>
-
-<p>
-Examples are therefore intended to be both readable documents and early execution targets.
+Examples are illustrative named slices of the specification.
+They remain subordinate to the owning spec documents and complementary to conformance.
 </p>
 
 <p>
-The main reading discipline is:
+The first coherent mirror to open is the positive compiler corridor for the conservative <code>native_cpu_llvm</code> route.
 </p>
-
-<pre><code>read the example
-then read the owning specification
-not the reverse
-</code></pre>
-
-<p>
-An example helps the reader enter the specification.
-It does not replace the need to read the owning layer.
-</p>
-
-<hr/>
-
-<h2 id="relation-with-conformance-and-reference-implementation">10. Relation with Conformance and Reference Implementation</h2>
-
-<p>
-This directory is meant to work together with:
-</p>
-
-<ul>
-  <li><code>Conformance/</code> — which states what should be accepted, rejected, or preserved,</li>
-  <li><code>Implementations/Reference/</code> — which may use these examples as the first runnable targets of a reference toolchain.</li>
-</ul>
-
-<p>
-The distinction must remain explicit:
-</p>
-
-<pre><code>Examples/
-   provides small named programs
-
-Conformance/
-   states expected accept / reject / preserve outcomes
-
-Implementations/Reference/
-   attempts to load, structurally validate, semantically validate,
-   derive, lower, emit contracts, and eventually run those programs
-</code></pre>
-
-<p>
-An example may be illustrative without being a full conformance statement.
-A conformance case may reference an example but still owns the explicit expectation.
-A reference implementation may execute an example correctly, but it does not become language law by doing so.
-</p>
-
-<p>
-A useful repository reading corridor is therefore:
-</p>
-
-<pre><code>Examples/
-   names and explains the program
-
-Conformance/
-   explains what must happen
-
-Implementations/Reference/
-   tries to do it correctly through explicit stages
-</code></pre>
-
-<hr/>
-
-<h2 id="status-in-v01">11. Status in v0.1</h2>
-
-<p>
-In base v0.1, this directory is intentionally small.
-The goal is not breadth.
-The goal is to establish a <strong>clean, durable, implementation-useful starting set</strong>.
-</p>
-
-<p>
-The currently published early slices are:
-</p>
-
-<ul>
-  <li><code>01_pure_addition</code>,</li>
-  <li><code>02_ui_value_roundtrip</code>,</li>
-  <li><code>03_ui_property_write</code>,</li>
-  <li><code>04_stateful_feedback_delay</code>.</li>
-</ul>
-
-<p>
-More examples may be added later,
-but the first examples should remain carefully chosen and architecturally dense.
-</p>
-
-<p>
-A good v0.1 example set should be:
-</p>
-
-<ul>
-  <li>small enough to inspect manually,</li>
-  <li>strong enough to drive early implementations,</li>
-  <li>clear enough to support future conformance work,</li>
-  <li>stable enough to remain useful as the repository grows.</li>
-</ul>
-
-<p>
-In particular, examples should remain aligned with the published stage corridor rather than smuggling private implementation shortcuts into the public reading of the repository.
-</p>
-
-<hr/>
-
-<h2 id="summary">12. Summary</h2>
-
-<p>
-This directory provides minimal example programs for the published FROG specification.
-Its role is to support reading, early execution experiments, future conformance, and a future reference implementation.
-</p>
-
-<p>
-Examples are intentionally practical,
-but they remain downstream from the normative specification layers.
-They illustrate the language.
-They do not redefine it.
-</p>
-
-<p>
-The essential distinction is:
-</p>
-
-<pre><code>Specification
-    owns truth
-
-Examples
-    make that truth easier to read
-
-Conformance
-    makes that truth testable
-
-Implementations
-    must follow accordingly
-</code></pre>
