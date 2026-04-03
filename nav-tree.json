@@ -187,7 +187,15 @@
               "title": "compiler",
               "path": "/Examples/compiler/Readme.md",
               "kind": "category",
-              "children": []
+              "children": [
+                {
+                  "key": "examples/compiler/01_pure_arithmetic.md",
+                  "title": "01 pure arithmetic",
+                  "path": "/Examples/compiler/01_pure_arithmetic.md",
+                  "kind": "page",
+                  "children": []
+                }
+              ]
             }
           ]
         },
@@ -2027,6 +2035,7 @@
     "/Examples/03_ui_property_write/Readme.md",
     "/Examples/04_stateful_feedback_delay/main.frog",
     "/Examples/04_stateful_feedback_delay/Readme.md",
+    "/Examples/compiler/01_pure_arithmetic.md",
     "/Examples/compiler/Readme.md",
     "/Examples/Readme.md",
     "/Language/Control%20structures.md",
