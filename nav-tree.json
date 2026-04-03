@@ -201,6 +201,13 @@
                   "path": "/Examples/compiler/02_structured_control.md",
                   "kind": "page",
                   "children": []
+                },
+                {
+                  "key": "examples/compiler/03_explicit_state.md",
+                  "title": "03 explicit state",
+                  "path": "/Examples/compiler/03_explicit_state.md",
+                  "kind": "page",
+                  "children": []
                 }
               ]
             }
@@ -2044,6 +2051,7 @@
     "/Examples/04_stateful_feedback_delay/Readme.md",
     "/Examples/compiler/01_pure_arithmetic.md",
     "/Examples/compiler/02_structured_control.md",
+    "/Examples/compiler/03_explicit_state.md",
     "/Examples/compiler/Readme.md",
     "/Examples/Readme.md",
     "/Language/Control%20structures.md",

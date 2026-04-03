@@ -28,6 +28,7 @@
   - [compiler](/Examples/compiler/Readme.md)
     - [01 pure arithmetic](/Examples/compiler/01_pure_arithmetic.md)
     - [02 structured control](/Examples/compiler/02_structured_control.md)
+    - [03 explicit state](/Examples/compiler/03_explicit_state.md)
 - [Language](/Language/Readme.md)
   - [Control structures](/Language/Control%20structures.md)
   - [Execution control and observation boundaries](/Language/Execution%20control%20and%20observation%20boundaries.md)
