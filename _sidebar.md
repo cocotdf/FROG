@@ -144,6 +144,7 @@
       - [02 ir derivable but not lowerable](/Conformance/invalid/compiler/02_ir_derivable_but_not_lowerable.md)
       - [02 lowerable but not backend contract emittable](/Conformance/invalid/compiler/02_lowerable_but_not_backend_contract_emittable.md)
       - [03 contract emittable but consumer rejected](/Conformance/invalid/compiler/03_contract_emittable_but_consumer_rejected.md)
+      - [03 lowerable but not backend contract emittable](/Conformance/invalid/compiler/03_lowerable_but_not_backend_contract_emittable.md)
   - valid
     - [01 pure addition](/Conformance/valid/01_pure_addition.md)
     - [02 ui value roundtrip](/Conformance/valid/02_ui_value_roundtrip.md)
