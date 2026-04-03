@@ -1011,6 +1011,13 @@
                       "path": "/Conformance/invalid/compiler/02_ir_derivable_but_not_lowerable.md",
                       "kind": "page",
                       "children": []
+                    },
+                    {
+                      "key": "conformance/invalid/compiler/03_contract_emittable_but_consumer_rejected.md",
+                      "title": "03 contract emittable but consumer rejected",
+                      "path": "/Conformance/invalid/compiler/03_contract_emittable_but_consumer_rejected.md",
+                      "kind": "page",
+                      "children": []
                     }
                   ]
                 }
@@ -2093,6 +2100,7 @@
     "/Conformance/invalid/ui_reference_without_ui_primitive.md",
     "/Conformance/invalid/compiler/01_language_valid_but_profile_rejected.md",
     "/Conformance/invalid/compiler/02_ir_derivable_but_not_lowerable.md",
+    "/Conformance/invalid/compiler/03_contract_emittable_but_consumer_rejected.md",
     "/Conformance/invalid/compiler/Readme.md",
     "/Conformance/valid/01_pure_addition.md",
     "/Conformance/valid/02_ui_value_roundtrip.md",

@@ -142,6 +142,7 @@
     - [compiler](/Conformance/invalid/compiler/Readme.md)
       - [01 language valid but profile rejected](/Conformance/invalid/compiler/01_language_valid_but_profile_rejected.md)
       - [02 ir derivable but not lowerable](/Conformance/invalid/compiler/02_ir_derivable_but_not_lowerable.md)
+      - [03 contract emittable but consumer rejected](/Conformance/invalid/compiler/03_contract_emittable_but_consumer_rejected.md)
   - valid
     - [01 pure addition](/Conformance/valid/01_pure_addition.md)
     - [02 ui value roundtrip](/Conformance/valid/02_ui_value_roundtrip.md)
