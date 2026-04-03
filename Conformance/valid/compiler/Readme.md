@@ -17,15 +17,14 @@
   <li><a href="#why-this-subdirectory-exists">2. Why This Subdirectory Exists</a></li>
   <li><a href="#position-in-the-conformance-corridor">3. Position in the Conformance Corridor</a></li>
   <li><a href="#what-valid-compiler-corridor-means">4. What Valid Compiler-Corridor Means</a></li>
-  <li><a href="#what-these-cases-test">5. What These Cases Test</a></li>
-  <li><a href="#what-these-cases-do-not-claim">6. What These Cases Do Not Claim</a></li>
-  <li><a href="#relation-with-native_cpu_llvm">7. Relation with <code>native_cpu_llvm</code></a></li>
-  <li><a href="#expected-case-structure">8. Expected Case Structure</a></li>
-  <li><a href="#expected-outcome-classes">9. Expected Outcome Classes</a></li>
-  <li><a href="#recommended-case-growth-order">10. Recommended Case Growth Order</a></li>
-  <li><a href="#initial-v01-case-families">11. Initial v0.1 Case Families</a></li>
-  <li><a href="#relation-with-invalid-compiler-corridor-cases">12. Relation with Invalid Compiler-Corridor Cases</a></li>
-  <li><a href="#summary">13. Summary</a></li>
+  <li><a href="#published-case-order">5. Published Case Order</a></li>
+  <li><a href="#what-these-cases-test">6. What These Cases Test</a></li>
+  <li><a href="#what-these-cases-do-not-claim">7. What These Cases Do Not Claim</a></li>
+  <li><a href="#relation-with-native_cpu_llvm">8. Relation with <code>native_cpu_llvm</code></a></li>
+  <li><a href="#expected-case-structure">9. Expected Case Structure</a></li>
+  <li><a href="#expected-outcome-classes">10. Expected Outcome Classes</a></li>
+  <li><a href="#recommended-case-growth-order">11. Recommended Case Growth Order</a></li>
+  <li><a href="#summary">12. Summary</a></li>
 </ul>
 
 <hr/>
@@ -49,13 +48,13 @@ semantic acceptance
    -&gt;
 canonical Execution IR derivation
    -&gt;
-canonical JSON IR compatibility where applicable
+canonical JSON IR validity where applicable
    -&gt;
 lowering eligibility
    -&gt;
 backend-contract eligibility
    -&gt;
-downstream compiler-family consumability where the case declares such a scope</code></pre>
+declared backend-family consumability where the case declares such a scope</code></pre>
 
 <p>
 This directory exists to make the compiler corridor publicly testable rather than merely descriptive.
@@ -75,7 +74,8 @@ The main conformance surface of FROG already distinguishes:
   <li>semantic acceptance,</li>
   <li>canonical Execution IR derivation,</li>
   <li>canonical JSON IR validation where applicable,</li>
-  <li>later lowering and backend-facing handoff where applicable.</li>
+  <li>later lowering and backend-facing handoff where applicable,</li>
+  <li>declared backend-family consumption where applicable.</li>
 </ul>
 
 <p>
@@ -156,7 +156,34 @@ They explicitly test corridor closure beyond semantic acceptance.
 
 <hr/>
 
-<h2 id="what-these-cases-test">5. What These Cases Test</h2>
+<h2 id="published-case-order">5. Published Case Order</h2>
+
+<p>
+The canonical file order for this directory SHOULD be:
+</p>
+
+<pre><code>01_pure_arithmetic_is_consumable.md
+02_structured_control_is_consumable.md
+03_explicit_state_is_consumable.md</code></pre>
+
+<p>
+This order reflects a deliberate corridor-closing strategy:
+</p>
+
+<pre><code>pure computation
+   -&gt;
+structured control
+   -&gt;
+explicit state</code></pre>
+
+<p>
+The order is intentionally conservative.
+It closes one serious native compiled core before widening the corridor to more effect-heavy or runtime-heavy surfaces.
+</p>
+
+<hr/>
+
+<h2 id="what-these-cases-test">6. What These Cases Test</h2>
 
 <p>
 A valid compiler-corridor case may test one or more of the following:
@@ -177,7 +204,7 @@ These cases therefore test positive corridor closure, not merely source validity
 
 <hr/>
 
-<h2 id="what-these-cases-do-not-claim">6. What These Cases Do Not Claim</h2>
+<h2 id="what-these-cases-do-not-claim">7. What These Cases Do Not Claim</h2>
 
 <p>
 These cases do not claim:
@@ -197,7 +224,7 @@ A valid compiler-corridor case is always bounded by its declared scope.
 
 <hr/>
 
-<h2 id="relation-with-native_cpu_llvm">7. Relation with <code>native_cpu_llvm</code></h2>
+<h2 id="relation-with-native_cpu_llvm">8. Relation with <code>native_cpu_llvm</code></h2>
 
 <p>
 For v0.1, the first intended downstream compilation corridor is the optional profile:
@@ -206,27 +233,40 @@ For v0.1, the first intended downstream compilation corridor is the optional pro
 <pre><code>native_cpu_llvm</code></pre>
 
 <p>
-Accordingly, the first compiler-corridor cases in this directory SHOULD preferentially target the conservative accepted subset of that profile.
+Accordingly, the first compiler-corridor cases in this directory target the conservative accepted subset of that profile.
 </p>
 
 <p>
-This means the first published positive cases SHOULD focus on slices such as:
+The published positive anchors currently correspond to:
 </p>
 
 <ul>
-  <li>pure arithmetic / typed dataflow,</li>
-  <li>structured control that remains faithfully lowerable,</li>
-  <li>explicit local memory that remains faithfully lowerable,</li>
-  <li>restricted interop only when the contract boundary remains explicit.</li>
+  <li><code>01_pure_arithmetic_is_consumable</code></li>
+  <li><code>02_structured_control_is_consumable</code></li>
+  <li><code>03_explicit_state_is_consumable</code></li>
 </ul>
 
 <p>
-UI-heavy or runtime-service-heavy cases SHOULD NOT be the first positive anchors of this directory unless their corridor story is already normatively closed.
+Together they express the first bounded claim that:
+</p>
+
+<ul>
+  <li>pure typed computation,</li>
+  <li>bounded structured control,</li>
+  <li>explicit local memory</li>
+</ul>
+
+<p>
+can travel through the declared Native CPU LLVM corridor when all staged obligations are satisfied.
+</p>
+
+<p>
+UI-heavy or runtime-service-heavy cases are intentionally not the first positive anchors of this directory.
 </p>
 
 <hr/>
 
-<h2 id="expected-case-structure">8. Expected Case Structure</h2>
+<h2 id="expected-case-structure">9. Expected Case Structure</h2>
 
 <p>
 Each valid compiler-corridor case SHOULD state, as applicable:
@@ -260,7 +300,7 @@ Required preserved distinctions:</code></pre>
 
 <hr/>
 
-<h2 id="expected-outcome-classes">9. Expected Outcome Classes</h2>
+<h2 id="expected-outcome-classes">10. Expected Outcome Classes</h2>
 
 <p>
 Positive compiler-corridor cases will typically use outcome declarations such as:
@@ -277,13 +317,13 @@ Positive compiler-corridor cases will typically use outcome declarations such as
 </ul>
 
 <p>
-Not every case must go all the way to a declared backend-family consumer.
+Not every future case must go all the way to a declared backend-family consumer.
 However, once a case declares that scope, the later corridor stages become part of the public expectation.
 </p>
 
 <hr/>
 
-<h2 id="recommended-case-growth-order">10. Recommended Case Growth Order</h2>
+<h2 id="recommended-case-growth-order">11. Recommended Case Growth Order</h2>
 
 <p>
 Growth in this directory SHOULD remain disciplined.
@@ -307,79 +347,26 @@ more complex effect surfaces</code></pre>
 This order keeps the first compilation corridor tight and auditable.
 </p>
 
-<hr/>
-
-<h2 id="initial-v01-case-families">11. Initial v0.1 Case Families</h2>
-
 <p>
-The first coherent case families for this directory SHOULD be:
-</p>
-
-<h3>11.1 Pure computation</h3>
-
-<ul>
-  <li>typed arithmetic pipelines,</li>
-  <li>pure dataflow slices,</li>
-  <li>no runtime-service dependency beyond the native compiled core.</li>
-</ul>
-
-<h3>11.2 Structured control</h3>
-
-<ul>
-  <li>case-like control that remains lowerable,</li>
-  <li>loop-like control that remains lowerable,</li>
-  <li>explicit region and boundary preservation through lowering.</li>
-</ul>
-
-<h3>11.3 Explicit state</h3>
-
-<ul>
-  <li>delay-like or equivalent accepted explicit local-memory slices,</li>
-  <li>explicit initialization preservation,</li>
-  <li>lowered state-cell eligibility.</li>
-</ul>
-
-<h3>11.4 Restricted interop</h3>
-
-<ul>
-  <li>external-call boundaries only when the contract surface is explicit and bounded.</li>
-</ul>
-
-<p>
-This first set is enough to make the profile corridor publicly testable without opening the entire future ecosystem at once.
+The first three published cases are therefore not arbitrary examples.
+They are the minimum coherent positive nucleus of the corridor.
 </p>
 
 <hr/>
 
-<h2 id="relation-with-invalid-compiler-corridor-cases">12. Relation with Invalid Compiler-Corridor Cases</h2>
-
-<p>
-This directory must be read together with the future mirrored invalid side of the compiler corridor.
-</p>
-
-<p>
-That invalid side should later cover cases such as:
-</p>
-
-<ul>
-  <li>language-valid but profile-rejected,</li>
-  <li>IR-derivable but not lowerable,</li>
-  <li>lowerable but not backend-contract-emittable,</li>
-  <li>contract-emittable but rejected by the declared backend-family consumer.</li>
-</ul>
-
-<p>
-The positive side alone is not enough.
-It must eventually be mirrored by explicit negative corridor boundaries.
-</p>
-
-<hr/>
-
-<h2 id="summary">13. Summary</h2>
+<h2 id="summary">12. Summary</h2>
 
 <p>
 This subdirectory defines positive conformance cases for the published FROG compiler corridor.
 </p>
+
+<p>
+The canonical v0.1 positive order is:
+</p>
+
+<pre><code>01_pure_arithmetic_is_consumable
+02_structured_control_is_consumable
+03_explicit_state_is_consumable</code></pre>
 
 <p>
 These cases extend the public truth surface beyond ordinary language validity by making the following stages testable where declared:
@@ -402,5 +389,5 @@ For v0.1, the first intended target is the conservative subset of the optional <
 </p>
 
 <p>
-This keeps the compiler corridor explicit, bounded, and publicly testable.
+This keeps the compiler corridor explicit, bounded, and publicly testable on its positive path.
 </p>
