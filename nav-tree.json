@@ -194,6 +194,13 @@
                   "path": "/Examples/compiler/01_pure_arithmetic.md",
                   "kind": "page",
                   "children": []
+                },
+                {
+                  "key": "examples/compiler/02_structured_control.md",
+                  "title": "02 structured control",
+                  "path": "/Examples/compiler/02_structured_control.md",
+                  "kind": "page",
+                  "children": []
                 }
               ]
             }
@@ -2036,6 +2043,7 @@
     "/Examples/04_stateful_feedback_delay/main.frog",
     "/Examples/04_stateful_feedback_delay/Readme.md",
     "/Examples/compiler/01_pure_arithmetic.md",
+    "/Examples/compiler/02_structured_control.md",
     "/Examples/compiler/Readme.md",
     "/Examples/Readme.md",
     "/Language/Control%20structures.md",
