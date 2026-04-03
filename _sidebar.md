@@ -140,6 +140,7 @@
     - [interface widget role confusion](/Conformance/invalid/interface_widget_role_confusion.md)
     - [ui reference without ui primitive](/Conformance/invalid/ui_reference_without_ui_primitive.md)
     - [compiler](/Conformance/invalid/compiler/Readme.md)
+      - [01 language valid but profile rejected](/Conformance/invalid/compiler/01_language_valid_but_profile_rejected.md)
   - valid
     - [01 pure addition](/Conformance/valid/01_pure_addition.md)
     - [02 ui value roundtrip](/Conformance/valid/02_ui_value_roundtrip.md)
