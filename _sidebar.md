@@ -50,6 +50,7 @@
   - [UI](/Libraries/UI.md)
 - [Profiles](/Profiles/Readme.md)
   - [Interop](/Profiles/Interop.md)
+  - [Native CPU LLVM](/Profiles/Native%20CPU%20LLVM.md)
 - [IDE](/IDE/Readme.md)
   - [Debugging](/IDE/Debugging.md)
   - [Execution observability](/IDE/Execution%20observability.md)
@@ -138,6 +139,7 @@
     - [illegal feedback without explicit memory](/Conformance/invalid/illegal_feedback_without_explicit_memory.md)
     - [interface widget role confusion](/Conformance/invalid/interface_widget_role_confusion.md)
     - [ui reference without ui primitive](/Conformance/invalid/ui_reference_without_ui_primitive.md)
+    - [compiler](/Conformance/invalid/compiler/Readme.md)
   - valid
     - [01 pure addition](/Conformance/valid/01_pure_addition.md)
     - [02 ui value roundtrip](/Conformance/valid/02_ui_value_roundtrip.md)
@@ -221,6 +223,7 @@
       - [case.frog](/Conformance/valid/09_optional_front_panel_present_and_structurally_valid/case.frog)
     - [10 distinct source identifiers are valid](/Conformance/valid/10_distinct_source_identifiers_are_valid/Readme.md)
       - [case.frog](/Conformance/valid/10_distinct_source_identifiers_are_valid/case.frog)
+    - [compiler](/Conformance/valid/compiler/Readme.md)
 - [Reference Implementation](/Implementations/Reference/Readme.md)
   - [example-artifact-requirements](/Implementations/Reference/example-artifact-requirements.md)
   - [frogc](/Implementations/Reference/frogc.md)
