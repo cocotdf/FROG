@@ -50,7 +50,8 @@ What must be rejected?
 What must be preserved?</code></pre>
 
 <p>
-This directory does not define the language by itself. It makes already-published language law operationally checkable.
+This directory does not define the language by itself.
+It makes already-published language law operationally checkable.
 Conformance therefore sits at the boundary between repository truth and observable implementation behavior.
 It turns architectural distinctions into public expectations.
 </p>
@@ -74,7 +75,7 @@ canonical JSON IR validation where applicable
    -&gt;
 later lowering / backend-facing handoff where applicable
    -&gt;
-declared compiler-family consumption where applicable</code></pre>
+declared backend-family consumption where applicable</code></pre>
 
 <p>
 Conformance therefore already matters to the compiler corridor, even when the downstream compilation route is still being consolidated.
@@ -154,7 +155,7 @@ It ensures that:
   <li>implementations do not silently diverge,</li>
   <li>semantic meaning is not reinterpreted implicitly,</li>
   <li>invalid constructs are rejected instead of silently repaired,</li>
-  <li>critical distinctions remain visible across loadability, structural validation, semantic validation, IR derivation, IR construction, canonical JSON validation, lowering, backend-facing handoff, and declared compiler-corridor consumption where applicable.</li>
+  <li>critical distinctions remain visible across loadability, structural validation, semantic validation, IR derivation, IR construction, canonical JSON validation, later lowering / backend-facing handoff, and declared backend-family consumption where applicable.</li>
 </ul>
 
 <p>
@@ -525,7 +526,7 @@ The current published and newly-opened conformance set combines:
   <li>a mirrored valid / invalid architectural boundary progression,</li>
   <li>additional standalone invalid architectural rejection cases,</li>
   <li>an extended IR recoverability and correspondence-disentanglement progression,</li>
-  <li>a newly-opened valid / invalid compiler-corridor family for downstream compilation-stage reading.</li>
+  <li>a newly-opened valid / invalid compiler-corridor family with named positive and negative anchors.</li>
 </ul>
 
 <h3>9.1 Published top-level source-shape block</h3>
@@ -700,16 +701,46 @@ backend-contract eligibility
 declared backend-family consumability</code></pre>
 
 <p>
-The positive side exists to publish cases that are not only language-valid, but also lowerable and handoff-ready for a declared compilation corridor.
-The negative side exists to publish staged rejections such as:
+The positive side currently names the first three published corridor anchors:
+</p>
+
+<pre><code>valid/compiler/01_pure_arithmetic_is_consumable
+valid/compiler/02_structured_control_is_consumable
+valid/compiler/03_explicit_state_is_consumable</code></pre>
+
+<p>
+The negative side currently names the first four staged rejection anchors:
+</p>
+
+<pre><code>invalid/compiler/01_language_valid_but_profile_rejected
+invalid/compiler/02_ir_derivable_but_not_lowerable
+invalid/compiler/03_lowerable_but_not_backend_contract_emittable
+invalid/compiler/04_contract_emittable_but_consumer_rejected</code></pre>
+
+<p>
+These two mirrored families are intentionally ordered along the downstream corridor:
 </p>
 
 <ul>
-  <li>language-valid but profile-rejected,</li>
-  <li>IR-derivable but not lowerable,</li>
-  <li>lowerable but not backend-contract-emittable,</li>
-  <li>contract-emittable but rejected by the declared backend-family consumer.</li>
+  <li>pure computation,</li>
+  <li>structured control,</li>
+  <li>explicit state</li>
 </ul>
+
+<p>
+on the positive side, and:
+</p>
+
+<ul>
+  <li>profile rejection,</li>
+  <li>lowering rejection,</li>
+  <li>backend-contract rejection,</li>
+  <li>backend-family consumer rejection</li>
+</ul>
+
+<p>
+on the negative side.
+</p>
 
 <p>
 For v0.1, the first intended downstream profile target for these families is the conservative subset of <code>native_cpu_llvm</code>.
@@ -835,7 +866,7 @@ Near-term focus therefore remains:
   <li>semantic rejection clarity,</li>
   <li>IR preservation, attribution, and correspondence discipline,</li>
   <li>canonical JSON IR validity versus deeper architectural validity,</li>
-  <li>first compiler-corridor positive and negative family structure.</li>
+  <li>first named compiler-corridor positive and negative family structure.</li>
 </ul>
 
 <p>
@@ -863,7 +894,7 @@ IR preservation closure
    -&gt;
 canonical JSON IR validation closure
    -&gt;
-compiler-corridor valid / invalid family closure
+named compiler-corridor valid / invalid family closure
    -&gt;
 later corridor expansion</code></pre>
 
@@ -993,7 +1024,7 @@ Its current published and newly-opened corpus covers:
   <li>architectural distinction preservation,</li>
   <li>IR recoverability and correspondence discipline,</li>
   <li>downstream-sensitive boundaries relevant to lowering and backend-facing handoff,</li>
-  <li>first valid / invalid compiler-corridor family structure for declared downstream compilation routes.</li>
+  <li>a first named valid / invalid compiler-corridor family for declared downstream compilation routes.</li>
 </ul>
 
 <p>
