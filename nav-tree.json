@@ -1596,7 +1596,15 @@
                   "title": "compiler",
                   "path": "/Conformance/valid/compiler/Readme.md",
                   "kind": "category",
-                  "children": []
+                  "children": [
+                    {
+                      "key": "conformance/valid/compiler/01_pure_arithmetic_is_consumable.md",
+                      "title": "01 pure arithmetic is consumable",
+                      "path": "/Conformance/valid/compiler/01_pure_arithmetic_is_consumable.md",
+                      "kind": "page",
+                      "children": []
+                    }
+                  ]
                 }
               ]
             }
@@ -2151,6 +2159,7 @@
     "/Conformance/valid/09_optional_front_panel_present_and_structurally_valid/Readme.md",
     "/Conformance/valid/10_distinct_source_identifiers_are_valid/case.frog",
     "/Conformance/valid/10_distinct_source_identifiers_are_valid/Readme.md",
+    "/Conformance/valid/compiler/01_pure_arithmetic_is_consumable.md",
     "/Conformance/valid/compiler/Readme.md",
     "/Conformance/Readme.md",
     "/Implementations/Reference/example-artifact-requirements.md",
