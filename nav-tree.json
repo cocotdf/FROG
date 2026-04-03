@@ -1032,6 +1032,13 @@
                       "path": "/Conformance/invalid/compiler/03_lowerable_but_not_backend_contract_emittable.md",
                       "kind": "page",
                       "children": []
+                    },
+                    {
+                      "key": "conformance/invalid/compiler/04_contract_emittable_but_consumer_rejected.md",
+                      "title": "04 contract emittable but consumer rejected",
+                      "path": "/Conformance/invalid/compiler/04_contract_emittable_but_consumer_rejected.md",
+                      "kind": "page",
+                      "children": []
                     }
                   ]
                 }
@@ -2117,6 +2124,7 @@
     "/Conformance/invalid/compiler/02_lowerable_but_not_backend_contract_emittable.md",
     "/Conformance/invalid/compiler/03_contract_emittable_but_consumer_rejected.md",
     "/Conformance/invalid/compiler/03_lowerable_but_not_backend_contract_emittable.md",
+    "/Conformance/invalid/compiler/04_contract_emittable_but_consumer_rejected.md",
     "/Conformance/invalid/compiler/Readme.md",
     "/Conformance/valid/01_pure_addition.md",
     "/Conformance/valid/02_ui_value_roundtrip.md",

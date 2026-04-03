@@ -145,6 +145,7 @@
       - [02 lowerable but not backend contract emittable](/Conformance/invalid/compiler/02_lowerable_but_not_backend_contract_emittable.md)
       - [03 contract emittable but consumer rejected](/Conformance/invalid/compiler/03_contract_emittable_but_consumer_rejected.md)
       - [03 lowerable but not backend contract emittable](/Conformance/invalid/compiler/03_lowerable_but_not_backend_contract_emittable.md)
+      - [04 contract emittable but consumer rejected](/Conformance/invalid/compiler/04_contract_emittable_but_consumer_rejected.md)
   - valid
     - [01 pure addition](/Conformance/valid/01_pure_addition.md)
     - [02 ui value roundtrip](/Conformance/valid/02_ui_value_roundtrip.md)
