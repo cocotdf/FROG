@@ -1,0 +1,94 @@
+name: Refresh Pages Navigation
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - _sidebar.md
+      - nav-tree.json
+  schedule:
+    - cron: "23 2 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-pages-navigation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  refresh-pages-navigation:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Decide whether this push needs a Pages refresh
+        id: scope
+        shell: pwsh
+        run: |
+          $shouldRefresh = $true
+
+          if ("${{ github.event_name }}" -eq "push") {
+            $before = "${{ github.event.before }}"
+            $after = "${{ github.sha }}"
+            $changedFiles = @()
+
+            if ($before -and $before -ne "0000000000000000000000000000000000000000") {
+              $changedFiles = @(git diff --name-only $before $after)
+            } else {
+              $changedFiles = @(git diff-tree --no-commit-id --name-only -r $after)
+            }
+
+            $relevantPattern = '(^|/)[^/]+\.(md|frog|py)$|^(index\.html|404\.html|_navbar\.md)$|^\.github/scripts/|^\.github/workflows/refresh-pages-navigation\.yml$'
+            $relevantFiles = @($changedFiles | Where-Object { $_ -match $relevantPattern })
+
+            if ($relevantFiles.Count -eq 0) {
+              $shouldRefresh = $false
+              Write-Host "No relevant documentation or Pages inputs changed in this push."
+            } else {
+              Write-Host "Relevant files changed:"
+              $relevantFiles | ForEach-Object { Write-Host " - $_" }
+            }
+          }
+
+          "should_refresh=$($shouldRefresh.ToString().ToLowerInvariant())" >> $env:GITHUB_OUTPUT
+
+      - name: Rebuild Pages navigation
+        if: steps.scope.outputs.should_refresh == 'true' || github.event_name != 'push'
+        shell: pwsh
+        run: ./.github/scripts/build-pages-navigation.ps1
+
+      - name: Verify Pages navigation
+        if: steps.scope.outputs.should_refresh == 'true' || github.event_name != 'push'
+        shell: pwsh
+        run: ./.github/scripts/verify-pages-navigation.ps1
+
+      - name: Detect generated navigation changes
+        if: steps.scope.outputs.should_refresh == 'true' || github.event_name != 'push'
+        id: changes
+        shell: pwsh
+        run: |
+          $changedFiles = @(git status --porcelain -- _sidebar.md nav-tree.json)
+          if ($changedFiles.Count -gt 0) {
+            Write-Host "Generated navigation changed."
+            "has_changes=true" >> $env:GITHUB_OUTPUT
+          } else {
+            Write-Host "Generated navigation is already up to date."
+            "has_changes=false" >> $env:GITHUB_OUTPUT
+          }
+
+      - name: Commit refreshed navigation
+        if: steps.changes.outputs.has_changes == 'true'
+        shell: pwsh
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- _sidebar.md nav-tree.json
+          git commit -m "chore: refresh pages navigation"
+          git push
