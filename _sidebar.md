@@ -25,6 +25,7 @@
     - [main.frog](/Examples/03_ui_property_write/main.frog)
   - [04 stateful feedback delay](/Examples/04_stateful_feedback_delay/Readme.md)
     - [main.frog](/Examples/04_stateful_feedback_delay/main.frog)
+  - [compiler](/Examples/compiler/Readme.md)
 - [Language](/Language/Readme.md)
   - [Control structures](/Language/Control%20structures.md)
   - [Execution control and observation boundaries](/Language/Execution%20control%20and%20observation%20boundaries.md)
