@@ -396,6 +396,13 @@
               "path": "/Profiles/Native%20CPU%20LLVM.md",
               "kind": "page",
               "children": []
+            },
+            {
+              "key": "profiles/native-cpu-llvm-execution-contract.md",
+              "title": "Native CPU LLVM Execution contract",
+              "path": "/Profiles/Native%20CPU%20LLVM%20Execution%20contract.md",
+              "kind": "page",
+              "children": []
             }
           ]
         },
@@ -2079,6 +2086,7 @@
     "/Libraries/Readme.md",
     "/Profiles/Interop.md",
     "/Profiles/Native%20CPU%20LLVM.md",
+    "/Profiles/Native%20CPU%20LLVM%20Execution%20contract.md",
     "/Profiles/Readme.md",
     "/IDE/Debugging.md",
     "/IDE/Execution%20observability.md",

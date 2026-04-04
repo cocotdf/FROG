@@ -55,6 +55,7 @@
 - [Profiles](/Profiles/Readme.md)
   - [Interop](/Profiles/Interop.md)
   - [Native CPU LLVM](/Profiles/Native%20CPU%20LLVM.md)
+  - [Native CPU LLVM Execution contract](/Profiles/Native%20CPU%20LLVM%20Execution%20contract.md)
 - [IDE](/IDE/Readme.md)
   - [Debugging](/IDE/Debugging.md)
   - [Execution observability](/IDE/Execution%20observability.md)
