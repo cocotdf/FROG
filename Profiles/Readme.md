@@ -545,14 +545,7 @@ The currently published profile specifications are:
 
 <ul>
   <li><code>Interop.md</code> — optional interoperability capability profile,</li>
-  <li><code>Native CPU LLVM.md</code> — optional native CPU compilation profile for LLVM-oriented backend families.</li>
-</ul>
-
-<p>
-The following companion document may also exist as part of the same bounded profile family when added and published:
-</p>
-
-<ul>
+  <li><code>Native CPU LLVM.md</code> — optional native CPU compilation profile for LLVM-oriented backend families,</li>
   <li><code>Native CPU LLVM Execution contract.md</code> — optional Native CPU LLVM companion execution contract for bounded execution-start closure.</li>
 </ul>
 
@@ -597,13 +590,19 @@ It should be read as:
   <li>not a replacement for the core language or core IR stack.</li>
 </ul>
 
+<h3>11.3 Native CPU LLVM Execution Contract</h3>
+
 <p>
-Where published, a companion Native CPU LLVM execution contract should be read as a distinct but related document:
+<code>Native CPU LLVM Execution contract.md</code> is the companion execution-side closure document for the same bounded Native CPU LLVM profile family.
+</p>
+
+<p>
+Its role is distinct:
 </p>
 
 <ul>
   <li><code>Native CPU LLVM.md</code> closes the compilation corridor,</li>
-  <li>the execution contract closes the additional execution-start assumptions for a bounded accepted subset,</li>
+  <li><code>Native CPU LLVM Execution contract.md</code> closes the additional execution-start assumptions for a bounded accepted subset,</li>
   <li><code>IR/Backend contract.md</code> remains the generic consumer-facing backend handoff owned by <code>IR/</code>.</li>
 </ul>
 
@@ -713,9 +712,9 @@ In the current repository posture:
 </p>
 
 <ul>
-  <li><code>Profiles/</code> is already a normative specification layer,</li>
-  <li>the directory already distinguishes optional profiles from core intrinsic language ownership,</li>
-  <li>the directory publishes an interoperability profile and a first native compilation profile,</li>
+  <li><code>Profiles/</code> is a normative specification layer,</li>
+  <li>the directory distinguishes optional profiles from core intrinsic language ownership,</li>
+  <li>the directory contains an interoperability profile, a first native compilation profile, and a companion execution contract for that native corridor,</li>
   <li>the broader profile surface remains intentionally limited and conservative,</li>
   <li>the architecture leaves room for bounded profile-side execution contracts without moving backend-contract ownership out of <code>IR/</code>.</li>
 </ul>
@@ -756,12 +755,9 @@ The current published profile set includes:
 
 <ul>
   <li><code>Interop.md</code> for interoperability capability,</li>
-  <li><code>Native CPU LLVM.md</code> for a first native CPU LLVM-oriented compilation corridor.</li>
+  <li><code>Native CPU LLVM.md</code> for a first native CPU LLVM-oriented compilation corridor,</li>
+  <li><code>Native CPU LLVM Execution contract.md</code> for bounded execution-start closure in that same profile family.</li>
 </ul>
-
-<p>
-And where a bounded published corridor needs stronger closure, a profile MAY be accompanied by a companion execution contract that remains distinct from <code>IR/Backend contract.md</code>.
-</p>
 
 <p>
 This keeps the architecture explicit:
