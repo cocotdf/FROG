@@ -1110,7 +1110,7 @@
                 {
                   "key": "conformance/invalid/structural/",
                   "title": "structural",
-                  "path": null,
+                  "path": "/Conformance/invalid/structural/Readme.md",
                   "kind": "category",
                   "children": [
                     {
@@ -2323,6 +2323,7 @@
     "/Conformance/invalid/structural/01_front_panel_widgets_must_be_array/Readme.md",
     "/Conformance/invalid/structural/02_front_panel_canvas_must_be_object/case.frog",
     "/Conformance/invalid/structural/02_front_panel_canvas_must_be_object/Readme.md",
+    "/Conformance/invalid/structural/Readme.md",
     "/Conformance/valid/01_pure_addition.md",
     "/Conformance/valid/02_ui_value_roundtrip.md",
     "/Conformance/valid/03_ui_property_write.md",
