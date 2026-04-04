@@ -76,7 +76,7 @@ declared backend-family consumption where applicable
 bounded executable truth where explicitly published</pre>
 
 <p>
-Conformance therefore already matters to the compiler corridor and already contains early executable truth anchors, even while broader execution-ready structuring remains a later consolidation step.
+Conformance therefore already matters to source law, semantic law, IR law, compiler-corridor law, and bounded executable truth where the published corpus already exposes such anchors.
 </p>
 
 <hr/>
@@ -178,7 +178,7 @@ It includes:
   <li>correct canonical-IR construction and canonical JSON compatibility where the case reaches that stage,</li>
   <li>correct preservation of required boundaries across later lowering and backend-facing handoff where applicable,</li>
   <li>correct staged acceptance or rejection across declared compiler-corridor stages where applicable,</li>
-  <li>correct bounded executable behavior where the repository has already published executable anchor truth.</li>
+  <li>correct bounded executable behavior where the published corpus already defines executable anchor truth.</li>
 </ul>
 
 <p>
@@ -297,37 +297,45 @@ unless the published conformance corpus says so explicitly</pre>
 <h2 id="directory-structure">8. Directory Structure</h2>
 
 <p>
-The current published directory structure is:
+The current published directory structure is layered rather than uniform.
+</p>
+
+<p>
+At top level:
 </p>
 
 <pre>Conformance/
 ├── Readme.md
 ├── valid/
-│   └── compiler/
-└── invalid/
-    └── compiler/</pre>
+└── invalid/</pre>
 
 <p>
-The root <code>valid/</code> and <code>invalid/</code> directories remain the primary home of the published conformance corpus.
-</p>
-
-<p>
-The nested <code>compiler/</code> families extend that corpus along a later compiler-corridor reading without replacing the root valid / invalid structure.
-</p>
-
-<p>
-This means the published conformance tree currently mixes:
+Inside <code>valid/</code>, the published corpus currently combines:
 </p>
 
 <ul>
-  <li>top-level source-shape and architectural cases,</li>
-  <li>top-level early positive executable anchor cases,</li>
-  <li>nested compiler-corridor families.</li>
+  <li>a top-level historical block of valid source-shape, architectural, IR-sensitive, and executable-anchor cases,</li>
+  <li>a dedicated <code>compiler/</code> family,</li>
+  <li>a dedicated <code>executable/</code> family.</li>
 </ul>
 
 <p>
-That mixed structure is intentional in the current published state. It already exposes executable truth anchors without yet requiring a fully separated <code>valid/executable/</code> or <code>invalid/executable/</code> family.
+This means the published positive corpus is already hybrid:
 </p>
+
+<pre>top-level historical valid cases
+   +
+valid/compiler/
+   +
+valid/executable/</pre>
+
+<p>
+The key architectural rule is therefore not “every case must already fit one uniform subtree”.
+The key rule is:
+</p>
+
+<pre>the published corpus may grow by structured subfamilies
+without erasing earlier top-level anchors</pre>
 
 <hr/>
 
@@ -337,68 +345,72 @@ That mixed structure is intentional in the current published state. It already e
 The currently published conformance corpus is staged rather than monolithic.
 </p>
 
-<h3>9.1 Published top-level source-shape block</h3>
+<h3>9.1 Published top-level valid anchors</h3>
 
 <p>
-The published top-level source-shape block currently includes root valid / invalid material that keeps loadability, structural validity, and early semantic accept / reject behavior visible at the top level of the corpus.
-</p>
-
-<h3>9.2 Early valid executable anchor cases</h3>
-
-<p>
-The published corpus also already contains four early positive executable anchor cases:
-</p>
-
-<pre>01_pure_addition
-02_ui_value_roundtrip
-03_ui_property_write
-04_stateful_feedback_delay</pre>
-
-<p>
-These anchor cases show that conformance is not only about abstract rejection. It already covers minimal positive executable slices that the published architecture is expected to support.
-</p>
-
-<p>
-These cases are especially important because they already span:
+The published positive corpus already contains a top-level historical block under <code>Conformance/valid/</code> that includes:
 </p>
 
 <ul>
-  <li>a pure dataflow slice,</li>
-  <li>a UI value path slice,</li>
-  <li>a UI object-operation slice,</li>
-  <li>an explicit state / delay slice.</li>
+  <li>minimal canonical source-shape cases,</li>
+  <li>optional-section validity cases,</li>
+  <li>front-panel and connector structure cases,</li>
+  <li>named executable anchors,</li>
+  <li>architectural distinction cases tied to canonical Execution IR correspondence discipline.</li>
 </ul>
 
 <p>
-Together they already constrain the future execution and compilation corridor by proving that the repository truth surface is not limited to syntax or abstract semantics alone.
+This top-level block remains part of the published truth surface and must not be retroactively described as though it had been replaced already.
 </p>
 
-<h3>9.3 Architectural boundary progression</h3>
+<h3>9.2 Early executable anchor cases</h3>
 
 <p>
-The published corpus also includes top-level material that makes architectural boundary mistakes publicly visible, including cases where source validity, semantic validity, IR derivability, and preservation obligations must not be silently collapsed.
+The published top-level positive corpus includes the following early valid executable anchor cases:
 </p>
 
-<h3>9.4 Additional standalone invalid architectural cases</h3>
+<pre>01_pure_addition.md
+02_ui_value_roundtrip.md
+03_ui_property_write.md
+04_stateful_feedback_delay.md</pre>
 
 <p>
-The top-level negative corpus also includes standalone rejection cases that remain useful independently of the later nested compiler-corridor families.
+These anchors are important because they already expose bounded executable truth across four distinct axes:
 </p>
 
-<h3>9.5 IR recoverability and correspondence-sensitive cases</h3>
+<ul>
+  <li>pure dataflow computation,</li>
+  <li>natural <code>widget_value</code> participation,</li>
+  <li><code>widget_reference</code> object-operation participation,</li>
+  <li>explicit state through feedback and delay.</li>
+</ul>
 
 <p>
-The published corpus already includes cases that materially constrain IR identity, recoverability, and correspondence discipline.
+They therefore already constrain future compiler and runtime growth, even before the entire executable corpus becomes fully normalized under one subtree.
+</p>
+
+<h3>9.3 Additional top-level architectural distinction cases</h3>
+
+<p>
+The same published top-level positive corpus also includes additional cases such as:
+</p>
+
+<pre>05_public_interface_and_widget_participation_distinct.md
+07_widget_reference_remains_distinct_from_widget_value.md</pre>
+
+<p>
+and later correspondence-sensitive cases with higher numbering that protect canonical Execution IR boundary distinctions.
 </p>
 
 <p>
-This is one of the most important current published areas for the future compiler corridor, because a serious backend cannot be allowed to consume an IR that has already lost attribution, ownership, or distinction boundaries.
+This means the top-level positive corpus is not only “early examples”.
+It is already part of the published architectural truth surface.
 </p>
 
-<h3>9.6 Compiler-corridor families</h3>
+<h3>9.4 Compiler-corridor families</h3>
 
 <p>
-The conformance tree now also opens two nested compiler-corridor families:
+The conformance tree also opens a dedicated compiler-corridor family:
 </p>
 
 <pre>valid/compiler/
@@ -429,42 +441,31 @@ valid/compiler/02_structured_control_is_consumable
 valid/compiler/03_explicit_state_is_consumable</pre>
 
 <p>
-The negative side currently names the first four staged rejection anchors:
+The negative side currently names staged rejection anchors along the downstream corridor.
 </p>
 
-<pre>invalid/compiler/01_language_valid_but_profile_rejected
-invalid/compiler/02_ir_derivable_but_not_lowerable
-invalid/compiler/03_lowerable_but_not_backend_contract_emittable
-invalid/compiler/04_contract_emittable_but_consumer_rejected</pre>
+<h3>9.5 Executable subfamily posture</h3>
 
 <p>
-These two mirrored families are intentionally ordered along the downstream corridor:
-</p>
-
-<ul>
-  <li>pure computation,</li>
-  <li>structured control,</li>
-  <li>explicit state</li>
-</ul>
-
-<p>
-on the positive side, and:
-</p>
-
-<ul>
-  <li>profile rejection,</li>
-  <li>lowering rejection,</li>
-  <li>backend-contract rejection,</li>
-  <li>backend-family consumer rejection</li>
-</ul>
-
-<p>
-on the negative side.
+The published positive tree also already contains a dedicated <code>valid/executable/</code> subtree.
 </p>
 
 <p>
-For v0.1, the first intended downstream profile target for these families is the conservative subset of <code>native_cpu_llvm</code>.
+That means the repository has already opened a structural place for executable-family growth.
 </p>
+
+<p>
+However, the top-level executable anchors still remain published at the root of <code>valid/</code>.
+The correct reading is therefore:
+</p>
+
+<pre>top-level executable anchors
+   remain published historical anchors
+
+valid/executable/
+   provides structured executable-family growth
+
+the two are not mutually exclusive</pre>
 
 <hr/>
 
@@ -483,7 +484,7 @@ Each case expresses structured expectations such as:
   <li>Expected lowering result: <code>lowerable</code> | <code>rejected</code> | <code>not applicable</code></li>
   <li>Expected backend-contract result: <code>emittable</code> | <code>not emittable</code> | <code>not applicable</code></li>
   <li>Expected backend-family result: <code>consumable</code> | <code>rejected</code> | <code>not applicable</code></li>
-  <li>Expected executable result where already published at top level: bounded positive executable truth for the named anchor case</li>
+  <li>Expected executable result where already published: bounded positive executable truth for the named anchor or executable-family case</li>
 </ul>
 
 <p>
@@ -506,52 +507,49 @@ Did it match the published executable truth where executable anchors already exi
 <h2 id="active-v01-conformance-focus">11. Active v0.1 Conformance Focus</h2>
 
 <p>
-The active v0.1 conformance focus is now two-part.
+The active v0.1 conformance focus is now multi-layered.
 </p>
 
 <p>
-First, the repository already publishes top-level executable anchors that prove conformance is not limited to rejection or abstract preservation.
+The published corpus already contains:
 </p>
 
-<p>
-Second, the repository now also publishes a named compiler corridor through the nested <code>valid/compiler/</code> and <code>invalid/compiler/</code> families.
-</p>
-
-<p>
-More precisely, the current public truth surface concentrates on:
-</p>
-
-<pre>top-level source and architectural correctness
-   +
-top-level early executable anchors
-   +
-named compiler-corridor staged consumability</pre>
+<ul>
+  <li>top-level source-shape truth,</li>
+  <li>top-level architectural distinction truth,</li>
+  <li>top-level early executable anchors,</li>
+  <li>a dedicated compiler-corridor family,</li>
+  <li>a dedicated executable subtree for structured future executable growth.</li>
+</ul>
 
 <p>
 This is already a substantial closure step.
 </p>
 
 <p>
-It means the repository no longer treats the downstream corridor as future-only strategy. It already exposes:
+It means the repository no longer treats downstream execution as future-only strategy. It already exposes:
 </p>
 
-<ul>
-  <li>source-shape truth,</li>
-  <li>semantic truth,</li>
-  <li>IR-sensitive truth,</li>
-  <li>early executable truth,</li>
-  <li>compiler-corridor truth.</li>
-</ul>
+<pre>source truth
+   +
+meaning truth
+   +
+IR-sensitive truth
+   +
+early executable truth
+   +
+compiler-corridor truth
+   +
+room for structured executable-family growth</pre>
 
 <p>
 However, the current published focus remains conservative:
 </p>
 
 <ul>
-  <li>the root valid / invalid corpus remains primary,</li>
-  <li>the compiler-corridor families extend rather than replace that root corpus,</li>
-  <li>broader executable family normalization may still come later,</li>
-  <li>future executable structuring should not erase or misdescribe the already-published top-level executable anchors.</li>
+  <li>the top-level valid corpus remains important,</li>
+  <li>structured subfamilies extend rather than erase earlier anchors,</li>
+  <li>future executable normalization should not rewrite history by pretending the top-level executable anchors never existed.</li>
 </ul>
 
 <hr/>
@@ -634,26 +632,22 @@ The preferred near-term growth order is therefore:
 
 <pre>top-level source-shape and architectural closure
    -&gt;
-early executable anchor preservation
+top-level executable anchor preservation
    -&gt;
 named compiler-corridor family closure
    -&gt;
-later executable-family normalization where justified
+structured executable-family growth
    -&gt;
 later corridor expansion</pre>
 
 <p>
-That means future executable growth may later introduce more explicit structuring such as dedicated executable subfamilies.
-</p>
-
-<p>
-But if that happens, the growth should:
+That means future executable growth should:
 </p>
 
 <ul>
   <li>remain compatible with the already-published top-level executable anchors,</li>
   <li>avoid pretending those anchors never existed,</li>
-  <li>avoid claiming a new executable family is already published before it actually exists in the tree,</li>
+  <li>treat <code>valid/executable/</code> as structured growth rather than retroactive erasure,</li>
   <li>keep the distinction explicit between backend-family consumability and broader execution-side closure.</li>
 </ul>
 
@@ -684,7 +678,8 @@ In v0.1, the active published conformance surface already includes:
 <ul>
   <li>top-level source-shape and architectural truth,</li>
   <li>top-level early executable anchor cases,</li>
-  <li>a named valid / invalid compiler-corridor family for declared downstream compilation routes.</li>
+  <li>a named valid / invalid compiler-corridor family,</li>
+  <li>a structured executable subtree for further executable-family growth.</li>
 </ul>
 
 <p>
