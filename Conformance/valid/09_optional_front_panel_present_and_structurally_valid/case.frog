@@ -25,7 +25,8 @@
     "widgets": [
       {
         "id": "widget_1",
-        "class": "frog.ui.numeric_control"
+        "role": "control",
+        "widget": "frog.ui.standard.numeric_control"
       }
     ]
   }
