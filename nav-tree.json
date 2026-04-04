@@ -1077,6 +1077,13 @@
                       "children": []
                     }
                   ]
+                },
+                {
+                  "key": "conformance/invalid/executable/",
+                  "title": "executable",
+                  "path": "/Conformance/invalid/executable/Readme.md",
+                  "kind": "category",
+                  "children": []
                 }
               ]
             },
@@ -2196,6 +2203,7 @@
     "/Conformance/invalid/compiler/03_lowerable_but_not_backend_contract_emittable.md",
     "/Conformance/invalid/compiler/04_contract_emittable_but_consumer_rejected.md",
     "/Conformance/invalid/compiler/Readme.md",
+    "/Conformance/invalid/executable/Readme.md",
     "/Conformance/valid/01_pure_addition.md",
     "/Conformance/valid/02_ui_value_roundtrip.md",
     "/Conformance/valid/03_ui_property_write.md",
