@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="../FROG logo.svg" alt="FROG logo" width="140" />
+  <img src="../FROG logo.svg" alt="FROG logo" width="200" />
 </p>
 
 <h1 align="center">FROG Profiles</h1>
@@ -50,15 +50,36 @@ Profiles exist to standardize capability areas that matter for real ecosystems b
 Within the current repository architecture:
 </p>
 
-<ul>
-  <li><code>Expression/</code> owns canonical source representation,</li>
-  <li><code>Language/</code> owns normative validated-program meaning and cross-cutting execution semantics,</li>
-  <li><code>Libraries/</code> owns intrinsic standardized primitive vocabularies,</li>
-  <li><code>IR/</code> owns canonical execution-facing representation, derivation, construction, lowering, and backend contracts,</li>
-  <li><code>Profiles/</code> owns optional standardized capability families,</li>
-  <li><code>IDE/</code> owns authoring, observability, debugging, inspection, and related tooling responsibilities,</li>
-  <li><code>Implementations/</code> owns non-normative executable realization workspaces.</li>
-</ul>
+<pre>Expression/
+   - canonical source representation
+
+Language/
+   - normative validated-program meaning
+   - cross-cutting execution semantics
+
+Libraries/
+   - intrinsic standardized primitive vocabularies
+
+IR/
+   - canonical execution-facing representation
+   - derivation
+   - construction
+   - schema posture
+   - lowering
+   - backend contract
+
+Profiles/
+   - optional standardized capability families
+
+IDE/
+   - authoring
+   - observability
+   - debugging
+   - inspection
+   - related tooling responsibilities
+
+Implementations/
+   - non-normative executable realization workspaces</pre>
 
 <p>
 A profile therefore extends the standardized capability surface of FROG, but it does so from outside the intrinsic core.
@@ -107,14 +128,15 @@ Profiles occupy a distinct architectural role between the minimal core standard 
 They are intended to standardize capability families that are broader than one vendor-specific extension but narrower than the mandatory language core.
 </p>
 
-<pre><code>FROG specification architecture
-Expression/        -&gt; canonical source form
-Language/          -&gt; normative validated-program meaning
-Libraries/         -&gt; intrinsic standardized primitive vocabularies
-IR/                -&gt; canonical derived execution representation and backend-facing boundaries
-Profiles/          -&gt; optional standardized capability families
-IDE/               -&gt; authoring and observability tooling
-Implementations/   -&gt; non-normative executable realizations</code></pre>
+<pre>FROG specification architecture
+
+Expression/        - canonical source form
+Language/          - normative validated-program meaning
+Libraries/         - intrinsic standardized primitive vocabularies
+IR/                - canonical derived execution representation and backend-facing boundaries
+Profiles/          - optional standardized capability families
+IDE/               - authoring and observability tooling
+Implementations/   - non-normative executable realizations</pre>
 
 <p>
 This model preserves a stable architectural center while allowing the ecosystem to grow through bounded optional capability families.
@@ -146,7 +168,8 @@ A profile specification MAY define:
   <li>deployment-facing capability classes,</li>
   <li>runtime-facing capability contracts,</li>
   <li>profile-specific terminology and behavior that remain outside the minimal intrinsic language surface,</li>
-  <li>optional capability claims that implementations MAY support explicitly.</li>
+  <li>optional capability claims that implementations MAY support explicitly,</li>
+  <li>profile-level execution contracts for bounded execution corridors, where justified.</li>
 </ul>
 
 <p>
@@ -168,8 +191,7 @@ To keep the architecture explicit, FROG distinguishes several different concepts
 <h3>5.1 Optional capability profiles</h3>
 
 <p>
-An optional capability profile is the top-level object standardized in this directory.
-It defines one bounded optional capability family that implementations may claim explicitly.
+An optional capability profile is the top-level object standardized in this directory. It defines one bounded optional capability family that implementations may claim explicitly.
 </p>
 
 <p>
@@ -194,8 +216,7 @@ A target profile is a standardized class of execution assumptions, constraints, 
 </p>
 
 <p>
-A target profile is not a single machine model, not a private runtime module, and not a backend implementation by itself.
-It is a standardized capability class.
+A target profile is not a single machine model, not a private runtime module, and not a backend implementation by itself. It is a standardized capability class.
 </p>
 
 <p>
@@ -218,8 +239,7 @@ A deployment mode is a standardized class of packaging, observability, distribut
 </p>
 
 <p>
-A deployment mode may constrain how a compiled or prepared program is delivered or executed.
-It is not the same thing as:
+A deployment mode may constrain how a compiled or prepared program is delivered or executed. It is not the same thing as:
 </p>
 
 <ul>
@@ -231,8 +251,7 @@ It is not the same thing as:
 <h3>5.4 Backend families</h3>
 
 <p>
-A backend family is a class of downstream execution consumers or compiler consumers.
-Backend families remain downstream from the canonical FROG Execution IR.
+A backend family is a class of downstream execution consumers or compiler consumers. Backend families remain downstream from the canonical FROG Execution IR.
 </p>
 
 <p>
@@ -271,6 +290,44 @@ It is not identical to:
 A profile MAY define runtime-facing capability expectations where justified, but those expectations MUST remain subordinate to the repository-wide separation between open IR, lowering, backend handoff, and private realization.
 </p>
 
+<h3>5.6 Profile-level execution contracts</h3>
+
+<p>
+A profile-level execution contract is a bounded profile companion document that closes the additional question:
+</p>
+
+<pre>Given a lowered and backend-contract-emitted program
+inside one accepted profile subset,
+under what explicit assumptions
+may execution actually begin?</pre>
+
+<p>
+A profile-level execution contract is therefore not:
+</p>
+
+<ul>
+  <li>the generic backend contract owned by <code>IR/</code>,</li>
+  <li>a universal runtime specification for all FROG programs,</li>
+  <li>a license to move private runtime realization into normative language truth.</li>
+</ul>
+
+<p>
+Instead, it is a profile-side closure surface for one bounded execution corridor.
+</p>
+
+<p>
+Compactly:
+</p>
+
+<pre>backend contract
+   =
+standardized downstream handoff
+
+profile-level execution contract
+   =
+additional bounded execution-start closure
+for one published optional capability corridor</pre>
+
 <hr/>
 
 <h2 id="profile-vs-runtime-boundary">6. Profile vs Runtime Boundary</h2>
@@ -283,19 +340,19 @@ A profile may constrain or classify runtime-facing expectations, but it does not
 This distinction matters especially for advanced capability surfaces.
 </p>
 
-<pre><code>profile
+<pre>profile
    may define
 capability assumptions
 
 profile
    does not define
-one private runtime realization</code></pre>
+one private runtime realization</pre>
 
 <p>
 Likewise:
 </p>
 
-<pre><code>profile
+<pre>profile
    may define
 target-facing or deployment-facing classes
 
@@ -303,11 +360,21 @@ profile
    does not redefine
 canonical open IR
 or
-backend contract ownership</code></pre>
+backend contract ownership</pre>
 
 <p>
 Profiles therefore remain optional specification layers, not hidden runtime specifications.
 </p>
+
+<p>
+Where a profile publishes an execution contract, that execution contract remains:
+</p>
+
+<ul>
+  <li>bounded,</li>
+  <li>subordinate to the rest of the repository architecture,</li>
+  <li>distinct from private runtime realization.</li>
+</ul>
 
 <hr/>
 
@@ -328,7 +395,8 @@ Examples include:
   <li>deployment classes,</li>
   <li>runtime-service capability surfaces,</li>
   <li>specialized validation restrictions for an optional capability family,</li>
-  <li>bounded profile-specific execution assumptions.</li>
+  <li>bounded profile-specific execution assumptions,</li>
+  <li>bounded profile-level execution contracts.</li>
 </ul>
 
 <p>
@@ -339,7 +407,8 @@ A profile MAY therefore state:
   <li>what optional capability claim exists,</li>
   <li>what assumptions that claim requires,</li>
   <li>what subset or bounded capability class it applies to,</li>
-  <li>what explicit rejection conditions apply when those assumptions are not met.</li>
+  <li>what explicit rejection conditions apply when those assumptions are not met,</li>
+  <li>what additional execution-start assumptions must be satisfied when compilability alone is not enough.</li>
 </ul>
 
 <hr/>
@@ -358,12 +427,11 @@ A profile MUST NOT:
   <li>replace the ownership of <code>IR/</code> for canonical execution representation, derivation, lowering, or backend contract,</li>
   <li>turn one implementation strategy into mandatory language law,</li>
   <li>present one private runtime design as though it were the only conforming meaning of the capability family,</li>
-  <li>collapse backend family, target profile, deployment mode, and runtime realization into one ambiguous concept.</li>
+  <li>collapse backend family, target profile, deployment mode, execution contract, and runtime realization into one ambiguous concept.</li>
 </ul>
 
 <p>
-Profiles are optional architectural extensions.
-They are not ownership shortcuts.
+Profiles are optional architectural extensions. They are not ownership shortcuts.
 </p>
 
 <hr/>
@@ -378,7 +446,7 @@ Profiles must remain readable relative to the rest of the repository.
 The intended reading model is:
 </p>
 
-<pre><code>Expression/
+<pre>Expression/
    defines canonical source structure
 
 Language/
@@ -403,12 +471,24 @@ IDE/
    defines authoring and observability concerns
 
 Implementations/
-   provide non-normative executable workspaces</code></pre>
+   provide non-normative executable workspaces</pre>
 
 <p>
-A profile may depend on these layers.
-It must not absorb them.
+A profile may depend on these layers. It must not absorb them.
 </p>
+
+<p>
+Where a profile publishes an execution contract, the intended reading remains:
+</p>
+
+<pre>IR/
+   keeps ownership of
+backend handoff
+
+Profiles/
+   may add
+bounded execution-side closure
+for one optional capability corridor</pre>
 
 <hr/>
 
@@ -433,8 +513,7 @@ A program, toolchain, or deployment path MAY also declare that it targets a give
 </p>
 
 <p>
-A profile claim MUST remain precise.
-For example:
+A profile claim MUST remain precise. For example:
 </p>
 
 <ul>
@@ -443,8 +522,17 @@ For example:
 </ul>
 
 <p>
-Vague claims such as “supports all advanced features” are not profile claims.
-Explicit profile naming is preferred.
+If a profile also publishes an execution contract, support claims SHOULD remain equally precise. For example:
+</p>
+
+<ul>
+  <li>support for the compilation profile alone,</li>
+  <li>support for the compilation profile plus its published execution contract,</li>
+  <li>support for only a bounded execution-ready subset of that pair.</li>
+</ul>
+
+<p>
+Vague claims such as “supports all advanced features” are not profile claims. Explicit profile naming is preferred.
 </p>
 
 <hr/>
@@ -460,6 +548,10 @@ The currently published profile specifications are:
   <li><code>Native CPU LLVM.md</code> — optional native CPU compilation profile for LLVM-oriented backend families.</li>
 </ul>
 
+<p>
+Profiles MAY also be accompanied by narrower companion documents when their corridor requires additional bounded closure, including profile-level execution contracts.
+</p>
+
 <h3>11.1 Interop</h3>
 
 <p>
@@ -472,7 +564,7 @@ The currently published profile specifications are:
 <code>Native CPU LLVM.md</code> defines a first optional compilation-oriented profile for a conservative v0.1 subset capable of traveling through:
 </p>
 
-<pre><code>validated meaning
+<pre>validated meaning
    -&gt;
 canonical FROG Execution IR
    -&gt;
@@ -480,7 +572,7 @@ lowering
    -&gt;
 backend contract
    -&gt;
-LLVM-oriented native CPU backend family</code></pre>
+LLVM-oriented native CPU backend family</pre>
 
 <p>
 This profile exists to close one serious industrial compilation corridor without collapsing the language into LLVM and without redefining IR ownership inside <code>Profiles/</code>.
@@ -496,6 +588,33 @@ It should be read as:
   <li>a backend-family-oriented downstream compatibility claim,</li>
   <li>not a replacement for the core language or core IR stack.</li>
 </ul>
+
+<p>
+Where published, a companion Native CPU LLVM execution contract should be read as a distinct but related document:
+</p>
+
+<ul>
+  <li><code>Native CPU LLVM.md</code> closes the compilation corridor,</li>
+  <li>the execution contract closes the additional execution-start assumptions for a bounded accepted subset,</li>
+  <li><code>IR/Backend contract.md</code> remains the generic consumer-facing backend handoff owned by <code>IR/</code>.</li>
+</ul>
+
+<p>
+The intended distinction is:
+</p>
+
+<pre>compilation profile
+   =
+bounded route to backend-family consumability
+
+backend contract
+   =
+generic standardized downstream handoff
+
+profile-level execution contract
+   =
+bounded execution-start closure
+under explicit assumptions</pre>
 
 <hr/>
 
@@ -516,19 +635,25 @@ An implementation may:
 </ul>
 
 <p>
-Profile support therefore extends the supported capability surface.
-It does not replace core conformance.
+Profile support therefore extends the supported capability surface. It does not replace core conformance.
 </p>
 
 <p>
 Likewise:
 </p>
 
-<pre><code>core conformance
+<pre>core conformance
    != profile support breadth
 
 profile support breadth
-   != certification breadth</code></pre>
+   != certification breadth</pre>
+
+<p>
+And:
+</p>
+
+<pre>profile support
+   != automatic execution-contract support</pre>
 
 <p>
 Certification, if defined more explicitly later, remains a separate question from the existence of profiles themselves.
@@ -567,7 +692,8 @@ In particular, future profile growth SHOULD prefer:
   <li>small coherent capability families,</li>
   <li>clear target-facing or deployment-facing classes,</li>
   <li>explicit rejection conditions,</li>
-  <li>clean separation from backend-private and runtime-private realization.</li>
+  <li>clean separation from backend-private and runtime-private realization,</li>
+  <li>bounded execution contracts only when the compilation corridor alone no longer closes the needed public truth surface.</li>
 </ul>
 
 <hr/>
@@ -582,7 +708,8 @@ In the current published repository posture:
   <li><code>Profiles/</code> is already a normative specification layer,</li>
   <li>the directory already distinguishes optional profiles from core intrinsic language ownership,</li>
   <li>the directory now publishes both an interoperability profile and a first native compilation profile,</li>
-  <li>the broader profile surface remains intentionally limited and conservative.</li>
+  <li>the broader profile surface remains intentionally limited and conservative,</li>
+  <li>the architecture already leaves room for bounded profile-side execution contracts without moving backend-contract ownership out of <code>IR/</code>.</li>
 </ul>
 
 <p>
@@ -611,7 +738,7 @@ A profile:
   <li>extends the standardized capability surface,</li>
   <li>remains optional rather than intrinsic,</li>
   <li>stays subordinate to the core repository architecture,</li>
-  <li>may define bounded target-facing, deployment-facing, interoperability, runtime-facing, or compilation-oriented capability classes,</li>
+  <li>may define bounded target-facing, deployment-facing, interoperability, runtime-facing, compilation-oriented, or execution-contract capability classes,</li>
   <li>must not redefine the language core, canonical IR ownership, or private runtime truth.</li>
 </ul>
 
@@ -625,10 +752,14 @@ The current published profile set includes:
 </ul>
 
 <p>
+And where a bounded published corridor needs stronger closure, a profile MAY be accompanied by a companion execution contract that remains distinct from <code>IR/Backend contract.md</code>.
+</p>
+
+<p>
 This keeps the architecture explicit:
 </p>
 
-<pre><code>core language stays core
+<pre>core language stays core
 
 IR stays IR
 
@@ -636,7 +767,9 @@ profiles stay optional
 
 backend families stay downstream
 
-private realization stays private</code></pre>
+execution-contract closure stays bounded
+
+private realization stays private</pre>
 
 <p>
 That is the intended role of <code>Profiles/</code> in FROG v0.1.
