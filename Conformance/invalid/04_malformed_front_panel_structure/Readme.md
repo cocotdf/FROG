@@ -17,13 +17,14 @@
   <li><a href="#case-purpose">2. Case Purpose</a></li>
   <li><a href="#case-classification">3. Case Classification</a></li>
   <li><a href="#normative-basis">4. Normative Basis</a></li>
-  <li><a href="#input-shape">5. Input Shape</a></li>
-  <li><a href="#expected-outcome">6. Expected Outcome</a></li>
-  <li><a href="#why-this-case-must-fail">7. Why this Case Must Fail</a></li>
-  <li><a href="#what-this-case-is-not-testing">8. What this Case Is Not Testing</a></li>
-  <li><a href="#preservation-and-boundary-notes">9. Preservation and Boundary Notes</a></li>
-  <li><a href="#implementation-requirements">10. Implementation Requirements</a></li>
-  <li><a href="#summary">11. Summary</a></li>
+  <li><a href="#associated-source-artifact">5. Associated Source Artifact</a></li>
+  <li><a href="#input-shape">6. Input Shape</a></li>
+  <li><a href="#expected-outcome">7. Expected Outcome</a></li>
+  <li><a href="#why-this-case-must-fail">8. Why this Case Must Fail</a></li>
+  <li><a href="#what-this-case-is-not-testing">9. What this Case Is Not Testing</a></li>
+  <li><a href="#preservation-and-boundary-notes">10. Preservation and Boundary Notes</a></li>
+  <li><a href="#implementation-requirements">11. Implementation Requirements</a></li>
+  <li><a href="#summary">12. Summary</a></li>
 </ul>
 
 <hr/>
@@ -120,14 +121,46 @@ optional front_panel present but malformed
 
 <hr/>
 
-<h2 id="input-shape">5. Input Shape</h2>
+<h2 id="associated-source-artifact">5. Associated Source Artifact</h2>
 
 <p>
-The associated invalid source artifact for this case SHOULD be a JSON-loadable <code>.frog</code> file in which <code>front_panel</code> exists but is malformed as source.
+The source artifact associated with this case is:
+</p>
+
+<pre><code>Conformance/invalid/04_malformed_front_panel_structure/case.frog
+</code></pre>
+
+<p>
+That artifact is the authoritative concrete input for this case. This README explains why it must be rejected.
+</p>
+
+<hr/>
+
+<h2 id="input-shape">6. Input Shape</h2>
+
+<p>
+The associated invalid source artifact is a JSON-loadable <code>.frog</code> file in which <code>front_panel</code> exists but is malformed as source.
 </p>
 
 <p>
-Typical invalid patterns include:
+In the current associated <code>case.frog</code>, the malformed shape is explicit:
+</p>
+
+<pre><code>"front_panel": [
+  {
+    "id": "widget_1",
+    "role": "control",
+    "widget": "frog.ui.standard.numeric_control"
+  }
+]
+</code></pre>
+
+<p>
+That is invalid because <code>front_panel</code> must be an object when present, not an array.
+</p>
+
+<p>
+More generally, typical invalid patterns include:
 </p>
 
 <ul>
@@ -140,22 +173,12 @@ Typical invalid patterns include:
 </ul>
 
 <p>
-A representative invalid intention is:
-</p>
-
-<pre><code>front_panel
-  -&gt; present as a source section
-  -&gt; contains widget data in a malformed source structure
-  -&gt; cannot be interpreted as valid front-panel composition
-</code></pre>
-
-<p>
 This is not merely a UI-runtime issue. It is a canonical-source failure.
 </p>
 
 <hr/>
 
-<h2 id="expected-outcome">6. Expected Outcome</h2>
+<h2 id="expected-outcome">7. Expected Outcome</h2>
 
 <p>
 The expected outcome is:
@@ -168,12 +191,12 @@ Expected rejection: malformed front_panel structure
 </code></pre>
 
 <p>
-A conforming implementation MUST reject the case explicitly. It MUST NOT silently normalize malformed front-panel source into validity. It MUST NOT treat malformed UI source as harmless decoration. It MUST NOT continue as if validated meaning had been established.
+A conforming implementation MUST reject the associated <code>case.frog</code> explicitly. It MUST NOT silently normalize malformed front-panel source into validity. It MUST NOT treat malformed UI source as harmless decoration. It MUST NOT continue as if validated meaning had been established.
 </p>
 
 <hr/>
 
-<h2 id="why-this-case-must-fail">7. Why this Case Must Fail</h2>
+<h2 id="why-this-case-must-fail">8. Why this Case Must Fail</h2>
 
 <p>
 The FROG source model allows optional sections, but optionality does not remove structural discipline.
@@ -210,7 +233,7 @@ structural rejection required
 
 <hr/>
 
-<h2 id="what-this-case-is-not-testing">8. What this Case Is Not Testing</h2>
+<h2 id="what-this-case-is-not-testing">9. What this Case Is Not Testing</h2>
 
 <p>
 This case is intentionally narrow. It is not testing:
@@ -237,7 +260,7 @@ must be rejected structurally
 
 <hr/>
 
-<h2 id="preservation-and-boundary-notes">9. Preservation and Boundary Notes</h2>
+<h2 id="preservation-and-boundary-notes">10. Preservation and Boundary Notes</h2>
 
 <p>
 This case helps preserve the architectural distinction between:
@@ -271,7 +294,7 @@ front_panel
 
 <hr/>
 
-<h2 id="implementation-requirements">10. Implementation Requirements</h2>
+<h2 id="implementation-requirements">11. Implementation Requirements</h2>
 
 <p>
 A conforming implementation handling this case SHOULD:
@@ -298,7 +321,7 @@ A conforming implementation MUST NOT:
 
 <hr/>
 
-<h2 id="summary">11. Summary</h2>
+<h2 id="summary">12. Summary</h2>
 
 <p>
 This case establishes a focused negative truth:
