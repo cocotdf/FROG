@@ -249,6 +249,7 @@
     - structural
       - [01 front panel canvas widgets and ui libraries](/Conformance/valid/structural/01_front_panel_canvas_widgets_and_ui_libraries/Readme.md)
         - [case.frog](/Conformance/valid/structural/01_front_panel_canvas_widgets_and_ui_libraries/case.frog)
+      - [02 front panel recursive children shape is valid](/Conformance/valid/structural/02_front_panel_recursive_children_shape_is_valid/Readme.md)
 - [Reference Implementation](/Implementations/Reference/Readme.md)
   - [example-artifact-requirements](/Implementations/Reference/example-artifact-requirements.md)
   - [frogc](/Implementations/Reference/frogc.md)
