@@ -50,7 +50,7 @@ It is a program-framing document that explains the problem, the opportunity, the
 <h2 id="strategic-thesis">2. Strategic Thesis</h2>
 
 <p>
-FROG aims to make <strong>graphical system-grade programming open, inspectable, hardware-agnostic, and deployable</strong> across heterogeneous execution targets.
+FROG aims to make <strong>graphical system-grade programming open, inspectable, hardware-agnostic, auditable, and deployable</strong> across heterogeneous execution targets.
 </p>
 
 <p>
@@ -72,7 +72,21 @@ In practical terms, FROG seeks to combine:
 <ul>
   <li>the accessibility historically associated with graphical dataflow programming,</li>
   <li>the execution seriousness required for industrial and system-grade deployment,</li>
-  <li>the openness and inspectability needed for modern interoperability, portability, and AI-assisted tooling.</li>
+  <li>the openness and inspectability needed for modern interoperability and portability,</li>
+  <li>the auditability and structured artifacts needed for AI-assisted generation and transformation workflows,</li>
+  <li>the sovereignty-preserving properties needed for long-term industrial independence from opaque vendor-controlled formats.</li>
+</ul>
+
+<p>
+The strategic thesis is therefore not merely “open graphical programming”.
+It is that the next generation of industrial programming infrastructure must remain:
+</p>
+
+<ul>
+  <li>machine-friendly enough for AI-era tooling,</li>
+  <li>human-reviewable enough for security and engineering trust,</li>
+  <li>open enough for multi-vendor implementation,</li>
+  <li>structured enough to preserve meaning across validation, derivation, and backend handoff.</li>
 </ul>
 
 <hr/>
@@ -89,6 +103,13 @@ At the other end of the spectrum, accessible environments may reduce friction bu
 </p>
 
 <p>
+The gap is now even wider in the AI era.
+Modern toolchains increasingly generate, rewrite, transform, or assist program structure.
+That increases the need for representations that are both machine-friendly and human-reviewable.
+Many current environments satisfy one side of that requirement better than the other.
+</p>
+
+<p>
 FROG targets the missing zone where the following properties are combined rather than traded against one another:
 </p>
 
@@ -97,7 +118,8 @@ FROG targets the missing zone where the following properties are combined rather
   <li>system-grade execution depth rather than shallow convenience scripting only,</li>
   <li>hardware agnosticism rather than ecosystem lock-in,</li>
   <li>open and inspectable program artifacts rather than opaque saved formats,</li>
-  <li>a path from rapid prototyping to deployment rather than a permanent split between prototype tooling and production tooling.</li>
+  <li>a path from rapid prototyping to deployment rather than a permanent split between prototype tooling and production tooling,</li>
+  <li>structured machine-compatible source artifacts together with direct human structural review.</li>
 </ul>
 
 <p>
@@ -139,6 +161,18 @@ It is an open language foundation that can eventually support:
   <li>CPU, ARM, microcontroller, FPGA, and other backend-oriented execution paths.</li>
 </ul>
 
+<p>
+More specifically, FROG is trying to make AI-era program generation more governable.
+It aims to provide a language stack where:
+</p>
+
+<ul>
+  <li>the saved source remains structured and machine-friendly,</li>
+  <li>the program structure remains graphically reviewable by humans,</li>
+  <li>the execution-facing IR remains open to inspection,</li>
+  <li>downstream compilation remains separate from the normative language definition.</li>
+</ul>
+
 <hr/>
 
 <h2 id="heilmeier-h2">5. Heilmeier H2 — How is it done today, and what are the limits?</h2>
@@ -167,8 +201,17 @@ The practical limits of the current situation are structural rather than cosmeti
 </ul>
 
 <p>
+There is also a reviewability problem.
+Textual languages can certainly be audited, but structural understanding is often indirect:
+reviewers reconstruct system architecture from syntax, coding conventions, build context, and analysis tooling.
+In closed graphical systems, the problem is different but equally serious:
+the structure may be visual, yet the saved format and execution path remain opaque or vendor-bound.
+</p>
+
+<p>
 The issue is therefore not merely “better usability”.
-The issue is that graphical industrial programming has historically lacked a sufficiently open and standardized architectural foundation.
+The issue is that graphical industrial programming has historically lacked a sufficiently open and standardized architectural foundation,
+and AI-era software generation is making the cost of opaque or weakly reviewable representations even higher.
 </p>
 
 <hr/>
@@ -182,8 +225,9 @@ What is new is the combination of the following architectural commitments inside
 
 <ul>
   <li>an open canonical <code>.frog</code> source representation,</li>
+  <li>a canonical source model that is structured JSON rather than a private opaque file format,</li>
   <li>an explicit separation between saved source, validated semantics, derived IR, lowering, backend contract, and runtime realization,</li>
-  <li>a future standardized execution-facing FROG IR that remains inspectable and recoverable,</li>
+  <li>a standardized execution-facing FROG IR that remains inspectable and recoverable,</li>
   <li>a backend-family-oriented lowering path rather than one hidden private execution pipeline,</li>
   <li>a future path toward known backend/compiler targets without making those targets the definition of the language.</li>
 </ul>
@@ -199,6 +243,13 @@ The current slices already show that the published boundaries are not merely con
   <li>object-style UI interaction,</li>
   <li>explicit local memory and valid feedback through delay.</li>
 </ul>
+
+<p>
+The architectural argument is especially strong in the AI era:
+FROG does not offer only a machine-friendly source representation.
+It also offers a human-reviewable primary program structure and an open execution-facing IR.
+That combination is precisely what reduces the auditability gap between generated artifacts and deployed behavior.
+</p>
 
 <p>
 That does not yet prove the full compiler story.
@@ -221,8 +272,10 @@ If FROG succeeds, multiple groups should care.
   <li><strong>Industrial users and integrators</strong> gain an open graphical programming foundation that is not structurally locked to one hardware vendor.</li>
   <li><strong>Hardware vendors</strong> gain a path to expose serious industrial capabilities through a shared open graphical execution model rather than through isolated proprietary stacks.</li>
   <li><strong>System builders</strong> gain a cleaner way to target CPUs, embedded systems, edge devices, and future hardware families through one architectural language stack.</li>
-  <li><strong>AI and tooling ecosystems</strong> gain a readable and inspectable program representation rather than opaque graphical artifacts.</li>
+  <li><strong>AI and tooling ecosystems</strong> gain structured source and open IR artifacts rather than opaque graphical artifacts.</li>
+  <li><strong>Security and assurance stakeholders</strong> gain a more direct way to inspect generated or transformed logic across source and execution-facing layers.</li>
   <li><strong>The broader engineering community</strong> gains an alternative model for graphical programming that is open, portable, and structurally modern.</li>
+  <li><strong>States, sovereign industrial actors, and strategic technology programs</strong> gain a path away from dependence on opaque vendor-controlled graphical programming infrastructure.</li>
 </ul>
 
 <p>
@@ -241,15 +294,23 @@ It would change the structure of the category.
 
 <ul>
   <li>Graphical programs would no longer need to live inside opaque saved formats.</li>
+  <li>The saved source could remain open, structured, machine-friendly, and durable.</li>
   <li>Execution-facing representations could become inspectable, standardizable, and portable.</li>
   <li>Graphical industrial programming could become hardware-agnostic by design rather than vendor-limited by default.</li>
   <li>Multiple hardware manufacturers could participate in one open language ecosystem instead of forcing users into mutually isolated stacks.</li>
   <li>AI-assisted tooling could operate on open source and open IR artifacts rather than reverse-engineering closed graphical representations.</li>
+  <li>Critical generated logic could become easier to review visually and structurally rather than only through indirect reconstruction.</li>
 </ul>
 
 <p>
 The long-term difference would therefore be structural:
 FROG could shift graphical system-grade programming from vendor-controlled lock-in toward open, multi-vendor, inspectable infrastructure.
+</p>
+
+<p>
+That difference is not only technical.
+It is also strategic.
+In industrial and security-sensitive domains, the ability to inspect, attribute, and port logic matters for trust, resilience, and technological sovereignty.
 </p>
 
 <hr/>
@@ -267,11 +328,19 @@ Several important things still need to be proved.
   <li>Real deployable targets must be shown beyond the current minimal reference path.</li>
   <li>Backend diversity must be demonstrated without collapsing the architecture into one backend-specific truth.</li>
   <li>The relationship between open IR, backend contracts, compiler backends, runtime realization, and deployment artifacts must be shown end to end.</li>
+  <li>The claimed auditability advantage must remain disciplined and credible rather than overstated.</li>
 </ul>
 
 <p>
 The key risk is not that the idea is meaningless.
 The key risk is that the project could stop too early at the “interesting prototype” stage without closing the future standardized IR and backend/compiler story strongly enough.
+</p>
+
+<p>
+Another risk is strategic overclaim.
+FROG should not claim that graphical representation automatically guarantees security or that textual languages cannot be reviewed.
+Its real claim is narrower and stronger:
+it can reduce structural opacity by combining machine-friendly source, direct graphical reviewability, and open execution-facing representation.
 </p>
 
 <hr/>
@@ -320,6 +389,18 @@ Natural milestone categories are:
 The important point is that each stage should be auditable, explicit, and grounded in repository-visible artifacts rather than in vague aspiration.
 </p>
 
+<p>
+In the AI-era framing, a particularly important exam is whether FROG can demonstrate the full review loop:
+</p>
+
+<ul>
+  <li>structured source generation,</li>
+  <li>human graphical review,</li>
+  <li>semantic validation,</li>
+  <li>inspectable IR derivation,</li>
+  <li>backend handoff without loss of architectural traceability.</li>
+</ul>
+
 <hr/>
 
 <h2 id="what-is-already-demonstrated-in-the-repository">12. What is Already Demonstrated in the Repository</h2>
@@ -341,6 +422,11 @@ These slices matter because they show that the architecture already supports rea
 
 <p>
 They should be understood as proof of architectural viability, not as proof that all long-term execution targets are already closed.
+</p>
+
+<p>
+They also matter strategically because they keep the project grounded in inspectable repository-visible artifacts.
+The strategic argument for openness, auditability, and downstream seriousness is stronger when each stage is already exercised in public slices.
 </p>
 
 <hr/>
@@ -385,12 +471,25 @@ It would show that FROG is not merely a saved graphical representation or a toy 
 For hardware-oriented targets, the same logic should later extend toward backend families appropriate for embedded systems, microcontrollers, and FPGA-oriented flows.
 </p>
 
+<p>
+A particularly convincing future proof point would be an AI-assisted generation scenario in which:
+</p>
+
+<ul>
+  <li>a valid canonical <code>.frog</code> source artifact is produced,</li>
+  <li>its structure is reviewed graphically by a human,</li>
+  <li>its validated meaning is derived into inspectable FROG IR,</li>
+  <li>that IR is lowered toward a serious backend path,</li>
+  <li>the end-to-end chain remains attributable and auditable.</li>
+</ul>
+
 <hr/>
 
 <h2 id="summary">14. Summary</h2>
 
 <p>
-FROG is trying to open a missing category: accessible graphical programming with a serious path to system-grade execution, hardware agnosticism, and future deployable backend/compiler integration.
+FROG is trying to open a missing category:
+accessible graphical programming with a serious path to system-grade execution, hardware agnosticism, inspectable intermediate representation, and future deployable backend/compiler integration.
 </p>
 
 <p>
@@ -403,10 +502,14 @@ The strategic case for FROG is therefore clear:
 
 <ul>
   <li>open the saved source format,</li>
+  <li>keep that source structured and machine-friendly,</li>
+  <li>make program structure graphically reviewable by humans,</li>
   <li>open and standardize the execution-facing dataflow representation,</li>
   <li>separate language truth from runtime-private realization,</li>
   <li>prepare a future path toward known compiler/runtime backends,</li>
-  <li>enable an open, multi-vendor, industrial graphical programming ecosystem.</li>
+  <li>enable an open, multi-vendor, industrial graphical programming ecosystem,</li>
+  <li>reduce the auditability gap introduced by increasingly AI-assisted software generation,</li>
+  <li>support industrial security and technological sovereignty through open, inspectable program artifacts.</li>
 </ul>
 
 <p>
