@@ -549,6 +549,14 @@ The currently published profile specifications are:
 </ul>
 
 <p>
+The following companion document may also exist as part of the same bounded profile family when added and published:
+</p>
+
+<ul>
+  <li><code>Native CPU LLVM Execution contract.md</code> — optional Native CPU LLVM companion execution contract for bounded execution-start closure.</li>
+</ul>
+
+<p>
 Profiles MAY also be accompanied by narrower companion documents when their corridor requires additional bounded closure, including profile-level execution contracts.
 </p>
 
@@ -701,15 +709,15 @@ In particular, future profile growth SHOULD prefer:
 <h2 id="status">14. Status</h2>
 
 <p>
-In the current published repository posture:
+In the current repository posture:
 </p>
 
 <ul>
   <li><code>Profiles/</code> is already a normative specification layer,</li>
   <li>the directory already distinguishes optional profiles from core intrinsic language ownership,</li>
-  <li>the directory now publishes both an interoperability profile and a first native compilation profile,</li>
+  <li>the directory publishes an interoperability profile and a first native compilation profile,</li>
   <li>the broader profile surface remains intentionally limited and conservative,</li>
-  <li>the architecture already leaves room for bounded profile-side execution contracts without moving backend-contract ownership out of <code>IR/</code>.</li>
+  <li>the architecture leaves room for bounded profile-side execution contracts without moving backend-contract ownership out of <code>IR/</code>.</li>
 </ul>
 
 <p>
