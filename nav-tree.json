@@ -1083,7 +1083,15 @@
                   "title": "executable",
                   "path": "/Conformance/invalid/executable/Readme.md",
                   "kind": "category",
-                  "children": []
+                  "children": [
+                    {
+                      "key": "conformance/invalid/executable/01_backend_consumable_but_execution_contract_invalid/",
+                      "title": "01 backend consumable but execution contract invalid",
+                      "path": "/Conformance/invalid/executable/01_backend_consumable_but_execution_contract_invalid/Readme.md",
+                      "kind": "category",
+                      "children": []
+                    }
+                  ]
                 }
               ]
             },
@@ -2203,6 +2211,7 @@
     "/Conformance/invalid/compiler/03_lowerable_but_not_backend_contract_emittable.md",
     "/Conformance/invalid/compiler/04_contract_emittable_but_consumer_rejected.md",
     "/Conformance/invalid/compiler/Readme.md",
+    "/Conformance/invalid/executable/01_backend_consumable_but_execution_contract_invalid/Readme.md",
     "/Conformance/invalid/executable/Readme.md",
     "/Conformance/valid/01_pure_addition.md",
     "/Conformance/valid/02_ui_value_roundtrip.md",
