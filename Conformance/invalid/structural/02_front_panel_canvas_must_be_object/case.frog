@@ -1,0 +1,19 @@
+{
+  "spec_version": "0.1",
+  "metadata": {},
+  "interface": {
+    "inputs": [],
+    "outputs": []
+  },
+  "diagram": {
+    "nodes": [],
+    "edges": []
+  },
+  "front_panel": {
+    "canvas": [
+      800,
+      600
+    ],
+    "widgets": []
+  }
+}
