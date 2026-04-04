@@ -17,10 +17,11 @@
   <li><a href="#case-purpose">2. Case Purpose</a></li>
   <li><a href="#case-classification">3. Case Classification</a></li>
   <li><a href="#normative-basis">4. Normative Basis</a></li>
-  <li><a href="#input-shape">5. Input Shape</a></li>
-  <li><a href="#expected-outcome">6. Expected Outcome</a></li>
-  <li><a href="#why-this-case-must-fail">7. Why This Case Must Fail</a></li>
-  <li><a href="#summary">8. Summary</a></li>
+  <li><a href="#associated-source-artifact">5. Associated Source Artifact</a></li>
+  <li><a href="#input-shape">6. Input Shape</a></li>
+  <li><a href="#expected-outcome">7. Expected Outcome</a></li>
+  <li><a href="#why-this-case-must-fail">8. Why This Case Must Fail</a></li>
+  <li><a href="#summary">9. Summary</a></li>
 </ul>
 
 <hr/>
@@ -65,7 +66,22 @@ This case is grounded in the published source-shape rule that <code>canvas</code
 
 <hr/>
 
-<h2 id="input-shape">5. Input Shape</h2>
+<h2 id="associated-source-artifact">5. Associated Source Artifact</h2>
+
+<p>
+The source artifact associated with this case is:
+</p>
+
+<pre><code>Conformance/invalid/structural/02_front_panel_canvas_must_be_object/case.frog
+</code></pre>
+
+<p>
+That artifact is the authoritative concrete input for this case. This README explains why it must be rejected.
+</p>
+
+<hr/>
+
+<h2 id="input-shape">6. Input Shape</h2>
 
 <p>
 The associated source artifact contains a present <code>front_panel</code> object, but its <code>canvas</code> field is incorrectly serialized as an array.
@@ -73,7 +89,7 @@ The associated source artifact contains a present <code>front_panel</code> objec
 
 <hr/>
 
-<h2 id="expected-outcome">6. Expected Outcome</h2>
+<h2 id="expected-outcome">7. Expected Outcome</h2>
 
 <pre><code>Expected loadability: loadable
 Expected structural validity: invalid
@@ -83,7 +99,7 @@ Expected rejection reason: front_panel.canvas is not an object
 
 <hr/>
 
-<h2 id="why-this-case-must-fail">7. Why This Case Must Fail</h2>
+<h2 id="why-this-case-must-fail">8. Why This Case Must Fail</h2>
 
 <p>
 This case must fail before semantic validation because the source shape violates an explicit front-panel structural rule.
@@ -91,7 +107,7 @@ This case must fail before semantic validation because the source shape violates
 
 <hr/>
 
-<h2 id="summary">8. Summary</h2>
+<h2 id="summary">9. Summary</h2>
 
 <p>
 This is a narrow structural rejection case for incorrect <code>front_panel.canvas</code> shape.
