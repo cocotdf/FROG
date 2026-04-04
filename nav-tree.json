@@ -1698,6 +1698,21 @@
                       "children": []
                     }
                   ]
+                },
+                {
+                  "key": "conformance/valid/executable/",
+                  "title": "executable",
+                  "path": null,
+                  "kind": "category",
+                  "children": [
+                    {
+                      "key": "conformance/valid/executable/01_one_shot_pure_core_starts_and_terminates/",
+                      "title": "01 one shot pure core starts and terminates",
+                      "path": "/Conformance/valid/executable/01_one_shot_pure_core_starts_and_terminates/Readme.md",
+                      "kind": "category",
+                      "children": []
+                    }
+                  ]
                 }
               ]
             }
@@ -2267,6 +2282,7 @@
     "/Conformance/valid/compiler/02_structured_control_is_consumable.md",
     "/Conformance/valid/compiler/03_explicit_state_is_consumable.md",
     "/Conformance/valid/compiler/Readme.md",
+    "/Conformance/valid/executable/01_one_shot_pure_core_starts_and_terminates/Readme.md",
     "/Conformance/Readme.md",
     "/Implementations/Reference/example-artifact-requirements.md",
     "/Implementations/Reference/frogc.md",
