@@ -50,7 +50,7 @@ Profiles exist to standardize capability areas that matter for real ecosystems b
 Within the current repository architecture:
 </p>
 
-<pre>Expression/
+<pre><code>Expression/
    - canonical source representation
 
 Language/
@@ -79,7 +79,8 @@ IDE/
    - related tooling responsibilities
 
 Implementations/
-   - non-normative executable realization workspaces</pre>
+   - non-normative executable realization workspaces
+</code></pre>
 
 <p>
 A profile therefore extends the standardized capability surface of FROG, but it does so from outside the intrinsic core.
@@ -128,15 +129,15 @@ Profiles occupy a distinct architectural role between the minimal core standard 
 They are intended to standardize capability families that are broader than one vendor-specific extension but narrower than the mandatory language core.
 </p>
 
-<pre>FROG specification architecture
-
+<pre><code>FROG specification architecture
 Expression/        - canonical source form
 Language/          - normative validated-program meaning
 Libraries/         - intrinsic standardized primitive vocabularies
 IR/                - canonical derived execution representation and backend-facing boundaries
 Profiles/          - optional standardized capability families
 IDE/               - authoring and observability tooling
-Implementations/   - non-normative executable realizations</pre>
+Implementations/   - non-normative executable realizations
+</code></pre>
 
 <p>
 This model preserves a stable architectural center while allowing the ecosystem to grow through bounded optional capability families.
@@ -169,7 +170,8 @@ A profile specification MAY define:
   <li>runtime-facing capability contracts,</li>
   <li>profile-specific terminology and behavior that remain outside the minimal intrinsic language surface,</li>
   <li>optional capability claims that implementations MAY support explicitly,</li>
-  <li>profile-level execution contracts for bounded execution corridors, where justified.</li>
+  <li>profile-level execution contracts for bounded execution corridors, where justified,</li>
+  <li>portable capability catalogs needed by multiple tools without moving their ownership into the minimal core.</li>
 </ul>
 
 <p>
@@ -296,10 +298,11 @@ A profile MAY define runtime-facing capability expectations where justified, but
 A profile-level execution contract is a bounded profile companion document that closes the additional question:
 </p>
 
-<pre>Given a lowered and backend-contract-emitted program
+<pre><code>Given a lowered and backend-contract-emitted program
 inside one accepted profile subset,
 under what explicit assumptions
-may execution actually begin?</pre>
+may execution actually begin?
+</code></pre>
 
 <p>
 A profile-level execution contract is therefore not:
@@ -319,14 +322,15 @@ Instead, it is a profile-side closure surface for one bounded execution corridor
 Compactly:
 </p>
 
-<pre>backend contract
+<pre><code>backend contract
    =
 standardized downstream handoff
 
 profile-level execution contract
    =
 additional bounded execution-start closure
-for one published optional capability corridor</pre>
+for one published optional capability corridor
+</code></pre>
 
 <hr/>
 
@@ -340,19 +344,20 @@ A profile may constrain or classify runtime-facing expectations, but it does not
 This distinction matters especially for advanced capability surfaces.
 </p>
 
-<pre>profile
+<pre><code>profile
    may define
 capability assumptions
 
 profile
    does not define
-one private runtime realization</pre>
+one private runtime realization
+</code></pre>
 
 <p>
 Likewise:
 </p>
 
-<pre>profile
+<pre><code>profile
    may define
 target-facing or deployment-facing classes
 
@@ -360,7 +365,8 @@ profile
    does not redefine
 canonical open IR
 or
-backend contract ownership</pre>
+backend contract ownership
+</code></pre>
 
 <p>
 Profiles therefore remain optional specification layers, not hidden runtime specifications.
@@ -396,7 +402,9 @@ Examples include:
   <li>runtime-service capability surfaces,</li>
   <li>specialized validation restrictions for an optional capability family,</li>
   <li>bounded profile-specific execution assumptions,</li>
-  <li>bounded profile-level execution contracts.</li>
+  <li>bounded profile-level execution contracts,</li>
+  <li>portable widget-class catalogs and class-contract families,</li>
+  <li>tool-consumable capability metadata needed by multiple conforming implementations.</li>
 </ul>
 
 <p>
@@ -425,9 +433,11 @@ A profile MUST NOT:
   <li>move intrinsic language truth out of the core architecture,</li>
   <li>replace the ownership of <code>Libraries/</code> for intrinsic primitives,</li>
   <li>replace the ownership of <code>IR/</code> for canonical execution representation, derivation, lowering, or backend contract,</li>
+  <li>replace the ownership of <code>Expression/</code> for canonical widget-instance declaration or other source-owned forms,</li>
+  <li>replace the ownership of <code>IDE/</code> for authoring ergonomics, Program Model realization, or editor-private workflow behavior,</li>
   <li>turn one implementation strategy into mandatory language law,</li>
   <li>present one private runtime design as though it were the only conforming meaning of the capability family,</li>
-  <li>collapse backend family, target profile, deployment mode, execution contract, and runtime realization into one ambiguous concept.</li>
+  <li>collapse backend family, target profile, deployment mode, execution contract, runtime realization, and tool-private metadata into one ambiguous concept.</li>
 </ul>
 
 <p>
@@ -446,7 +456,7 @@ Profiles must remain readable relative to the rest of the repository.
 The intended reading model is:
 </p>
 
-<pre>Expression/
+<pre><code>Expression/
    defines canonical source structure
 
 Language/
@@ -471,7 +481,8 @@ IDE/
    defines authoring and observability concerns
 
 Implementations/
-   provide non-normative executable workspaces</pre>
+   provide non-normative executable workspaces
+</code></pre>
 
 <p>
 A profile may depend on these layers. It must not absorb them.
@@ -481,14 +492,39 @@ A profile may depend on these layers. It must not absorb them.
 Where a profile publishes an execution contract, the intended reading remains:
 </p>
 
-<pre>IR/
+<pre><code>IR/
    keeps ownership of
 backend handoff
 
 Profiles/
    may add
 bounded execution-side closure
-for one optional capability corridor</pre>
+for one optional capability corridor
+</code></pre>
+
+<p>
+The same boundary rule applies to richer UI capability families:
+</p>
+
+<pre><code>Expression/
+   keeps ownership of
+widget-instance source representation
+
+Libraries/
+   keep ownership of
+intrinsic frog.ui primitive identities
+
+Profiles/
+   may define
+portable widget-class catalogs,
+class contracts,
+and optional rich UI capability families
+
+IDE/
+   may consume those contracts
+for authoring and guided node generation
+without becoming their normative owner
+</code></pre>
 
 <hr/>
 
@@ -518,7 +554,8 @@ A profile claim MUST remain precise. For example:
 
 <ul>
   <li><code>interop</code> means support for the published interoperability profile, not generic foreign-function support of unknown scope,</li>
-  <li><code>native_cpu_llvm</code> means support for the published optional native CPU LLVM-oriented compilation profile, not a claim that LLVM defines FROG or that every valid FROG program is automatically compatible with that corridor.</li>
+  <li><code>native_cpu_llvm</code> means support for the published optional native CPU LLVM-oriented compilation profile, not a claim that LLVM defines FROG or that every valid FROG program is automatically compatible with that corridor,</li>
+  <li><code>ui_widget_classes</code> means support for the published optional widget-class contract profile, not a vague claim that one IDE happens to expose proprietary property panels or object reflection.</li>
 </ul>
 
 <p>
@@ -540,13 +577,14 @@ Vague claims such as “supports all advanced features” are not profile claims
 <h2 id="current-profile-specifications">11. Current Profile Specifications</h2>
 
 <p>
-The currently published profile specifications are:
+The currently published or directly targeted profile specifications in this directory are:
 </p>
 
 <ul>
   <li><code>Interop.md</code> — optional interoperability capability profile,</li>
   <li><code>Native CPU LLVM.md</code> — optional native CPU compilation profile for LLVM-oriented backend families,</li>
-  <li><code>Native CPU LLVM Execution contract.md</code> — optional Native CPU LLVM companion execution contract for bounded execution-start closure.</li>
+  <li><code>Native CPU LLVM Execution contract.md</code> — optional Native CPU LLVM companion execution contract for bounded execution-start closure,</li>
+  <li><code>UI Widget Classes.md</code> — optional rich UI widget-class catalog and class-contract profile for portable property, method, part, and event surfaces.</li>
 </ul>
 
 <p>
@@ -565,7 +603,7 @@ Profiles MAY also be accompanied by narrower companion documents when their corr
 <code>Native CPU LLVM.md</code> defines a first optional compilation-oriented profile for a conservative v0.1 subset capable of traveling through:
 </p>
 
-<pre>validated meaning
+<pre><code>validated meaning
    -&gt;
 canonical FROG Execution IR
    -&gt;
@@ -573,7 +611,8 @@ lowering
    -&gt;
 backend contract
    -&gt;
-LLVM-oriented native CPU backend family</pre>
+LLVM-oriented native CPU backend family
+</code></pre>
 
 <p>
 This profile exists to close one serious industrial compilation corridor without collapsing the language into LLVM and without redefining IR ownership inside <code>Profiles/</code>.
@@ -610,7 +649,7 @@ Its role is distinct:
 The intended distinction is:
 </p>
 
-<pre>compilation profile
+<pre><code>compilation profile
    =
 bounded route to backend-family consumability
 
@@ -620,15 +659,46 @@ generic standardized downstream handoff
 
 profile-level execution contract
    =
-bounded execution-start closure
-under explicit assumptions</pre>
+additional bounded execution-start closure
+for one accepted optional corridor
+</code></pre>
+
+<h3>11.4 UI Widget Classes</h3>
+
+<p>
+<code>UI Widget Classes.md</code> is the optional rich UI widget-class profile.
+</p>
+
+<p>
+Its role is to standardize a portable widget-class catalog and class-contract surface for richer front-panel object ecosystems without moving ownership away from:
+</p>
+
+<ul>
+  <li><code>Expression/</code> for canonical widget-instance source declaration,</li>
+  <li><code>Libraries/UI.md</code> for intrinsic <code>frog.ui.*</code> executable primitives,</li>
+  <li><code>IDE/</code> for Program Model realization and editor behavior,</li>
+  <li><code>IR/</code> for execution-facing preservation, lowering, and backend handoff.</li>
+</ul>
+
+<p>
+This profile should be read as:
+</p>
+
+<ul>
+  <li>a bounded optional capability claim for portable widget-class catalogs,</li>
+  <li>a class-contract surface for property, method, part, and event declaration,</li>
+  <li>a validation aid for object-style UI interaction,</li>
+  <li>not a universal rendering toolkit specification,</li>
+  <li>not a hidden runtime-private widget ABI,</li>
+  <li>not a replacement for core widget-instance source ownership.</li>
+</ul>
 
 <hr/>
 
 <h2 id="core-conformance-profile-support-and-certification">12. Core Conformance, Profile Support, and Certification</h2>
 
 <p>
-Core conformance and profile support are related but not identical.
+Core language conformance and profile support are related but distinct.
 </p>
 
 <p>
@@ -636,71 +706,79 @@ An implementation may:
 </p>
 
 <ul>
-  <li>conform to the core language and support no optional profiles,</li>
-  <li>conform to the core language and support one optional profile,</li>
-  <li>conform to the core language and support multiple optional profiles.</li>
+  <li>conform to the FROG core without supporting any optional profile,</li>
+  <li>conform to the FROG core and also support one or more optional profiles,</li>
+  <li>support only bounded subsets of a profile, provided those claims are explicit.</li>
 </ul>
 
 <p>
-Profile support therefore extends the supported capability surface. It does not replace core conformance.
+Accordingly:
+</p>
+
+<pre><code>core conformance
+   !=
+profile support claim
+
+profile support claim
+   !=
+support for every optional profile
+
+support for one profile
+   !=
+support for every bounded subset,
+every companion contract,
+or every host environment
+</code></pre>
+
+<p>
+Where conformance material exists for a profile corridor, acceptance or rejection under that corridor SHOULD remain explicit and separately claimable.
 </p>
 
 <p>
-Likewise:
+The same discipline applies to rich UI profiles:
 </p>
 
-<pre>core conformance
-   != profile support breadth
-
-profile support breadth
-   != certification breadth</pre>
-
-<p>
-And:
-</p>
-
-<pre>profile support
-   != automatic execution-contract support</pre>
-
-<p>
-Certification, if defined more explicitly later, remains a separate question from the existence of profiles themselves.
-</p>
+<ul>
+  <li>support for widget-instance source is not automatically support for a rich widget-class catalog,</li>
+  <li>support for property-read nodes is not automatically support for every class family,</li>
+  <li>support for one class family is not automatically support for every declared event surface or runtime host capability.</li>
+</ul>
 
 <hr/>
 
 <h2 id="profile-evolution">13. Profile Evolution</h2>
 
 <p>
-Profiles should evolve conservatively.
+Profiles allow the published specification architecture to grow without destabilizing the minimal core.
 </p>
 
 <p>
-A good profile evolution pattern is:
+Over time, new profiles may standardize capability families such as:
 </p>
 
 <ul>
-  <li>identify a bounded optional capability family,</li>
-  <li>define its assumptions clearly,</li>
-  <li>define what it adds without redefining the core,</li>
-  <li>define what it does not promise,</li>
-  <li>keep its relation with other layers explicit,</li>
-  <li>add conformance material when the profile becomes mature enough for public accept / reject expectations.</li>
+  <li>additional interoperability families,</li>
+  <li>additional compilation corridors,</li>
+  <li>additional target or deployment classes,</li>
+  <li>bounded runtime-service contracts,</li>
+  <li>richer UI widget-class families and companion event surfaces,</li>
+  <li>other optional capability areas that are important for real ecosystems but should remain outside the minimal intrinsic core.</li>
 </ul>
 
 <p>
-Profiles should not become a catch-all zone for unresolved architectural ideas.
+This growth must remain disciplined.
 </p>
 
 <p>
-In particular, future profile growth SHOULD prefer:
+New profiles SHOULD:
 </p>
 
 <ul>
-  <li>small coherent capability families,</li>
-  <li>clear target-facing or deployment-facing classes,</li>
-  <li>explicit rejection conditions,</li>
-  <li>clean separation from backend-private and runtime-private realization,</li>
-  <li>bounded execution contracts only when the compilation corridor alone no longer closes the needed public truth surface.</li>
+  <li>name one bounded capability family clearly,</li>
+  <li>state their assumptions explicitly,</li>
+  <li>preserve ownership boundaries across the repository,</li>
+  <li>avoid turning one implementation strategy into universal truth,</li>
+  <li>remain claimable, inspectable, and compatible with conformance growth where relevant.</li>
 </ul>
 
 <hr/>
@@ -708,25 +786,28 @@ In particular, future profile growth SHOULD prefer:
 <h2 id="status">14. Status</h2>
 
 <p>
-In the current repository posture:
+This directory is normative.
 </p>
-
-<ul>
-  <li><code>Profiles/</code> is a normative specification layer,</li>
-  <li>the directory distinguishes optional profiles from core intrinsic language ownership,</li>
-  <li>the directory contains an interoperability profile, a first native compilation profile, and a companion execution contract for that native corridor,</li>
-  <li>the broader profile surface remains intentionally limited and conservative,</li>
-  <li>the architecture leaves room for bounded profile-side execution contracts without moving backend-contract ownership out of <code>IR/</code>.</li>
-</ul>
 
 <p>
-That is the intended status for v0.1:
+It defines the architectural role of optional standardized capability families within the published FROG specification.
+</p>
+
+<p>
+The set of profiles in this directory is expected to evolve over time as the repository closes additional bounded capability corridors.
+</p>
+
+<p>
+That evolution must remain architecture-preserving:
 </p>
 
 <ul>
-  <li>a stable architectural home exists,</li>
-  <li>a small number of bounded optional capability families are published,</li>
-  <li>the repository remains free to grow later without collapsing the core architecture.</li>
+  <li>the core language remains the core language,</li>
+  <li>core IR ownership remains in <code>IR/</code>,</li>
+  <li>intrinsic primitive ownership remains in <code>Libraries/</code>,</li>
+  <li>source ownership remains in <code>Expression/</code>,</li>
+  <li>authoring and observability ownership remain in <code>IDE/</code>,</li>
+  <li>profiles remain optional standardized capability families.</li>
 </ul>
 
 <hr/>
@@ -734,47 +815,41 @@ That is the intended status for v0.1:
 <h2 id="summary">15. Summary</h2>
 
 <p>
-This directory defines optional standardized capability families for FROG.
+FROG profiles are optional standardized capability families that extend the usable capability surface of the language without redefining the minimal core.
 </p>
 
 <p>
-A profile:
+They exist so that the repository can standardize broader industrially meaningful capability corridors while preserving architectural ownership boundaries.
 </p>
 
-<ul>
-  <li>extends the standardized capability surface,</li>
-  <li>remains optional rather than intrinsic,</li>
-  <li>stays subordinate to the core repository architecture,</li>
-  <li>may define bounded target-facing, deployment-facing, interoperability, runtime-facing, compilation-oriented, or execution-contract capability classes,</li>
-  <li>must not redefine the language core, canonical IR ownership, or private runtime truth.</li>
-</ul>
-
 <p>
-The current published profile set includes:
+In short:
 </p>
 
-<ul>
-  <li><code>Interop.md</code> for interoperability capability,</li>
-  <li><code>Native CPU LLVM.md</code> for a first native CPU LLVM-oriented compilation corridor,</li>
-  <li><code>Native CPU LLVM Execution contract.md</code> for bounded execution-start closure in that same profile family.</li>
-</ul>
+<pre><code>Expression/
+   owns canonical source
+
+Language/
+   owns validated meaning
+
+Libraries/
+   own intrinsic primitive vocabularies
+
+IR/
+   owns canonical execution-facing representation,
+   lowering,
+   and backend handoff
+
+Profiles/
+   own bounded optional capability families
+
+IDE/
+   owns authoring and observability tooling
+
+Implementations/
+   remain non-normative executable workspaces
+</code></pre>
 
 <p>
-This keeps the architecture explicit:
-</p>
-
-<pre>core language stays core
-
-IR stays IR
-
-profiles stay optional
-
-backend families stay downstream
-
-execution-contract closure stays bounded
-
-private realization stays private</pre>
-
-<p>
-That is the intended role of <code>Profiles/</code> in FROG v0.1.
+This makes it possible for FROG to grow through explicit optional profiles such as interoperability, bounded native compilation corridors, bounded execution-side closures, and portable rich UI widget-class capability families, without collapsing the architecture into one implementation or one runtime.
 </p>
