@@ -238,7 +238,7 @@
       - [01 pure arithmetic is consumable](/Conformance/valid/compiler/01_pure_arithmetic_is_consumable.md)
       - [02 structured control is consumable](/Conformance/valid/compiler/02_structured_control_is_consumable.md)
       - [03 explicit state is consumable](/Conformance/valid/compiler/03_explicit_state_is_consumable.md)
-    - executable
+    - [executable](/Conformance/valid/executable/Readme.md)
       - [01 one shot pure core starts and terminates](/Conformance/valid/executable/01_one_shot_pure_core_starts_and_terminates/Readme.md)
 - [Reference Implementation](/Implementations/Reference/Readme.md)
   - [example-artifact-requirements](/Implementations/Reference/example-artifact-requirements.md)
