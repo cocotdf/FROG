@@ -1,0 +1,41 @@
+{
+  "spec_version": "0.1",
+  "metadata": {},
+  "interface": {
+    "inputs": [],
+    "outputs": []
+  },
+  "diagram": {
+    "nodes": [],
+    "edges": []
+  },
+  "front_panel": {
+    "widgets": [
+      {
+        "id": "main_panel",
+        "role": "container",
+        "widget": "frog.ui.standard.panel",
+        "layout": {
+          "x": 0,
+          "y": 0,
+          "width": 800,
+          "height": 600
+        },
+        "children": [
+          {
+            "id": "ind_ready",
+            "role": "indicator",
+            "widget": "frog.ui.standard.boolean_indicator",
+            "value_type": "bool",
+            "layout": {
+              "x": 20,
+              "y": 20,
+              "width": 120,
+              "height": 28
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
