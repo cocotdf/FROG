@@ -1756,6 +1756,21 @@
                       "children": []
                     }
                   ]
+                },
+                {
+                  "key": "conformance/valid/structural/",
+                  "title": "structural",
+                  "path": null,
+                  "kind": "category",
+                  "children": [
+                    {
+                      "key": "conformance/valid/structural/01_front_panel_canvas_widgets_and_ui_libraries/",
+                      "title": "01 front panel canvas widgets and ui libraries",
+                      "path": "/Conformance/valid/structural/01_front_panel_canvas_widgets_and_ui_libraries/Readme.md",
+                      "kind": "category",
+                      "children": []
+                    }
+                  ]
                 }
               ]
             }
@@ -2333,6 +2348,7 @@
     "/Conformance/valid/executable/02_structured_control_one_shot_executes_correctly/Readme.md",
     "/Conformance/valid/executable/03_explicit_state_step_mode_initializes_and_advances/Readme.md",
     "/Conformance/valid/executable/Readme.md",
+    "/Conformance/valid/structural/01_front_panel_canvas_widgets_and_ui_libraries/Readme.md",
     "/Conformance/Readme.md",
     "/Implementations/Reference/example-artifact-requirements.md",
     "/Implementations/Reference/frogc.md",

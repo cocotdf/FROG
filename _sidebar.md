@@ -246,6 +246,8 @@
       - [01 one shot pure core starts and terminates](/Conformance/valid/executable/01_one_shot_pure_core_starts_and_terminates/Readme.md)
       - [02 structured control one shot executes correctly](/Conformance/valid/executable/02_structured_control_one_shot_executes_correctly/Readme.md)
       - [03 explicit state step mode initializes and advances](/Conformance/valid/executable/03_explicit_state_step_mode_initializes_and_advances/Readme.md)
+    - structural
+      - [01 front panel canvas widgets and ui libraries](/Conformance/valid/structural/01_front_panel_canvas_widgets_and_ui_libraries/Readme.md)
 - [Reference Implementation](/Implementations/Reference/Readme.md)
   - [example-artifact-requirements](/Implementations/Reference/example-artifact-requirements.md)
   - [frogc](/Implementations/Reference/frogc.md)
