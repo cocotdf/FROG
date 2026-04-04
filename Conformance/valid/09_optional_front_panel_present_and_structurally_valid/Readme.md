@@ -5,7 +5,7 @@
 <h1 align="center">Valid Case — Optional Front Panel Present and Structurally Valid</h1>
 
 <p align="center">
-  <strong>Structurally valid canonical source with a present <code>front_panel</code> section that remains within source ownership boundaries</strong><br/>
+  <strong>Structurally valid canonical source with a present <code>front_panel</code> section that remains within published source ownership boundaries</strong><br/>
   <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -35,8 +35,7 @@ This case defines a structurally valid canonical <code>.frog</code> source file 
 </p>
 
 <p>
-The case exists to show the positive structural rule for front-panel presence:
-a <code>front_panel</code> is valid when it remains a source-level UI composition surface and does not attempt to replace the executable authority of the <code>diagram</code>.
+The case exists to show the positive structural rule for front-panel presence: a <code>front_panel</code> is valid when it remains a source-level UI composition surface and does not attempt to replace the executable authority of the <code>diagram</code>, the public boundary owned by <code>interface</code>, the widget instance model owned by <code>Widget.md</code>, the class-side widget contract owned by <code>Widget class contract.md</code>, or the diagram-side widget interaction model owned by <code>Widget interaction.md</code>.
 </p>
 
 <hr/>
@@ -50,8 +49,9 @@ This case exists to verify that a conforming implementation accepts a source fil
 <ul>
   <li><code>front_panel</code> is present,</li>
   <li>its top-level shape is structurally valid,</li>
-  <li>its widget-side content remains inside the front-panel source family,</li>
-  <li>it does not encode executable graph ownership that belongs to <code>diagram</code>.</li>
+  <li>its widget-side content remains inside the published front-panel and widget-instance source family,</li>
+  <li>it does not encode executable graph ownership that belongs to <code>diagram</code>,</li>
+  <li>it does not collapse class-side widget member legality into front-panel composition.</li>
 </ul>
 
 <p>
@@ -70,13 +70,13 @@ canonical source valid
 <h2 id="case-classification">3. Case Classification</h2>
 
 <ul>
-  <li><strong>Case family:</strong> valid</li>
-  <li><strong>Primary owner:</strong> <code>Expression/</code></li>
-  <li><strong>Case kind:</strong> canonical source acceptance with present structurally valid <code>front_panel</code></li>
-  <li><strong>Expected loadability:</strong> loadable</li>
-  <li><strong>Expected structural validity:</strong> valid</li>
-  <li><strong>Expected meaning:</strong> established</li>
-  <li><strong>Expected IR derivation:</strong> permitted to proceed according to the published downstream rules</li>
+  <li>Case family: valid</li>
+  <li>Primary owner: <code>Expression/</code></li>
+  <li>Case kind: canonical source acceptance with present structurally valid <code>front_panel</code></li>
+  <li>Expected loadability: loadable</li>
+  <li>Expected structural validity: valid</li>
+  <li>Expected meaning: established</li>
+  <li>Expected IR derivation: permitted to proceed according to the published downstream rules</li>
 </ul>
 
 <hr/>
@@ -96,6 +96,8 @@ For FROG v0.1:
   <li>when present, it defines the user-facing interaction layer through widget instances, layout, style, and related UI composition data,</li>
   <li><code>front_panel</code> does not define the public API,</li>
   <li><code>front_panel</code> does not replace the executable graph,</li>
+  <li><code>front_panel</code> does not own the full widget class contract,</li>
+  <li><code>front_panel</code> does not own the full executable widget interaction model,</li>
   <li>any executable relationship involving front-panel behavior must still pass through <code>diagram</code>.</li>
 </ul>
 
@@ -104,13 +106,22 @@ Therefore, a front panel is structurally valid when it remains within those sour
 </p>
 
 <pre><code>front_panel
-    -> optional UI composition source
+    -&gt; optional UI composition source
+
+Widget.md
+    -&gt; widget instance model
+
+Widget class contract.md
+    -&gt; class-side member legality
+
+Widget interaction.md
+    -&gt; diagram-side executable widget access
 
 diagram
-    -> authoritative executable source
+    -&gt; authoritative executable source
 
 front_panel present and well-formed
-    -> canonical source valid
+    -&gt; canonical source valid
 </code></pre>
 
 <hr/>
@@ -149,15 +160,16 @@ A representative valid shape is:
     "widgets": [
       {
         "id": "widget_1",
-        "class": "frog.ui.numeric_control"
+        "role": "control",
+        "widget": "frog.ui.standard.numeric_control"
       }
     ]
   }
-}</code></pre>
+}
+</code></pre>
 
 <p>
-In this shape, the front panel stays in its source role as UI composition.
-It does not attempt to own executable graph content.
+In this shape, the front panel stays in its source role as UI composition. It does not attempt to own executable graph content, class-side widget legality, or executable widget interaction behavior.
 </p>
 
 <hr/>
@@ -171,18 +183,20 @@ The expected outcome is:
 <pre><code>Expected loadability: loadable
 Expected structural validity: valid
 Expected meaning: established
-Expected preservation: front_panel remains distinct from diagram and interface ownership
+Expected preservation: front_panel remains distinct from diagram, interface, widget class contract, and widget interaction ownership
 </code></pre>
 
 <p>
-A conforming implementation MUST accept the case as canonical source.
-It MUST preserve the distinction between:
+A conforming implementation MUST accept the case as canonical source. It MUST preserve the distinction between:
 </p>
 
 <ul>
   <li><code>front_panel</code> as optional UI composition source,</li>
   <li><code>diagram</code> as authoritative executable source,</li>
-  <li><code>interface</code> as public logical boundary.</li>
+  <li><code>interface</code> as public logical boundary,</li>
+  <li><code>Widget.md</code> as widget instance model ownership,</li>
+  <li><code>Widget class contract.md</code> as class-side member legality ownership,</li>
+  <li><code>Widget interaction.md</code> as diagram-side executable widget-access ownership.</li>
 </ul>
 
 <hr/>
@@ -190,8 +204,7 @@ It MUST preserve the distinction between:
 <h2 id="why-this-case-must-pass">7. Why this Case Must Pass</h2>
 
 <p>
-The published source model does not forbid front-panel presence.
-It defines how front-panel presence remains valid.
+The published source model does not forbid front-panel presence. It defines how front-panel presence remains valid.
 </p>
 
 <p>
@@ -202,7 +215,7 @@ This case must therefore pass because:
   <li>the required canonical sections are present,</li>
   <li><code>front_panel</code> is allowed to be present,</li>
   <li>the front panel remains structurally well-formed,</li>
-  <li>the front panel does not attempt to take ownership of executable graph content or public interface ownership.</li>
+  <li>the front panel does not attempt to take ownership of executable graph content, public interface ownership, class-side member legality, or executable widget interaction ownership.</li>
 </ul>
 
 <pre><code>front_panel present
@@ -210,7 +223,9 @@ This case must therefore pass because:
 front_panel structurally valid
 +
 diagram ownership preserved
-    ->
++
+class-side widget legality not collapsed into composition
+    -&gt;
 acceptance required
 </code></pre>
 
@@ -219,12 +234,12 @@ acceptance required
 <h2 id="what-this-case-is-not-testing">8. What this Case Is Not Testing</h2>
 
 <p>
-This case is intentionally narrow.
-It is not testing:
+This case is intentionally narrow. It is not testing:
 </p>
 
 <ul>
   <li>full widget semantics,</li>
+  <li>widget class legality,</li>
   <li><code>widget_value</code> versus <code>widget_reference</code> semantic behavior,</li>
   <li>diagram-side widget interaction,</li>
   <li>runtime UI realization,</li>
@@ -236,9 +251,9 @@ It only tests one boundary:
 </p>
 
 <pre><code>front_panel present
-      ->
+      -&gt;
 must remain structurally valid
-      ->
+      -&gt;
 must remain in its source ownership role
 </code></pre>
 
@@ -252,6 +267,9 @@ This case helps preserve the architectural distinction between:
 
 <ul>
   <li>front-panel composition,</li>
+  <li>widget instance serialization,</li>
+  <li>class-side member legality,</li>
+  <li>diagram-side widget interaction,</li>
   <li>public interface definition,</li>
   <li>diagram execution content,</li>
   <li>valid UI-source presence,</li>
@@ -259,7 +277,7 @@ This case helps preserve the architectural distinction between:
 </ul>
 
 <p>
-It therefore protects the rule:
+It therefore protects the rules:
 </p>
 
 <pre><code>front_panel present
@@ -267,6 +285,12 @@ It therefore protects the rule:
 
 UI composition source
       -/-> second diagram
+
+front_panel
+      -/-> class-side widget contract
+
+front_panel
+      -/-> executable widget interaction layer
 </code></pre>
 
 <hr/>
@@ -292,7 +316,9 @@ A conforming implementation MUST NOT:
 <ul>
   <li>reject the file merely because <code>front_panel</code> is present,</li>
   <li>reinterpret <code>front_panel</code> as executable graph ownership,</li>
-  <li>collapse front-panel composition into public-interface ownership.</li>
+  <li>collapse front-panel composition into public-interface ownership,</li>
+  <li>treat widget instance serialization as if it were the full class-side widget contract,</li>
+  <li>treat front-panel composition as if it directly defined executable widget interaction semantics.</li>
 </ul>
 
 <hr/>
@@ -304,12 +330,12 @@ This case establishes a focused positive truth:
 </p>
 
 <pre><code>front_panel present and structurally valid
-    ->
+    -&gt;
 canonical source still valid
-    ->
+    -&gt;
 acceptance required
 </code></pre>
 
 <p>
-It anchors the positive side of the front-panel structural boundary in the FROG canonical source model.
+It anchors the positive side of the front-panel structural boundary in the FROG canonical source model while keeping composition, widget instance model, class contract, and executable widget interaction explicitly distinct.
 </p>
