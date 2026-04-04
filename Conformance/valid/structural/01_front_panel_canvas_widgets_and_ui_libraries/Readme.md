@@ -17,11 +17,12 @@
   <li><a href="#case-purpose">2. Case Purpose</a></li>
   <li><a href="#case-classification">3. Case Classification</a></li>
   <li><a href="#normative-basis">4. Normative Basis</a></li>
-  <li><a href="#input-shape">5. Input Shape</a></li>
-  <li><a href="#expected-outcome">6. Expected Outcome</a></li>
-  <li><a href="#why-this-case-must-pass">7. Why This Case Must Pass</a></li>
-  <li><a href="#what-this-case-is-not-testing">8. What This Case Is Not Testing</a></li>
-  <li><a href="#summary">9. Summary</a></li>
+  <li><a href="#associated-source-artifact">5. Associated Source Artifact</a></li>
+  <li><a href="#input-shape">6. Input Shape</a></li>
+  <li><a href="#expected-outcome">7. Expected Outcome</a></li>
+  <li><a href="#why-this-case-must-pass">8. Why This Case Must Pass</a></li>
+  <li><a href="#what-this-case-is-not-testing">9. What This Case Is Not Testing</a></li>
+  <li><a href="#summary">10. Summary</a></li>
 </ul>
 
 <hr/>
@@ -77,7 +78,22 @@ This case is grounded in the published canonical-source rules that:
 
 <hr/>
 
-<h2 id="input-shape">5. Input Shape</h2>
+<h2 id="associated-source-artifact">5. Associated Source Artifact</h2>
+
+<p>
+The source artifact associated with this case is:
+</p>
+
+<pre><code>Conformance/valid/structural/01_front_panel_canvas_widgets_and_ui_libraries/case.frog
+</code></pre>
+
+<p>
+That artifact is the authoritative concrete input for this case. This README explains why it must be accepted.
+</p>
+
+<hr/>
+
+<h2 id="input-shape">6. Input Shape</h2>
 
 <p>
 The associated source artifact contains:
@@ -94,7 +110,7 @@ The associated source artifact contains:
 
 <hr/>
 
-<h2 id="expected-outcome">6. Expected Outcome</h2>
+<h2 id="expected-outcome">7. Expected Outcome</h2>
 
 <pre><code>Expected loadability: loadable
 Expected structural validity: valid
@@ -104,7 +120,7 @@ Expected preservation: front_panel remains source-owned UI composition
 
 <hr/>
 
-<h2 id="why-this-case-must-pass">7. Why This Case Must Pass</h2>
+<h2 id="why-this-case-must-pass">8. Why This Case Must Pass</h2>
 
 <p>
 This case must pass because it stays inside published source-shape law without claiming any extra semantic guarantees.
@@ -125,7 +141,7 @@ structural acceptance required
 
 <hr/>
 
-<h2 id="what-this-case-is-not-testing">8. What This Case Is Not Testing</h2>
+<h2 id="what-this-case-is-not-testing">9. What This Case Is Not Testing</h2>
 
 <ul>
   <li>widget class legality,</li>
@@ -137,7 +153,7 @@ structural acceptance required
 
 <hr/>
 
-<h2 id="summary">9. Summary</h2>
+<h2 id="summary">10. Summary</h2>
 
 <p>
 This is a narrow structural acceptance case for the conservative published <code>front_panel</code> shape.
