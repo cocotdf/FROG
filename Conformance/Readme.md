@@ -411,7 +411,8 @@ Inside <code>valid/</code>, the published corpus already combines:
 <ul>
   <li>a top-level historical block of valid source-shape, architectural, IR-sensitive, and executable-anchor cases,</li>
   <li>a dedicated <code>compiler/</code> family,</li>
-  <li>a dedicated <code>executable/</code> family.</li>
+  <li>a dedicated <code>executable/</code> family,</li>
+  <li>a dedicated <code>structural/</code> family with its own local index.</li>
 </ul>
 
 <p>
@@ -423,29 +424,53 @@ This means the published positive corpus is already hybrid:
 valid/compiler/
    +
 valid/executable/
+   +
+valid/structural/
 </code></pre>
 
 <p>
-The same growth rule applies to structural closure:
-</p>
-
-<pre><code>existing published top-level anchors
-   remain published truth
-
-new structural subfamilies
-   may be added as structured growth
-</code></pre>
-
-<p>
-Accordingly, a structured subtree such as the following is repository-coherent:
+The positive structural subtree is organized as:
 </p>
 
 <pre><code>valid/structural/
+├── Readme.md
+├── 01_front_panel_canvas_widgets_and_ui_libraries/
+└── 02_front_panel_recursive_children_shape_is_valid/
+</code></pre>
+
+<p>
+Inside <code>invalid/</code>, the published corpus combines:
+</p>
+
+<ul>
+  <li>a top-level historical block of invalid source-shape and architectural-rejection cases,</li>
+  <li>a dedicated <code>compiler/</code> family,</li>
+  <li>a dedicated <code>structural/</code> family with its own local index.</li>
+</ul>
+
+<p>
+This means the published negative corpus is also hybrid:
+</p>
+
+<pre><code>top-level historical invalid cases
+   +
+invalid/compiler/
+   +
 invalid/structural/
 </code></pre>
 
 <p>
-Such a subtree does not erase earlier top-level anchors. It provides a clearer home for focused source-shape growth after the original historical block.
+The negative structural subtree is organized as:
+</p>
+
+<pre><code>invalid/structural/
+├── Readme.md
+├── 01_front_panel_widgets_must_be_array/
+└── 02_front_panel_canvas_must_be_object/
+</code></pre>
+
+<p>
+Structured subtrees do not erase earlier top-level anchors. They provide clearer homes for focused family growth after the original historical block.
 </p>
 
 <p>
@@ -605,7 +630,7 @@ The same growth rule applies to source-shape closure.
 </p>
 
 <p>
-A dedicated subtree such as:
+Dedicated subtrees such as:
 </p>
 
 <pre><code>valid/structural/
@@ -613,7 +638,7 @@ invalid/structural/
 </code></pre>
 
 <p>
-is appropriate when:
+are appropriate when:
 </p>
 
 <ul>
@@ -687,7 +712,8 @@ The published corpus already contains:
   <li>top-level architectural distinction truth,</li>
   <li>top-level early executable anchors,</li>
   <li>a dedicated compiler-corridor family,</li>
-  <li>a dedicated executable subtree for structured future executable growth.</li>
+  <li>a dedicated executable subtree for structured future executable growth,</li>
+  <li>dedicated positive and negative structural subtrees for focused source-shape growth.</li>
 </ul>
 
 <p>
@@ -707,6 +733,8 @@ IR-sensitive truth
 early executable truth
    +
 compiler-corridor truth
+   +
+structured source-shape truth
    +
 room for structured executable-family growth
 </code></pre>
@@ -839,12 +867,9 @@ In v0.1, the active published conformance surface already includes:
   <li>top-level source-shape and architectural truth,</li>
   <li>top-level early executable anchor cases,</li>
   <li>a named valid / invalid compiler-corridor family,</li>
-  <li>a structured executable subtree for further executable-family growth.</li>
+  <li>a structured executable subtree for further executable-family growth,</li>
+  <li>structured positive and negative source-shape subtrees for focused structural closure.</li>
 </ul>
-
-<p>
-It now also supports structured source-shape growth where the ownership is already explicit, including front-panel structural closure under dedicated structural subfamilies when useful.
-</p>
 
 <p>
 It should therefore be read as a public truth surface for the full published corridor:
