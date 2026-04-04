@@ -410,6 +410,13 @@
               "path": "/Profiles/Native%20CPU%20LLVM%20Execution%20contract.md",
               "kind": "page",
               "children": []
+            },
+            {
+              "key": "profiles/ui-widget-classes.md",
+              "title": "UI Widget Classes",
+              "path": "/Profiles/UI%20Widget%20Classes.md",
+              "kind": "page",
+              "children": []
             }
           ]
         },
@@ -2222,6 +2229,7 @@
     "/Profiles/Interop.md",
     "/Profiles/Native%20CPU%20LLVM.md",
     "/Profiles/Native%20CPU%20LLVM%20Execution%20contract.md",
+    "/Profiles/UI%20Widget%20Classes.md",
     "/Profiles/Readme.md",
     "/IDE/Debugging.md",
     "/IDE/Execution%20observability.md",
