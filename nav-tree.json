@@ -1733,6 +1733,13 @@
                       "path": "/Conformance/valid/executable/02_structured_control_one_shot_executes_correctly/Readme.md",
                       "kind": "category",
                       "children": []
+                    },
+                    {
+                      "key": "conformance/valid/executable/03_explicit_state_step_mode_initializes_and_advances/",
+                      "title": "03 explicit state step mode initializes and advances",
+                      "path": "/Conformance/valid/executable/03_explicit_state_step_mode_initializes_and_advances/Readme.md",
+                      "kind": "category",
+                      "children": []
                     }
                   ]
                 }
@@ -2308,6 +2315,7 @@
     "/Conformance/valid/compiler/Readme.md",
     "/Conformance/valid/executable/01_one_shot_pure_core_starts_and_terminates/Readme.md",
     "/Conformance/valid/executable/02_structured_control_one_shot_executes_correctly/Readme.md",
+    "/Conformance/valid/executable/03_explicit_state_step_mode_initializes_and_advances/Readme.md",
     "/Conformance/valid/executable/Readme.md",
     "/Conformance/Readme.md",
     "/Implementations/Reference/example-artifact-requirements.md",
