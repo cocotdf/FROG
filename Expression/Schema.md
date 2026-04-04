@@ -40,14 +40,11 @@
 <h2 id="overview">1. Overview</h2>
 
 <p>
-This document defines the schema posture of canonical FROG source.
-It specifies how machine-checkable structural validation relates to the published FROG Expression specification.
+This document defines the schema posture of canonical FROG source. It specifies how machine-checkable structural validation relates to the published FROG Expression specification.
 </p>
 
 <p>
-In FROG, a schema is not the whole language.
-A schema is the machine-checkable structural contract of canonical <code>.frog</code> source.
-It exists so that source-shape validation becomes explicit, reproducible, implementation-comparable, and clearly separated from semantic validation, IR derivation, lowering, backend-facing handoff, and private runtime realization.
+In FROG, a schema is not the whole language. A schema is the machine-checkable structural contract of canonical <code>.frog</code> source. It exists so that source-shape validation becomes explicit, reproducible, implementation-comparable, and clearly separated from semantic validation, IR derivation, lowering, backend-facing handoff, and private runtime realization.
 </p>
 
 <p>
@@ -68,8 +65,7 @@ runtime-private realization
 </code></pre>
 
 <p>
-This is a source-ownership document.
-It defines what schema means in FROG, what schema is allowed to own, what schema must not own, and how machine-checkable source validation must remain disciplined as the repository grows.
+This is a source-ownership document. It defines what schema means in FROG, what schema is allowed to own, what schema must not own, and how machine-checkable source validation must remain disciplined as the repository grows.
 </p>
 
 <hr/>
@@ -77,8 +73,7 @@ It defines what schema means in FROG, what schema is allowed to own, what schema
 <h2 id="why-this-document-exists">2. Why This Document Exists</h2>
 
 <p>
-The repository already defines canonical source structure in <code>Expression/</code>.
-However, once disciplined validators, conformance growth, and repeatable reference execution matter, structural validity must not remain prose-only or validator-folklore-only.
+The repository already defines canonical source structure in <code>Expression/</code>. However, once disciplined validators, conformance growth, and repeatable reference execution matter, structural validity must not remain prose-only or validator-folklore-only.
 </p>
 
 <p>
@@ -86,16 +81,14 @@ This document exists so that:
 </p>
 
 <ul>
-  <li>canonical source ownership remains explicit,</li>
-  <li>structural validation becomes machine-checkable enough to be reproducible,</li>
-  <li>validator behavior can be compared against published repository law,</li>
-  <li>implementations do not silently redefine structural truth through ad hoc parsing logic,</li>
-  <li>the boundary between malformed source, structurally invalid source, and semantically rejected source remains stable.</li>
+  <li>machine-checkable structural validation has a clear ownership boundary,</li>
+  <li>schema growth remains subordinate to published source ownership,</li>
+  <li>semantic and execution-facing rules do not silently drift upstream into source-shape validation,</li>
+  <li>implementations can align on structural acceptance and rejection without treating one validator as hidden law.</li>
 </ul>
 
 <p>
-The goal is not to replace the Expression specification with one technical artifact.
-The goal is to make the structural contract repository-visible in both normative prose and machine-checkable form.
+This document is therefore about discipline, not maximal declarative coverage.
 </p>
 
 <hr/>
@@ -103,35 +96,32 @@ The goal is to make the structural contract repository-visible in both normative
 <h2 id="ownership-boundary">3. Ownership Boundary</h2>
 
 <p>
-This document belongs to <code>Expression/</code> because schema ownership is source ownership.
-</p>
-
-<pre><code>Expression/   -> canonical source structure and structural validity
-Language/     -> validated program meaning
-IR/           -> derived open execution-facing representation
-Libraries/    -> intrinsic primitive meaning
-Profiles/     -> optional capability meaning
-IDE/          -> authoring, presentation, debugging, observability
-</code></pre>
-
-<p>
-Accordingly:
+This document owns:
 </p>
 
 <ul>
-  <li><code>Expression/</code> owns schema posture for canonical <code>.frog</code> source.</li>
-  <li><code>Expression/</code> owns what is machine-checkable as source structure.</li>
-  <li><code>Expression/</code> does not own validated meaning.</li>
-  <li><code>Expression/</code> does not own Execution IR shape.</li>
-  <li><code>Expression/</code> does not own lowering.</li>
-  <li><code>Expression/</code> does not own backend contract content.</li>
-  <li><code>Expression/</code> does not own private runtime representation.</li>
+  <li>the schema posture of canonical source,</li>
+  <li>the structural validation boundary between loadability and semantic validation,</li>
+  <li>the relation between published prose ownership and machine-checkable artifacts,</li>
+  <li>the rules for conservative schema growth.</li>
 </ul>
 
 <p>
-A validator may consume a schema.
-A schema does not become the owner of the language.
-The published specification remains the owner of the language.
+This document does not own:
+</p>
+
+<ul>
+  <li>the complete source model itself,</li>
+  <li>the complete semantic meaning of source constructs,</li>
+  <li>IR construction,</li>
+  <li>lowering,</li>
+  <li>backend contract content,</li>
+  <li>runtime-private realization,</li>
+  <li>IDE-private Program Model details.</li>
+</ul>
+
+<p>
+Normative ownership of specific source constructs remains in the relevant published <code>Expression/</code> documents. Schema artifacts are downstream machine-checkable support for that ownership.
 </p>
 
 <hr/>
@@ -139,26 +129,36 @@ The published specification remains the owner of the language.
 <h2 id="what-schema-means-in-frog">4. What “Schema” Means in FROG</h2>
 
 <p>
-In FROG, “schema” means the machine-checkable description of canonical source shape that is appropriate to structural validation.
+In FROG, “schema” means the machine-checkable structural contract of canonical source.
 </p>
 
 <p>
-It may cover, for example:
+It does not mean:
 </p>
 
 <ul>
-  <li>top-level object shape,</li>
-  <li>required versus optional top-level sections,</li>
-  <li>section type constraints,</li>
-  <li>required object properties for structurally defined source objects,</li>
-  <li>allowed structural discriminators,</li>
-  <li>container kinds such as object, array, and scalar where structurally relevant,</li>
-  <li>forbidden malformed placements that can be rejected without semantic interpretation.</li>
+  <li>the whole language,</li>
+  <li>all legality checks,</li>
+  <li>the entire validator,</li>
+  <li>the full semantic interpretation of a FROG,</li>
+  <li>the execution-facing representation of a validated program.</li>
 </ul>
 
 <p>
-It does not automatically cover every rule that can be stated in prose.
-Some structural rules may remain validator logic rather than pure declarative schema when they clearly belong to source structure but are awkward to encode declaratively without reducing clarity or recoverability.
+A schema MAY include:
+</p>
+
+<ul>
+  <li>required top-level sections,</li>
+  <li>section kind constraints,</li>
+  <li>structural discriminators,</li>
+  <li>object-shape requirements,</li>
+  <li>array-versus-object distinctions,</li>
+  <li>selected source-owned structural rules whose ownership is explicit and stable enough to encode.</li>
+</ul>
+
+<p>
+It does not automatically cover every rule that can be stated in prose. Some structural rules may remain validator logic rather than pure declarative schema when they clearly belong to source structure but are awkward to encode declaratively without reducing clarity or recoverability.
 </p>
 
 <p>
@@ -181,12 +181,12 @@ Structural validation is the stage after loadability and before semantic validat
 </p>
 
 <pre><code>bytes / text
-    -> loadable JSON source
-    -> structurally valid canonical source
-    -> validated program meaning
-    -> open execution-facing derivation
-    -> lowering / backend-facing handoff
-    -> private realization
+    -&gt; loadable JSON source
+    -&gt; structurally valid canonical source
+    -&gt; validated program meaning
+    -&gt; open execution-facing derivation
+    -&gt; lowering / backend-facing handoff
+    -&gt; private realization
 </code></pre>
 
 <p>
@@ -214,10 +214,7 @@ A source file may therefore be:
 </ul>
 
 <p>
-These states MUST NOT be collapsed.
-A structural rejection is not a semantic rejection.
-A semantic rejection is not malformed source.
-An implementation subset limitation is not specification invalidity.
+These states MUST NOT be collapsed. A structural rejection is not a semantic rejection. A semantic rejection is not malformed source. An implementation subset limitation is not specification invalidity.
 </p>
 
 <hr/>
@@ -229,7 +226,7 @@ This document does not define:
 </p>
 
 <ul>
-  <li>the complete semantic interpretation of nodes, edges, structures, widgets, or state,</li>
+  <li>the complete semantic interpretation of nodes, edges, structures, widgets, widget class contracts, widget interactions, or state,</li>
   <li>the complete legality of type and value combinations,</li>
   <li>the full primitive catalog,</li>
   <li>profile-owned optional capability semantics,</li>
@@ -242,10 +239,7 @@ This document does not define:
 </ul>
 
 <p>
-This document also does not require one mandatory schema technology.
-A JSON Schema artifact may be used.
-Other machine-checkable validator-support artifacts may also exist.
-The normative requirement is the published structural contract, not one implementation convenience format.
+This document also does not require one mandatory schema technology. A JSON Schema artifact may be used. Other machine-checkable validator-support artifacts may also exist. The normative requirement is the published structural contract, not one implementation convenience format.
 </p>
 
 <hr/>
@@ -259,8 +253,7 @@ FROG source-schema posture has three layers.
 <h3>7.1 Normative structural prose</h3>
 
 <p>
-The primary owner remains the published specification text in <code>Expression/</code>.
-If a machine artifact and the published prose disagree, the prose wins until the repository is corrected and republished coherently.
+The primary owner remains the published specification text in <code>Expression/</code>. If a machine artifact and the published prose disagree, the prose wins until the repository is corrected and republished coherently.
 </p>
 
 <h3>7.2 Repository-visible machine-checkable schema artifacts</h3>
@@ -277,31 +270,24 @@ The repository MAY publish machine-checkable artifacts such as:
 </ul>
 
 <p>
-These artifacts make structural validation more reproducible.
-They do not replace the normative specification layer.
+These artifacts make structural validation more reproducible. They do not replace the normative specification layer.
 </p>
 
-<h3>7.3 Implementation validator logic</h3>
+<h3>7.3 Validator implementation logic</h3>
 
 <p>
-Implementations MAY contain validator logic that applies the published schema posture.
-That logic is downstream.
-It must align with the published source contract.
-It must not silently expand language law.
+A validator MAY implement additional structural checks procedurally when those checks remain attributable to published source ownership and do not silently become semantic reinterpretation.
 </p>
 
 <p>
-Useful reading rule:
+Accordingly:
 </p>
 
-<pre><code>published prose
-    owns structural truth
+<pre><code>published structural prose
+    -&gt; repository-visible machine-checkable artifact when useful
+    -&gt; validator implementation support
 
-machine-checkable artifact
-    assists structural reproducibility
-
-implementation validator
-    consumes the published contract
+not the reverse
 </code></pre>
 
 <hr/>
@@ -309,22 +295,34 @@ implementation validator
 <h2 id="top-level-canonical-source-shape">8. Top-Level Canonical Source Shape</h2>
 
 <p>
-At the top level, a canonical <code>.frog</code> source file MUST satisfy the following structural posture:
+At the broadest structural level, canonical <code>.frog</code> source is a JSON object with required and optional top-level sections.
+</p>
+
+<p>
+The required top-level sections are:
 </p>
 
 <ul>
-  <li>the root MUST be a JSON object,</li>
-  <li>the root MUST contain <code>spec_version</code>, <code>metadata</code>, <code>interface</code>, and <code>diagram</code>,</li>
-  <li>the root MAY contain <code>connector</code>, <code>front_panel</code>, <code>icon</code>, <code>ide</code>, and <code>cache</code>,</li>
-  <li>required and optional sections MUST appear at the top level only,</li>
-  <li>top-level section names MUST follow the canonical section vocabulary defined by <code>Expression/</code>,</li>
-  <li>top-level section values MUST have the structural kind required by their owning section specification,</li>
-  <li>unexpected top-level sections MUST be rejected as structurally invalid canonical source.</li>
+  <li><code>spec_version</code>,</li>
+  <li><code>metadata</code>,</li>
+  <li><code>interface</code>,</li>
+  <li><code>diagram</code>.</li>
 </ul>
 
 <p>
-This document does not restate every section rule in full.
-Section-specific structural detail remains owned by the corresponding specification document.
+The optional top-level sections are:
+</p>
+
+<ul>
+  <li><code>connector</code>,</li>
+  <li><code>front_panel</code>,</li>
+  <li><code>icon</code>,</li>
+  <li><code>ide</code>,</li>
+  <li><code>cache</code>.</li>
+</ul>
+
+<p>
+This top-level posture remains intentionally conservative. Cross-cutting source subsystems such as the type model, the widget model, the widget class contract model, the widget interaction model, control-structure source representation, and state/cycle source representation do not become dedicated required top-level sections merely because they are normatively specified in <code>Expression/</code>.
 </p>
 
 <hr/>
@@ -332,37 +330,26 @@ Section-specific structural detail remains owned by the corresponding specificat
 <h2 id="section-level-schema-ownership">9. Section-Level Schema Ownership</h2>
 
 <p>
-Section-level schema ownership remains local and explicit.
-</p>
-
-<pre><code>Metadata.md           -> shape of metadata section
-Interface.md          -> shape of interface section
-Connector.md          -> shape of connector section
-Diagram.md            -> shape of diagram section
-Front panel.md        -> shape of front_panel section
-Icon.md               -> shape of icon section
-IDE preferences.md    -> shape of ide section
-Cache.md              -> shape of cache section
-</code></pre>
-
-<p>
-This file does not centralize every sub-object definition into one giant prose table.
-Instead, it defines the posture under which those section-owned source rules may be rendered into machine-checkable structural artifacts.
+Top-level section presence rules and section kind constraints are natural schema concerns. However, detailed section-local structure remains owned by the corresponding source document.
 </p>
 
 <p>
-A useful ownership rule is:
+Examples:
 </p>
 
 <ul>
-  <li>root-level section presence is governed here and in <code>Expression/Readme.md</code>,</li>
-  <li>section-local structural object shape is governed by the owning section document,</li>
-  <li>cross-section semantic consistency is not automatically a schema concern.</li>
+  <li><code>metadata</code> section-local ownership belongs to <code>Metadata.md</code>,</li>
+  <li><code>interface</code> section-local ownership belongs to <code>Interface.md</code>,</li>
+  <li><code>diagram</code> section-local ownership belongs to <code>Diagram.md</code>,</li>
+  <li><code>front_panel</code> section-local ownership belongs to <code>Front panel.md</code>.</li>
 </ul>
 
 <p>
-This avoids one of the main failure modes of growing schema systems:
-a central artifact silently becoming the hidden owner of many local section rules that it no longer explains well.
+This means a machine-checkable artifact MAY initially say “this top-level field must be an object” without immediately encoding the full object shape.
+</p>
+
+<p>
+That is still useful structural validation, provided the ownership boundary remains explicit.
 </p>
 
 <hr/>
@@ -370,21 +357,24 @@ a central artifact silently becoming the hidden owner of many local section rule
 <h2 id="cross-cutting-source-subsystems">10. Cross-Cutting Source Subsystems</h2>
 
 <p>
-Some source subsystems are cross-cutting rather than top-level sections.
-Examples include:
+FROG canonical source includes cross-cutting subsystems that are not independent top-level sections but still contribute to source structure.
+</p>
+
+<p>
+At the current repository stage, those subsystems include:
 </p>
 
 <ul>
-  <li>type expressions,</li>
-  <li>widget model,</li>
-  <li>widget interaction source objects,</li>
-  <li>control-structure source representation,</li>
-  <li>explicit local-memory source representation.</li>
+  <li>the type system,</li>
+  <li>the widget instance model,</li>
+  <li>the widget class contract model,</li>
+  <li>the widget interaction model,</li>
+  <li>the source-facing representation of control structures,</li>
+  <li>the source-facing representation of explicit local memory and cycle formation.</li>
 </ul>
 
 <p>
-These subsystems may contribute machine-checkable structural rules when they affect canonical source shape.
-However, their semantic consequences remain outside the schema layer when they belong to validated meaning.
+These subsystems may contribute machine-checkable structural rules when they affect canonical source shape. However, their semantic consequences remain outside the schema layer when they belong to validated meaning.
 </p>
 
 <p>
@@ -393,12 +383,12 @@ Example distinction:
 
 <ul>
   <li>“this object MUST contain a <code>kind</code> discriminator and an array named <code>ports</code>” may be schema-level,</li>
-  <li>“this structure is semantically legal only when its selector type matches all branch expectations” is not automatically schema-level.</li>
+  <li>“this structure is semantically legal only when its selector type matches all branch expectations” is not automatically schema-level,</li>
+  <li>“this widget interaction targets a readable property under the active widget class contract and active profile” is not automatically schema-level even though parts of its source shape may be.</li>
 </ul>
 
 <p>
-Schema growth across cross-cutting subsystems should therefore remain selective and boundary-aware:
-encode structural shape where useful, but do not drag semantic legality upstream into source-shape validation.
+Schema growth across cross-cutting subsystems should therefore remain selective and boundary-aware: encode structural shape where useful, but do not drag semantic legality upstream into source-shape validation.
 </p>
 
 <hr/>
@@ -442,8 +432,7 @@ Accordingly, the machine-checkable schema posture in FROG is intentionally conse
 </ul>
 
 <p>
-At the current repository stage, the published machine-checkable posture may therefore be partial without being weak.
-Partial machine-checkability is acceptable when:
+At the current repository stage, the published machine-checkable posture may therefore be partial without being weak. Partial machine-checkability is acceptable when:
 </p>
 
 <ul>
@@ -454,8 +443,7 @@ Partial machine-checkability is acceptable when:
 </ul>
 
 <p>
-The important rule is not “encode everything”.
-The important rule is:
+The important rule is not “encode everything”. The important rule is:
 </p>
 
 <pre><code>encode what is structurally stable
@@ -485,94 +473,61 @@ Schema validation and semantic validation are related but distinct.
 <h3>12.2 Semantic validation asks</h3>
 
 <ul>
-  <li>Does the diagram mean something legal in the language?</li>
-  <li>Are types compatible where meaning requires compatibility?</li>
-  <li>Are structures used legally?</li>
-  <li>Are cycles legal only through explicit local memory?</li>
-  <li>Are primitive invocations valid with respect to their library definition?</li>
-  <li>Are profile-owned capabilities used only where allowed?</li>
+  <li>Do types match?</li>
+  <li>Are graph connections legal?</li>
+  <li>Is a control structure semantically well-formed?</li>
+  <li>Is a local-memory cycle legal?</li>
+  <li>Does a widget interaction target a member that is actually legal under the relevant widget class contract?</li>
+  <li>Is a profile-gated construct allowed under the active profile?</li>
 </ul>
 
 <p>
-A key FROG rule is therefore:
+Those questions MUST NOT be collapsed into one generic “validation” blur.
 </p>
-
-<pre><code>schema-valid
-does not mean
-semantically valid
-</code></pre>
-
-<p>
-And the inverse is equally important:
-</p>
-
-<pre><code>semantic rejection
-must not be mislabeled
-as malformed source
-</code></pre>
-
-<p>
-Likewise:
-</p>
-
-<pre><code>unsupported by one implementation subset
-does not mean
-invalid by repository law
-</code></pre>
 
 <hr/>
 
 <h2 id="schema-vs-ir-vs-runtime">13. Schema vs IR vs Runtime</h2>
 
 <p>
-The schema layer must remain upstream from the IR corridor.
+Schema is upstream from validated meaning, IR, lowering, backend handoff, and runtime realization.
 </p>
 
-<pre><code>.frog source
-    -> source schema / structural validation
-    -> validated meaning
-    -> Execution IR
-    -> lowering
-    -> backend contract
-    -> backend-family consumption
-    -> deployment realization
-    -> runtime services on target
+<pre><code>schema
+    -&gt; does not define validated meaning
+    -&gt; does not define Execution IR
+    -&gt; does not define lowering
+    -&gt; does not define backend contract content
+    -&gt; does not define private runtime realization
 </code></pre>
 
 <p>
-Therefore, the schema layer MUST NOT:
+This is especially important for cross-cutting source subsystems such as widgets and widget interaction.
+</p>
+
+<p>
+For example:
 </p>
 
 <ul>
-  <li>define Execution IR node identities,</li>
-  <li>define derivation results as if they were source shape,</li>
-  <li>define lowering-time specialization,</li>
-  <li>define backend-family assumptions,</li>
-  <li>define runtime module composition,</li>
-  <li>define private scheduling order,</li>
-  <li>define private observation state.</li>
+  <li>the source shape of a widget instance may be schema-level,</li>
+  <li>the existence of a widget class contract as a source-owned concept may be schema-relevant where serialized shape is concerned,</li>
+  <li>the legality of a property read against a given widget class is not schema ownership by default,</li>
+  <li>runtime UI object behavior is not schema ownership.</li>
 </ul>
-
-<p>
-The schema layer only guarantees that canonical source is structurally well-formed enough to proceed to later stages.
-It does not guarantee semantic acceptance.
-It does not guarantee successful execution.
-It does not guarantee support in one implementation stack.
-</p>
 
 <hr/>
 
 <h2 id="validator-posture">14. Validator Posture</h2>
 
 <p>
-A FROG validator is a downstream consumer of the published structural contract.
-It may be split internally into stages such as:
+A FROG validator is a downstream consumer of the published structural contract. It may be split internally into stages such as:
 </p>
 
 <pre><code>loader
-    -> source-shape checker
-    -> structural validator
-    -> semantic validator
+    -&gt; source-shape checker
+    -&gt; structural validator
+    -&gt; semantic validator
 </code></pre>
 
 <p>
@@ -591,8 +546,7 @@ A validator SHOULD report at least:
 </ul>
 
 <p>
-A validator MAY use repository-visible machine-checkable artifacts to support structural validation.
-However:
+A validator MAY use repository-visible machine-checkable artifacts to support structural validation. However:
 </p>
 
 <ul>
@@ -617,13 +571,12 @@ A validator MUST NOT:
 <h2 id="relation-with-conformance">15. Relation with Conformance</h2>
 
 <p>
-This document defines schema posture.
-<code>Conformance/</code> defines public testable expectations against that posture.
+This document defines schema posture. <code>Conformance/</code> defines public testable expectations against that posture.
 </p>
 
-<pre><code>Expression/                  -> structural contract is written
-Conformance/                 -> structural contract is tested
-Implementations/Reference/   -> structural contract is consumed
+<pre><code>Expression/                  -&gt; structural contract is written
+Conformance/                 -&gt; structural contract is tested
+Implementations/Reference/   -&gt; structural contract is consumed
 </code></pre>
 
 <p>
@@ -637,9 +590,7 @@ Accordingly:
 </ul>
 
 <p>
-Conformance does not redefine schema ownership.
-It makes it inspectable.
-A case passing in one implementation does not turn implementation behavior into repository law.
+Conformance does not redefine schema ownership. It makes it inspectable. A case passing in one implementation does not turn implementation behavior into repository law.
 </p>
 
 <hr/>
@@ -663,9 +614,7 @@ Therefore:
 </ul>
 
 <p>
-A repository-visible schema artifact MAY be incomplete relative to all structural prose if its limits are explicit.
-Partial machine-checkability is acceptable.
-Silent ambiguity is not.
+A repository-visible schema artifact MAY be incomplete relative to all structural prose if its limits are explicit. Partial machine-checkability is acceptable. Silent ambiguity is not.
 </p>
 
 <p>
@@ -673,10 +622,10 @@ Preferred growth pattern:
 </p>
 
 <pre><code>published ownership
-    -> explicit structural rule
-    -> repository-visible machine-checkable form
-    -> conformance case
-    -> implementation alignment
+    -&gt; explicit structural rule
+    -&gt; repository-visible machine-checkable form
+    -&gt; conformance case
+    -&gt; implementation alignment
 </code></pre>
 
 <hr/>
@@ -684,83 +633,66 @@ Preferred growth pattern:
 <h2 id="minimum-guarantees">17. Minimum Guarantees</h2>
 
 <p>
-At minimum, the FROG source-schema posture MUST preserve the following guarantees:
+At minimum, the repository-visible schema posture SHOULD make the following explicit:
 </p>
 
 <ul>
-  <li>canonical <code>.frog</code> source has an explicit top-level object shape,</li>
+  <li>canonical <code>.frog</code> source is a JSON object,</li>
   <li>required top-level sections are explicit,</li>
   <li>optional top-level sections are explicit,</li>
-  <li>section placement rules are explicit,</li>
-  <li>unexpected top-level sections are structurally rejectable,</li>
-  <li>section-local structural ownership remains attributable,</li>
-  <li>structural validity remains distinct from semantic validity,</li>
-  <li>schema artifacts remain downstream from normative prose,</li>
-  <li>validators remain downstream from published repository law.</li>
+  <li>top-level unexpected fields are not silently accepted,</li>
+  <li>machine-checkable coverage limits are explicit when the schema artifact is partial.</li>
 </ul>
+
+<p>
+Anything beyond that MAY be added progressively, provided ownership remains attributable and the structural-versus-semantic boundary remains clear.
+</p>
 
 <hr/>
 
 <h2 id="reading-rule">18. Reading Rule</h2>
 
 <p>
-Use the following reading rule when deciding whether a question belongs to source schema.
+This document MUST be read together with the rest of <code>Expression/</code>.
 </p>
-
-<pre><code>If the question is:
-- "Can this be rejected without semantic interpretation?"          -> likely schema / structural validity
-- "Is this the correct top-level source shape?"                    -> schema / structural validity
-- "Is this source object missing structurally required fields?"    -> schema / structural validity
-- "What does this validated program mean?"                         -> Language/
-- "What does this primitive do?"                                   -> Libraries/
-- "What does this optional capability mean?"                       -> Profiles/
-- "What does the open execution-facing form look like?"            -> IR/
-- "How does one runtime realize it privately?"                     -> implementation, not schema
-</code></pre>
 
 <p>
-Companion rule:
+It does not replace those documents. It defines how machine-checkable structural artifacts relate to them.
 </p>
 
-<pre><code>reject early when the source shape is wrong
-but do not use schema
-to answer semantic questions
-</code></pre>
+<p>
+If a reader wants to know:
+</p>
+
+<ul>
+  <li>what sections exist, read <code>Readme.md</code>,</li>
+  <li>what the front panel structurally represents, read <code>Front panel.md</code>,</li>
+  <li>what a widget instance is, read <code>Widget.md</code>,</li>
+  <li>what the widget class contract owns, read <code>Widget class contract.md</code>,</li>
+  <li>how widget interaction is represented in source, read <code>Widget interaction.md</code>,</li>
+  <li>what the schema layer may machine-check, read this document.</li>
+</ul>
 
 <hr/>
 
 <h2 id="status">19. Status</h2>
 
 <p>
-This document establishes the published schema posture of canonical FROG source.
-It does not by itself close every section-local machine-checkable rule.
-It defines the ownership model under which that closure can proceed without architectural blur.
+The published machine-checkable schema posture of FROG is intentionally conservative.
 </p>
 
 <p>
-At the current repository stage, machine-checkable support is intentionally conservative.
-That conservatism is deliberate:
-it improves structural reproducibility without pretending that all structural prose has already been fully rendered into one artifact.
+At the current stage, it is acceptable for repository-visible schema artifacts to cover top-level shape, section vocabulary, required-versus-optional sections, and selected obvious structural object requirements, while leaving broader section-local and cross-cutting legality primarily prose-owned or validator-owned.
 </p>
 
 <p>
-Immediate consequence:
+This is not a weakness. It is an explicit boundary discipline.
 </p>
-
-<pre><code>source shape
-can now be discussed
-tested
-and made machine-checkable
-as a first-class published concern
-inside Expression/
-rather than as implementation folklore
-</code></pre>
 
 <hr/>
 
 <h2 id="license">20. License</h2>
 
 <p>
-This document is part of the FROG repository and is covered by the repository license.
-See the root <code>LICENSE</code> file for details.
+See the repository-level license information for the licensing terms governing this specification.
 </p>
