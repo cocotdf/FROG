@@ -158,6 +158,7 @@
     - structural
       - [01 front panel widgets must be array](/Conformance/invalid/structural/01_front_panel_widgets_must_be_array/Readme.md)
         - [case.frog](/Conformance/invalid/structural/01_front_panel_widgets_must_be_array/case.frog)
+      - [02 front panel canvas must be object](/Conformance/invalid/structural/02_front_panel_canvas_must_be_object/Readme.md)
   - valid
     - [01 pure addition](/Conformance/valid/01_pure_addition.md)
     - [02 ui value roundtrip](/Conformance/valid/02_ui_value_roundtrip.md)
