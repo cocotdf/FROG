@@ -155,6 +155,8 @@
     - [executable](/Conformance/invalid/executable/Readme.md)
       - [01 backend consumable but execution contract invalid](/Conformance/invalid/executable/01_backend_consumable_but_execution_contract_invalid/Readme.md)
       - [02 execution contract valid but required host service missing](/Conformance/invalid/executable/02_execution_contract_valid_but_required_host_service_missing/Readme.md)
+    - structural
+      - [01 front panel widgets must be array](/Conformance/invalid/structural/01_front_panel_widgets_must_be_array/Readme.md)
   - valid
     - [01 pure addition](/Conformance/valid/01_pure_addition.md)
     - [02 ui value roundtrip](/Conformance/valid/02_ui_value_roundtrip.md)
