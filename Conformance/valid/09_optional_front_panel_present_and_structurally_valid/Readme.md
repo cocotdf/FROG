@@ -17,13 +17,14 @@
   <li><a href="#case-purpose">2. Case Purpose</a></li>
   <li><a href="#case-classification">3. Case Classification</a></li>
   <li><a href="#normative-basis">4. Normative Basis</a></li>
-  <li><a href="#input-shape">5. Input Shape</a></li>
-  <li><a href="#expected-outcome">6. Expected Outcome</a></li>
-  <li><a href="#why-this-case-must-pass">7. Why this Case Must Pass</a></li>
-  <li><a href="#what-this-case-is-not-testing">8. What this Case Is Not Testing</a></li>
-  <li><a href="#preservation-and-boundary-notes">9. Preservation and Boundary Notes</a></li>
-  <li><a href="#implementation-requirements">10. Implementation Requirements</a></li>
-  <li><a href="#summary">11. Summary</a></li>
+  <li><a href="#associated-source-artifact">5. Associated Source Artifact</a></li>
+  <li><a href="#input-shape">6. Input Shape</a></li>
+  <li><a href="#expected-outcome">7. Expected Outcome</a></li>
+  <li><a href="#why-this-case-must-pass">8. Why this Case Must Pass</a></li>
+  <li><a href="#what-this-case-is-not-testing">9. What this Case Is Not Testing</a></li>
+  <li><a href="#preservation-and-boundary-notes">10. Preservation and Boundary Notes</a></li>
+  <li><a href="#implementation-requirements">11. Implementation Requirements</a></li>
+  <li><a href="#summary">12. Summary</a></li>
 </ul>
 
 <hr/>
@@ -126,28 +127,55 @@ front_panel present and well-formed
 
 <hr/>
 
-<h2 id="input-shape">5. Input Shape</h2>
+<h2 id="associated-source-artifact">5. Associated Source Artifact</h2>
 
 <p>
-The associated valid source artifact for this case SHOULD be a JSON-loadable <code>.frog</code> file with:
+The source artifact associated with this case is:
+</p>
+
+<pre><code>Conformance/valid/09_optional_front_panel_present_and_structurally_valid/case.frog
+</code></pre>
+
+<p>
+That artifact is the authoritative concrete input for this case. This README explains why it must be accepted.
+</p>
+
+<hr/>
+
+<h2 id="input-shape">6. Input Shape</h2>
+
+<p>
+The associated valid source artifact is a JSON-loadable <code>.frog</code> file with:
 </p>
 
 <ul>
   <li>a valid top-level object root,</li>
   <li>all required sections present,</li>
   <li>a present <code>front_panel</code> section,</li>
-  <li>a structurally valid front-panel widget collection,</li>
+  <li>a structurally valid front-panel widget collection under <code>front_panel.widgets</code>,</li>
   <li>no executable edge ownership misplaced into <code>front_panel</code>,</li>
   <li>a valid minimal <code>diagram</code>.</li>
 </ul>
 
 <p>
-A representative valid shape is:
+The associated <code>case.frog</code> uses the following representative shape:
 </p>
 
 <pre><code>{
   "spec_version": "0.1",
-  "metadata": {},
+  "metadata": {
+    "name": "optional_front_panel_present_and_structurally_valid",
+    "description": "Valid conformance case: front_panel is present and structurally valid.",
+    "author": "FROG Conformance",
+    "version": "0.1.0",
+    "tags": [
+      "conformance",
+      "valid",
+      "front-panel",
+      "canonical-source",
+      "ui-composition"
+    ]
+  },
   "interface": {
     "inputs": [],
     "outputs": []
@@ -174,7 +202,7 @@ In this shape, the front panel stays in its source role as UI composition. It do
 
 <hr/>
 
-<h2 id="expected-outcome">6. Expected Outcome</h2>
+<h2 id="expected-outcome">7. Expected Outcome</h2>
 
 <p>
 The expected outcome is:
@@ -187,7 +215,7 @@ Expected preservation: front_panel remains distinct from diagram, interface, wid
 </code></pre>
 
 <p>
-A conforming implementation MUST accept the case as canonical source. It MUST preserve the distinction between:
+A conforming implementation MUST accept the associated <code>case.frog</code> as canonical source. It MUST preserve the distinction between:
 </p>
 
 <ul>
@@ -201,7 +229,7 @@ A conforming implementation MUST accept the case as canonical source. It MUST pr
 
 <hr/>
 
-<h2 id="why-this-case-must-pass">7. Why this Case Must Pass</h2>
+<h2 id="why-this-case-must-pass">8. Why this Case Must Pass</h2>
 
 <p>
 The published source model does not forbid front-panel presence. It defines how front-panel presence remains valid.
@@ -215,6 +243,7 @@ This case must therefore pass because:
   <li>the required canonical sections are present,</li>
   <li><code>front_panel</code> is allowed to be present,</li>
   <li>the front panel remains structurally well-formed,</li>
+  <li>the associated widget instance uses the structurally coherent instance fields <code>id</code>, <code>role</code>, and <code>widget</code>,</li>
   <li>the front panel does not attempt to take ownership of executable graph content, public interface ownership, class-side member legality, or executable widget interaction ownership.</li>
 </ul>
 
@@ -231,7 +260,7 @@ acceptance required
 
 <hr/>
 
-<h2 id="what-this-case-is-not-testing">8. What this Case Is Not Testing</h2>
+<h2 id="what-this-case-is-not-testing">9. What this Case Is Not Testing</h2>
 
 <p>
 This case is intentionally narrow. It is not testing:
@@ -259,7 +288,7 @@ must remain in its source ownership role
 
 <hr/>
 
-<h2 id="preservation-and-boundary-notes">9. Preservation and Boundary Notes</h2>
+<h2 id="preservation-and-boundary-notes">10. Preservation and Boundary Notes</h2>
 
 <p>
 This case helps preserve the architectural distinction between:
@@ -295,7 +324,7 @@ front_panel
 
 <hr/>
 
-<h2 id="implementation-requirements">10. Implementation Requirements</h2>
+<h2 id="implementation-requirements">11. Implementation Requirements</h2>
 
 <p>
 A conforming implementation handling this case SHOULD:
@@ -305,7 +334,7 @@ A conforming implementation handling this case SHOULD:
   <li>load the source as JSON,</li>
   <li>validate required section presence,</li>
   <li>validate the structural shape of <code>front_panel</code>,</li>
-  <li>accept the source as structurally valid canonical source,</li>
+  <li>accept the associated <code>case.frog</code> as structurally valid canonical source,</li>
   <li>allow later semantic and derivation stages to proceed according to the published architecture.</li>
 </ul>
 
@@ -323,7 +352,7 @@ A conforming implementation MUST NOT:
 
 <hr/>
 
-<h2 id="summary">11. Summary</h2>
+<h2 id="summary">12. Summary</h2>
 
 <p>
 This case establishes a focused positive truth:
