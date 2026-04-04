@@ -1,11 +1,11 @@
 <p align="center">
-  <img src="../FROG logo.svg" alt="FROG logo" width="200" />
+  <img src="../FROG logo.svg" alt="FROG logo" width="140" />
 </p>
 
-<h1 align="center">FROG Profile — Native CPU LLVM Execution Contract</h1>
+<h1 align="center">FROG Profile — Native CPU LLVM</h1>
 
 <p align="center">
-  <strong>Optional execution-contract surface for the Native CPU LLVM profile in FROG v0.1</strong><br/>
+  <strong>Optional standardized native CPU compilation profile for LLVM-oriented backend families in FROG v0.1</strong><br/>
   <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -14,28 +14,30 @@
 <h2>Contents</h2>
 <ul>
   <li><a href="#overview">1. Overview</a></li>
-  <li><a href="#why-this-document-exists">2. Why This Document Exists</a></li>
+  <li><a href="#why-this-profile-exists">2. Why This Profile Exists</a></li>
   <li><a href="#architectural-position">3. Architectural Position</a></li>
   <li><a href="#scope">4. Scope</a></li>
   <li><a href="#non-goals">5. Non-Goals</a></li>
-  <li><a href="#core-definition">6. Core Definition</a></li>
-  <li><a href="#execution-corridor">7. Execution Corridor</a></li>
-  <li><a href="#contract-entry-condition">8. Contract Entry Condition</a></li>
-  <li><a href="#execution-unit-and-entry-surface">9. Execution Unit and Entry Surface</a></li>
-  <li><a href="#execution-lifecycle">10. Execution Lifecycle</a></li>
-  <li><a href="#state-instantiation-and-initialization">11. State Instantiation and Initialization</a></li>
-  <li><a href="#execution-modes">12. Execution Modes</a></li>
-  <li><a href="#scheduling-and-order-visibility">13. Scheduling and Order Visibility</a></li>
-  <li><a href="#data-representation-and-call-boundary-posture">14. Data Representation and Call-Boundary Posture</a></li>
-  <li><a href="#effects-io-and-host-services">15. Effects, IO, and Host Services</a></li>
-  <li><a href="#ui-posture">16. UI Posture</a></li>
-  <li><a href="#fault-rejection-and-termination-posture">17. Fault, Rejection, and Termination Posture</a></li>
-  <li><a href="#producer-obligations">18. Producer Obligations</a></li>
-  <li><a href="#consumer-obligations">19. Consumer Obligations</a></li>
-  <li><a href="#relation-with-backend-contract">20. Relation with Backend Contract</a></li>
-  <li><a href="#conformance-reading">21. Conformance Reading</a></li>
-  <li><a href="#future-evolution">22. Future Evolution</a></li>
-  <li><a href="#summary">23. Summary</a></li>
+  <li><a href="#profile-identity">6. Profile Identity</a></li>
+  <li><a href="#core-purpose">7. Core Purpose</a></li>
+  <li><a href="#compilation-corridor">8. Compilation Corridor</a></li>
+  <li><a href="#profile-entry-condition">9. Profile Entry Condition</a></li>
+  <li><a href="#v01-compilation-ready-subset">10. v0.1 Compilation-Ready Subset</a></li>
+  <li><a href="#capability-assumptions">11. Capability Assumptions</a></li>
+  <li><a href="#execution-model-posture">12. Execution Model Posture</a></li>
+  <li><a href="#type-and-data-representation-posture">13. Type and Data Representation Posture</a></li>
+  <li><a href="#control-structure-posture">14. Control-Structure Posture</a></li>
+  <li><a href="#state-and-memory-posture">15. State and Memory Posture</a></li>
+  <li><a href="#effects-io-and-ui-posture">16. Effects, IO, and UI Posture</a></li>
+  <li><a href="#interop-and-external-call-posture">17. Interop and External Call Posture</a></li>
+  <li><a href="#lowering-expectations">18. Lowering Expectations</a></li>
+  <li><a href="#backend-contract-expectations">19. Backend Contract Expectations</a></li>
+  <li><a href="#consumer-backend-family-posture">20. Consumer Backend-Family Posture</a></li>
+  <li><a href="#rejection-conditions">21. Rejection Conditions</a></li>
+  <li><a href="#conformance-reading">22. Conformance Reading</a></li>
+  <li><a href="#relation-with-other-specification-layers">23. Relation with Other Specification Layers</a></li>
+  <li><a href="#future-evolution">24. Future Evolution</a></li>
+  <li><a href="#summary">25. Summary</a></li>
 </ul>
 
 <hr/>
@@ -43,67 +45,75 @@
 <h2 id="overview">1. Overview</h2>
 
 <p>
-This document defines an optional execution-contract surface for the <code>native_cpu_llvm</code> profile in FROG v0.1.
+This document defines <strong>Native CPU LLVM</strong> as an optional standardized FROG profile in base v0.1.
 </p>
 
 <p>
-Its purpose is to make explicit what a producer and a downstream native CPU LLVM-oriented consumer may rely on when the goal is not only profile-compatible handoff, but actual executable realization of a bounded accepted subset.
+Its purpose is to define a first serious compilation-oriented profile for programs intended to pass through:
 </p>
 
-<p>
-This document therefore sits after:
-</p>
-
-<pre>.frog source
-   -&gt;
-structural validation
-   -&gt;
-semantic acceptance
+<pre><code>validated meaning
    -&gt;
 canonical FROG Execution IR
    -&gt;
 lowering
    -&gt;
-backend contract</pre>
+backend contract
+   -&gt;
+LLVM-oriented native CPU backend family</code></pre>
 
 <p>
-and before or at the point where a downstream consumer realizes:
-</p>
-
-<pre>native executable artifact
-   and/or
-native executable process image
-   and/or
-step-capable execution intake</pre>
-
-<p>
-This document does not redefine the language, the canonical Execution IR, or the generic backend contract. It defines the additional execution-facing closure required for one conservative first executable corridor under the Native CPU LLVM profile.
-</p>
-
-<hr/>
-
-<h2 id="why-this-document-exists">2. Why This Document Exists</h2>
-
-<p>
-The Native CPU LLVM profile already defines a first serious compilation-oriented corridor for a bounded subset of FROG. However, a compilation-oriented profile alone does not fully answer the execution-side questions that appear once a lowered and contract-emitted program must actually begin running.
+This profile does not redefine FROG.
+It defines a bounded optional capability surface under which a FROG program may claim compatibility with a native CPU compilation corridor oriented toward LLVM-family downstream consumers.
 </p>
 
 <p>
-In particular, an execution-capable corridor benefits from explicit statements about:
+This profile is therefore:
 </p>
 
 <ul>
-  <li>what execution unit is being instantiated,</li>
-  <li>what the entry surface is,</li>
-  <li>how explicit state is materialized initially,</li>
-  <li>what execution modes are admitted,</li>
-  <li>what order guarantees remain externally visible,</li>
-  <li>what host or runtime services may be assumed,</li>
-  <li>what must cause rejection instead of silent fallback.</li>
+  <li>optional,</li>
+  <li>compilation-oriented,</li>
+  <li>CPU-native in target posture,</li>
+  <li>LLVM-oriented in downstream backend-family posture,</li>
+  <li>subordinate to the core FROG language architecture.</li>
+</ul>
+
+<hr/>
+
+<h2 id="why-this-profile-exists">2. Why This Profile Exists</h2>
+
+<p>
+The core repository architecture already distinguishes:
+</p>
+
+<ul>
+  <li>canonical source,</li>
+  <li>validated language meaning,</li>
+  <li>canonical Execution IR,</li>
+  <li>lowering,</li>
+  <li>backend contract,</li>
+  <li>downstream backend families.</li>
 </ul>
 
 <p>
-This document exists to close those questions conservatively for one first native CPU executable corridor, while preserving the repository-wide ownership boundaries between language, IR, lowering, backend handoff, and private runtime realization.
+That separation makes it possible to define a first industrial compilation corridor without collapsing FROG into one specific compiler technology.
+</p>
+
+<p>
+This profile exists to make one important downstream route explicit:
+</p>
+
+<ul>
+  <li>a route where a conforming implementation can take an accepted subset of FROG,</li>
+  <li>derive canonical open IR,</li>
+  <li>lower it faithfully,</li>
+  <li>emit a consumer-facing backend contract,</li>
+  <li>and hand that contract to an LLVM-oriented native backend family targeting CPUs.</li>
+</ul>
+
+<p>
+This profile therefore turns a general compiler direction into an explicit optional capability class.
 </p>
 
 <hr/>
@@ -111,14 +121,17 @@ This document exists to close those questions conservatively for one first nativ
 <h2 id="architectural-position">3. Architectural Position</h2>
 
 <p>
-This document must be read under the following repository-wide layering:
+This profile must be read inside the repository-wide ownership boundaries:
 </p>
 
-<pre>Expression/
-   - canonical source
+<pre><code>Expression/
+   - canonical source form
 
 Language/
-   - validated meaning
+   - validated program meaning
+
+Libraries/
+   - intrinsic primitive vocabularies
 
 IR/
    - canonical Execution IR
@@ -130,137 +143,142 @@ IR/
 
 Profiles/
    - optional standardized capability families
-   - target-facing constraints and expectations
 
 Implementations/
-   - non-normative executable workspaces</pre>
+   - non-normative executable workspaces</code></pre>
 
 <p>
 Accordingly, this document:
 </p>
 
 <ul>
-  <li>does not redefine canonical source form,</li>
+  <li>does not redefine canonical source,</li>
   <li>does not redefine semantic truth,</li>
-  <li>does not redefine canonical Execution IR,</li>
-  <li>does not redefine the generic backend contract as the standardized consumer-facing handoff,</li>
-  <li>does define additional execution-side expectations for one bounded profile corridor.</li>
+  <li>does not redefine the canonical Execution IR,</li>
+  <li>does not redefine lowering or backend contract ownership,</li>
+  <li>does define an optional standardized capability family for one compilation corridor.</li>
 </ul>
-
-<p>
-Compactly:
-</p>
-
-<pre>Language
-   defines
-meaning
-
-IR
-   defines
-open execution-facing representation
-
-Lowering
-   specializes
-for downstream realization
-
-Backend contract
-   hands off
-lowered executable meaning
-
-This document
-   constrains
-how one bounded native CPU LLVM corridor may actually begin execution</pre>
 
 <hr/>
 
 <h2 id="scope">4. Scope</h2>
 
 <p>
-This document defines:
+This profile defines:
 </p>
 
 <ul>
-  <li>a conservative execution-contract posture for the accepted Native CPU LLVM subset,</li>
-  <li>the minimum execution-unit assumptions needed for native executable realization,</li>
-  <li>entry, initialization, lifecycle, and termination expectations,</li>
-  <li>the distinction between producer-side commitments and consumer-side obligations,</li>
-  <li>what kinds of host support may be relied on explicitly,</li>
-  <li>what must still remain outside the default first executable promise.</li>
+  <li>a first compilation-ready subset posture for FROG v0.1,</li>
+  <li>the capability assumptions required for CPU-native LLVM-oriented downstream consumption,</li>
+  <li>the execution-facing and lowering-facing expectations that a conforming implementation must satisfy before claiming this profile,</li>
+  <li>the rejection conditions for programs or lowered forms that exceed the profile,</li>
+  <li>the relation between this profile and later backend-family consumption.</li>
 </ul>
 
 <p>
-This document does not define the whole future runtime story of FROG.
+This profile does not define:
 </p>
+
+<ul>
+  <li>the full FROG language,</li>
+  <li>all future compilation profiles,</li>
+  <li>GPU, FPGA, RT, MCU, or accelerator profiles,</li>
+  <li>a universal runtime model,</li>
+  <li>a mandatory LLVM pipeline shape,</li>
+  <li>a mandatory ABI,</li>
+  <li>a mandatory optimizer pass sequence.</li>
+</ul>
 
 <hr/>
 
 <h2 id="non-goals">5. Non-Goals</h2>
 
 <p>
-This document is not:
+This profile is not:
 </p>
 
 <ul>
-  <li>a universal runtime specification for all FROG programs,</li>
-  <li>a mandatory ABI for all producers and consumers,</li>
-  <li>a mandatory process model for all deployment modes,</li>
-  <li>a mandatory scheduler model for all implementations,</li>
-  <li>a hidden replacement for <code>IR/Backend contract.md</code>,</li>
-  <li>a promise that UI-heavy or runtime-heavy programs belong to the first closed native executable corridor,</li>
-  <li>a definition of one mandatory vendor-specific executable packaging format.</li>
+  <li>a replacement for the core language,</li>
+  <li>a hidden backend specification disguised as a profile,</li>
+  <li>a way to redefine the canonical Execution IR as LLVM IR,</li>
+  <li>a promise that every valid FROG program is automatically Native CPU LLVM compatible,</li>
+  <li>a promise that UI-heavy or runtime-heavy programs belong to the same first compilation corridor as pure native cores,</li>
+  <li>a definition of one mandatory private runtime implementation.</li>
 </ul>
 
 <p>
-This document also does not authorize private runtime choices to become hidden semantic law.
+The purpose of this profile is to close one coherent industrial corridor first, not to absorb the whole future ecosystem immediately.
 </p>
 
 <hr/>
 
-<h2 id="core-definition">6. Core Definition</h2>
+<h2 id="profile-identity">6. Profile Identity</h2>
 
 <p>
-For the purposes of the <code>native_cpu_llvm</code> profile, an <strong>execution contract</strong> is the explicit profile-level statement that a lowered program scope and its backend contract are sufficient to begin native execution under declared assumptions without reinterpreting upstream meaning.
+The profile identifier is:
 </p>
 
+<pre><code>native_cpu_llvm</code></pre>
+
 <p>
-An execution contract therefore defines, for one bounded executable scope:
+This identifier denotes:
 </p>
 
 <ul>
-  <li>what execution unit is being instantiated,</li>
-  <li>what inputs must exist at activation time,</li>
-  <li>what explicit state must be materialized initially,</li>
-  <li>what execution mode is being used,</li>
-  <li>what externally visible boundaries remain significant,</li>
-  <li>what host services are assumed,</li>
-  <li>what faults or unsupported conditions require rejection, termination, or explicit fault reporting.</li>
+  <li>a target-facing capability class for native CPU-oriented compilation,</li>
+  <li>a downstream backend-family posture that is LLVM-oriented,</li>
+  <li>a profile-level claim that the accepted program slice is suitable for this corridor.</li>
 </ul>
 
 <p>
-Compactly:
+This identifier MUST NOT be misread as:
 </p>
 
-<pre>backend contract
-   says
-what a downstream consumer may rely on
-
-execution contract
-   says
-how a bounded accepted program scope may actually begin and proceed under that reliance</pre>
+<ul>
+  <li>a claim that LLVM defines FROG,</li>
+  <li>a claim that one specific vendor toolchain is mandatory,</li>
+  <li>a claim that the canonical open IR is itself LLVM IR.</li>
+</ul>
 
 <hr/>
 
-<h2 id="execution-corridor">7. Execution Corridor</h2>
+<h2 id="core-purpose">7. Core Purpose</h2>
 
 <p>
-The intended corridor for this document is:
+The core purpose of this profile is to enable a first industrially credible statement of the form:
 </p>
 
-<pre>.frog
+<pre><code>For the accepted Native CPU LLVM v0.1 subset,
+a semantically accepted FROG program
+can be derived to canonical FROG Execution IR,
+lowered faithfully,
+emitted as a backend contract,
+and consumed by an LLVM-oriented native CPU backend family.</code></pre>
+
+<p>
+This profile exists so that this statement becomes:
+</p>
+
+<ul>
+  <li>bounded,</li>
+  <li>auditable,</li>
+  <li>conformance-readable,</li>
+  <li>implementation-comparable.</li>
+</ul>
+
+<hr/>
+
+<h2 id="compilation-corridor">8. Compilation Corridor</h2>
+
+<p>
+The intended corridor for this profile is:
+</p>
+
+<pre><code>.frog
    -&gt;
 structural validation
    -&gt;
-semantic acceptance
+semantic validation
    -&gt;
 canonical FROG Execution IR
    -&gt;
@@ -268,236 +286,12 @@ lowering
    -&gt;
 backend contract
    -&gt;
-execution contract satisfaction
+LLVM-oriented native CPU consumer
    -&gt;
-native executable realization
-   -&gt;
-execution start</pre>
+native executable realization</code></pre>
 
 <p>
-The additional <em>execution contract satisfaction</em> step exists because compilation-oriented consumability is not yet identical to executable-start readiness.
-</p>
-
-<p>
-A producer or consumer MUST NOT silently pretend that:
-</p>
-
-<pre>backend consumable
-   =
-execution-ready</pre>
-
-<p>
-unless the execution-side assumptions of this document are actually satisfied.
-</p>
-
-<hr/>
-
-<h2 id="contract-entry-condition">8. Contract Entry Condition</h2>
-
-<p>
-A program scope may only claim conformance with this execution contract if all of the following are true:
-</p>
-
-<ul>
-  <li>the source is canonical and structurally valid where required,</li>
-  <li>the program meaning is semantically accepted,</li>
-  <li>the accepted program remains within the Native CPU LLVM profile subset,</li>
-  <li>canonical Execution IR has been derived without loss of required distinctions,</li>
-  <li>lowering has preserved required execution-facing meaning,</li>
-  <li>a backend contract has been emitted for a native CPU LLVM-oriented consumer family,</li>
-  <li>the producer can state the execution mode and execution unit explicitly,</li>
-  <li>all host-service dependencies needed for start are explicit rather than guessed,</li>
-  <li>no unresolved runtime-private assumption remains disguised as though it were already standardized upstream.</li>
-</ul>
-
-<p>
-Failure of any of these conditions requires rejection of the execution-contract claim.
-</p>
-
-<hr/>
-
-<h2 id="execution-unit-and-entry-surface">9. Execution Unit and Entry Surface</h2>
-
-<p>
-Under this document, execution begins from an explicitly identified <strong>execution unit</strong>.
-</p>
-
-<p>
-An execution unit is the bounded lowered program scope that a consumer is expected to instantiate and start under the emitted backend contract and the present execution contract.
-</p>
-
-<p>
-At minimum, an execution unit MUST make explicit:
-</p>
-
-<ul>
-  <li>its identity,</li>
-  <li>its accepted input boundary,</li>
-  <li>its accepted output boundary,</li>
-  <li>its explicit state boundary where present,</li>
-  <li>its required initialization surface,</li>
-  <li>its chosen execution mode.</li>
-</ul>
-
-<p>
-The entry surface MUST be explicit.
-</p>
-
-<p>
-The entry surface MAY be realized downstream as:
-</p>
-
-<ul>
-  <li>a native function-like boundary,</li>
-  <li>a process-main preparation boundary,</li>
-  <li>a step-call boundary,</li>
-  <li>an activation API boundary,</li>
-  <li>another native intake boundary consistent with the backend contract.</li>
-</ul>
-
-<p>
-This document does not mandate one universal representation of that entry surface.
-</p>
-
-<p>
-It does require that the producer and consumer agree explicitly on:
-</p>
-
-<pre>what must exist before first execution
-what is materialized at activation
-what values are supplied at activation
-what state is retained across permitted activations
-what outputs become externally visible
-what event counts as termination or quiescent completion</pre>
-
-<hr/>
-
-<h2 id="execution-lifecycle">10. Execution Lifecycle</h2>
-
-<p>
-The conservative lifecycle admitted by this document is:
-</p>
-
-<pre>prepare
-   -&gt;
-instantiate
-   -&gt;
-initialize explicit state
-   -&gt;
-activate
-   -&gt;
-run or step
-   -&gt;
-produce visible outputs
-   -&gt;
-terminate, quiesce, or await next permitted activation
-   -&gt;
-dispose</pre>
-
-<p>
-Not every implementation must expose all of these lifecycle moments as public APIs.
-</p>
-
-<p>
-However, the producer and consumer MUST preserve the architectural distinction between:
-</p>
-
-<ul>
-  <li>instantiation,</li>
-  <li>initialization,</li>
-  <li>activation,</li>
-  <li>execution progress,</li>
-  <li>termination or quiescence,</li>
-  <li>disposal.</li>
-</ul>
-
-<p>
-These moments MUST NOT be silently collapsed where that would change required state, visibility, or effect behavior.
-</p>
-
-<hr/>
-
-<h2 id="state-instantiation-and-initialization">11. State Instantiation and Initialization</h2>
-
-<p>
-This document inherits the FROG rule that explicit state remains explicit.
-</p>
-
-<p>
-Accordingly, when the accepted program scope contains explicit local memory or state participation:
-</p>
-
-<ul>
-  <li>state MUST be materialized as state, not rewritten as accidental hidden persistence,</li>
-  <li>required initial values MUST be supplied or derived exactly as permitted upstream,</li>
-  <li>the first activation MUST observe the proper initialized state,</li>
-  <li>subsequent permitted activations MUST observe state continuity only where the corridor explicitly allows it.</li>
-</ul>
-
-<p>
-The execution contract MUST therefore make one of the following postures explicit:
-</p>
-
-<ul>
-  <li><strong>fresh-instance posture</strong> — each activation receives newly instantiated state,</li>
-  <li><strong>retained-instance posture</strong> — the execution unit persists across permitted activations,</li>
-  <li><strong>externally managed-instance posture</strong> — state lifetime is controlled by an explicit host-side owner.</li>
-</ul>
-
-<p>
-A producer MUST NOT rely on implicit state retention that is neither semantically justified nor made explicit by the execution contract.
-</p>
-
-<hr/>
-
-<h2 id="execution-modes">12. Execution Modes</h2>
-
-<p>
-This document recognizes the following conservative execution modes for the first Native CPU LLVM executable corridor:
-</p>
-
-<ul>
-  <li><strong>one-shot mode</strong> — instantiate, run to completion or quiescence, then terminate,</li>
-  <li><strong>step mode</strong> — instantiate once, then advance through explicit repeated activations,</li>
-  <li><strong>host-driven retained-instance mode</strong> — the host controls repeated activations of an already materialized execution unit.</li>
-</ul>
-
-<p>
-A conforming producer and consumer MUST state which execution mode is being used.
-</p>
-
-<p>
-They MUST NOT assume that:
-</p>
-
-<pre>compiled
-   implies
-always process-main one-shot execution</pre>
-
-<p>
-because some accepted scopes may instead be intended for repeated step-style activation under host control.
-</p>
-
-<p>
-For the first conservative corridor:
-</p>
-
-<ul>
-  <li>one-shot mode is the simplest default,</li>
-  <li>step mode is permitted where state and activation boundaries remain explicit,</li>
-  <li>continuous event-loop ownership is not part of the default first executable promise.</li>
-</ul>
-
-<hr/>
-
-<h2 id="scheduling-and-order-visibility">13. Scheduling and Order Visibility</h2>
-
-<p>
-The consumer MAY choose downstream scheduling strategies consistent with the lowered form and backend contract.
-</p>
-
-<p>
-However, this document requires preservation of all order-visible obligations that still matter at execution start and during execution.
+This profile applies only if the program remains within the accepted subset and the implementation preserves the full corridor discipline.
 </p>
 
 <p>
@@ -505,386 +299,491 @@ In particular:
 </p>
 
 <ul>
-  <li>data dependencies remain binding,</li>
-  <li>explicit structure boundaries remain binding where required upstream,</li>
-  <li>explicit state visibility rules remain binding,</li>
-  <li>effect ordering remains binding where preserved by lowering and handoff,</li>
-  <li>externally visible outputs MUST NOT appear in an order that contradicts the accepted lowered meaning.</li>
+  <li>the canonical Execution IR remains open and language-owned,</li>
+  <li>lowering remains downstream specialization,</li>
+  <li>backend contract remains the standardized consumer-facing handoff,</li>
+  <li>LLVM remains a downstream consumer family.</li>
+</ul>
+
+<hr/>
+
+<h2 id="profile-entry-condition">9. Profile Entry Condition</h2>
+
+<p>
+A program may only claim this profile if all of the following are true:
+</p>
+
+<ul>
+  <li>the program is structurally valid canonical FROG source,</li>
+  <li>the program is semantically accepted by the core language and any referenced optional capability surfaces,</li>
+  <li>the program remains within the accepted v0.1 subset of this profile,</li>
+  <li>the implementation can derive canonical FROG Execution IR without losing required distinctions,</li>
+  <li>the implementation can lower that IR faithfully toward a native CPU LLVM-oriented handoff,</li>
+  <li>the implementation can emit a backend contract consistent with that handoff.</li>
 </ul>
 
 <p>
-Compactly:
-</p>
-
-<pre>consumer may schedule freely
-only inside
-the freedom left open
-by
-meaning
-   -&gt;
-IR
-   -&gt;
-lowering
-   -&gt;
-backend contract
-   -&gt;
-execution contract</pre>
-
-<p>
-This document does not mandate one scheduler model, but it does forbid scheduler freedom from rewriting preserved semantics.
+Failure of any of these conditions requires rejection of the profile claim.
 </p>
 
 <hr/>
 
-<h2 id="data-representation-and-call-boundary-posture">14. Data Representation and Call-Boundary Posture</h2>
+<h2 id="v01-compilation-ready-subset">10. v0.1 Compilation-Ready Subset</h2>
 
 <p>
-This document does not define one mandatory ABI.
+The accepted v0.1 subset for this profile is intentionally conservative.
 </p>
 
 <p>
-It does require that execution-start assumptions around data representation and callable boundaries be explicit enough for the consumer to begin execution without hidden guesses.
-</p>
-
-<p>
-Accordingly, where execution depends on externally visible call boundaries, the producer MUST make explicit, through the backend contract and any execution-side companion material:
+It includes, at minimum, the following capability families when they are semantically valid and otherwise conforming:
 </p>
 
 <ul>
-  <li>what values are passed at activation,</li>
-  <li>what values are returned or made visible at completion or quiescence,</li>
-  <li>what stateful handles or instance references exist, if any,</li>
-  <li>what representation-sensitive obligations remain important,</li>
-  <li>what ownership or lifetime assumptions are in force at the boundary.</li>
+  <li>scalar numeric computation,</li>
+  <li>basic typed dataflow connectivity,</li>
+  <li>intrinsic pure primitives from the accepted library surface,</li>
+  <li>arrays and aggregates that can be represented by the consuming implementation,</li>
+  <li>public typed interface participation,</li>
+  <li>structured control forms such as case-like and loop-like families when the implementation supports their lowering under this profile,</li>
+  <li>explicit local memory / delay-like state participation when the implementation supports their lowering under this profile,</li>
+  <li>restricted external call boundaries where the implementation can provide a stable backend-facing interpretation.</li>
 </ul>
 
 <p>
-This may be realized through:
+The following remain outside the default first accepted core of this profile unless explicitly supported by a conforming implementation statement:
 </p>
 
 <ul>
-  <li>native-call conventions,</li>
-  <li>generated wrappers,</li>
-  <li>host-side adapter layers,</li>
-  <li>deployment-mode-specific intake surfaces.</li>
+  <li>UI-heavy execution surfaces,</li>
+  <li>runtime-service-dependent interactive widget manipulation as a primary compiled-core feature,</li>
+  <li>distributed or multi-device semantics,</li>
+  <li>accelerator-specific placement semantics,</li>
+  <li>hard real-time commitments,</li>
+  <li>profile surfaces that require a different backend family or stronger runtime contracts.</li>
 </ul>
 
 <p>
-The exact private representation remains downstream.
+The guiding rule is:
 </p>
 
-<p>
-What is forbidden is:
-</p>
-
-<pre>opaque hidden boundary assumption
-presented as though
-the profile had already standardized it</pre>
+<pre><code>close one serious native compiled core first
+before widening the profile surface</code></pre>
 
 <hr/>
 
-<h2 id="effects-io-and-host-services">15. Effects, IO, and Host Services</h2>
+<h2 id="capability-assumptions">11. Capability Assumptions</h2>
 
 <p>
-The first Native CPU LLVM executable corridor is conservative around effects.
-</p>
-
-<p>
-Pure or mostly pure executable scopes belong most naturally to this contract.
-</p>
-
-<p>
-Effectful behavior MAY belong to this contract only if:
+A conforming implementation claiming <code>native_cpu_llvm</code> support assumes a consumer environment capable of:
 </p>
 
 <ul>
-  <li>the effect boundary is explicit,</li>
-  <li>the lowering path preserved it explicitly,</li>
+  <li>native CPU code generation or equivalent native CPU execution preparation,</li>
+  <li>LLVM-oriented downstream code generation or optimization consumption,</li>
+  <li>typed data representation compatible with the accepted subset,</li>
+  <li>control-flow materialization compatible with the accepted structured subset,</li>
+  <li>state and storage materialization compatible with the accepted explicit-memory subset,</li>
+  <li>external call handling where the profile-supported interop subset requires it.</li>
+</ul>
+
+<p>
+These are capability assumptions, not proof that one specific LLVM toolchain is mandatory.
+</p>
+
+<hr/>
+
+<h2 id="execution-model-posture">12. Execution Model Posture</h2>
+
+<p>
+This profile remains subordinate to the core FROG execution model.
+</p>
+
+<p>
+Therefore:
+</p>
+
+<ul>
+  <li>dataflow meaning remains dataflow meaning,</li>
+  <li>validated dependencies remain authoritative,</li>
+  <li>structured control remains structured control,</li>
+  <li>explicit state remains explicit state,</li>
+  <li>lowering MAY specialize these for native backend consumption,</li>
+  <li>lowering MUST NOT replace them with backend-private semantic invention.</li>
+</ul>
+
+<p>
+The profile adds a compilation corridor.
+It does not replace the language’s execution semantics.
+</p>
+
+<hr/>
+
+<h2 id="type-and-data-representation-posture">13. Type and Data Representation Posture</h2>
+
+<p>
+Under this profile, accepted programs must use data representations that the producer can lower coherently to a native CPU LLVM-oriented backend family.
+</p>
+
+<p>
+This means:
+</p>
+
+<ul>
+  <li>scalar numeric types MUST have a defined lowering path,</li>
+  <li>aggregate and array types MUST have a defined storage and transfer interpretation,</li>
+  <li>type legality remains decided upstream by the language and library layers,</li>
+  <li>representation commitments may become more explicit during lowering and backend contract emission.</li>
+</ul>
+
+<p>
+A conforming implementation MUST reject profile claims for programs whose accepted types still lack a coherent lowering and contract path under this profile.
+</p>
+
+<hr/>
+
+<h2 id="control-structure-posture">14. Control-Structure Posture</h2>
+
+<p>
+This profile accepts structured control only where the implementation can preserve semantics through the full corridor.
+</p>
+
+<p>
+Accordingly:
+</p>
+
+<ul>
+  <li>case-like structures MAY be included when the producer can lower them faithfully to a native CPU LLVM-oriented consumer,</li>
+  <li>loop-like structures MAY be included when the producer can preserve region, condition, iteration, and boundary semantics through lowering,</li>
+  <li>structured control MUST NOT be flattened in a way that destroys required semantics before the permitted downstream boundary.</li>
+</ul>
+
+<p>
+If a particular structure family is semantically valid in FROG but not yet lowerable under this profile, the correct result is:
+</p>
+
+<pre><code>language acceptance
++
+profile rejection</code></pre>
+
+<p>
+and not silent reinterpretation.
+</p>
+
+<hr/>
+
+<h2 id="state-and-memory-posture">15. State and Memory Posture</h2>
+
+<p>
+This profile accepts explicit local memory only where the implementation can lower it faithfully.
+</p>
+
+<p>
+Accordingly:
+</p>
+
+<ul>
+  <li>explicit state remains explicit state,</li>
+  <li>initialization remains explicit when semantically required,</li>
+  <li>state participation must remain distinguishable from ordinary dataflow through the contract boundary,</li>
+  <li>hidden persistence MUST NOT be invented as a substitute for explicit state.</li>
+</ul>
+
+<p>
+A profile-supporting implementation MUST reject any program whose accepted state semantics cannot be preserved through the native CPU LLVM-oriented corridor.
+</p>
+
+<hr/>
+
+<h2 id="effects-io-and-ui-posture">16. Effects, IO, and UI Posture</h2>
+
+<p>
+This profile is intentionally conservative around effectful and UI-dependent features.
+</p>
+
+<p>
+The default posture is:
+</p>
+
+<ul>
+  <li>pure or mostly pure computation belongs naturally to this first corridor,</li>
+  <li>effect surfaces may be admitted only when the producer can model them explicitly in lowering and backend contract form,</li>
+  <li>UI-heavy interactive surfaces are not part of the default first compiled-core promise of this profile,</li>
+  <li>runtime-mediated UI services may be supported later, but they are not assumed by default in the first closed profile corridor.</li>
+</ul>
+
+<p>
+This keeps the first industrial profile focused on closing a real native compiled core instead of prematurely absorbing the full UI runtime story.
+</p>
+
+<hr/>
+
+<h2 id="interop-and-external-call-posture">17. Interop and External Call Posture</h2>
+
+<p>
+Restricted interop MAY belong to this profile if and only if:
+</p>
+
+<ul>
+  <li>the callable boundary is explicit,</li>
+  <li>the type boundary is explicit,</li>
+  <li>the lowering path is coherent,</li>
   <li>the backend contract makes the assumptions explicit,</li>
-  <li>any required host service is declared explicitly,</li>
-  <li>execution may begin without hidden service discovery or hidden semantic invention.</li>
+  <li>the consumer can honor the call-surface obligations.</li>
 </ul>
 
 <p>
-Host services MAY include, for example:
+Interop support under this profile is therefore:
 </p>
 
 <ul>
-  <li>basic process services,</li>
-  <li>memory allocation services,</li>
-  <li>time or clock access where explicitly admitted,</li>
-  <li>declared external call surfaces,</li>
-  <li>declared runtime-service bridges introduced by lowering.</li>
-</ul>
-
-<p>
-A producer MUST NOT claim conformance with this execution contract if execution start depends on an undeclared host-service assumption.
-</p>
-
-<hr/>
-
-<h2 id="ui-posture">16. UI Posture</h2>
-
-<p>
-UI-heavy interactive execution is outside the default first executable promise of this document.
-</p>
-
-<p>
-This document therefore adopts the following conservative posture:
-</p>
-
-<ul>
-  <li>pure compiled cores are in scope,</li>
-  <li>explicit non-UI effects may be in scope if they are contract-bound,</li>
-  <li>runtime-mediated UI services are out of scope by default,</li>
-  <li>interactive event-loop ownership is out of scope by default,</li>
-  <li>widget-object manipulation as a primary execution-service dependency is out of scope by default.</li>
-</ul>
-
-<p>
-If a conforming implementation wishes to admit some UI-related execution surface later, it MUST do so by explicit extension and MUST preserve:
-</p>
-
-<ul>
-  <li><code>widget_value</code> versus <code>widget_reference</code>,</li>
-  <li>UI-object operation versus ordinary connectivity,</li>
-  <li>explicit UI sequencing where present,</li>
-  <li>runtime-service call boundaries introduced during lowering.</li>
-</ul>
-
-<p>
-This document therefore does not close the full UI runtime story. It leaves room for it without pretending it is already solved by the first executable corridor.
-</p>
-
-<hr/>
-
-<h2 id="fault-rejection-and-termination-posture">17. Fault, Rejection, and Termination Posture</h2>
-
-<p>
-A conforming implementation MUST distinguish at least the following situations:
-</p>
-
-<ul>
-  <li><strong>profile rejection</strong> — the accepted FROG program is valid but outside the executable subset admitted here,</li>
-  <li><strong>execution-contract rejection</strong> — the compilation corridor exists, but execution-start assumptions are incomplete, inconsistent, or unsupported,</li>
-  <li><strong>startup fault</strong> — execution was permitted to begin but failed during preparation, instantiation, or initialization,</li>
-  <li><strong>runtime fault</strong> — execution began and later failed under explicit runtime or host conditions,</li>
-  <li><strong>normal termination</strong> — execution reached completion under the chosen mode,</li>
-  <li><strong>quiescent continuation posture</strong> — execution reached a stable wait state under a retained-instance or step-capable mode.</li>
-</ul>
-
-<p>
-These conditions MUST NOT be silently collapsed.
-</p>
-
-<p>
-In particular:
-</p>
-
-<pre>language-valid
-   +
-profile-valid
-   +
-backend-consumable
-does not guarantee
-execution-start success</pre>
-
-<p>
-unless the execution-side assumptions of this document are also satisfied.
-</p>
-
-<hr/>
-
-<h2 id="producer-obligations">18. Producer Obligations</h2>
-
-<p>
-A producer claiming this execution contract MUST:
-</p>
-
-<ul>
-  <li>emit a backend contract consistent with the Native CPU LLVM profile,</li>
-  <li>identify the bounded execution unit explicitly,</li>
-  <li>state the execution mode explicitly,</li>
-  <li>state the state-instantiation posture explicitly where state exists,</li>
-  <li>make required host-service assumptions explicit,</li>
-  <li>reject unsupported execution-start conditions instead of silently inventing private semantics,</li>
-  <li>avoid implying that one private ABI or runtime model is already standardized if it is not.</li>
-</ul>
-
-<p>
-The producer MAY also provide additional implementation-side metadata or manifests. Those MAY help execution, but they do not replace the architectural obligations defined here.
-</p>
-
-<hr/>
-
-<h2 id="consumer-obligations">19. Consumer Obligations</h2>
-
-<p>
-A consumer claiming conformance with this execution contract MUST:
-</p>
-
-<ul>
-  <li>honor the backend contract assumptions it accepts,</li>
-  <li>honor the execution mode it accepts,</li>
-  <li>materialize initialization in a way consistent with explicit state requirements,</li>
-  <li>avoid rewriting preserved semantic distinctions at execution intake,</li>
-  <li>reject unsupported assumptions explicitly rather than silently degrading meaning,</li>
-  <li>keep runtime-private realization downstream from the standardized handoff surfaces.</li>
-</ul>
-
-<p>
-A consumer MAY:
-</p>
-
-<ul>
-  <li>choose its own optimizer sequence,</li>
-  <li>choose its own internal scheduler model,</li>
-  <li>choose its own ABI strategy,</li>
-  <li>choose AOT, JIT, or hybrid realization,</li>
-  <li>choose deployment packaging consistent with accepted assumptions.</li>
-</ul>
-
-<p>
-Those freedoms remain valid only so long as they do not violate preserved upstream meaning and explicit execution-side commitments.
-</p>
-
-<hr/>
-
-<h2 id="relation-with-backend-contract">20. Relation with Backend Contract</h2>
-
-<p>
-This document MUST be read as a companion to, not a replacement for, <code>IR/Backend contract.md</code>.
-</p>
-
-<p>
-The distinction is:
-</p>
-
-<pre>backend contract
-   =
-standardized downstream handoff
-
-execution contract
-   =
-additional profile-level closure for beginning execution
-under one bounded accepted native CPU LLVM corridor</pre>
-
-<p>
-A practical reading order is therefore:
-</p>
-
-<pre>Profiles/Native CPU LLVM.md
-   -&gt;
-IR/Lowering.md
-   -&gt;
-IR/Backend contract.md
-   -&gt;
-this document</pre>
-
-<p>
-If any contradiction appears, the reader must first check whether:
-</p>
-
-<ul>
-  <li>the issue belongs to generic backend-handoff ownership,</li>
-  <li>the issue belongs to this profile-specific execution closure,</li>
-  <li>the issue is actually a private implementation detail that should remain outside the specification.</li>
+  <li>possible,</li>
+  <li>restricted,</li>
+  <li>contract-bound,</li>
+  <li>not license for arbitrary foreign-runtime dependency surfaces.</li>
 </ul>
 
 <hr/>
 
-<h2 id="conformance-reading">21. Conformance Reading</h2>
+<h2 id="lowering-expectations">18. Lowering Expectations</h2>
 
 <p>
-This document is intended to support later executable conformance growth without pretending that such a corpus is already complete.
+A producer claiming this profile MUST be able to lower the accepted subset toward a native CPU LLVM-oriented consumer family while preserving:
+</p>
+
+<ul>
+  <li>semantic faithfulness,</li>
+  <li>required attribution continuity,</li>
+  <li>required control and state distinctions,</li>
+  <li>backend-relevant type and storage commitments,</li>
+  <li>explicit rejection where unsupported features remain.</li>
+</ul>
+
+<p>
+The producer MAY:
+</p>
+
+<ul>
+  <li>normalize control toward CFG-friendly forms,</li>
+  <li>normalize pure computation toward SSA-friendly forms,</li>
+  <li>materialize storage and state more explicitly,</li>
+  <li>introduce backend-oriented support structure.</li>
+</ul>
+
+<p>
+The producer MUST NOT:
+</p>
+
+<ul>
+  <li>collapse FROG IR into LLVM IR,</li>
+  <li>treat backend-family convenience as language truth,</li>
+  <li>repair unsupported profile features silently.</li>
+</ul>
+
+<hr/>
+
+<h2 id="backend-contract-expectations">19. Backend Contract Expectations</h2>
+
+<p>
+A profile-supporting producer MUST emit a backend contract explicit enough for a native CPU LLVM-oriented consumer to decide whether it can consume the lowered form without guessing.
 </p>
 
 <p>
-A future executable conformance family may read cases through a corridor such as:
+That contract SHOULD make explicit, as applicable:
 </p>
 
-<pre>valid/executable/...
-   source accepted
-   -&gt;
-   IR preserved
-   -&gt;
-   lowering accepted
-   -&gt;
-   backend contract accepted
-   -&gt;
-   execution contract satisfied
-   -&gt;
-   observable execution outcome matches expectation</pre>
+<ul>
+  <li>backend family posture,</li>
+  <li>accepted lowered executable scope,</li>
+  <li>representation commitments,</li>
+  <li>state and control commitments,</li>
+  <li>effect or interop commitments,</li>
+  <li>required capabilities,</li>
+  <li>rejection conditions.</li>
+</ul>
 
 <p>
-Corresponding negative families may distinguish:
+The backend contract remains downstream from canonical open IR and lowering.
+This profile depends on that distinction and does not replace it.
+</p>
+
+<hr/>
+
+<h2 id="consumer-backend-family-posture">20. Consumer Backend-Family Posture</h2>
+
+<p>
+A consumer under this profile is any backend-family consumer that is:
+</p>
+
+<ul>
+  <li>native CPU oriented,</li>
+  <li>LLVM oriented in downstream compilation posture,</li>
+  <li>able to honor the emitted backend contract.</li>
+</ul>
+
+<p>
+Such a consumer MAY:
+</p>
+
+<ul>
+  <li>compile to machine code,</li>
+  <li>optimize through LLVM-oriented passes,</li>
+  <li>produce native object or executable artifacts,</li>
+  <li>participate in JIT or AOT flows,</li>
+  <li>delegate some support needs to a runtime surface declared by the contract.</li>
+</ul>
+
+<p>
+Such a consumer MUST NOT:
+</p>
+
+<ul>
+  <li>reinterpret unsupported profile features silently,</li>
+  <li>pretend LLVM defines the language,</li>
+  <li>erase contract-required distinctions without honoring them.</li>
+</ul>
+
+<hr/>
+
+<h2 id="rejection-conditions">21. Rejection Conditions</h2>
+
+<p>
+A profile claim MUST be rejected if any of the following applies:
+</p>
+
+<ul>
+  <li>the program exceeds the accepted v0.1 subset,</li>
+  <li>the implementation cannot derive canonical FROG Execution IR faithfully,</li>
+  <li>the implementation cannot lower the accepted semantics coherently,</li>
+  <li>the implementation cannot emit a backend contract explicit enough for the consumer,</li>
+  <li>the consumer cannot honor required control, state, representation, or capability commitments,</li>
+  <li>the route would require silent semantic invention or hidden runtime assumptions beyond the declared profile surface.</li>
+</ul>
+
+<p>
+This is one of the key benefits of the profile:
+</p>
+
+<pre><code>explicit profile rejection
+is better than
+implicit backend drift</code></pre>
+
+<hr/>
+
+<h2 id="conformance-reading">22. Conformance Reading</h2>
+
+<p>
+This profile should be read together with the repository conformance corridor.
+</p>
+
+<p>
+In particular, claiming <code>native_cpu_llvm</code> support does not weaken the public truth surface around:
+</p>
+
+<ul>
+  <li>accept / reject correctness,</li>
+  <li>IR derivation correctness,</li>
+  <li>identity and recoverability,</li>
+  <li>schema validity,</li>
+  <li>lowering discipline,</li>
+  <li>backend-contract discipline.</li>
+</ul>
+
+<p>
+Future conformance growth for this profile SHOULD therefore introduce cases that distinguish:
 </p>
 
 <ul>
   <li>language-valid but profile-rejected,</li>
-  <li>profile-valid but execution-contract-rejected,</li>
-  <li>execution-start fault conditions,</li>
-  <li>runtime-fault conditions where relevant to the published corridor.</li>
+  <li>IR-derivable but not lowerable under this profile,</li>
+  <li>lowerable but not contract-emittable under this profile,</li>
+  <li>contract-emittable but consumer-rejected under this profile.</li>
 </ul>
-
-<p>
-Until such executable conformance families are published, this document should be read as the architectural closure point that makes those future cases possible in a disciplined way.
-</p>
 
 <hr/>
 
-<h2 id="future-evolution">22. Future Evolution</h2>
+<h2 id="relation-with-other-specification-layers">23. Relation with Other Specification Layers</h2>
 
 <p>
-Later revisions may extend this execution contract with more detailed treatment of:
+This profile remains subordinate to the rest of the published architecture:
 </p>
 
 <ul>
-  <li>declared ABI families,</li>
-  <li>stronger deployment-mode taxonomies,</li>
-  <li>stricter real-time-oriented execution contracts,</li>
-  <li>more explicit interop execution surfaces,</li>
-  <li>runtime-mediated UI service contracts,</li>
-  <li>multi-thread or partition-aware execution contracts,</li>
-  <li>embedded or reduced-service execution contracts.</li>
+  <li><code>Expression/</code> still owns source form,</li>
+  <li><code>Language/</code> still owns validated meaning,</li>
+  <li><code>Libraries/</code> still own intrinsic primitive law,</li>
+  <li><code>IR/</code> still owns canonical IR, derivation, schema, lowering, and backend contract,</li>
+  <li><code>Profiles/</code> only owns the optional standardized capability claim described here.</li>
 </ul>
 
 <p>
-Any such extension MUST preserve the repository-wide ownership rule:
+This is critical:
 </p>
 
-<pre>open language and IR truth upstream
-private realization downstream</pre>
+<pre><code>Native CPU LLVM
+   is a profile claim
 
-<p>
-and MUST NOT treat one private implementation strategy as though it had always been part of the language definition.
-</p>
+it is not
+the definition of FROG</code></pre>
 
 <hr/>
 
-<h2 id="summary">23. Summary</h2>
+<h2 id="future-evolution">24. Future Evolution</h2>
 
 <p>
-This document closes one missing question in the Native CPU LLVM corridor:
-</p>
-
-<pre>When may a bounded accepted FROG program
-not only be compiled toward a native CPU LLVM-oriented consumer,
-but actually be considered ready to begin execution?</pre>
-
-<p>
-Its answer is conservative:
+This profile is intentionally a first closure step.
+It MAY evolve later through:
 </p>
 
 <ul>
-  <li>only for an accepted bounded subset,</li>
-  <li>only when execution-unit assumptions are explicit,</li>
-  <li>only when state initialization and lifecycle are explicit,</li>
-  <li>only when host-service dependencies are explicit,</li>
-  <li>only when the consumer honors the backend contract and this execution contract,</li>
-  <li>and without pretending that the entire future runtime ecosystem is already standardized.</li>
+  <li>wider accepted structured-control coverage,</li>
+  <li>wider explicit-state coverage,</li>
+  <li>better effect-surface support,</li>
+  <li>restricted UI-service support,</li>
+  <li>better interop coverage,</li>
+  <li>richer native deployment modes,</li>
+  <li>additional backend-family refinements.</li>
 </ul>
 
 <p>
-That is the intended role of the Native CPU LLVM execution contract in FROG v0.1.
+However, future growth SHOULD remain disciplined:
+</p>
+
+<pre><code>close one coherent corridor
+before broadening the optional surface</code></pre>
+
+<hr/>
+
+<h2 id="summary">25. Summary</h2>
+
+<p>
+This document defines <code>native_cpu_llvm</code> as an optional standardized FROG profile for a first industrial native CPU compilation corridor oriented toward LLVM-family downstream consumers.
+</p>
+
+<p>
+Its core rules are:
+</p>
+
+<ul>
+  <li>the profile is optional,</li>
+  <li>the profile is downstream-compilation-oriented,</li>
+  <li>the profile does not redefine the language core or the canonical IR,</li>
+  <li>the profile accepts only a conservative v0.1 subset,</li>
+  <li>the profile requires faithful derivation, lowering, and backend-contract emission,</li>
+  <li>the profile requires explicit rejection when the corridor cannot be honored.</li>
+</ul>
+
+<p>
+This profile therefore enables a serious public statement:
+</p>
+
+<pre><code>FROG can support a real native compiled corridor
+without collapsing the language into LLVM,
+because LLVM remains downstream from
+validated meaning,
+canonical open IR,
+lowering,
+and backend contract.</code></pre>
+
+<p>
+That is the purpose of this profile in base v0.1.
 </p>
