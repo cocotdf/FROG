@@ -1798,7 +1798,7 @@
                 {
                   "key": "conformance/valid/structural/",
                   "title": "structural",
-                  "path": null,
+                  "path": "/Conformance/valid/structural/Readme.md",
                   "kind": "category",
                   "children": [
                     {
@@ -2417,6 +2417,7 @@
     "/Conformance/valid/structural/01_front_panel_canvas_widgets_and_ui_libraries/Readme.md",
     "/Conformance/valid/structural/02_front_panel_recursive_children_shape_is_valid/case.frog",
     "/Conformance/valid/structural/02_front_panel_recursive_children_shape_is_valid/Readme.md",
+    "/Conformance/valid/structural/Readme.md",
     "/Conformance/Readme.md",
     "/Implementations/Reference/example-artifact-requirements.md",
     "/Implementations/Reference/frogc.md",

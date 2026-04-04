@@ -251,7 +251,7 @@
       - [01 one shot pure core starts and terminates](/Conformance/valid/executable/01_one_shot_pure_core_starts_and_terminates/Readme.md)
       - [02 structured control one shot executes correctly](/Conformance/valid/executable/02_structured_control_one_shot_executes_correctly/Readme.md)
       - [03 explicit state step mode initializes and advances](/Conformance/valid/executable/03_explicit_state_step_mode_initializes_and_advances/Readme.md)
-    - structural
+    - [structural](/Conformance/valid/structural/Readme.md)
       - [01 front panel canvas widgets and ui libraries](/Conformance/valid/structural/01_front_panel_canvas_widgets_and_ui_libraries/Readme.md)
         - [case.frog](/Conformance/valid/structural/01_front_panel_canvas_widgets_and_ui_libraries/case.frog)
       - [02 front panel recursive children shape is valid](/Conformance/valid/structural/02_front_panel_recursive_children_shape_is_valid/Readme.md)
