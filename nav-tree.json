@@ -1133,7 +1133,15 @@
                       "title": "02 front panel canvas must be object",
                       "path": "/Conformance/invalid/structural/02_front_panel_canvas_must_be_object/Readme.md",
                       "kind": "category",
-                      "children": []
+                      "children": [
+                        {
+                          "key": "conformance/invalid/structural/02_front_panel_canvas_must_be_object/case.frog",
+                          "title": "case.frog",
+                          "path": "/Conformance/invalid/structural/02_front_panel_canvas_must_be_object/case.frog",
+                          "kind": "code",
+                          "children": []
+                        }
+                      ]
                     }
                   ]
                 }
@@ -2313,6 +2321,7 @@
     "/Conformance/invalid/executable/Readme.md",
     "/Conformance/invalid/structural/01_front_panel_widgets_must_be_array/case.frog",
     "/Conformance/invalid/structural/01_front_panel_widgets_must_be_array/Readme.md",
+    "/Conformance/invalid/structural/02_front_panel_canvas_must_be_object/case.frog",
     "/Conformance/invalid/structural/02_front_panel_canvas_must_be_object/Readme.md",
     "/Conformance/valid/01_pure_addition.md",
     "/Conformance/valid/02_ui_value_roundtrip.md",
