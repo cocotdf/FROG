@@ -35,9 +35,7 @@ This case defines a canonical-source rejection expectation for a FROG file in wh
 </p>
 
 <p>
-The section is optional.
-However, once present, it MUST satisfy the canonical source-shape rules that apply to front-panel composition and widget containment.
-If the section has the wrong source form, the file is not a structurally valid canonical <code>.frog</code> source file.
+The section is optional. However, once present, it MUST satisfy the canonical source-shape rules that apply to front-panel composition and widget containment. If the section has the wrong source form, the file is not a structurally valid canonical <code>.frog</code> source file.
 </p>
 
 <hr/>
@@ -54,22 +52,34 @@ structurally unconstrained section
 </code></pre>
 
 <p>
-An optional section may be absent.
-But if it is present, it must still satisfy the source-structure rules owned by <code>Expression/</code>.
+An optional section may be absent. But if it is present, it must still satisfy the source-structure rules owned by <code>Expression/</code>.
 </p>
+
+<p>
+This case also exists to verify that a conforming implementation does not blur:
+</p>
+
+<pre><code>front_panel composition
+      !=
+widget instance model
+      !=
+widget class contract
+      !=
+diagram-side widget interaction
+</code></pre>
 
 <hr/>
 
 <h2 id="case-classification">3. Case Classification</h2>
 
 <ul>
-  <li><strong>Case family:</strong> invalid</li>
-  <li><strong>Primary owner:</strong> <code>Expression/</code></li>
-  <li><strong>Case kind:</strong> source-shape / structural-validity rejection</li>
-  <li><strong>Expected loadability:</strong> loadable</li>
-  <li><strong>Expected structural validity:</strong> invalid</li>
-  <li><strong>Expected meaning:</strong> not established</li>
-  <li><strong>Expected IR derivation:</strong> must not proceed as if validated meaning existed</li>
+  <li>Case family: invalid</li>
+  <li>Primary owner: <code>Expression/</code></li>
+  <li>Case kind: source-shape / structural-validity rejection</li>
+  <li>Expected loadability: loadable</li>
+  <li>Expected structural validity: invalid</li>
+  <li>Expected meaning: not established</li>
+  <li>Expected IR derivation: must not proceed as if validated meaning existed</li>
 </ul>
 
 <hr/>
@@ -88,6 +98,9 @@ In FROG v0.1:
   <li><code>front_panel</code> is an optional top-level source section,</li>
   <li>when present, it defines front-panel composition and widget-side source content,</li>
   <li>its presence does not make it free-form or implementation-private,</li>
+  <li>widget instances remain governed at instance level by <code>Widget.md</code>,</li>
+  <li>class-side member legality remains owned by <code>Widget class contract.md</code>,</li>
+  <li>diagram-side executable widget interaction remains owned by <code>Widget interaction.md</code>,</li>
   <li>all executable linkage related to front-panel widgets must still pass through the <code>diagram</code>.</li>
 </ul>
 
@@ -96,13 +109,13 @@ Therefore, a malformed <code>front_panel</code> section is a structural-source f
 </p>
 
 <pre><code>optional front_panel absent
-    -> allowed
+    -&gt; allowed
 
 optional front_panel present and well-formed
-    -> allowed
+    -&gt; allowed
 
 optional front_panel present but malformed
-    -> structural invalidity
+    -&gt; structural invalidity
 </code></pre>
 
 <hr/>
@@ -122,7 +135,8 @@ Typical invalid patterns include:
   <li>widget collections represented with the wrong container type,</li>
   <li>widget entries missing required structural identity fields,</li>
   <li>widget containment encoded in a shape not permitted by the source model,</li>
-  <li>mixing executable linkage directly into <code>front_panel</code> instead of expressing it through the <code>diagram</code>.</li>
+  <li>mixing executable linkage directly into <code>front_panel</code> instead of expressing it through the <code>diagram</code>,</li>
+  <li>treating front-panel composition as if it declared class-side widget legality.</li>
 </ul>
 
 <p>
@@ -130,14 +144,13 @@ A representative invalid intention is:
 </p>
 
 <pre><code>front_panel
-  -> present as a source section
-  -> contains widget data in a malformed source structure
-  -> cannot be interpreted as valid front-panel composition
+  -&gt; present as a source section
+  -&gt; contains widget data in a malformed source structure
+  -&gt; cannot be interpreted as valid front-panel composition
 </code></pre>
 
 <p>
-This is not merely a UI-runtime issue.
-It is a canonical-source failure.
+This is not merely a UI-runtime issue. It is a canonical-source failure.
 </p>
 
 <hr/>
@@ -155,10 +168,7 @@ Expected rejection: malformed front_panel structure
 </code></pre>
 
 <p>
-A conforming implementation MUST reject the case explicitly.
-It MUST NOT silently normalize malformed front-panel source into validity.
-It MUST NOT treat malformed UI source as harmless decoration.
-It MUST NOT continue as if validated meaning had been established.
+A conforming implementation MUST reject the case explicitly. It MUST NOT silently normalize malformed front-panel source into validity. It MUST NOT treat malformed UI source as harmless decoration. It MUST NOT continue as if validated meaning had been established.
 </p>
 
 <hr/>
@@ -186,16 +196,16 @@ This case must therefore fail because:
 <ul>
   <li><code>front_panel</code> remains part of canonical source when present,</li>
   <li>canonical source must stay structurally checkable,</li>
-  <li>runtime or IDE repair must not replace source validity.</li>
+  <li>front-panel composition must remain distinct from the executable graph,</li>
+  <li>source composition must remain distinct from class-side widget member legality,</li>
+  <li>source composition must remain distinct from executable widget interaction behavior.</li>
 </ul>
 
-<pre><code>optional section present
-    +
-malformed source shape
-    ->
-canonical source contract not satisfied
-    ->
-rejection required
+<pre><code>optional section
++
+wrong source shape
+    -&gt;
+structural rejection required
 </code></pre>
 
 <hr/>
@@ -203,29 +213,26 @@ rejection required
 <h2 id="what-this-case-is-not-testing">8. What this Case Is Not Testing</h2>
 
 <p>
-This case is intentionally narrow.
-It is not testing:
+This case is intentionally narrow. It is not testing:
 </p>
 
 <ul>
-  <li>whether a front panel is required,</li>
-  <li>whether a given widget class is semantically useful,</li>
-  <li>diagram legality for widget participation,</li>
-  <li>widget_value versus widget_reference semantics,</li>
-  <li>state semantics,</li>
-  <li>IR preservation details,</li>
+  <li>whether a widget class is semantically supported,</li>
+  <li>whether a widget member is legally readable or writable,</li>
+  <li>whether a method is invocable,</li>
+  <li>diagram-side widget interaction semantics,</li>
   <li>runtime UI realization.</li>
 </ul>
 
 <p>
-It only tests one architectural boundary:
+It only tests one boundary:
 </p>
 
-<pre><code>optional front_panel
-      ->
-still source-structured
-      ->
-still subject to structural validation
+<pre><code>front_panel present
+      +
+wrong source shape
+      -&gt;
+must be rejected structurally
 </code></pre>
 
 <hr/>
@@ -233,30 +240,34 @@ still subject to structural validation
 <h2 id="preservation-and-boundary-notes">9. Preservation and Boundary Notes</h2>
 
 <p>
-This case helps preserve the following source-layer distinctions:
+This case helps preserve the architectural distinction between:
 </p>
 
 <ul>
-  <li>optional presence versus arbitrary structure,</li>
-  <li>UI composition source versus runtime UI realization,</li>
-  <li>front-panel composition versus executable linkage.</li>
+  <li>optional section presence,</li>
+  <li>structural validity,</li>
+  <li>widget instance serialization,</li>
+  <li>class-side widget contract,</li>
+  <li>diagram-side widget interaction,</li>
+  <li>diagram execution ownership.</li>
 </ul>
 
 <p>
-It therefore protects the rule:
+It therefore protects the rules:
 </p>
 
-<pre><code>front_panel present
-      -/-> source-valid by default
+<pre><code>optional
+  -/-> free-form
 
-UI composition source
-      -/-> implementation-private blob
+front_panel
+  -/-> second diagram
+
+front_panel
+  -/-> class-side widget contract
+
+front_panel
+  -/-> executable widget interaction layer
 </code></pre>
-
-<p>
-This boundary matters before semantic validation and far before runtime realization.
-It must not be repaired implicitly by tools.
-</p>
 
 <hr/>
 
@@ -267,10 +278,9 @@ A conforming implementation handling this case SHOULD:
 </p>
 
 <ul>
-  <li>load the source if it is syntactically readable,</li>
-  <li>validate the structural shape of <code>front_panel</code> when present,</li>
-  <li>detect malformed front-panel source content,</li>
-  <li>reject the file before claiming validated meaning exists,</li>
+  <li>load the source as JSON,</li>
+  <li>detect that <code>front_panel</code> is structurally malformed,</li>
+  <li>reject the source before semantic validation is considered established,</li>
   <li>report the rejection as a structural-source failure.</li>
 </ul>
 
@@ -279,10 +289,11 @@ A conforming implementation MUST NOT:
 </p>
 
 <ul>
-  <li>treat malformed <code>front_panel</code> content as acceptable implementation-private UI data,</li>
-  <li>auto-repair malformed widget composition silently,</li>
-  <li>reinterpret malformed front-panel source as valid canonical source,</li>
-  <li>derive execution-facing artifacts as if the source were structurally valid.</li>
+  <li>silently repair malformed front-panel source into validity,</li>
+  <li>reinterpret malformed widget-source shape as acceptable implementation-private UI state,</li>
+  <li>treat malformed UI source as semantically harmless decoration,</li>
+  <li>continue as if a valid widget instance model had already been established,</li>
+  <li>continue as if class-side widget member legality or executable widget interaction had already become applicable.</li>
 </ul>
 
 <hr/>
@@ -290,27 +301,16 @@ A conforming implementation MUST NOT:
 <h2 id="summary">11. Summary</h2>
 
 <p>
-This case establishes a clear public truth:
+This case establishes a focused negative truth:
 </p>
 
-<pre><code>malformed front_panel structure
-    ->
-structurally invalid canonical source
-    ->
-rejection required
+<pre><code>optional front_panel
++
+malformed source shape
+    -&gt;
+structural rejection required
 </code></pre>
 
 <p>
-It protects a key principle of the FROG source layer:
-</p>
-
-<pre><code>optional source section
-   -&gt;
-still canonical source
-   -&gt;
-still structurally checkable
-</code></pre>
-
-<p>
-That principle must remain explicit across all conforming implementations.
+It anchors the negative side of the front-panel structural boundary in the FROG canonical source model while keeping composition, widget instance model, class contract, and executable widget interaction explicitly distinct.
 </p>
