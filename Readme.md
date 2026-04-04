@@ -107,7 +107,7 @@ Its role is to provide a durable open foundation for future:
 
 <p>
 The repository also contains repository-level support material that helps make the specification inspectable in practice:
-named examples, conformance material, and a non-normative reference implementation workspace.
+named examples, conformance material, a non-normative reference implementation workspace, a strategic framing layer, and a non-normative roadmap layer.
 Those areas support the published specification, but they do not replace its ownership boundaries.
 </p>
 
@@ -140,13 +140,15 @@ These remain the primary ownership layers of the published language specificatio
 </p>
 
 <p>
-The repository also contains three important repository-level support areas:
+The repository also contains repository-level support areas and repository-level framing layers:
 </p>
 
 <ul>
   <li><strong><code>Examples/</code></strong> — named source examples and the first executable vertical slices,</li>
   <li><strong><code>Conformance/</code></strong> — public accept / reject / preserve expectations for the published repository state,</li>
-  <li><strong><code>Implementations/Reference/</code></strong> — a non-normative reference implementation workspace used to exercise a disciplined minimal execution path.</li>
+  <li><strong><code>Implementations/Reference/</code></strong> — a non-normative reference implementation workspace used to exercise a disciplined minimal execution path,</li>
+  <li><strong><code>Strategy/</code></strong> — a non-normative strategic framing layer distinct from normative ownership,</li>
+  <li><strong><code>Roadmap/</code></strong> — a non-normative closure-sequencing layer distinct from both strategy and specification.</li>
 </ul>
 
 <p>
@@ -166,6 +168,7 @@ canonical source ownership and source-schema posture are published in <code>Expr
 validated program meaning is staged in <code>Language/</code>,
 open execution-facing representation is staged in <code>IR/</code>,
 and the repository-level examples, conformance material, and reference implementation workspace together expose the first repository-visible executable vertical slices.
+The repository also now carries explicit strategic and roadmap framing layers so that long-term purpose and closure order remain visible without displacing normative ownership.
 </p>
 
 <p>
@@ -187,6 +190,7 @@ That published reality does <strong>not</strong> yet mean that the repository al
 The current repository state should therefore be read as:
 published architectural specification first,
 published source-schema and conformance posture for the current subset,
+published strategic and roadmap framing,
 and published non-normative executable reference prototypes for a controlled subset.
 </p>
 
@@ -574,8 +578,9 @@ The support areas exist to make that baseline more inspectable, testable, and ex
 ├── Libraries/                        Intrinsic standardized primitive-library specifications
 ├── Profiles/                         Optional standardized capability-family specifications
 ├── Roadmap/                          Non-normative closure sequencing and milestone tracking
-├── Strategy/
-│   └── Heilmeier/                    Strategic framing layer distinct from normative ownership
+├── Strategy/                         Non-normative strategic framing layer
+│   ├── Readme.md                     Strategic entry point for the Strategy layer
+│   └── Heilmeier/                    Program-framing and mission-oriented strategic document set
 │
 ├── CLA.md                            Contributor license agreement requirements
 ├── CONTRIBUTING.md                   Contribution process and contribution rules
@@ -610,11 +615,11 @@ The current repository-level support areas are:
 </ul>
 
 <p>
-The repository also contains:
+The repository also contains two non-normative framing layers:
 </p>
 
 <ul>
-  <li><strong><code>Strategy/Heilmeier/</code></strong> — strategic framing that remains distinct from normative ownership,</li>
+  <li><strong><code>Strategy/</code></strong> — strategic framing that remains distinct from normative ownership,</li>
   <li><strong><code>Roadmap/</code></strong> — non-normative sequencing and milestone tracking for project closure.</li>
 </ul>
 
@@ -776,6 +781,30 @@ This directory defines the architecture and responsibilities of a FROG developme
 It explains how editing relates to the Program Model, serialized Expression, validation, IR derivation, execution preparation, execution observability, debugging, probes, watch views, snippets, and Express authoring.
 </p>
 
+<h3><code>Strategy/</code> — strategic framing layer</h3>
+
+<p>
+This directory defines the non-normative strategic framing layer of the repository.
+Its role is to explain why FROG matters, what ecosystem gap it targets, why openness and inspectability matter in the AI era, and why the project has industrial-security and technological-sovereignty relevance beyond local tooling concerns.
+</p>
+
+<p>
+It does not own language truth, source validity, semantics, IR derivation rules, or conformance expectations.
+It explains the strategic purpose of the project while remaining distinct from normative ownership.
+</p>
+
+<h3><code>Roadmap/</code> — closure-sequencing layer</h3>
+
+<p>
+This directory defines the non-normative closure-sequencing layer of the repository.
+Its role is to explain in what order the project should be closed, which phases are already established, which are partial, and which remain future work.
+</p>
+
+<p>
+It does not replace strategy and it does not replace specification.
+It sequences the closure path between the current published state and the long-term compiler/runtime, IDE, deployment, and ecosystem objectives.
+</p>
+
 <hr/>
 
 <h2 id="internal-documentation-map">Internal documentation map</h2>
@@ -823,6 +852,8 @@ The map below summarizes the intended role of the Markdown documents in the curr
 │       -&gt; compact milestone tracking for repository-level closure progress
 │
 ├── Strategy/
+│   ├── Readme.md
+│   │   -&gt; strategic entry point for the non-normative Strategy layer
 │   └── Heilmeier/
 │       └── Readme.md
 │           -&gt; strategic framing distinct from normative specification
@@ -952,7 +983,7 @@ The map below summarizes the intended role of the Markdown documents in the curr
 
 <p>
 This map is intentionally architectural rather than merely enumerative.
-Its purpose is to make repository ownership boundaries, support layers, and recommended reading paths easier to understand.
+Its purpose is to make repository ownership boundaries, support layers, framing layers, and recommended reading paths easier to understand.
 </p>
 
 <hr/>
@@ -1067,6 +1098,34 @@ schema validates its canonical JSON form,
 and downstream lowering and backend contracts remain explicitly downstream from the open IR core even though they are documented in the same directory.
 </p>
 
+<p>
+Readers who want the strategic and closure-sequencing framing SHOULD then continue with:
+</p>
+
+<pre>
+Strategy/Readme.md
+   |
+   v
+Strategy/Heilmeier/Readme.md
+   |
+   v
+Roadmap/Readme.md
+   |
+   v
+Roadmap/Milestones.md
+</pre>
+
+<p>
+That fourth path answers a different set of questions:
+</p>
+
+<ul>
+  <li><strong><code>Strategy/Readme.md</code></strong> — why FROG matters as a strategic program,</li>
+  <li><strong><code>Strategy/Heilmeier/Readme.md</code></strong> — the structured mission framing of that strategic case,</li>
+  <li><strong><code>Roadmap/Readme.md</code></strong> — the intended closure order,</li>
+  <li><strong><code>Roadmap/Milestones.md</code></strong> — the compact milestone-tracking surface.</li>
+</ul>
+
 <hr/>
 
 <h2 id="specification-architecture">Specification architecture</h2>
@@ -1122,6 +1181,15 @@ what is prototyped   -> Implementations/Reference/
 </pre>
 
 <p>
+The repository also contains two framing layers that should remain explicit and distinct:
+</p>
+
+<pre>
+why it matters       -> Strategy/
+in what order it closes -> Roadmap/
+</pre>
+
+<p>
 Within that baseline, the <code>IR/</code> directory already includes documents for derivation, identity and mapping, construction, schema, lowering, and backend-facing contracts.
 Those documents remain architecturally downstream from validated program meaning and upstream from private realization.
 </p>
@@ -1134,7 +1202,9 @@ but they do not redefine the ownership model:
 <ul>
   <li><strong><code>Examples/</code></strong> do not define language truth,</li>
   <li><strong><code>Conformance/</code></strong> does not become the semantic owner,</li>
-  <li><strong><code>Implementations/Reference/</code></strong> does not become the normative production compiler pipeline.</li>
+  <li><strong><code>Implementations/Reference/</code></strong> does not become the normative production compiler pipeline,</li>
+  <li><strong><code>Strategy/</code></strong> does not become semantic ownership,</li>
+  <li><strong><code>Roadmap/</code></strong> does not become normative specification.</li>
 </ul>
 
 <p>
@@ -1777,7 +1847,7 @@ while trademark, certification, and branding can remain separately governed with
 
 <p>
 FROG is currently under active design, cleanup, and stabilization.
-The repository already contains substantial material across canonical source representation, source-schema posture, language semantics, canonical open execution-facing IR architecture, intrinsic standardized primitive libraries, optional profile architecture, and IDE architecture, but the overall specification is still converging toward a coherent v0.1 foundation.
+The repository already contains substantial material across canonical source representation, source-schema posture, language semantics, canonical open execution-facing IR architecture, intrinsic standardized primitive libraries, optional profile architecture, IDE architecture, strategic framing, and roadmap posture, but the overall specification is still converging toward a coherent v0.1 foundation.
 </p>
 
 <p>
@@ -1788,7 +1858,9 @@ It already contains:
 <ul>
   <li>a published <code>Examples/</code> directory with the first four repository-visible executable slices,</li>
   <li>a published <code>Conformance/</code> directory with explicit staged expected-outcome posture,</li>
-  <li>a published <code>Implementations/Reference/</code> workspace whose current purpose is to exercise disciplined minimal executable vertical slices for a controlled subset.</li>
+  <li>a published <code>Implementations/Reference/</code> workspace whose current purpose is to exercise disciplined minimal executable vertical slices for a controlled subset,</li>
+  <li>a published <code>Strategy/</code> layer for non-normative strategic framing,</li>
+  <li>a published <code>Roadmap/</code> layer for non-normative closure sequencing.</li>
 </ul>
 
 <p>
@@ -1827,6 +1899,7 @@ Current repository direction therefore includes both <strong>architectural stabi
   <li>defining guided Express authoring as an IDE convenience layer that normalizes to canonical FROG content,</li>
   <li>keeping the executable reference path clean, reproducible, and inspectable,</li>
   <li>keeping <code>Examples/</code>, <code>Conformance/</code>, and <code>Implementations/Reference/</code> aligned without letting them silently become hidden language law,</li>
+  <li>keeping <code>Strategy/</code> and <code>Roadmap/</code> explicit without letting them replace normative ownership,</li>
   <li>preparing the path from canonical <code>.frog</code> source toward a serious future compiler/runtime story, including downstream compiler-family paths such as LLVM-oriented ones,</li>
   <li>making the language increasingly credible as an AI-compatible, reviewable, and sovereignty-preserving open programming foundation.</li>
 </ul>
