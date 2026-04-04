@@ -153,6 +153,7 @@
       - [04 contract emittable but consumer rejected](/Conformance/invalid/compiler/04_contract_emittable_but_consumer_rejected.md)
     - [executable](/Conformance/invalid/executable/Readme.md)
       - [01 backend consumable but execution contract invalid](/Conformance/invalid/executable/01_backend_consumable_but_execution_contract_invalid/Readme.md)
+      - [02 execution contract valid but required host service missing](/Conformance/invalid/executable/02_execution_contract_valid_but_required_host_service_missing/Readme.md)
   - valid
     - [01 pure addition](/Conformance/valid/01_pure_addition.md)
     - [02 ui value roundtrip](/Conformance/valid/02_ui_value_roundtrip.md)
