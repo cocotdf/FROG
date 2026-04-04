@@ -2,17 +2,16 @@
   <img src="../FROG logo.svg" alt="FROG logo" width="200" />
 </p>
 
-<h1 align="center">🐸 FROG Front Panel Specification</h1>
+<h1 align="center">FROG Front Panel Specification</h1>
 
 <p align="center">
-Definition of the optional <code>front_panel</code> section of <strong>.frog</strong> programs<br/>
-<em>FROG — Free Open Graphical Language</em>
+  <strong>Definition of the optional <code>front_panel</code> section of <code>.frog</code> programs</strong><br/>
+  <em>FROG — Free Open Graphical Language</em>
 </p>
 
 <hr/>
 
-<h2 id="contents">Contents</h2>
-
+<h2>Contents</h2>
 <ul>
   <li><a href="#overview">1. Overview</a></li>
   <li><a href="#scope">2. Scope</a></li>
@@ -39,9 +38,7 @@ The <code>front_panel</code> section defines the optional user-facing interactio
 </p>
 
 <p>
-It declares widget instances and their visual composition in canonical source.
-A FROG MAY include a front panel, but it is not required.
-A program MAY therefore be purely diagram-based with no serialized user-facing UI composition.
+It declares widget instances and their visual composition in canonical source. A FROG MAY include a front panel, but it is not required. A program MAY therefore be purely diagram-based with no serialized user-facing UI composition.
 </p>
 
 <p>
@@ -56,14 +53,16 @@ The front panel defines:
 </ul>
 
 <p>
-The front panel does <strong>not</strong> define:
+The front panel does not define:
 </p>
 
 <ul>
   <li>the public interface of the FROG,</li>
   <li>the authoritative executable dataflow graph,</li>
   <li>runtime scheduling semantics,</li>
-  <li>the general language execution semantics.</li>
+  <li>the general language execution semantics,</li>
+  <li>the full widget class contract,</li>
+  <li>the full executable interaction model for widgets.</li>
 </ul>
 
 <p>
@@ -73,7 +72,9 @@ Those responsibilities belong respectively to:
 <ul>
   <li><code>Interface.md</code>,</li>
   <li><code>Diagram.md</code>,</li>
-  <li>the normative execution semantics defined in <code>Language/</code>.</li>
+  <li>the normative execution semantics defined in <code>Language/</code>,</li>
+  <li><code>Widget class contract.md</code>,</li>
+  <li><code>Widget interaction.md</code>.</li>
 </ul>
 
 <hr/>
@@ -101,6 +102,7 @@ This document intentionally does not standardize:
 
 <ul>
   <li>the full widget object model,</li>
+  <li>the full class-level widget contract,</li>
   <li>the full executable interaction model for widgets,</li>
   <li>a complete UI toolkit,</li>
   <li>a complete theme or styling system,</li>
@@ -112,11 +114,12 @@ This document intentionally does not standardize:
 <h2 id="relation-with-other-specifications">3. Relation with Other Specifications</h2>
 
 <ul>
-  <li><code>Widget.md</code> defines the widget object model, including roles, value-carrying behavior, parts, properties, methods, and widget identity.</li>
+  <li><code>Widget.md</code> defines the widget instance model, including roles, value-carrying behavior, parts, properties, methods, events, and widget identity.</li>
+  <li><code>Widget class contract.md</code> defines the class-level widget contract, including members, part ownership, member legality, access modes, and IDE-facing object exposure constraints.</li>
   <li><code>Widget interaction.md</code> defines diagram-side object-style interaction with widgets.</li>
   <li><code>Diagram.md</code> defines the authoritative executable graph.</li>
   <li><code>Interface.md</code> defines the public contract of the FROG.</li>
-  <li><code>Type.md</code> defines the value type system used by value-carrying widgets.</li>
+  <li><code>Type.md</code> defines the value type system used by value-carrying widgets and typed widget members.</li>
 </ul>
 
 <p>
@@ -124,17 +127,18 @@ Accordingly:
 </p>
 
 <ul>
-  <li><strong>interface</strong> defines public program inputs and outputs,</li>
-  <li><strong>diagram</strong> defines executable behavior,</li>
-  <li><strong>widget model</strong> defines widget-object semantics,</li>
-  <li><strong>front_panel</strong> defines UI composition and serialized widget placement.</li>
+  <li>interface defines public program inputs and outputs,</li>
+  <li>diagram defines executable behavior,</li>
+  <li>widget model defines instance-side widget-object shape,</li>
+  <li>widget class contract defines class-side member legality and object exposure,</li>
+  <li>front_panel defines UI composition and serialized widget placement.</li>
 </ul>
 
 <p>
 Ownership boundary:
 </p>
 
-<pre>Front panel.md owns:
+<pre><code>Front panel.md owns:
 - optional UI composition
 - widget tree serialization
 - panel-level layout/canvas structure
@@ -143,9 +147,11 @@ Ownership boundary:
 Front panel.md does not own:
 - public interface semantics
 - executable graph semantics
-- widget object model semantics
+- widget instance-object semantics
+- widget class member-contract semantics
 - widget interaction primitive semantics
-- general language execution semantics</pre>
+- general language execution semantics
+</code></pre>
 
 <hr/>
 
@@ -155,21 +161,21 @@ Front panel.md does not own:
 When present, the front panel appears as an optional top-level section of a <code>.frog</code> file.
 </p>
 
-<pre>{
+<pre><code>{
   "spec_version": "0.1",
   "metadata": {},
   "interface": {},
   "diagram": {},
   "front_panel": {}
-}</pre>
+}
+</code></pre>
 
 <p>
 The <code>front_panel</code> section is optional.
 </p>
 
 <p>
-When absent, the FROG is interpreted as having no serialized front-panel composition.
-This does not affect the validity of the program as an executable FROG.
+When absent, the FROG is interpreted as having no serialized front-panel composition. This does not affect the validity of the program as an executable FROG.
 </p>
 
 <hr/>
@@ -177,8 +183,7 @@ This does not affect the validity of the program as an executable FROG.
 <h2 id="front-panel-ownership">5. Front Panel Ownership</h2>
 
 <p>
-The <code>front_panel</code> section owns the source-level declaration of the user-facing widget composition.
-It is the canonical source home for the widget tree of the user-facing panel.
+The <code>front_panel</code> section owns the source-level declaration of the user-facing widget composition. It is the canonical source home for the widget tree of the user-facing panel.
 </p>
 
 <p>
@@ -189,18 +194,21 @@ However, the <code>front_panel</code> section is not authoritative for:
   <li>program execution,</li>
   <li>public API definition,</li>
   <li>type-system definition,</li>
-  <li>widget-object interaction semantics.</li>
+  <li>widget-object interaction semantics,</li>
+  <li>class-side widget member legality.</li>
 </ul>
 
 <p>
 A practical interpretation rule is:
 </p>
 
-<pre>If the question is:
-- What is displayed and how widgets are composed? -> front_panel
-- What is the widget as an object?                -> Widget.md
-- How does execution use the widget?             -> Diagram.md / Widget interaction.md
-- What is the public API of the FROG?            -> Interface.md</pre>
+<pre><code>If the question is:
+- What is displayed and how widgets are composed? -> Front panel.md
+- What is the widget as an instance-side object?  -> Widget.md
+- What members does the class expose legally?     -> Widget class contract.md
+- How does execution use the widget?              -> Diagram.md / Widget interaction.md
+- What is the public API of the FROG?             -> Interface.md
+</code></pre>
 
 <hr/>
 
@@ -210,11 +218,12 @@ A practical interpretation rule is:
 The canonical structure of the front panel object is:
 </p>
 
-<pre>"front_panel": {
+<pre><code>"front_panel": {
   "canvas": {},
   "widgets": [],
   "ui_libraries": []
-}</pre>
+}
+</code></pre>
 
 <p>
 Fields:
@@ -227,13 +236,11 @@ Fields:
 </ul>
 
 <p>
-All fields are optional.
-If present, they MUST follow the declared structure.
+All fields are optional. If present, they MUST follow the declared structure.
 </p>
 
 <p>
-The absence of a field does not transfer its responsibility elsewhere.
-It only means the corresponding information is omitted from source.
+The absence of a field does not transfer its responsibility elsewhere. It only means the corresponding information is omitted from source.
 </p>
 
 <hr/>
@@ -263,7 +270,7 @@ Typical widget fields include:
 Example:
 </p>
 
-<pre>{
+<pre><code>{
   "id": "ctrl_gain",
   "role": "control",
   "widget": "frog.ui.standard.numeric_control",
@@ -274,11 +281,11 @@ Example:
     "width": 120,
     "height": 28
   }
-}</pre>
+}
+</code></pre>
 
 <p>
-The front panel serializes widget instances as source objects.
-It does not redefine widget class semantics already owned by <code>Widget.md</code>.
+The front panel serializes widget instances as source objects. It does not redefine widget class semantics, member legality, member accessibility, or class-side part contracts already owned by <code>Widget.md</code> and <code>Widget class contract.md</code>.
 </p>
 
 <hr/>
@@ -290,8 +297,7 @@ The front panel defines a widget tree.
 </p>
 
 <p>
-Top-level widgets appear in <code>front_panel.widgets</code>.
-Container widgets MAY define child widgets using the <code>children</code> field.
+Top-level widgets appear in <code>front_panel.widgets</code>. Container widgets MAY define child widgets using the <code>children</code> field.
 </p>
 
 <p>
@@ -309,7 +315,7 @@ Rules:
 Conceptually:
 </p>
 
-<pre>front_panel
+<pre><code>front_panel
    |
    +-- widgets[]
          |
@@ -321,10 +327,11 @@ Conceptually:
          |
          +-- widget
          |
-         +-- widget</pre>
+         +-- widget
+</code></pre>
 
 <p>
-The front panel therefore owns the composition tree, while individual widget semantics remain owned by the widget model.
+The front panel therefore owns the composition tree, while individual widget semantics remain owned by the widget model and class-side member legality remains owned by the widget class contract.
 </p>
 
 <hr/>
@@ -347,13 +354,11 @@ Typical responsibilities include:
 </ul>
 
 <p>
-This information is design-time composition data.
-It MUST NOT redefine execution semantics, widget-object semantics, or public interface semantics.
+This information is design-time composition data. It MUST NOT redefine execution semantics, widget-object semantics, widget class member semantics, or public interface semantics.
 </p>
 
 <p>
-The front panel does not require every implementation to render identically.
-The serialized meaning is structural and compositional, not pixel-perfect renderer identity.
+The front panel does not require every implementation to render identically. The serialized meaning is structural and compositional, not pixel-perfect renderer identity.
 </p>
 
 <hr/>
@@ -361,8 +366,7 @@ The serialized meaning is structural and compositional, not pixel-perfect render
 <h2 id="relation-with-the-diagram">10. Relation with the Diagram</h2>
 
 <p>
-The front panel does not define executable behavior.
-The diagram remains the authoritative executable graph of the FROG.
+The front panel does not define executable behavior. The diagram remains the authoritative executable graph of the FROG.
 </p>
 
 <p>
@@ -389,14 +393,14 @@ Object-style interaction occurs through standardized primitives such as:
 </ul>
 
 <p>
-These mechanisms are defined in <code>Widget interaction.md</code> together with the relevant widget and library specifications.
+These mechanisms are defined in <code>Widget interaction.md</code> together with the relevant widget and library specifications. Their legality against a given widget class depends on the corresponding class contract.
 </p>
 
 <p>
 The relationship can be summarized as:
 </p>
 
-<pre>front_panel
+<pre><code>front_panel
    |
    +-- declares widget instance
             |
@@ -409,7 +413,9 @@ The relationship can be summarized as:
                      +-- frog.ui.method_invoke
 
 front_panel declares UI composition
-diagram declares executable interaction</pre>
+diagram declares executable interaction
+widget class contract constrains legal object access
+</code></pre>
 
 <hr/>
 
@@ -420,8 +426,7 @@ The front panel is independent from the public interface of the FROG.
 </p>
 
 <p>
-A widget does not become a public API port merely because it exists in the front panel.
-Likewise, a public interface port does not require a corresponding widget.
+A widget does not become a public API port merely because it exists in the front panel. Likewise, a public interface port does not require a corresponding widget.
 </p>
 
 <p>
@@ -468,6 +473,7 @@ The front panel MUST NOT redefine:
 <ul>
   <li>public interface semantics,</li>
   <li>diagram semantics,</li>
+  <li>class-side widget member legality,</li>
   <li>language execution semantics.</li>
 </ul>
 
@@ -487,15 +493,16 @@ Validators SHOULD diagnose at least the following error classes:
 
 <h2 id="examples">13. Examples</h2>
 
-<h3 id="minimal-front-panel">13.1 Minimal Front Panel</h3>
+<h3>13.1 Minimal Front Panel</h3>
 
-<pre>"front_panel": {
+<pre><code>"front_panel": {
   "widgets": []
-}</pre>
+}
+</code></pre>
 
-<h3 id="front-panel-with-widget">13.2 Front Panel with One Widget</h3>
+<h3>13.2 Front Panel with One Widget</h3>
 
-<pre>"front_panel": {
+<pre><code>"front_panel": {
   "widgets": [
     {
       "id": "ctrl_gain",
@@ -510,11 +517,12 @@ Validators SHOULD diagnose at least the following error classes:
       }
     }
   ]
-}</pre>
+}
+</code></pre>
 
-<h3 id="front-panel-with-container">13.3 Front Panel with Container and Children</h3>
+<h3>13.3 Front Panel with Container and Children</h3>
 
-<pre>"front_panel": {
+<pre><code>"front_panel": {
   "canvas": {
     "width": 800,
     "height": 600
@@ -551,48 +559,47 @@ Validators SHOULD diagnose at least the following error classes:
           "layout": {
             "x": 20,
             "y": 70,
-            "width": 22,
-            "height": 22
+            "width": 120,
+            "height": 28
           }
         }
       ]
     }
   ]
-}</pre>
+}
+</code></pre>
 
 <hr/>
 
 <h2 id="summary">14. Summary</h2>
 
 <p>
-The optional <code>front_panel</code> section defines the serialized UI composition of a FROG program.
+The <code>front_panel</code> section is the optional canonical source home of user-facing widget composition in a FROG program.
+</p>
+
+<p>
+It defines:
 </p>
 
 <ul>
-  <li>It declares widget instances and their composition tree.</li>
-  <li>It serializes design-time layout and panel-level structure.</li>
-  <li>It is independent from the public interface.</li>
-  <li>It is independent from the authoritative executable diagram.</li>
-  <li>Execution semantics remain defined by the diagram and the language specification.</li>
+  <li>which widget instances exist on the panel,</li>
+  <li>how they are serialized,</li>
+  <li>how they are nested,</li>
+  <li>how their design-time layout is represented.</li>
 </ul>
 
 <p>
-This separation allows FROG programs to be:
+It does not define:
 </p>
 
 <ul>
-  <li>UI-driven,</li>
-  <li>purely computational,</li>
-  <li>or somewhere in between,</li>
+  <li>the public interface,</li>
+  <li>the authoritative executable graph,</li>
+  <li>the class-side widget contract,</li>
+  <li>the executable widget interaction model,</li>
+  <li>general language execution semantics.</li>
 </ul>
 
 <p>
-while preserving one consistent canonical source format with a clean separation between:
+Keeping that boundary explicit allows FROG to support rich panel composition without turning UI layout, one IDE, or one runtime into the hidden source of execution truth.
 </p>
-
-<ul>
-  <li>public API,</li>
-  <li>executable graph,</li>
-  <li>widget object model,</li>
-  <li>optional user-facing panel composition.</li>
-</ul>
