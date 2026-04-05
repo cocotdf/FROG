@@ -19,8 +19,9 @@
   <li><a href="#current-surface-matrix">4. Current Surface Matrix</a></li>
   <li><a href="#version-status-legend">5. Version Status Legend</a></li>
   <li><a href="#cross-version-handling-summary">6. Cross-Version Handling Summary</a></li>
-  <li><a href="#maintenance-rule">7. Maintenance Rule</a></li>
-  <li><a href="#summary">8. Summary</a></li>
+  <li><a href="#cumulative-version-model-summary">7. Cumulative Version Model Summary</a></li>
+  <li><a href="#maintenance-rule">8. Maintenance Rule</a></li>
+  <li><a href="#summary">9. Summary</a></li>
 </ul>
 
 <hr/>
@@ -97,6 +98,11 @@ The main columns are:
       <td>Additive by default, explicit degraded readability, preservable when safe</td>
       <td>Governed centrally in <code>Versioning/Readme.md</code></td>
     </tr>
+    <tr>
+      <td>Cumulative version model</td>
+      <td>Later versions extend earlier valid forms by default</td>
+      <td>Later versions should normally be read as earlier valid forms plus bounded additions unless an explicit breaking boundary is declared</td>
+    </tr>
   </tbody>
 </table>
 
@@ -121,7 +127,7 @@ The main columns are:
       <td>Published, broad framing, mostly aligned</td>
       <td>Repository-level entry point and top-level architecture framing</td>
       <td>Describes the current multi-layer repository posture and the bounded end-to-end corridor</td>
-      <td>Add a short introduction of <code>Versioning/</code> as a distinct repository-level governance surface</td>
+      <td>Keep top-level framing aligned with the published Strategy / Roadmap / Versioning tri-distinction</td>
     </tr>
     <tr>
       <td><code>Expression/</code></td>
@@ -214,18 +220,18 @@ The main columns are:
     <tr>
       <td><code>Versioning/Readme.md</code></td>
       <td><code>0.1-draft</code></td>
-      <td>Draft-to-add centralized governance surface</td>
+      <td>Published centralized governance surface</td>
       <td>Specification-version governance entry point</td>
-      <td>Should centralize doctrine, current corpus version, and transition logic</td>
-      <td>Publish and then lightly reference it from the root README and nearby repository-level surfaces</td>
+      <td>Centralizes doctrine, current corpus version, cumulative version model, and transition logic</td>
+      <td>Keep current doctrine, current corpus values, and cross-version policy aligned with the real published repository posture</td>
     </tr>
     <tr>
       <td><code>Versioning/Matrix.md</code></td>
       <td><code>0.1-draft</code></td>
-      <td>Draft-to-add centralized status matrix</td>
+      <td>Published centralized status matrix</td>
       <td>Detailed current-state matrix for repository surfaces</td>
-      <td>Should centralize the current per-surface status table</td>
-      <td>Publish and keep it maintained as the single detailed current-status table</td>
+      <td>Centralizes the current per-surface status table and complements the main versioning governance document</td>
+      <td>Keep the matrix synchronized with the doctrine, especially additive evolution and the cumulative version model</td>
     </tr>
     <tr>
       <td>Bounded executable corridor</td>
@@ -242,6 +248,14 @@ The main columns are:
       <td>Source-visible widget declaration, interaction, class contract, and profile-level class modeling</td>
       <td>Already serious and repository-visible, but still a likely growth front</td>
       <td>Keep ownership and object-surface distinctions aligned across Expression, Libraries, and Profiles</td>
+    </tr>
+    <tr>
+      <td>Cumulative version model</td>
+      <td><code>0.1-draft</code></td>
+      <td>Published cross-version doctrine under active consolidation</td>
+      <td>Repository-wide interpretation of later versions as bounded extensions of earlier valid forms</td>
+      <td>Now explicitly part of centralized versioning governance and intended to shape later specification evolution</td>
+      <td>Keep source-compatibility guidance and degraded-reading rules aligned with this model as new versions are introduced</td>
     </tr>
   </tbody>
 </table>
@@ -274,8 +288,12 @@ The main columns are:
       <td>Published and important, but not yet treated as fully stabilized repository-wide closure law</td>
     </tr>
     <tr>
-      <td>Draft-to-add</td>
-      <td>Proposed new published surface not yet present in the currently published repository tree</td>
+      <td>Published centralized governance surface</td>
+      <td>Published repository-level governance surface that centralizes doctrine and current corpus-version posture without taking over technical ownership</td>
+    </tr>
+    <tr>
+      <td>Published centralized status matrix</td>
+      <td>Published repository-level current-status table that centralizes visibility without replacing technical ownership</td>
     </tr>
     <tr>
       <td>Non-normative framing</td>
@@ -304,7 +322,35 @@ This doctrine applies across the matrix as a repository-wide governance rule. De
 
 <hr/>
 
-<h2 id="maintenance-rule">7. Maintenance Rule</h2>
+<h2 id="cumulative-version-model-summary">7. Cumulative Version Model Summary</h2>
+<p>
+The current repository-wide cumulative version model is:
+</p>
+
+<pre><code>later version
+    =
+earlier valid forms
+    +
+explicit bounded additions
+</code></pre>
+
+<p>
+This means that later specification evolution should normally preserve earlier valid forms and extend them, rather than silently redefine them.
+</p>
+
+<p>
+This cumulative model does not remove the need for degraded-reading and preservation-aware tooling behavior.
+It complements that behavior:
+</p>
+
+<ul>
+  <li>the cumulative model governs how the specification evolves,</li>
+  <li>the degraded-reading model governs how older-capability tools handle newer artifacts they do not fully support.</li>
+</ul>
+
+<hr/>
+
+<h2 id="maintenance-rule">8. Maintenance Rule</h2>
 <p>
 This matrix should be updated whenever one of the following changes:
 </p>
@@ -314,7 +360,8 @@ This matrix should be updated whenever one of the following changes:
   <li>the bounded published source target,</li>
   <li>the stabilization status of a major repository surface,</li>
   <li>the declared next closure target of a major repository surface,</li>
-  <li>the repository adds or removes a major top-level specification or support surface.</li>
+  <li>the repository adds or removes a major top-level specification or support surface,</li>
+  <li>the centralized cross-version doctrine materially changes.</li>
 </ul>
 
 <p>
@@ -323,7 +370,7 @@ This file should remain compact, current, and centralized. Other documents shoul
 
 <hr/>
 
-<h2 id="summary">8. Summary</h2>
+<h2 id="summary">9. Summary</h2>
 <p>
 This file is the central detailed version-status table for the published FROG specification corpus.
 </p>
@@ -337,5 +384,6 @@ It should answer, in one place:
   <li>which surfaces are currently bounded and stabilized,</li>
   <li>which surfaces remain draft or framing-only,</li>
   <li>which cross-cutting corridors are already real,</li>
+  <li>which centralized cross-version doctrines are now explicitly in force,</li>
   <li>and what the next smallest coherent closure steps are.</li>
 </ul>
