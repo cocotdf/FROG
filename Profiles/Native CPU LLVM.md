@@ -61,7 +61,8 @@ lowering
    -&gt;
 backend contract
    -&gt;
-LLVM-oriented native CPU backend family</code></pre>
+LLVM-oriented native CPU backend family
+</code></pre>
 
 <p>
 This profile is intentionally conservative.
@@ -138,7 +139,8 @@ Profiles/
    - optional standardized capability families
 
 Implementations/
-   - non-normative executable workspaces</code></pre>
+   - non-normative executable workspaces
+</code></pre>
 
 <p>
 Accordingly, this document:
@@ -174,7 +176,8 @@ lowered executable meaning
 
 This profile
    constrains
-one bounded native CPU LLVM-oriented compilation corridor</code></pre>
+one bounded native CPU LLVM-oriented compilation corridor
+</code></pre>
 
 <hr/>
 
@@ -260,7 +263,8 @@ a semantically accepted FROG program
 can be derived to canonical FROG Execution IR,
 lowered faithfully,
 emitted as a backend contract,
-and consumed by an LLVM-oriented native CPU backend family.</code></pre>
+and consumed by an LLVM-oriented native CPU backend family.
+</code></pre>
 
 <p>
 This profile exists so that this statement becomes:
@@ -295,7 +299,8 @@ backend contract
    -&gt;
 LLVM-oriented native CPU consumer
    -&gt;
-native executable realization</code></pre>
+native executable realization
+</code></pre>
 
 <p>
 This profile applies only if the program remains within the accepted subset and the implementation preserves the full corridor discipline.
@@ -322,14 +327,16 @@ It says:
 
 <pre><code>accepted meaning
    can reach
-backend-family consumability</code></pre>
+backend-family consumability
+</code></pre>
 
 <p>
 It does not yet, by itself, say:
 </p>
 
 <pre><code>every backend-consumable case
-is automatically execution-start closed</code></pre>
+is automatically execution-start closed
+</code></pre>
 
 <hr/>
 
@@ -417,7 +424,8 @@ clear lowering
    -&gt;
 clear backend handoff
    -&gt;
-clear native CPU consumer route</code></pre>
+clear native CPU consumer route
+</code></pre>
 
 <p>
 Programs that depend on broad hidden services, broad implicit runtime mediation, or ambiguous execution-side assumptions do not belong naturally to the first accepted subset.
@@ -462,7 +470,8 @@ IR-preservable
    +
 lowerable
    +
-contract-emittable</code></pre>
+contract-emittable
+</code></pre>
 
 <hr/>
 
@@ -493,7 +502,8 @@ explicit in IR
    -&gt;
 explicit in lowering commitments
    -&gt;
-explicit enough at backend handoff</code></pre>
+explicit enough at backend handoff
+</code></pre>
 
 <hr/>
 
@@ -591,12 +601,8 @@ Interop support under this profile is therefore:
   <li>possible,</li>
   <li>restricted,</li>
   <li>contract-bound,</li>
-  <li>not license for arbitrary foreign-runtime dependency surfaces.</li>
+  <li>not a license for arbitrary foreign-runtime dependency surfaces.</li>
 </ul>
-
-<p>
-Where interop is involved, this profile should also be read together with the separately owned optional interoperability profile rather than as a replacement for it.
-</p>
 
 <hr/>
 
@@ -665,14 +671,16 @@ lowering
    -&gt;
 backend contract
    -&gt;
-consumer decision</code></pre>
+consumer decision
+</code></pre>
 
 <p>
 The backend contract answers:
 </p>
 
 <pre><code>Can this downstream consumer family
-accept and honor the lowered executable commitments?</code></pre>
+accept and honor the lowered executable commitments?
+</code></pre>
 
 <hr/>
 
@@ -688,7 +696,8 @@ Accordingly, it should be read together with any companion execution-contract do
 
 <pre><code>When may a backend-consumable lowered FROG program
 actually be considered ready to begin execution
-under a bounded native CPU LLVM corridor?</code></pre>
+under a bounded native CPU LLVM corridor?
+</code></pre>
 
 <p>
 The distinction is essential:
@@ -705,7 +714,8 @@ standardized consumer-facing handoff
 execution contract
    defines
 additional profile-level closure
-for beginning execution under explicit assumptions</code></pre>
+for beginning execution under explicit assumptions
+</code></pre>
 
 <p>
 Therefore:
@@ -741,7 +751,8 @@ Profiles
    may define bounded capability corridors and execution-side companion constraints
 
 Implementations
-   still own private runtime realization</code></pre>
+   still own private runtime realization
+</code></pre>
 
 <p>
 This is the intended reading discipline:
@@ -750,7 +761,8 @@ This is the intended reading discipline:
 <pre><code>compilation corridor
    is necessary
 but not always sufficient
-for execution-start closure</code></pre>
+for execution-start closure
+</code></pre>
 
 <hr/>
 
@@ -811,7 +823,8 @@ This is one of the key benefits of the profile:
 
 <pre><code>explicit profile rejection
    is better than
-implicit backend drift</code></pre>
+implicit backend drift
+</code></pre>
 
 <p>
 Likewise, explicit execution-contract rejection is better than pretending compilability automatically means safe executable start.
@@ -845,4 +858,111 @@ Future conformance growth for this profile SHOULD therefore introduce cases that
 <ul>
   <li>language-valid but profile-rejected,</li>
   <li>IR-derivable but not lowerable under this profile,</li>
-  <li>lowerable but not
+  <li>lowerable but not contract-emittable under this profile,</li>
+  <li>contract-emittable but consumer-rejected under this profile,</li>
+  <li>consumer-acceptable but execution-contract-rejected where stronger execution closure is required.</li>
+</ul>
+
+<hr/>
+
+<h2 id="relation-with-other-specification-layers">24. Relation with Other Specification Layers</h2>
+
+<p>
+This profile remains subordinate to the rest of the published architecture:
+</p>
+
+<ul>
+  <li><code>Expression/</code> still owns source form,</li>
+  <li><code>Language/</code> still owns validated meaning,</li>
+  <li><code>Libraries/</code> still own intrinsic primitive law,</li>
+  <li><code>IR/</code> still owns canonical IR, derivation, schema, lowering, and backend contract,</li>
+  <li><code>Profiles/</code> only owns the optional standardized capability claim described here and any explicit profile-level companion closures such as execution contracts.</li>
+</ul>
+
+<p>
+This is critical:
+</p>
+
+<pre><code>Native CPU LLVM
+   is a profile claim
+
+it is not
+the language core
+
+it is not
+the canonical IR
+
+it is not
+the hidden definition of execution for all FROG programs
+</code></pre>
+
+<hr/>
+
+<h2 id="future-evolution">25. Future Evolution</h2>
+
+<p>
+This profile is intentionally a first closure step.
+It MAY evolve later through:
+</p>
+
+<ul>
+  <li>wider accepted structured-control coverage,</li>
+  <li>wider explicit-state coverage,</li>
+  <li>better effect-surface support,</li>
+  <li>restricted UI-service support,</li>
+  <li>better interop coverage,</li>
+  <li>richer native deployment modes,</li>
+  <li>additional backend-family refinements,</li>
+  <li>stronger execution-contract closure for bounded executable subsets.</li>
+</ul>
+
+<p>
+However, future growth SHOULD remain disciplined:
+</p>
+
+<pre><code>close one coherent corridor
+before broadening the optional surface
+</code></pre>
+
+<hr/>
+
+<h2 id="summary">26. Summary</h2>
+
+<p>
+This document defines <code>native_cpu_llvm</code> as an optional standardized FROG profile for a first industrial native CPU compilation corridor oriented toward LLVM-family downstream consumers.
+</p>
+
+<p>
+Its core rules are:
+</p>
+
+<ul>
+  <li>the profile is optional,</li>
+  <li>the profile is downstream-compilation-oriented,</li>
+  <li>the profile does not redefine the language core or the canonical IR,</li>
+  <li>the profile accepts only a conservative v0.1 subset,</li>
+  <li>the profile requires faithful derivation, lowering, and backend-contract emission,</li>
+  <li>the profile does not silently equate compilability with execution-start closure,</li>
+  <li>the profile requires explicit rejection when the corridor cannot be honored.</li>
+</ul>
+
+<p>
+This profile therefore enables a serious public statement:
+</p>
+
+<pre><code>FROG can support a real native compiled corridor
+without collapsing the language into LLVM,
+because LLVM remains downstream from
+validated meaning,
+canonical open IR,
+lowering,
+and backend contract.
+</code></pre>
+
+<p>
+And where execution-start closure matters, that closure must be stated explicitly through a companion execution contract rather than being guessed from compilability alone.
+</p>
+
+<p>
+That is the purpose of this profile in base v0.1.
+</p>
