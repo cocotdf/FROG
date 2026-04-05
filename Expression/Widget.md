@@ -76,6 +76,11 @@ FROG distinguishes two interaction paths for widgets:
 These two paths are related but distinct. The natural value path is the canonical representation for ordinary value flow. The object-style path is the canonical representation for properties, methods, parts, and other explicit widget-object interactions.
 </p>
 
+<p>
+This document does not define repository-wide version policy.
+Top-level <code>spec_version</code> identifies the source-format compatibility target of the containing <code>.frog</code> file, while the published specification corpus version remains governed centrally in <code>Versioning/Readme.md</code>.
+</p>
+
 <hr/>
 
 <h2 id="goals-of-the-widget-model">2. Goals of the Widget Model</h2>
@@ -91,6 +96,7 @@ The widget model is designed to provide:
   <li><strong>Tool interoperability</strong> — multiple editors and runtimes can reconstruct equivalent widget meaning.</li>
   <li><strong>Extensibility</strong> — specialized widget libraries MAY extend the model without redefining its foundations.</li>
   <li><strong>Graphical durability</strong> — widget declarations remain explicit and specifiable as long-term source objects.</li>
+  <li><strong>Boundary clarity</strong> — value typing, widget-reference identity, and explicit UI sequencing MUST remain distinct concerns.</li>
 </ul>
 
 <hr/>
@@ -126,6 +132,16 @@ FROG v0.1 also keeps an explicit architectural split:
   <li><code>Widget interaction.md</code> defines diagram-side executable access to widgets.</li>
 </ul>
 
+<p>
+In base v0.1:
+</p>
+
+<ul>
+  <li>ordinary widget values are governed by <code>Type.md</code>,</li>
+  <li>widget references are object-access anchors rather than ordinary first-class value types,</li>
+  <li>explicit UI sequencing belongs to the interaction primitive surface rather than to the widget instance structure itself.</li>
+</ul>
+
 <hr/>
 
 <h2 id="relation-with-other-specifications">4. Relation with Other Specifications</h2>
@@ -137,6 +153,7 @@ FROG v0.1 also keeps an explicit architectural split:
   <li><code>Diagram.md</code> defines the executable graph and the node kinds that materialize widget participation in that graph.</li>
   <li><code>Widget interaction.md</code> defines the explicit diagram-side interaction model for widget references, property reads and writes, method invocation, and optional UI sequencing.</li>
   <li><code>Interface.md</code> defines the public program contract and remains distinct from the front panel.</li>
+  <li><code>Versioning/Readme.md</code> defines the centralized distinction between specification corpus version, top-level <code>spec_version</code>, and program artifact versioning.</li>
 </ul>
 
 <p>
@@ -161,7 +178,8 @@ This document defines what widget instances are. It does not redefine:
   <li>the executable graph rules,</li>
   <li>public interface rules,</li>
   <li>front-panel composition rules,</li>
-  <li>class-side member legality already owned by <code>Widget class contract.md</code>.</li>
+  <li>class-side member legality already owned by <code>Widget class contract.md</code>,</li>
+  <li>repository-wide version-transition doctrine.</li>
 </ul>
 
 <hr/>
@@ -258,6 +276,13 @@ A widget is not a type, and a type is not a widget.
   <li><code>frog.ui.standard.numeric_control</code> is a widget class,</li>
   <li>a widget instance may be a numeric control carrying a value of type <code>f64</code>.</li>
 </ul>
+
+<h3>6.4 Additional consequence</h3>
+
+<p>
+A widget reference is not a widget class and is not an ordinary value type expression.
+It is an object-access token materialized in the diagram by <code>widget_reference</code> and consumed by object-style interaction primitives.
+</p>
 
 <hr/>
 
@@ -534,6 +559,15 @@ object-style property access to value
 They may refer to related semantics, but they are not the same abstraction layer.
 </p>
 
+<p>
+Likewise:
+</p>
+
+<pre><code>ordinary typed value
+    !=
+widget reference token
+</code></pre>
+
 <hr/>
 
 <h2 id="widget-reference-model">11. Widget Reference Model</h2>
@@ -560,6 +594,10 @@ A <code>widget_reference</code> node identifies one widget instance by stable so
 
 <p>
 A widget reference does not by itself define which members are legal. It only anchors object-style access. Member legality depends on the widget class contract, and executable access rules depend on <code>Widget interaction.md</code>.
+</p>
+
+<p>
+In base v0.1, a widget reference is not an ordinary user-declared value type in canonical source. It is an interaction token used by the diagram-side object-access model.
 </p>
 
 <hr/>
@@ -742,6 +780,10 @@ This baseline exists to guarantee a small portable common core.
 Profiles MAY define additional widget classes or richer widget vocabularies. Such extensions MUST remain compatible with the widget instance model defined here and with the class-side contract model defined in <code>Widget class contract.md</code>.
 </p>
 
+<p>
+Under the centralized cumulative version model, later source-format versions should normally extend earlier valid widget-instance forms rather than silently replace them, unless an explicit breaking boundary is declared in repository-wide version governance.
+</p>
+
 <hr/>
 
 <h2 id="addressing-model">17. Addressing Model</h2>
@@ -810,6 +852,11 @@ Validators SHOULD additionally diagnose at least:
 
 <p>
 Detailed legality of class members, part members, access modes, profile gates, and host gates belongs to the corresponding widget class contract and to the relevant interaction validation.
+</p>
+
+<p>
+These checks validate canonical widget-instance structure.
+They do not, by themselves, redefine top-level <code>spec_version</code> policy or repository-wide corpus-version governance.
 </p>
 
 <hr/>
@@ -915,7 +962,9 @@ It does not define:
   <li>front-panel composition ownership,</li>
   <li>class-side member legality,</li>
   <li>diagram-side executable widget interaction semantics,</li>
-  <li>general language execution semantics.</li>
+  <li>general language execution semantics,</li>
+  <li>source-format compatibility law,</li>
+  <li>published specification corpus versioning.</li>
 </ul>
 
 <p>
