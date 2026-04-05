@@ -84,6 +84,16 @@ Execution behavior MUST be derived from the validated executable source represen
 Runtimes, compilers, and other execution-facing systems MUST ignore metadata fields when determining executable meaning.
 </p>
 
+<p>
+Version fields also remain separated by role:
+</p>
+
+<ul>
+  <li><code>metadata.program_version</code> versions one program artifact,</li>
+  <li>top-level <code>spec_version</code> versions the source-format compatibility target of the <code>.frog</code> file,</li>
+  <li>the published specification corpus version is governed centrally in <code>Versioning/Readme.md</code>.</li>
+</ul>
+
 <pre>
 Metadata at a glance
 
@@ -96,6 +106,8 @@ metadata
    != interface
    != diagram
    != execution semantics
+   != source-format compatibility law
+   != specification corpus version
 </pre>
 
 <hr/>
@@ -137,6 +149,7 @@ Humans and tools need:
 - a description
 - descriptive context
 - discovery hints
+- program artifact tracking
 
 Execution does not need:
 - author name
@@ -144,6 +157,7 @@ Execution does not need:
 - summary text
 - license label
 - timestamps
+- program_version
 </pre>
 
 <hr/>
@@ -172,7 +186,9 @@ This document does not specify:
   <li>the optional front-panel composition,</li>
   <li>IDE authoring preferences,</li>
   <li>cache or derived artifacts,</li>
-  <li>runtime scheduling, typing, or execution semantics.</li>
+  <li>runtime scheduling, typing, or execution semantics,</li>
+  <li>the top-level <code>spec_version</code> compatibility policy,</li>
+  <li>the published specification corpus version.</li>
 </ul>
 
 <pre>
@@ -188,6 +204,8 @@ This document does not own:
 - IDE recoverability state
 - tooling cache
 - runtime meaning
+- source-format compatibility policy
+- specification corpus version policy
 </pre>
 
 <hr/>
@@ -222,6 +240,8 @@ In particular:
   <li><code>metadata</code> does not define front-panel composition. That belongs to <code>front_panel</code> when present.</li>
   <li><code>metadata</code> does not carry IDE recoverability or editor-state preferences. That belongs to <code>ide</code>.</li>
   <li><code>metadata</code> does not carry derived accelerators or regenerated artifacts. That belongs to <code>cache</code>.</li>
+  <li><code>metadata.program_version</code> does not define source-format compatibility. That belongs to top-level <code>spec_version</code>.</li>
+  <li><code>metadata.program_version</code> does not define the repository-wide published specification corpus version. That belongs to <code>Versioning/Readme.md</code>.</li>
 </ul>
 
 <pre>
@@ -230,6 +250,12 @@ Non-executable boundary inside Expression/
 metadata -> durable descriptive identity
 ide      -> IDE-facing authoring preferences and recoverability aids
 cache    -> derived tooling accelerators safe to delete and regenerate
+
+Version boundary
+
+metadata.program_version -> one program artifact revision
+spec_version             -> source-format compatibility target
+Versioning/Readme.md     -> published specification corpus version
 </pre>
 
 <hr/>
@@ -327,7 +353,7 @@ Required descriptive core
 Optional descriptive enrichments
    -> summary
    -> author
-   -> version
+   -> program_version
    -> tags
    -> example flag
    -> timestamps
@@ -408,7 +434,7 @@ Identifies the creator, maintainer, or owning organization.
 <h3 id="field-program-version">7.5 <code>program_version</code></h3>
 
 <p>
-Version identifier of the FROG program itself.
+Version identifier of the FROG program artifact itself.
 </p>
 
 <pre>"program_version": "1.2.0"</pre>
@@ -417,7 +443,23 @@ Version identifier of the FROG program itself.
   <li>MUST be a string if present.</li>
   <li>SHOULD use a stable project-defined versioning convention.</li>
   <li>Semantic versioning (<code>MAJOR.MINOR.PATCH</code>) is RECOMMENDED when appropriate.</li>
+  <li>MUST be interpreted as the revision of the authored FROG program artifact, not as the source-format compatibility version of the file.</li>
+  <li>MUST NOT be interpreted as the published specification corpus version.</li>
 </ul>
+
+<p>
+The following distinction MUST remain explicit:
+</p>
+
+<pre>
+metadata.program_version -> version of one FROG program artifact
+spec_version             -> source-format compatibility target of the .frog file
+Versioning/Readme.md     -> published specification corpus version
+</pre>
+
+<p>
+These three notions are related but not interchangeable.
+</p>
 
 <hr/>
 
@@ -542,6 +584,7 @@ metadata validation
 metadata validation
    != executable graph validation
    != runtime semantic interpretation
+   != source-format compatibility validation
 </pre>
 
 <hr/>
@@ -594,7 +637,7 @@ Derived, regenerable tooling accelerators
 
 <p>
 Metadata extensions SHOULD remain understandable as descriptive source information.
-They SHOULD NOT become a hidden transport for execution hints, private lowering directives, runtime policies, or editor-only transient state.
+They SHOULD NOT become a hidden transport for execution hints, private lowering directives, runtime policies, editor-only transient state, or source-format compatibility policy.
 </p>
 
 <hr/>
@@ -636,6 +679,7 @@ They SHOULD NOT become a hidden transport for execution hints, private lowering 
   <li>Remain compatible with transparent canonical source representation.</li>
   <li>Remain strictly non-authoritative for execution semantics.</li>
   <li>Preserve a clean architectural boundary with <code>interface</code>, <code>diagram</code>, <code>front_panel</code>, <code>ide</code>, and <code>cache</code>.</li>
+  <li>Preserve a clean versioning boundary with top-level <code>spec_version</code> and centralized corpus-version governance.</li>
 </ul>
 
 <pre>
@@ -646,6 +690,7 @@ Metadata should stay:
 - transparent
 - searchable
 - ignorable for execution
+- distinct from source compatibility law
 
 Metadata should not become:
 
@@ -653,6 +698,8 @@ Metadata should not become:
 - IDE transient state
 - cache payload
 - hidden runtime policy
+- hidden spec_version substitute
+- hidden corpus-version substitute
 </pre>
 
 <hr/>
@@ -674,7 +721,10 @@ This preserves a clean long-term separation between:
   <li>authoritative executable logic (<code>diagram</code>),</li>
   <li>optional user-facing composition (<code>front_panel</code>),</li>
   <li>optional IDE-facing authoring metadata (<code>ide</code>),</li>
-  <li>optional derived tooling data (<code>cache</code>).</li>
+  <li>optional derived tooling data (<code>cache</code>),</li>
+  <li>program artifact versioning (<code>metadata.program_version</code>),</li>
+  <li>source-format compatibility versioning (top-level <code>spec_version</code>),</li>
+  <li>published specification corpus version governance (<code>Versioning/Readme.md</code>).</li>
 </ul>
 
 <pre>
@@ -682,4 +732,5 @@ One-line mental model
 
 metadata tells you what the FROG is
 metadata does not tell the FROG how to execute
+metadata.program_version does not tell the repository what specification version it is
 </pre>
