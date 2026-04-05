@@ -71,6 +71,10 @@ This directory is about the authoritative source form of a FROG. It is not the c
 Cross-cutting execution semantics are related to this source specification but are not owned here when they belong to validated program meaning. Likewise, optional capability families may appear in executable diagrams, but their normative ownership remains outside <code>Expression/</code> when they belong to profile specifications rather than to the source format itself.
 </p>
 
+<p>
+Source-version interpretation is centralized in <code>Versioning/Readme.md</code>. In particular, the <code>spec_version</code> field follows the repository-wide cumulative version model: later source-format versions should normally extend earlier valid forms rather than silently replace them, unless an explicit breaking boundary is declared.
+</p>
+
 <pre><code>Repository architecture around Expression
 
 Expression/   -&gt; canonical source form
@@ -162,7 +166,8 @@ It does not define:
   <li>the complete cross-cutting execution semantics of the language,</li>
   <li>the complete intrinsic primitive vocabulary of FROG,</li>
   <li>the complete optional profile surface of FROG,</li>
-  <li>the complete standard widget catalog of every possible IDE or UI system.</li>
+  <li>the complete standard widget catalog of every possible IDE or UI system,</li>
+  <li>the full repository-wide policy for specification-version transition.</li>
 </ul>
 
 <hr/>
@@ -330,6 +335,15 @@ The following distinctions MUST remain explicit:
   <li>backend contract is not identical to one private runtime realization.</li>
 </ul>
 
+<p>
+The following versioning distinction MUST also remain explicit:
+</p>
+
+<ul>
+  <li>the source file's <code>spec_version</code> identifies the source-format compatibility target of that artifact,</li>
+  <li>the full repository-wide version-transition policy remains centralized in <code>Versioning/Readme.md</code>.</li>
+</ul>
+
 <hr/>
 
 <h2 id="file-tree-and-artifact-families">7. File Tree and Artifact Families</h2>
@@ -465,6 +479,10 @@ MAY:
 - ide
 - cache
 </code></pre>
+
+<p>
+The presence of <code>spec_version</code> is also the source-level anchor for cumulative source evolution. Later source-format versions should normally extend earlier valid forms rather than silently invalidate them, as governed centrally in <code>Versioning/Readme.md</code>.
+</p>
 
 <hr/>
 
@@ -818,6 +836,10 @@ Structural validity concerns whether the source:
 Structural validity does not by itself establish the full validated meaning of the program.
 </p>
 
+<p>
+Structural validity also does not by itself define cross-version policy. The repository-wide cumulative version model and related transition doctrine remain centralized in <code>Versioning/Readme.md</code>.
+</p>
+
 <hr/>
 
 <h2 id="execution-relevance-validation-and-derivation-boundary">15. Execution Relevance, Validation, and Derivation Boundary</h2>
@@ -903,7 +925,8 @@ Some parts of the source model are intentionally conservative in v0.1 so that:
 <ul>
   <li>canonical source remains stable,</li>
   <li>structural validity remains machine-checkable where appropriate,</li>
-  <li>later semantic and execution-facing layers can evolve without collapsing back into private tool behavior.</li>
+  <li>later semantic and execution-facing layers can evolve without collapsing back into private tool behavior,</li>
+  <li>later source-format versions can remain cumulative extensions of earlier valid forms rather than silent replacements.</li>
 </ul>
 
 <hr/>
