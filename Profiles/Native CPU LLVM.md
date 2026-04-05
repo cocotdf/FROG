@@ -53,7 +53,7 @@ This document defines <code>native_cpu_llvm</code> as an optional standardized F
 Its purpose is to define a first serious compilation-oriented profile for programs intended to pass through:
 </p>
 
-<pre>validated meaning
+<pre><code>validated meaning
    -&gt;
 canonical FROG Execution IR
    -&gt;
@@ -61,14 +61,15 @@ lowering
    -&gt;
 backend contract
    -&gt;
-LLVM-oriented native CPU backend family</pre>
+LLVM-oriented native CPU backend family</code></pre>
 
 <p>
 This profile is intentionally conservative.
 </p>
 
 <p>
-It does not claim that every valid FROG program belongs automatically to the same first native compiled corridor. Instead, it defines one bounded profile surface under which a producer and a downstream consumer may make a serious, public, disciplined claim that a semantically accepted FROG program can be compiled toward a native CPU realization through an LLVM-oriented backend family without collapsing FROG into LLVM itself.
+It does not claim that every valid FROG program belongs automatically to the same first native compiled corridor.
+Instead, it defines one bounded profile surface under which a producer and a downstream consumer may make a serious, public, disciplined claim that a semantically accepted FROG program can be compiled toward a native CPU realization through an LLVM-oriented backend family without collapsing FROG into LLVM itself.
 </p>
 
 <hr/>
@@ -116,7 +117,7 @@ This profile therefore turns a general compiler direction into an explicit optio
 This profile must be read inside the repository-wide ownership boundaries:
 </p>
 
-<pre>Expression/
+<pre><code>Expression/
    - canonical source form
 
 Language/
@@ -137,7 +138,7 @@ Profiles/
    - optional standardized capability families
 
 Implementations/
-   - non-normative executable workspaces</pre>
+   - non-normative executable workspaces</code></pre>
 
 <p>
 Accordingly, this document:
@@ -155,7 +156,7 @@ Accordingly, this document:
 Compactly:
 </p>
 
-<pre>Language
+<pre><code>Language
    defines
 meaning
 
@@ -173,7 +174,7 @@ lowered executable meaning
 
 This profile
    constrains
-one bounded native CPU LLVM-oriented compilation corridor</pre>
+one bounded native CPU LLVM-oriented compilation corridor</code></pre>
 
 <hr/>
 
@@ -225,7 +226,7 @@ This profile also does not authorize silent semantic invention at consumer level
 The identifier of this profile is:
 </p>
 
-<pre>native_cpu_llvm</pre>
+<pre><code>native_cpu_llvm</code></pre>
 
 <p>
 This identifier names an optional standardized capability claim.
@@ -254,12 +255,12 @@ It means only that one optional profile exists for a bounded native CPU compilat
 The core purpose of this profile is to enable a first industrially credible statement of the form:
 </p>
 
-<pre>For the accepted Native CPU LLVM v0.1 subset,
+<pre><code>For the accepted Native CPU LLVM v0.1 subset,
 a semantically accepted FROG program
 can be derived to canonical FROG Execution IR,
 lowered faithfully,
 emitted as a backend contract,
-and consumed by an LLVM-oriented native CPU backend family.</pre>
+and consumed by an LLVM-oriented native CPU backend family.</code></pre>
 
 <p>
 This profile exists so that this statement becomes:
@@ -280,7 +281,7 @@ This profile exists so that this statement becomes:
 The intended corridor for this profile is:
 </p>
 
-<pre>.frog
+<pre><code>.frog
    -&gt;
 structural validation
    -&gt;
@@ -294,7 +295,7 @@ backend contract
    -&gt;
 LLVM-oriented native CPU consumer
    -&gt;
-native executable realization</pre>
+native executable realization</code></pre>
 
 <p>
 This profile applies only if the program remains within the accepted subset and the implementation preserves the full corridor discipline.
@@ -319,16 +320,16 @@ This corridor is intentionally compilation-oriented first.
 It says:
 </p>
 
-<pre>accepted meaning
+<pre><code>accepted meaning
    can reach
-backend-family consumability</pre>
+backend-family consumability</code></pre>
 
 <p>
 It does not yet, by itself, say:
 </p>
 
-<pre>every backend-consumable case
-is automatically execution-start closed</pre>
+<pre><code>every backend-consumable case
+is automatically execution-start closed</code></pre>
 
 <hr/>
 
@@ -408,7 +409,7 @@ A program shape belongs naturally to this profile when it can be understood as:
 The preferred first-profile posture is therefore:
 </p>
 
-<pre>clear accepted graph
+<pre><code>clear accepted graph
    -&gt;
 clear canonical Execution IR
    -&gt;
@@ -416,7 +417,7 @@ clear lowering
    -&gt;
 clear backend handoff
    -&gt;
-clear native CPU consumer route</pre>
+clear native CPU consumer route</code></pre>
 
 <p>
 Programs that depend on broad hidden services, broad implicit runtime mediation, or ambiguous execution-side assumptions do not belong naturally to the first accepted subset.
@@ -455,13 +456,13 @@ The profile does not require that every conceivable future control feature alrea
 It does require that admitted control structures be:
 </p>
 
-<pre>semantically accepted
+<pre><code>semantically accepted
    +
 IR-preservable
    +
 lowerable
    +
-contract-emittable</pre>
+contract-emittable</code></pre>
 
 <hr/>
 
@@ -486,13 +487,13 @@ This profile does not authorize stateful behavior to re-enter through hidden per
 If state exists, it must remain:
 </p>
 
-<pre>explicit upstream
+<pre><code>explicit upstream
    -&gt;
 explicit in IR
    -&gt;
 explicit in lowering commitments
    -&gt;
-explicit enough at backend handoff</pre>
+explicit enough at backend handoff</code></pre>
 
 <hr/>
 
@@ -539,7 +540,8 @@ In particular:
 </ul>
 
 <p>
-This profile therefore allows effectful compilation only under explicit discipline. It is not a blanket authorization for arbitrary host dependency surfaces.
+This profile therefore allows effectful compilation only under explicit discipline.
+It is not a blanket authorization for arbitrary host dependency surfaces.
 </p>
 
 <hr/>
@@ -591,6 +593,10 @@ Interop support under this profile is therefore:
   <li>contract-bound,</li>
   <li>not license for arbitrary foreign-runtime dependency surfaces.</li>
 </ul>
+
+<p>
+Where interop is involved, this profile should also be read together with the separately owned optional interoperability profile rather than as a replacement for it.
+</p>
 
 <hr/>
 
@@ -653,20 +659,20 @@ This profile depends on that distinction and does not replace it.
 Compactly:
 </p>
 
-<pre>canonical IR
+<pre><code>canonical IR
    -&gt;
 lowering
    -&gt;
 backend contract
    -&gt;
-consumer decision</pre>
+consumer decision</code></pre>
 
 <p>
 The backend contract answers:
 </p>
 
-<pre>Can this downstream consumer family
-accept and honor the lowered executable commitments?</pre>
+<pre><code>Can this downstream consumer family
+accept and honor the lowered executable commitments?</code></pre>
 
 <hr/>
 
@@ -680,15 +686,15 @@ This profile is compilation-oriented first.
 Accordingly, it should be read together with any companion execution-contract document that closes the additional question:
 </p>
 
-<pre>When may a backend-consumable lowered FROG program
+<pre><code>When may a backend-consumable lowered FROG program
 actually be considered ready to begin execution
-under a bounded native CPU LLVM corridor?</pre>
+under a bounded native CPU LLVM corridor?</code></pre>
 
 <p>
 The distinction is essential:
 </p>
 
-<pre>this profile
+<pre><code>this profile
    defines
 a bounded compilation corridor
 
@@ -699,7 +705,7 @@ standardized consumer-facing handoff
 execution contract
    defines
 additional profile-level closure
-for beginning execution under explicit assumptions</pre>
+for beginning execution under explicit assumptions</code></pre>
 
 <p>
 Therefore:
@@ -725,7 +731,7 @@ A companion execution contract, when published, belongs to the same profile fami
 This separation preserves the repository-wide architecture:
 </p>
 
-<pre>Language
+<pre><code>Language
    owns meaning
 
 IR
@@ -735,16 +741,16 @@ Profiles
    may define bounded capability corridors and execution-side companion constraints
 
 Implementations
-   still own private runtime realization</pre>
+   still own private runtime realization</code></pre>
 
 <p>
 This is the intended reading discipline:
 </p>
 
-<pre>compilation corridor
+<pre><code>compilation corridor
    is necessary
 but not always sufficient
-for execution-start closure</pre>
+for execution-start closure</code></pre>
 
 <hr/>
 
@@ -803,9 +809,9 @@ A profile claim MUST be rejected if any of the following applies:
 This is one of the key benefits of the profile:
 </p>
 
-<pre>explicit profile rejection
+<pre><code>explicit profile rejection
    is better than
-implicit backend drift</pre>
+implicit backend drift</code></pre>
 
 <p>
 Likewise, explicit execution-contract rejection is better than pretending compilability automatically means safe executable start.
@@ -839,107 +845,4 @@ Future conformance growth for this profile SHOULD therefore introduce cases that
 <ul>
   <li>language-valid but profile-rejected,</li>
   <li>IR-derivable but not lowerable under this profile,</li>
-  <li>lowerable but not contract-emittable under this profile,</li>
-  <li>contract-emittable but consumer-rejected under this profile,</li>
-  <li>consumer-acceptable but execution-contract-rejected where stronger execution closure is required.</li>
-</ul>
-
-<hr/>
-
-<h2 id="relation-with-other-specification-layers">24. Relation with Other Specification Layers</h2>
-
-<p>
-This profile remains subordinate to the rest of the published architecture:
-</p>
-
-<ul>
-  <li><code>Expression/</code> still owns source form,</li>
-  <li><code>Language/</code> still owns validated meaning,</li>
-  <li><code>Libraries/</code> still own intrinsic primitive law,</li>
-  <li><code>IR/</code> still owns canonical IR, derivation, schema, lowering, and backend contract,</li>
-  <li><code>Profiles/</code> only owns the optional standardized capability claim described here and any explicit profile-level companion closures such as execution contracts.</li>
-</ul>
-
-<p>
-This is critical:
-</p>
-
-<pre>Native CPU LLVM
-   is a profile claim
-
-it is not
-the language core
-
-it is not
-the canonical IR
-
-it is not
-the hidden definition of execution for all FROG programs</pre>
-
-<hr/>
-
-<h2 id="future-evolution">25. Future Evolution</h2>
-
-<p>
-This profile is intentionally a first closure step. It MAY evolve later through:
-</p>
-
-<ul>
-  <li>wider accepted structured-control coverage,</li>
-  <li>wider explicit-state coverage,</li>
-  <li>better effect-surface support,</li>
-  <li>restricted UI-service support,</li>
-  <li>better interop coverage,</li>
-  <li>richer native deployment modes,</li>
-  <li>additional backend-family refinements,</li>
-  <li>stronger execution-contract closure for bounded executable subsets.</li>
-</ul>
-
-<p>
-However, future growth SHOULD remain disciplined:
-</p>
-
-<pre>close one coherent corridor
-before broadening the optional surface</pre>
-
-<hr/>
-
-<h2 id="summary">26. Summary</h2>
-
-<p>
-This document defines <code>native_cpu_llvm</code> as an optional standardized FROG profile for a first industrial native CPU compilation corridor oriented toward LLVM-family downstream consumers.
-</p>
-
-<p>
-Its core rules are:
-</p>
-
-<ul>
-  <li>the profile is optional,</li>
-  <li>the profile is downstream-compilation-oriented,</li>
-  <li>the profile does not redefine the language core or the canonical IR,</li>
-  <li>the profile accepts only a conservative v0.1 subset,</li>
-  <li>the profile requires faithful derivation, lowering, and backend-contract emission,</li>
-  <li>the profile does not silently equate compilability with execution-start closure,</li>
-  <li>the profile requires explicit rejection when the corridor cannot be honored.</li>
-</ul>
-
-<p>
-This profile therefore enables a serious public statement:
-</p>
-
-<pre>FROG can support a real native compiled corridor
-without collapsing the language into LLVM,
-because LLVM remains downstream from
-validated meaning,
-canonical open IR,
-lowering,
-and backend contract.</pre>
-
-<p>
-And where execution-start closure matters, that closure must be stated explicitly through a companion execution contract rather than being guessed from compilability alone.
-</p>
-
-<p>
-That is the purpose of this profile in base v0.1.
-</p>
+  <li>lowerable but not
