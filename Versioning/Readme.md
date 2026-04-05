@@ -20,29 +20,30 @@
   <li><a href="#current-published-version">5. Current Published Version</a></li>
   <li><a href="#three-version-notions-that-must-remain-distinct">6. Three Version Notions That Must Remain Distinct</a></li>
   <li><a href="#core-versioning-doctrine">7. Core Versioning Doctrine</a></li>
-  <li><a href="#specification-corpus-version">8. Specification Corpus Version</a></li>
-  <li><a href="#frog-spec_version-source-compatibility-version">9. <code>.frog</code> <code>spec_version</code> Source Compatibility Version</a></li>
-  <li><a href="#metadata-program_version-program-artifact-version">10. <code>metadata.program_version</code> Program Artifact Version</a></li>
-  <li><a href="#governance-principles">11. Governance Principles</a></li>
-  <li><a href="#additive-evolution-rule">12. Additive Evolution Rule</a></li>
-  <li><a href="#degraded-reading-and-preservation-model">13. Degraded Reading and Preservation Model</a></li>
-  <li><a href="#compatibility-levels">14. Compatibility Levels</a></li>
-  <li><a href="#safe-behavior-rule">15. Safe Behavior Rule</a></li>
-  <li><a href="#format-design-obligations">16. Format Design Obligations</a></li>
-  <li><a href="#version-boundary-model">17. Version Boundary Model</a></li>
-  <li><a href="#stabilization-classes">18. Stabilization Classes</a></li>
-  <li><a href="#cross-repository-versioning-responsibilities">19. Cross-Repository Versioning Responsibilities</a></li>
-  <li><a href="#compatibility-posture">20. Compatibility Posture</a></li>
-  <li><a href="#version-transition-criteria">21. Version Transition Criteria</a></li>
-  <li><a href="#published-version-objectives">22. Published Version Objectives</a></li>
-  <li><a href="#central-version-matrix">23. Central Version Matrix</a></li>
-  <li><a href="#how-other-documents-should-reference-this-surface">24. How Other Documents Should Reference This Surface</a></li>
-  <li><a href="#change-classification-guidance">25. Change Classification Guidance</a></li>
-  <li><a href="#minimal-decision-table">26. Minimal Decision Table</a></li>
-  <li><a href="#relationship-with-roadmap-strategy-and-conformance">27. Relationship with Roadmap, Strategy, and Conformance</a></li>
-  <li><a href="#repository-wide-versioning-diagram">28. Repository-Wide Versioning Diagram</a></li>
-  <li><a href="#future-expansion">29. Future Expansion</a></li>
-  <li><a href="#summary">30. Summary</a></li>
+  <li><a href="#cumulative-version-model">8. Cumulative Version Model</a></li>
+  <li><a href="#specification-corpus-version">9. Specification Corpus Version</a></li>
+  <li><a href="#frog-spec_version-source-compatibility-version">10. <code>.frog</code> <code>spec_version</code> Source Compatibility Version</a></li>
+  <li><a href="#metadata-program_version-program-artifact-version">11. <code>metadata.program_version</code> Program Artifact Version</a></li>
+  <li><a href="#governance-principles">12. Governance Principles</a></li>
+  <li><a href="#additive-evolution-rule">13. Additive Evolution Rule</a></li>
+  <li><a href="#degraded-reading-and-preservation-model">14. Degraded Reading and Preservation Model</a></li>
+  <li><a href="#compatibility-levels">15. Compatibility Levels</a></li>
+  <li><a href="#safe-behavior-rule">16. Safe Behavior Rule</a></li>
+  <li><a href="#format-design-obligations">17. Format Design Obligations</a></li>
+  <li><a href="#version-boundary-model">18. Version Boundary Model</a></li>
+  <li><a href="#stabilization-classes">19. Stabilization Classes</a></li>
+  <li><a href="#cross-repository-versioning-responsibilities">20. Cross-Repository Versioning Responsibilities</a></li>
+  <li><a href="#compatibility-posture">21. Compatibility Posture</a></li>
+  <li><a href="#version-transition-criteria">22. Version Transition Criteria</a></li>
+  <li><a href="#published-version-objectives">23. Published Version Objectives</a></li>
+  <li><a href="#central-version-matrix">24. Central Version Matrix</a></li>
+  <li><a href="#how-other-documents-should-reference-this-surface">25. How Other Documents Should Reference This Surface</a></li>
+  <li><a href="#change-classification-guidance">26. Change Classification Guidance</a></li>
+  <li><a href="#minimal-decision-table">27. Minimal Decision Table</a></li>
+  <li><a href="#relationship-with-roadmap-strategy-and-conformance">28. Relationship with Roadmap, Strategy, and Conformance</a></li>
+  <li><a href="#repository-wide-versioning-diagram">29. Repository-Wide Versioning Diagram</a></li>
+  <li><a href="#future-expansion">30. Future Expansion</a></li>
+  <li><a href="#summary">31. Summary</a></li>
 </ul>
 
 <hr/>
@@ -90,7 +91,7 @@ Without a centralized specification-versioning surface, version intent would ten
 </p>
 
 <p>
-This document therefore serves as the single published reference point for cross-version scope, stabilization, transition logic, additive-evolution doctrine, and degraded-but-safe cross-version readability posture.
+This document therefore serves as the single published reference point for cross-version scope, stabilization, transition logic, additive-evolution doctrine, cumulative version-model policy, and degraded-but-safe cross-version readability posture.
 </p>
 
 <hr/>
@@ -249,7 +250,64 @@ This doctrine is stronger than ordinary backward readability and narrower than a
 
 <hr/>
 
-<h2 id="specification-corpus-version">8. Specification Corpus Version</h2>
+<h2 id="cumulative-version-model">8. Cumulative Version Model</h2>
+<p>
+FROG follows a cumulative version model for specification evolution.
+</p>
+
+<p>
+In that model, each new specification version should extend the previous one by default rather than replace it. Older valid source forms should remain valid in later specification versions unless an explicitly documented breaking boundary is declared.
+</p>
+
+<p>
+The intended reading posture is therefore close in spirit to cumulative language-standard evolution:
+</p>
+
+<ul>
+  <li>a later version includes the earlier valid language surface,</li>
+  <li>later versions add new bounded capabilities, forms, or distinctions,</li>
+  <li>earlier authored content should continue to remain meaningful within later specification scope unless a breaking boundary is explicitly declared.</li>
+</ul>
+
+<p>
+This model does not mean that all tools must support all future constructs equally.
+It means that specification evolution should normally behave as:
+</p>
+
+<pre><code>later version
+    =
+earlier version
+    +
+explicit bounded additions
+</code></pre>
+
+<p>
+It also means that version evolution should not behave as:
+</p>
+
+<pre><code>later version
+    =
+silent redefinition of the earlier language
+</code></pre>
+
+<p>
+In practical terms:
+</p>
+
+<ul>
+  <li>a later corpus version should normally preserve earlier valid forms,</li>
+  <li>a later <code>.frog spec_version</code> should normally extend prior accepted source-compatible forms,</li>
+  <li>older-capability tools may still need to degrade explicitly when they encounter newer bounded additions,</li>
+  <li>unsupported meaning must not be silently guessed or falsely claimed.</li>
+</ul>
+
+<p>
+This cumulative model is therefore paired with the degraded-reading and preservation model defined later in this document. Cumulative specification evolution preserves older valid forms. Preservation-aware tooling behavior governs how older-capability tools handle newer artifacts they do not fully understand.
+</p>
+
+<hr/>
+
+<h2 id="specification-corpus-version">9. Specification Corpus Version</h2>
 <p>
 The specification corpus version is the version of the published FROG specification repository considered as a public specification corpus.
 </p>
@@ -271,7 +329,7 @@ The specification corpus version is a repository-governance notion. It is not em
 
 <hr/>
 
-<h2 id="frog-spec_version-source-compatibility-version">9. <code>.frog</code> <code>spec_version</code> Source Compatibility Version</h2>
+<h2 id="frog-spec_version-source-compatibility-version">10. <code>.frog</code> <code>spec_version</code> Source Compatibility Version</h2>
 <p>
 The <code>spec_version</code> field in a <code>.frog</code> file identifies the source-format / compatibility target expected by that source artifact.
 </p>
@@ -305,9 +363,13 @@ Therefore:
 The additive-evolution doctrine means that new <code>spec_version</code> values should, by default, extend prior accepted forms rather than redefine them incompatibly unless a carefully justified boundary change is explicitly declared.
 </p>
 
+<p>
+Under the cumulative version model, a later <code>spec_version</code> should normally be readable as a later bounded extension of earlier valid source-compatible forms rather than as a replacement language with silent incompatibility.
+</p>
+
 <hr/>
 
-<h2 id="metadata-program_version-program-artifact-version">10. <code>metadata.program_version</code> Program Artifact Version</h2>
+<h2 id="metadata-program_version-program-artifact-version">11. <code>metadata.program_version</code> Program Artifact Version</h2>
 <p>
 The <code>metadata.program_version</code> field versions one particular FROG program artifact as chosen by its author, maintainer, or governing process.
 </p>
@@ -328,7 +390,7 @@ It does not define specification law, source compatibility law, or repository pu
 
 <hr/>
 
-<h2 id="governance-principles">11. Governance Principles</h2>
+<h2 id="governance-principles">12. Governance Principles</h2>
 <p>
 The following principles apply to specification-version governance across the published repository:
 </p>
@@ -342,13 +404,14 @@ The following principles apply to specification-version governance across the pu
   <li><strong>Bounded closure before expansion:</strong> a version should close a coherent corridor before broadening into new unfinished fronts.</li>
   <li><strong>No hidden semantic law:</strong> runtime-private implementation convenience must not silently define version semantics.</li>
   <li><strong>Additive by default:</strong> future versions should extend earlier accepted source structures rather than invalidate them without explicit and justified need.</li>
+  <li><strong>Cumulative by default:</strong> a later version should normally include earlier valid forms as part of its language surface unless an explicit breaking boundary is declared.</li>
   <li><strong>Preserve when unknown:</strong> unsupported but safely preservable content should not be silently destroyed.</li>
   <li><strong>Refuse when unsafe:</strong> explicit limitation or refusal is preferable to false semantic confidence.</li>
 </ol>
 
 <hr/>
 
-<h2 id="additive-evolution-rule">12. Additive Evolution Rule</h2>
+<h2 id="additive-evolution-rule">13. Additive Evolution Rule</h2>
 <p>
 FROG version evolution should be additive by default at the source-representation level and, where possible, at the repository-visible corridor level.
 </p>
@@ -375,9 +438,18 @@ This rule does not mean that any addition is automatically safe for every older 
 An additive change is acceptable by default only when an older tool that does not understand the addition can still behave safely and explicitly. If a nominally additive construct would cause an older tool to silently misunderstand program meaning, the change must be treated as requiring stricter gating, explicit refusal behavior, or a more carefully delimited compatibility boundary.
 </p>
 
+<p>
+The additive rule and the cumulative version model reinforce each other:
+</p>
+
+<ul>
+  <li>the additive rule governs how new capability enters the specification,</li>
+  <li>the cumulative model governs how later versions should be interpreted with respect to earlier valid forms.</li>
+</ul>
+
 <hr/>
 
-<h2 id="degraded-reading-and-preservation-model">13. Degraded Reading and Preservation Model</h2>
+<h2 id="degraded-reading-and-preservation-model">14. Degraded Reading and Preservation Model</h2>
 <p>
 FROG should support degraded reading of newer artifacts by older-capability tools whenever that degraded reading can remain explicit and safe.
 </p>
@@ -411,7 +483,7 @@ This doctrine is especially important for long-lived source durability, cross-ID
 
 <hr/>
 
-<h2 id="compatibility-levels">14. Compatibility Levels</h2>
+<h2 id="compatibility-levels">15. Compatibility Levels</h2>
 <p>
 When a tool encounters a FROG artifact from a newer capability set or source revision, the specification should distinguish at least the following compatibility levels:
 </p>
@@ -464,7 +536,7 @@ A conforming tool must not collapse these levels into one undifferentiated “op
 
 <hr/>
 
-<h2 id="safe-behavior-rule">15. Safe Behavior Rule</h2>
+<h2 id="safe-behavior-rule">16. Safe Behavior Rule</h2>
 <p>
 When a tool encounters a construct, capability, section, or semantic dependency that it does not support, it must follow the safe behavior rule:
 </p>
@@ -489,32 +561,32 @@ In particular:
 
 <hr/>
 
-<h2 id="format-design-obligations">16. Format Design Obligations</h2>
+<h2 id="format-design-obligations">17. Format Design Obligations</h2>
 <p>
 The additive and preservable versioning doctrine imposes concrete obligations on the FROG source model and surrounding specification surfaces.
 </p>
 
-<h3>16.1 Structured extensibility</h3>
+<h3>17.1 Structured extensibility</h3>
 <p>
 New capabilities should be introduced through clearly delimited extensibility points rather than by silently changing the meaning of existing fields.
 </p>
 
-<h3>16.2 Unknown-field tolerance where intended</h3>
+<h3>17.2 Unknown-field tolerance where intended</h3>
 <p>
 Where a source area is explicitly extensible, conforming readers should tolerate unknown fields or substructures according to the rules of that area.
 </p>
 
-<h3>16.3 Preservation without understanding</h3>
+<h3>17.3 Preservation without understanding</h3>
 <p>
 Where technically feasible and safe, tools should preserve unsupported sections without needing to reinterpret them.
 </p>
 
-<h3>16.4 Capability-sensitive acceptance</h3>
+<h3>17.4 Capability-sensitive acceptance</h3>
 <p>
 A simple source version number is not always sufficient to determine safe operation. The repository may therefore define bounded capability families, feature gates, or profile-specific support requirements where necessary.
 </p>
 
-<h3>16.5 Explicit criticality</h3>
+<h3>17.5 Explicit criticality</h3>
 <p>
 Additions should be designed so that tools can distinguish at least:
 </p>
@@ -533,7 +605,7 @@ An older tool may be allowed to ignore decorative or non-authoritative enrichmen
 
 <hr/>
 
-<h2 id="version-boundary-model">17. Version Boundary Model</h2>
+<h2 id="version-boundary-model">18. Version Boundary Model</h2>
 <p>
 A specification version boundary is the public point at which the repository declares that a specific closure target has become coherent enough to be treated as a stabilized published corpus state.
 </p>
@@ -582,7 +654,7 @@ Where a version objective includes additive cross-version readability posture, t
 
 <hr/>
 
-<h2 id="stabilization-classes">18. Stabilization Classes</h2>
+<h2 id="stabilization-classes">19. Stabilization Classes</h2>
 <p>
 Each major topic discussed in the repository should be readable through one of the following stabilization classes:
 </p>
@@ -630,7 +702,7 @@ This classification is repository-governance guidance. Technical meaning remains
 
 <hr/>
 
-<h2 id="cross-repository-versioning-responsibilities">19. Cross-Repository Versioning Responsibilities</h2>
+<h2 id="cross-repository-versioning-responsibilities">20. Cross-Repository Versioning Responsibilities</h2>
 <p>
 Version governance must preserve the published ownership boundaries of the repository.
 </p>
@@ -709,7 +781,7 @@ Version governance must preserve the published ownership boundaries of the repos
 
 <hr/>
 
-<h2 id="compatibility-posture">20. Compatibility Posture</h2>
+<h2 id="compatibility-posture">21. Compatibility Posture</h2>
 <p>
 Compatibility claims should be made carefully and at the correct layer.
 </p>
@@ -740,7 +812,7 @@ A compatibility statement should therefore identify:
 
 <hr/>
 
-<h2 id="version-transition-criteria">21. Version Transition Criteria</h2>
+<h2 id="version-transition-criteria">22. Version Transition Criteria</h2>
 <p>
 A transition from one specification corpus version to the next should be considered only when the repository shows a coherent closure across the relevant target boundary.
 </p>
@@ -791,12 +863,12 @@ Where the target version claims additive and preservable cross-version handling 
 
 <hr/>
 
-<h2 id="published-version-objectives">22. Published Version Objectives</h2>
+<h2 id="published-version-objectives">23. Published Version Objectives</h2>
 <p>
 This section centralizes the current published version objectives at a repository-governance level.
 </p>
 
-<h3>22.1 Current published closure baseline</h3>
+<h3>23.1 Current published closure baseline</h3>
 <p>
 At the current published stage of the repository, the visible closure direction is already beyond architecture-only prose.
 </p>
@@ -821,7 +893,7 @@ The repository already exposes a first bounded end-to-end corridor where a contr
 The repository also already exposes a serious widget-object closure direction through source-visible widget representation, interaction surfaces, class-contract discussion, and profile-level widget class modeling.
 </p>
 
-<h3>22.2 Near-term version objective</h3>
+<h3>23.2 Near-term version objective</h3>
 <p>
 The near-term version objective is to consolidate the first coherent published corpus version around:
 </p>
@@ -837,10 +909,11 @@ The near-term version objective is to consolidate the first coherent published c
   <li>bounded observable executable slices,</li>
   <li>coherent widget-object exposure for the currently published UI corridor,</li>
   <li>repository-visible conformance / examples / reference alignment,</li>
-  <li>the repository-wide additive versioning and safe degraded readability doctrine.</li>
+  <li>the repository-wide additive versioning and safe degraded readability doctrine,</li>
+  <li>the cumulative version model for later specification evolution.</li>
 </ul>
 
-<h3>22.3 Explicitly not yet implied by this baseline</h3>
+<h3>23.3 Explicitly not yet implied by this baseline</h3>
 <p>
 The current near-term version objective does not automatically imply:
 </p>
@@ -861,7 +934,7 @@ Those areas may remain draft, partial, or deferred even if one bounded corpus ve
 
 <hr/>
 
-<h2 id="central-version-matrix">23. Central Version Matrix</h2>
+<h2 id="central-version-matrix">24. Central Version Matrix</h2>
 <p>
 The detailed current status of the repository is centralized in <code>Versioning/Matrix.md</code>.
 </p>
@@ -884,7 +957,7 @@ This document remains the primary governance entry point. The matrix remains the
 
 <hr/>
 
-<h2 id="how-other-documents-should-reference-this-surface">24. How Other Documents Should Reference This Surface</h2>
+<h2 id="how-other-documents-should-reference-this-surface">25. How Other Documents Should Reference This Surface</h2>
 <p>
 When another repository document needs versioning guidance, it should keep that guidance short and point back to this document rather than restating full transition policy.
 </p>
@@ -894,7 +967,7 @@ Recommended pattern:
 </p>
 
 <pre><code>This document participates in the current published FROG specification corpus scope.
-Cross-version stabilization targets, additive evolution doctrine, and transition policy are governed centrally in `Versioning/Readme.md`.
+Cross-version stabilization targets, additive evolution doctrine, cumulative version model, and transition policy are governed centrally in `Versioning/Readme.md`.
 Detailed current status by repository surface is centralized in `Versioning/Matrix.md`.
 </code></pre>
 
@@ -912,7 +985,7 @@ Other documents should not duplicate:
 
 <hr/>
 
-<h2 id="change-classification-guidance">25. Change Classification Guidance</h2>
+<h2 id="change-classification-guidance">26. Change Classification Guidance</h2>
 <p>
 A proposed repository change should be classified before version claims are made.
 </p>
@@ -965,7 +1038,7 @@ A nominally additive change must still be reviewed for degraded readability safe
 
 <hr/>
 
-<h2 id="minimal-decision-table">26. Minimal Decision Table</h2>
+<h2 id="minimal-decision-table">27. Minimal Decision Table</h2>
 <table>
   <thead>
     <tr>
@@ -1025,7 +1098,7 @@ A nominally additive change must still be reviewed for degraded readability safe
 
 <hr/>
 
-<h2 id="relationship-with-roadmap-strategy-and-conformance">27. Relationship with Roadmap, Strategy, and Conformance</h2>
+<h2 id="relationship-with-roadmap-strategy-and-conformance">28. Relationship with Roadmap, Strategy, and Conformance</h2>
 <p>
 This document must remain distinct from three nearby repository-wide surfaces:
 </p>
@@ -1063,7 +1136,7 @@ Versioning governance sits adjacent to those surfaces, but it is not reducible t
 
 <hr/>
 
-<h2 id="repository-wide-versioning-diagram">28. Repository-Wide Versioning Diagram</h2>
+<h2 id="repository-wide-versioning-diagram">29. Repository-Wide Versioning Diagram</h2>
 <pre><code>published FROG repository
     |
     +-- technical ownership layers
@@ -1102,11 +1175,18 @@ cross-version handling doctrine:
     preserve what is unknown when safe
     refuse unsafe semantic or executable claims
     never silently misinterpret
+
+cumulative version model:
+    later version
+        =
+    earlier version
+        +
+    explicit bounded additions
 </code></pre>
 
 <hr/>
 
-<h2 id="future-expansion">29. Future Expansion</h2>
+<h2 id="future-expansion">30. Future Expansion</h2>
 <p>
 This document may later be expanded with:
 </p>
@@ -1126,7 +1206,7 @@ Such additions should remain centralized here unless a strong repository-archite
 
 <hr/>
 
-<h2 id="summary">30. Summary</h2>
+<h2 id="summary">31. Summary</h2>
 <p>
 FROG needs centralized specification-version governance because the repository now spans multiple technical ownership layers, executable reference slices, conformance material, profile-level closure, widget-object closure, and framing layers.
 </p>
@@ -1140,6 +1220,7 @@ This document provides the single repository-visible place where the published s
   <li>how it differs from <code>.frog</code> source compatibility versioning,</li>
   <li>how it differs from program artifact versioning,</li>
   <li>that specification evolution is additive by default,</li>
+  <li>that later versions should normally be cumulative extensions of earlier valid forms,</li>
   <li>that degraded cross-version readability should be explicit and safe,</li>
   <li>that unknown supported-preservable content should not be silently destroyed,</li>
   <li>that semantic misunderstanding is worse than explicit refusal,</li>
