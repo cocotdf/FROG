@@ -2,10 +2,10 @@
   <img src="../FROG logo.svg" alt="FROG logo" width="200" />
 </p>
 
-<h1 align="center">🐸 FROG Roadmap</h1>
+<h1 align="center">FROG Roadmap</h1>
 
 <p align="center">
-  Non-normative planning layer for the progressive closure of FROG as a language, conformance surface, reference path, compiler corridor, runtime path, deployment path, and future IDE ecosystem<br/>
+  <strong>Non-normative planning layer for the progressive closure of FROG as a language, conformance surface, reference path, compiler corridor, runtime path, deployment path, and future IDE ecosystem</strong><br/>
   <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -13,33 +13,36 @@
   Roadmap start date: <strong>8 March 2026</strong>
 </p>
 
-<p align="center">
-  <a href="#project-map-at-a-glance">Project map</a> •
-  <a href="#purpose-of-this-roadmap">Purpose</a> •
-  <a href="#what-this-roadmap-is-and-is-not">What this is / is not</a> •
-  <a href="#status-legend">Status legend</a> •
-  <a href="#guiding-principles">Guiding principles</a> •
-  <a href="#current-published-baseline">Current baseline</a> •
-  <a href="#priority-order">Priority order</a> •
-  <a href="#high-level-roadmap">High-level roadmap</a> •
-  <a href="#phase-0">Phase 0</a> •
-  <a href="#phase-1">Phase 1</a> •
-  <a href="#phase-2">Phase 2</a> •
-  <a href="#phase-3">Phase 3</a> •
-  <a href="#phase-4">Phase 4</a> •
-  <a href="#phase-5">Phase 5</a> •
-  <a href="#phase-6">Phase 6</a> •
-  <a href="#cross-cutting-workstreams">Cross-cutting workstreams</a> •
-  <a href="#milestone-navigation">Milestone navigation</a> •
-  <a href="#definition-of-success">Definition of success</a>
-</p>
+<hr/>
+
+<h2>Contents</h2>
+<ul>
+  <li><a href="#project-map-at-a-glance">1. Project map at a glance</a></li>
+  <li><a href="#purpose-of-this-roadmap">2. Purpose of this roadmap</a></li>
+  <li><a href="#what-this-roadmap-is-and-is-not">3. What this roadmap is and is not</a></li>
+  <li><a href="#relationship-with-versioning">4. Relationship with Versioning</a></li>
+  <li><a href="#status-legend">5. Status legend</a></li>
+  <li><a href="#guiding-principles">6. Guiding principles</a></li>
+  <li><a href="#current-published-baseline">7. Current published baseline</a></li>
+  <li><a href="#priority-order">8. Priority order</a></li>
+  <li><a href="#high-level-roadmap">9. High-level roadmap</a></li>
+  <li><a href="#phase-0-foundation-already-established">10. Phase 0 — Foundation already established</a></li>
+  <li><a href="#phase-1-source-and-semantics-closure">11. Phase 1 — Source and semantics closure</a></li>
+  <li><a href="#phase-2-ir-and-compiler-corridor-closure">12. Phase 2 — IR and compiler-corridor closure</a></li>
+  <li><a href="#phase-3-bounded-execution-start-and-reference-path-closure">13. Phase 3 — Bounded execution-start and reference-path closure</a></li>
+  <li><a href="#phase-4-widget-object-and-ui-corridor-closure">14. Phase 4 — Widget-object and UI corridor closure</a></li>
+  <li><a href="#phase-5-conformance-growth-and-profile-broadening">15. Phase 5 — Conformance growth and profile broadening</a></li>
+  <li><a href="#phase-6-ecosystem-and-industrial-standard-position">16. Phase 6 — Ecosystem and industrial-standard position</a></li>
+  <li><a href="#cross-cutting-workstreams">17. Cross-cutting workstreams</a></li>
+  <li><a href="#milestone-navigation">18. Milestone navigation</a></li>
+  <li><a href="#definition-of-success">19. Definition of success</a></li>
+</ul>
 
 <hr/>
 
-<h2 id="project-map-at-a-glance">Project map at a glance</h2>
+<h2 id="project-map-at-a-glance">1. Project map at a glance</h2>
 
-<pre>
-FROG closure sequence
+<pre><code>FROG closure sequence
 
 canonical .frog source
         |
@@ -67,34 +70,36 @@ runtime or compiler/backend realization
         v
 deployable artifact
 
+
 in parallel
 
 authoring
-   -> Program Model
-   -> graphical IDE
-   -> validation feedback
-   -> observability / debugging
-   -> reusable industrial workflow
+   -&gt; Program Model
+   -&gt; graphical IDE
+   -&gt; validation feedback
+   -&gt; observability / debugging
+   -&gt; reusable industrial workflow
+
 
 project logic
 
 semantic closure
-   -> schema / validation closure
-   -> conformance closure
-   -> reference execution proof
-   -> backend credibility
-   -> IDE credibility
-   -> ecosystem credibility
-</pre>
+   -&gt; schema / validation closure
+   -&gt; conformance closure
+   -&gt; reference execution proof
+   -&gt; backend credibility
+   -&gt; IDE credibility
+   -&gt; ecosystem credibility
+</code></pre>
 
 <p>
 This roadmap explains the intended closure order.
-It does not replace <code>Expression/</code>, <code>Language/</code>, <code>IR/</code>, or any other normative ownership layer.
+It does not replace <code>Expression/</code>, <code>Language/</code>, <code>IR/</code>, <code>Libraries/</code>, <code>Profiles/</code>, <code>IDE/</code>, or any other normative ownership layer.
 </p>
 
 <hr/>
 
-<h2 id="purpose-of-this-roadmap">Purpose of this roadmap</h2>
+<h2 id="purpose-of-this-roadmap">2. Purpose of this roadmap</h2>
 
 <p>
 This roadmap exists to track the planned closure path of FROG as a full long-term ecosystem effort.
@@ -120,13 +125,12 @@ That distinction matters:
 
 <p>
 The roadmap also exists to keep the project disciplined.
-It helps ensure that strategic ambition does not outrun technical closure,
-and that new fronts are not opened faster than the current architectural corridor is stabilized.
+It helps ensure that strategic ambition does not outrun technical closure, and that new fronts are not opened faster than the current architectural corridor is stabilized.
 </p>
 
 <hr/>
 
-<h2 id="what-this-roadmap-is-and-is-not">What this roadmap is and is not</h2>
+<h2 id="what-this-roadmap-is-and-is-not">3. What this roadmap is and is not</h2>
 
 <h3>What it is</h3>
 
@@ -146,12 +150,70 @@ and that new fronts are not opened faster than the current architectural corrido
   <li>not a substitute for <code>Expression/</code>, <code>Language/</code>, <code>IR/</code>, or <code>Profiles/</code>,</li>
   <li>not a place where implementation convenience becomes language law,</li>
   <li>not a place where strategy prose silently replaces technical closure,</li>
+  <li>not a place where current corpus-version truth is declared,</li>
   <li>not a claim that all future phases are already stabilized.</li>
 </ul>
 
 <hr/>
 
-<h2 id="status-legend">Status legend</h2>
+<h2 id="relationship-with-versioning">4. Relationship with Versioning</h2>
+
+<p>
+The roadmap and the versioning surface answer different questions and must remain distinct.
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Surface</th>
+      <th>Main question</th>
+      <th>What it must not replace</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Roadmap/</code></td>
+      <td>In what order should FROG be closed?</td>
+      <td>Current corpus-version truth or per-surface current-status reporting</td>
+    </tr>
+    <tr>
+      <td><code>Versioning/Readme.md</code></td>
+      <td>What is the current published specification corpus version, and what is the cross-version doctrine?</td>
+      <td>Closure sequencing</td>
+    </tr>
+    <tr>
+      <td><code>Versioning/Matrix.md</code></td>
+      <td>What is the current detailed status of each major repository surface?</td>
+      <td>Milestone ordering or long-term planning logic</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>
+This means:
+</p>
+
+<ul>
+  <li>the roadmap states <strong>what should be closed next</strong>,</li>
+  <li>the versioning surface states <strong>what is currently published and how version truth is governed</strong>.</li>
+</ul>
+
+<p>
+When a reader wants to know the current published corpus version or the current detailed repository-wide status table, the authoritative repository-visible entry points are:
+</p>
+
+<ul>
+  <li><code>Versioning/Readme.md</code>,</li>
+  <li><code>Versioning/Matrix.md</code>.</li>
+</ul>
+
+<p>
+This roadmap may refer to those files, but it must not duplicate their role.
+</p>
+
+<hr/>
+
+<h2 id="status-legend">5. Status legend</h2>
 
 <ul>
   <li><strong>[x]</strong> completed or already established in the published baseline</li>
@@ -161,7 +223,7 @@ and that new fronts are not opened faster than the current architectural corrido
 
 <hr/>
 
-<h2 id="guiding-principles">Guiding principles</h2>
+<h2 id="guiding-principles">6. Guiding principles</h2>
 
 <ul>
   <li>Keep the architectural boundaries explicit.</li>
@@ -170,33 +232,35 @@ and that new fronts are not opened faster than the current architectural corrido
   <li>Do not collapse open FROG IR into one backend-specific or runtime-private form.</li>
   <li>Do not confuse backend family, target profile, deployment mode, and runtime-private realization.</li>
   <li>Do not confuse roadmap planning with normative ownership.</li>
+  <li>Do not confuse roadmap planning with current corpus-version reporting.</li>
   <li>Keep the path from canonical <code>.frog</code> source to deployable execution explicit and inspectable.</li>
   <li>Use conformance as a public truth surface, not as commentary only.</li>
   <li>Keep source-shape/schema closure distinct from later semantic validation.</li>
   <li>Only widen the ecosystem after enough closure exists to support that widening cleanly.</li>
   <li>Keep strategic claims aligned with repository-visible proof.</li>
   <li>Keep AI-era auditability claims tied to real architectural closure rather than slogans.</li>
+  <li>Keep versioning governance centralized in <code>Versioning/</code> rather than scattering it into planning documents.</li>
 </ul>
 
 <p>
 What the project must preserve:
 </p>
 
-<pre>
-saved source           -> Expression
-validated meaning      -> Language
-derived execution form -> IR
-backend specialization -> Lowering
-consumable handoff     -> Backend contract
-private realization    -> Runtime / backend
-authoring + debugging  -> IDE
-closure sequencing     -> Roadmap
-strategic purpose      -> Strategy
-</pre>
+<pre><code>saved source           -&gt; Expression
+validated meaning      -&gt; Language
+derived execution form -&gt; IR
+backend specialization -&gt; Lowering
+consumable handoff     -&gt; Backend contract
+private realization    -&gt; Runtime / backend
+authoring + debugging  -&gt; IDE
+closure sequencing     -&gt; Roadmap
+current version truth  -&gt; Versioning
+strategic purpose      -&gt; Strategy
+</code></pre>
 
 <hr/>
 
-<h2 id="current-published-baseline">Current published baseline</h2>
+<h2 id="current-published-baseline">7. Current published baseline</h2>
 
 <p>
 The project is no longer only conceptual.
@@ -209,319 +273,252 @@ A meaningful public foundation already exists.
   <li>[x] FROG is explicitly structured as an open graphical dataflow language rather than a product-bound environment.</li>
   <li>[x] The six core specification families exist: <code>Expression</code>, <code>Language</code>, <code>IR</code>, <code>Libraries</code>, <code>Profiles</code>, <code>IDE</code>.</li>
   <li>[x] The repository contains support areas: <code>Examples/</code>, <code>Conformance/</code>, and <code>Implementations/Reference/</code>.</li>
+  <li>[x] A centralized version-governance surface exists through <code>Versioning/Readme.md</code> and <code>Versioning/Matrix.md</code>.</li>
   <li>[x] The first published executable slices already exist: <code>01_pure_addition</code>, <code>02_ui_value_roundtrip</code>, <code>03_ui_property_write</code>, <code>04_stateful_feedback_delay</code>.</li>
   <li>[x] The reference implementation posture is explicitly non-normative.</li>
   <li>[x] The distinction between public interface, front panel, and diagram is already explicit.</li>
   <li>[x] The distinction between <code>widget_value</code> and <code>widget_reference</code> is already explicit.</li>
   <li>[x] The strategic framing layer already exists through <code>Strategy/Heilmeier/</code>.</li>
-  <li>[x] The roadmap layer already exists as a non-normative planning surface distinct from both strategy and specification.</li>
-  <li>[x] The long-term chain remains explicit: <code>.frog source -&gt; loadability -&gt; structural validation -&gt; validated meaning -&gt; FROG execution IR -&gt; lowering -&gt; backend contract -&gt; backend/runtime</code>.</li>
-  <li>[x] The distinction between backend family, target profile, deployment mode, and runtime-private realization is explicit at the architectural level.</li>
-  <li>[x] Source-shape/schema posture has an explicit normative home inside <code>Expression/</code>.</li>
-  <li>[x] A conservative machine-checkable schema artifact exists for canonical top-level source shape.</li>
-  <li>[x] The conformance layer reads explicitly through <code>loadability -&gt; structural validity -&gt; semantic acceptance -&gt; preservation</code>.</li>
-  <li>[x] The reference implementation posture describes staged validation rather than a blurred validator story.</li>
-  <li>[x] The repository now already supports an explicit argument around open source, inspectable IR, and downstream compiler/backend separation.</li>
 </ul>
 
-<h3>Partially formed but not yet fully closed</h3>
+<h3>Already visible but still under closure pressure</h3>
 
 <ul>
-  <li>[~] Expression ↔ Language ↔ IR correspondence</li>
-  <li>[~] minimal primitive baseline closure</li>
-  <li>[~] type / value / state semantic closure</li>
-  <li>[~] execution-model and structure closure</li>
-  <li>[~] source-shape / schema and validator closure as a fully stable repository-level asset</li>
-  <li>[~] conformance breadth and public completeness</li>
-  <li>[~] repeatable reference execution path for a clearly bounded supported subset</li>
-  <li>[~] explicit target-profile taxonomy beyond the now-established architectural distinction</li>
-  <li>[~] explicit deployment-mode taxonomy beyond the now-established architectural distinction</li>
-  <li>[~] first serious backend-family taxonomies and first reusable contract families</li>
-  <li>[~] explicit strategic articulation of AI-era auditability and sovereignty across all top-level repository entry points</li>
+  <li>[~] Canonical source and source-schema posture are substantially visible but still need continued tightening.</li>
+  <li>[~] Language-semantics closure is already meaningful but still being consolidated.</li>
+  <li>[~] IR, lowering, and backend-contract posture are already repository-visible but still part of an active closure front.</li>
+  <li>[~] Bounded execution-start and reference-path proof are real, but still intentionally narrow.</li>
+  <li>[~] Widget-object closure is already serious, but still a growth front.</li>
+  <li>[~] The current corpus version is centrally described, but broader stabilization of the full published subset is still progressing.</li>
 </ul>
 
-<h3>Still future work</h3>
-
-<ul>
-  <li>[ ] a fully closed v0.1 foundation</li>
-  <li>[ ] a fully stable schema / validator closure</li>
-  <li>[ ] a first serious backend-oriented compiler path</li>
-  <li>[ ] a serious FROG IDE foundation</li>
-  <li>[ ] broader target-profile and deployment depth</li>
-  <li>[ ] a mature conformance / certification / ecosystem layer</li>
-  <li>[ ] a repository-wide strategic alignment where openness, auditability, industrial security, and technological sovereignty are stated consistently without displacing normative ownership</li>
-</ul>
-
-<h3>Interpretation of the current state</h3>
-
-<pre>
-FROG today
-   +-- strong architectural base
-   +-- early semantic and IR structure
-   +-- first public executable reference slices
-   +-- explicit conformance posture
-   +-- explicit non-normative reference path
-   +-- explicit profile / backend / runtime separation
-   +-- explicit source-schema posture
-   +-- conservative machine-checkable top-level schema support
-   +-- explicit staged conformance reading
-   +-- stronger AI-era relevance than a purely pre-GenAI framing
-   +-- no final production compiler stack yet
-   +-- no serious full IDE yet
-   +-- no mature deployment ecosystem yet
-</pre>
+<p>
+This roadmap should therefore be read as the sequencing layer for a repository that already has real published structure, not as a plan for a repository that is still empty or purely hypothetical.
+</p>
 
 <hr/>
 
-<h2 id="priority-order">Priority order</h2>
+<h2 id="priority-order">8. Priority order</h2>
 
 <p>
-Not all future work is equally urgent.
-The project currently benefits most from the following closure order.
+The current closure order should remain biased toward corridor coherence before broad ecosystem expansion.
 </p>
 
 <ol>
-  <li>close Expression ↔ Language ↔ IR correspondence more explicitly,</li>
-  <li>close the minimal primitive baseline,</li>
-  <li>close type / value / state semantic ownership more tightly,</li>
-  <li>close execution-model and structure semantics more tightly,</li>
-  <li>stabilize source-shape/schema and validator posture as a stable repository-level closure,</li>
-  <li>expand conformance in a disciplined way,</li>
-  <li>strengthen the repeatable reference execution path,</li>
-  <li>prepare the first serious backend contract and lowering family,</li>
-  <li>stabilize the first serious backend-family-oriented compiler corridor,</li>
-  <li>only then widen toward broader execution profiles, deployment models, and richer ecosystem growth,</li>
-  <li>keep strategic communication aligned with the real published proof surface at each step.</li>
+  <li>keep the repository-level entry surfaces aligned with the real published state,</li>
+  <li>keep source, semantic, IR, and conformance boundaries mutually coherent,</li>
+  <li>keep the bounded execution-start and reference path credible,</li>
+  <li>keep widget-object closure coherent across source, libraries, profiles, and execution-facing reasoning,</li>
+  <li>keep version-governance centralized and current,</li>
+  <li>only then widen backend families, runtime families, deployment surfaces, or broader ecosystem claims.</li>
 </ol>
 
+<hr/>
+
+<h2 id="high-level-roadmap">9. High-level roadmap</h2>
+
+<pre><code>Phase 0  -&gt; foundation already established
+Phase 1  -&gt; source and semantics closure
+Phase 2  -&gt; IR and compiler-corridor closure
+Phase 3  -&gt; bounded execution-start and reference-path closure
+Phase 4  -&gt; widget-object and UI corridor closure
+Phase 5  -&gt; conformance growth and profile broadening
+Phase 6  -&gt; ecosystem and industrial-standard position
+</code></pre>
+
 <p>
-This order is intentional.
-It keeps the project grounded in repository-visible closure rather than jumping too early into broad ecosystem claims.
+These phases are not independent silos.
+They overlap, but they should still be closed in a disciplined order.
 </p>
 
 <hr/>
 
-<h2 id="high-level-roadmap">High-level roadmap</h2>
-
-<pre>
-Phase 0  -> establish open language architecture
-Phase 1  -> establish canonical source posture and semantic baseline
-Phase 2  -> establish repository-visible reference path and conformance posture
-Phase 3  -> stabilize open execution-facing IR and compiler corridor boundaries
-Phase 4  -> demonstrate a serious backend-oriented path
-Phase 5  -> build serious IDE and observability foundations
-Phase 6  -> widen ecosystem, deployment, and certification depth
-</pre>
-
-<p>
-The roadmap is cumulative.
-Later phases do not replace earlier ones.
-They depend on them.
-</p>
-
-<hr/>
-
-<h2 id="phase-0">Phase 0</h2>
-
-<h3>Architectural establishment</h3>
+<h2 id="phase-0-foundation-already-established">10. Phase 0 — Foundation already established</h2>
 
 <ul>
-  <li>[x] establish FROG as an open graphical language rather than a product-bound environment</li>
-  <li>[x] separate language, runtime, IDE, and hardware concerns</li>
-  <li>[x] establish the six core architectural specification families</li>
-  <li>[x] establish a repository-visible strategic layer and roadmap layer distinct from normative ownership</li>
+  <li>[x] repository landing surface and global architecture framing</li>
+  <li>[x] six core specification families</li>
+  <li>[x] examples, conformance, and reference-path support surfaces</li>
+  <li>[x] strategic framing layer</li>
+  <li>[x] roadmap layer</li>
+  <li>[x] centralized version-governance layer</li>
 </ul>
 
 <p>
-Phase 0 should be read as established at the architectural level.
-Its purpose was to create the correct ownership model before deeper closure work.
+Phase 0 is no longer the active frontier.
+It is the already-established repository foundation that later work now builds on.
 </p>
 
 <hr/>
 
-<h2 id="phase-1">Phase 1</h2>
-
-<h3>Canonical source and semantic baseline</h3>
+<h2 id="phase-1-source-and-semantics-closure">11. Phase 1 — Source and semantics closure</h2>
 
 <ul>
-  <li>[x] establish canonical <code>.frog</code> source ownership</li>
-  <li>[x] establish source-shape/schema posture inside <code>Expression/</code></li>
-  <li>[~] close the minimal structural source model more fully</li>
-  <li>[~] close core type, value, control, and state semantics more fully</li>
-  <li>[~] align source-owned and semantic-owned responsibilities more tightly</li>
+  <li>[~] continue tightening the canonical <code>.frog</code> source shape</li>
+  <li>[~] continue tightening source-schema posture and structural validation boundaries</li>
+  <li>[~] continue tightening the distinction between structural validity and semantic acceptance</li>
+  <li>[~] continue tightening public-interface, front-panel, connector, and diagram ownership boundaries</li>
+  <li>[~] continue tightening control-structure and state semantics</li>
+  <li>[~] continue tightening library-owned versus profile-owned behavior boundaries</li>
 </ul>
 
 <p>
-This phase is where FROG becomes more than a general architectural idea.
-It becomes a language with a serious saved form and a serious semantic baseline.
+Phase 1 is successful when the repository exposes a clean source-to-meaning boundary for the bounded published subset without relying on implementation folklore.
 </p>
 
 <hr/>
 
-<h2 id="phase-2">Phase 2</h2>
-
-<h3>Repository-visible reference path and conformance posture</h3>
+<h2 id="phase-2-ir-and-compiler-corridor-closure">12. Phase 2 — IR and compiler-corridor closure</h2>
 
 <ul>
-  <li>[x] publish first example slices</li>
-  <li>[x] publish conformance as a public truth surface</li>
-  <li>[x] publish a non-normative reference implementation workspace</li>
-  <li>[~] expand conformance breadth coherently</li>
-  <li>[~] make the bounded supported subset more explicit and repeatable</li>
-  <li>[~] keep examples, conformance, and reference implementation aligned without letting them become hidden semantic law</li>
+  <li>[~] keep the canonical execution-facing IR explicit and open</li>
+  <li>[~] keep derivation rules, construction rules, and identity mapping coherent</li>
+  <li>[~] keep canonical JSON IR validation posture explicit where published</li>
+  <li>[~] keep lowering architecturally downstream from the open IR</li>
+  <li>[~] keep backend-facing contracts explicit and distinct from runtime-private realization</li>
+  <li>[~] keep backend-family reasoning bounded and credible</li>
 </ul>
 
 <p>
-This phase is critical because it turns the repository into a visible proof surface rather than leaving it as architecture prose only.
+Phase 2 is successful when the repository-visible compiler corridor is explicit enough that the open IR remains clearly upstream from private backend machinery and clearly distinct from one runtime’s internal graph.
 </p>
 
 <hr/>
 
-<h2 id="phase-3">Phase 3</h2>
-
-<h3>IR stabilization and compiler corridor closure</h3>
+<h2 id="phase-3-bounded-execution-start-and-reference-path-closure">13. Phase 3 — Bounded execution-start and reference-path closure</h2>
 
 <ul>
-  <li>[x] publish an explicit IR layer</li>
-  <li>[x] publish derivation, construction, identity, schema, lowering, and backend contract surfaces</li>
-  <li>[~] stabilize Expression ↔ Language ↔ IR correspondence</li>
-  <li>[~] stabilize canonical JSON IR posture as a durable machine-checkable layer</li>
-  <li>[~] keep lowering explicitly downstream from open IR</li>
-  <li>[~] keep backend contract explicitly distinct from private runtime realization</li>
+  <li>[~] keep a first bounded profile-level execution-start contract coherent</li>
+  <li>[~] keep named example slices aligned with the actual bounded corridor</li>
+  <li>[~] keep conformance material aligned with the bounded executable truth surface</li>
+  <li>[~] keep the reference workspace serious but non-normative</li>
+  <li>[~] keep executable reference slices inspectable from source to bounded observable execution</li>
 </ul>
 
 <p>
-This phase is where FROG becomes credible as more than an authoring format.
-It becomes credible as a language stack with a real execution-facing middle.
+Phase 3 is successful when the repository can show a real bounded vertical slice from canonical source through derivation and backend-facing preparation to an observable execution path without pretending that all later runtime families are already standardized.
 </p>
 
 <hr/>
 
-<h2 id="phase-4">Phase 4</h2>
-
-<h3>First serious backend-oriented proof</h3>
+<h2 id="phase-4-widget-object-and-ui-corridor-closure">14. Phase 4 — Widget-object and UI corridor closure</h2>
 
 <ul>
-  <li>[ ] define the first reusable backend-family corridor more concretely</li>
-  <li>[ ] demonstrate lowering toward a serious backend path</li>
-  <li>[ ] demonstrate consumable backend handoff for a bounded subset</li>
-  <li>[ ] keep LLVM or any comparable compiler family clearly downstream from FROG</li>
-  <li>[ ] prove that the open IR can feed a serious compilation path without becoming that compiler family’s private truth model</li>
+  <li>[~] keep front-panel declaration distinct from diagram interaction</li>
+  <li>[~] keep <code>widget_value</code> and <code>widget_reference</code> distinct</li>
+  <li>[~] keep widget instance and widget class distinct</li>
+  <li>[~] keep property read, property write, method invocation, and event exposure distinct</li>
+  <li>[~] keep source-level declaration and IDE-synthesized node surfaces distinct</li>
+  <li>[~] keep standardized widget-class contracts distinct from runtime-private or toolkit-private reflection mechanisms</li>
 </ul>
 
 <p>
-This phase is one of the most important future exams of the whole project.
-It is where backend credibility becomes real.
+Phase 4 is successful when the published repository exposes a coherent UI-object corridor serious enough to support long-term conforming IDE behavior, validator behavior, and runtime-host reasoning without turning one UI host into hidden normative law.
 </p>
 
 <hr/>
 
-<h2 id="phase-5">Phase 5</h2>
-
-<h3>Serious IDE and observability foundation</h3>
+<h2 id="phase-5-conformance-growth-and-profile-broadening">15. Phase 5 — Conformance growth and profile broadening</h2>
 
 <ul>
-  <li>[ ] stabilize the Program Model architecture more deeply</li>
-  <li>[ ] define coherent IDE responsibilities across editing, validation feedback, and execution preparation</li>
-  <li>[ ] define strong observability, debugging, probes, and watch foundations</li>
-  <li>[ ] demonstrate that the language can support a serious future graphical development environment without collapsing the language into that IDE</li>
+  <li>[ ] expand conformance families once the currently published corridor is stable enough</li>
+  <li>[ ] broaden capability-family coverage only when ownership boundaries remain clear</li>
+  <li>[ ] refine broader backend-family, runtime-family, or deployment-family distinctions where justified</li>
+  <li>[ ] widen interop and profile surfaces without collapsing them into the intrinsic core</li>
+  <li>[ ] grow preservability and degraded readability expectations where cross-version safety can be made explicit</li>
 </ul>
 
 <p>
-This phase matters because FROG is not only a compiler corridor.
-It is also intended to support a serious graphical engineering workflow.
+Phase 5 must not start by scattering unfinished claims.
+It should widen only from a sufficiently stable bounded core.
 </p>
 
 <hr/>
 
-<h2 id="phase-6">Phase 6</h2>
-
-<h3>Ecosystem widening, deployment, and certification depth</h3>
+<h2 id="phase-6-ecosystem-and-industrial-standard-position">16. Phase 6 — Ecosystem and industrial-standard position</h2>
 
 <ul>
-  <li>[ ] refine target-profile taxonomies</li>
-  <li>[ ] refine deployment-mode distinctions</li>
-  <li>[ ] widen conformance breadth and certification logic</li>
-  <li>[ ] support broader implementation diversity</li>
-  <li>[ ] support richer industrial ecosystem participation</li>
-  <li>[ ] support long-term hardware and software ecosystem adoption</li>
+  <li>[ ] credible multi-implementation ecosystem posture</li>
+  <li>[ ] broader profile ecosystem credibility</li>
+  <li>[ ] serious deployment and runtime-family maturity</li>
+  <li>[ ] stronger industrial-standard posture</li>
+  <li>[ ] clearer conformance, certification, and branding ecosystem separation</li>
 </ul>
 
 <p>
-This phase should come after enough technical closure exists to support it cleanly.
-Premature ecosystem widening would create ambiguity rather than credibility.
+Phase 6 is not a marketing phase.
+It is the point where enough repository-visible closure exists to sustain a credible long-term open industrial language ecosystem.
 </p>
 
 <hr/>
 
-<h2 id="cross-cutting-workstreams">Cross-cutting workstreams</h2>
+<h2 id="cross-cutting-workstreams">17. Cross-cutting workstreams</h2>
 
 <p>
-Some workstreams cut across multiple phases and should be treated as continuous concerns:
+Some workstreams cut across several phases and must remain continuously aligned:
 </p>
 
 <ul>
-  <li><strong>Ownership clarity</strong> — keep strategy, roadmap, conformance, specification, and reference implementation distinct.</li>
-  <li><strong>Repository-visible proof</strong> — prefer published artifacts over abstract claims.</li>
-  <li><strong>AI-era auditability</strong> — keep the source, graph structure, and execution-facing representation aligned with reviewability goals.</li>
-  <li><strong>Industrial credibility</strong> — keep execution seriousness and portability central.</li>
-  <li><strong>Technological sovereignty</strong> — keep the language open, multi-implementable, and separable from one vendor stack.</li>
-  <li><strong>Conservative closure discipline</strong> — close one corridor coherently before widening unrelated fronts.</li>
+  <li>repository-entry alignment,</li>
+  <li>example / conformance / reference triangulation,</li>
+  <li>identity and mapping continuity,</li>
+  <li>execution observability and debugging posture,</li>
+  <li>widget-object ownership clarity,</li>
+  <li>versioning centralization and freshness,</li>
+  <li>strategy-to-proof coherence,</li>
+  <li>anti-regression documentation discipline.</li>
 </ul>
 
 <hr/>
 
-<h2 id="milestone-navigation">Milestone navigation</h2>
+<h2 id="milestone-navigation">18. Milestone navigation</h2>
 
 <p>
-Milestone tracking should remain compact and subordinate to the roadmap narrative.
-The detailed milestone surface is maintained in:
+Compact milestone tracking is maintained in:
 </p>
 
 <pre><code>Roadmap/Milestones.md</code></pre>
 
 <p>
-This separation helps keep the roadmap readable while still allowing explicit tracking.
+Milestones should remain a compact navigation aid for closure progress.
+They should not become a duplicate version-status matrix.
+Detailed current repository-surface status belongs centrally in:
 </p>
+
+<ul>
+  <li><code>Versioning/Readme.md</code>,</li>
+  <li><code>Versioning/Matrix.md</code>.</li>
+</ul>
 
 <hr/>
 
-<h2 id="definition-of-success">Definition of success</h2>
+<h2 id="definition-of-success">19. Definition of success</h2>
 
 <p>
-The roadmap should be considered successful when the repository can credibly demonstrate all of the following together:
+This roadmap is successful when it helps the repository close in a disciplined order without blurring the distinction between:
 </p>
 
 <ul>
-  <li>a stable canonical <code>.frog</code> source posture,</li>
-  <li>a clear structural validation boundary,</li>
-  <li>a coherent validated semantic layer,</li>
-  <li>a serious open execution-facing IR,</li>
-  <li>explicit lowering and backend handoff boundaries,</li>
-  <li>a credible backend/compiler corridor,</li>
-  <li>a serious future IDE foundation,</li>
-  <li>a public conformance growth path,</li>
-  <li>a reference path that remains non-normative but useful,</li>
-  <li>a coherent strategic position as an open, inspectable, industrially credible language foundation.</li>
+  <li>what FROG is,</li>
+  <li>what is already published,</li>
+  <li>what version state the repository is currently in,</li>
+  <li>what should be closed next,</li>
+  <li>what remains longer-term ecosystem work.</li>
 </ul>
 
 <p>
-In the current era, success also includes one more condition:
-FROG should become credibly understandable as a language infrastructure that remains governable when software creation is increasingly AI-assisted.
-</p>
-
-<p>
-That means:
+The roadmap should therefore remain:
 </p>
 
 <ul>
-  <li>structured source,</li>
-  <li>graphically reviewable logic,</li>
-  <li>inspectable execution-facing derivation,</li>
-  <li>clear downstream handoff boundaries,</li>
-  <li>an ecosystem architecture compatible with long-term industrial security and technological sovereignty.</li>
+  <li>non-normative,</li>
+  <li>sequencing-oriented,</li>
+  <li>architecturally disciplined,</li>
+  <li>explicitly distinct from the version-governance surface,</li>
+  <li>explicitly distinct from strategy,</li>
+  <li>explicitly distinct from technical ownership layers.</li>
 </ul>
 
 <p>
-That is the long-term closure target of the roadmap.
+FROG succeeds as a project when the repository can sustain a durable path from canonical source to validated meaning, open execution-facing IR, backend handoff, bounded observable execution, rich widget-object closure, conformance growth, and eventually a credible multi-implementation open industrial ecosystem.
 </p>
