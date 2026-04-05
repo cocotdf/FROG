@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="../FROG logo.svg" alt="FROG logo" width="200" />
+</p>
+
 <h1 align="center">🐸 FROG Connector Specification</h1>
 
 <p align="center">
@@ -45,6 +49,10 @@ A Frog may be executable without a connector.
 The connector becomes relevant when the Frog is intended to be reused as a graphical node.
 </p>
 
+<p>
+This document also does not define repository-wide version policy. Top-level <code>spec_version</code> identifies the source-format compatibility target of the containing <code>.frog</code> file, while the published specification corpus version remains governed centrally in <code>Versioning/Readme.md</code>.
+</p>
+
 <hr/>
 
 <h2 id="purpose">2. Purpose of the Connector</h2>
@@ -81,8 +89,7 @@ The connector is defined as a top-level object.
 Example structure:
 </p>
 
-<pre>
-{
+<pre><code>{
   "spec_version": "0.1",
   "metadata": {},
   "interface": {},
@@ -90,7 +97,7 @@ Example structure:
   "diagram": {},
   "front_panel": {}
 }
-</pre>
+</code></pre>
 
 <p>
 The <code>connector</code> section is <strong>optional</strong>.
@@ -103,6 +110,16 @@ It SHOULD be present when the Frog is intended to be instantiated as a reusable 
 <p>
 A top-level executable Frog may omit the connector entirely.
 </p>
+
+<p>
+In this source shape:
+</p>
+
+<ul>
+  <li>top-level <code>spec_version</code> identifies the source-format compatibility target of the file,</li>
+  <li><code>connector</code> defines optional graphical projection of the public contract,</li>
+  <li>the published specification corpus version remains governed centrally in <code>Versioning/Readme.md</code>.</li>
+</ul>
 
 <hr/>
 
@@ -137,6 +154,10 @@ In practical terms:
   <li><strong>connector</strong> = graphical projection of that contract</li>
 </ul>
 
+<p>
+The connector does not define source-format compatibility policy and does not redefine the versioning meaning of top-level <code>spec_version</code>.
+</p>
+
 <hr/>
 
 <h2 id="structure">5. Connector Structure</h2>
@@ -145,8 +166,7 @@ In practical terms:
 Example connector definition:
 </p>
 
-<pre>
-"connector": {
+<pre><code>"connector": {
   "granularity": 40,
   "ports": [
     { "interface_port": "a", "slot": 34 },
@@ -154,7 +174,7 @@ Example connector definition:
     { "interface_port": "result", "slot": 14 }
   ]
 }
-</pre>
+</code></pre>
 
 <p>
 Fields:
@@ -200,8 +220,7 @@ With the default granularity of 40, the perimeter is divided into four equal sid
 Conceptual model:
 </p>
 
-<pre>
-                 0   1   2   3   4   5   6   7   8   9
+<pre><code>                 0   1   2   3   4   5   6   7   8   9
                ●   ●   ●   ●   ●   ●   ●   ●   ●   ●
 
           39 ●                                     ● 10
@@ -217,7 +236,7 @@ Conceptual model:
 
                ●   ●   ●   ●   ●   ●   ●   ●   ●   ●
                 29  28  27  26  25  24  23  22  21  20
-</pre>
+</code></pre>
 
 <p>
 Each slot represents one discrete connection position on the perimeter of the reusable node.
@@ -240,12 +259,11 @@ Each entry in <code>connector.ports</code> maps one public interface port to one
 Example:
 </p>
 
-<pre>
-{
+<pre><code>{
   "interface_port": "temperature",
   "slot": 12
 }
-</pre>
+</code></pre>
 
 <p>
 Fields:
@@ -271,8 +289,7 @@ Those properties remain defined by the interface.
 
 <h3>Basic Arithmetic Node</h3>
 
-<pre>
-"connector": {
+<pre><code>"connector": {
   "granularity": 40,
   "ports": [
     { "interface_port": "a", "slot": 34 },
@@ -280,12 +297,11 @@ Those properties remain defined by the interface.
     { "interface_port": "result", "slot": 14 }
   ]
 }
-</pre>
+</code></pre>
 
 <h3>Control System Node</h3>
 
-<pre>
-"connector": {
+<pre><code>"connector": {
   "granularity": 40,
   "ports": [
     { "interface_port": "enable", "slot": 1 },
@@ -294,12 +310,11 @@ Those properties remain defined by the interface.
     { "interface_port": "output", "slot": 22 }
   ]
 }
-</pre>
+</code></pre>
 
 <h3>Top-Level Executable Frog Without Connector</h3>
 
-<pre>
-{
+<pre><code>{
   "spec_version": "0.1",
   "metadata": {},
   "interface": {
@@ -313,11 +328,21 @@ Those properties remain defined by the interface.
   "diagram": {},
   "front_panel": {}
 }
-</pre>
+</code></pre>
 
 <p>
 In this case, the Frog remains executable, but it does not yet define a reusable graphical connector.
 </p>
+
+<p>
+In this example:
+</p>
+
+<ul>
+  <li>top-level <code>spec_version</code> identifies the source-format compatibility target of the file,</li>
+  <li>the absence of <code>connector</code> means no serialized reusable-node perimeter mapping is provided,</li>
+  <li>the published specification corpus version remains governed centrally in <code>Versioning/Readme.md</code>.</li>
+</ul>
 
 <hr/>
 
@@ -352,6 +377,11 @@ Implementations MAY treat incomplete mappings as validation errors when full gra
 Invalid connector mappings MUST trigger validation errors.
 </p>
 
+<p>
+These checks validate optional connector structure and connector-to-interface consistency.
+They do not, by themselves, redefine top-level <code>spec_version</code> policy or repository-wide corpus-version governance.
+</p>
+
 <hr/>
 
 <h2 id="extensibility">10. Extensibility</h2>
@@ -364,13 +394,12 @@ Tools MAY extend connector entries with additional non-semantic properties.
 Example:
 </p>
 
-<pre>
-{
+<pre><code>{
   "interface_port": "speed",
   "slot": 8,
   "label": "Speed Input"
 }
-</pre>
+</code></pre>
 
 <p>
 Such properties MAY be used for authoring, visualization, or editor hints.
@@ -378,6 +407,10 @@ Such properties MAY be used for authoring, visualization, or editor hints.
 
 <p>
 Unknown connector properties MUST be ignored by runtimes and by tools that do not support them.
+</p>
+
+<p>
+Such extensions should remain compatible with the centralized cumulative version model: later source-format versions should normally extend earlier valid connector forms rather than silently replace them, unless an explicit breaking boundary is declared in repository-wide version governance.
 </p>
 
 <hr/>
@@ -410,4 +443,5 @@ In short:
 <ul>
   <li><strong>interface</strong> defines <em>what</em> the Frog exposes</li>
   <li><strong>connector</strong> defines <em>how</em> that interface appears when the Frog is used as a reusable node</li>
+  <li><strong>connector</strong> does not define source-format compatibility law or published specification corpus versioning</li>
 </ul>
