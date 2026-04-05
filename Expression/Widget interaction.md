@@ -87,6 +87,11 @@ The primary widget value has a dual status: it is the natural value terminal of 
 Accordingly, a widget value MAY be accessed naturally through <code>widget_value</code>, and MAY also be accessed through the object-style path as member <code>value</code>.
 </p>
 
+<p>
+This document does not define repository-wide version policy.
+Top-level <code>spec_version</code> identifies the source-format compatibility target of the containing <code>.frog</code> file, while the published specification corpus version remains governed centrally in <code>Versioning/Readme.md</code>.
+</p>
+
 <hr/>
 
 <h2 id="scope">2. Scope</h2>
@@ -113,7 +118,8 @@ This document does not specify:
   <li>the canonical declaration and composition of the front panel,</li>
   <li>the primitive identities and full primitive signatures beyond their source-facing use here,</li>
   <li>the primitive-local execution semantics of UI interaction operations,</li>
-  <li>the general executable semantics of the diagram.</li>
+  <li>the general executable semantics of the diagram,</li>
+  <li>the repository-wide version-transition doctrine.</li>
 </ul>
 
 <hr/>
@@ -129,7 +135,8 @@ The widget interaction model is designed to satisfy the following goals:
   <li><strong>Contract consistency</strong> — object-style access MUST remain legal only when permitted by the corresponding widget class contract.</li>
   <li><strong>Dataflow clarity</strong> — ordinary value flow and explicit object access MUST remain distinct.</li>
   <li><strong>Source explicitness</strong> — object-style interaction MUST be represented through explicit source constructs rather than hidden editor conventions.</li>
-  <li><strong>Type safety</strong> — widget member types and method signatures MUST remain compatible with the FROG type system.</li>
+  <li><strong>Type safety</strong> — ordinary value typing MUST remain compatible with the FROG type system.</li>
+  <li><strong>Token separation</strong> — ordinary typed values, widget references, and UI sequencing tokens MUST remain distinct categories and MUST NOT be silently collapsed.</li>
   <li><strong>Profile extensibility</strong> — widget classes MAY expose different properties, methods, parts, and access modes under different profiles while preserving one common interaction model.</li>
   <li><strong>Architectural separation</strong> — widget interaction MUST NOT redefine public interface semantics, front-panel composition semantics, widget class contracts, general execution semantics, or the ownership of the standardized <code>frog.ui.*</code> primitive surface.</li>
 </ul>
@@ -168,6 +175,16 @@ FROG v0.1 does not fully standardize in this document:
   <li>a complete effect system covering every UI runtime profile.</li>
 </ul>
 
+<p>
+In particular, base v0.1 keeps the following distinction explicit:
+</p>
+
+<ul>
+  <li>a widget reference is an object-access token, not an ordinary user-declared value type expression,</li>
+  <li><code>ui_in</code> and <code>ui_out</code> are sequencing tokens, not ordinary typed value ports,</li>
+  <li>ordinary value ports remain governed by <code>Type.md</code>.</li>
+</ul>
+
 <hr/>
 
 <h2 id="relation-with-other-specifications">5. Relation with Other Specifications</h2>
@@ -183,6 +200,7 @@ This document depends on the following specifications:
   <li><code>Expression/Front panel.md</code> — declaration and serialization of widget instances.</li>
   <li><code>Expression/Diagram.md</code> — executable graph structure, node categories, canonical widget node kinds, and port-resolution rules.</li>
   <li><code>Libraries/UI.md</code> — the standardized <code>frog.ui.*</code> primitive catalog, primitive signatures, primitive typing rules, sequencing rules, and primitive-local interaction semantics.</li>
+  <li><code>Versioning/Readme.md</code> — centralized distinction between specification corpus version, top-level <code>spec_version</code>, and program artifact versioning.</li>
 </ul>
 
 <p>
@@ -231,6 +249,9 @@ Libraries/UI.md
   -&gt; primitive signatures
   -&gt; primitive-local typing and sequencing rules
   -&gt; primitive-local interaction semantics
+
+Versioning/Readme.md
+  -&gt; repository-wide version-transition doctrine
 </code></pre>
 
 <hr/>
@@ -283,6 +304,17 @@ A widget interaction node also does not define which members are legal for the t
 <p>
 When explicit ordering of UI side effects is required, widget interaction nodes MAY participate in a sequencing chain through <code>ui_in</code> and <code>ui_out</code>. The primitive-level meaning of those sequencing ports is defined by <code>Libraries/UI.md</code>.
 </p>
+
+<p>
+The following distinction MUST remain explicit:
+</p>
+
+<pre><code>ordinary typed value
+    !=
+widget reference token
+    !=
+UI sequencing token
+</code></pre>
 
 <hr/>
 
@@ -646,6 +678,27 @@ Respectively:
   <li>primitive-local execution semantics belong to <code>Libraries/UI.md</code> and the relevant execution-semantics layers.</li>
 </ul>
 
+<p>
+The following distinction MUST also remain explicit:
+</p>
+
+<pre><code>ordinary typed value ports
+  !=
+widget reference ports
+  !=
+UI sequencing ports
+</code></pre>
+
+<p>
+Accordingly:
+</p>
+
+<ul>
+  <li>ordinary value ports are governed by <code>Type.md</code>,</li>
+  <li><code>ref</code> ports carry widget-reference tokens defined by the widget interaction model and the corresponding primitive contracts,</li>
+  <li><code>ui_in</code> and <code>ui_out</code> carry opaque sequencing tokens used only for explicit UI ordering when supported.</li>
+</ul>
+
 <hr/>
 
 <h2 id="diagram-representation">13. Diagram Representation</h2>
@@ -722,8 +775,15 @@ Validators SHOULD diagnose at least the following error classes:
   <li>invocation of non-invocable method,</li>
   <li>use of profile-gated member outside the required profile,</li>
   <li>use of host-gated member without required host capability,</li>
-  <li>attempt to use object-style access where only natural value access is valid.</li>
+  <li>attempt to use object-style access where only natural value access is valid,</li>
+  <li>treating a widget reference token as an ordinary typed value,</li>
+  <li>treating a sequencing port as an ordinary typed value port.</li>
 </ul>
+
+<p>
+These checks validate the source-facing widget-object interaction model.
+They do not, by themselves, redefine top-level <code>spec_version</code> policy or repository-wide corpus-version governance.
+</p>
 
 <hr/>
 
@@ -845,7 +905,9 @@ It does not standardize:
   <li>widget instance composition,</li>
   <li>widget class member legality,</li>
   <li>primitive-local execution semantics,</li>
-  <li>general execution semantics of the language.</li>
+  <li>general execution semantics of the language,</li>
+  <li>source-format compatibility law,</li>
+  <li>published specification corpus versioning.</li>
 </ul>
 
 <p>
