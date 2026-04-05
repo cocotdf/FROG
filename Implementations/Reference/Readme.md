@@ -18,10 +18,10 @@
   <li><a href="#architectural-position">3. Architectural Position</a></li>
   <li><a href="#current-purpose">4. Current Purpose</a></li>
   <li><a href="#prototype-status-and-future-compiler-direction">5. Prototype Status and Future Compiler Direction</a></li>
-  <li><a href="#executable-reference-slices">6. Executable Reference Slices</a></li>
+  <li><a href="#reference-corridors-and-executable-slices">6. Reference Corridors and Executable Slices</a></li>
   <li><a href="#reference-pipeline">7. Reference Pipeline</a></li>
   <li><a href="#directory-posture">8. Directory Posture</a></li>
-  <li><a href="#relation-with-examples-conformance-and-schema">9. Relation with Examples, Conformance, and Schema</a></li>
+  <li><a href="#relation-with-examples-conformance-ir-profiles-and-versioning">9. Relation with Examples, Conformance, IR, Profiles, and Versioning</a></li>
   <li><a href="#runtime-modules-deployment-modes-target-profiles-and-backend-families">10. Runtime Modules, Deployment Modes, Target Profiles, and Backend Families</a></li>
   <li><a href="#runtime-posture-in-v01">11. Runtime Posture in v0.1</a></li>
   <li><a href="#what-this-directory-does-not-standardize">12. What this Directory Does Not Standardize</a></li>
@@ -77,7 +77,8 @@ Normative ownership remains in the specification layers:
   <li><code>Profiles/</code> — optional standardized capability families, target-profile-facing distinctions, deployment-mode-facing distinctions, and backend-family-facing distinctions where standardized,</li>
   <li><code>IR/</code> — canonical Execution IR, derivation, identity, construction, lowering, and backend contract boundaries,</li>
   <li><code>IDE/</code> — authoring, debugging, observability, and tool-facing concerns,</li>
-  <li><code>Conformance/</code> — public accept / reject / preserve expectations.</li>
+  <li><code>Conformance/</code> — public accept / reject / preserve expectations,</li>
+  <li><code>Versioning/</code> — repository-wide version-governance doctrine and current-surface status reporting.</li>
 </ul>
 
 <p>
@@ -234,87 +235,70 @@ It does not prematurely collapse them into one opaque compiler implementation.
 
 <hr/>
 
-<h2 id="executable-reference-slices">6. Executable Reference Slices</h2>
+<h2 id="reference-corridors-and-executable-slices">6. Reference Corridors and Executable Slices</h2>
 
 <p>
-The current executable reference path is intentionally staged.
-The progression matters:
+The current reference posture should be read through <strong>two neighboring repository-visible surfaces</strong> that serve different roles:
 </p>
 
 <ul>
-  <li><code>Examples/01_pure_addition</code></li>
-  <li><code>Examples/02_ui_value_roundtrip</code></li>
-  <li><code>Examples/03_ui_property_write</code></li>
-  <li><code>Examples/04_stateful_feedback_delay</code></li>
+  <li><strong><code>Examples/</code></strong> — illustrative named slices that help readers understand a bounded corridor,</li>
+  <li><strong><code>Conformance/</code></strong> — public accept / reject / preserve truth that the reference implementation should try to satisfy for the supported subset.</li>
 </ul>
 
 <p>
-Each slice adds one architectural concern without collapsing layer boundaries.
+At the current published state, the first bounded illustrative compiler mirror is:
 </p>
 
-<h3>6.1 01_pure_addition</h3>
+<pre><code>Examples/compiler/
+├── 01_pure_arithmetic.md
+├── 02_structured_control.md
+└── 03_explicit_state.md</code></pre>
 
 <p>
-This is the smallest end-to-end executable case.
-It proves the full path from canonical <code>.frog</code> source to observable runtime result with:
+Those examples are explanatory mirrors.
+They help stage a conservative compiler-oriented corridor without becoming hidden semantic law.
+</p>
+
+<p>
+At the same time, the published conformance surface already contains historical top-level executable anchors such as:
+</p>
+
+<pre><code>Conformance/valid/
+├── 01_pure_addition.md
+├── 02_ui_value_roundtrip.md
+├── 03_ui_property_write.md
+└── 04_stateful_feedback_delay.md</code></pre>
+
+<p>
+Those conformance anchors remain part of the published truth surface.
+They are not replaced by the illustrative compiler mirror.
+</p>
+
+<p>
+The correct reading for the reference implementation is therefore:
+</p>
+
+<pre><code>Examples/
+   -&gt; bounded illustrative corridor
+
+Conformance/
+   -&gt; public acceptance / rejection / preservation surface
+
+Implementations/Reference/
+   -&gt; non-normative consumer path that should try to process the supported subset correctly
+</code></pre>
+
+<p>
+A good early implementation progression is therefore conservative:
 </p>
 
 <ul>
-  <li><code>interface_input</code>,</li>
-  <li><code>interface_output</code>,</li>
-  <li>one ordinary primitive node,</li>
-  <li><code>frog.core.add</code>.</li>
+  <li>prove a pure arithmetic corridor first,</li>
+  <li>prove structured control next,</li>
+  <li>prove explicit state next,</li>
+  <li>preserve the distinction between natural widget value participation and object-style widget interaction where the historical executable anchors already make those distinctions public.</li>
 </ul>
-
-<p>
-Simple interpretation:
-<code>result = a + b</code>
-</p>
-
-<h3>6.2 02_ui_value_roundtrip</h3>
-
-<p>
-This is the first front-panel value-participation case.
-It proves that natural widget value flow can be transported through the architecture without being collapsed into object-style UI interaction.
-</p>
-
-<p>
-Simple interpretation:
-<code>ind_result.value = ctrl_a.value + ctrl_b.value</code>
-</p>
-
-<h3>6.3 03_ui_property_write</h3>
-
-<p>
-This is the first object-style UI interaction case.
-It proves the distinction between:
-</p>
-
-<ul>
-  <li>front-panel widget declaration,</li>
-  <li>diagram-side <code>widget_reference</code> participation,</li>
-  <li>a side-effecting UI primitive.</li>
-</ul>
-
-<p>
-Simple interpretation:
-<code>ctrl_gain.label.text = status</code>
-</p>
-
-<h3>6.4 04_stateful_feedback_delay</h3>
-
-<p>
-This is the first explicit-memory and valid-feedback case.
-It proves that recurrence is represented through explicit delay state rather than hidden scheduler repair or implicit runtime memory.
-</p>
-
-<p>
-Simple interpretation:
-</p>
-
-<pre><code>y(t) = x(t) + state(t)
-state(t + 1) = y(t)
-state(0) = 0.0</code></pre>
 
 <p>
 This staged progression matters.
@@ -401,17 +385,19 @@ Early convenience must not become accidental architecture.
 
 <hr/>
 
-<h2 id="relation-with-examples-conformance-and-schema">9. Relation with Examples, Conformance, and Schema</h2>
+<h2 id="relation-with-examples-conformance-ir-profiles-and-versioning">9. Relation with Examples, Conformance, IR, Profiles, and Versioning</h2>
 
 <p>
 This directory works together with:
 </p>
 
 <ul>
-  <li><code>Examples/</code> — published named source programs,</li>
+  <li><code>Examples/</code> — published illustrative named slices,</li>
   <li><code>Conformance/</code> — expected acceptance, rejection, and preservation outcomes,</li>
   <li><code>Expression/Schema.md</code> and repository-visible schema artifacts — published structural-validation posture for canonical source,</li>
-  <li><code>IR/Schema.md</code> and <code>IR/schema/</code> — published canonical Execution IR validation posture for the open execution-facing boundary artifact.</li>
+  <li><code>IR/</code> and <code>IR/schema/</code> — published canonical Execution IR definition and validation posture for the open execution-facing boundary artifact,</li>
+  <li><code>Profiles/</code> — published optional downstream corridor posture, including backend-family-relevant corridors where standardized,</li>
+  <li><code>Versioning/</code> — published corpus-version doctrine and current-surface status reporting that frame what this workspace should claim against.</li>
 </ul>
 
 <p>
@@ -419,10 +405,10 @@ The relationship is intentionally simple:
 </p>
 
 <pre><code>Examples/
-  provides source programs
+  provides bounded illustrative mirrors
 
 Conformance/
-  states what is expected
+  states what is expected publicly
 
 Expression/
   defines source-shape ownership and structural validation posture
@@ -430,17 +416,23 @@ Expression/
 IR/
   defines the canonical execution-facing artifact and its validation posture
 
+Profiles/
+  bound optional downstream corridors
+
+Versioning/
+  states what published corpus version and current-surface status mean
+
 Implementations/Reference/
-  tries to do it correctly
+  tries to consume the supported corridor correctly
 </code></pre>
 
 <p>
 The reference implementation should therefore start from published named slices rather than from an unbounded language ambition.
-A correct implementation should prove each published example path before widening scope.
+A correct implementation should prove each supported path before widening scope.
 </p>
 
 <p>
-In practical terms, the first implementation milestones should be able to consume the published example slices, distinguish:
+In practical terms, early implementation milestones should be able to consume a controlled published subset and distinguish:
 </p>
 
 <ul>
@@ -588,7 +580,7 @@ Implementation habit must not overwrite architectural intent.
 
 <p>
 In base v0.1, this directory should stay compact, explicit, and testable.
-The current objective is a coherent executable path through small published example slices.
+The current objective is a coherent executable path through a controlled published subset.
 </p>
 
 <p>
