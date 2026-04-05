@@ -34,6 +34,7 @@
   <a href="#internal-documentation-map">Internal documentation map</a> •
   <a href="#recommended-reading-path">Recommended reading path</a> •
   <a href="#specification-architecture">Specification architecture</a> •
+  <a href="#specification-versioning">Specification versioning</a> •
   <a href="#program-representation">Program representation</a> •
   <a href="#execution-architecture">Execution architecture</a> •
   <a href="#execution-observability-debugging-and-inspection">Execution observability, debugging, and inspection</a> •
@@ -107,7 +108,7 @@ Its role is to provide a durable open foundation for future:
 
 <p>
 The repository also contains repository-level support material that helps make the specification inspectable in practice:
-named examples, conformance material, a non-normative reference implementation workspace, a strategic framing layer, and a non-normative roadmap layer.
+named examples, conformance material, a non-normative reference implementation workspace, a strategic framing layer, a non-normative roadmap layer, and a centralized specification-versioning surface.
 Those areas support the published specification, but they do not replace its ownership boundaries.
 </p>
 
@@ -121,7 +122,7 @@ It does not equate the language with one IDE, one runtime, one compiler, one ven
   <li><strong>FROG is not a single runtime.</strong></li>
   <li><strong>FROG is not a single compiler.</strong></li>
   <li><strong>FROG is not a vendor product.</strong></li>
-  <li><strong>FROG is an open language specification with distinct source, semantic, IR, library, profile, and IDE-facing layers.</strong></li>
+  <li><strong>FROG is an open language specification with distinct source, semantic, IR, library, profile, IDE-facing, and version-governance layers.</strong></li>
 </ul>
 
 <hr/>
@@ -140,13 +141,14 @@ These remain the primary ownership layers of the published language specificatio
 </p>
 
 <p>
-The repository also contains repository-level support areas and repository-level framing layers:
+The repository also contains repository-level support areas and repository-level framing / governance layers:
 </p>
 
 <ul>
   <li><strong><code>Examples/</code></strong> — named source examples and the first executable vertical slices,</li>
   <li><strong><code>Conformance/</code></strong> — public accept / reject / preserve expectations for the published repository state,</li>
   <li><strong><code>Implementations/Reference/</code></strong> — a non-normative reference implementation workspace used to exercise a disciplined minimal execution path,</li>
+  <li><strong><code>Versioning/</code></strong> — centralized specification-version governance and current-status reporting for the published specification corpus,</li>
   <li><strong><code>Strategy/</code></strong> — a non-normative strategic framing layer distinct from normative ownership,</li>
   <li><strong><code>Roadmap/</code></strong> — a non-normative closure-sequencing layer distinct from both strategy and specification.</li>
 </ul>
@@ -168,7 +170,7 @@ canonical source ownership and source-schema posture are published in <code>Expr
 validated program meaning is staged in <code>Language/</code>,
 open execution-facing representation is staged in <code>IR/</code>,
 and the repository-level examples, conformance material, and reference implementation workspace together expose the first repository-visible executable vertical slices.
-The repository also now carries explicit strategic and roadmap framing layers so that long-term purpose and closure order remain visible without displacing normative ownership.
+The repository also now carries explicit strategic, roadmap, and specification-versioning surfaces so that long-term purpose, closure order, and current corpus-version posture remain visible without displacing normative ownership.
 </p>
 
 <p>
@@ -190,6 +192,7 @@ That published reality does <strong>not</strong> yet mean that the repository al
 The current repository state should therefore be read as:
 published architectural specification first,
 published source-schema and conformance posture for the current subset,
+published version-governance posture for the current corpus state,
 published strategic and roadmap framing,
 and published non-normative executable reference prototypes for a controlled subset.
 </p>
@@ -581,6 +584,9 @@ The support areas exist to make that baseline more inspectable, testable, and ex
 ├── Strategy/                         Non-normative strategic framing layer
 │   ├── Readme.md                     Strategic entry point for the Strategy layer
 │   └── Heilmeier/                    Program-framing and mission-oriented strategic document set
+├── Versioning/                       Centralized specification-version governance and current-status matrix
+│   ├── Readme.md                     Corpus-version doctrine, current published version, transition policy
+│   └── Matrix.md                     Detailed current-status table by repository surface
 │
 ├── CLA.md                            Contributor license agreement requirements
 ├── CONTRIBUTING.md                   Contribution process and contribution rules
@@ -605,13 +611,14 @@ The six core specification families are:
 </ul>
 
 <p>
-The current repository-level support areas are:
+The current repository-level support and governance areas are:
 </p>
 
 <ul>
   <li><strong><code>Examples/</code></strong> — named source cases and compact executable slices,</li>
   <li><strong><code>Conformance/</code></strong> — expected outcomes for validation, preservation, and rejection,</li>
-  <li><strong><code>Implementations/Reference/</code></strong> — non-normative prototype workspace used to exercise the current reference path.</li>
+  <li><strong><code>Implementations/Reference/</code></strong> — non-normative prototype workspace used to exercise the current reference path,</li>
+  <li><strong><code>Versioning/</code></strong> — centralized current corpus-version governance and per-surface current-status reporting.</li>
 </ul>
 
 <p>
@@ -781,6 +788,18 @@ This directory defines the architecture and responsibilities of a FROG developme
 It explains how editing relates to the Program Model, serialized Expression, validation, IR derivation, execution preparation, execution observability, debugging, probes, watch views, snippets, and Express authoring.
 </p>
 
+<h3><code>Versioning/</code> — centralized specification-version governance</h3>
+
+<p>
+This directory defines the centralized specification-version governance surface of the repository.
+Its role is to make cross-version policy, the current published corpus version, additive-evolution doctrine, degraded readability expectations, and the detailed per-surface current-status table visible in one place rather than scattering them across many unrelated documents.
+</p>
+
+<p>
+It does not replace normative ownership of <code>Expression/</code>, <code>Language/</code>, <code>IR/</code>, <code>Libraries/</code>, <code>Profiles/</code>, or <code>IDE/</code>.
+It centralizes version-governance policy and current-status reporting for the published corpus.
+</p>
+
 <h3><code>Strategy/</code> — strategic framing layer</h3>
 
 <p>
@@ -789,7 +808,7 @@ Its role is to explain why FROG matters, what ecosystem gap it targets, why open
 </p>
 
 <p>
-It does not own language truth, source validity, semantics, IR derivation rules, or conformance expectations.
+It does not own language truth, source validity, semantics, IR derivation rules, conformance expectations, or current corpus-version truth.
 It explains the strategic purpose of the project while remaining distinct from normative ownership.
 </p>
 
@@ -801,7 +820,7 @@ Its role is to explain in what order the project should be closed, which phases 
 </p>
 
 <p>
-It does not replace strategy and it does not replace specification.
+It does not replace strategy, it does not replace specification, and it does not replace centralized version-state reporting.
 It sequences the closure path between the current published state and the long-term compiler/runtime, IDE, deployment, and ecosystem objectives.
 </p>
 
@@ -843,6 +862,14 @@ The map below summarizes the intended role of the Markdown documents in the curr
 │           -&gt; non-normative reference workspace, executable-slice purpose,
 │              staged validator posture, prototype status,
 │              and future compiler direction
+│
+├── Versioning/
+│   ├── Readme.md
+│   │   -&gt; centralized corpus-version governance, current published version,
+│   │      additive-evolution doctrine, degraded readability policy,
+│   │      and transition criteria
+│   └── Matrix.md
+│       -&gt; centralized current-status table by repository surface
 │
 ├── Roadmap/
 │   ├── Readme.md
@@ -983,7 +1010,7 @@ The map below summarizes the intended role of the Markdown documents in the curr
 
 <p>
 This map is intentionally architectural rather than merely enumerative.
-Its purpose is to make repository ownership boundaries, support layers, framing layers, and recommended reading paths easier to understand.
+Its purpose is to make repository ownership boundaries, support layers, framing layers, governance layers, and recommended reading paths easier to understand.
 </p>
 
 <hr/>
@@ -1058,6 +1085,26 @@ That second path answers three different questions in order:
 </ul>
 
 <p>
+Readers who want the current repository-wide version posture SHOULD then continue with:
+</p>
+
+<pre>
+Versioning/Readme.md
+   |
+   v
+Versioning/Matrix.md
+</pre>
+
+<p>
+That third path answers two different but related questions:
+</p>
+
+<ul>
+  <li><strong><code>Versioning/Readme.md</code></strong> — what the current corpus version means, how cross-version governance works, and what doctrine governs additive evolution and degraded readability,</li>
+  <li><strong><code>Versioning/Matrix.md</code></strong> — what the current detailed status is for each major repository surface.</li>
+</ul>
+
+<p>
 Readers who continue specifically into the IR layer SHOULD then follow:
 </p>
 
@@ -1090,7 +1137,7 @@ Backend contract.md
 </pre>
 
 <p>
-That third path reflects the current IR bundle:
+That fourth path reflects the current IR bundle:
 the canonical open Execution IR core comes first,
 identity and mapping preserve attribution continuity,
 construction materializes the canonical open artifact,
@@ -1116,7 +1163,7 @@ Roadmap/Milestones.md
 </pre>
 
 <p>
-That fourth path answers a different set of questions:
+That fifth path answers a different set of questions:
 </p>
 
 <ul>
@@ -1171,13 +1218,14 @@ what is edited     -> IDE/
 </pre>
 
 <p>
-Beyond those six core families, the published repository also contains three important support areas that should not be confused with competing semantic owners:
+Beyond those six core families, the published repository also contains four important support and governance areas that should not be confused with competing semantic owners:
 </p>
 
 <pre>
-what is exemplified  -> Examples/
-what is expected     -> Conformance/
-what is prototyped   -> Implementations/Reference/
+what is exemplified   -> Examples/
+what is expected      -> Conformance/
+what is prototyped    -> Implementations/Reference/
+what version means    -> Versioning/
 </pre>
 
 <p>
@@ -1185,8 +1233,8 @@ The repository also contains two framing layers that should remain explicit and 
 </p>
 
 <pre>
-why it matters       -> Strategy/
-in what order it closes -> Roadmap/
+why it matters           -> Strategy/
+in what order it closes  -> Roadmap/
 </pre>
 
 <p>
@@ -1195,7 +1243,7 @@ Those documents remain architecturally downstream from validated program meaning
 </p>
 
 <p>
-Likewise, the repository-level support areas are already part of the published state of the repository,
+Likewise, the repository-level support and governance areas are already part of the published state of the repository,
 but they do not redefine the ownership model:
 </p>
 
@@ -1203,6 +1251,7 @@ but they do not redefine the ownership model:
   <li><strong><code>Examples/</code></strong> do not define language truth,</li>
   <li><strong><code>Conformance/</code></strong> does not become the semantic owner,</li>
   <li><strong><code>Implementations/Reference/</code></strong> does not become the normative production compiler pipeline,</li>
+  <li><strong><code>Versioning/</code></strong> does not become the owner of semantics, source law, or IR law,</li>
   <li><strong><code>Strategy/</code></strong> does not become semantic ownership,</li>
   <li><strong><code>Roadmap/</code></strong> does not become normative specification.</li>
 </ul>
@@ -1210,6 +1259,54 @@ but they do not redefine the ownership model:
 <p>
 Beyond the six top-level families listed above, later areas such as deployment, runtime profiles, or conformance-oriented execution profiles MAY be structured more explicitly over time.
 Those later areas are not yet closed top-level specification families in the same sense as the six layers listed above.
+</p>
+
+<hr/>
+
+<h2 id="specification-versioning">Specification versioning</h2>
+
+<p>
+FROG distinguishes three version notions that must remain explicit and must not be collapsed:
+</p>
+
+<ul>
+  <li><strong>specification corpus version</strong> — the version of the published FROG specification repository as a whole,</li>
+  <li><strong><code>.frog spec_version</code></strong> — the source-format / compatibility target declared by a source artifact,</li>
+  <li><strong><code>metadata.program_version</code></strong> — the version of one authored FROG program artifact.</li>
+</ul>
+
+<p>
+These notions are related, but they do not mean the same thing and must not be reported interchangeably.
+</p>
+
+<p>
+Cross-version governance is centralized in:
+</p>
+
+<ul>
+  <li><strong><code>Versioning/Readme.md</code></strong> — corpus-version doctrine, current published version, additive-evolution rule, degraded readability posture, and transition policy,</li>
+  <li><strong><code>Versioning/Matrix.md</code></strong> — detailed current-status table by repository surface.</li>
+</ul>
+
+<p>
+The repository-wide versioning doctrine is:
+</p>
+
+<pre><code>open if possible
+inspect what is known
+preserve what is unknown when safe
+refuse unsafe semantic or executable claims
+never silently misinterpret
+</code></pre>
+
+<p>
+This means FROG specification evolution should be additive by default.
+Newer source-compatible forms should normally extend earlier accepted forms rather than invalidate them without strong reason.
+Older-capability tools should, where possible, be able to open newer artifacts in an explicit degraded mode, preserve unsupported but safely preservable sections, and refuse claims they cannot make safely.
+</p>
+
+<p>
+Versioning policy is centralized so that current corpus-version truth, transition criteria, and per-surface current-status reporting are not scattered across unrelated README files.
 </p>
 
 <hr/>
@@ -1381,6 +1478,7 @@ lowering / backend-facing handoff
 This layered representation is one of the reasons FROG is suited to AI-era tooling:
 the source remains structured,
 the semantic boundary remains explicit,
+the current source-compatibility target remains identifiable,
 and the execution-facing artifact remains open to inspection rather than disappearing into one opaque implementation step.
 </p>
 
@@ -1483,6 +1581,7 @@ They are source-aligned views and controls that allow implementations to project
 <pre>
 what is saved       -> Expression/
 what is validated   -> Expression/ + Language/ + Libraries/ + Profiles/
+what is versioned   -> Versioning/
 what is derived     -> IR/
 what is executed    -> compiler / backend / runtime implementations
 what is observed    -> IDE-facing source-aligned observability and debugging
@@ -1643,7 +1742,7 @@ Critical software ecosystems should not have to depend on one opaque program for
 <h2 id="security-and-optimization-by-design">Security and optimization by design</h2>
 
 <p>
-FROG integrates validation, inspectability, and optimization into its architecture.
+FROG integrates validation, inspectability, version governance, and optimization into its architecture.
 </p>
 
 <p>
@@ -1657,13 +1756,13 @@ Base principles include:
   <li>explicit structure semantics,</li>
   <li>explicit local-memory semantics for valid feedback loops,</li>
   <li>deterministic execution guarantees where supported by the active profile,</li>
-  <li>clear separation between source truth, validated meaning, execution-facing derivation, and private realization.</li>
+  <li>clear separation between source truth, validated meaning, execution-facing derivation, version-governance posture, and private realization.</li>
 </ul>
 
 <p>
 This matters for security as well as execution.
 In safety-relevant or industrial environments, it is not enough to execute logic.
-It must also be possible to review, attribute, validate, and reason about that logic across the source and execution-facing layers.
+It must also be possible to review, attribute, validate, reason about version intent, and reason about that logic across the source and execution-facing layers.
 </p>
 
 <p>
@@ -1696,6 +1795,7 @@ FROG is designed for interoperability at several levels:
   <li><strong>semantic interoperability</strong> — validated programs are interpreted against shared language, intrinsic-library, and profile specifications,</li>
   <li><strong>IR interoperability</strong> — multiple toolchains may derive compatible canonical open execution-facing representations,</li>
   <li><strong>execution interoperability</strong> — multiple toolchains may lower, contract, compile, or run compatible program meanings across different backend families,</li>
+  <li><strong>version interoperability</strong> — current corpus-version truth and current-surface status can be read centrally rather than inferred from scattered documents,</li>
   <li><strong>ecosystem interoperability</strong> — the language remains separate from vendor lock-in.</li>
 </ul>
 
@@ -1749,6 +1849,7 @@ FROG explicitly separates:
   <li>live inspection through probes,</li>
   <li>persistent watch-based inspection,</li>
   <li>snippet-based authoring transport,</li>
+  <li>specification-version governance,</li>
   <li>compiler implementations,</li>
   <li>backend implementations,</li>
   <li>runtime implementations,</li>
@@ -1772,6 +1873,8 @@ At the modeling level, FROG also separates:
   <li>public interface from front panel,</li>
   <li>diagram from connector,</li>
   <li>natural widget value flow from object-style widget interaction,</li>
+  <li>specification corpus version from <code>.frog spec_version</code>,</li>
+  <li><code>.frog spec_version</code> from <code>metadata.program_version</code>,</li>
   <li>canonical Execution IR from downstream compiler-family forms such as LLVM-oriented artifacts.</li>
 </ul>
 
@@ -1847,7 +1950,7 @@ while trademark, certification, and branding can remain separately governed with
 
 <p>
 FROG is currently under active design, cleanup, and stabilization.
-The repository already contains substantial material across canonical source representation, source-schema posture, language semantics, canonical open execution-facing IR architecture, intrinsic standardized primitive libraries, optional profile architecture, IDE architecture, strategic framing, and roadmap posture, but the overall specification is still converging toward a coherent v0.1 foundation.
+The repository already contains substantial material across canonical source representation, source-schema posture, language semantics, canonical open execution-facing IR architecture, intrinsic standardized primitive libraries, optional profile architecture, IDE architecture, specification-version governance, strategic framing, and roadmap posture, but the overall specification is still converging toward a coherent v0.1 foundation.
 </p>
 
 <p>
@@ -1859,6 +1962,7 @@ It already contains:
   <li>a published <code>Examples/</code> directory with the first four repository-visible executable slices,</li>
   <li>a published <code>Conformance/</code> directory with explicit staged expected-outcome posture,</li>
   <li>a published <code>Implementations/Reference/</code> workspace whose current purpose is to exercise disciplined minimal executable vertical slices for a controlled subset,</li>
+  <li>a published <code>Versioning/</code> surface for centralized corpus-version doctrine and current-status reporting,</li>
   <li>a published <code>Strategy/</code> layer for non-normative strategic framing,</li>
   <li>a published <code>Roadmap/</code> layer for non-normative closure sequencing.</li>
 </ul>
@@ -1899,6 +2003,7 @@ Current repository direction therefore includes both <strong>architectural stabi
   <li>defining guided Express authoring as an IDE convenience layer that normalizes to canonical FROG content,</li>
   <li>keeping the executable reference path clean, reproducible, and inspectable,</li>
   <li>keeping <code>Examples/</code>, <code>Conformance/</code>, and <code>Implementations/Reference/</code> aligned without letting them silently become hidden language law,</li>
+  <li>keeping <code>Versioning/</code> centralized so current corpus-version truth and current-surface status are not scattered,</li>
   <li>keeping <code>Strategy/</code> and <code>Roadmap/</code> explicit without letting them replace normative ownership,</li>
   <li>preparing the path from canonical <code>.frog</code> source toward a serious future compiler/runtime story, including downstream compiler-family paths such as LLVM-oriented ones,</li>
   <li>making the language increasingly credible as an AI-compatible, reviewable, and sovereignty-preserving open programming foundation.</li>
@@ -1915,7 +2020,7 @@ Topics such as deployment, runtime profiles, target-profile taxonomies, and broa
 </p>
 
 <p>
-The long-term ambition is to establish a durable open graphical programming ecosystem that can scale from experimentation to deeply integrated industrial deployment while remaining inspectable across the source, semantic, and execution-facing layers.
+The long-term ambition is to establish a durable open graphical programming ecosystem that can scale from experimentation to deeply integrated industrial deployment while remaining inspectable across the source, semantic, execution-facing, and version-governance layers.
 </p>
 
 <p>
