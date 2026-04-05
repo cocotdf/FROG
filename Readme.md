@@ -145,7 +145,7 @@ The repository also contains repository-level support areas and repository-level
 </p>
 
 <ul>
-  <li><strong><code>Examples/</code></strong> — named source examples and the first executable vertical slices,</li>
+  <li><strong><code>Examples/</code></strong> — illustrative named source slices and bounded compiler-corridor mirrors,</li>
   <li><strong><code>Conformance/</code></strong> — public accept / reject / preserve expectations for the published repository state,</li>
   <li><strong><code>Implementations/Reference/</code></strong> — a non-normative reference implementation workspace used to exercise a disciplined minimal execution path,</li>
   <li><strong><code>Versioning/</code></strong> — centralized specification-version governance and current-status reporting for the published specification corpus,</li>
@@ -154,14 +154,14 @@ The repository also contains repository-level support areas and repository-level
 </ul>
 
 <p>
-The currently published example slices are:
+The currently published example corridor is a first positive compiler-corridor mirror under <code>Examples/compiler/</code>.
+Its initial named slices are:
 </p>
 
 <ul>
-  <li><code>01_pure_addition</code>,</li>
-  <li><code>02_ui_value_roundtrip</code>,</li>
-  <li><code>03_ui_property_write</code>,</li>
-  <li><code>04_stateful_feedback_delay</code>.</li>
+  <li><code>01_pure_arithmetic.md</code>,</li>
+  <li><code>02_structured_control.md</code>,</li>
+  <li><code>03_explicit_state.md</code>.</li>
 </ul>
 
 <p>
@@ -571,7 +571,7 @@ The support areas exist to make that baseline more inspectable, testable, and ex
 <pre><code>FROG/
 │
 ├── Conformance/                      Public accept / reject / preserve expectations
-├── Examples/                         Named source examples and first executable vertical slices
+├── Examples/                         Illustrative named source slices and bounded compiler-corridor mirrors
 ├── Expression/                       Canonical source specification for .frog programs
 ├── IDE/                              IDE architecture, authoring, observability, debugging, and inspection
 ├── IR/                               Canonical open execution-facing representation and downstream handoff boundaries
@@ -615,7 +615,7 @@ The current repository-level support and governance areas are:
 </p>
 
 <ul>
-  <li><strong><code>Examples/</code></strong> — named source cases and compact executable slices,</li>
+  <li><strong><code>Examples/</code></strong> — illustrative named source cases and bounded compiler-corridor slices,</li>
   <li><strong><code>Conformance/</code></strong> — expected outcomes for validation, preservation, and rejection,</li>
   <li><strong><code>Implementations/Reference/</code></strong> — non-normative prototype workspace used to exercise the current reference path,</li>
   <li><strong><code>Versioning/</code></strong> — centralized current corpus-version governance and per-surface current-status reporting.</li>
@@ -654,7 +654,7 @@ semantic acceptance
 preservation expectations
 </code></pre>
 
-<h3><code>Examples/</code> — named source examples and first executable slices</h3>
+<h3><code>Examples/</code> — illustrative named source slices</h3>
 
 <p>
 This directory contains minimal example programs for the published FROG specification.
@@ -662,14 +662,13 @@ Its role is to provide compact named source cases that help make the architectur
 </p>
 
 <p>
-At the current published state, the first visible example slices are:
+At the current published state, the first visible example corridor is the positive compiler-corridor mirror:
 </p>
 
 <ul>
-  <li><code>01_pure_addition</code>,</li>
-  <li><code>02_ui_value_roundtrip</code>,</li>
-  <li><code>03_ui_property_write</code>,</li>
-  <li><code>04_stateful_feedback_delay</code>.</li>
+  <li><code>Examples/compiler/01_pure_arithmetic.md</code>,</li>
+  <li><code>Examples/compiler/02_structured_control.md</code>,</li>
+  <li><code>Examples/compiler/03_explicit_state.md</code>.</li>
 </ul>
 
 <h3><code>Expression/</code> — canonical source specification</h3>
@@ -726,18 +725,18 @@ Its immediate goal is to exercise disciplined minimal executable vertical slices
 </p>
 
 <p>
-Within the current published repository, this workspace contains prototype components such as:
+Within the current published repository, this workspace documents a practical staged reference path and a practical internal posture that may distinguish prototype areas such as:
 </p>
 
 <ul>
-  <li><code>CLI</code>,</li>
-  <li><code>Loader</code>,</li>
-  <li><code>Validator</code>,</li>
-  <li><code>Deriver</code>,</li>
-  <li><code>Lowerer</code>,</li>
-  <li><code>ContractEmitter</code>,</li>
-  <li><code>Runtime</code>,</li>
-  <li><code>UIHost</code>.</li>
+  <li><code>CLI/</code>,</li>
+  <li><code>Loader/</code>,</li>
+  <li><code>Validator/</code>,</li>
+  <li><code>Deriver/</code>,</li>
+  <li><code>Lowerer/</code>,</li>
+  <li><code>ContractEmitter/</code>,</li>
+  <li><code>Runtime/</code>,</li>
+  <li><code>UIHost/</code>.</li>
 </ul>
 
 <p>
@@ -847,8 +846,8 @@ The map below summarizes the intended role of the Markdown documents in the curr
 │
 ├── Examples/
 │   └── Readme.md
-│       -&gt; architectural role of named example programs, example design rules,
-│          first example slices, and relation with conformance and reference implementation
+│       -&gt; architectural role of illustrative named slices, compiler-corridor mirror,
+│          and relation with conformance and reference implementation
 │
 ├── Conformance/
 │   └── Readme.md
@@ -906,7 +905,11 @@ The map below summarizes the intended role of the Markdown documents in the curr
 │   ├── Front panel.md
 │   │   -&gt; optional front-panel composition and user-facing interaction surface
 │   ├── Widget.md
-│   │   -&gt; widget object model, widget classes, properties, methods, events, and roles
+│   │   -&gt; widget instance model, widget identity, roles, value behavior,
+│   │      properties, methods, events, and parts
+│   ├── Widget class contract.md
+│   │   -&gt; class-level widget contract for members, parts, events,
+│   │      access legality, and IDE-facing object exposure
 │   ├── Widget interaction.md
 │   │   -&gt; diagram-side widget interaction paths and execution-facing widget access model
 │   ├── Control structures.md
@@ -941,7 +944,8 @@ The map below summarizes the intended role of the Markdown documents in the curr
 │   ├── Execution IR.md
 │   │   -&gt; canonical open execution-facing IR model
 │   ├── Derivation rules.md
-│   │   -&gt; normative correspondence rules from validated program meaning to the canonical Execution IR Document
+│   │   -&gt; normative correspondence rules from validated program meaning
+│   │      to the canonical Execution IR Document
 │   ├── Construction rules.md
 │   │   -&gt; normative rules for materially building the canonical Execution IR Document
 │   ├── Identity and Mapping.md
@@ -1079,8 +1083,8 @@ That second path answers three different questions in order:
 </p>
 
 <ul>
-  <li><strong><code>Examples/</code></strong> — which named source cases are being used,</li>
-  <li><strong><code>Conformance/</code></strong> — what those cases are expected to validate, preserve, or reject,</li>
+  <li><strong><code>Examples/</code></strong> — which illustrative named slices are being used,</li>
+  <li><strong><code>Conformance/</code></strong> — what those slices are expected to validate, preserve, or reject,</li>
   <li><strong><code>Implementations/Reference/</code></strong> — how a non-normative prototype pipeline currently tries to process them.</li>
 </ul>
 
@@ -1201,20 +1205,20 @@ different actors may later build compatible IDEs, validators, runtimes, compiler
 </p>
 
 <pre>
-Expression/   -> canonical source form and structural validity
-Language/     -> validated program meaning
-IR/           -> canonical open execution-facing representation
-Libraries/    -> intrinsic standardized primitive vocabularies
-Profiles/     -> optional standardized capability families
-IDE/          -> authoring, observability, debugging, inspection
+Expression/   -&gt; canonical source form and structural validity
+Language/     -&gt; validated program meaning
+IR/           -&gt; canonical open execution-facing representation
+Libraries/    -&gt; intrinsic standardized primitive vocabularies
+Profiles/     -&gt; optional standardized capability families
+IDE/          -&gt; authoring, observability, debugging, inspection
 </pre>
 
 <pre>
-what is saved      -> Expression/
-what is true       -> Language/
-what is derived    -> IR/
-what exists        -> Libraries/ and Profiles/
-what is edited     -> IDE/
+what is saved      -&gt; Expression/
+what is true       -&gt; Language/
+what is derived    -&gt; IR/
+what exists        -&gt; Libraries/ and Profiles/
+what is edited     -&gt; IDE/
 </pre>
 
 <p>
@@ -1222,10 +1226,10 @@ Beyond those six core families, the published repository also contains four impo
 </p>
 
 <pre>
-what is exemplified   -> Examples/
-what is expected      -> Conformance/
-what is prototyped    -> Implementations/Reference/
-what version means    -> Versioning/
+what is exemplified   -&gt; Examples/
+what is expected      -&gt; Conformance/
+what is prototyped    -&gt; Implementations/Reference/
+what version means    -&gt; Versioning/
 </pre>
 
 <p>
@@ -1233,8 +1237,8 @@ The repository also contains two framing layers that should remain explicit and 
 </p>
 
 <pre>
-why it matters           -> Strategy/
-in what order it closes  -> Roadmap/
+why it matters           -&gt; Strategy/
+in what order it closes  -&gt; Roadmap/
 </pre>
 
 <p>
@@ -1287,6 +1291,10 @@ Cross-version governance is centralized in:
   <li><strong><code>Versioning/Readme.md</code></strong> — corpus-version doctrine, current published version, additive-evolution rule, degraded readability posture, and transition policy,</li>
   <li><strong><code>Versioning/Matrix.md</code></strong> — detailed current-status table by repository surface.</li>
 </ul>
+
+<p>
+The repository-wide published posture is currently organized around a <code>0.1-draft</code> specification corpus version and a bounded reference source-format target of <code>.frog spec_version = 0.1</code>.
+</p>
 
 <p>
 The repository-wide versioning doctrine is:
@@ -1579,12 +1587,12 @@ They are source-aligned views and controls that allow implementations to project
 </p>
 
 <pre>
-what is saved       -> Expression/
-what is validated   -> Expression/ + Language/ + Libraries/ + Profiles/
-what is versioned   -> Versioning/
-what is derived     -> IR/
-what is executed    -> compiler / backend / runtime implementations
-what is observed    -> IDE-facing source-aligned observability and debugging
+what is saved       -&gt; Expression/
+what is validated   -&gt; Expression/ + Language/ + Libraries/ + Profiles/
+what is versioned   -&gt; Versioning/
+what is derived     -&gt; IR/
+what is executed    -&gt; compiler / backend / runtime implementations
+what is observed    -&gt; IDE-facing source-aligned observability and debugging
 </pre>
 
 <p>
@@ -1959,7 +1967,7 @@ It already contains:
 </p>
 
 <ul>
-  <li>a published <code>Examples/</code> directory with the first four repository-visible executable slices,</li>
+  <li>a published <code>Examples/</code> directory with a first bounded compiler-corridor mirror,</li>
   <li>a published <code>Conformance/</code> directory with explicit staged expected-outcome posture,</li>
   <li>a published <code>Implementations/Reference/</code> workspace whose current purpose is to exercise disciplined minimal executable vertical slices for a controlled subset,</li>
   <li>a published <code>Versioning/</code> surface for centralized corpus-version doctrine and current-status reporting,</li>
@@ -1968,14 +1976,13 @@ It already contains:
 </ul>
 
 <p>
-The first currently published executable slices are:
+The first currently published illustrative example slices are:
 </p>
 
 <ul>
-  <li><code>01_pure_addition</code>,</li>
-  <li><code>02_ui_value_roundtrip</code>,</li>
-  <li><code>03_ui_property_write</code>,</li>
-  <li><code>04_stateful_feedback_delay</code>.</li>
+  <li><code>Examples/compiler/01_pure_arithmetic.md</code>,</li>
+  <li><code>Examples/compiler/02_structured_control.md</code>,</li>
+  <li><code>Examples/compiler/03_explicit_state.md</code>.</li>
 </ul>
 
 <p>
