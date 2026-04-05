@@ -2,8 +2,8 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://graiphic.github.io/FROG/Expression/schema/frog.schema.json",
   "title": "FROG Canonical Source Schema",
-  "description": "Conservative machine-checkable structural schema for canonical .frog source in FROG v0.1. This artifact covers top-level canonical source shape, allowed top-level section vocabulary, required-versus-optional top-level sections, and selected section-local structural ownership where the published Expression/ specification makes that ownership explicit and stable enough to encode.\nIt does not define full semantic validity, validated meaning, Execution IR, lowering, backend contract content, runtime realization, class-side widget member legality, or profile-gated execution legality.",
-  "$comment": "Normative ownership remains in Expression/ prose.\nThis schema is a repository-visible machine-checkable aid for structural reproducibility and must not be treated as the owner of the language.",
+  "description": "Conservative machine-checkable structural schema for canonical .frog source in FROG v0.1. This artifact covers top-level canonical source shape, allowed top-level section vocabulary, required-versus-optional top-level sections, and section kind constraints only. It does not define full section-local structural ownership, semantic validity, validated meaning, Execution IR, lowering, backend contract content, or runtime realization.",
+  "$comment": "Normative ownership remains in Expression/ prose. This schema is a repository-visible machine-checkable aid for structural reproducibility and must not be treated as the owner of the language. Repository-wide version-transition doctrine, including the cumulative version model and the distinction between specification corpus version, top-level spec_version, and metadata.program_version, is governed centrally in Versioning/Readme.md.",
   "type": "object",
   "required": [
     "spec_version",
@@ -13,7 +13,7 @@
   ],
   "properties": {
     "spec_version": {
-      "description": "Specification version identifier for the canonical source file.\nIn repository state v0.1, canonical source is expected to declare version 0.1.",
+      "description": "Source-format compatibility version identifier for the canonical .frog file. In the current published v0.1 subset, canonical source is expected to declare version 0.1. This field versions source compatibility, not the published specification corpus as a whole, and not one program artifact revision. Under the centralized cumulative version model, later source-format versions should normally extend earlier valid forms rather than silently replace them unless an explicit breaking boundary is declared in repository-wide version governance.",
       "oneOf": [
         {
           "type": "string",
@@ -59,161 +59,64 @@
     "genericSectionObject": {
       "type": "object"
     },
-
     "metadataSection": {
-      "description": "Required metadata section.\nSection-local object structure is owned by Expression/Metadata.md.",
+      "description": "Required metadata section. Section-local object structure is owned by Expression/Metadata.md.",
       "allOf": [
         {
           "$ref": "#/$defs/genericSectionObject"
         }
       ]
     },
-
     "interfaceSection": {
-      "description": "Required interface section.\nSection-local object structure is owned by Expression/Interface.md.",
+      "description": "Required interface section. Section-local object structure is owned by Expression/Interface.md.",
       "allOf": [
         {
           "$ref": "#/$defs/genericSectionObject"
         }
       ]
     },
-
     "diagramSection": {
-      "description": "Required diagram section.\nSection-local object structure is owned by Expression/Diagram.md.",
+      "description": "Required diagram section. Section-local object structure is owned by Expression/Diagram.md.",
       "allOf": [
         {
           "$ref": "#/$defs/genericSectionObject"
         }
       ]
     },
-
     "connectorSection": {
-      "description": "Optional connector section.\nSection-local object structure is owned by Expression/Connector.md.",
+      "description": "Optional connector section. Section-local object structure is owned by Expression/Connector.md.",
       "allOf": [
         {
           "$ref": "#/$defs/genericSectionObject"
         }
       ]
     },
-
     "frontPanelSection": {
-      "description": "Optional front_panel section.\nThis schema conservatively captures explicit published front-panel structure: front_panel is an object, canvas is an object when present, widgets is an array when present, and ui_libraries is an array when present. Widget instance legality, class compatibility, member legality, and semantic behavior remain owned by Expression/Front panel.md, Expression/Widget.md, Expression/Widget class contract.md, Expression/Widget interaction.md, and later validation layers.",
-      "type": "object",
-      "properties": {
-        "canvas": {
-          "$ref": "#/$defs/frontPanelCanvas"
-        },
-        "widgets": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/widgetInstance"
-          }
-        },
-        "ui_libraries": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+      "description": "Optional front_panel section. Section-local object structure is owned by Expression/Front panel.md.",
+      "allOf": [
+        {
+          "$ref": "#/$defs/genericSectionObject"
         }
-      },
-      "additionalProperties": false
+      ]
     },
-
-    "frontPanelCanvas": {
-      "description": "Optional design-time panel or coordinate-space metadata. The detailed semantic interpretation of canvas fields remains prose-owned by Expression/Front panel.md.",
-      "type": "object"
-    },
-
-    "widgetInstance": {
-      "description": "Conservative structural schema for a widget instance serialized in front_panel.widgets or recursively in widget children. This schema captures only stable source shape, not class legality, role compatibility, value-type legality, containment legality, or class-side member legality.",
-      "type": "object",
-      "required": [
-        "id",
-        "role",
-        "widget"
-      ],
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "role": {
-          "type": "string"
-        },
-        "widget": {
-          "type": "string"
-        },
-        "value_type": {
-          "description": "Canonical FROG type expression for value-carrying widgets. Structural string acceptance here does not replace Type.md validation.",
-          "type": "string"
-        },
-        "layout": {
-          "$ref": "#/$defs/widgetLayout"
-        },
-        "props": {
-          "description": "Source-owned widget property object. Property legality and ownership boundaries remain outside this schema.",
-          "type": "object"
-        },
-        "parts": {
-          "description": "Source-visible widget parts object. Part existence, part cardinality, and part-member legality remain outside this schema.",
-          "type": "object"
-        },
-        "children": {
-          "description": "Recursive child widget instances for container widgets. Container legality remains outside this schema.",
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/widgetInstance"
-          }
-        },
-        "style_ref": {
-          "type": "string"
-        },
-        "style_override": {
-          "type": "object"
-        }
-      },
-      "additionalProperties": false
-    },
-
-    "widgetLayout": {
-      "description": "Conservative structural schema for widget design-time layout metadata. Field semantics remain prose-owned by Expression/Front panel.md.",
-      "type": "object",
-      "properties": {
-        "x": {
-          "type": "number"
-        },
-        "y": {
-          "type": "number"
-        },
-        "width": {
-          "type": "number"
-        },
-        "height": {
-          "type": "number"
-        }
-      },
-      "additionalProperties": true
-    },
-
     "iconSection": {
-      "description": "Optional icon section.\nSection-local object structure is owned by Expression/Icon.md.",
+      "description": "Optional icon section. Section-local object structure is owned by Expression/Icon.md.",
       "allOf": [
         {
           "$ref": "#/$defs/genericSectionObject"
         }
       ]
     },
-
     "ideSection": {
-      "description": "Optional ide section.\nSection-local object structure is owned by Expression/IDE preferences.md.",
+      "description": "Optional ide section. Section-local object structure is owned by Expression/IDE preferences.md.",
       "allOf": [
         {
           "$ref": "#/$defs/genericSectionObject"
         }
       ]
     },
-
     "cacheSection": {
-      "description": "Optional cache section.\nSection-local object structure is owned by Expression/Cache.md.",
+      "description": "Optional cache section. Section-local object structure is owned by Expression/Cache.md.",
       "allOf": [
         {
           "$ref": "#/$defs/genericSectionObject"
@@ -233,41 +136,11 @@
       "metadata": {},
       "interface": {},
       "diagram": {},
-      "front_panel": {
-        "widgets": []
-      }
-    },
-    {
-      "spec_version": "0.1",
-      "metadata": {},
-      "interface": {},
-      "diagram": {},
-      "front_panel": {
-        "canvas": {
-          "width": 800,
-          "height": 600
-        },
-        "widgets": [
-          {
-            "id": "ctrl_gain",
-            "role": "control",
-            "widget": "frog.ui.standard.numeric_control",
-            "value_type": "f64",
-            "layout": {
-              "x": 20,
-              "y": 20,
-              "width": 120,
-              "height": 28
-            },
-            "props": {
-              "caption": "Gain"
-            }
-          }
-        ],
-        "ui_libraries": [
-          "frog.ui.standard"
-        ]
-      }
+      "connector": {},
+      "front_panel": {},
+      "icon": {},
+      "ide": {},
+      "cache": {}
     }
   ]
 }
