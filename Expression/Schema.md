@@ -68,6 +68,10 @@ runtime-private realization
 This is a source-ownership document. It defines what schema means in FROG, what schema is allowed to own, what schema must not own, and how machine-checkable source validation must remain disciplined as the repository grows.
 </p>
 
+<p>
+Cross-version policy is governed centrally in <code>Versioning/Readme.md</code>. In particular, schema interpretation of <code>spec_version</code> should remain compatible with the repository-wide cumulative version model, under which later source-format versions should normally extend earlier valid forms rather than silently replace them unless an explicit breaking boundary is declared.
+</p>
+
 <hr/>
 
 <h2 id="why-this-document-exists">2. Why This Document Exists</h2>
@@ -117,7 +121,8 @@ This document does not own:
   <li>lowering,</li>
   <li>backend contract content,</li>
   <li>runtime-private realization,</li>
-  <li>IDE-private Program Model details.</li>
+  <li>IDE-private Program Model details,</li>
+  <li>the full repository-wide doctrine for version transition.</li>
 </ul>
 
 <p>
@@ -325,6 +330,10 @@ The optional top-level sections are:
 This top-level posture remains intentionally conservative. Cross-cutting source subsystems such as the type model, the widget model, the widget class contract model, the widget interaction model, control-structure source representation, and state/cycle source representation do not become dedicated required top-level sections merely because they are normatively specified in <code>Expression/</code>.
 </p>
 
+<p>
+The top-level presence of <code>spec_version</code> is also the schema-level anchor for source-format compatibility targeting. Under the centralized cumulative version model, later source-format versions should normally be treated as later bounded extensions of earlier valid forms unless an explicit breaking boundary is declared in the repository-wide versioning surface.
+</p>
+
 <hr/>
 
 <h2 id="section-level-schema-ownership">9. Section-Level Schema Ownership</h2>
@@ -439,7 +448,8 @@ At the current repository stage, the published machine-checkable posture may the
   <li>its limits are explicit,</li>
   <li>ownership remains attributable,</li>
   <li>structural versus semantic boundaries remain clear,</li>
-  <li>implementations are not forced to guess silently.</li>
+  <li>implementations are not forced to guess silently,</li>
+  <li>schema growth remains compatible with the centralized cumulative version model.</li>
 </ul>
 
 <p>
@@ -566,6 +576,10 @@ A validator MUST NOT:
   <li>collapse source validation, semantic validation, and runtime support into one blurred rejection category.</li>
 </ul>
 
+<p>
+When <code>spec_version</code> affects structural acceptance, the validator posture SHOULD remain compatible with the centralized cumulative version model: later source-format versions should normally be treated as later bounded extensions of earlier valid forms, while unsupported newer constructs are handled through explicit limitation rather than silent reinterpretation.
+</p>
+
 <hr/>
 
 <h2 id="relation-with-conformance">15. Relation with Conformance</h2>
@@ -615,6 +629,21 @@ Therefore:
 
 <p>
 A repository-visible schema artifact MAY be incomplete relative to all structural prose if its limits are explicit. Partial machine-checkability is acceptable. Silent ambiguity is not.
+</p>
+
+<p>
+Under the centralized cumulative version model, schema evolution SHOULD also follow this default interpretation:
+</p>
+
+<pre><code>later source-format version
+    =
+earlier valid structural forms
+    +
+explicit bounded structural additions
+</code></pre>
+
+<p>
+That model does not remove the possibility of a breaking boundary, but it means such a boundary should be explicit and deliberate rather than implicit in schema drift.
 </p>
 
 <p>
@@ -670,7 +699,8 @@ If a reader wants to know:
   <li>what a widget instance is, read <code>Widget.md</code>,</li>
   <li>what the widget class contract owns, read <code>Widget class contract.md</code>,</li>
   <li>how widget interaction is represented in source, read <code>Widget interaction.md</code>,</li>
-  <li>what the schema layer may machine-check, read this document.</li>
+  <li>what the schema layer may machine-check, read this document,</li>
+  <li>what the repository-wide cumulative version model is, read <code>Versioning/Readme.md</code>.</li>
 </ul>
 
 <hr/>
@@ -687,6 +717,10 @@ At the current stage, it is acceptable for repository-visible schema artifacts t
 
 <p>
 This is not a weakness. It is an explicit boundary discipline.
+</p>
+
+<p>
+It is also compatible with the centralized cumulative version model: later source-format versions may add bounded structural shape, while earlier valid structural forms should normally remain interpretable as part of later source evolution unless an explicit breaking boundary is declared.
 </p>
 
 <hr/>
