@@ -193,7 +193,8 @@ To keep the architecture explicit, FROG distinguishes several different concepts
 <h3>5.1 Optional capability profiles</h3>
 
 <p>
-An optional capability profile is the top-level object standardized in this directory. It defines one bounded optional capability family that implementations may claim explicitly.
+An optional capability profile is the top-level object standardized in this directory.
+It defines one bounded optional capability family that implementations may claim explicitly.
 </p>
 
 <p>
@@ -211,37 +212,41 @@ A profile is not automatically:
 A profile MAY define one or more of those related capability classes or constraints when that is part of its bounded scope.
 </p>
 
-<h3>5.2 Target profiles</h3>
+<h3>5.2 Target-facing capability classes</h3>
 
 <p>
-A target profile is a standardized class of execution assumptions, constraints, and capabilities that a program, implementation, backend path, or deployment may explicitly target.
+A profile may define target-facing capability classes when a bounded optional corridor depends on explicit execution assumptions.
 </p>
 
 <p>
-A target profile is not a single machine model, not a private runtime module, and not a backend implementation by itself. It is a standardized capability class.
+A target-facing capability class is not a private runtime module and not a backend implementation by itself.
+It is a standardized capability class that helps delimit where a profile applies.
 </p>
 
 <p>
-Examples of target-profile families that MAY later be specified include:
+Examples of target-facing posture that may be relevant inside published profiles include:
 </p>
 
 <ul>
-  <li><code>desktop_ui</code>,</li>
-  <li><code>desktop_headless</code>,</li>
-  <li><code>embedded</code>,</li>
-  <li><code>real_time</code>,</li>
-  <li><code>accelerated</code>,</li>
-  <li><code>microcontroller</code>.</li>
+  <li>host-oriented native CPU execution,</li>
+  <li>UI-capable host environments,</li>
+  <li>restricted interoperability-ready environments.</li>
 </ul>
 
-<h3>5.3 Deployment modes</h3>
+<p>
+These target-facing classes are profile-side constraints.
+They do not replace the core semantic model and they do not, by themselves, define runtime-private realization.
+</p>
+
+<h3>5.3 Deployment-facing capability classes</h3>
 
 <p>
-A deployment mode is a standardized class of packaging, observability, distribution, or execution-environment assumptions applied when preparing an executable artifact.
+A profile may define deployment-facing capability classes when a bounded corridor depends on packaging, observability, or execution-environment assumptions.
 </p>
 
 <p>
-A deployment mode may constrain how a compiled or prepared program is delivered or executed. It is not the same thing as:
+A deployment-facing class may constrain how a prepared program is delivered or started.
+It is not the same thing as:
 </p>
 
 <ul>
@@ -253,23 +258,21 @@ A deployment mode may constrain how a compiled or prepared program is delivered 
 <h3>5.4 Backend families</h3>
 
 <p>
-A backend family is a class of downstream execution consumers or compiler consumers. Backend families remain downstream from the canonical FROG Execution IR.
+A backend family is a class of downstream execution consumers or compiler consumers.
+Backend families remain downstream from the canonical FROG Execution IR.
 </p>
 
 <p>
-Examples of backend-family postures that MAY exist include:
+Examples of backend-family posture that are already relevant in the current published repository include:
 </p>
 
 <ul>
-  <li>native-code-oriented families,</li>
-  <li>LLVM-oriented native families,</li>
-  <li>VM-oriented families,</li>
-  <li>interpreter-oriented families,</li>
-  <li>accelerator-oriented families.</li>
+  <li>LLVM-oriented native CPU backend families,</li>
+  <li>other future native, VM, interpreter, or accelerator-oriented families that may later be bounded explicitly.</li>
 </ul>
 
 <p>
-A backend family is not a profile by itself, although a profile MAY define compatibility with one or more backend families.
+A backend family is not a profile by itself, although a profile MAY define bounded compatibility with one or more backend families.
 </p>
 
 <h3>5.5 Runtime-facing capability contracts</h3>
@@ -391,18 +394,13 @@ A profile MAY define any bounded optional capability family that remains archite
 </p>
 
 <p>
-Examples include:
+Examples already visible or directly supported by the current repository posture include:
 </p>
 
 <ul>
   <li>interoperability surfaces,</li>
-  <li>restricted target classes,</li>
-  <li>native compilation corridors,</li>
-  <li>deployment classes,</li>
-  <li>runtime-service capability surfaces,</li>
-  <li>specialized validation restrictions for an optional capability family,</li>
-  <li>bounded profile-specific execution assumptions,</li>
-  <li>bounded profile-level execution contracts,</li>
+  <li>restricted native compilation corridors,</li>
+  <li>bounded execution-side companion contracts,</li>
   <li>portable widget-class catalogs and class-contract families,</li>
   <li>tool-consumable capability metadata needed by multiple conforming implementations.</li>
 </ul>
@@ -437,11 +435,12 @@ A profile MUST NOT:
   <li>replace the ownership of <code>IDE/</code> for authoring ergonomics, Program Model realization, or editor-private workflow behavior,</li>
   <li>turn one implementation strategy into mandatory language law,</li>
   <li>present one private runtime design as though it were the only conforming meaning of the capability family,</li>
-  <li>collapse backend family, target profile, deployment mode, execution contract, runtime realization, and tool-private metadata into one ambiguous concept.</li>
+  <li>collapse backend family, target-facing class, deployment-facing class, execution contract, runtime realization, and tool-private metadata into one ambiguous concept.</li>
 </ul>
 
 <p>
-Profiles are optional architectural extensions. They are not ownership shortcuts.
+Profiles are optional architectural extensions.
+They are not ownership shortcuts.
 </p>
 
 <hr/>
@@ -485,7 +484,8 @@ Implementations/
 </code></pre>
 
 <p>
-A profile may depend on these layers. It must not absorb them.
+A profile may depend on these layers.
+It must not absorb them.
 </p>
 
 <p>
@@ -549,7 +549,8 @@ A program, toolchain, or deployment path MAY also declare that it targets a give
 </p>
 
 <p>
-A profile claim MUST remain precise. For example:
+A profile claim MUST remain precise.
+For example:
 </p>
 
 <ul>
@@ -559,7 +560,8 @@ A profile claim MUST remain precise. For example:
 </ul>
 
 <p>
-If a profile also publishes an execution contract, support claims SHOULD remain equally precise. For example:
+If a profile also publishes an execution contract, support claims SHOULD remain equally precise.
+For example:
 </p>
 
 <ul>
@@ -569,7 +571,8 @@ If a profile also publishes an execution contract, support claims SHOULD remain 
 </ul>
 
 <p>
-Vague claims such as “supports all advanced features” are not profile claims. Explicit profile naming is preferred.
+Vague claims such as “supports all advanced features” are not profile claims.
+Explicit profile naming is preferred.
 </p>
 
 <hr/>
@@ -577,7 +580,7 @@ Vague claims such as “supports all advanced features” are not profile claims
 <h2 id="current-profile-specifications">11. Current Profile Specifications</h2>
 
 <p>
-The currently published or directly targeted profile specifications in this directory are:
+The currently published profile specifications in this directory are:
 </p>
 
 <ul>
@@ -600,7 +603,7 @@ Profiles MAY also be accompanied by narrower companion documents when their corr
 <h3>11.2 Native CPU LLVM</h3>
 
 <p>
-<code>Native CPU LLVM.md</code> defines a first optional compilation-oriented profile for a conservative v0.1 subset capable of traveling through:
+<code>Native CPU LLVM.md</code> defines a first optional compilation-oriented profile for a conservative bounded subset capable of traveling through:
 </p>
 
 <pre><code>validated meaning
@@ -753,20 +756,8 @@ Profiles allow the published specification architecture to grow without destabil
 </p>
 
 <p>
-Over time, new profiles may standardize capability families such as:
-</p>
-
-<ul>
-  <li>additional interoperability families,</li>
-  <li>additional compilation corridors,</li>
-  <li>additional target or deployment classes,</li>
-  <li>bounded runtime-service contracts,</li>
-  <li>richer UI widget-class families and companion event surfaces,</li>
-  <li>other optional capability areas that are important for real ecosystems but should remain outside the minimal intrinsic core.</li>
-</ul>
-
-<p>
-This growth must remain disciplined.
+Over time, new profiles may standardize additional bounded capability families.
+That growth should remain disciplined and should follow already justified repository-visible closure fronts rather than speculative category expansion.
 </p>
 
 <p>
@@ -781,6 +772,17 @@ New profiles SHOULD:
   <li>remain claimable, inspectable, and compatible with conformance growth where relevant.</li>
 </ul>
 
+<p>
+The preferred growth posture is therefore:
+</p>
+
+<pre><code>stabilize one high-value published corridor
+   -&gt;
+align profile claim, conformance, and reference consumption
+   -&gt;
+only then open the next optional family
+</code></pre>
+
 <hr/>
 
 <h2 id="status">14. Status</h2>
@@ -794,8 +796,14 @@ It defines the architectural role of optional standardized capability families w
 </p>
 
 <p>
-The set of profiles in this directory is expected to evolve over time as the repository closes additional bounded capability corridors.
+At the current repository posture, this surface should be read as:
 </p>
+
+<ul>
+  <li>published and meaningful,</li>
+  <li>already containing high-value bounded corridors,</li>
+  <li>still under active closure for some of its most important families.</li>
+</ul>
 
 <p>
 That evolution must remain architecture-preserving:
