@@ -73,6 +73,11 @@ This document defines value types only.
 It does not define widget classes, widget object references, public interface ownership, control-structure semantics, scheduling, execution order, or runtime memory policy.
 </p>
 
+<p>
+This document also does not define repository-wide version policy.
+Top-level <code>spec_version</code> identifies the source-format compatibility target of the containing <code>.frog</code> file, while the published specification corpus version remains governed centrally in <code>Versioning/Readme.md</code>.
+</p>
+
 <hr/>
 
 <h2 id="scope">2. Scope</h2>
@@ -98,7 +103,8 @@ This document does not specify:
   <li>execution scheduling,</li>
   <li>cycle legality,</li>
   <li>primitive-local behavior except where typed compatibility is referenced,</li>
-  <li>future runtime, lowering, or IR type systems beyond the canonical source type layer.</li>
+  <li>future runtime, lowering, or IR type systems beyond the canonical source type layer,</li>
+  <li>the repository-wide version-transition doctrine.</li>
 </ul>
 
 <hr/>
@@ -151,6 +157,10 @@ FROG v0.1 does not yet standardize:
   <li>units-of-measure type systems.</li>
 </ul>
 
+<p>
+Under the centralized cumulative version model, later source-format versions should normally extend earlier valid type forms rather than silently replace them, unless an explicit breaking boundary is declared in repository-wide version governance.
+</p>
+
 <hr/>
 
 <h2 id="relation-with-other-specifications">5. Relation with Other Specifications</h2>
@@ -166,13 +176,14 @@ This document defines the value type system used by other parts of the FROG spec
   <li><code>Front panel.md</code> serializes widgets that may declare a <code>value_type</code>, but does not redefine the type system.</li>
   <li><code>Widget interaction.md</code> may reference typed widget members, but does not redefine type identity or coercion behavior.</li>
   <li><code>Libraries/Core.md</code> relies on this document for primitive port typing and typed configuration compatibility such as <code>frog.core.delay.initial</code>.</li>
+  <li><code>Versioning/Readme.md</code> defines the centralized distinction between specification corpus version, top-level <code>spec_version</code>, and program artifact versioning.</li>
 </ul>
 
 <p>
 Ownership boundary:
 </p>
 
-<pre>Type.md owns:
+<pre><code>Type.md owns:
 - value type expressions
 - value type identity
 - value compatibility
@@ -183,7 +194,9 @@ Type.md does not own:
 - interface ownership structure
 - executable graph semantics
 - cycle legality
-- primitive-local behavioral semantics</pre>
+- primitive-local behavioral semantics
+- repository-wide version-transition law
+</code></pre>
 
 <hr/>
 
@@ -194,10 +207,10 @@ Types are represented directly where values are declared or constrained.
 For example, interface ports and other typed elements use canonical textual type expressions such as:
 </p>
 
-<pre>{
+<pre><code>{
   "id": "input_signal",
   "type": "f64"
-}</pre>
+}</code></pre>
 
 <p>
 The top-level <code>.frog</code> file does not require a separate mandatory <code>types</code> section in v0.1.
@@ -207,6 +220,16 @@ Type declarations are embedded inline through canonical type expressions.
 <p>
 This keeps type usage local to the source object that owns the typed value.
 </p>
+
+<p>
+Accordingly:
+</p>
+
+<ul>
+  <li>top-level <code>spec_version</code> identifies the source-format compatibility target of the file,</li>
+  <li>inline <code>type</code> fields identify value-type meaning inside that source format,</li>
+  <li>the published specification corpus version remains governed centrally in <code>Versioning/Readme.md</code>.</li>
+</ul>
 
 <hr/>
 
@@ -223,7 +246,7 @@ This syntax is normative.
 Primitive types are written as a single identifier:
 </p>
 
-<pre>bool
+<pre><code>bool
 i8
 i16
 i32
@@ -234,7 +257,7 @@ u32
 u64
 f32
 f64
-string</pre>
+string</code></pre>
 
 <hr/>
 
@@ -244,13 +267,13 @@ string</pre>
 Dynamic-size arrays are written as:
 </p>
 
-<pre>array&lt;T&gt;</pre>
+<pre><code>array&lt;T&gt;</code></pre>
 
 <p>
 Fixed-size arrays are written as:
 </p>
 
-<pre>array&lt;T, N&gt;</pre>
+<pre><code>array&lt;T, N&gt;</code></pre>
 
 <p>
 Where:
@@ -276,11 +299,11 @@ Where:
 Examples of canonical form:
 </p>
 
-<pre>i32
+<pre><code>i32
 f64
 array&lt;u8&gt;
 array&lt;f32, 256&gt;
-array&lt;array&lt;i16, 8&gt;, 4&gt;</pre>
+array&lt;array&lt;i16, 8&gt;, 4&gt;</code></pre>
 
 <hr/>
 
@@ -364,9 +387,9 @@ Array rules:
 Examples:
 </p>
 
-<pre>array&lt;f64&gt;
+<pre><code>array&lt;f64&gt;
 array&lt;u8, 1024&gt;
-array&lt;array&lt;f32, 16&gt;, 8&gt;</pre>
+array&lt;array&lt;f32, 16&gt;, 8&gt;</code></pre>
 
 <hr/>
 
@@ -431,7 +454,7 @@ Unless otherwise defined, a typed connection or assignment context is valid when
   <li>an explicit conversion node is inserted by the author.</li>
 </ul>
 
-<pre>Compatibility decision model
+<pre><code>Compatibility decision model
 
 source type
     |
@@ -444,7 +467,7 @@ target type
     |
     +-- explicit conversion inserted? - yes --> valid
     |
-    +-- otherwise --------------------------- invalid</pre>
+    +-- otherwise --------------------------- invalid</code></pre>
 
 <p>
 This document defines value-type compatibility only.
@@ -788,6 +811,11 @@ Validators SHOULD diagnose at least the following error classes:
   <li>type-incompatible <code>initial</code> value.</li>
 </ul>
 
+<p>
+These checks validate canonical value-type form and value-compatibility behavior.
+They do not, by themselves, redefine top-level <code>spec_version</code> policy or repository-wide corpus-version governance.
+</p>
+
 <hr/>
 
 <h2 id="out-of-scope-for-v01">16. Out of Scope for v0.1</h2>
@@ -811,18 +839,18 @@ Validators SHOULD diagnose at least the following error classes:
 
 <h3 id="valid-primitive-type-expressions">17.1 Valid Primitive Type Expressions</h3>
 
-<pre>bool
+<pre><code>bool
 i32
 f64
-string</pre>
+string</code></pre>
 
 <hr/>
 
 <h3 id="valid-array-type-expressions">17.2 Valid Array Type Expressions</h3>
 
-<pre>array&lt;f64&gt;
+<pre><code>array&lt;f64&gt;
 array&lt;u8, 1024&gt;
-array&lt;array&lt;i16, 8&gt;, 4&gt;</pre>
+array&lt;array&lt;i16, 8&gt;, 4&gt;</code></pre>
 
 <hr/>
 
@@ -865,7 +893,7 @@ array&lt;array&lt;i16, 8&gt;, 4&gt;</pre>
 
 <h3 id="interface-example">17.6 Interface Example</h3>
 
-<pre>"interface": {
+<pre><code>"interface": {
   "inputs": [
     { "id": "signal", "type": "array&lt;f64&gt;" },
     { "id": "gain", "type": "f64" },
@@ -874,29 +902,29 @@ array&lt;array&lt;i16, 8&gt;, 4&gt;</pre>
   "outputs": [
     { "id": "scaled", "type": "array&lt;f64&gt;" }
   ]
-}</pre>
+}</code></pre>
 
 <hr/>
 
 <h3 id="widget-example">17.7 Widget Example</h3>
 
-<pre>{
+<pre><code>{
   "id": "ctrl_gain",
   "role": "control",
   "widget": "frog.ui.standard.numeric_control",
   "value_type": "f64"
-}</pre>
+}</code></pre>
 
 <hr/>
 
 <h3 id="delay-example">17.8 Delay Example</h3>
 
-<pre>{
+<pre><code>{
   "id": "delay_1",
   "kind": "primitive",
   "type": "frog.core.delay",
   "initial": 0.0
-}</pre>
+}</code></pre>
 
 <p>
 In this example, the <code>initial</code> value is compatible with a floating-point carried value type.
@@ -917,6 +945,7 @@ The FROG type system provides the canonical value-type foundation for v0.1.
   <li>It allows limited implicit coercions for numeric and shape-preserving array cases.</li>
   <li>It rejects implicit coercion for non-numeric scalar mixes and for dynamic/fixed array mismatches.</li>
   <li>It remains separate from widget identity, widget references, and UI object semantics.</li>
+  <li>It does not define source-format compatibility law or published specification corpus versioning.</li>
 </ul>
 
 <p>
