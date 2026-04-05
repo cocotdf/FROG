@@ -43,7 +43,8 @@ It complements <code>Versioning/Readme.md</code> by giving a compact matrix view
 </ul>
 
 <p>
-This matrix is a governance and visibility surface. It does not replace the normative ownership of the technical documents themselves.
+This matrix is a governance and visibility surface.
+It does not replace the normative ownership of the technical documents themselves.
 </p>
 
 <hr/>
@@ -64,6 +65,16 @@ The main columns are:
   <li><strong>Primary role</strong> — what architectural responsibility that surface owns,</li>
   <li><strong>Current posture</strong> — compact description of what is currently true,</li>
   <li><strong>Next coherent closure step</strong> — the smallest next step that would improve coherence.</li>
+</ul>
+
+<p>
+This matrix should be read together with:
+</p>
+
+<ul>
+  <li><code>Versioning/Readme.md</code> for doctrine and transition policy,</li>
+  <li><code>Readme.md</code> for repository-wide architecture framing,</li>
+  <li>the owning technical surfaces for actual normative law.</li>
 </ul>
 
 <hr/>
@@ -91,7 +102,7 @@ The main columns are:
     <tr>
       <td>Current repository-wide status</td>
       <td>Bounded published closure under consolidation</td>
-      <td>The repository already exposes a real end-to-end corridor but not all surfaces are equally stabilized</td>
+      <td>The repository already exposes a real multi-layer corridor, but not all surfaces are equally stabilized</td>
     </tr>
     <tr>
       <td>Versioning doctrine</td>
@@ -124,34 +135,34 @@ The main columns are:
     <tr>
       <td><code>Readme.md</code> (root)</td>
       <td><code>0.1-draft</code></td>
-      <td>Published, broad framing, mostly aligned</td>
+      <td>Published repository entry surface, broadly aligned</td>
       <td>Repository-level entry point and top-level architecture framing</td>
-      <td>Describes the current multi-layer repository posture and the bounded end-to-end corridor</td>
-      <td>Keep top-level framing aligned with the published Strategy / Roadmap / Versioning tri-distinction</td>
+      <td>Describes the current multi-layer repository posture, including Versioning as a centralized governance surface and the bounded execution-facing corridor</td>
+      <td>Keep root framing synchronized with the actual published Versioning / Examples / Conformance / Reference posture</td>
     </tr>
     <tr>
       <td><code>Expression/</code></td>
       <td><code>0.1</code></td>
       <td>Normative, bounded published scope</td>
       <td>Canonical source representation and source-visible boundaries</td>
-      <td>Owns canonical source shape for the currently published subset</td>
-      <td>Keep source-level extensibility points and version-facing guidance aligned with the centralized versioning doctrine</td>
+      <td>Owns canonical source shape, source sections, source-schema posture, and structural validity for the currently published subset</td>
+      <td>Keep source extensibility and source-version guidance explicitly compatible with centralized version doctrine</td>
     </tr>
     <tr>
       <td><code>Language/</code></td>
       <td><code>0.1</code></td>
       <td>Normative, bounded published scope</td>
       <td>Validated meaning of accepted programs</td>
-      <td>Provides semantic law for the currently published subset</td>
-      <td>Continue tightening semantic closure only where needed by currently published executable and widget corridors</td>
+      <td>Provides semantic law for the currently published subset, especially around control, state, and execution-facing meaning boundaries</td>
+      <td>Continue tightening semantics only where needed by currently published executable and widget corridors</td>
     </tr>
     <tr>
       <td><code>IR/</code></td>
       <td><code>0.1</code></td>
       <td>Normative, bounded published scope</td>
       <td>Execution-facing normalized representation and downstream corridor staging</td>
-      <td>Already carries execution IR, derivation, schema, lowering, backend contract, and related corridor material</td>
-      <td>Keep IR corridor language tightly aligned with the currently bounded executable and backend-family claims</td>
+      <td>Already carries Execution IR, derivation, identity and mapping, schema posture, lowering, and backend contract material</td>
+      <td>Keep open IR posture tightly aligned with bounded backend-family and reference-path claims</td>
     </tr>
     <tr>
       <td><code>Libraries/</code></td>
@@ -164,42 +175,42 @@ The main columns are:
     <tr>
       <td><code>Profiles/</code></td>
       <td><code>0.1-draft</code></td>
-      <td>Bounded published closure with active growth fronts</td>
+      <td>Published draft with bounded high-value closure fronts</td>
       <td>Optional capability-family and profile-level closure</td>
-      <td>Already includes Native CPU LLVM and UI widget class surfaces, but remains a high-leverage growth area</td>
-      <td>Keep Native CPU LLVM and widget-related profiles coherent before widening to additional families</td>
+      <td>Already publishes meaningful bounded corridors such as Native CPU LLVM and widget-related profile modeling, but remains an active growth front</td>
+      <td>Stabilize the currently published high-value corridors before widening to additional profile families</td>
     </tr>
     <tr>
       <td><code>IDE/</code></td>
       <td><code>0.1-draft</code></td>
-      <td>Published draft / bounded architecture surface</td>
+      <td>Published draft architecture surface</td>
       <td>Authoring, observability, inspection, debugging, Program Model</td>
-      <td>Published and meaningful, but not yet a fully frozen ecosystem-wide law surface</td>
-      <td>Keep IDE-facing boundaries explicit without turning one future IDE behavior into hidden semantic law</td>
+      <td>Published and already architecturally meaningful, but not yet a fully frozen ecosystem-wide law surface</td>
+      <td>Keep IDE-facing boundaries explicit without letting one future IDE behavior become hidden semantic law</td>
     </tr>
     <tr>
       <td><code>Examples/</code></td>
       <td><code>0.1</code></td>
       <td>Published, bounded, aligned support surface</td>
-      <td>Named illustrative slices</td>
-      <td>Provides named examples for the bounded published corridor</td>
-      <td>Maintain strict alignment with conformance and executable reference slices</td>
+      <td>Illustrative named slices</td>
+      <td>Provides bounded illustrative mirrors, including the compiler-oriented family under <code>Examples/compiler/</code></td>
+      <td>Maintain strict alignment with conformance and the bounded reference consumption path</td>
     </tr>
     <tr>
       <td><code>Conformance/</code></td>
       <td><code>0.1</code></td>
-      <td>Published, bounded, high-priority truth surface</td>
+      <td>Published, bounded, high-priority public truth surface</td>
       <td>Public accept / reject / preserve expectations</td>
-      <td>Already acts as a major repository-visible truth surface for the bounded published subset</td>
-      <td>Keep numbering, mirroring, and corridor-family coverage aligned with the actual published claims</td>
+      <td>Already acts as a major repository-visible truth surface, including historical top-level anchors and structured corridor subfamilies</td>
+      <td>Keep corridor mirroring, family growth, and published acceptance claims aligned with the real repository state</td>
     </tr>
     <tr>
       <td><code>Implementations/Reference/</code></td>
       <td><code>0.1-draft</code></td>
       <td>Published non-normative bounded executable workspace</td>
       <td>Reference path exercise without normative ownership</td>
-      <td>Exercises a real reference corridor from loading toward bounded execution path</td>
-      <td>Keep it aligned with published contracts without allowing it to become hidden normative law</td>
+      <td>Exercises a real source-to-execution reference path for a controlled published subset while remaining explicitly downstream from the specification</td>
+      <td>Keep it aligned with Examples / Conformance / IR / Profiles without allowing it to become hidden normative law</td>
     </tr>
     <tr>
       <td><code>Roadmap/</code></td>
@@ -222,8 +233,8 @@ The main columns are:
       <td><code>0.1-draft</code></td>
       <td>Published centralized governance surface</td>
       <td>Specification-version governance entry point</td>
-      <td>Centralizes doctrine, current corpus version, cumulative version model, and transition logic</td>
-      <td>Keep current doctrine, current corpus values, and cross-version policy aligned with the real published repository posture</td>
+      <td>Centralizes doctrine, current corpus version, source-version distinction, cumulative version model, and transition logic</td>
+      <td>Keep doctrine, current corpus values, and cross-version policy aligned with the real published corridor posture</td>
     </tr>
     <tr>
       <td><code>Versioning/Matrix.md</code></td>
@@ -231,31 +242,39 @@ The main columns are:
       <td>Published centralized status matrix</td>
       <td>Detailed current-state matrix for repository surfaces</td>
       <td>Centralizes the current per-surface status table and complements the main versioning governance document</td>
-      <td>Keep the matrix synchronized with the doctrine, especially additive evolution and the cumulative version model</td>
+      <td>Keep the matrix synchronized with the actual published state of each major surface and corridor</td>
     </tr>
     <tr>
       <td>Bounded executable corridor</td>
       <td><code>0.1</code></td>
       <td>Published bounded closure</td>
-      <td>Repository-visible source-to-execution corridor for the first bounded slice</td>
-      <td>Already present across root framing, IR, Profiles, Examples, Conformance, and Reference workspace</td>
-      <td>Preserve coherence before broadening to additional backend families or runtime families</td>
+      <td>Repository-visible source-to-execution corridor for a first controlled subset</td>
+      <td>Already present across root framing, IR, Profiles, Examples, Conformance, and the non-normative reference workspace</td>
+      <td>Preserve corridor coherence before broadening to additional backend families or runtime families</td>
     </tr>
     <tr>
       <td>Widget-object corridor</td>
       <td><code>0.1-draft</code></td>
       <td>Published bounded closure with active growth</td>
       <td>Source-visible widget declaration, interaction, class contract, and profile-level class modeling</td>
-      <td>Already serious and repository-visible, but still a likely growth front</td>
-      <td>Keep ownership and object-surface distinctions aligned across Expression, Libraries, and Profiles</td>
+      <td>Already serious and repository-visible, but still an active closure front rather than a fully frozen final surface</td>
+      <td>Keep ownership and object-surface distinctions aligned across Expression, Libraries, Profiles, and relevant IDE-facing documents</td>
+    </tr>
+    <tr>
+      <td>Additive cross-version doctrine</td>
+      <td><code>0.1-draft</code></td>
+      <td>Published centralized governance doctrine</td>
+      <td>Repository-wide rule for safe forward evolution and degraded reading</td>
+      <td>Explicitly published and already part of centralized version law</td>
+      <td>Keep source-version guidance and safe degraded-handling expectations aligned as later versions are introduced</td>
     </tr>
     <tr>
       <td>Cumulative version model</td>
       <td><code>0.1-draft</code></td>
-      <td>Published cross-version doctrine under active consolidation</td>
+      <td>Published centralized governance doctrine</td>
       <td>Repository-wide interpretation of later versions as bounded extensions of earlier valid forms</td>
-      <td>Now explicitly part of centralized versioning governance and intended to shape later specification evolution</td>
-      <td>Keep source-compatibility guidance and degraded-reading rules aligned with this model as new versions are introduced</td>
+      <td>Explicitly part of centralized versioning governance and intended to shape later specification evolution</td>
+      <td>Keep compatibility guidance and change classification aligned with this model as the corpus matures</td>
     </tr>
   </tbody>
 </table>
@@ -284,8 +303,12 @@ The main columns are:
       <td>Published and useful, but non-normative by design</td>
     </tr>
     <tr>
-      <td>Published draft</td>
-      <td>Published and important, but not yet treated as fully stabilized repository-wide closure law</td>
+      <td>Published draft architecture surface</td>
+      <td>Published and architecturally meaningful, but not yet treated as fully stabilized repository-wide closure law</td>
+    </tr>
+    <tr>
+      <td>Published draft with bounded high-value closure fronts</td>
+      <td>Published and already partially closed around important corridors, but still an active stabilization front</td>
     </tr>
     <tr>
       <td>Published centralized governance surface</td>
@@ -296,7 +319,15 @@ The main columns are:
       <td>Published repository-level current-status table that centralizes visibility without replacing technical ownership</td>
     </tr>
     <tr>
-      <td>Non-normative framing</td>
+      <td>Published centralized governance doctrine</td>
+      <td>Published repository-wide rule that governs interpretation across surfaces rather than one isolated technical layer</td>
+    </tr>
+    <tr>
+      <td>Published repository entry surface, broadly aligned</td>
+      <td>Published top-level architectural entry point that must remain synchronized with the detailed repository state</td>
+    </tr>
+    <tr>
+      <td>Published non-normative framing</td>
       <td>Published rationale or sequencing surface that must remain distinct from specification law</td>
     </tr>
   </tbody>
@@ -317,7 +348,8 @@ never silently misinterpret
 </code></pre>
 
 <p>
-This doctrine applies across the matrix as a repository-wide governance rule. Detailed policy remains centralized in <code>Versioning/Readme.md</code>.
+This doctrine applies across the matrix as a repository-wide governance rule.
+Detailed policy remains centralized in <code>Versioning/Readme.md</code>.
 </p>
 
 <hr/>
@@ -365,7 +397,8 @@ This matrix should be updated whenever one of the following changes:
 </ul>
 
 <p>
-This file should remain compact, current, and centralized. Other documents should reference it rather than re-creating competing status tables.
+This file should remain compact, current, and centralized.
+Other documents should reference it rather than re-creating competing status tables.
 </p>
 
 <hr/>
@@ -387,3 +420,7 @@ It should answer, in one place:
   <li>which centralized cross-version doctrines are now explicitly in force,</li>
   <li>and what the next smallest coherent closure steps are.</li>
 </ul>
+
+<p>
+Its role is to make the current repository posture readable without scattering competing status statements across the corpus.
+</p>
