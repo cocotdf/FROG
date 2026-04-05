@@ -18,18 +18,19 @@
   <li><a href="#governance-goals">2. Governance Goals</a></li>
   <li><a href="#scope-of-governance">3. Scope of Governance</a></li>
   <li><a href="#repository-layers-and-governance-boundaries">4. Repository Layers and Governance Boundaries</a></li>
-  <li><a href="#stewardship">5. Stewardship</a></li>
-  <li><a href="#open-specification-and-multiple-implementations">6. Open Specification and Multiple Implementations</a></li>
-  <li><a href="#decision-model">7. Decision Model</a></li>
-  <li><a href="#proposal-and-change-process">8. Proposal and Change Process</a></li>
-  <li><a href="#compatibility-versioning-and-deprecation">9. Compatibility, Versioning, and Deprecation</a></li>
-  <li><a href="#repository-contributions-and-licensing">10. Repository Contributions and Licensing</a></li>
-  <li><a href="#commercial-implementations-and-ecosystem-participation">11. Commercial Implementations and Ecosystem Participation</a></li>
-  <li><a href="#support-claims-conformance-and-certification">12. Support Claims, Conformance, and Certification</a></li>
-  <li><a href="#trademarks-branding-and-official-claims">13. Trademarks, Branding, and Official Claims</a></li>
-  <li><a href="#commercial-vs-non-commercial-certification-direction">14. Commercial vs Non-Commercial Certification Direction</a></li>
-  <li><a href="#future-governance-evolution">15. Future Governance Evolution</a></li>
-  <li><a href="#non-goals">16. Non-Goals</a></li>
+  <li><a href="#repository-wide-framing-and-governance-surfaces">5. Repository-Wide Framing and Governance Surfaces</a></li>
+  <li><a href="#stewardship">6. Stewardship</a></li>
+  <li><a href="#open-specification-and-multiple-implementations">7. Open Specification and Multiple Implementations</a></li>
+  <li><a href="#decision-model">8. Decision Model</a></li>
+  <li><a href="#proposal-and-change-process">9. Proposal and Change Process</a></li>
+  <li><a href="#compatibility-versioning-and-deprecation">10. Compatibility, Versioning, and Deprecation</a></li>
+  <li><a href="#repository-contributions-and-licensing">11. Repository Contributions and Licensing</a></li>
+  <li><a href="#commercial-implementations-and-ecosystem-participation">12. Commercial Implementations and Ecosystem Participation</a></li>
+  <li><a href="#support-claims-conformance-and-certification">13. Support Claims, Conformance, and Certification</a></li>
+  <li><a href="#trademarks-branding-and-official-claims">14. Trademarks, Branding, and Official Claims</a></li>
+  <li><a href="#commercial-vs-non-commercial-certification-direction">15. Commercial vs Non-Commercial Certification Direction</a></li>
+  <li><a href="#future-governance-evolution">16. Future Governance Evolution</a></li>
+  <li><a href="#non-goals">17. Non-Goals</a></li>
 </ul>
 
 <hr/>
@@ -83,7 +84,7 @@ The governance of FROG exists to preserve the following goals:
   <li>allow responsible evolution of the specification over time,</li>
   <li>support a healthy ecosystem of open and commercial implementations,</li>
   <li>keep a clean distinction between the core language, optional standardized profiles, and implementation-specific extensions,</li>
-  <li>preserve a clear distinction between normative specification, strategic framing, roadmap sequencing, conformance posture, and reference implementation work,</li>
+  <li>preserve a clear distinction between normative specification, strategic framing, roadmap sequencing, current corpus-version governance, conformance posture, and reference implementation work,</li>
   <li>protect the integrity of official FROG branding, certification, and compatibility claims.</li>
 </ul>
 
@@ -116,6 +117,7 @@ This document applies to the governance of the FROG specification repository, in
   <li>repository-level conformance material,</li>
   <li>repository-level strategic framing documents,</li>
   <li>repository-level roadmap documents,</li>
+  <li>repository-level versioning-governance documents,</li>
   <li>related architectural and normative documents contained in this repository.</li>
 </ul>
 
@@ -163,19 +165,20 @@ Governance must keep those roles distinct.
 </p>
 
 <pre>
-Expression/                 -> canonical source and structural validity
-Language/                   -> validated program meaning
-Libraries/                  -> intrinsic primitive surface
-Profiles/                   -> optional standardized capability families
-IR/                         -> canonical open execution-facing representation
-IDE/                        -> authoring, observability, debugging, inspection
+Expression/                 -&gt; canonical source and structural validity
+Language/                   -&gt; validated program meaning
+Libraries/                  -&gt; intrinsic primitive surface
+Profiles/                   -&gt; optional standardized capability families
+IR/                         -&gt; canonical open execution-facing representation
+IDE/                        -&gt; authoring, observability, debugging, inspection
 
-Examples/                   -> named example programs
-Conformance/                -> public accept / reject / preserve expectations
-Implementations/Reference/  -> non-normative executable workspace
+Examples/                   -&gt; named example programs
+Conformance/                -&gt; public accept / reject / preserve expectations
+Implementations/Reference/  -&gt; non-normative executable workspace
 
-Strategy/                   -> non-normative strategic framing
-Roadmap/                    -> non-normative closure sequencing
+Strategy/                   -&gt; non-normative strategic framing
+Roadmap/                    -&gt; non-normative closure sequencing
+Versioning/                 -&gt; current corpus-version governance and current-status reporting
 </pre>
 
 <p>
@@ -186,6 +189,7 @@ In particular:
 <ul>
   <li><strong>Strategy</strong> explains why FROG matters, but does not define language truth.</li>
   <li><strong>Roadmap</strong> explains in what order FROG should be closed, but does not define language truth.</li>
+  <li><strong>Versioning</strong> defines current published corpus-version posture and cross-version governance, but does not define language semantics or roadmap ordering.</li>
   <li><strong>Conformance</strong> exposes public expected outcomes, but does not silently replace semantic ownership.</li>
   <li><strong>Implementations/Reference</strong> exercises a bounded executable path, but does not become normative merely by existing.</li>
 </ul>
@@ -198,13 +202,66 @@ Governance must therefore preserve not only openness and implementability, but a
   <li>what is normative,</li>
   <li>what is strategic,</li>
   <li>what is sequencing guidance,</li>
+  <li>what is current corpus-version truth,</li>
   <li>what is conformance truth surface,</li>
   <li>what is executable reference proof.</li>
 </ul>
 
 <hr/>
 
-<h2 id="stewardship">5. Stewardship</h2>
+<h2 id="repository-wide-framing-and-governance-surfaces">5. Repository-Wide Framing and Governance Surfaces</h2>
+
+<p>
+The repository now contains three distinct repository-wide framing and governance surfaces that answer three different questions:
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Surface</th>
+      <th>Primary question</th>
+      <th>What it must not replace</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Strategy/</code></td>
+      <td>Why does FROG matter?</td>
+      <td>Normative technical ownership, closure sequencing, or current corpus-version truth</td>
+    </tr>
+    <tr>
+      <td><code>Roadmap/</code></td>
+      <td>In what order should FROG be closed?</td>
+      <td>Normative technical ownership, strategic rationale, or current corpus-version truth</td>
+    </tr>
+    <tr>
+      <td><code>Versioning/</code></td>
+      <td>What is the current published specification corpus version, what doctrine governs version evolution, and what is the current detailed per-surface status?</td>
+      <td>Normative technical ownership, strategic rationale, or milestone sequencing</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>
+This distinction is governance-relevant because it prevents repository-wide confusion between:
+</p>
+
+<ul>
+  <li>purpose,</li>
+  <li>sequencing,</li>
+  <li>current version truth.</li>
+</ul>
+
+<p>
+Governance should preserve this tri-distinction explicitly.
+Repository-wide purpose belongs to <code>Strategy/</code>.
+Repository-wide closure order belongs to <code>Roadmap/</code>.
+Current published corpus-version truth and current detailed status belong to <code>Versioning/</code>.
+</p>
+
+<hr/>
+
+<h2 id="stewardship">6. Stewardship</h2>
 
 <p>
 Graiphic is the initial steward of the FROG specification repository.
@@ -227,7 +284,7 @@ The steward SHOULD make decisions in a way that preserves:
   <li>backward compatibility when reasonably possible,</li>
   <li>separation between the standard and any one implementation,</li>
   <li>clear boundaries between intrinsic libraries, profiles, and implementation-specific extensions,</li>
-  <li>clear boundaries between specification, strategy, roadmap, conformance, and reference implementation work.</li>
+  <li>clear boundaries between specification, strategy, roadmap, versioning, conformance, and reference implementation work.</li>
 </ul>
 
 <pre>
@@ -247,7 +304,7 @@ Stewardship is:
 
 <hr/>
 
-<h2 id="open-specification-and-multiple-implementations">6. Open Specification and Multiple Implementations</h2>
+<h2 id="open-specification-and-multiple-implementations">7. Open Specification and Multiple Implementations</h2>
 
 <p>
 FROG is an open specification.
@@ -314,7 +371,7 @@ This openness is also one of the reasons FROG can credibly support:
 
 <hr/>
 
-<h2 id="decision-model">7. Decision Model</h2>
+<h2 id="decision-model">8. Decision Model</h2>
 
 <p>
 FROG governance currently follows a steward-led model.
@@ -343,6 +400,7 @@ For example:
 <ul>
   <li>a strategic concern does not automatically justify a semantic change,</li>
   <li>a roadmap desire does not automatically justify normative wording,</li>
+  <li>a versioning-governance clarification does not automatically justify semantic change,</li>
   <li>a reference implementation shortcut does not automatically justify a specification change.</li>
 </ul>
 
@@ -360,7 +418,7 @@ accept / revise / split / defer / redirect / reject
 
 <hr/>
 
-<h2 id="proposal-and-change-process">8. Proposal and Change Process</h2>
+<h2 id="proposal-and-change-process">9. Proposal and Change Process</h2>
 
 <p>
 The normal change path for the specification is:
@@ -383,7 +441,7 @@ Specification changes SHOULD be:
   <li>conservative when modifying existing normative behavior,</li>
   <li>clear about whether they are corrective, additive, or breaking,</li>
   <li>cross-checked against directly related documents,</li>
-  <li>clear about whether they affect the core language, an intrinsic library, a profile, an IDE-facing concern, a strategic framing layer, or a roadmap layer.</li>
+  <li>clear about whether they affect the core language, an intrinsic library, a profile, an IDE-facing concern, a strategic framing layer, a roadmap layer, or the centralized versioning surface.</li>
 </ul>
 
 <p>
@@ -404,7 +462,7 @@ Cross-layer semantic change
 
 <hr/>
 
-<h2 id="compatibility-versioning-and-deprecation">9. Compatibility, Versioning, and Deprecation</h2>
+<h2 id="compatibility-versioning-and-deprecation">10. Compatibility, Versioning, and Deprecation</h2>
 
 <p>
 The FROG specification SHOULD evolve in a way that preserves continuity whenever reasonably possible.
@@ -427,7 +485,8 @@ Where appropriate, the repository SHOULD describe migration direction, replaceme
 </p>
 
 <p>
-A future dedicated versioning policy MAY define more precise release classes, compatibility guarantees, profile-version compatibility rules, and conformance targets.
+The repository-wide doctrine for current corpus-version governance, additive evolution, degraded readability posture, and current detailed per-surface status belongs centrally in <code>Versioning/</code>.
+This governance document recognizes that surface and protects its role, but does not attempt to duplicate its full policy here.
 </p>
 
 <pre>
@@ -440,7 +499,7 @@ breaking      -> migration may be required
 
 <hr/>
 
-<h2 id="repository-contributions-and-licensing">10. Repository Contributions and Licensing</h2>
+<h2 id="repository-contributions-and-licensing">11. Repository Contributions and Licensing</h2>
 
 <p>
 Repository contributions are governed by the repository license, contribution workflow, and contributor license agreement requirements published in the root of the repository.
@@ -459,7 +518,7 @@ If any conflict appears, the applicable legal and contribution documents govern 
 
 <hr/>
 
-<h2 id="commercial-implementations-and-ecosystem-participation">11. Commercial Implementations and Ecosystem Participation</h2>
+<h2 id="commercial-implementations-and-ecosystem-participation">12. Commercial Implementations and Ecosystem Participation</h2>
 
 <p>
 Open specification does not imply implementation uniformity.
@@ -500,7 +559,7 @@ FROG is intended to support an ecosystem in which:
 
 <hr/>
 
-<h2 id="support-claims-conformance-and-certification">12. Support Claims, Conformance, and Certification</h2>
+<h2 id="support-claims-conformance-and-certification">13. Support Claims, Conformance, and Certification</h2>
 
 <p>
 The governance of FROG SHOULD distinguish clearly between support claims, conformance claims, and certification claims.
@@ -553,7 +612,7 @@ These distinctions are especially important because:
 
 <hr/>
 
-<h2 id="trademarks-branding-and-official-claims">13. Trademarks, Branding, and Official Claims</h2>
+<h2 id="trademarks-branding-and-official-claims">14. Trademarks, Branding, and Official Claims</h2>
 
 <p>
 The openness of the FROG specification does not automatically grant trademark rights.
@@ -592,7 +651,7 @@ An open language should remain independently implementable without confusing tha
 
 <hr/>
 
-<h2 id="commercial-vs-non-commercial-certification-direction">14. Commercial vs Non-Commercial Certification Direction</h2>
+<h2 id="commercial-vs-non-commercial-certification-direction">15. Commercial vs Non-Commercial Certification Direction</h2>
 
 <p>
 The steward MAY define a certification and branding program for implementations that wish to use official FROG certification, official branding, or equivalent steward-controlled marks.
@@ -630,7 +689,7 @@ non-commercial official certification may be free or low-cost
 
 <hr/>
 
-<h2 id="future-governance-evolution">15. Future Governance Evolution</h2>
+<h2 id="future-governance-evolution">16. Future Governance Evolution</h2>
 
 <p>
 The current governance model is intentionally simple and steward-led.
@@ -661,13 +720,14 @@ Any future governance evolution SHOULD also preserve the internal repository dis
   <li>normative ownership,</li>
   <li>strategic framing,</li>
   <li>roadmap sequencing,</li>
+  <li>current corpus-version governance,</li>
   <li>conformance truth surface,</li>
   <li>reference implementation proof.</li>
 </ul>
 
 <hr/>
 
-<h2 id="non-goals">16. Non-Goals</h2>
+<h2 id="non-goals">17. Non-Goals</h2>
 
 <p>
 This document does not attempt to:
@@ -682,6 +742,7 @@ This document does not attempt to:
   <li>force all implementations to support the same optional profiles,</li>
   <li>replace strategy documents with governance,</li>
   <li>replace roadmap sequencing with governance,</li>
+  <li>replace versioning governance with governance,</li>
   <li>replace normative specification with governance.</li>
 </ul>
 
