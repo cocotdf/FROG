@@ -5,7 +5,7 @@
 <h1 align="center">🐸 FROG — Heilmeier Framing</h1>
 
 <p align="center">
-  Strategic framing for the technological purpose, expected impact, and program logic of FROG<br/>
+  Strategic framing for the technological purpose, expected impact, ecosystem significance, and long-term program logic of FROG<br/>
   <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -25,9 +25,10 @@
   <li><a href="#heilmeier-h6">9. Heilmeier H6 — What are the risks and what still needs to be proved?</a></li>
   <li><a href="#heilmeier-h7">10. Heilmeier H7 — How much will it cost?</a></li>
   <li><a href="#heilmeier-h8">11. Heilmeier H8 — How long will it take and what are the midterm and final exams?</a></li>
-  <li><a href="#what-is-already-demonstrated-in-the-repository">12. What is Already Demonstrated in the Repository</a></li>
-  <li><a href="#future-end-to-end-poc-direction">13. Future End-to-End POC Direction</a></li>
-  <li><a href="#summary">14. Summary</a></li>
+  <li><a href="#relation-with-strategy-roadmap-and-versioning">12. Relation with Strategy, Roadmap, and Versioning</a></li>
+  <li><a href="#what-is-already-demonstrated-in-the-repository">13. What is Already Demonstrated in the Repository</a></li>
+  <li><a href="#future-end-to-end-poc-direction">14. Future End-to-End POC Direction</a></li>
+  <li><a href="#summary">15. Summary</a></li>
 </ul>
 
 <hr/>
@@ -42,6 +43,8 @@ This page explains why FROG exists as a technological program, what gap it targe
 This page is intentionally strategic.
 It is not the normative language definition.
 It is not the reference implementation documentation.
+It is not the roadmap.
+It is not the current corpus-version status surface.
 It is a program-framing document that explains the problem, the opportunity, the expected impact, and the execution logic behind FROG.
 </p>
 
@@ -86,7 +89,8 @@ It is that the next generation of industrial programming infrastructure must rem
   <li>machine-friendly enough for AI-era tooling,</li>
   <li>human-reviewable enough for security and engineering trust,</li>
   <li>open enough for multi-vendor implementation,</li>
-  <li>structured enough to preserve meaning across validation, derivation, and backend handoff.</li>
+  <li>structured enough to preserve meaning across validation, derivation, and backend handoff,</li>
+  <li>governable enough that current version posture remains explicit rather than hidden in one proprietary lifecycle.</li>
 </ul>
 
 <hr/>
@@ -170,7 +174,8 @@ It aims to provide a language stack where:
   <li>the saved source remains structured and machine-friendly,</li>
   <li>the program structure remains graphically reviewable by humans,</li>
   <li>the execution-facing IR remains open to inspection,</li>
-  <li>downstream compilation remains separate from the normative language definition.</li>
+  <li>downstream compilation remains separate from the normative language definition,</li>
+  <li>and the repository can state its current corpus posture explicitly without forcing that truth into strategic prose.</li>
 </ul>
 
 <hr/>
@@ -197,7 +202,8 @@ The practical limits of the current situation are structural rather than cosmeti
   <li>difficulty of porting graphical system logic across hardware ecosystems,</li>
   <li>difficulty of integrating modern AI tooling with opaque graphical formats,</li>
   <li>difficulty of building an open multi-vendor ecosystem around system-grade graphical execution,</li>
-  <li>difficulty of cleanly separating source truth, execution-facing IR, backend lowering, and runtime realization.</li>
+  <li>difficulty of cleanly separating source truth, execution-facing IR, backend lowering, and runtime realization,</li>
+  <li>difficulty of keeping version posture explicit rather than burying it in one vendor release logic.</li>
 </ul>
 
 <p>
@@ -229,7 +235,8 @@ What is new is the combination of the following architectural commitments inside
   <li>an explicit separation between saved source, validated semantics, derived IR, lowering, backend contract, and runtime realization,</li>
   <li>a standardized execution-facing FROG IR that remains inspectable and recoverable,</li>
   <li>a backend-family-oriented lowering path rather than one hidden private execution pipeline,</li>
-  <li>a future path toward known backend/compiler targets without making those targets the definition of the language.</li>
+  <li>a future path toward known backend/compiler targets without making those targets the definition of the language,</li>
+  <li>a centralized repository-visible versioning surface rather than scattered implicit version claims.</li>
 </ul>
 
 <p>
@@ -300,6 +307,7 @@ It would change the structure of the category.
   <li>Multiple hardware manufacturers could participate in one open language ecosystem instead of forcing users into mutually isolated stacks.</li>
   <li>AI-assisted tooling could operate on open source and open IR artifacts rather than reverse-engineering closed graphical representations.</li>
   <li>Critical generated logic could become easier to review visually and structurally rather than only through indirect reconstruction.</li>
+  <li>Specification-corpus version posture could remain publicly readable and governable rather than hidden in one product lifecycle.</li>
 </ul>
 
 <p>
@@ -310,7 +318,7 @@ FROG could shift graphical system-grade programming from vendor-controlled lock-
 <p>
 That difference is not only technical.
 It is also strategic.
-In industrial and security-sensitive domains, the ability to inspect, attribute, and port logic matters for trust, resilience, and technological sovereignty.
+In industrial and security-sensitive domains, the ability to inspect, attribute, govern, and port logic matters for trust, resilience, and technological sovereignty.
 </p>
 
 <hr/>
@@ -329,6 +337,7 @@ Several important things still need to be proved.
   <li>Backend diversity must be demonstrated without collapsing the architecture into one backend-specific truth.</li>
   <li>The relationship between open IR, backend contracts, compiler backends, runtime realization, and deployment artifacts must be shown end to end.</li>
   <li>The claimed auditability advantage must remain disciplined and credible rather than overstated.</li>
+  <li>The distinction between strategy, roadmap sequencing, and current version truth must remain explicit.</li>
 </ul>
 
 <p>
@@ -340,7 +349,7 @@ The key risk is that the project could stop too early at the “interesting prot
 Another risk is strategic overclaim.
 FROG should not claim that graphical representation automatically guarantees security or that textual languages cannot be reviewed.
 Its real claim is narrower and stronger:
-it can reduce structural opacity by combining machine-friendly source, direct graphical reviewability, and open execution-facing representation.
+it can reduce structural opacity by combining machine-friendly source, direct graphical reviewability, open execution-facing representation, and explicit repository-visible version governance.
 </p>
 
 <hr/>
@@ -364,6 +373,7 @@ The cost profile should eventually separate into at least four layers:
 
 <p>
 A later roadmap phase should convert this strategic framing into explicit work packages, milestones, cost ranges, and resource assumptions.
+The current corpus-version posture and current detailed repository-surface status remain governed centrally in <code>Versioning/</code>, not in this strategic framing.
 </p>
 
 <hr/>
@@ -401,9 +411,71 @@ In the AI-era framing, a particularly important exam is whether FROG can demonst
   <li>backend handoff without loss of architectural traceability.</li>
 </ul>
 
+<p>
+The ordering of those proofs belongs to the roadmap layer.
+The current published version posture of the corpus belongs to the versioning layer.
+This document explains why those proof points matter strategically.
+</p>
+
 <hr/>
 
-<h2 id="what-is-already-demonstrated-in-the-repository">12. What is Already Demonstrated in the Repository</h2>
+<h2 id="relation-with-strategy-roadmap-and-versioning">12. Relation with Strategy, Roadmap, and Versioning</h2>
+
+<p>
+The repository now contains three distinct repository-wide framing and governance surfaces that answer three different questions:
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Surface</th>
+      <th>Primary question</th>
+      <th>What it must not replace</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Strategy/</code></td>
+      <td>Why does FROG matter?</td>
+      <td>Normative technical ownership, closure sequencing, or current corpus-version truth</td>
+    </tr>
+    <tr>
+      <td><code>Roadmap/</code></td>
+      <td>In what order should FROG be closed?</td>
+      <td>Normative technical ownership, strategic rationale, or current corpus-version truth</td>
+    </tr>
+    <tr>
+      <td><code>Versioning/</code></td>
+      <td>What is the current published specification corpus version, what doctrine governs version evolution, and what is the current detailed per-surface status?</td>
+      <td>Normative technical ownership, strategic rationale, or milestone sequencing</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>
+This means:
+</p>
+
+<ul>
+  <li>Strategy explains the <strong>why</strong>,</li>
+  <li>Roadmap explains the <strong>next</strong>,</li>
+  <li>Versioning explains the <strong>current published corpus posture</strong>.</li>
+</ul>
+
+<p>
+This Heilmeier framing belongs to the strategic layer.
+It may refer to the current baseline of the project, but it must not become the authoritative place where the repository declares its current version state or detailed surface-by-surface status.
+When that information is needed, the authoritative repository-visible entry points are:
+</p>
+
+<ul>
+  <li><code>Versioning/Readme.md</code>,</li>
+  <li><code>Versioning/Matrix.md</code>.</li>
+</ul>
+
+<hr/>
+
+<h2 id="what-is-already-demonstrated-in-the-repository">13. What is Already Demonstrated in the Repository</h2>
 
 <p>
 The repository already demonstrates a minimal executable reference path through a sequence of small vertical slices.
@@ -427,11 +499,12 @@ They should be understood as proof of architectural viability, not as proof that
 <p>
 They also matter strategically because they keep the project grounded in inspectable repository-visible artifacts.
 The strategic argument for openness, auditability, and downstream seriousness is stronger when each stage is already exercised in public slices.
+The authoritative current repository-wide version posture of those published surfaces remains centralized in <code>Versioning/</code>.
 </p>
 
 <hr/>
 
-<h2 id="future-end-to-end-poc-direction">13. Future End-to-End POC Direction</h2>
+<h2 id="future-end-to-end-poc-direction">14. Future End-to-End POC Direction</h2>
 
 <p>
 A future end-to-end proof of concept should demonstrate the full chain more explicitly and more convincingly.
@@ -483,9 +556,15 @@ A particularly convincing future proof point would be an AI-assisted generation 
   <li>the end-to-end chain remains attributable and auditable.</li>
 </ul>
 
+<p>
+The strategic importance of that proof belongs here.
+The ordering of the work belongs to <code>Roadmap/</code>.
+The current corpus-version truth and detailed surface status belong to <code>Versioning/</code>.
+</p>
+
 <hr/>
 
-<h2 id="summary">14. Summary</h2>
+<h2 id="summary">15. Summary</h2>
 
 <p>
 FROG is trying to open a missing category:
@@ -509,9 +588,11 @@ The strategic case for FROG is therefore clear:
   <li>prepare a future path toward known compiler/runtime backends,</li>
   <li>enable an open, multi-vendor, industrial graphical programming ecosystem,</li>
   <li>reduce the auditability gap introduced by increasingly AI-assisted software generation,</li>
-  <li>support industrial security and technological sovereignty through open, inspectable program artifacts.</li>
+  <li>support industrial security and technological sovereignty through open, inspectable, and governable program artifacts.</li>
 </ul>
 
 <p>
 That is the long-term significance of the project.
+This document explains <strong>why</strong> that significance matters.
+It does not replace the roadmap’s sequencing role, and it does not replace the versioning layer’s role as the centralized source for current published corpus-version truth.
 </p>
