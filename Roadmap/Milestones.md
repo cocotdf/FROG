@@ -1,239 +1,312 @@
 <p align="center">
-  <img src="../FROG%20logo.svg" alt="FROG logo" width="200"/>
+  <img src="../FROG logo.svg" alt="FROG logo" width="200" />
 </p>
 
-<h1 align="center">FROG Roadmap Milestones</h1>
+<h1 align="center">FROG Milestones</h1>
 
 <p align="center">
-  <strong>Compact milestone tracking for the roadmap layer inside the FROG repository</strong>
-</p>
-
-<p align="center">
-  <a href="./Readme.md">Back to Roadmap overview</a>
+  <strong>Compact milestone-tracking surface for the non-normative FROG closure roadmap</strong><br/>
+  <em>FROG — Free Open Graphical Language</em>
 </p>
 
 <hr/>
 
-<h2>Milestone map</h2>
-
-<pre>
-M0  [x] Architectural separation established
-M1  [x] First published executable slices established
-M2  [x] Non-normative reference implementation posture established
-M3  [x] Root repository recontextualized around the published state
-M4  [x] Strategic framing layer published
-M5  [~] Roadmap layer published inside the repository
-M6  [ ] v0.1 foundation closed
-M7  [~] Source schema / validator closure materially established but not yet fully closed
-M8  [ ] Stable repeatable reference execution path for the supported subset
-M9  [ ] First serious backend-oriented compiler path
-M10 [ ] First serious FROG IDE foundation
-M11 [ ] Expanded language breadth, profile depth, and deployment depth
-M12 [ ] Practical open industrial graphical ecosystem with clear structural superiority
-</pre>
-
-<hr/>
-
-<h2>Milestone detail</h2>
-
-<h3>M0 — Architectural separation established</h3>
-
+<h2>Contents</h2>
 <ul>
-  <li><strong>Status:</strong> [x]</li>
-  <li><strong>Meaning:</strong> the core ownership split exists between source, semantics, IR, libraries, profiles, and IDE.</li>
-  <li><strong>Main consequence:</strong> FROG is not defined as one product implementation.</li>
-</ul>
-
-<h3>M1 — First published executable slices established</h3>
-
-<ul>
-  <li><strong>Status:</strong> [x]</li>
-  <li><strong>Meaning:</strong> the repository already demonstrates early executable vertical slices.</li>
-  <li><strong>Main consequence:</strong> FROG is no longer architectural prose only.</li>
-</ul>
-
-<h3>M2 — Non-normative reference implementation posture established</h3>
-
-<ul>
-  <li><strong>Status:</strong> [x]</li>
-  <li><strong>Meaning:</strong> the reference path exists but is not the definition of the language.</li>
-  <li><strong>Main consequence:</strong> implementation convenience remains downstream from published ownership layers.</li>
-</ul>
-
-<h3>M3 — Root repository recontextualized around the published state</h3>
-
-<ul>
-  <li><strong>Status:</strong> [x]</li>
-  <li><strong>Meaning:</strong> the main landing page reflects the current architectural and repository-level reality more accurately.</li>
-  <li><strong>Main consequence:</strong> the repository is easier to read as a structured language effort.</li>
-</ul>
-
-<h3>M4 — Strategic framing layer published</h3>
-
-<ul>
-  <li><strong>Status:</strong> [x]</li>
-  <li><strong>Meaning:</strong> the project has an explicit strategic explanation distinct from normative ownership.</li>
-  <li><strong>Main consequence:</strong> strategic positioning no longer has to leak into technical documents.</li>
-</ul>
-
-<h3>M5 — Roadmap layer published inside the repository</h3>
-
-<ul>
-  <li><strong>Status:</strong> [~]</li>
-  <li><strong>Meaning:</strong> a repository-local roadmap exists as a non-normative planning layer.</li>
-  <li><strong>Main consequence:</strong> sequencing can now be discussed without confusing planning and specification.</li>
-  <li><strong>To close:</strong></li>
-  <ul>
-    <li>keep this layer aligned with the real published state after each major closure step</li>
-    <li>keep milestone wording synchronized with the roadmap overview</li>
-    <li>avoid letting milestone summaries drift away from specification reality</li>
-  </ul>
-</ul>
-
-<h3>M6 — v0.1 foundation closed</h3>
-
-<ul>
-  <li><strong>Status:</strong> [ ]</li>
-  <li><strong>Meaning:</strong> the base specification is tight enough that source truth, semantic truth, derived execution form, backend-facing handoff, and implementation workspace are no longer blurred.</li>
-  <li><strong>Main consequence:</strong> later compiler, runtime, and IDE work can build on a much firmer foundation.</li>
-  <li><strong>To close:</strong></li>
-  <ul>
-    <li>Expression ↔ Language ↔ IR correspondence tightened</li>
-    <li>minimal primitive baseline clarified</li>
-    <li>type / value / state ownership clarified</li>
-    <li>execution-model and structure semantics tightened</li>
-    <li>normative truth versus implementation convenience fully clarified</li>
-    <li>architectural distinction between backend family, target profile, deployment mode, and runtime-private realization kept explicit across the relevant documents</li>
-    <li>conformance around already-published boundaries strengthened</li>
-  </ul>
-</ul>
-
-<h3>M7 — Source schema / validator closure materially established but not yet fully closed</h3>
-
-<ul>
-  <li><strong>Status:</strong> [~]</li>
-  <li><strong>Meaning:</strong> canonical source ownership is now explicit enough in published prose and repository-visible machine-checkable form that structural validation is no longer only prose interpretation or private validator folklore, but the repository is not yet at full section-local or fully stabilized validator closure.</li>
-  <li><strong>Main consequence:</strong> structural validation is now materially more explicit, more reproducible, easier to compare across implementations, and better separated from later semantic validation and downstream derivation.</li>
-  <li><strong>Already established:</strong></li>
-  <ul>
-    <li>source-shape / schema posture is published explicitly inside <code>Expression/</code></li>
-    <li>a conservative machine-checkable source-schema artifact exists for canonical top-level source shape</li>
-    <li>conformance reading and case expectations are now more explicit across loadability, structural validity, semantic acceptance, and preservation</li>
-    <li>the reference implementation posture now reflects staged validation rather than a blurred validator story</li>
-    <li>the repository makes clear that schema artifacts assist structural validation but do not replace normative specification ownership</li>
-  </ul>
-  <li><strong>To close:</strong></li>
-  <ul>
-    <li>stabilize whether additional section-local structural rules should remain prose-owned or become repository-visible machine-checkable assets</li>
-    <li>make the supported validator posture explicit enough that structural validation outcomes are easy to compare across implementations for the published subset</li>
-    <li>decide whether the top-level source-shape block is sufficient for M7 closure or whether one more small section-local closure step is required</li>
-    <li>keep schema posture, conformance wording, and reference-validator posture synchronized as the published subset expands</li>
-    <li>avoid letting implementation-side convenience become the hidden definition of structural validity</li>
-  </ul>
-</ul>
-
-<h3>M8 — Stable repeatable reference execution path</h3>
-
-<ul>
-  <li><strong>Status:</strong> [ ]</li>
-  <li><strong>Meaning:</strong> the supported subset can be processed end to end repeatedly through the same explicit stages.</li>
-  <li><strong>Main consequence:</strong> the reference path becomes a reliable proof surface rather than a one-off demonstration.</li>
-  <li><strong>To close:</strong></li>
-  <ul>
-    <li>supported subset explicitly bounded</li>
-    <li>loadability, structural validity, semantic acceptance, and unsupported-but-valid outcomes surfaced consistently in the reference path</li>
-    <li>intermediate artifacts standardized</li>
-    <li>CLI execution path made easy to run and inspect</li>
-    <li>end-to-end repeatability demonstrated</li>
-    <li>development and execution postures shown to support different runtime-service bundles without changing language meaning</li>
-  </ul>
-</ul>
-
-<h3>M9 — First serious backend-oriented compiler path</h3>
-
-<ul>
-  <li><strong>Status:</strong> [ ]</li>
-  <li><strong>Meaning:</strong> FROG can feed a real backend-oriented path without collapsing its own IR and architectural stages into one private downstream technology.</li>
-  <li><strong>Main consequence:</strong> the project gains real compiler/runtime credibility beyond the early reference path.</li>
-  <li><strong>To close:</strong></li>
-  <ul>
-    <li>first compilation-oriented IR subset stabilized</li>
-    <li>first backend-family strategy defined</li>
-    <li>backend contract family prepared</li>
-    <li>known downstream backend demonstrated without collapsing FROG into it</li>
-    <li>target-profile and deployment-mode assumptions made explicit where they materially affect backend consumption</li>
-  </ul>
-</ul>
-
-<h3>M10 — First serious FROG IDE foundation</h3>
-
-<ul>
-  <li><strong>Status:</strong> [ ]</li>
-  <li><strong>Meaning:</strong> FROG gains a real graphical authoring and debugging foundation rather than only static documents and early execution demos.</li>
-  <li><strong>Main consequence:</strong> the project becomes materially more usable for real authoring, validation, inspection, and execution workflows.</li>
-  <li><strong>To close:</strong></li>
-  <ul>
-    <li>Program Model stabilized</li>
-    <li>diagram + interface + front-panel authoring supported</li>
-    <li>validation feedback integrated</li>
-    <li>debugging, probes, and watch surfaces established</li>
-    <li>deployment selection can target different backend families, target profiles, and deployment modes without blurring their distinction</li>
-  </ul>
-</ul>
-
-<h3>M11 — Expanded language breadth, profile depth, and deployment depth</h3>
-
-<ul>
-  <li><strong>Status:</strong> [ ]</li>
-  <li><strong>Meaning:</strong> the project expands beyond the minimal serious base toward broader computation, stronger reuse, and more realistic deployment depth.</li>
-  <li><strong>Main consequence:</strong> FROG becomes much closer to a genuinely useful industrial programming environment rather than a narrow proof surface.</li>
-  <li><strong>To close:</strong></li>
-  <ul>
-    <li>broader primitive coverage</li>
-    <li>stronger structure and memory semantics</li>
-    <li>profile growth</li>
-    <li>packaging and deployment preparation</li>
-    <li>named target-profile families expanded where needed</li>
-    <li>runtime-module strategies for development, debug, release, self-contained, and constrained deployment postures clarified without creating one monolithic universal runtime</li>
-  </ul>
-</ul>
-
-<h3>M12 — Practical open industrial graphical ecosystem</h3>
-
-<ul>
-  <li><strong>Status:</strong> [ ]</li>
-  <li><strong>Meaning:</strong> FROG becomes a credible open industrial graphical ecosystem with serious technical depth, explicit boundaries, and real implementation potential.</li>
-  <li><strong>Main consequence:</strong> the project can credibly rival and surpass the historical proprietary model on both openness and technical structure.</li>
-  <li><strong>To close:</strong></li>
-  <ul>
-    <li>serious IDE</li>
-    <li>serious backend path</li>
-    <li>clear conformance boundary</li>
-    <li>usable governance / certification / branding layer</li>
-    <li>credible industrial adoption path</li>
-    <li>explicit separation between language, IDE, runtime, backend, deployment, and ecosystem participation remains durable at scale</li>
-  </ul>
+  <li><a href="#overview">1. Overview</a></li>
+  <li><a href="#what-this-file-tracks">2. What This File Tracks</a></li>
+  <li><a href="#what-this-file-does-not-track">3. What This File Does Not Track</a></li>
+  <li><a href="#relationship-with-versioning">4. Relationship with Versioning</a></li>
+  <li><a href="#status-legend">5. Status Legend</a></li>
+  <li><a href="#current-milestone-bias">6. Current Milestone Bias</a></li>
+  <li><a href="#milestone-table">7. Milestone Table</a></li>
+  <li><a href="#reading-guidance">8. Reading Guidance</a></li>
+  <li><a href="#maintenance-rule">9. Maintenance Rule</a></li>
+  <li><a href="#summary">10. Summary</a></li>
 </ul>
 
 <hr/>
 
-<h2>Suggested near-term execution order</h2>
-
-<pre>
-1. correspondence closure
-2. primitive baseline closure
-3. type / value / state closure
-4. execution-model and structure closure
-5. stabilize the remaining M7 closure frontier
-6. conformance growth
-7. reference-path hardening
-8. backend-contract preparation
-9. target-profile and deployment-mode depth where it materially improves backend and deployment clarity
-</pre>
-
-<hr/>
-
-<p align="center">
-  <strong>Milestones guide the closure sequence.</strong><br/>
-  They do not replace specification ownership.
+<h2 id="overview">1. Overview</h2>
+<p>
+This document is the compact milestone-tracking surface for the non-normative FROG roadmap.
 </p>
+
+<p>
+Its purpose is to give a concise view of the main closure milestones that organize the project’s sequencing logic without turning milestone tracking into a competing source of specification truth, semantic ownership, or current corpus-version reporting.
+</p>
+
+<p>
+This file is intentionally shorter and more operational than <code>Roadmap/Readme.md</code>.
+It is a navigation surface for closure progress, not a replacement for the architectural roadmap narrative.
+</p>
+
+<hr/>
+
+<h2 id="what-this-file-tracks">2. What This File Tracks</h2>
+<p>
+This file tracks:
+</p>
+
+<ul>
+  <li>the major closure milestones of the FROG project,</li>
+  <li>their rough sequencing logic,</li>
+  <li>their high-level status,</li>
+  <li>their relation to the repository-visible closure corridor.</li>
+</ul>
+
+<p>
+The milestones here are project-level closure markers.
+They are intended to remain compact and readable.
+</p>
+
+<hr/>
+
+<h2 id="what-this-file-does-not-track">3. What This File Does Not Track</h2>
+<p>
+This file does not track:
+</p>
+
+<ul>
+  <li>the current published specification corpus version,</li>
+  <li>the current detailed status of every repository surface,</li>
+  <li>the cross-version additive-evolution doctrine,</li>
+  <li>the detailed compatibility posture of source, semantic, IR, or profile layers,</li>
+  <li>the normative law of the language.</li>
+</ul>
+
+<p>
+Those responsibilities belong elsewhere:
+</p>
+
+<ul>
+  <li><code>Versioning/Readme.md</code> — current corpus-version doctrine and transition policy,</li>
+  <li><code>Versioning/Matrix.md</code> — detailed current-status table by repository surface,</li>
+  <li>the six core specification families — normative technical ownership.</li>
+</ul>
+
+<hr/>
+
+<h2 id="relationship-with-versioning">4. Relationship with Versioning</h2>
+<p>
+Milestones and versions are related, but they must not be confused.
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Surface</th>
+      <th>Primary question</th>
+      <th>What it must not replace</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Roadmap/Milestones.md</code></td>
+      <td>Which closure steps matter most, and in what rough order?</td>
+      <td>Current corpus-version truth</td>
+    </tr>
+    <tr>
+      <td><code>Versioning/Readme.md</code></td>
+      <td>What is the current published specification corpus version and what doctrine governs version transitions?</td>
+      <td>Milestone sequencing</td>
+    </tr>
+    <tr>
+      <td><code>Versioning/Matrix.md</code></td>
+      <td>What is the detailed current status of each major repository surface?</td>
+      <td>Milestone planning</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>
+This means:
+</p>
+
+<ul>
+  <li>a milestone may be active even when the current corpus version has not changed,</li>
+  <li>a corpus version may be clarified centrally without changing milestone order,</li>
+  <li>this file should never be used as the authoritative answer to “what version is the published specification currently at?”</li>
+</ul>
+
+<p>
+For that question, the authoritative repository-visible entry points are:
+</p>
+
+<ul>
+  <li><code>Versioning/Readme.md</code>,</li>
+  <li><code>Versioning/Matrix.md</code>.</li>
+</ul>
+
+<hr/>
+
+<h2 id="status-legend">5. Status Legend</h2>
+<ul>
+  <li><strong>[x]</strong> completed or already established in the published baseline</li>
+  <li><strong>[~]</strong> active, partially established, or under consolidation</li>
+  <li><strong>[ ]</strong> planned future milestone</li>
+</ul>
+
+<hr/>
+
+<h2 id="current-milestone-bias">6. Current Milestone Bias</h2>
+<p>
+The current milestone bias remains:
+</p>
+
+<ol>
+  <li>preserve repository-entry coherence,</li>
+  <li>preserve source / semantics / IR / conformance alignment,</li>
+  <li>preserve the bounded executable reference corridor,</li>
+  <li>preserve widget-object corridor coherence,</li>
+  <li>preserve centralized version-governance clarity,</li>
+  <li>only then broaden backend families, runtime families, deployment families, or ecosystem claims.</li>
+</ol>
+
+<p>
+In other words, the project should continue to prefer coherent corridor closure over premature ecosystem widening.
+</p>
+
+<hr/>
+
+<h2 id="milestone-table">7. Milestone Table</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Milestone</th>
+      <th>Status</th>
+      <th>Meaning</th>
+      <th>Current practical focus</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>M0 — Repository foundation established</td>
+      <td>[x]</td>
+      <td>Core specification families, support areas, framing layers, and centralized version-governance surfaces exist</td>
+      <td>Preserve coherence rather than reopening the foundation</td>
+    </tr>
+    <tr>
+      <td>M1 — Canonical source and source-schema closure</td>
+      <td>[~]</td>
+      <td>The canonical <code>.frog</code> source model and its structural-validity posture are made increasingly precise and stable</td>
+      <td>Tighten source-shape, section ownership, and structural validation boundaries</td>
+    </tr>
+    <tr>
+      <td>M2 — Validated semantic closure</td>
+      <td>[~]</td>
+      <td>Validated program meaning becomes increasingly explicit and architecture-coherent</td>
+      <td>Keep control, state, interface, widget, and primitive/profile semantics aligned</td>
+    </tr>
+    <tr>
+      <td>M3 — IR and compiler-corridor closure</td>
+      <td>[~]</td>
+      <td>The open execution-facing IR corridor remains explicit from derivation through lowering and backend contract</td>
+      <td>Preserve clear distinction between open IR, lowering, backend handoff, and private realization</td>
+    </tr>
+    <tr>
+      <td>M4 — Bounded execution-start and reference-path proof</td>
+      <td>[~]</td>
+      <td>A narrow but real path from source to observable execution is repository-visible and credible</td>
+      <td>Keep examples, conformance, profiles, and reference implementation aligned on the bounded slice</td>
+    </tr>
+    <tr>
+      <td>M5 — Widget-object and UI corridor closure</td>
+      <td>[~]</td>
+      <td>The widget-object model becomes serious enough to sustain long-term IDE/runtime/UI-host reasoning</td>
+      <td>Keep <code>widget_value</code>, <code>widget_reference</code>, class contracts, and UI primitives coherent</td>
+    </tr>
+    <tr>
+      <td>M6 — Conformance growth and profile broadening</td>
+      <td>[ ]</td>
+      <td>The public truth surface and capability-family coverage broaden from a stable bounded core</td>
+      <td>Expand only after current corridor closure is solid enough</td>
+    </tr>
+    <tr>
+      <td>M7 — Broader ecosystem and industrial-standard credibility</td>
+      <td>[ ]</td>
+      <td>FROG sustains credible multi-implementation, profile, and industrial ecosystem growth</td>
+      <td>Widen from proof to durable ecosystem posture without losing architectural discipline</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr/>
+
+<h2 id="reading-guidance">8. Reading Guidance</h2>
+<p>
+Readers should use this file for a quick answer to:
+</p>
+
+<p>
+<strong>Which closure milestones matter right now?</strong>
+</p>
+
+<p>
+Readers should use other files for different questions:
+</p>
+
+<ul>
+  <li><strong><code>Roadmap/Readme.md</code></strong> — for the fuller narrative and phase logic,</li>
+  <li><strong><code>Versioning/Readme.md</code></strong> — for the current published corpus version and cross-version doctrine,</li>
+  <li><strong><code>Versioning/Matrix.md</code></strong> — for the current detailed status of each major repository surface.</li>
+</ul>
+
+<hr/>
+
+<h2 id="maintenance-rule">9. Maintenance Rule</h2>
+<p>
+This file should be updated when:
+</p>
+
+<ul>
+  <li>a major closure milestone is reached,</li>
+  <li>a major milestone changes status from planned to active,</li>
+  <li>the current milestone bias changes materially,</li>
+  <li>the project reorders major closure fronts.</li>
+</ul>
+
+<p>
+This file should <strong>not</strong> be updated merely to restate the current corpus-version truth if that truth is already maintained centrally in <code>Versioning/</code>.
+</p>
+
+<p>
+Milestones should remain compact, readable, and sequencing-oriented.
+They should not become a second version-status matrix.
+</p>
+
+<hr/>
+
+<h2 id="summary">10. Summary</h2>
+<p>
+This file is the compact milestone tracker of the non-normative FROG roadmap.
+</p>
+
+<p>
+It should answer:
+</p>
+
+<ul>
+  <li>which closure fronts are already established,</li>
+  <li>which ones are currently active,</li>
+  <li>which ones come next in the project logic.</li>
+</ul>
+
+<p>
+It should not answer, by itself:
+</p>
+
+<ul>
+  <li>what the current published specification corpus version is,</li>
+  <li>what the detailed current status of each repository surface is,</li>
+  <li>what the full cross-version doctrine is.</li>
+</ul>
+
+<p>
+Those responsibilities remain centralized in:
+</p>
+
+<ul>
+  <li><code>Versioning/Readme.md</code>,</li>
+  <li><code>Versioning/Matrix.md</code>.</li>
+</ul>
