@@ -51,11 +51,15 @@ What must be preserved?
 </code></pre>
 
 <p>
-This directory does not define the language by itself. It makes already-published language law operationally checkable. Conformance therefore sits at the boundary between repository truth and observable implementation behavior. It turns architectural distinctions into public expectations.
+This directory does not define the language by itself.
+It makes already-published language law operationally checkable.
+Conformance therefore sits at the boundary between repository truth and observable implementation behavior.
+It turns architectural distinctions into public expectations.
 </p>
 
 <p>
-In v0.1, that public truth surface is not limited to source acceptance or semantic rejection alone. It also includes preservation obligations across the published execution corridor:
+In v0.1, that public truth surface is not limited to source acceptance or semantic rejection alone.
+It also includes preservation obligations across the published execution corridor:
 </p>
 
 <pre><code>.frog source
@@ -76,7 +80,8 @@ declared backend-family consumption where applicable
 </code></pre>
 
 <p>
-Conformance therefore already matters to the compiler corridor, even when the downstream compilation route is still being consolidated. A future industrial compilation chain must remain compatible with the same public accept / reject / preserve truth surface.
+Conformance therefore already matters to the compiler corridor, even when the downstream compilation route is still being consolidated.
+A future industrial compilation chain must remain compatible with the same public accept / reject / preserve truth surface.
 </p>
 
 <hr/>
@@ -93,7 +98,8 @@ Implementation  = must behave accordingly
 </code></pre>
 
 <p>
-A conforming implementation MAY vary internally. It MUST NOT vary in published accept / reject / preserve outcomes for the same published case while still claiming conformance to the same published repository state.
+A conforming implementation MAY vary internally.
+It MUST NOT vary in published accept / reject / preserve outcomes for the same published case while still claiming conformance to the same published repository state.
 </p>
 
 <p>
@@ -117,7 +123,8 @@ implementation convenience
 </code></pre>
 
 <p>
-Conformance is therefore not a commentary layer. It is the public truth surface that makes published repository law observable, comparable, and reviewable.
+Conformance is therefore not a commentary layer.
+It is the public truth surface that makes published repository law observable, comparable, and reviewable.
 </p>
 
 <hr/>
@@ -153,7 +160,8 @@ It ensures that:
 </ul>
 
 <p>
-Conformance is therefore not commentary. It is the public truth surface that turns specification architecture into comparable observable behavior.
+Conformance is therefore not commentary.
+It is the public truth surface that turns specification architecture into comparable observable behavior.
 </p>
 
 <hr/>
@@ -222,7 +230,9 @@ Where useful, a case MAY also make explicit whether it is:
 </ul>
 
 <p>
-This distinction matters because machine-checkable schema is part of the validation corridor. It is not a replacement for semantic validation. Likewise, canonical JSON IR validity is not a replacement for semantic validity or IR architectural validity.
+This distinction matters because machine-checkable schema is part of the validation corridor.
+It is not a replacement for semantic validation.
+Likewise, canonical JSON IR validity is not a replacement for semantic validity or IR architectural validity.
 </p>
 
 <hr/>
@@ -251,7 +261,8 @@ Implementation follows
 </code></pre>
 
 <p>
-Conformance must never become the place where missing language law is invented retroactively. When a case reveals ambiguity, the owning specification document must be clarified.
+Conformance must never become the place where missing language law is invented retroactively.
+When a case reveals ambiguity, the owning specification document must be clarified.
 </p>
 
 <hr/>
@@ -301,7 +312,8 @@ In particular:
 </ul>
 
 <p>
-A case file is therefore not a second specification. It is a public executable reading of already-published ownership.
+A case file is therefore not a second specification.
+It is a public executable reading of already-published ownership.
 </p>
 
 <hr/>
@@ -470,7 +482,8 @@ The negative structural subtree is organized as:
 </code></pre>
 
 <p>
-Structured subtrees do not erase earlier top-level anchors. They provide clearer homes for focused family growth after the original historical block.
+Structured subtrees do not erase earlier top-level anchors.
+They provide clearer homes for focused family growth after the original historical block.
 </p>
 
 <p>
@@ -570,7 +583,8 @@ and later correspondence-sensitive cases with higher numbering that protect cano
 </p>
 
 <p>
-This means the top-level positive corpus is not only “early examples”. It is already part of the published architectural truth surface.
+This means the top-level positive corpus is not only “early examples”.
+It is already part of the published architectural truth surface.
 </p>
 
 <h3>9.4 Compiler-corridor families</h3>
@@ -600,6 +614,12 @@ backend-contract eligibility
 declared backend-family consumability
 </code></pre>
 
+<p>
+They should also be read together with the illustrative compiler mirror published under <code>Examples/compiler/</code>.
+That mirror is illustrative.
+The conformance families remain the public expectation surface.
+</p>
+
 <h3>9.5 Executable subfamily posture</h3>
 
 <p>
@@ -611,7 +631,8 @@ That means the repository has already opened a structural place for executable-f
 </p>
 
 <p>
-However, the top-level executable anchors still remain published at the root of <code>valid/</code>. The correct reading is therefore:
+However, the top-level executable anchors still remain published at the root of <code>valid/</code>.
+The correct reading is therefore:
 </p>
 
 <pre><code>top-level executable anchors
@@ -721,7 +742,8 @@ This is already a substantial closure step.
 </p>
 
 <p>
-It means the repository no longer treats downstream execution as future-only strategy. It already exposes:
+It means the repository no longer treats downstream execution as future-only strategy.
+It already exposes:
 </p>
 
 <pre><code>source truth
@@ -746,7 +768,9 @@ The next structural closure step should therefore remain conservative:
 <ul>
   <li>keep the historical top-level block readable,</li>
   <li>grow focused structural subfamilies where the source law is already explicit,</li>
-  <li>prefer small high-signal structural cases over broad unfocused expansion.</li>
+  <li>preserve early executable anchors as published truth,</li>
+  <li>align compiler-corridor conformance with the bounded illustrative mirror under <code>Examples/compiler/</code>,</li>
+  <li>prefer small high-signal cases over broad unfocused expansion.</li>
 </ul>
 
 <p>
@@ -794,6 +818,24 @@ Reference implementation
    -&gt; consume the published layers without owning them
 </code></pre>
 
+<p>
+Within that reading discipline, the relation with <code>Examples/compiler/</code> must remain explicit:
+</p>
+
+<pre><code>Examples/compiler/
+   -&gt; bounded illustrative mirror
+
+Conformance/valid/compiler/ and Conformance/invalid/compiler/
+   -&gt; public acceptance / rejection / preservation surface
+
+the mirror does not replace the public truth surface
+</code></pre>
+
+<p>
+Likewise, the early top-level executable anchors in <code>Conformance/valid/</code> remain part of the published truth surface even though <code>Examples/</code> now also exposes a bounded compiler-oriented mirror.
+The two surfaces serve different roles and should remain distinguishable.
+</p>
+
 <hr/>
 
 <h2 id="future-growth">13. Future Growth</h2>
@@ -836,6 +878,17 @@ That means structural growth should:
   <li>avoid pretending those anchors never existed,</li>
   <li>treat <code>valid/structural/</code> and <code>invalid/structural/</code> as structured growth rather than retroactive erasure,</li>
   <li>stay tightly mapped to published <code>Expression/</code> ownership.</li>
+</ul>
+
+<p>
+Compiler-corridor growth should:
+</p>
+
+<ul>
+  <li>remain explicitly bounded by published profile posture,</li>
+  <li>stay compatible with the open IR boundary rather than collapsing into backend-private truth,</li>
+  <li>treat <code>Examples/compiler/</code> as an illustrative neighbor rather than as a substitute for conformance,</li>
+  <li>preserve the distinction between backend-family consumption and FROG semantic truth.</li>
 </ul>
 
 <p>
@@ -889,6 +942,16 @@ backend-family consumability
    -&gt;
 bounded executable truth where already published
 </code></pre>
+
+<p>
+Within that corridor:
+</p>
+
+<ul>
+  <li><code>Examples/</code> illustrates,</li>
+  <li><code>Conformance/</code> exposes public expectations,</li>
+  <li><code>Implementations/Reference/</code> consumes the published layers without owning them.</li>
+</ul>
 
 <p>
 This keeps the repository disciplined:
