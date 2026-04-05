@@ -87,6 +87,11 @@ This document defines the graph-level source representation itself.
 It does not own the full execution semantics of every graph element.
 </p>
 
+<p>
+This document also does not own repository-wide version policy.
+Top-level <code>spec_version</code> identifies the source-format compatibility target of the containing <code>.frog</code> file, while published specification corpus versioning remains governed centrally in <code>Versioning/Readme.md</code>.
+</p>
+
 <hr/>
 
 <h2 id="purpose">2. Purpose of the Diagram</h2>
@@ -131,7 +136,8 @@ This document depends on the following FROG specifications:
   <li><code>Language/Control structures.md</code> — normative execution semantics for structure families such as <code>case</code>, <code>for_loop</code>, and <code>while_loop</code>,</li>
   <li><code>Language/State and cycles.md</code> — normative semantics for local memory and cycle validity,</li>
   <li><code>Libraries/Core.md</code> — standard primitive definitions such as <code>frog.core.add</code>, <code>frog.core.mul</code>, and <code>frog.core.delay</code>,</li>
-  <li><code>Libraries/UI.md</code> — standard executable UI primitive definitions such as <code>frog.ui.property_read</code>, <code>frog.ui.property_write</code>, and <code>frog.ui.method_invoke</code>.</li>
+  <li><code>Libraries/UI.md</code> — standard executable UI primitive definitions such as <code>frog.ui.property_read</code>, <code>frog.ui.property_write</code>, and <code>frog.ui.method_invoke</code>,</li>
+  <li><code>Versioning/Readme.md</code> — centralized distinction between specification corpus version, top-level <code>spec_version</code>, and program artifact versioning.</li>
 </ul>
 
 <p>
@@ -159,6 +165,16 @@ The diagram appears as a top-level object in the canonical <code>.frog</code> so
 <p>
 The <code>diagram</code> section MUST exist in a canonical <code>.frog</code> source file.
 </p>
+
+<p>
+In this source shape:
+</p>
+
+<ul>
+  <li>top-level <code>spec_version</code> identifies the source-format compatibility target of the file,</li>
+  <li><code>diagram</code> defines the authoritative executable graph in canonical source,</li>
+  <li>the repository-wide specification corpus version remains governed centrally in <code>Versioning/Readme.md</code>.</li>
+</ul>
 
 <hr/>
 
@@ -1110,6 +1126,11 @@ Validators SHOULD diagnose at least the following error classes:
   <li>missing mandatory <code>initial</code> on <code>frog.core.delay</code>.</li>
 </ul>
 
+<p>
+These checks validate the graph-level source form of the artifact.
+They do not, by themselves, redefine top-level <code>spec_version</code> policy or repository-wide corpus-version governance.
+</p>
+
 <hr/>
 
 <h2 id="relation-with-execution-semantics">21. Relation with Execution Semantics</h2>
@@ -1172,7 +1193,8 @@ This document MUST NOT be interpreted as redefining:
   <li>structure branch-selection or loop-iteration semantics,</li>
   <li>primitive-local runtime behavior,</li>
   <li>cycle-validity semantics,</li>
-  <li>runtime scheduling policy.</li>
+  <li>runtime scheduling policy,</li>
+  <li>repository-wide version-transition law.</li>
 </ul>
 
 <hr/>
@@ -1498,6 +1520,7 @@ sub-FROG invocation, explicit local memory, and graph-level documentation are re
   <li>Language structures are explicit graph nodes, not hidden function expansions.</li>
   <li>Cycles and explicit local memory participate directly in the diagram graph.</li>
   <li>The diagram owns graph structure representation; annotations and layout do not change execution semantics.</li>
+  <li>The diagram does not define source-format compatibility law or published specification corpus versioning.</li>
 </ul>
 
 <p>
