@@ -40,7 +40,7 @@
   <li><a href="#how-other-documents-should-reference-this-surface">25. How Other Documents Should Reference This Surface</a></li>
   <li><a href="#change-classification-guidance">26. Change Classification Guidance</a></li>
   <li><a href="#minimal-decision-table">27. Minimal Decision Table</a></li>
-  <li><a href="#relationship-with-roadmap-strategy-and-conformance">28. Relationship with Roadmap, Strategy, and Conformance</a></li>
+  <li><a href="#relationship-with-readme-examples-conformance-and-reference-implementation">28. Relationship with Readme, Examples, Conformance, and Reference Implementation</a></li>
   <li><a href="#repository-wide-versioning-diagram">29. Repository-Wide Versioning Diagram</a></li>
   <li><a href="#future-expansion">30. Future Expansion</a></li>
   <li><a href="#summary">31. Summary</a></li>
@@ -58,7 +58,11 @@ Its purpose is to define how specification versions are identified, how version-
 </p>
 
 <p>
-This document also defines the core FROG versioning doctrine: specification evolution should be additive by default, future source artifacts should remain openable as broadly as possible, unknown or unsupported sections should be preserved rather than destroyed where safe, and semantic misunderstanding must be preferred less than explicit limitation or refusal.
+This document also defines the core FROG versioning doctrine:
+specification evolution should be additive by default,
+future source artifacts should remain openable as broadly as possible,
+unknown or unsupported sections should be preserved rather than destroyed where safe,
+and semantic misunderstanding must be treated as worse than explicit limitation or refusal.
 </p>
 
 <hr/>
@@ -77,7 +81,7 @@ The published FROG repository already spans multiple architectural layers and re
   <li>lowering,</li>
   <li>backend contract,</li>
   <li>backend-family consumption,</li>
-  <li>execution-start closure for bounded published cases,</li>
+  <li>bounded execution-oriented corridors,</li>
   <li>widget and front-panel object exposure,</li>
   <li>examples,</li>
   <li>conformance material,</li>
@@ -91,8 +95,17 @@ Without a centralized specification-versioning surface, version intent would ten
 </p>
 
 <p>
-This document therefore serves as the single published reference point for cross-version scope, stabilization, transition logic, additive-evolution doctrine, cumulative version-model policy, and degraded-but-safe cross-version readability posture.
+This document therefore serves as the single published reference point for:
 </p>
+
+<ul>
+  <li>cross-version scope,</li>
+  <li>stabilization posture,</li>
+  <li>transition logic,</li>
+  <li>additive-evolution doctrine,</li>
+  <li>cumulative version-model policy,</li>
+  <li>degraded-but-safe cross-version readability posture.</li>
+</ul>
 
 <hr/>
 
@@ -111,7 +124,8 @@ This document governs:
 </ul>
 
 <p>
-This document does not replace normative ownership of the specification itself. Normative technical law remains owned by the relevant architectural layers such as <code>Expression/</code>, <code>Language/</code>, <code>IR/</code>, <code>Libraries/</code>, <code>Profiles/</code>, and <code>IDE/</code>.
+This document does not replace normative ownership of the specification itself.
+Normative technical law remains owned by the relevant architectural layers such as <code>Expression/</code>, <code>Language/</code>, <code>IR/</code>, <code>Libraries/</code>, <code>Profiles/</code>, and <code>IDE/</code>.
 </p>
 
 <hr/>
@@ -133,7 +147,8 @@ This document does not:
 </ul>
 
 <p>
-Versioning governance is not a substitute for technical specification. It is the repository-level policy that organizes stabilization across the already-separated technical ownership layers.
+Versioning governance is not a substitute for technical specification.
+It is the repository-level policy that organizes stabilization across the already-separated technical ownership layers.
 </p>
 
 <hr/>
@@ -155,17 +170,17 @@ This section is the canonical repository-visible place where the current publish
     <tr>
       <td>Specification corpus version</td>
       <td><code>0.1-draft</code></td>
-      <td>Current published repository-level specification posture</td>
+      <td>Current published repository-level specification posture under active consolidation</td>
     </tr>
     <tr>
       <td>Status</td>
       <td>Bounded published closure under consolidation</td>
-      <td>The repository already exposes a real multi-layer published corridor, but not all surfaces are yet fully stabilized</td>
+      <td>The repository already exposes a real multi-layer published corridor, but not all surfaces are yet equally stabilized</td>
     </tr>
     <tr>
       <td>Primary closure target</td>
       <td>First coherent end-to-end bounded corpus version</td>
-      <td>Canonical source, validated meaning, execution-facing IR, lowering, backend handoff, bounded execution-start, bounded observable execution, and bounded widget-object closure</td>
+      <td>Canonical source, validated meaning, execution-facing IR, lowering, backend handoff, bounded executable corridor, and bounded widget-object closure</td>
     </tr>
     <tr>
       <td>Reference source-format target</td>
@@ -176,7 +191,23 @@ This section is the canonical repository-visible place where the current publish
 </table>
 
 <p>
-The values above identify the current repository-wide publication posture. More detailed per-surface status is centralized in <code>Versioning/Matrix.md</code>.
+The values above identify the current repository-wide publication posture.
+More detailed per-surface status is centralized in <code>Versioning/Matrix.md</code>.
+</p>
+
+<p>
+The distinction between <code>0.1-draft</code> and <code>.frog spec_version = 0.1</code> is intentional:
+</p>
+
+<ul>
+  <li><code>0.1-draft</code> describes the current repository-wide publication posture of the specification corpus,</li>
+  <li><code>spec_version = 0.1</code> describes the source-format compatibility target for canonical <code>.frog</code> artifacts within the currently bounded published subset.</li>
+</ul>
+
+<p>
+The first is repository-governance state.
+The second is source-artifact compatibility declaration.
+They must remain explicit and non-collapsed.
 </p>
 
 <hr/>
@@ -229,7 +260,8 @@ FROG specification evolution should be additive by default.
 </p>
 
 <p>
-Newer specification versions should extend earlier source representations rather than invalidate them without necessity. A conforming tool should, where possible, be able to open source artifacts targeting newer specification revisions in a degraded but explicit manner, preserving unknown or unsupported sections without silently reinterpreting, discarding, or corrupting them.
+Newer specification versions should extend earlier source representations rather than invalidate them without necessity.
+A conforming tool should, where possible, be able to open source artifacts targeting newer specification revisions in a degraded but explicit manner, preserving unknown or unsupported sections without silently reinterpreting, discarding, or corrupting them.
 </p>
 
 <p>
@@ -245,7 +277,9 @@ FROG therefore prefers the following posture:
 </ul>
 
 <p>
-This doctrine is stronger than ordinary backward readability and narrower than a promise of universal full reversibility. It does not require every older tool to fully understand every future FROG artifact. It requires the specification and conforming tools to distinguish partial readability from full semantic acceptance, full editability, and executable acceptance.
+This doctrine is stronger than ordinary backward readability and narrower than a promise of universal full reversibility.
+It does not require every older tool to fully understand every future FROG artifact.
+It requires the specification and conforming tools to distinguish partial readability from full semantic acceptance, full editability, and executable acceptance.
 </p>
 
 <hr/>
@@ -256,7 +290,8 @@ FROG follows a cumulative version model for specification evolution.
 </p>
 
 <p>
-In that model, each new specification version should extend the previous one by default rather than replace it. Older valid source forms should remain valid in later specification versions unless an explicitly documented breaking boundary is declared.
+In that model, each new specification version should extend the previous one by default rather than replace it.
+Older valid source forms should remain valid in later specification versions unless an explicitly documented breaking boundary is declared.
 </p>
 
 <p>
@@ -302,7 +337,9 @@ In practical terms:
 </ul>
 
 <p>
-This cumulative model is therefore paired with the degraded-reading and preservation model defined later in this document. Cumulative specification evolution preserves older valid forms. Preservation-aware tooling behavior governs how older-capability tools handle newer artifacts they do not fully understand.
+This cumulative model is therefore paired with the degraded-reading and preservation model defined later in this document.
+Cumulative specification evolution preserves older valid forms.
+Preservation-aware tooling behavior governs how older-capability tools handle newer artifacts they do not fully understand.
 </p>
 
 <hr/>
@@ -324,7 +361,14 @@ It answers questions such as:
 </ul>
 
 <p>
-The specification corpus version is a repository-governance notion. It is not embedded as the version of an individual FROG program artifact.
+The specification corpus version is a repository-governance notion.
+It is not embedded as the version of an individual FROG program artifact.
+</p>
+
+<p>
+In the current repository posture, the corpus version should be read together with the central matrix:
+the version label alone identifies the declared overall publication state,
+while <code>Versioning/Matrix.md</code> explains how that state is distributed across the repository surfaces.
 </p>
 
 <hr/>
@@ -431,11 +475,13 @@ This means that a newer version should normally introduce:
 </ul>
 
 <p>
-This rule does not mean that any addition is automatically safe for every older tool. Additivity must be evaluated not only syntactically, but also with respect to degraded semantic readability.
+This rule does not mean that any addition is automatically safe for every older tool.
+Additivity must be evaluated not only syntactically, but also with respect to degraded semantic readability.
 </p>
 
 <p>
-An additive change is acceptable by default only when an older tool that does not understand the addition can still behave safely and explicitly. If a nominally additive construct would cause an older tool to silently misunderstand program meaning, the change must be treated as requiring stricter gating, explicit refusal behavior, or a more carefully delimited compatibility boundary.
+An additive change is acceptable by default only when an older tool that does not understand the addition can still behave safely and explicitly.
+If a nominally additive construct would cause an older tool to silently misunderstand program meaning, the change must be treated as requiring stricter gating, explicit refusal behavior, or a more carefully delimited compatibility boundary.
 </p>
 
 <p>
@@ -523,8 +569,8 @@ When a tool encounters a FROG artifact from a newer capability set or source rev
       <td>That all downstream profiles or runtimes are supported</td>
     </tr>
     <tr>
-      <td>Executablely acceptable</td>
-      <td>The tool may claim bounded derivation/lowering/execution acceptance for the relevant scope</td>
+      <td>Executably acceptable</td>
+      <td>The tool may claim bounded derivation / lowering / execution acceptance for the relevant scope</td>
       <td>That unsupported features may be ignored without consequence</td>
     </tr>
   </tbody>
@@ -583,7 +629,8 @@ Where technically feasible and safe, tools should preserve unsupported sections 
 
 <h3>17.4 Capability-sensitive acceptance</h3>
 <p>
-A simple source version number is not always sufficient to determine safe operation. The repository may therefore define bounded capability families, feature gates, or profile-specific support requirements where necessary.
+A simple source version number is not always sufficient to determine safe operation.
+The repository may therefore define bounded capability families, feature gates, or profile-specific support requirements where necessary.
 </p>
 
 <h3>17.5 Explicit criticality</h3>
@@ -600,7 +647,8 @@ Additions should be designed so that tools can distinguish at least:
 </ul>
 
 <p>
-An older tool may be allowed to ignore decorative or non-authoritative enrichment. It must not ignore semantic or execution-relevant additions while pretending full acceptance.
+An older tool may be allowed to ignore decorative or non-authoritative enrichment.
+It must not ignore semantic or execution-relevant additions while pretending full acceptance.
 </p>
 
 <hr/>
@@ -639,7 +687,7 @@ For example:
 </code></pre>
 
 <p>
-Where a version objective includes execution-start closure or widget-object closure, the required repository-visible corridor must be coherent at those boundaries too.
+Where a version objective includes execution-oriented closure or widget-object closure, the required repository-visible corridor must be coherent at those boundaries too.
 </p>
 
 <p>
@@ -680,8 +728,8 @@ Each major topic discussed in the repository should be readable through one of t
     </tr>
     <tr>
       <td>Published draft</td>
-      <td>Visible in the repository, but not yet treated as stabilized version boundary law</td>
-      <td>Clearly marked as draft, provisional, exploratory, or subject to closure</td>
+      <td>Visible in the repository, but not yet treated as fully stabilized version-boundary law</td>
+      <td>Clearly marked as draft, provisional, exploratory, or still under consolidation</td>
     </tr>
     <tr>
       <td>Deferred</td>
@@ -697,7 +745,8 @@ Each major topic discussed in the repository should be readable through one of t
 </table>
 
 <p>
-This classification is repository-governance guidance. Technical meaning remains owned by the relevant technical documents.
+This classification is repository-governance guidance.
+Technical meaning remains owned by the relevant technical documents.
 </p>
 
 <hr/>
@@ -796,7 +845,7 @@ The repository should distinguish at least the following:
   <li><strong>semantic compatibility</strong> — whether the validated meaning remains equivalent across specification evolution,</li>
   <li><strong>IR compatibility</strong> — whether the published execution-facing representation remains acceptable for the relevant version scope,</li>
   <li><strong>backend-handoff compatibility</strong> — whether downstream consumer-facing contracts remain stable enough for the targeted profile boundary,</li>
-  <li><strong>example / conformance alignment compatibility</strong> — whether repository-visible examples and conformance material still match the intended published subset.</li>
+  <li><strong>example / conformance / reference alignment compatibility</strong> — whether repository-visible examples, conformance material, and the non-normative reference path still align with the intended published subset.</li>
 </ul>
 
 <p>
@@ -835,7 +884,7 @@ Where the target version claims bounded executable closure, transition criteria 
 </p>
 
 <ul>
-  <li>an explicit execution-start contract for the bounded profile family,</li>
+  <li>an explicit execution-facing corridor for the bounded profile family,</li>
   <li>a repository-visible path from source to observable execution for the declared subset,</li>
   <li>clear distinction between public contract and runtime-private realization.</li>
 </ul>
@@ -885,8 +934,7 @@ The repository already exposes a first bounded end-to-end corridor where a contr
   <li>derived into a published execution-facing IR posture,</li>
   <li>lowered toward a backend family,</li>
   <li>emitted as a backend-facing handoff,</li>
-  <li>brought to a bounded execution-start contract for a first native CPU LLVM family,</li>
-  <li>and exercised through repository-visible example, conformance, and reference-path material.</li>
+  <li>exercised through repository-visible examples, conformance material, and a non-normative reference path.</li>
 </ul>
 
 <p>
@@ -905,7 +953,7 @@ The near-term version objective is to consolidate the first coherent published c
   <li>open execution-facing IR posture,</li>
   <li>canonical JSON IR posture where published,</li>
   <li>lowering and backend contract posture,</li>
-  <li>bounded Native CPU LLVM execution-start closure,</li>
+  <li>bounded Native CPU LLVM corridor closure where published,</li>
   <li>bounded observable executable slices,</li>
   <li>coherent widget-object exposure for the currently published UI corridor,</li>
   <li>repository-visible conformance / examples / reference alignment,</li>
@@ -952,7 +1000,8 @@ That file should provide:
 </ul>
 
 <p>
-This document remains the primary governance entry point. The matrix remains the primary detailed status table.
+This document remains the primary governance entry point.
+The matrix remains the primary detailed status table.
 </p>
 
 <hr/>
@@ -1021,7 +1070,7 @@ A proposed repository change should be classified before version claims are made
     </tr>
     <tr>
       <td>Downstream corridor clarification</td>
-      <td>Clarifies IR, lowering, backend contract, or execution-start boundaries</td>
+      <td>Clarifies IR, lowering, backend contract, or execution-facing corridor boundaries</td>
       <td>May affect corpus-level stabilization without changing source compatibility</td>
     </tr>
     <tr>
@@ -1033,7 +1082,8 @@ A proposed repository change should be classified before version claims are made
 </table>
 
 <p>
-A nominally additive change must still be reviewed for degraded readability safety. If an older tool would likely misinterpret the addition semantically, the change must not be described as harmlessly additive without further qualification.
+A nominally additive change must still be reviewed for degraded readability safety.
+If an older tool would likely misinterpret the addition semantically, the change must not be described as harmlessly additive without further qualification.
 </p>
 
 <hr/>
@@ -1098,9 +1148,9 @@ A nominally additive change must still be reviewed for degraded readability safe
 
 <hr/>
 
-<h2 id="relationship-with-roadmap-strategy-and-conformance">28. Relationship with Roadmap, Strategy, and Conformance</h2>
+<h2 id="relationship-with-readme-examples-conformance-and-reference-implementation">28. Relationship with Readme, Examples, Conformance, and Reference Implementation</h2>
 <p>
-This document must remain distinct from three nearby repository-wide surfaces:
+This document must remain aligned with nearby repository-visible surfaces without duplicating their ownership.
 </p>
 
 <table>
@@ -1113,22 +1163,47 @@ This document must remain distinct from three nearby repository-wide surfaces:
   </thead>
   <tbody>
     <tr>
-      <td><code>Strategy/</code></td>
-      <td>Why FROG matters</td>
-      <td>Normative ownership or version-transition law</td>
+      <td><code>Readme.md</code></td>
+      <td>What the published repository currently is and how its layers relate</td>
+      <td>Centralized version-transition law</td>
     </tr>
     <tr>
-      <td><code>Roadmap/</code></td>
-      <td>In what order closure is intended</td>
-      <td>Normative ownership or centralized version policy</td>
+      <td><code>Examples/</code></td>
+      <td>Which named illustrative corridors are currently visible</td>
+      <td>Normative ownership or corpus-version policy</td>
     </tr>
     <tr>
       <td><code>Conformance/</code></td>
       <td>What is accepted, rejected, or preserved in public repository-visible truth surfaces</td>
       <td>Cross-version governance policy</td>
     </tr>
+    <tr>
+      <td><code>Implementations/Reference/</code></td>
+      <td>How a non-normative executable workspace consumes a bounded corridor</td>
+      <td>Normative law or corpus-version truth</td>
+    </tr>
   </tbody>
 </table>
+
+<p>
+The intended reading relation is:
+</p>
+
+<pre><code>Readme.md
+   -&gt; repository-wide architectural entry point
+
+Examples/
+   -&gt; illustrative bounded mirrors
+
+Conformance/
+   -&gt; public accept / reject / preserve truth
+
+Implementations/Reference/
+   -&gt; non-normative executable consumption path
+
+Versioning/
+   -&gt; centralized statement of what current repository-wide version posture means
+</code></pre>
 
 <p>
 Versioning governance sits adjacent to those surfaces, but it is not reducible to any of them.
@@ -1208,7 +1283,7 @@ Such additions should remain centralized here unless a strong repository-archite
 
 <h2 id="summary">31. Summary</h2>
 <p>
-FROG needs centralized specification-version governance because the repository now spans multiple technical ownership layers, executable reference slices, conformance material, profile-level closure, widget-object closure, and framing layers.
+FROG needs centralized specification-version governance because the repository now spans multiple technical ownership layers, illustrative example corridors, conformance material, non-normative executable reference work, widget-object closure, and framing layers.
 </p>
 
 <p>
@@ -1216,7 +1291,7 @@ This document provides the single repository-visible place where the published s
 </p>
 
 <ul>
-  <li>what specification version means,</li>
+  <li>what specification corpus version means,</li>
   <li>how it differs from <code>.frog</code> source compatibility versioning,</li>
   <li>how it differs from program artifact versioning,</li>
   <li>that specification evolution is additive by default,</li>
