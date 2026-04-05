@@ -77,6 +77,10 @@ Those responsibilities belong respectively to:
   <li><code>Widget interaction.md</code>.</li>
 </ul>
 
+<p>
+This document also does not define repository-wide version policy. Top-level <code>spec_version</code> identifies the source-format compatibility target of the containing <code>.frog</code> file, while the published specification corpus version remains governed centrally in <code>Versioning/Readme.md</code>.
+</p>
+
 <hr/>
 
 <h2 id="scope">2. Scope</h2>
@@ -106,7 +110,8 @@ This document intentionally does not standardize:
   <li>the full executable interaction model for widgets,</li>
   <li>a complete UI toolkit,</li>
   <li>a complete theme or styling system,</li>
-  <li>pixel-perfect cross-runtime rendering.</li>
+  <li>pixel-perfect cross-runtime rendering,</li>
+  <li>the repository-wide version-transition doctrine.</li>
 </ul>
 
 <hr/>
@@ -120,6 +125,7 @@ This document intentionally does not standardize:
   <li><code>Diagram.md</code> defines the authoritative executable graph.</li>
   <li><code>Interface.md</code> defines the public contract of the FROG.</li>
   <li><code>Type.md</code> defines the value type system used by value-carrying widgets and typed widget members.</li>
+  <li><code>Versioning/Readme.md</code> defines the centralized distinction between specification corpus version, top-level <code>spec_version</code>, and program artifact versioning.</li>
 </ul>
 
 <p>
@@ -131,7 +137,8 @@ Accordingly:
   <li>diagram defines executable behavior,</li>
   <li>widget model defines instance-side widget-object shape,</li>
   <li>widget class contract defines class-side member legality and object exposure,</li>
-  <li>front_panel defines UI composition and serialized widget placement.</li>
+  <li>front_panel defines UI composition and serialized widget placement,</li>
+  <li>the centralized versioning surface defines repository-wide version-transition doctrine.</li>
 </ul>
 
 <p>
@@ -151,6 +158,7 @@ Front panel.md does not own:
 - widget class member-contract semantics
 - widget interaction primitive semantics
 - general language execution semantics
+- repository-wide version-transition law
 </code></pre>
 
 <hr/>
@@ -177,6 +185,16 @@ The <code>front_panel</code> section is optional.
 <p>
 When absent, the FROG is interpreted as having no serialized front-panel composition. This does not affect the validity of the program as an executable FROG.
 </p>
+
+<p>
+In this source shape:
+</p>
+
+<ul>
+  <li>top-level <code>spec_version</code> identifies the source-format compatibility target of the file,</li>
+  <li><code>front_panel</code> defines optional UI composition only,</li>
+  <li>the published specification corpus version remains governed centrally in <code>Versioning/Readme.md</code>.</li>
+</ul>
 
 <hr/>
 
@@ -489,6 +507,11 @@ Validators SHOULD diagnose at least the following error classes:
   <li>invalid child placement under a non-container widget.</li>
 </ul>
 
+<p>
+These checks validate optional UI-composition structure.
+They do not, by themselves, redefine top-level <code>spec_version</code> policy or repository-wide corpus-version governance.
+</p>
+
 <hr/>
 
 <h2 id="examples">13. Examples</h2>
@@ -597,7 +620,9 @@ It does not define:
   <li>the authoritative executable graph,</li>
   <li>the class-side widget contract,</li>
   <li>the executable widget interaction model,</li>
-  <li>general language execution semantics.</li>
+  <li>general language execution semantics,</li>
+  <li>source-format compatibility law,</li>
+  <li>published specification corpus versioning.</li>
 </ul>
 
 <p>
