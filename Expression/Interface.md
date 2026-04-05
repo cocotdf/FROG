@@ -1,5 +1,8 @@
 <p align="center">
-  <i:contentReference[oaicite:1]{index=1}gn="center">🐸 FROG Interface Specification</h1>
+  <img src="../FROG logo.svg" alt="FROG logo" width="200" />
+</p>
+
+<h1 align="center">🐸 FROG Interface Specification</h1>
 
 <p align="center">
   Definition of public program interfaces for <strong>.frog</strong> files<br/>
@@ -70,6 +73,11 @@ The interface does not define:
   <li>UI composition.</li>
 </ul>
 
+<p>
+The interface also does not define repository-wide version policy.
+Top-level <code>spec_version</code> identifies the source-format compatibility target of the <code>.frog</code> file, while published specification corpus versioning remains governed centrally in <code>Versioning/Readme.md</code>.
+</p>
+
 <hr/>
 
 <h2 id="purpose-of-the-interface">2. Purpose of the Interface</h2>
@@ -110,6 +118,7 @@ It relies on other specifications for concepts outside that scope.
   <li><code>Widget.md</code> defines widget classes and widget value semantics.</li>
   <li><code>Widget interaction.md</code> defines object-style widget access in the diagram.</li>
   <li><code>Connector.md</code>, when present, defines the graphical perimeter mapping used when a FROG is reused as a node.</li>
+  <li><code>Versioning/Readme.md</code> defines the centralized distinction between specification corpus version, top-level <code>spec_version</code>, and program artifact versioning.</li>
 </ul>
 
 <p>
@@ -120,7 +129,8 @@ Accordingly:
   <li>the interface defines the public contract,</li>
   <li>the diagram defines executable behavior,</li>
   <li>the connector defines reusable-node graphical mapping,</li>
-  <li>the front panel defines UI composition.</li>
+  <li>the front panel defines UI composition,</li>
+  <li>the centralized versioning surface defines repository-wide version-transition doctrine.</li>
 </ul>
 
 <hr/>
@@ -143,6 +153,16 @@ The interface is defined as a top-level JSON object.
 <p>
 The <code>interface</code> section MUST be present in a canonical <code>.frog</code> source file.
 </p>
+
+<p>
+In this source shape:
+</p>
+
+<ul>
+  <li>top-level <code>spec_version</code> identifies the source-format compatibility target of the file,</li>
+  <li><code>interface</code> defines the public contract of the executable unit,</li>
+  <li>the repository-wide specification corpus version remains governed centrally in <code>Versioning/Readme.md</code>.</li>
+</ul>
 
 <hr/>
 
@@ -657,6 +677,11 @@ Validators SHOULD diagnose at least the following error classes:
   <li>unknown interface port referenced by the connector.</li>
 </ul>
 
+<p>
+These checks validate the public contract of the source artifact.
+They do not, by themselves, redefine top-level <code>spec_version</code> policy or repository-wide corpus-version governance.
+</p>
+
 <hr/>
 
 <h2 id="examples">16. Examples</h2>
@@ -821,6 +846,10 @@ Any such extension MUST preserve the distinction between:
   <li>front-panel UI semantics.</li>
 </ul>
 
+<p>
+Such extensions must also remain compatible with the centralized cumulative version model: later source-format versions should normally extend earlier valid interface forms rather than silently replace them, unless an explicit breaking boundary is declared in repository-wide version governance.
+</p>
+
 <hr/>
 
 <h2 id="summary">18. Summary</h2>
@@ -839,6 +868,7 @@ It specifies what enters and what leaves the executable unit, with stable identi
   <li>Public boundary participation in the diagram is represented canonically by <code>interface_input</code> and <code>interface_output</code>.</li>
   <li>The connector maps interface ports graphically but does not redefine them.</li>
   <li>The front panel does not define the public API.</li>
+  <li>The interface does not define source-format compatibility law or published specification corpus versioning.</li>
 </ul>
 
 <p>
