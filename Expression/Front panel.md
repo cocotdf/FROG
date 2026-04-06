@@ -36,7 +36,7 @@
 
 <p>
 The <code>front_panel</code> section defines the source-level declaration of the user-facing widget composition of a FROG.
-It is the canonical source home of the serialized widget tree.
+It is the canonical source home of the serialized widget tree and of source-owned front-face presentation metadata.
 </p>
 
 <p>
@@ -55,6 +55,29 @@ The front panel does not define executable graph semantics.
 The diagram remains the authoritative executable graph of the FROG.
 </p>
 
+<p>
+Accordingly, the front panel is the source layer where a program may declare:
+</p>
+
+<ul>
+  <li>which widgets exist,</li>
+  <li>where they are placed,</li>
+  <li>how they are nested,</li>
+  <li>which source-owned presentation properties they persist,</li>
+  <li>and which preferred front-face template resources are associated with them.</li>
+</ul>
+
+<p>
+It is not the layer that defines:
+</p>
+
+<ul>
+  <li>program dataflow meaning,</li>
+  <li>public interface meaning,</li>
+  <li>widget class legality,</li>
+  <li>or diagram-side executable interaction semantics.</li>
+</ul>
+
 <hr/>
 
 <h2 id="scope">2. Scope</h2>
@@ -68,7 +91,8 @@ This document standardizes:
   <li>widget-tree ownership at source level,</li>
   <li>canvas and placement metadata,</li>
   <li>the boundary between composition metadata and executable meaning,</li>
-  <li>the source-persistence posture of presentation members such as <code>face_color</code> and <code>face_template</code>.</li>
+  <li>the source-persistence posture of presentation members such as <code>caption</code>, <code>face_color</code>, and <code>face_template</code>,</li>
+  <li>the canonical source shape of face-template resource references for the first executable slice.</li>
 </ul>
 
 <p>
@@ -80,7 +104,8 @@ This document does not standardize:
   <li>diagram executable semantics,</li>
   <li>widget class member legality,</li>
   <li>diagram-side interaction primitive semantics,</li>
-  <li>one mandatory rendering toolkit.</li>
+  <li>one mandatory rendering toolkit,</li>
+  <li>pixel-perfect rendering identity across hosts.</li>
 </ul>
 
 <hr/>
@@ -95,7 +120,8 @@ This document does not standardize:
   <li>source-level panel composition,</li>
   <li>source-level widget containment,</li>
   <li>source-level placement and canvas metadata,</li>
-  <li>source-persisted presentation metadata carried by widget instances when the class contract allows it.</li>
+  <li>source-persisted presentation metadata carried by widget instances when the class contract allows it,</li>
+  <li>the canonical source-level posture of front-face template references.</li>
 </ul>
 
 <p>
@@ -112,6 +138,19 @@ This document does not standardize:
   <li>repository-wide version-transition law.</li>
 </ul>
 
+<p>
+The following distinction MUST remain explicit:
+</p>
+
+<pre><code>front_panel serialization
+    !=
+widget class contract
+    !=
+diagram executable interaction
+    !=
+runtime-private rendering strategy
+</code></pre>
+
 <hr/>
 
 <h2 id="location-in-a-frog-file">4. Location in a <code>.frog</code> File</h2>
@@ -126,8 +165,7 @@ When present, the front panel appears as an optional top-level section of a <cod
   "interface": {},
   "diagram": {},
   "front_panel": {}
-}
-</code></pre>
+}</code></pre>
 
 <p>
 The <code>front_panel</code> section is optional.
@@ -147,8 +185,7 @@ The canonical structure of the front panel object is:
   "canvas": {},
   "widgets": [],
   "ui_libraries": []
-}
-</code></pre>
+}</code></pre>
 
 <p>
 Fields:
@@ -209,12 +246,11 @@ Example:
     "face_color": "#D0D0D0",
     "face_template": {
       "kind": "resource",
-      "family": "svg_static_template_v1",
+      "format": "svg",
       "path": "./assets/widgets/u16_numeric_control_face.svg"
     }
   }
-}
-</code></pre>
+}</code></pre>
 
 <p>
 The front panel serializes widget instances as source objects.
@@ -264,9 +300,8 @@ Example:
 
 <pre><code>"canvas": {
   "width": 460,
-  "height": 180
-}
-</code></pre>
+  "height": 170
+}</code></pre>
 
 <p>
 Canvas metadata:
@@ -313,6 +348,17 @@ Presentation metadata:
   <li>MUST NOT by itself create execution semantics.</li>
 </ul>
 
+<p>
+The following distinction MUST remain explicit:
+</p>
+
+<pre><code>widget primary value
+    !=
+presentation property
+    !=
+front-face template resource
+</code></pre>
+
 <hr/>
 
 <h2 id="face-template-reference">10. Face Template Reference</h2>
@@ -340,16 +386,21 @@ For the minimal executable widget family, a face-template reference is carried a
 <pre><code>{
   "face_template": {
     "kind": "resource",
-    "family": "svg_static_template_v1",
+    "format": "svg",
     "path": "./assets/widgets/u16_numeric_control_face.svg"
   }
-}
-</code></pre>
+}</code></pre>
 
 <p>
-The <code>family</code> field identifies the expected template interpretation family.
-For the first executable slice, the recommended family is <code>svg_static_template_v1</code>.
+Rules for the first executable slice:
 </p>
+
+<ul>
+  <li><code>kind</code> MUST equal <code>"resource"</code>,</li>
+  <li><code>format</code> MUST equal <code>"svg"</code> when the template is an SVG-backed face template,</li>
+  <li><code>path</code> MUST be a source-visible relative resource path or another profile-approved resource locator,</li>
+  <li>additional fields MAY be introduced only by an explicit published profile or later compatible source-format growth.</li>
+</ul>
 
 <hr/>
 
@@ -380,7 +431,21 @@ The following distinction MUST remain explicit:
 widget executable interaction
     !=
 presentation metadata
+    !=
+SVG resource content
 </code></pre>
+
+<p>
+A host MAY:
+</p>
+
+<ul>
+  <li>render the SVG-backed front face faithfully,</li>
+  <li>substitute a compatible native face,</li>
+  <li>ignore unsupported rendering details,</li>
+  <li>or ignore the template entirely if that template family is not supported,</li>
+  <li>but it MUST preserve the widget source meaning.</li>
+</ul>
 
 <hr/>
 
@@ -406,6 +471,11 @@ The canonical diagram interaction mechanisms are:
 A source-persisted member such as <code>face_template</code> does not become executable interaction merely because it is present in the widget instance source.
 </p>
 
+<p>
+Likewise, a source-persisted member such as <code>face_color</code> remains a presentation-oriented property even when the class contract also allows it to participate in runtime property writes.
+That runtime write surface belongs to executable interaction and host realization, not to panel composition itself.
+</p>
+
 <hr/>
 
 <h2 id="validation-rules">13. Validation Rules</h2>
@@ -421,7 +491,18 @@ Validators MUST verify at least that:
   <li>each widget instance is structurally valid,</li>
   <li>persisted presentation metadata is recognized by the active widget class contract,</li>
   <li><code>face_template</code> values, when present, follow the published template-reference source shape,</li>
+  <li><code>format: "svg"</code> is used when the persisted resource is an SVG-backed face template,</li>
   <li>presentation metadata is not misinterpreted as executable semantics.</li>
+</ul>
+
+<p>
+Validators SHOULD additionally diagnose:
+</p>
+
+<ul>
+  <li>unsupported template families or formats under the active profile,</li>
+  <li>template references that are structurally valid but unsupported by the active host claim,</li>
+  <li>attempts to serialize front-face assets in a way that blurs source presentation with executable behavior.</li>
 </ul>
 
 <hr/>
@@ -447,6 +528,16 @@ The required presentation properties for that slice are:
   <li><code>caption</code>,</li>
   <li><code>face_color</code>,</li>
   <li><code>face_template</code>.</li>
+</ul>
+
+<p>
+For that slice, the recommended face-template posture is:
+</p>
+
+<ul>
+  <li><code>kind: "resource"</code>,</li>
+  <li><code>format: "svg"</code>,</li>
+  <li>one relative path to a source-visible asset.</li>
 </ul>
 
 <p>
@@ -481,3 +572,7 @@ For the first executable slice, it stabilizes:
   <li>one explicit SVG-backed <code>face_template</code> resource shape,</li>
   <li>and one strict separation between front-panel persistence and executable graph meaning.</li>
 </ul>
+
+<p>
+This allows a FROG program to persist a credible minimal front face in canonical source while preserving the architectural rule that the diagram remains the authoritative executable graph.
+</p>
