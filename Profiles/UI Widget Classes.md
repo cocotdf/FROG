@@ -79,6 +79,8 @@ This profile therefore closes an important architectural gap between:
 
 <pre><code>Expression/Widget.md
         +
+Expression/Widget class contract.md
+        +
 Expression/Widget interaction.md
         +
 Libraries/UI.md
@@ -114,7 +116,8 @@ In particular, it exists so that:
 </ul>
 
 <p>
-This profile does not attempt to define one universal GUI toolkit. It defines the portable contract surface needed so that multiple toolchains can understand the same widget class family.
+This profile does not attempt to define one universal GUI toolkit.
+It defines the portable contract surface needed so that multiple toolchains can understand the same widget class family.
 </p>
 
 <hr/>
@@ -127,6 +130,8 @@ Within the FROG repository architecture:
 
 <pre><code>Expression/
   - canonical source representation of widget instances
+  - class-side widget contract shape
+  - diagram-side widget interaction shape
 
 Libraries/
   - intrinsic executable frog.ui interaction primitives
@@ -151,12 +156,13 @@ This profile lives in <code>Profiles/</code> because it standardizes an optional
 <ul>
   <li>richer widget-class catalogs,</li>
   <li>portable class contracts,</li>
-  <li>tool-consumable event/property/method metadata,</li>
+  <li>tool-consumable event / property / method metadata,</li>
   <li>and profile-specific UI object ecosystems.</li>
 </ul>
 
 <p>
-It does not replace the core widget model. It extends what classes may be standardized and how tools may consume them.
+It does not replace the core widget model.
+It extends what classes may be standardized and how tools may consume them.
 </p>
 
 <hr/>
@@ -197,6 +203,17 @@ This profile does not define:
   <li>one mandatory commercial widget toolkit.</li>
 </ul>
 
+<p>
+This profile also does not redefine:
+</p>
+
+<ul>
+  <li>front-panel composition ownership,</li>
+  <li>the authoritative executable graph,</li>
+  <li>the generic backend handoff,</li>
+  <li>one universal runtime-side widget ABI.</li>
+</ul>
+
 <hr/>
 
 <h2 id="relation-with-other-specifications">6. Relation with Other Specifications</h2>
@@ -207,6 +224,7 @@ This profile must be read together with:
 
 <ul>
   <li><code>Expression/Widget.md</code> for the source-level widget object model,</li>
+  <li><code>Expression/Widget class contract.md</code> for the normative class-side contract model already present in canonical source architecture,</li>
   <li><code>Expression/Front panel.md</code> for widget instance declaration and composition,</li>
   <li><code>Expression/Widget interaction.md</code> for canonical source-facing property-read, property-write, and method-invoke representation,</li>
   <li><code>Libraries/UI.md</code> for the intrinsic executable <code>frog.ui.*</code> primitive contracts,</li>
@@ -234,6 +252,11 @@ widget class contract
     !=
 one IDE's private authoring model
 </code></pre>
+
+<p>
+This profile therefore standardizes one optional catalog and capability surface around those existing boundaries.
+It does not erase them.
+</p>
 
 <hr/>
 
@@ -602,6 +625,10 @@ Accordingly, the class contract MUST provide enough information to determine:
   <li>whether access is valid under the active profile and host-capability set.</li>
 </ul>
 
+<p>
+This profile therefore strengthens resolution and validation of object-style interaction without moving ownership of the interaction primitives out of <code>Libraries/UI.md</code>.
+</p>
+
 <hr/>
 
 <h2 id="execution-facing-posture">17. Execution-Facing Posture</h2>
@@ -637,6 +664,10 @@ A lowering pipeline MAY map this information to:
 
 <p>
 Those mappings remain downstream from the class catalog itself.
+</p>
+
+<p>
+This profile therefore standardizes enough class-side truth for preservation, lowering preparation, and backend handoff preparation, without pretending to standardize one private widget runtime.
 </p>
 
 <hr/>
@@ -681,7 +712,8 @@ A conservative initial published family under this profile MAY include richer st
 </ul>
 
 <p>
-Those richer classes are not fully standardized by this document alone. They require separate class-family publication or a later extension of this profile.
+Those richer classes are not fully standardized by this document alone.
+They require separate class-family publication or a later extension of this profile.
 </p>
 
 <hr/>
@@ -837,6 +869,7 @@ In this architecture:
 
 <ul>
   <li><code>Expression/</code> continues to own canonical widget-instance source,</li>
+  <li><code>Expression/Widget class contract.md</code> continues to own the normative class-side contract model in the core source architecture,</li>
   <li><code>Libraries/UI.md</code> continues to own intrinsic <code>frog.ui.*</code> executable primitive identities,</li>
   <li><code>IDE/</code> continues to own Program Model and authoring behavior,</li>
   <li><code>IR/</code> continues to own execution-facing preservation and lowering,</li>
