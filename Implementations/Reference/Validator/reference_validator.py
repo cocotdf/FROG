@@ -5,10 +5,8 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from Implementations.Reference.common import (
     DEMO_ARTIFACT_VERSION,
-    FrogPipelineError,
     LoadedSource,
     ValidationResult,
-    ensure,
 )
 
 
@@ -23,13 +21,30 @@ SUPPORTED_WIDGET_CLASSES = {
     "frog.ui.standard.numeric_indicator",
 }
 
+SUPPORTED_WIDGET_ROLES = {
+    "control",
+    "indicator",
+}
+
 SUPPORTED_NUMERIC_TYPES = {
-    "f64",
     "u16",
     "i32",
+    "f64",
+}
+
+SUPPORTED_CONSTANT_TYPES = {
+    "u16",
+    "i32",
+    "i64",
+    "f64",
+    "frog.ui.color",
 }
 
 SUPPORTED_COLOR_TYPE = "frog.ui.color"
+
+SUPPORTED_FACE_TEMPLATE_FORMATS = {
+    "svg",
+}
 
 
 def _fail(status: str, source_ref: Dict[str, Any], diagnostics: List[Dict[str, Any]]) -> ValidationResult:
@@ -62,10 +77,6 @@ def _diag(code: str, message: str, *, location: Optional[str] = None, severity: 
     return diag
 
 
-def _type_compatible(source_type: str, target_type: str) -> bool:
-    return source_type == target_type
-
-
 def _require_top_level_sections(doc: Dict[str, Any], source_ref: Dict[str, Any]) -> Optional[ValidationResult]:
     required = ["spec_version", "metadata", "interface", "diagram"]
     missing = [name for name in required if name not in doc]
@@ -78,7 +89,10 @@ def _require_top_level_sections(doc: Dict[str, Any], source_ref: Dict[str, Any])
     return None
 
 
-def _validate_interface(interface: Dict[str, Any], source_ref: Dict[str, Any]) -> Tuple[Optional[ValidationResult], Dict[str, str], Dict[str, str]]:
+def _validate_interface(
+    interface: Dict[str, Any],
+    source_ref: Dict[str, Any],
+) -> Tuple[Optional[ValidationResult], Dict[str, str], Dict[str, str]]:
     if not _is_object(interface):
         return (
             _fail(
@@ -126,7 +140,58 @@ def _validate_interface(interface: Dict[str, Any], source_ref: Dict[str, Any]) -
     return None, input_types, output_types
 
 
-def _validate_front_panel(front_panel: Dict[str, Any], source_ref: Dict[str, Any]) -> Tuple[Optional[ValidationResult], Dict[str, Dict[str, Any]]]:
+def _validate_face_template(
+    value: Any,
+    *,
+    widget_id: str,
+    diagnostics: List[Dict[str, Any]],
+) -> None:
+    if not _is_object(value):
+        diagnostics.append(
+            _diag(
+                "invalid_face_template_shape",
+                "Widget 'face_template' must be an object.",
+                location=f"front_panel.widget:{widget_id}.props.face_template",
+            )
+        )
+        return
+
+    kind = value.get("kind")
+    fmt = value.get("format")
+    path = value.get("path")
+
+    if kind != "resource":
+        diagnostics.append(
+            _diag(
+                "invalid_face_template_kind",
+                "Widget 'face_template.kind' must equal 'resource' in the reference subset.",
+                location=f"front_panel.widget:{widget_id}.props.face_template.kind",
+            )
+        )
+
+    if fmt not in SUPPORTED_FACE_TEMPLATE_FORMATS:
+        diagnostics.append(
+            _diag(
+                "unsupported_face_template_format",
+                f"Unsupported face_template format in reference subset: {fmt}.",
+                location=f"front_panel.widget:{widget_id}.props.face_template.format",
+            )
+        )
+
+    if not isinstance(path, str) or not path:
+        diagnostics.append(
+            _diag(
+                "invalid_face_template_path",
+                "Widget 'face_template.path' must be a non-empty string.",
+                location=f"front_panel.widget:{widget_id}.props.face_template.path",
+            )
+        )
+
+
+def _validate_front_panel(
+    front_panel: Dict[str, Any],
+    source_ref: Dict[str, Any],
+) -> Tuple[Optional[ValidationResult], Dict[str, Dict[str, Any]]]:
     if not _is_object(front_panel):
         return (
             _fail(
@@ -160,6 +225,7 @@ def _validate_front_panel(front_panel: Dict[str, Any], source_ref: Dict[str, Any
         widget_class = widget.get("widget")
         widget_role = widget.get("role")
         value_type = widget.get("value_type")
+        props = widget.get("props", {})
 
         if not widget_id or not widget_class or not widget_role:
             diagnostics.append(_diag("missing_widget_fields", "Each widget must define 'id', 'widget', and 'role'."))
@@ -174,24 +240,49 @@ def _validate_front_panel(front_panel: Dict[str, Any], source_ref: Dict[str, Any
                 _diag(
                     "unsupported_widget_class",
                     f"Unsupported widget class in reference subset: {widget_class}.",
+                    location=f"front_panel.widget:{widget_id}",
                 )
             )
 
-        if widget_role not in {"control", "indicator"}:
+        if widget_role not in SUPPORTED_WIDGET_ROLES:
             diagnostics.append(
                 _diag(
                     "unsupported_widget_role",
                     f"Unsupported widget role in reference subset: {widget_role}.",
+                    location=f"front_panel.widget:{widget_id}",
                 )
             )
 
-        if value_type not in {"u16", "f64"}:
+        if value_type != "u16":
             diagnostics.append(
                 _diag(
                     "unsupported_widget_value_type",
-                    f"Unsupported widget value_type in reference subset: {value_type}.",
+                    f"Unsupported widget value_type in reference subset: {value_type}. Expected 'u16'.",
+                    location=f"front_panel.widget:{widget_id}",
                 )
             )
+
+        if not _is_object(props):
+            diagnostics.append(
+                _diag(
+                    "invalid_widget_props_shape",
+                    "Widget 'props' must be an object when present.",
+                    location=f"front_panel.widget:{widget_id}.props",
+                )
+            )
+            props = {}
+
+        if "face_color" in props and not isinstance(props["face_color"], str):
+            diagnostics.append(
+                _diag(
+                    "invalid_face_color_shape",
+                    "Widget 'face_color' must be a string in canonical source.",
+                    location=f"front_panel.widget:{widget_id}.props.face_color",
+                )
+            )
+
+        if "face_template" in props:
+            _validate_face_template(props["face_template"], widget_id=widget_id, diagnostics=diagnostics)
 
         widget_by_id[widget_id] = deepcopy(widget)
 
@@ -201,7 +292,10 @@ def _validate_front_panel(front_panel: Dict[str, Any], source_ref: Dict[str, Any
     return None, widget_by_id
 
 
-def _collect_diagram_node_map(diagram: Dict[str, Any], source_ref: Dict[str, Any]) -> Tuple[Optional[ValidationResult], Dict[str, Dict[str, Any]], List[Dict[str, Any]]]:
+def _collect_diagram_node_map(
+    diagram: Dict[str, Any],
+    source_ref: Dict[str, Any],
+) -> Tuple[Optional[ValidationResult], Dict[str, Dict[str, Any]], List[Dict[str, Any]]]:
     if not _is_object(diagram):
         return (
             _fail(
@@ -246,7 +340,10 @@ def _collect_diagram_node_map(diagram: Dict[str, Any], source_ref: Dict[str, Any
     return None, node_map, deepcopy(edges)
 
 
-def _build_incoming_edge_map(edges: List[Dict[str, Any]], source_ref: Dict[str, Any]) -> Tuple[Optional[ValidationResult], Dict[Tuple[str, str], List[Dict[str, Any]]]]:
+def _build_incoming_edge_map(
+    edges: List[Dict[str, Any]],
+    source_ref: Dict[str, Any],
+) -> Tuple[Optional[ValidationResult], Dict[Tuple[str, str], List[Dict[str, Any]]]]:
     incoming: Dict[Tuple[str, str], List[Dict[str, Any]]] = {}
     diagnostics: List[Dict[str, Any]] = []
 
@@ -263,13 +360,39 @@ def _build_incoming_edge_map(edges: List[Dict[str, Any]], source_ref: Dict[str, 
             diagnostics.append(_diag("invalid_edge_fields", "Each edge must define 'id', 'from', and 'to'."))
             continue
 
-        key = (edge_to["node"], edge_to["port"])
+        from_node = edge_from.get("node")
+        from_port = edge_from.get("port")
+        to_node = edge_to.get("node")
+        to_port = edge_to.get("port")
+
+        if not from_node or not from_port or not to_node or not to_port:
+            diagnostics.append(_diag("invalid_edge_endpoints", "Each edge endpoint must define 'node' and 'port'."))
+            continue
+
+        key = (to_node, to_port)
         incoming.setdefault(key, []).append(deepcopy(edge))
 
     if diagnostics:
         return _fail("structural_invalid", source_ref, diagnostics), {}
 
     return None, incoming
+
+
+def _find_constant_input_value(
+    *,
+    target_node_id: str,
+    target_port: str,
+    incoming: Dict[Tuple[str, str], List[Dict[str, Any]]],
+    node_map: Dict[str, Dict[str, Any]],
+) -> Optional[Any]:
+    candidates = incoming.get((target_node_id, target_port), [])
+    if len(candidates) != 1:
+        return None
+    edge = candidates[0]
+    source_node = node_map.get(edge["from"]["node"])
+    if source_node is None or source_node.get("kind") != "constant":
+        return None
+    return source_node.get("value")
 
 
 def _resolve_source_port_type(
@@ -279,6 +402,7 @@ def _resolve_source_port_type(
     input_types: Dict[str, str],
     output_types: Dict[str, str],
     widget_by_id: Dict[str, Dict[str, Any]],
+    structure_output_types: Dict[Tuple[str, str], str],
 ) -> Optional[str]:
     kind = node["kind"]
 
@@ -300,22 +424,660 @@ def _resolve_source_port_type(
 
     if kind == "primitive":
         primitive_ref = node["type"]
-        if primitive_ref == "frog.core.add":
-            if port in {"a", "b", "result"}:
-                return node.get("_resolved_value_type") or node.get("value_type")
-        if primitive_ref == "frog.core.delay":
-            if port in {"in", "initial", "out"}:
-                return node.get("_resolved_value_type") or node.get("value_type")
+        if primitive_ref == "frog.core.add" and port in {"a", "b", "result"}:
+            return node.get("_resolved_value_type")
+        if primitive_ref == "frog.core.delay" and port in {"in", "initial", "out"}:
+            return node.get("_resolved_value_type")
         if primitive_ref == "frog.ui.property_write":
             if port == "ref":
                 return "widget_reference"
             if port == "value":
                 return node.get("_resolved_value_type")
 
-    if kind == "for_loop":
-        if port in {"loop_input_value", "loop_initial_state", "loop_final_state"}:
-            return node.get("_resolved_value_type") or node.get("value_type")
+    if kind == "structure":
+        return structure_output_types.get((node["id"], port))
 
+    return None
+
+
+def _resolve_region_port_type(
+    *,
+    region_node: Dict[str, Any],
+    port: str,
+    boundary_input_types: Dict[str, str],
+    boundary_output_types: Dict[str, str],
+    structure_terminals: Dict[str, Dict[str, Any]],
+) -> Optional[str]:
+    kind = region_node.get("kind")
+
+    if kind == "boundary_input" and port == "value":
+        return boundary_input_types.get(region_node.get("boundary_port"))
+
+    if kind == "boundary_output" and port == "value":
+        return boundary_output_types.get(region_node.get("boundary_port"))
+
+    if kind == "structure_terminal":
+        terminal_name = region_node.get("terminal")
+        terminal = structure_terminals.get(terminal_name, {})
+        if port == "value":
+            return terminal.get("type")
+
+    if kind == "primitive":
+        primitive_ref = region_node.get("type")
+        if primitive_ref == "frog.core.add" and port in {"a", "b", "result"}:
+            return region_node.get("_resolved_value_type")
+        if primitive_ref == "frog.core.delay" and port in {"in", "initial", "out"}:
+            return region_node.get("_resolved_value_type")
+
+    return None
+
+
+def _build_region_incoming_edge_map(
+    region_edges: List[Dict[str, Any]],
+    *,
+    source_ref: Dict[str, Any],
+    location_prefix: str,
+) -> Tuple[Optional[ValidationResult], Dict[Tuple[str, str], List[Dict[str, Any]]]]:
+    incoming: Dict[Tuple[str, str], List[Dict[str, Any]]] = {}
+    diagnostics: List[Dict[str, Any]] = []
+
+    for edge in region_edges:
+        if not _is_object(edge):
+            diagnostics.append(_diag("invalid_region_edge_shape", "Each region edge must be an object.", location=location_prefix))
+            continue
+
+        edge_id = edge.get("id")
+        edge_from = edge.get("from")
+        edge_to = edge.get("to")
+
+        if not edge_id or not _is_object(edge_from) or not _is_object(edge_to):
+            diagnostics.append(
+                _diag("invalid_region_edge_fields", "Each region edge must define 'id', 'from', and 'to'.", location=location_prefix)
+            )
+            continue
+
+        from_node = edge_from.get("node")
+        from_port = edge_from.get("port")
+        to_node = edge_to.get("node")
+        to_port = edge_to.get("port")
+
+        if not from_node or not from_port or not to_node or not to_port:
+            diagnostics.append(
+                _diag("invalid_region_edge_endpoints", "Each region edge endpoint must define 'node' and 'port'.", location=location_prefix)
+            )
+            continue
+
+        incoming.setdefault((to_node, to_port), []).append(deepcopy(edge))
+
+    if diagnostics:
+        return _fail("structural_invalid", source_ref, diagnostics), {}
+
+    return None, incoming
+
+
+def _validate_for_loop_structure(
+    *,
+    node_id: str,
+    node: Dict[str, Any],
+    node_map: Dict[str, Dict[str, Any]],
+    incoming: Dict[Tuple[str, str], List[Dict[str, Any]]],
+    widget_by_id: Dict[str, Dict[str, Any]],
+    input_types: Dict[str, str],
+    output_types: Dict[str, str],
+    structure_output_types: Dict[Tuple[str, str], str],
+    source_ref: Dict[str, Any],
+) -> Optional[ValidationResult]:
+    diagnostics: List[Dict[str, Any]] = []
+
+    if node.get("kind") != "structure" or node.get("structure_type") != "for_loop":
+        diagnostics.append(
+            _diag(
+                "unsupported_structure_kind",
+                "Reference subset expects a canonical structure node with structure_type 'for_loop'.",
+                location=f"diagram.node:{node_id}",
+            )
+        )
+        return _fail("unsupported_but_valid", source_ref, diagnostics)
+
+    boundary = node.get("boundary")
+    structure_terminals = node.get("structure_terminals")
+    regions = node.get("regions")
+
+    if not _is_object(boundary):
+        diagnostics.append(_diag("invalid_structure_boundary", "for_loop 'boundary' must be an object.", location=f"diagram.node:{node_id}"))
+        return _fail("structural_invalid", source_ref, diagnostics)
+
+    if not _is_object(structure_terminals):
+        diagnostics.append(
+            _diag("invalid_structure_terminals", "for_loop 'structure_terminals' must be an object.", location=f"diagram.node:{node_id}")
+        )
+        return _fail("structural_invalid", source_ref, diagnostics)
+
+    if not _is_array(regions):
+        diagnostics.append(_diag("invalid_structure_regions", "for_loop 'regions' must be an array.", location=f"diagram.node:{node_id}"))
+        return _fail("structural_invalid", source_ref, diagnostics)
+
+    boundary_inputs = boundary.get("inputs", [])
+    boundary_outputs = boundary.get("outputs", [])
+
+    if not _is_array(boundary_inputs) or not _is_array(boundary_outputs):
+        diagnostics.append(
+            _diag(
+                "invalid_structure_boundary_collections",
+                "for_loop boundary inputs and outputs must be arrays.",
+                location=f"diagram.node:{node_id}",
+            )
+        )
+        return _fail("structural_invalid", source_ref, diagnostics)
+
+    boundary_input_types: Dict[str, str] = {}
+    boundary_output_types: Dict[str, str] = {}
+
+    expected_inputs = {"input_value", "initial_state"}
+    expected_outputs = {"final_value"}
+
+    actual_inputs = set()
+    actual_outputs = set()
+
+    for item in boundary_inputs:
+        if not _is_object(item) or "id" not in item or "type" not in item:
+            diagnostics.append(
+                _diag(
+                    "invalid_for_loop_boundary_input",
+                    "Each for_loop boundary input must define 'id' and 'type'.",
+                    location=f"diagram.node:{node_id}",
+                )
+            )
+            continue
+        actual_inputs.add(item["id"])
+        boundary_input_types[item["id"]] = item["type"]
+
+    for item in boundary_outputs:
+        if not _is_object(item) or "id" not in item or "type" not in item:
+            diagnostics.append(
+                _diag(
+                    "invalid_for_loop_boundary_output",
+                    "Each for_loop boundary output must define 'id' and 'type'.",
+                    location=f"diagram.node:{node_id}",
+                )
+            )
+            continue
+        actual_outputs.add(item["id"])
+        boundary_output_types[item["id"]] = item["type"]
+
+    if actual_inputs != expected_inputs:
+        diagnostics.append(
+            _diag(
+                "unsupported_for_loop_boundary_inputs",
+                "Reference subset expects exactly boundary inputs 'input_value' and 'initial_state'.",
+                location=f"diagram.node:{node_id}",
+            )
+        )
+
+    if actual_outputs != expected_outputs:
+        diagnostics.append(
+            _diag(
+                "unsupported_for_loop_boundary_outputs",
+                "Reference subset expects exactly boundary output 'final_value'.",
+                location=f"diagram.node:{node_id}",
+            )
+        )
+
+    if diagnostics:
+        return _fail("unsupported_but_valid", source_ref, diagnostics)
+
+    input_value_type = boundary_input_types["input_value"]
+    initial_state_type = boundary_input_types["initial_state"]
+    final_value_type = boundary_output_types["final_value"]
+
+    if input_value_type != initial_state_type or input_value_type != final_value_type:
+        diagnostics.append(
+            _diag(
+                "invalid_for_loop_boundary_types",
+                "for_loop boundary input/output types must match in the reference subset.",
+                location=f"diagram.node:{node_id}",
+            )
+        )
+
+    if input_value_type != "u16":
+        diagnostics.append(
+            _diag(
+                "unsupported_for_loop_value_type",
+                f"Unsupported for_loop value type in reference subset: {input_value_type}. Expected 'u16'.",
+                location=f"diagram.node:{node_id}",
+            )
+        )
+
+    final_output = next((item for item in boundary_outputs if item["id"] == "final_value"), None)
+    if final_output is None or final_output.get("mode") != "last_value":
+        diagnostics.append(
+            _diag(
+                "invalid_for_loop_output_mode",
+                "Reference subset expects boundary output 'final_value' with mode 'last_value'.",
+                location=f"diagram.node:{node_id}",
+            )
+        )
+    elif final_output.get("zero_iteration_value") != 0:
+        diagnostics.append(
+            _diag(
+                "invalid_for_loop_zero_iteration_value",
+                "Reference subset expects boundary output 'final_value' zero_iteration_value to equal 0.",
+                location=f"diagram.node:{node_id}",
+            )
+        )
+
+    count_terminal = structure_terminals.get("count")
+    index_terminal = structure_terminals.get("index")
+
+    if not _is_object(count_terminal) or count_terminal.get("type") != "i64" or count_terminal.get("outer_visible") is not True:
+        diagnostics.append(
+            _diag(
+                "invalid_for_loop_count_terminal",
+                "Reference subset expects a 'count' terminal of type 'i64' with outer_visible true.",
+                location=f"diagram.node:{node_id}",
+            )
+        )
+
+    if not _is_object(index_terminal) or index_terminal.get("type") != "i64" or index_terminal.get("exposed_in_body") is not True:
+        diagnostics.append(
+            _diag(
+                "invalid_for_loop_index_terminal",
+                "Reference subset expects an 'index' terminal of type 'i64' exposed in the body.",
+                location=f"diagram.node:{node_id}",
+            )
+        )
+
+    incoming_count = incoming.get((node_id, "count"), [])
+    incoming_input_value = incoming.get((node_id, "input_value"), [])
+    incoming_initial_state = incoming.get((node_id, "initial_state"), [])
+
+    if len(incoming_count) != 1:
+        diagnostics.append(
+            _diag(
+                "invalid_for_loop_count_input",
+                "Reference subset expects exactly one incoming edge for structure terminal 'count'.",
+                location=f"diagram.node:{node_id}",
+            )
+        )
+    if len(incoming_input_value) != 1 or len(incoming_initial_state) != 1:
+        diagnostics.append(
+            _diag(
+                "invalid_for_loop_boundary_inputs_edges",
+                "Reference subset expects exactly one incoming edge for 'input_value' and 'initial_state'.",
+                location=f"diagram.node:{node_id}",
+            )
+        )
+
+    if diagnostics:
+        return _fail("semantic_rejected", source_ref, diagnostics)
+
+    count_source_edge = incoming_count[0]
+    count_source_node = node_map.get(count_source_edge["from"]["node"])
+    count_source_port = count_source_edge["from"]["port"]
+
+    count_source_type = None
+    if count_source_node is not None:
+        count_source_type = _resolve_source_port_type(
+            node=count_source_node,
+            port=count_source_port,
+            input_types=input_types,
+            output_types=output_types,
+            widget_by_id=widget_by_id,
+            structure_output_types=structure_output_types,
+        )
+
+    if count_source_node is None or count_source_node.get("kind") != "constant" or count_source_port != "value":
+        diagnostics.append(
+            _diag(
+                "unsupported_for_loop_count_source",
+                "Reference subset expects structure terminal 'count' to be driven by a constant node 'value' port.",
+                location=f"diagram.node:{node_id}",
+            )
+        )
+    elif count_source_type != "i64" or int(count_source_node.get("value")) != 5:
+        diagnostics.append(
+            _diag(
+                "unsupported_for_loop_iteration_count",
+                "Reference subset currently supports only a constant i64 iteration count of exactly 5.",
+                location=f"diagram.node:{node_id}",
+            )
+        )
+
+    input_source_edge = incoming_input_value[0]
+    initial_source_edge = incoming_initial_state[0]
+
+    input_source_node = node_map.get(input_source_edge["from"]["node"])
+    initial_source_node = node_map.get(initial_source_edge["from"]["node"])
+
+    input_source_type = None
+    initial_source_type = None
+
+    if input_source_node is not None:
+        input_source_type = _resolve_source_port_type(
+            node=input_source_node,
+            port=input_source_edge["from"]["port"],
+            input_types=input_types,
+            output_types=output_types,
+            widget_by_id=widget_by_id,
+            structure_output_types=structure_output_types,
+        )
+
+    if initial_source_node is not None:
+        initial_source_type = _resolve_source_port_type(
+            node=initial_source_node,
+            port=initial_source_edge["from"]["port"],
+            input_types=input_types,
+            output_types=output_types,
+            widget_by_id=widget_by_id,
+            structure_output_types=structure_output_types,
+        )
+
+    if input_source_type != "u16" or initial_source_type != "u16":
+        diagnostics.append(
+            _diag(
+                "invalid_for_loop_input_types",
+                "Reference subset expects both 'input_value' and 'initial_state' inputs to resolve to type 'u16'.",
+                location=f"diagram.node:{node_id}",
+            )
+        )
+
+    if len(regions) != 1 or not _is_object(regions[0]) or regions[0].get("id") != "body":
+        diagnostics.append(
+            _diag(
+                "invalid_for_loop_regions",
+                "Reference subset expects exactly one for_loop region with id 'body'.",
+                location=f"diagram.node:{node_id}",
+            )
+        )
+        return _fail("semantic_rejected", source_ref, diagnostics)
+
+    body_region = regions[0]
+    body_diagram = body_region.get("diagram")
+
+    if not _is_object(body_diagram):
+        diagnostics.append(
+            _diag(
+                "invalid_for_loop_body_diagram",
+                "for_loop body region must define a valid 'diagram' object.",
+                location=f"diagram.node:{node_id}.regions:body",
+            )
+        )
+        return _fail("structural_invalid", source_ref, diagnostics)
+
+    region_nodes = body_diagram.get("nodes", [])
+    region_edges = body_diagram.get("edges", [])
+
+    if not _is_array(region_nodes) or not _is_array(region_edges):
+        diagnostics.append(
+            _diag(
+                "invalid_for_loop_body_collections",
+                "for_loop body diagram must define 'nodes' and 'edges' arrays.",
+                location=f"diagram.node:{node_id}.regions:body",
+            )
+        )
+        return _fail("structural_invalid", source_ref, diagnostics)
+
+    region_node_map: Dict[str, Dict[str, Any]] = {}
+    for region_node in region_nodes:
+        if not _is_object(region_node) or "id" not in region_node or "kind" not in region_node:
+            diagnostics.append(
+                _diag(
+                    "invalid_region_node_shape",
+                    "Each region node must define 'id' and 'kind'.",
+                    location=f"diagram.node:{node_id}.regions:body",
+                )
+            )
+            continue
+        region_node_id = region_node["id"]
+        if region_node_id in region_node_map:
+            diagnostics.append(
+                _diag(
+                    "duplicate_region_node_id",
+                    f"Duplicate region node id '{region_node_id}'.",
+                    location=f"diagram.node:{node_id}.regions:body",
+                )
+            )
+            continue
+        region_node_map[region_node_id] = deepcopy(region_node)
+
+    if diagnostics:
+        return _fail("structural_invalid", source_ref, diagnostics)
+
+    region_incoming_failure, region_incoming = _build_region_incoming_edge_map(
+        region_edges,
+        source_ref=source_ref,
+        location_prefix=f"diagram.node:{node_id}.regions:body",
+    )
+    if region_incoming_failure is not None:
+        return region_incoming_failure
+
+    expected_region_kinds = {
+        "body_input_value": "boundary_input",
+        "body_initial_state": "boundary_input",
+        "body_index": "structure_terminal",
+        "delay_state": "primitive",
+        "add_step": "primitive",
+        "body_final_value": "boundary_output",
+    }
+
+    for expected_id, expected_kind in expected_region_kinds.items():
+        region_node = region_node_map.get(expected_id)
+        if region_node is None or region_node.get("kind") != expected_kind:
+            diagnostics.append(
+                _diag(
+                    "unsupported_for_loop_region_shape",
+                    f"Reference subset expects region node '{expected_id}' of kind '{expected_kind}'.",
+                    location=f"diagram.node:{node_id}.regions:body",
+                )
+            )
+
+    if diagnostics:
+        return _fail("unsupported_but_valid", source_ref, diagnostics)
+
+    if region_node_map["body_input_value"].get("boundary_port") != "input_value":
+        diagnostics.append(
+            _diag(
+                "invalid_region_boundary_input_mapping",
+                "Region node 'body_input_value' must reference boundary port 'input_value'.",
+                location=f"diagram.node:{node_id}.regions:body.node:body_input_value",
+            )
+        )
+
+    if region_node_map["body_initial_state"].get("boundary_port") != "initial_state":
+        diagnostics.append(
+            _diag(
+                "invalid_region_boundary_input_mapping",
+                "Region node 'body_initial_state' must reference boundary port 'initial_state'.",
+                location=f"diagram.node:{node_id}.regions:body.node:body_initial_state",
+            )
+        )
+
+    if region_node_map["body_final_value"].get("boundary_port") != "final_value":
+        diagnostics.append(
+            _diag(
+                "invalid_region_boundary_output_mapping",
+                "Region node 'body_final_value' must reference boundary port 'final_value'.",
+                location=f"diagram.node:{node_id}.regions:body.node:body_final_value",
+            )
+        )
+
+    if region_node_map["body_index"].get("terminal") != "index":
+        diagnostics.append(
+            _diag(
+                "invalid_region_structure_terminal_mapping",
+                "Region node 'body_index' must reference structure terminal 'index'.",
+                location=f"diagram.node:{node_id}.regions:body.node:body_index",
+            )
+        )
+
+    if region_node_map["delay_state"].get("type") != "frog.core.delay":
+        diagnostics.append(
+            _diag(
+                "invalid_region_delay_primitive",
+                "Region node 'delay_state' must be primitive 'frog.core.delay'.",
+                location=f"diagram.node:{node_id}.regions:body.node:delay_state",
+            )
+        )
+
+    if region_node_map["add_step"].get("type") != "frog.core.add":
+        diagnostics.append(
+            _diag(
+                "invalid_region_add_primitive",
+                "Region node 'add_step' must be primitive 'frog.core.add'.",
+                location=f"diagram.node:{node_id}.regions:body.node:add_step",
+            )
+        )
+
+    if diagnostics:
+        return _fail("semantic_rejected", source_ref, diagnostics)
+
+    add_node = region_node_map["add_step"]
+    delay_node = region_node_map["delay_state"]
+
+    add_incoming_a = region_incoming.get(("add_step", "a"), [])
+    add_incoming_b = region_incoming.get(("add_step", "b"), [])
+    delay_incoming_in = region_incoming.get(("delay_state", "in"), [])
+    delay_incoming_initial = region_incoming.get(("delay_state", "initial"), [])
+    body_final_incoming = region_incoming.get(("body_final_value", "value"), [])
+
+    if len(add_incoming_a) != 1 or len(add_incoming_b) != 1:
+        diagnostics.append(
+            _diag(
+                "invalid_region_add_inputs",
+                "Region primitive 'add_step' requires exactly one incoming edge on ports 'a' and 'b'.",
+                location=f"diagram.node:{node_id}.regions:body.node:add_step",
+            )
+        )
+
+    if len(delay_incoming_in) != 1 or len(delay_incoming_initial) != 1:
+        diagnostics.append(
+            _diag(
+                "invalid_region_delay_inputs",
+                "Region primitive 'delay_state' requires exactly one incoming edge on ports 'in' and 'initial'.",
+                location=f"diagram.node:{node_id}.regions:body.node:delay_state",
+            )
+        )
+
+    if len(body_final_incoming) != 1:
+        diagnostics.append(
+            _diag(
+                "invalid_region_boundary_output_input",
+                "Region boundary output 'body_final_value' requires exactly one incoming edge on port 'value'.",
+                location=f"diagram.node:{node_id}.regions:body.node:body_final_value",
+            )
+        )
+
+    if diagnostics:
+        return _fail("semantic_rejected", source_ref, diagnostics)
+
+    add_a_source = region_node_map[add_incoming_a[0]["from"]["node"]]
+    add_b_source = region_node_map[add_incoming_b[0]["from"]["node"]]
+    delay_in_source = region_node_map[delay_incoming_in[0]["from"]["node"]]
+    delay_initial_source = region_node_map[delay_incoming_initial[0]["from"]["node"]]
+    body_final_source = region_node_map[body_final_incoming[0]["from"]["node"]]
+
+    add_a_type = _resolve_region_port_type(
+        region_node=add_a_source,
+        port=add_incoming_a[0]["from"]["port"],
+        boundary_input_types=boundary_input_types,
+        boundary_output_types=boundary_output_types,
+        structure_terminals=structure_terminals,
+    )
+    add_b_type = _resolve_region_port_type(
+        region_node=add_b_source,
+        port=add_incoming_b[0]["from"]["port"],
+        boundary_input_types=boundary_input_types,
+        boundary_output_types=boundary_output_types,
+        structure_terminals=structure_terminals,
+    )
+
+    if add_a_type != "u16" or add_b_type != "u16" or add_a_type != add_b_type:
+        diagnostics.append(
+            _diag(
+                "invalid_region_add_types",
+                "Region primitive 'add_step' requires both inputs to resolve to type 'u16' in the reference subset.",
+                location=f"diagram.node:{node_id}.regions:body.node:add_step",
+            )
+        )
+    else:
+        add_node["_resolved_value_type"] = "u16"
+
+    delay_initial_type = _resolve_region_port_type(
+        region_node=delay_initial_source,
+        port=delay_incoming_initial[0]["from"]["port"],
+        boundary_input_types=boundary_input_types,
+        boundary_output_types=boundary_output_types,
+        structure_terminals=structure_terminals,
+    )
+    delay_in_type = _resolve_region_port_type(
+        region_node=delay_in_source,
+        port=delay_incoming_in[0]["from"]["port"],
+        boundary_input_types=boundary_input_types,
+        boundary_output_types=boundary_output_types,
+        structure_terminals=structure_terminals,
+    )
+
+    if delay_initial_type != "u16" or delay_in_type != "u16" or delay_initial_type != delay_in_type:
+        diagnostics.append(
+            _diag(
+                "invalid_region_delay_types",
+                "Region primitive 'delay_state' requires both 'in' and 'initial' to resolve to type 'u16' in the reference subset.",
+                location=f"diagram.node:{node_id}.regions:body.node:delay_state",
+            )
+        )
+    else:
+        delay_node["_resolved_value_type"] = "u16"
+
+    if not (body_final_source.get("id") == "add_step" and body_final_incoming[0]["from"]["port"] == "result"):
+        diagnostics.append(
+            _diag(
+                "invalid_region_boundary_output_source",
+                "Region boundary output 'body_final_value' must be driven from 'add_step.result' in the reference subset.",
+                location=f"diagram.node:{node_id}.regions:body.node:body_final_value",
+            )
+        )
+
+    if not (add_a_source.get("id") == "body_input_value" and add_incoming_a[0]["from"]["port"] == "value"):
+        diagnostics.append(
+            _diag(
+                "invalid_region_add_a_source",
+                "Region primitive 'add_step.a' must be driven by 'body_input_value.value' in the reference subset.",
+                location=f"diagram.node:{node_id}.regions:body.node:add_step",
+            )
+        )
+
+    if not (add_b_source.get("id") == "delay_state" and add_incoming_b[0]["from"]["port"] == "out"):
+        diagnostics.append(
+            _diag(
+                "invalid_region_add_b_source",
+                "Region primitive 'add_step.b' must be driven by 'delay_state.out' in the reference subset.",
+                location=f"diagram.node:{node_id}.regions:body.node:add_step",
+            )
+        )
+
+    if not (delay_in_source.get("id") == "add_step" and delay_incoming_in[0]["from"]["port"] == "result"):
+        diagnostics.append(
+            _diag(
+                "invalid_region_delay_in_source",
+                "Region primitive 'delay_state.in' must be driven by 'add_step.result' in the reference subset.",
+                location=f"diagram.node:{node_id}.regions:body.node:delay_state",
+            )
+        )
+
+    if not (delay_initial_source.get("id") == "body_initial_state" and delay_incoming_initial[0]["from"]["port"] == "value"):
+        diagnostics.append(
+            _diag(
+                "invalid_region_delay_initial_source",
+                "Region primitive 'delay_state.initial' must be driven by 'body_initial_state.value' in the reference subset.",
+                location=f"diagram.node:{node_id}.regions:body.node:delay_state",
+            )
+        )
+
+    if diagnostics:
+        return _fail("semantic_rejected", source_ref, diagnostics)
+
+    node["_resolved_value_type"] = "u16"
+    structure_output_types[(node_id, "final_value")] = "u16"
     return None
 
 
@@ -330,13 +1092,14 @@ def _validate_and_enrich_nodes(
     source_ref: Dict[str, Any],
 ) -> Optional[ValidationResult]:
     diagnostics: List[Dict[str, Any]] = []
+    structure_output_types: Dict[Tuple[str, str], str] = {}
 
     for node_id, node in node_map.items():
         kind = node["kind"]
 
         if kind == "constant":
             node_type = node.get("type")
-            if node_type not in {"u16", "f64", "i32", "frog.ui.color"}:
+            if node_type not in SUPPORTED_CONSTANT_TYPES:
                 diagnostics.append(
                     _diag(
                         "unsupported_constant_type",
@@ -424,6 +1187,7 @@ def _validate_and_enrich_nodes(
                     input_types=input_types,
                     output_types=output_types,
                     widget_by_id=widget_by_id,
+                    structure_output_types=structure_output_types,
                 )
                 type_b = _resolve_source_port_type(
                     node=src_b,
@@ -431,6 +1195,7 @@ def _validate_and_enrich_nodes(
                     input_types=input_types,
                     output_types=output_types,
                     widget_by_id=widget_by_id,
+                    structure_output_types=structure_output_types,
                 )
 
                 if type_a is None or type_b is None:
@@ -488,6 +1253,7 @@ def _validate_and_enrich_nodes(
                     input_types=input_types,
                     output_types=output_types,
                     widget_by_id=widget_by_id,
+                    structure_output_types=structure_output_types,
                 )
                 type_initial = _resolve_source_port_type(
                     node=src_initial,
@@ -495,6 +1261,7 @@ def _validate_and_enrich_nodes(
                     input_types=input_types,
                     output_types=output_types,
                     widget_by_id=widget_by_id,
+                    structure_output_types=structure_output_types,
                 )
 
                 if type_in is None or type_initial is None:
@@ -596,7 +1363,7 @@ def _validate_and_enrich_nodes(
                     diagnostics.append(
                         _diag(
                             "unsupported_part_property_write",
-                            "The current reference subset supports only class-level property writes.",
+                            "The current reference subset supports only root-level property writes.",
                             location=f"diagram.node:{node_id}",
                         )
                     )
@@ -619,6 +1386,7 @@ def _validate_and_enrich_nodes(
                     input_types=input_types,
                     output_types=output_types,
                     widget_by_id=widget_by_id,
+                    structure_output_types=structure_output_types,
                 )
 
                 if value_type != SUPPORTED_COLOR_TYPE:
@@ -635,162 +1403,31 @@ def _validate_and_enrich_nodes(
                 node["_resolved_widget_id"] = widget_id
                 node["_resolved_widget_class"] = widget["widget"]
 
-        elif kind == "for_loop":
-            region = node.get("region")
-            count_from = node.get("count_from")
-
-            if not _is_object(region):
+        elif kind == "structure":
+            structure_type = node.get("structure_type")
+            if structure_type != "for_loop":
                 diagnostics.append(
                     _diag(
-                        "invalid_for_loop_region",
-                        "Reference subset expects for_loop.region to be an object.",
+                        "unsupported_structure_type",
+                        f"Unsupported structure_type in reference subset: {structure_type}.",
                         location=f"diagram.node:{node_id}",
                     )
                 )
                 continue
 
-            if not _is_object(count_from):
-                diagnostics.append(
-                    _diag(
-                        "invalid_for_loop_count_from",
-                        "Reference subset expects for_loop.count_from to be an object.",
-                        location=f"diagram.node:{node_id}",
-                    )
-                )
-                continue
-
-            count_node_id = count_from.get("node")
-            count_port = count_from.get("port")
-            count_node = node_map.get(count_node_id)
-
-            if count_node is None or count_node.get("kind") != "constant" or count_port != "value":
-                diagnostics.append(
-                    _diag(
-                        "unsupported_for_loop_count_source",
-                        "Reference subset expects for_loop.count_from to reference a constant node 'value' port.",
-                        location=f"diagram.node:{node_id}",
-                    )
-                )
-                continue
-
-            if count_node.get("type") != "i32" or int(count_node.get("value")) != 5:
-                diagnostics.append(
-                    _diag(
-                        "unsupported_for_loop_iteration_count",
-                        "Reference subset currently supports only a constant i32 iteration count of exactly 5.",
-                        location=f"diagram.node:{node_id}",
-                    )
-                )
-                continue
-
-            region_inputs = region.get("inputs", [])
-            region_outputs = region.get("outputs", [])
-            region_nodes = region.get("nodes", [])
-            region_edges = region.get("edges", [])
-
-            if not (_is_array(region_inputs) and _is_array(region_outputs) and _is_array(region_nodes) and _is_array(region_edges)):
-                diagnostics.append(
-                    _diag(
-                        "invalid_for_loop_region_shape",
-                        "Reference subset expects region.inputs, region.outputs, region.nodes, and region.edges to be arrays.",
-                        location=f"diagram.node:{node_id}",
-                    )
-                )
-                continue
-
-            expected_input_ids = {"loop_input_value", "loop_initial_state"}
-            actual_input_ids = {item.get("id") for item in region_inputs if _is_object(item)}
-            if actual_input_ids != expected_input_ids:
-                diagnostics.append(
-                    _diag(
-                        "unsupported_for_loop_region_inputs",
-                        "Reference subset expects exactly region inputs 'loop_input_value' and 'loop_initial_state'.",
-                        location=f"diagram.node:{node_id}",
-                    )
-                )
-                continue
-
-            if len(region_outputs) != 1 or region_outputs[0].get("id") != "loop_final_state":
-                diagnostics.append(
-                    _diag(
-                        "unsupported_for_loop_region_outputs",
-                        "Reference subset expects exactly one region output 'loop_final_state'.",
-                        location=f"diagram.node:{node_id}",
-                    )
-                )
-                continue
-
-            region_delay_nodes = [
-                item for item in region_nodes
-                if _is_object(item) and item.get("kind") == "primitive" and item.get("type") == "frog.core.delay"
-            ]
-            region_add_nodes = [
-                item for item in region_nodes
-                if _is_object(item) and item.get("kind") == "primitive" and item.get("type") == "frog.core.add"
-            ]
-
-            if len(region_delay_nodes) != 1 or len(region_add_nodes) != 1:
-                diagnostics.append(
-                    _diag(
-                        "unsupported_for_loop_region_primitives",
-                        "Reference subset expects exactly one frog.core.delay and one frog.core.add inside the loop region.",
-                        location=f"diagram.node:{node_id}",
-                    )
-                )
-                continue
-
-            incoming_value = incoming.get((node_id, "loop_input_value"), [])
-            incoming_initial = incoming.get((node_id, "loop_initial_state"), [])
-
-            if len(incoming_value) != 1 or len(incoming_initial) != 1:
-                diagnostics.append(
-                    _diag(
-                        "invalid_for_loop_inputs",
-                        "Reference subset expects exactly one incoming edge for loop_input_value and loop_initial_state.",
-                        location=f"diagram.node:{node_id}",
-                    )
-                )
-                continue
-
-            src_value = node_map[incoming_value[0]["from"]["node"]]
-            src_initial = node_map[incoming_initial[0]["from"]["node"]]
-
-            value_type = _resolve_source_port_type(
-                node=src_value,
-                port=incoming_value[0]["from"]["port"],
+            structure_failure = _validate_for_loop_structure(
+                node_id=node_id,
+                node=node,
+                node_map=node_map,
+                incoming=incoming,
+                widget_by_id=widget_by_id,
                 input_types=input_types,
                 output_types=output_types,
-                widget_by_id=widget_by_id,
+                structure_output_types=structure_output_types,
+                source_ref=source_ref,
             )
-            initial_type = _resolve_source_port_type(
-                node=src_initial,
-                port=incoming_initial[0]["from"]["port"],
-                input_types=input_types,
-                output_types=output_types,
-                widget_by_id=widget_by_id,
-            )
-
-            if value_type is None or initial_type is None or value_type != initial_type:
-                diagnostics.append(
-                    _diag(
-                        "invalid_for_loop_input_types",
-                        "Reference subset expects loop_input_value and loop_initial_state to have the same resolvable type.",
-                        location=f"diagram.node:{node_id}",
-                    )
-                )
-                continue
-
-            if value_type not in {"u16", "f64"}:
-                diagnostics.append(
-                    _diag(
-                        "unsupported_for_loop_value_type",
-                        f"Unsupported for_loop value type in reference subset: {value_type}.",
-                        location=f"diagram.node:{node_id}",
-                    )
-                )
-                continue
-
-            node["_resolved_value_type"] = value_type
+            if structure_failure is not None:
+                return structure_failure
 
         else:
             diagnostics.append(
@@ -803,28 +1440,16 @@ def _validate_and_enrich_nodes(
 
     if diagnostics:
         status = "unsupported_but_valid"
-        if any(diag["code"].startswith("invalid_") or diag["code"].startswith("missing_") or diag["code"].startswith("type_mismatch") for diag in diagnostics):
+        if any(
+            diag["code"].startswith("invalid_")
+            or diag["code"].startswith("missing_")
+            or diag["code"].startswith("type_mismatch")
+            for diag in diagnostics
+        ):
             status = "semantic_rejected"
         return _fail(status, source_ref, diagnostics)
 
     return None
-
-
-def _find_constant_input_value(
-    *,
-    target_node_id: str,
-    target_port: str,
-    incoming: Dict[Tuple[str, str], List[Dict[str, Any]]],
-    node_map: Dict[str, Dict[str, Any]],
-) -> Optional[Any]:
-    candidates = incoming.get((target_node_id, target_port), [])
-    if len(candidates) != 1:
-        return None
-    edge = candidates[0]
-    source_node = node_map.get(edge["from"]["node"])
-    if source_node is None or source_node.get("kind") != "constant":
-        return None
-    return source_node.get("value")
 
 
 def validate_source(loaded: LoadedSource) -> ValidationResult:
@@ -891,9 +1516,12 @@ def validate_source(loaded: LoadedSource) -> ValidationResult:
             node["kind"] == "primitive" and node.get("type") == "frog.core.delay"
             for node in validated_nodes
         ),
-        "bounded_loop": any(node["kind"] == "for_loop" for node in validated_nodes),
+        "bounded_loop": any(
+            node["kind"] == "structure" and node.get("structure_type") == "for_loop"
+            for node in validated_nodes
+        ),
         "minimal_u16_widget_family": all(
-            widget.get("widget") in SUPPORTED_WIDGET_CLASSES
+            widget.get("widget") in SUPPORTED_WIDGET_CLASSES and widget.get("value_type") == "u16"
             for widget in widget_by_id.values()
         ),
         "presentation_metadata_persisted_in_source": any(
