@@ -5,7 +5,7 @@
 <h1 align="center">Example 05 — Bounded UI Accumulator</h1>
 
 <p align="center">
-  <strong>First complete applicative vertical-slice anchor combining front-panel value participation, bounded structured control, explicit state, and a minimal executable corridor</strong><br/>
+  <strong>First complete applicative vertical-slice anchor combining front-panel value participation, bounded structured control, explicit state, minimal object-style UI access, and a first executable corridor</strong><br/>
   <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -26,7 +26,7 @@
   <li><a href="#lowering-expectation">11. Lowering Expectation</a></li>
   <li><a href="#backend-contract-expectation">12. Backend Contract Expectation</a></li>
   <li><a href="#reference-runtime-expectation">13. Reference Runtime Expectation</a></li>
-  <li><a href="#why-this-example-matters">14. Why this Example Matters</a></li>
+  <li><a href="#why-this-example-matters">14. Why This Example Matters</a></li>
   <li><a href="#summary">15. Summary</a></li>
 </ul>
 
@@ -40,18 +40,21 @@ It combines in one coherent corridor:
 </p>
 
 <ul>
-  <li>one numeric front-panel control,</li>
-  <li>one numeric front-panel indicator,</li>
-  <li>one bounded loop with exactly five iterations,</li>
+  <li>one <code>u16</code> numeric front-panel control,</li>
+  <li>one <code>u16</code> numeric front-panel indicator,</li>
+  <li>one bounded <code>for_loop</code> structure with exactly five iterations,</li>
   <li>one explicit state initialized to zero,</li>
   <li>one accumulation behavior that adds the control value to the current state on each iteration,</li>
   <li>one final observable result,</li>
+  <li>one public output,</li>
+  <li>one minimal object-style UI interaction path for <code>face_color</code>,</li>
+  <li>one persisted front-face template reference through <code>face_template</code>,</li>
   <li>and one source-to-execution reading that remains explicit across validation, IR derivation, lowering, backend handoff, and first reference execution.</li>
 </ul>
 
 <p>
 This example is intentionally conservative.
-It is not intended to demonstrate rich widget classes, rich object-style UI access, advanced events, or broad runtime ambition.
+It is not intended to demonstrate rich widget classes, advanced events, or broad runtime ambition.
 It exists to close one small but credible end-to-end executable corridor without architectural cheating.
 </p>
 
@@ -66,10 +69,11 @@ The purpose of this example is to provide one named repository-visible slice tha
 <ul>
   <li>optional <code>front_panel</code> serialization,</li>
   <li>natural <code>widget_value</code> participation,</li>
+  <li>minimal <code>widget_reference</code>-based object access,</li>
   <li>bounded structured control,</li>
   <li>explicit local memory,</li>
   <li>public output exposure,</li>
-  <li>Execution IR preservation of loop and state meaning,</li>
+  <li>Execution IR preservation of loop, state, and UI-participation meaning,</li>
   <li>lowering into a backend-facing contract,</li>
   <li>and one first minimal runtime path that can actually execute the slice.</li>
 </ul>
@@ -80,6 +84,7 @@ This example is the first intended bridge between the currently separated exampl
 
 <ul>
   <li>UI value participation,</li>
+  <li>minimal object-style UI access,</li>
   <li>structured control,</li>
   <li>and explicit state.</li>
 </ul>
@@ -93,13 +98,14 @@ The example defines the following conservative behavior:
 </p>
 
 <ul>
-  <li>the numeric control provides one input value <code>x</code>,</li>
-  <li>the explicit state is initialized to <code>0.0</code>,</li>
+  <li>the numeric control provides one input value <code>x</code> of type <code>u16</code>,</li>
+  <li>the explicit state is initialized to <code>0</code>,</li>
   <li>the loop runs exactly <code>5</code> iterations,</li>
   <li>on each iteration, the next state is computed as <code>state_next = state_current + x</code>,</li>
   <li>after the fifth iteration, the final state is exposed as the program result,</li>
   <li>the numeric indicator displays that final result,</li>
-  <li>and one public output exposes the same final value.</li>
+  <li>one public output exposes the same final value,</li>
+  <li>and the control and indicator front-face colors are also written through explicit object-style property access.</li>
 </ul>
 
 <p>
@@ -107,7 +113,7 @@ Equivalent mathematical reading:
 </p>
 
 <pre><code>input  = x
-state0 = 0.0
+state0 = 0
 
 repeat 5 times:
     state = state + x
@@ -135,16 +141,18 @@ This example uses the following constructs:
   <li>one public output in <code>interface.outputs</code>,</li>
   <li>one diagram-side <code>widget_value</code> node for the control,</li>
   <li>one diagram-side <code>widget_value</code> node for the indicator,</li>
-  <li>one bounded structured-control node representing a <code>for_loop</code>,</li>
+  <li>two diagram-side <code>widget_reference</code> nodes used for minimal object-style property access,</li>
+  <li>two <code>frog.ui.property_write</code> primitives targeting <code>face_color</code>,</li>
+  <li>one bounded structured-control node represented canonically as <code>kind: "structure"</code> and <code>structure_type: "for_loop"</code>,</li>
   <li>one explicit local-memory primitive of type <code>frog.core.delay</code> with deterministic initialization,</li>
   <li>one arithmetic primitive of type <code>frog.core.add</code>,</li>
   <li>one diagram-side <code>interface_output</code> node,</li>
-  <li>and the directed edges required to keep loop, state, UI participation, and public exposure explicit.</li>
+  <li>and the directed edges required to keep loop, state, UI participation, object-style access, and public exposure explicit.</li>
 </ul>
 
 <p>
-All carried values in this example use the canonical FROG value type <code>f64</code>.
-The bounded loop count is fixed to five for this named slice.
+The carried program values in this example use the canonical FROG value type <code>u16</code>.
+The bounded loop count is fixed to five for this named slice and is expressed through the canonical <code>count</code> structure terminal.
 </p>
 
 <hr/>
@@ -159,7 +167,8 @@ The source contains:
   <li>a canonical metadata section,</li>
   <li>an interface with one public output,</li>
   <li>a front panel with one numeric control and one numeric indicator,</li>
-  <li>and an authoritative executable diagram containing widget-value participation, one bounded loop, one explicit local-memory element, and one final observable result path.</li>
+  <li>source-owned front-face metadata through <code>face_color</code> and <code>face_template</code>,</li>
+  <li>and an authoritative executable diagram containing widget-value participation, widget-reference participation, one bounded loop, one explicit local-memory element, and one final observable result path.</li>
 </ul>
 
 <p>
@@ -167,26 +176,36 @@ Conceptually:
 </p>
 
 <pre><code>front_panel:
-  control_x        : numeric_control(f64)
-  indicator_result : numeric_indicator(f64)
+  ctrl_input   : numeric_control(u16)
+  ind_result   : numeric_indicator(u16)
+
+  ctrl_input.props.face_color   = "#D0D0D0"
+  ctrl_input.props.face_template = resource(svg, "./assets/widgets/u16_numeric_control_face.svg")
+
+  ind_result.props.face_color   = "#D8E6FF"
+  ind_result.props.face_template = resource(svg, "./assets/widgets/u16_numeric_indicator_face.svg")
 
 diagram:
-  widget_value(control_x)
+  widget_value(ctrl_input)
            |
            v
-      for_loop(count = 5)
+  structure(for_loop, count = 5)
            |
-           | region:
-           |   state_current ---\
-           |                     +--- frog.core.add --- state_next
-           |   input_x ---------/
-           |   state_next ------&gt; frog.core.delay(in)
-           |   delay(out) ------&gt; state_current
+           | body:
+           |   boundary_input(input_value) --------\
+           |                                        +--- frog.core.add --- state_next
+           |   frog.core.delay(out) ---------------/
+           |   boundary_input(initial_state) --> frog.core.delay(initial)
+           |   state_next -----------------------> frog.core.delay(in)
+           |   state_next -----------------------> boundary_output(final_value)
            |
            v
-  final_result -----------------&gt; widget_value(indicator_result)
+  final_value -------------------------> widget_value(ind_result)
            |
-           +--------------------&gt; interface_output(result)
+           +---------------------------> interface_output(result)
+
+  widget_reference(ctrl_input) --> frog.ui.property_write(member = "face_color")
+  widget_reference(ind_result) --> frog.ui.property_write(member = "face_color")
 </code></pre>
 
 <p>
@@ -194,11 +213,12 @@ This example preserves the required ownership boundaries:
 </p>
 
 <ul>
-  <li>the front panel owns widget declaration and composition,</li>
+  <li>the front panel owns widget declaration and presentation metadata,</li>
   <li>the interface owns the public contract,</li>
   <li>the diagram owns executable participation,</li>
   <li>the loop remains explicit,</li>
   <li>the state remains explicit,</li>
+  <li>the object-style UI path remains explicit,</li>
   <li>and the final observable value remains attributable.</li>
 </ul>
 
@@ -207,7 +227,7 @@ This example preserves the required ownership boundaries:
 <h2 id="front-panel-posture">6. Front-Panel Posture</h2>
 
 <p>
-The front panel is present because this slice is intended to demonstrate that a bounded executable corridor can include an operational user-facing value path without introducing rich object-style UI complexity.
+The front panel is present because this slice is intended to demonstrate that a bounded executable corridor can include an operational user-facing value path and a minimal object-style UI path without forcing the full rich widget ecosystem first.
 </p>
 
 <p>
@@ -216,20 +236,28 @@ The indicator widget receives one natural value from the executable graph throug
 </p>
 
 <p>
-This example intentionally does not require:
+This example also introduces one deliberately small object-style surface:
 </p>
 
 <ul>
-  <li><code>widget_reference</code>,</li>
-  <li><code>frog.ui.property_read</code>,</li>
-  <li><code>frog.ui.property_write</code>,</li>
-  <li><code>frog.ui.method_invoke</code>,</li>
-  <li>event-heavy behavior,</li>
-  <li>or advanced widget-class member exposure.</li>
+  <li><code>widget_reference</code> to the control,</li>
+  <li><code>widget_reference</code> to the indicator,</li>
+  <li><code>frog.ui.property_write</code> on member <code>face_color</code>.</li>
 </ul>
 
 <p>
-The purpose is to prove the smallest serious UI participation corridor first.
+This example therefore demonstrates both canonical widget interaction paths:
+</p>
+
+<ul>
+  <li>natural value participation through <code>widget_value</code>,</li>
+  <li>explicit object-style access through <code>widget_reference</code> and <code>frog.ui.property_write</code>.</li>
+</ul>
+
+<p>
+The front panel also persists <code>face_template</code> for both widgets.
+That metadata is source-owned presentation data.
+It does not by itself define executable semantics.
 </p>
 
 <hr/>
@@ -240,6 +268,18 @@ The purpose is to prove the smallest serious UI participation corridor first.
 The loop is represented as bounded structured control, not as an unrolled hidden expansion and not as scheduler-private repetition.
 The loop count for this named example is exactly five.
 </p>
+
+<p>
+The loop is represented canonically as:
+</p>
+
+<ul>
+  <li><code>kind: "structure"</code>,</li>
+  <li><code>structure_type: "for_loop"</code>,</li>
+  <li>an explicit <code>count</code> terminal,</li>
+  <li>an explicit boundary,</li>
+  <li>one owned region with <code>id: "body"</code>.</li>
+</ul>
 
 <p>
 The structured-control object must preserve at least:
@@ -254,7 +294,7 @@ The structured-control object must preserve at least:
 </ul>
 
 <p>
-This example therefore acts as the first small bridge between UI participation and structured control.
+This example therefore acts as the first small bridge between UI participation, object-style UI access, and structured control.
 </p>
 
 <hr/>
@@ -267,12 +307,12 @@ That state is not inferred from repeated execution, not hidden in runtime-privat
 </p>
 
 <p>
-The explicit state must remain attributable across the corridor through:
+The explicit state remains attributable across the corridor through:
 </p>
 
 <ul>
   <li>one explicit local-memory primitive,</li>
-  <li>one deterministic initial value of <code>0.0</code>,</li>
+  <li>one deterministic initial value of <code>0</code>,</li>
   <li>one feedback path that is valid only because local memory is explicit,</li>
   <li>and one state evolution rule that is visible in the executable region.</li>
 </ul>
@@ -304,9 +344,13 @@ A conforming validator should confirm at least that:
   <li>the <code>front_panel</code> section is structurally valid,</li>
   <li>widget identifiers are unique,</li>
   <li>the declared widget classes are valid standard numeric widget classes,</li>
-  <li>the control and indicator are value-carrying widgets with compatible value type <code>f64</code>,</li>
+  <li>the control and indicator are value-carrying widgets with compatible value type <code>u16</code>,</li>
+  <li>the <code>face_color</code> values are structurally valid source-owned presentation properties,</li>
+  <li>the <code>face_template</code> values are structurally valid source-owned template references under the active profile,</li>
   <li>the interface output is structurally valid,</li>
   <li>the <code>widget_value</code> nodes reference existing value-carrying widgets,</li>
+  <li>the <code>widget_reference</code> nodes reference existing widgets,</li>
+  <li>the <code>frog.ui.property_write</code> nodes target a class-supported member,</li>
   <li>the bounded loop node is structurally valid as canonical structured control,</li>
   <li>the loop count is deterministically defined as five for this example,</li>
   <li>the primitive reference <code>frog.core.add</code> is valid,</li>
@@ -330,11 +374,14 @@ Execution IR derivation should preserve the following distinctions explicitly:
 <ul>
   <li>execution-unit identity for the whole program,</li>
   <li>widget-value participation for the numeric control,</li>
+  <li>widget-value participation for the numeric indicator,</li>
+  <li>widget-reference participation for both widgets,</li>
+  <li>explicit property-write operations for <code>face_color</code>,</li>
   <li>structured-control identity for the bounded loop,</li>
   <li>region-bounded execution inside the loop,</li>
   <li>primitive execution identity for <code>frog.core.add</code>,</li>
   <li>explicit local-memory execution identity for <code>frog.core.delay</code>,</li>
-  <li>the deterministic initial-state value <code>0.0</code>,</li>
+  <li>the deterministic initial-state value <code>0</code>,</li>
   <li>the final result path to the numeric indicator,</li>
   <li>the final result path to the public output,</li>
   <li>and the validated dependencies that make the accumulation attributable.</li>
@@ -349,6 +396,7 @@ The derived IR must not reinterpret this program as:
   <li>a UI-only data-binding artifact with no structured execution meaning,</li>
   <li>a loop erased into runtime-private repetition with no attributable region,</li>
   <li>a valid cycle repaired by hidden memory insertion,</li>
+  <li>a presentation-only widget definition with no executable participation,</li>
   <li>or a pure multiply-by-five rewrite at the semantic ownership boundary.</li>
 </ul>
 
@@ -368,6 +416,7 @@ A lowered form may specialize:
   <li>the bounded loop into a backend-family loop construct or repeated block,</li>
   <li>the delay-backed state into explicit backend-family state storage,</li>
   <li>the widget-value paths into host-driven input sampling and output publication bindings,</li>
+  <li>the widget-reference property writes into host-facing UI update operations,</li>
   <li>and the final observable result into one backend-facing result channel.</li>
 </ul>
 
@@ -380,7 +429,8 @@ However, lowering must preserve that:
   <li>the state is explicit,</li>
   <li>the initial value is deterministic,</li>
   <li>the control value participates as an input to the repeated computation,</li>
-  <li>and the indicator/public output receive the final post-loop value rather than one arbitrary intermediate value.</li>
+  <li>the indicator and public output receive the final post-loop value rather than one arbitrary intermediate value,</li>
+  <li>and presentation metadata such as <code>face_template</code> does not become executable semantic law.</li>
 </ul>
 
 <hr/>
@@ -395,10 +445,11 @@ After lowering, a backend contract for this example should still make clear:
   <li>that one consumable execution unit is being offered,</li>
   <li>that one bounded repeated computation of five iterations is required,</li>
   <li>that one explicit local state cell is required for correct meaning,</li>
-  <li>that the state cell has deterministic initialization to <code>0.0</code>,</li>
+  <li>that the state cell has deterministic initialization to <code>0</code>,</li>
   <li>that one host-provided numeric input value feeds the repeated computation,</li>
   <li>that one final numeric result is observable for public-output publication,</li>
-  <li>and that one final numeric result is observable for indicator publication.</li>
+  <li>that one final numeric result is observable for indicator publication,</li>
+  <li>and that one minimal object-style UI write surface exists for <code>face_color</code>.</li>
 </ul>
 
 <p>
@@ -408,7 +459,8 @@ A backend family may choose its own private realization strategy, but it must no
 <ul>
   <li>bounded structured repetition,</li>
   <li>explicit local memory,</li>
-  <li>and front-panel value participation.</li>
+  <li>front-panel value participation,</li>
+  <li>and explicit object-style UI access.</li>
 </ul>
 
 <hr/>
@@ -430,7 +482,8 @@ A conservative execution reading is:
   <li>lower into the conservative backend contract corridor,</li>
   <li>prepare one host-side execution unit,</li>
   <li>read the current numeric control value once for the run,</li>
-  <li>initialize the explicit state to <code>0.0</code>,</li>
+  <li>apply the two explicit <code>face_color</code> property writes,</li>
+  <li>initialize the explicit state to <code>0</code>,</li>
   <li>execute five iterations of accumulation,</li>
   <li>publish the final result to the numeric indicator,</li>
   <li>publish the same final result to the public output observation surface,</li>
@@ -445,19 +498,20 @@ This runtime expectation does not require:
   <li>continuous event-driven widget interaction,</li>
   <li>hidden persistence between runs,</li>
   <li>asynchronous UI-driven re-execution,</li>
-  <li>or advanced object-style widget behavior.</li>
+  <li>advanced object-style widget behavior,</li>
+  <li>or pixel-identical front-face rendering across hosts.</li>
 </ul>
 
 <p>
-The first runtime corridor is therefore intentionally bounded: one sampled input value, one deterministic execution, one final observable output value.
+The first runtime corridor is therefore intentionally bounded: one sampled input value, one deterministic execution, a small explicit UI write surface, and one final observable output value.
 </p>
 
 <hr/>
 
-<h2 id="why-this-example-matters">14. Why this Example Matters</h2>
+<h2 id="why-this-example-matters">14. Why This Example Matters</h2>
 
 <p>
-A serious open graphical language cannot remain credible if UI participation, structured control, explicit state, IR preservation, lowering, backend handoff, and executable runtime posture are only published as separate partial slices.
+A serious open graphical language cannot remain credible if UI participation, object-style widget access, structured control, explicit state, IR preservation, lowering, backend handoff, and executable runtime posture are only published as separate partial slices.
 </p>
 
 <p>
@@ -469,6 +523,9 @@ This example matters because it is the smallest applicative case that proves all
   <li>the diagram remains the authoritative executable graph,</li>
   <li>structured control can remain explicit,</li>
   <li>state can remain explicit,</li>
+  <li>widget value participation can remain explicit,</li>
+  <li>widget object participation can remain explicit,</li>
+  <li>presentation metadata can be persisted without becoming hidden semantic law,</li>
   <li>IR can preserve meaning without collapsing into a runtime-private form,</li>
   <li>backend handoff can remain attributable,</li>
   <li>and a first minimal runtime corridor can execute the slice without redefining the language.</li>
@@ -488,11 +545,12 @@ It combines:
 </p>
 
 <ul>
-  <li>one numeric control,</li>
-  <li>one numeric indicator,</li>
+  <li>one <code>u16</code> numeric control,</li>
+  <li>one <code>u16</code> numeric indicator,</li>
   <li>one bounded loop of five iterations,</li>
   <li>one explicit state initialized to zero,</li>
   <li>one final observable output,</li>
+  <li>one minimal object-style UI write surface,</li>
   <li>and one source-to-execution reading that remains explicit across the published corridor.</li>
 </ul>
 
