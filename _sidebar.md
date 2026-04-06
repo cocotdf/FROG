@@ -276,6 +276,7 @@
     - [emit backend contract](/Implementations/Reference/ContractEmitter/emit_backend_contract.md)
     - [responsibilities](/Implementations/Reference/ContractEmitter/responsibilities.md)
     - [__init__.py](/Implementations/Reference/ContractEmitter/__init__.py)
+    - [emit_backend_contract.py](/Implementations/Reference/ContractEmitter/emit_backend_contract.py)
     - [reference_contract_emitter.py](/Implementations/Reference/ContractEmitter/reference_contract_emitter.py)
   - [Deriver](/Implementations/Reference/Deriver/Readme.md)
     - [derive execution ir](/Implementations/Reference/Deriver/derive_execution_ir.md)

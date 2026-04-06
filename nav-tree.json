@@ -1978,6 +1978,13 @@
                   "children": []
                 },
                 {
+                  "key": "implementations/reference/contractemitter/emit_backend_contract.py",
+                  "title": "emit_backend_contract.py",
+                  "path": "/Implementations/Reference/ContractEmitter/emit_backend_contract.py",
+                  "kind": "code",
+                  "children": []
+                },
+                {
                   "key": "implementations/reference/contractemitter/reference_contract_emitter.py",
                   "title": "reference_contract_emitter.py",
                   "path": "/Implementations/Reference/ContractEmitter/reference_contract_emitter.py",
@@ -2460,6 +2467,7 @@
     "/Implementations/Reference/ContractEmitter/emit_backend_contract.md",
     "/Implementations/Reference/ContractEmitter/responsibilities.md",
     "/Implementations/Reference/ContractEmitter/__init__.py",
+    "/Implementations/Reference/ContractEmitter/emit_backend_contract.py",
     "/Implementations/Reference/ContractEmitter/reference_contract_emitter.py",
     "/Implementations/Reference/ContractEmitter/Readme.md",
     "/Implementations/Reference/Deriver/derive_execution_ir.md",
