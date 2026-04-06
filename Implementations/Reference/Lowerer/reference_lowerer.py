@@ -31,15 +31,141 @@ def _infer_initial_value_from_connections(
     constant_values: Dict[str, Any],
 ) -> Optional[Any]:
     for connection in connections:
-        if (
-            connection["to"]["object"] == object_id
-            and connection["to"]["port"] == port_name
-        ):
+        if connection["to"]["object"] == object_id and connection["to"]["port"] == port_name:
             source_object = connection["from"]["object"]
             source_port = connection["from"]["port"]
             if source_port == "value" and source_object in constant_values:
                 return constant_values[source_object]
     return None
+
+
+def _normalize_numeric_value(raw: Any, value_type: str) -> Any:
+    if raw is None:
+        return None
+    if value_type == "f64":
+        return float(raw)
+    if value_type in {"u16", "i32", "i64"}:
+        return int(raw)
+    return raw
+
+
+def _lower_region_unit(
+    *,
+    parent_loop_object_id: str,
+    region_unit: Dict[str, Any],
+) -> Dict[str, Any]:
+    region_objects = region_unit.get("objects", [])
+    region_connections = deepcopy(region_unit.get("connections", []))
+
+    lowered_region_operations: List[Dict[str, Any]] = []
+    constant_values: Dict[str, Any] = {}
+
+    for obj in region_objects:
+        obj_kind = obj["kind"]
+
+        if obj_kind == "constant":
+            constant_values[obj["id"]] = obj["value"]
+            lowered_region_operations.append(
+                {
+                    "id": obj["id"].replace("obj:", "op:"),
+                    "kind": "constant",
+                    "value_type": obj["value_type"],
+                    "value": obj["value"],
+                    "source_object": obj["id"],
+                }
+            )
+
+        elif obj_kind == "structure_boundary_input":
+            lowered_region_operations.append(
+                {
+                    "id": obj["id"].replace("obj:", "op:"),
+                    "kind": "region_input",
+                    "boundary_port": obj["boundary_port"],
+                    "value_type": obj["value_type"],
+                    "source_object": obj["id"],
+                }
+            )
+
+        elif obj_kind == "structure_boundary_output":
+            lowered_region_operations.append(
+                {
+                    "id": obj["id"].replace("obj:", "op:"),
+                    "kind": "region_output",
+                    "boundary_port": obj["boundary_port"],
+                    "value_type": obj["value_type"],
+                    "source_object": obj["id"],
+                }
+            )
+
+        elif obj_kind == "structure_terminal_projection":
+            lowered_region_operations.append(
+                {
+                    "id": obj["id"].replace("obj:", "op:"),
+                    "kind": "region_structure_terminal",
+                    "terminal": obj["terminal"],
+                    "value_type": obj["value_type"],
+                    "source_object": obj["id"],
+                }
+            )
+
+        elif obj_kind == "primitive":
+            primitive_ref = obj["primitive_ref"]
+
+            if primitive_ref == "frog.core.add":
+                lowered_region_operations.append(
+                    {
+                        "id": obj["id"].replace("obj:", "op:"),
+                        "kind": "core_primitive_add",
+                        "primitive_ref": primitive_ref,
+                        "value_type": obj.get("value_type", "u16"),
+                        "source_object": obj["id"],
+                    }
+                )
+            else:
+                raise FrogPipelineError(
+                    stage="lower",
+                    error_code="unsupported_region_primitive",
+                    message=f"Unsupported region primitive during lowering: {primitive_ref}",
+                )
+
+        elif obj_kind == "explicit_local_memory_primitive":
+            initial_value = obj.get("initial")
+            if initial_value is None:
+                initial_value = _infer_initial_value_from_connections(
+                    object_id=obj["id"],
+                    port_name="initial",
+                    connections=region_connections,
+                    constant_values=constant_values,
+                )
+
+            lowered_region_operations.append(
+                {
+                    "id": obj["id"].replace("obj:", "op:"),
+                    "kind": "state_init",
+                    "primitive_ref": obj["primitive_ref"],
+                    "state_id": obj["state_id"],
+                    "state_kind": obj["state_kind"],
+                    "value_type": obj["value_type"],
+                    "initial_value": _normalize_numeric_value(initial_value, obj["value_type"]),
+                    "source_object": obj["id"],
+                }
+            )
+
+        else:
+            raise FrogPipelineError(
+                stage="lower",
+                error_code="unsupported_region_object_kind",
+                message=f"Unsupported region IR object kind during lowering: {obj_kind}",
+            )
+
+    return {
+        "id": region_unit["id"].replace("unit:", "lowered_unit:"),
+        "role": region_unit.get("role", "structure_region_body"),
+        "region_id": region_unit.get("region_id"),
+        "parent_loop_object": parent_loop_object_id,
+        "operations": lowered_region_operations,
+        "connections": region_connections,
+    }
 
 
 def lower_for_backend_family(
@@ -57,8 +183,10 @@ def lower_for_backend_family(
     objects = unit["objects"]
     connections = deepcopy(unit["connections"])
     ui_declarations = deepcopy(unit.get("ui_declarations", {"widgets": []}))
+    non_semantic_ui_metadata = deepcopy(unit.get("non_semantic_ui_metadata", {}))
 
     operations: List[Dict[str, Any]] = []
+    region_units: List[Dict[str, Any]] = []
     constant_values: Dict[str, Any] = {}
 
     has_natural_ui = False
@@ -71,6 +199,15 @@ def lower_for_backend_family(
 
         if obj_kind == "constant":
             constant_values[obj["id"]] = obj["value"]
+            operations.append(
+                {
+                    "id": obj["id"].replace("obj:", "op:"),
+                    "kind": "constant",
+                    "value_type": obj["value_type"],
+                    "value": obj["value"],
+                    "source_object": obj["id"],
+                }
+            )
 
         elif obj_kind == "public_input_boundary":
             operations.append(
@@ -154,17 +291,18 @@ def lower_for_backend_family(
                         "id": obj["id"].replace("obj:", "op:"),
                         "kind": "core_primitive_add",
                         "primitive_ref": primitive_ref,
-                        "value_type": obj.get("value_type", "f64"),
+                        "value_type": obj.get("value_type", "u16"),
                         "source_object": obj["id"],
                     }
                 )
 
             elif primitive_ref == "frog.ui.property_write":
                 has_object_ui = True
+
                 ports = obj.get("ports", [])
                 value_type = None
                 for port in ports:
-                    if port["name"] == "value":
+                    if port["id"] == "value":
                         value_type = port["value_type"]
                         break
 
@@ -215,39 +353,52 @@ def lower_for_backend_family(
                     "state_id": obj["state_id"],
                     "state_kind": obj["state_kind"],
                     "value_type": obj["value_type"],
-                    "initial_value": initial_value,
+                    "initial_value": _normalize_numeric_value(initial_value, obj["value_type"]),
                     "source_object": obj["id"],
                 }
             )
 
         elif obj_kind == "counted_loop_region":
             iteration_count = int(obj["iteration_count"])
-            has_explicit_local_memory = has_explicit_local_memory or obj.get(
-                "uses_explicit_local_memory",
-                False,
-            )
+            has_explicit_local_memory = has_explicit_local_memory or obj.get("uses_explicit_local_memory", False)
 
             loop_operation: Dict[str, Any] = {
                 "id": obj["id"].replace("obj:", "op:"),
                 "kind": "counted_loop_execute",
+                "structure_type": obj.get("structure_type", "for_loop"),
                 "iteration_count": iteration_count,
                 "value_type": obj["value_type"],
+                "boundary": deepcopy(obj.get("boundary", {})),
+                "structure_terminals": deepcopy(obj.get("structure_terminals", {})),
                 "source_object": obj["id"],
             }
 
-            if "state_id" in obj:
-                loop_operation["state_id"] = obj["state_id"]
-
             initial_value = _infer_initial_value_from_connections(
                 object_id=obj["id"],
-                port_name="loop_initial_state",
+                port_name="initial_state",
                 connections=connections,
                 constant_values=constant_values,
             )
             if initial_value is not None:
-                loop_operation["initial_value"] = initial_value
+                loop_operation["initial_value"] = _normalize_numeric_value(initial_value, obj["value_type"])
+
+            count_value = _infer_initial_value_from_connections(
+                object_id=obj["id"],
+                port_name="count",
+                connections=connections,
+                constant_values=constant_values,
+            )
+            if count_value is not None:
+                loop_operation["count_value"] = int(count_value)
 
             operations.append(loop_operation)
+
+            for region_unit in obj.get("region_units", []):
+                lowered_region_unit = _lower_region_unit(
+                    parent_loop_object_id=obj["id"],
+                    region_unit=region_unit,
+                )
+                region_units.append(lowered_region_unit)
 
         else:
             raise FrogPipelineError(
@@ -271,8 +422,9 @@ def lower_for_backend_family(
             "explicit_local_memory": has_explicit_local_memory,
             "state_model": "explicit_local_memory" if has_explicit_local_memory else "none",
             "execution_mode": "bounded_ui_accumulator" if iteration_count is not None else "deterministic_step_execution",
-            "bounded_loop_lowering_mode": "counted_loop" if iteration_count is not None else "none",
+            "bounded_loop_lowering_mode": "counted_loop_region" if iteration_count is not None else "none",
             "presentation_template_runtime_support": "optional",
+            "non_semantic_ui_metadata_preserved": True,
         },
         "units": [
             {
@@ -280,7 +432,9 @@ def lower_for_backend_family(
                 "role": "entry_unit",
                 "operations": operations,
                 "connections": connections,
+                "region_units": region_units,
                 "ui_declarations": ui_declarations,
+                "non_semantic_ui_metadata": non_semantic_ui_metadata,
             }
         ],
         "diagnostics": [],
