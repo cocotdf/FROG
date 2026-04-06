@@ -2,19 +2,23 @@
   "spec_version": "0.1",
   "metadata": {
     "name": "05_bounded_ui_accumulator",
-    "summary": "Bounded front-panel accumulation example with explicit state, five-loop execution, and final indicator output.",
-    "description": "Reads one numeric control value from the front panel, executes a bounded loop of exactly five iterations, carries explicit state through frog.core.delay initialized to 0.0, and writes the final accumulated value both to one public output and to one numeric indicator.",
+    "summary": "Bounded front-panel accumulation example with explicit state, five-loop execution, minimal u16 widgets, and final indicator output.",
+    "description": "Reads one u16 numeric control value from the front panel, executes a bounded loop of exactly five iterations, carries explicit state through frog.core.delay initialized to 0, and writes the final accumulated value both to one public output and to one u16 numeric indicator. The front panel also persists minimal presentation metadata through face_color and face_template without giving those members executable meaning by themselves.",
     "author": "Graiphic",
     "program_version": "0.1.0",
     "tags": [
       "example",
       "ui",
       "widget_value",
+      "widget_reference",
       "bounded_loop",
       "state",
       "delay",
       "accumulator",
-      "vertical_slice"
+      "vertical_slice",
+      "u16",
+      "face_color",
+      "face_template"
     ],
     "is_example": true,
     "license": "Apache-2.0"
@@ -24,7 +28,7 @@
     "outputs": [
       {
         "id": "result",
-        "type": "f64"
+        "type": "u16"
       }
     ]
   },
@@ -36,16 +40,54 @@
         "widget": "ctrl_input"
       },
       {
+        "id": "ctrl_input_ref",
+        "kind": "widget_reference",
+        "widget": "ctrl_input"
+      },
+      {
+        "id": "ind_result_ref",
+        "kind": "widget_reference",
+        "widget": "ind_result"
+      },
+      {
         "id": "const_zero",
         "kind": "constant",
-        "type": "f64",
-        "value": 0.0
+        "type": "u16",
+        "value": 0
       },
       {
         "id": "const_five",
         "kind": "constant",
         "type": "i32",
         "value": 5
+      },
+      {
+        "id": "const_ctrl_face_color",
+        "kind": "constant",
+        "type": "frog.ui.color",
+        "value": "#D0D0D0"
+      },
+      {
+        "id": "const_ind_face_color",
+        "kind": "constant",
+        "type": "frog.ui.color",
+        "value": "#D8E6FF"
+      },
+      {
+        "id": "write_ctrl_face_color",
+        "kind": "primitive",
+        "type": "frog.ui.property_write",
+        "widget_member": {
+          "member": "face_color"
+        }
+      },
+      {
+        "id": "write_ind_face_color",
+        "kind": "primitive",
+        "type": "frog.ui.property_write",
+        "widget_member": {
+          "member": "face_color"
+        }
       },
       {
         "id": "loop_accumulate",
@@ -116,11 +158,11 @@
           "inputs": [
             {
               "id": "loop_input_value",
-              "type": "f64"
+              "type": "u16"
             },
             {
               "id": "loop_initial_state",
-              "type": "f64"
+              "type": "u16"
             }
           ],
           "outputs": [
@@ -130,7 +172,7 @@
                 "node": "add_step",
                 "port": "result"
               },
-              "type": "f64"
+              "type": "u16"
             }
           ]
         }
@@ -190,6 +232,50 @@
           "node": "output_result",
           "port": "value"
         }
+      },
+      {
+        "id": "e5",
+        "from": {
+          "node": "ctrl_input_ref",
+          "port": "ref"
+        },
+        "to": {
+          "node": "write_ctrl_face_color",
+          "port": "ref"
+        }
+      },
+      {
+        "id": "e6",
+        "from": {
+          "node": "const_ctrl_face_color",
+          "port": "value"
+        },
+        "to": {
+          "node": "write_ctrl_face_color",
+          "port": "value"
+        }
+      },
+      {
+        "id": "e7",
+        "from": {
+          "node": "ind_result_ref",
+          "port": "ref"
+        },
+        "to": {
+          "node": "write_ind_face_color",
+          "port": "ref"
+        }
+      },
+      {
+        "id": "e8",
+        "from": {
+          "node": "const_ind_face_color",
+          "port": "value"
+        },
+        "to": {
+          "node": "write_ind_face_color",
+          "port": "value"
+        }
       }
     ]
   },
@@ -203,30 +289,40 @@
         "id": "ctrl_input",
         "role": "control",
         "widget": "frog.ui.standard.numeric_control",
-        "value_type": "f64",
+        "value_type": "u16",
         "layout": {
           "x": 20,
           "y": 24,
           "width": 140,
-          "height": 28
+          "height": 32
         },
         "props": {
-          "caption": "Input value"
+          "caption": "Input value",
+          "face_color": "#D0D0D0",
+          "face_template": {
+            "kind": "resource",
+            "path": "./assets/widgets/u16_numeric_control_face.svg"
+          }
         }
       },
       {
         "id": "ind_result",
         "role": "indicator",
         "widget": "frog.ui.standard.numeric_indicator",
-        "value_type": "f64",
+        "value_type": "u16",
         "layout": {
           "x": 240,
           "y": 24,
           "width": 160,
-          "height": 28
+          "height": 32
         },
         "props": {
-          "caption": "Accumulated result"
+          "caption": "Accumulated result",
+          "face_color": "#D8E6FF",
+          "face_template": {
+            "kind": "resource",
+            "path": "./assets/widgets/u16_numeric_indicator_face.svg"
+          }
         }
       }
     ]
