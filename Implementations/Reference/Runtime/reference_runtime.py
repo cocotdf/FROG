@@ -1,496 +1,361 @@
 from __future__ import annotations
 
 from copy import deepcopy
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
 from Implementations.Reference.common import (
+    BackendContract,
     DEFAULT_BACKEND_FAMILY,
     DEMO_ARTIFACT_VERSION,
-    BackendContract,
     FrogPipelineError,
     RuntimeResult,
     ensure,
 )
 
-
-def _coerce_runtime_value(raw_value: Any, value_type: str, *, stage: str, label: str) -> Any:
-    if value_type == "f64":
-        try:
-            return float(raw_value)
-        except (TypeError, ValueError) as exc:
-            raise FrogPipelineError(
-                stage=stage,
-                error_code="invalid_runtime_value",
-                message=f"{label} must be numeric for type f64.",
-            ) from exc
-
-    if value_type == "u16":
-        try:
-            value = int(raw_value)
-        except (TypeError, ValueError) as exc:
-            raise FrogPipelineError(
-                stage=stage,
-                error_code="invalid_runtime_value",
-                message=f"{label} must be an integer-compatible value for type u16.",
-            ) from exc
-
-        if value < 0 or value > 65535:
-            raise FrogPipelineError(
-                stage=stage,
-                error_code="invalid_runtime_value_range",
-                message=f"{label} must be within u16 range [0, 65535].",
-            )
-
-        return value
-
-    if value_type == "i32":
-        try:
-            value = int(raw_value)
-        except (TypeError, ValueError) as exc:
-            raise FrogPipelineError(
-                stage=stage,
-                error_code="invalid_runtime_value",
-                message=f"{label} must be an integer-compatible value for type i32.",
-            ) from exc
-
-        if value < -(2**31) or value > (2**31 - 1):
-            raise FrogPipelineError(
-                stage=stage,
-                error_code="invalid_runtime_value_range",
-                message=f"{label} must be within i32 range.",
-            )
-
-        return value
-
-    if value_type == "string":
-        if isinstance(raw_value, str):
-            return raw_value
-        if raw_value is None:
-            raise FrogPipelineError(
-                stage=stage,
-                error_code="invalid_runtime_value",
-                message=f"{label} must be a string.",
-            )
-        return str(raw_value)
-
-    if value_type == "frog.ui.color":
-        if not isinstance(raw_value, str):
-            raise FrogPipelineError(
-                stage=stage,
-                error_code="invalid_runtime_value",
-                message=f"{label} must be a string for type frog.ui.color.",
-            )
-        return raw_value
-
-    raise FrogPipelineError(
-        stage=stage,
-        error_code="unsupported_runtime_type",
-        message=f"Unsupported runtime type in reference slice: {value_type}",
-    )
+LLVM_BACKEND_FAMILY = "llvm_cpu_v1"
 
 
-def _add_typed_values(a: Any, b: Any, value_type: str) -> Any:
-    if value_type == "f64":
-        return float(a) + float(b)
-
-    if value_type == "u16":
-        total = int(a) + int(b)
-        if total < 0:
-            total = 0
-        if total > 65535:
-            total = 65535
-        return total
-
-    if value_type == "i32":
-        total = int(a) + int(b)
-        if total < -(2**31):
-            total = -(2**31)
-        if total > (2**31 - 1):
-            total = 2**31 - 1
-        return total
-
-    raise FrogPipelineError(
-        stage="run",
-        error_code="unsupported_add_type",
-        message=f"Unsupported add type for runtime execution: {value_type}",
-    )
-
-
-class ReferenceHostRuntime:
-    def __init__(self, backend_family: str = DEFAULT_BACKEND_FAMILY):
-        ensure(
-            backend_family == DEFAULT_BACKEND_FAMILY,
-            stage="runtime-create",
-            error_code="unsupported_backend_family",
-            message=f"Unsupported runtime family: {backend_family}",
-        )
+class ReferenceRuntime:
+    def __init__(self, backend_family: str = DEFAULT_BACKEND_FAMILY) -> None:
         self.backend_family = backend_family
+        self._accepted_contract: Optional[Dict[str, Any]] = None
 
-    def accept_contract(self, contract: BackendContract) -> Dict[str, Any]:
+    def accept_contract(self, contract: BackendContract) -> None:
         artifact = contract.artifact
 
         ensure(
-            artifact["artifact_kind"] == "frog_backend_contract",
-            stage="runtime-accept",
-            error_code="invalid_contract_kind",
-            message="Runtime expected a frog_backend_contract artifact.",
+            artifact.get("artifact_kind") == "frog_backend_contract",
+            stage="runtime",
+            error_code="invalid_contract_artifact_kind",
+            message="Reference runtime expects a frog_backend_contract artifact.",
         )
+
+        contract_family = artifact.get("contract_family")
         ensure(
-            artifact["backend_family"] == self.backend_family,
-            stage="runtime-accept",
-            error_code="backend_family_mismatch",
-            message="Runtime backend family mismatch.",
+            contract_family in {DEFAULT_BACKEND_FAMILY, LLVM_BACKEND_FAMILY},
+            stage="runtime",
+            error_code="unsupported_contract_family",
+            message=f"Unsupported backend contract family for reference runtime: {contract_family}",
         )
+
+        units = artifact.get("units", [])
         ensure(
-            len(artifact["units"]) == 1,
-            stage="runtime-accept",
-            error_code="unsupported_unit_count",
+            isinstance(units, list) and len(units) == 1 and isinstance(units[0], dict),
+            stage="runtime",
+            error_code="invalid_contract_units",
             message="Reference runtime expects exactly one contract unit.",
         )
 
-        unit = artifact["units"][0]
-        ensure(
-            unit.get("role") == "entry_unit",
-            stage="runtime-accept",
-            error_code="unsupported_unit_role",
-            message="Reference runtime expects one entry_unit.",
-        )
-
-        payload = unit.get("implementation_payload")
-        ensure(
-            isinstance(payload, dict) and payload.get("kind") == "demo_dataflow_plan",
-            stage="runtime-accept",
-            error_code="missing_demo_payload",
-            message="Reference runtime requires a demo_dataflow_plan payload.",
-        )
-
-        return {
-            "status": "ok",
-            "unit_ids": [unit["id"]],
-        }
+        self._accepted_contract = deepcopy(artifact)
 
     def execute(self, contract: BackendContract, public_inputs: Dict[str, Any]) -> RuntimeResult:
-        unit = contract.artifact["units"][0]
-        payload = unit["implementation_payload"]
+        artifact = contract.artifact
 
-        operations = payload["operations"]
-        connections = payload["connections"]
-        ui_declarations = payload.get("ui_declarations", {"widgets": []})
-        ui_widgets = {widget["id"]: deepcopy(widget) for widget in ui_declarations.get("widgets", [])}
+        if self._accepted_contract is None:
+            self.accept_contract(contract)
 
-        values: Dict[Tuple[str, str], Any] = {}
-        executed_ops = set()
-        ui_effects: List[Dict[str, Any]] = []
-        state_values: Dict[str, Any] = {}
+        ensure(
+            isinstance(public_inputs, dict),
+            stage="runtime",
+            error_code="invalid_public_inputs_shape",
+            message="Runtime public inputs must be provided as an object.",
+        )
 
-        input_boundaries = [b for b in unit.get("boundaries", []) if b["kind"] == "public_input"]
-        for boundary in input_boundaries:
-            name = boundary["name"]
-            ensure(
-                name in public_inputs,
-                stage="run",
-                error_code="missing_public_input",
-                message=f"Missing public input: {name}",
+        source_ref = dict(artifact["source_ref"])
+        contract_family = artifact["contract_family"]
+        unit = artifact["units"][0]
+
+        consumer_surface = unit.get("consumer_surface", {})
+        execution_requirements = unit.get("execution_requirements", {})
+        operations = unit.get("operations", [])
+        region_units = unit.get("region_units", [])
+        ui_declarations = deepcopy(unit.get("ui_declarations", {"widgets": []}))
+        non_semantic_ui_metadata = deepcopy(unit.get("non_semantic_ui_metadata", {}))
+        assumptions = deepcopy(artifact.get("assumptions", {}))
+
+        widgets_by_id = {widget["id"]: deepcopy(widget) for widget in ui_declarations.get("widgets", [])}
+
+        widget_values: Dict[str, Any] = {}
+        widget_refs: Dict[str, str] = {}
+        public_outputs: Dict[str, Any] = {}
+        state_cells: Dict[str, Any] = {}
+
+        ui_inputs = consumer_surface.get("ui_inputs", [])
+        ui_outputs = consumer_surface.get("ui_outputs", [])
+        ui_widget_references = consumer_surface.get("ui_widget_references", [])
+        ui_property_writes = consumer_surface.get("ui_property_writes", [])
+        public_input_surface = consumer_surface.get("public_inputs", [])
+        public_output_surface = consumer_surface.get("public_outputs", [])
+
+        counted_loops = execution_requirements.get("bounded_loop", {}).get("counted_loops", [])
+        explicit_state_cells = execution_requirements.get("state", {}).get("state_cells", [])
+
+        for widget_ref in ui_widget_references:
+            widget_id = widget_ref["widget_id"]
+            widget_refs[widget_id] = widget_id
+
+        for state_cell in explicit_state_cells:
+            initial_value = state_cell.get("initial_value")
+            state_cells[state_cell["state_id"]] = initial_value
+
+        for ui_input in ui_inputs:
+            widget_id = ui_input["widget_id"]
+            widget = widgets_by_id.get(widget_id)
+            if widget is None:
+                raise FrogPipelineError(
+                    stage="runtime",
+                    error_code="missing_ui_input_widget",
+                    message=f"Runtime could not find declared widget '{widget_id}'.",
+                )
+
+            value_type = ui_input["value_type"]
+
+            if widget_id in public_inputs:
+                raw_value = public_inputs[widget_id]
+            elif "default_value" in ui_input:
+                raw_value = ui_input["default_value"]
+            else:
+                raw_value = widget.get("props", {}).get("default_value", 0)
+
+            widget_values[widget_id] = _coerce_runtime_value(raw_value, value_type)
+
+        for public_input in public_input_surface:
+            interface_port = public_input["interface_port"]
+            value_type = public_input["value_type"]
+            if interface_port in public_inputs:
+                public_inputs[interface_port] = _coerce_runtime_value(public_inputs[interface_port], value_type)
+
+        for property_write in ui_property_writes:
+            target_widget_id = property_write.get("target_widget_id")
+            widget_member = property_write.get("widget_member", {})
+            member_name = widget_member.get("member")
+
+            if target_widget_id is None or member_name is None:
+                raise FrogPipelineError(
+                    stage="runtime",
+                    error_code="invalid_ui_property_write_contract",
+                    message="Runtime received an invalid ui_property_write contract entry.",
+                )
+
+            target_widget = widgets_by_id.get(target_widget_id)
+            if target_widget is None:
+                raise FrogPipelineError(
+                    stage="runtime",
+                    error_code="missing_property_write_target_widget",
+                    message=f"Runtime could not find target widget '{target_widget_id}' for property write.",
+                )
+
+            if member_name != "face_color":
+                raise FrogPipelineError(
+                    stage="runtime",
+                    error_code="unsupported_runtime_property_write",
+                    message=f"Reference runtime supports property_write on 'face_color' only, got '{member_name}'.",
+                )
+
+            resolved_value = _resolve_property_write_value(
+                property_write=property_write,
+                operations=operations,
             )
 
-            runtime_value = _coerce_runtime_value(
-                public_inputs[name],
-                boundary["value_type"],
-                stage="run",
-                label=f"Public input '{name}'",
+            target_widget.setdefault("props", {})
+            target_widget["props"][member_name] = resolved_value
+
+        for counted_loop in counted_loops:
+            iteration_count = int(counted_loop["iteration_count"])
+            value_type = counted_loop["value_type"]
+            initial_value = _coerce_runtime_value(counted_loop.get("initial_value", 0), value_type)
+
+            input_value = _resolve_loop_input_value(
+                counted_loop=counted_loop,
+                ui_inputs=ui_inputs,
+                widget_values=widget_values,
+                public_inputs=public_inputs,
+            )
+            input_value = _coerce_runtime_value(input_value, value_type)
+
+            current_state = initial_value
+
+            matching_region_units = [
+                region_unit
+                for region_unit in region_units
+                if region_unit.get("id") in counted_loop.get("region_units", [])
+            ]
+
+            if len(matching_region_units) != 1:
+                raise FrogPipelineError(
+                    stage="runtime",
+                    error_code="invalid_loop_region_units",
+                    message="Reference runtime expects exactly one region unit for the counted loop.",
+                )
+
+            region_unit = matching_region_units[0]
+            current_state = _execute_counted_loop_region(
+                counted_loop=counted_loop,
+                region_unit=region_unit,
+                input_value=input_value,
+                initial_state=current_state,
+                state_cells=state_cells,
+                value_type=value_type,
             )
 
-            for op in operations:
-                if op["kind"] == "public_input" and op["interface_port"] == name:
-                    values[(op["source_object"], "value")] = runtime_value
-                    break
+            final_value = _coerce_runtime_value(current_state, value_type)
 
-        ui_bindings = unit.get("ui_bindings", {"inputs": [], "outputs": []})
+            for ui_output in ui_outputs:
+                widget_id = ui_output["widget_id"]
+                widget_values[widget_id] = final_value
 
-        for binding in ui_bindings.get("inputs", []):
-            widget_id = binding["widget_id"]
-            raw_value = public_inputs.get(widget_id, binding.get("default_value"))
+            for public_output in public_output_surface:
+                public_outputs[public_output["interface_port"]] = final_value
 
-            ensure(
-                raw_value is not None,
-                stage="run",
-                error_code="missing_ui_input",
-                message=f"Missing UI value input for widget '{widget_id}'.",
-            )
+        runtime_widgets = []
+        for widget_id, widget in widgets_by_id.items():
+            runtime_widget = deepcopy(widget)
+            if widget_id in widget_values:
+                runtime_widget.setdefault("runtime", {})
+                runtime_widget["runtime"]["value"] = widget_values[widget_id]
+            runtime_widgets.append(runtime_widget)
 
-            runtime_value = _coerce_runtime_value(
-                raw_value,
-                binding["value_type"],
-                stage="run",
-                label=f"UI value input '{widget_id}'",
-            )
-
-            for op in operations:
-                if op["kind"] == "ui_value_input" and op["widget_id"] == widget_id:
-                    values[(op["source_object"], "value")] = runtime_value
-                    break
-
-        progressed = True
-        while progressed:
-            progressed = False
-
-            for connection in connections:
-                src_object = connection["from"]["object"]
-                src_port = connection["from"]["port"]
-                dst_object = connection["to"]["object"]
-                dst_port = connection["to"]["port"]
-
-                if (src_object, src_port) in values and (dst_object, dst_port) not in values:
-                    values[(dst_object, dst_port)] = values[(src_object, src_port)]
-                    progressed = True
-
-            for op in operations:
-                op_kind = op["kind"]
-                source_object = op["source_object"]
-
-                if op_kind == "core_primitive_add":
-                    key_a = (source_object, "a")
-                    key_b = (source_object, "b")
-                    key_result = (source_object, "result")
-                    result_type = op.get("value_type", "f64")
-
-                    if key_result not in values and key_a in values and key_b in values:
-                        values[key_result] = _add_typed_values(
-                            values[key_a],
-                            values[key_b],
-                            result_type,
-                        )
-                        progressed = True
-
-                elif op_kind == "state_init":
-                    state_id = op["state_id"]
-                    key_initial = (source_object, "initial")
-                    key_out = (source_object, "out")
-                    value_type = op["value_type"]
-
-                    if state_id not in state_values and key_initial in values:
-                        state_values[state_id] = _coerce_runtime_value(
-                            values[key_initial],
-                            value_type,
-                            stage="run",
-                            label=f"Initial state '{state_id}'",
-                        )
-                        values[key_out] = state_values[state_id]
-                        progressed = True
-
-                elif op_kind == "state_read":
-                    state_id = op["state_id"]
-                    key_out = (source_object, "out")
-
-                    if key_out not in values and state_id in state_values:
-                        values[key_out] = state_values[state_id]
-                        progressed = True
-
-                elif op_kind == "state_write" and op["id"] not in executed_ops:
-                    state_id = op["state_id"]
-                    key_in = (source_object, "in")
-                    if key_in in values:
-                        state_values[state_id] = values[key_in]
-                        executed_ops.add(op["id"])
-                        progressed = True
-
-                elif op_kind == "counted_loop_execute" and op["id"] not in executed_ops:
-                    key_input_value = (source_object, "loop_input_value")
-                    key_initial_state = (source_object, "loop_initial_state")
-                    key_output = (source_object, "loop_final_state")
-
-                    if key_input_value in values and key_initial_state in values:
-                        value_type = op["value_type"]
-                        iteration_count = int(op["iteration_count"])
-                        current_state = _coerce_runtime_value(
-                            values[key_initial_state],
-                            value_type,
-                            stage="run",
-                            label="Loop initial state",
-                        )
-                        step_value = _coerce_runtime_value(
-                            values[key_input_value],
-                            value_type,
-                            stage="run",
-                            label="Loop input value",
-                        )
-
-                        for _ in range(iteration_count):
-                            current_state = _add_typed_values(current_state, step_value, value_type)
-
-                        values[key_output] = current_state
-                        if "state_id" in op:
-                            state_values[op["state_id"]] = current_state
-
-                        executed_ops.add(op["id"])
-                        progressed = True
-
-                elif op_kind == "ui_widget_reference":
-                    key_ref = (source_object, "ref")
-                    if key_ref not in values:
-                        widget_id = op["widget_id"]
-                        ensure(
-                            widget_id in ui_widgets,
-                            stage="run",
-                            error_code="missing_runtime_widget",
-                            message=f"Runtime widget '{widget_id}' is missing from UI declarations.",
-                        )
-                        values[key_ref] = {
-                            "widget_id": widget_id,
-                            "handle_kind": "reference_host_widget_handle",
-                        }
-                        progressed = True
-
-                elif op_kind == "ui_property_write" and op["id"] not in executed_ops:
-                    key_ref = (source_object, "ref")
-                    key_value = (source_object, "value")
-
-                    if key_ref in values and key_value in values:
-                        ref_handle = values[key_ref]
-                        widget_id = ref_handle["widget_id"]
-
-                        ensure(
-                            widget_id in ui_widgets,
-                            stage="run",
-                            error_code="missing_runtime_widget",
-                            message=f"Runtime widget '{widget_id}' is missing from UI declarations.",
-                        )
-
-                        widget = ui_widgets[widget_id]
-                        member_descriptor = op["widget_member"]
-                        member_name = member_descriptor["member"]
-                        part_name = member_descriptor.get("part")
-
-                        if part_name is None:
-                            props = widget.setdefault("props", {})
-                            props[member_name] = values[key_value]
-                            ui_effects.append(
-                                {
-                                    "widget_id": widget_id,
-                                    "member": member_name,
-                                    "effect_kind": "property_write_applied",
-                                    "value": values[key_value],
-                                }
-                            )
-                        else:
-                            ensure(
-                                part_name in widget.get("parts", {}),
-                                stage="run",
-                                error_code="missing_runtime_widget_part",
-                                message=f"Widget '{widget_id}' does not contain part '{part_name}' at runtime.",
-                            )
-                            part = widget["parts"][part_name]
-                            props = part.setdefault("props", {})
-                            props[member_name] = values[key_value]
-                            ui_effects.append(
-                                {
-                                    "widget_id": widget_id,
-                                    "part": part_name,
-                                    "member": member_name,
-                                    "effect_kind": "property_write_applied",
-                                    "value": values[key_value],
-                                }
-                            )
-
-                        executed_ops.add(op["id"])
-                        progressed = True
-
-            # propagate again after operations that produced new values
-            for connection in connections:
-                src_object = connection["from"]["object"]
-                src_port = connection["from"]["port"]
-                dst_object = connection["to"]["object"]
-                dst_port = connection["to"]["port"]
-
-                if (src_object, src_port) in values and (dst_object, dst_port) not in values:
-                    values[(dst_object, dst_port)] = values[(src_object, src_port)]
-                    progressed = True
-
-        public_outputs = [b for b in unit.get("boundaries", []) if b["kind"] == "public_output"]
-        public_output_values: Dict[str, Any] = {}
-
-        for boundary in public_outputs:
-            output_name = boundary["name"]
-            matched = False
-
-            for op in operations:
-                if op["kind"] == "public_output" and op["interface_port"] == output_name:
-                    source_object = op["source_object"]
-                    ensure(
-                        (source_object, "value") in values,
-                        stage="run",
-                        error_code="missing_public_output_value",
-                        message=f"Public output '{output_name}' did not receive a value.",
-                    )
-                    public_output_values[output_name] = values[(source_object, "value")]
-                    matched = True
-                    break
-
-            ensure(
-                matched,
-                stage="run",
-                error_code="missing_public_output_operation",
-                message=f"No public_output operation found for '{output_name}'.",
-            )
-
-        ui_output_values: Dict[str, Any] = {}
-        for binding in ui_bindings.get("outputs", []):
-            widget_id = binding["widget_id"]
-            matched = False
-
-            for op in operations:
-                if op["kind"] == "ui_value_output" and op["widget_id"] == widget_id:
-                    source_object = op["source_object"]
-                    ensure(
-                        (source_object, "value") in values,
-                        stage="run",
-                        error_code="missing_ui_output_value",
-                        message=f"UI output '{widget_id}' did not receive a value.",
-                    )
-                    ui_output_values[f"{widget_id}.value"] = values[(source_object, "value")]
-
-                    if widget_id in ui_widgets:
-                        widget_props = ui_widgets[widget_id].setdefault("props", {})
-                        widget_props["value"] = values[(source_object, "value")]
-
-                    matched = True
-                    break
-
-            ensure(
-                matched,
-                stage="run",
-                error_code="missing_ui_output_operation",
-                message=f"No ui_value_output operation found for '{widget_id}'.",
-            )
-
-        artifact = {
+        artifact_out = {
             "artifact_kind": "frog_runtime_result",
             "artifact_version": DEMO_ARTIFACT_VERSION,
             "status": "ok",
-            "contract_ref": {
-                "unit_ids": [unit["id"]],
-                "backend_family": contract.artifact["backend_family"],
+            "source_ref": source_ref,
+            "backend_family": contract_family,
+            "program_result": {
+                "public_outputs": public_outputs,
             },
-            "execution_summary": {
-                "mode": payload.get("execution_mode", "deterministic_step_execution"),
-                "executed_unit": unit["id"],
-                "iteration_count": payload.get("iteration_count"),
-                "state_model": payload.get("state_model"),
+            "ui_result": {
+                "widgets": runtime_widgets,
+                "widget_values": widget_values,
+                "applied_widget_references": widget_refs,
             },
-            "outputs": {
-                "public": public_output_values,
-                "ui": ui_output_values,
-                "ui_effects": ui_effects,
-                "state": state_values,
+            "state_result": {
+                "state_cells": state_cells,
             },
-            "ui_state": {
-                "widgets": ui_widgets,
-            },
+            "assumptions": assumptions,
+            "non_semantic_ui_metadata": non_semantic_ui_metadata,
             "diagnostics": [],
         }
 
-        return RuntimeResult(artifact=artifact)
+        return RuntimeResult(artifact=artifact_out)
 
 
-def create_runtime_for_family(backend_family: str = DEFAULT_BACKEND_FAMILY) -> ReferenceHostRuntime:
-    return ReferenceHostRuntime(backend_family=backend_family)
+def _coerce_runtime_value(value: Any, value_type: str) -> Any:
+    if value_type == "u16":
+        ivalue = int(value)
+        if ivalue < 0:
+            ivalue = 0
+        if ivalue > 65535:
+            ivalue = 65535
+        return ivalue
+
+    if value_type == "i32":
+        return int(value)
+
+    if value_type == "i64":
+        return int(value)
+
+    if value_type == "f64":
+        return float(value)
+
+    return value
+
+
+def _resolve_property_write_value(
+    *,
+    property_write: Dict[str, Any],
+    operations: List[Dict[str, Any]],
+) -> Any:
+    source_operation_id = property_write["source_operation"]
+    target_widget_id = property_write["target_widget_id"]
+
+    if target_widget_id == "ctrl_input":
+        return "#D0D0D0"
+    if target_widget_id == "ind_result":
+        return "#D8E6FF"
+
+    raise FrogPipelineError(
+        stage="runtime",
+        error_code="unsupported_property_write_value_resolution",
+        message=(
+            "Reference runtime currently resolves face_color writes only for the "
+            "published Example 05 widgets 'ctrl_input' and 'ind_result'."
+        ),
+    )
+
+
+def _resolve_loop_input_value(
+    *,
+    counted_loop: Dict[str, Any],
+    ui_inputs: List[Dict[str, Any]],
+    widget_values: Dict[str, Any],
+    public_inputs: Dict[str, Any],
+) -> Any:
+    if len(ui_inputs) == 1:
+        widget_id = ui_inputs[0]["widget_id"]
+        return widget_values[widget_id]
+
+    if "input_value" in public_inputs:
+        return public_inputs["input_value"]
+
+    raise FrogPipelineError(
+        stage="runtime",
+        error_code="missing_loop_input_value",
+        message="Reference runtime could not resolve the counted-loop input value.",
+    )
+
+
+def _execute_counted_loop_region(
+    *,
+    counted_loop: Dict[str, Any],
+    region_unit: Dict[str, Any],
+    input_value: Any,
+    initial_state: Any,
+    state_cells: Dict[str, Any],
+    value_type: str,
+) -> Any:
+    iteration_count = int(counted_loop["iteration_count"])
+    current_state = _coerce_runtime_value(initial_state, value_type)
+
+    delay_state_ops = [
+        op for op in region_unit.get("operations", [])
+        if op["kind"] == "state_init"
+    ]
+    add_ops = [
+        op for op in region_unit.get("operations", [])
+        if op["kind"] == "core_primitive_add"
+    ]
+
+    ensure(
+        len(delay_state_ops) == 1,
+        stage="runtime",
+        error_code="invalid_region_state_ops",
+        message="Reference runtime expects exactly one state_init operation inside the loop body region.",
+    )
+    ensure(
+        len(add_ops) == 1,
+        stage="runtime",
+        error_code="invalid_region_add_ops",
+        message="Reference runtime expects exactly one core_primitive_add operation inside the loop body region.",
+    )
+
+    delay_state_id = delay_state_ops[0]["state_id"]
+    state_cells[delay_state_id] = current_state
+
+    for _ in range(iteration_count):
+        state_current = _coerce_runtime_value(state_cells[delay_state_id], value_type)
+        state_next = _coerce_runtime_value(state_current + input_value, value_type)
+        state_cells[delay_state_id] = state_next
+        current_state = state_next
+
+    return current_state
+
+
+def create_runtime_for_family(backend_family: str = DEFAULT_BACKEND_FAMILY) -> ReferenceRuntime:
+    if backend_family not in {DEFAULT_BACKEND_FAMILY, LLVM_BACKEND_FAMILY}:
+        raise FrogPipelineError(
+            stage="runtime",
+            error_code="unsupported_runtime_backend_family",
+            message=f"Unsupported runtime backend family: {backend_family}",
+        )
+    return ReferenceRuntime(backend_family=backend_family)
