@@ -2,31 +2,33 @@
   <img src="../../FROG logo.svg" alt="FROG logo" width="200" />
 </p>
 
-<h1 align="center">🐸 Reference Internal Artifacts</h1>
+<h1 align="center">Reference Internal Artifacts</h1>
 
 <p align="center">
-  Minimal internal JSON artifact shapes for the non-normative FROG reference pipeline<br/>
+  <strong>Internal artifact taxonomy used by the FROG reference implementation across load, validation, derivation, lowering, contract emission, and runtime execution</strong><br/>
   <em>FROG — Free Open Graphical Language</em>
 </p>
 
 <hr/>
 
 <h2>Contents</h2>
-
 <ul>
   <li><a href="#overview">1. Overview</a></li>
   <li><a href="#status-and-boundary">2. Status and Boundary</a></li>
-  <li><a href="#design-rules">3. Design Rules</a></li>
-  <li><a href="#artifact-sequence">4. Artifact Sequence</a></li>
-  <li><a href="#loaded-source-artifact">5. Loaded Source Artifact</a></li>
-  <li><a href="#validation-result-artifact">6. Validation Result Artifact</a></li>
-  <li><a href="#derived-execution-ir-artifact">7. Derived Execution IR Artifact</a></li>
-  <li><a href="#lowered-form-artifact">8. Lowered Form Artifact</a></li>
-  <li><a href="#backend-contract-artifact">9. Backend Contract Artifact</a></li>
-  <li><a href="#runtime-result-artifact">10. Runtime Result Artifact</a></li>
-  <li><a href="#artifact-linking-rules">11. Artifact Linking Rules</a></li>
-  <li><a href="#first-slice-expectations">12. First-Slice Expectations</a></li>
-  <li><a href="#summary">13. Summary</a></li>
+  <li><a href="#design-goal">3. Design Goal</a></li>
+  <li><a href="#artifact-family-map">4. Artifact Family Map</a></li>
+  <li><a href="#artifact-kinds">5. Artifact Kinds</a></li>
+  <li><a href="#loader-artifacts">6. Loader Artifacts</a></li>
+  <li><a href="#validation-artifacts">7. Validation Artifacts</a></li>
+  <li><a href="#execution-ir-derivation-artifacts">8. Execution IR Derivation Artifacts</a></li>
+  <li><a href="#lowering-artifacts">9. Lowering Artifacts</a></li>
+  <li><a href="#backend-contract-artifacts">10. Backend Contract Artifacts</a></li>
+  <li><a href="#runtime-artifacts">11. Runtime Artifacts</a></li>
+  <li><a href="#ui-host-artifacts">12. UI Host Artifacts</a></li>
+  <li><a href="#subset-honesty-and-unsupported-status">13. Subset Honesty and Unsupported Status</a></li>
+  <li><a href="#example-05-minimum-artifact-chain">14. Example 05 Minimum Artifact Chain</a></li>
+  <li><a href="#stability-rule">15. Stability Rule</a></li>
+  <li><a href="#summary">16. Summary</a></li>
 </ul>
 
 <hr/>
@@ -34,22 +36,23 @@
 <h2 id="overview">1. Overview</h2>
 
 <p>
-This document defines <strong>minimal internal JSON artifact shapes</strong> for the first FROG reference pipeline.
-These artifacts are intended to make the reference implementation directly codable while preserving the already-published stage boundaries:
+This document defines the internal artifact taxonomy used by the reference implementation workspace.
 </p>
 
-<pre><code>canonical source
-  -&gt; loaded source
-  -&gt; validation result
-  -&gt; derived Execution IR
-  -&gt; lowered form
-  -&gt; backend contract
-  -&gt; runtime result
-</code></pre>
+<p>
+Its purpose is to keep implementation stages explicit and to ensure that the following documents all talk about the same internal objects:
+</p>
+
+<ul>
+  <li><code>Readme.md</code>,</li>
+  <li><code>pipeline.md</code>,</li>
+  <li><code>frogc.md</code>,</li>
+  <li><code>example-artifact-requirements.md</code>.</li>
+</ul>
 
 <p>
-The goal is not to standardize a universal transport for all future implementations.
-The goal is to define one compact, disciplined internal shape for the first non-normative reference implementation.
+This document does not standardize repository-wide normative syntax for every possible implementation artifact.
+It defines a coherent internal naming and boundary model for the reference implementation workspace.
 </p>
 
 <hr/>
@@ -57,538 +60,552 @@ The goal is to define one compact, disciplined internal shape for the first non-
 <h2 id="status-and-boundary">2. Status and Boundary</h2>
 
 <p>
-All artifact shapes in this document are <strong>non-normative</strong>.
-They do not redefine:
+All artifact kinds defined here are non-normative implementation artifacts.
+They do not replace:
 </p>
 
 <ul>
-  <li>canonical source structure,</li>
-  <li>validated semantic truth,</li>
-  <li>the normative open Execution IR model,</li>
-  <li>the normative backend contract boundary.</li>
+  <li>canonical source,</li>
+  <li>structural validity,</li>
+  <li>validated semantic meaning,</li>
+  <li>canonical Execution IR,</li>
+  <li>lowering law,</li>
+  <li>backend contract law.</li>
 </ul>
 
 <p>
-Instead, they provide one implementation-local materialization for the first reference pipeline.
-If an artifact shape becomes inconvenient or incomplete, the implementation may revise it.
-What must remain stable is the published architectural separation between source, validation, open IR, lowering, backend handoff, and private realization.
+Instead, they are the reference implementation's working surfaces for consuming the published repository architecture in a recoverable way.
 </p>
+
+<p>
+The key rule is:
+</p>
+
+<pre><code>internal artifact
+    !=
+normative language layer
+</code></pre>
 
 <hr/>
 
-<h2 id="design-rules">3. Design Rules</h2>
+<h2 id="design-goal">3. Design Goal</h2>
+
+<p>
+The internal artifact model should satisfy the following goals:
+</p>
 
 <ul>
-  <li>Each artifact should have a clear stage owner.</li>
-  <li>Each artifact should record its stage and version explicitly.</li>
-  <li>Each artifact should carry source identity where useful.</li>
-  <li>Validation failure should stop derivation.</li>
-  <li>Invalid source must not produce a “successful” later artifact.</li>
-  <li>Artifacts should remain simple enough to inspect by hand.</li>
-  <li>The first slice should prefer explicit structure over premature compression.</li>
+  <li><strong>stage clarity</strong> — each artifact should correspond to a clear pipeline stage,</li>
+  <li><strong>traceability</strong> — source attribution should remain recoverable,</li>
+  <li><strong>subset honesty</strong> — unsupported-but-valid situations should remain explicit,</li>
+  <li><strong>cross-document consistency</strong> — the same artifact names should appear coherently in CLI, pipeline, and example requirements,</li>
+  <li><strong>bounded usefulness</strong> — the first priority slice should be fully representable through these artifacts.</li>
 </ul>
 
 <hr/>
 
-<h2 id="artifact-sequence">4. Artifact Sequence</h2>
+<h2 id="artifact-family-map">4. Artifact Family Map</h2>
 
 <p>
-The reference pipeline should materialize artifacts conceptually equivalent to:
+The intended internal artifact family map is:
 </p>
 
-<pre><code>LoadedSource
-ValidationResult
-DerivedExecutionIR
-LoweredForm
-BackendContractArtifact
-RuntimeResult
+<pre><code>source file
+    |
+    v
+frog_loaded_source
+    |
+    v
+frog_validation_result
+    |
+    v
+frog_derived_execution_ir
+    |
+    v
+frog_lowered_form
+    |
+    v
+frog_backend_contract
+    |
+    v
+frog_runtime_result
 </code></pre>
 
 <p>
-Those names are implementation-facing and may be changed in code,
-but their stage meaning should remain stable.
+Optional implementation-side helper artifacts MAY appear between those main stages, but they SHOULD map clearly to one of those families rather than inventing a competing pipeline vocabulary.
 </p>
 
 <hr/>
 
-<h2 id="loaded-source-artifact">5. Loaded Source Artifact</h2>
+<h2 id="artifact-kinds">5. Artifact Kinds</h2>
 
 <p>
-The loaded-source artifact is the output of the loader.
-It should remain close to canonical source while adding just enough wrapper structure for diagnostics and stage chaining.
+The primary artifact kinds used by the reference implementation are:
+</p>
+
+<ul>
+  <li><code>frog_loaded_source</code>,</li>
+  <li><code>frog_validation_result</code>,</li>
+  <li><code>frog_derived_execution_ir</code>,</li>
+  <li><code>frog_lowered_form</code>,</li>
+  <li><code>frog_backend_contract</code>,</li>
+  <li><code>frog_runtime_result</code>.</li>
+</ul>
+
+<p>
+Each artifact SHOULD carry:
+</p>
+
+<ul>
+  <li><code>artifact_kind</code>,</li>
+  <li><code>artifact_version</code>,</li>
+  <li><code>source_ref</code> when meaningful,</li>
+  <li><code>program_id</code> when meaningful,</li>
+  <li><code>stage_ref</code> or equivalent stage identity when useful.</li>
+</ul>
+
+<p>
+A useful common envelope pattern is:
+</p>
+
+<pre><code>{
+  "artifact_kind": "&lt;kind&gt;",
+  "artifact_version": "0.1",
+  "source_ref": {
+    "path": "&lt;path&gt;"
+  },
+  "program_id": "&lt;program_id&gt;",
+  "stage_ref": "&lt;stage_name&gt;"
+}</code></pre>
+
+<hr/>
+
+<h2 id="loader-artifacts">6. Loader Artifacts</h2>
+
+<p>
+The loader stage SHOULD produce a <code>frog_loaded_source</code> artifact.
 </p>
 
 <p>
-Minimal conceptual shape:
+Its job is to record:
+</p>
+
+<ul>
+  <li>the source path,</li>
+  <li>the decoded top-level object,</li>
+  <li>the load status,</li>
+  <li>and any immediate decoding diagnostics.</li>
+</ul>
+
+<p>
+Conceptual shape:
 </p>
 
 <pre><code>{
   "artifact_kind": "frog_loaded_source",
-  "artifact_version": "0.1-dev",
-  "source": {
-    "path": "Examples/01_pure_addition/main.frog",
-    "content_hash": "sha256:...",
-    "spec_version": "0.1"
+  "artifact_version": "0.1",
+  "source_ref": {
+    "path": "Examples/05_bounded_ui_accumulator/main.frog"
   },
-  "document": {
-    "...": "verbatim decoded canonical source object"
+  "status": "ok",
+  "decoded_source": {
+    "&lt;top_level_sections&gt;": {}
   },
   "diagnostics": []
 }</code></pre>
 
 <p>
-Notes:
+A failed load SHOULD still return a recoverable artifact surface when possible, but with:
 </p>
 
 <ul>
-  <li><code>document</code> should remain as close as possible to the canonical source object.</li>
-  <li>No semantic truth should be claimed yet.</li>
-  <li>Loader diagnostics may exist here, but a successful loaded-source artifact is still only a source-intake artifact.</li>
+  <li><code>status</code> set to a load failure state,</li>
+  <li>and no claim that validation succeeded.</li>
 </ul>
 
 <hr/>
 
-<h2 id="validation-result-artifact">6. Validation Result Artifact</h2>
+<h2 id="validation-artifacts">7. Validation Artifacts</h2>
 
 <p>
-The validation-result artifact is the first stage that may claim success or failure against the selected published rules for the MVP slice.
+The validation stage SHOULD produce a <code>frog_validation_result</code> artifact.
 </p>
 
 <p>
-Minimal conceptual shape:
+Its job is to distinguish at least:
+</p>
+
+<ul>
+  <li>load failure,</li>
+  <li>structural invalidity,</li>
+  <li>semantic rejection,</li>
+  <li>unsupported-but-valid status,</li>
+  <li>successful validation.</li>
+</ul>
+
+<p>
+Conceptual shape:
 </p>
 
 <pre><code>{
   "artifact_kind": "frog_validation_result",
-  "artifact_version": "0.1-dev",
+  "artifact_version": "0.1",
   "source_ref": {
-    "path": "Examples/01_pure_addition/main.frog",
-    "content_hash": "sha256:..."
+    "path": "Examples/05_bounded_ui_accumulator/main.frog"
   },
   "status": "ok",
   "validated_subset": {
-    "core_primitives": true,
-    "public_interface": true,
-    "widget_value": false,
-    "widget_reference": false,
-    "ui_object_primitives": false,
-    "explicit_local_memory": false
+    "widget_value": true,
+    "widget_reference": true,
+    "ui_object_primitives": true,
+    "explicit_local_memory": true,
+    "bounded_loop": true
   },
   "validated_program": {
-    "program_id": "prog:01_pure_addition",
-    "entry_kind": "single_frog_program",
-    "type_facts": [],
-    "resolved_entities": {
-      "interface_inputs": [],
-      "interface_outputs": [],
-      "widgets": [],
-      "primitive_refs": []
-    }
+    "program_id": "prog:05_bounded_ui_accumulator",
+    "entry_kind": "single_frog_program"
   },
   "diagnostics": []
 }</code></pre>
 
 <p>
-For a failed validation:
-</p>
-
-<pre><code>{
-  "artifact_kind": "frog_validation_result",
-  "artifact_version": "0.1-dev",
-  "source_ref": {
-    "path": "Conformance/invalid/illegal_feedback_without_explicit_memory.case"
-  },
-  "status": "error",
-  "error_code": "illegal_feedback_without_explicit_memory",
-  "diagnostics": [
-    {
-      "severity": "error",
-      "message": "Directed cycle without explicit local-memory primitive.",
-      "source_anchor": {
-        "node_ids": ["add_1"],
-        "edge_ids": ["e3", "e4"]
-      }
-    }
-  ]
-}</code></pre>
-
-<p>
-Rules:
+This artifact is the first one that must explicitly record subset posture.
+It is the correct place to say:
 </p>
 
 <ul>
-  <li><code>status = ok</code> is required before derivation may begin.</li>
-  <li><code>validated_program</code> is an implementation-facing validated basis, not a new normative layer.</li>
-  <li>The first slice may keep <code>type_facts</code> and <code>resolved_entities</code> simple.</li>
+  <li>supported and accepted,</li>
+  <li>rejected,</li>
+  <li>or valid in the broader published model but unsupported by the current reference subset.</li>
 </ul>
 
 <hr/>
 
-<h2 id="derived-execution-ir-artifact">7. Derived Execution IR Artifact</h2>
+<h2 id="execution-ir-derivation-artifacts">8. Execution IR Derivation Artifacts</h2>
 
 <p>
-The derived Execution IR artifact is the output of the deriver.
-It must preserve attribution and the distinctions required by the published derivation rules,
-but it remains implementation-local in transport shape.
+The derivation stage SHOULD produce a <code>frog_derived_execution_ir</code> artifact.
 </p>
 
 <p>
-Minimal conceptual shape:
+Its job is to expose an attributable execution-facing representation derived from validated meaning.
+</p>
+
+<p>
+Conceptual shape:
 </p>
 
 <pre><code>{
   "artifact_kind": "frog_derived_execution_ir",
-  "artifact_version": "0.1-dev",
+  "artifact_version": "0.1",
   "source_ref": {
-    "path": "Examples/02_ui_value_roundtrip/main.frog",
-    "content_hash": "sha256:..."
+    "path": "Examples/05_bounded_ui_accumulator/main.frog"
   },
-  "validation_ref": {
-    "status": "ok",
-    "program_id": "prog:02_ui_value_roundtrip"
-  },
+  "program_id": "prog:05_bounded_ui_accumulator",
   "execution_unit": {
     "id": "unit:main",
-    "family": "execution_unit",
-    "objects": [
-      {
-        "id": "obj:ctrl_a_value",
-        "kind": "widget_value_participation",
-        "widget_id": "ctrl_a",
-        "direction": "out",
-        "value_type": "f64",
-        "sources": ["diagram.node:ctrl_a_value"]
-      },
-      {
-        "id": "obj:add_1",
-        "kind": "primitive",
-        "primitive_ref": "frog.core.add",
-        "ports": [
-          { "id": "a", "direction": "in", "value_type": "f64" },
-          { "id": "b", "direction": "in", "value_type": "f64" },
-          { "id": "result", "direction": "out", "value_type": "f64" }
-        ],
-        "sources": ["diagram.node:add_1"]
-      },
-      {
-        "id": "obj:ind_result_value",
-        "kind": "widget_value_participation",
-        "widget_id": "ind_result",
-        "direction": "in",
-        "value_type": "f64",
-        "sources": ["diagram.node:ind_result_value"]
-      }
-    ],
-    "connections": [
-      {
-        "id": "conn:e1",
-        "from": { "object": "obj:ctrl_a_value", "port": "value" },
-        "to": { "object": "obj:add_1", "port": "a" },
-        "sources": ["diagram.edge:e1"]
-      }
-    ],
-    "support_objects": []
+    "objects": [],
+    "connections": []
   },
   "diagnostics": []
 }</code></pre>
 
 <p>
-Rules:
+This artifact SHOULD preserve at least:
 </p>
 
 <ul>
-  <li>The first slice may use simple string IDs.</li>
-  <li><code>sources</code> should keep source attribution explicit.</li>
-  <li>The artifact must preserve distinctions such as:
-    <ul>
-      <li><code>interface_input</code> versus <code>interface_output</code>,</li>
-      <li><code>widget_value</code> versus <code>widget_reference</code>,</li>
-      <li>widget-reference participation versus UI-object primitive operation,</li>
-      <li>explicit local memory versus ordinary primitive execution.</li>
-    </ul>
-  </li>
+  <li>execution-unit identity,</li>
+  <li>boundary objects,</li>
+  <li>primitive identity,</li>
+  <li>explicit state identity when present,</li>
+  <li>distinction between semantic and presentation-only surfaces.</li>
 </ul>
 
 <hr/>
 
-<h2 id="lowered-form-artifact">8. Lowered Form Artifact</h2>
+<h2 id="lowering-artifacts">9. Lowering Artifacts</h2>
 
 <p>
-The lowered-form artifact is the output of the lowerer for one chosen backend family.
-It is more specialized than the open Execution IR,
-but it is still not yet the standardized backend contract.
+The lowering stage SHOULD produce a <code>frog_lowered_form</code> artifact.
 </p>
 
 <p>
-Minimal conceptual shape:
+Its job is to specialize the open execution-facing representation for one selected backend family.
+</p>
+
+<p>
+Conceptual shape:
 </p>
 
 <pre><code>{
   "artifact_kind": "frog_lowered_form",
-  "artifact_version": "0.1-dev",
+  "artifact_version": "0.1",
+  "program_id": "prog:05_bounded_ui_accumulator",
   "backend_family": "reference_host_runtime_ui_binding",
-  "source_ref": {
-    "path": "Examples/03_ui_property_write/main.frog",
-    "content_hash": "sha256:..."
-  },
-  "ir_ref": {
-    "execution_unit_id": "unit:main"
-  },
-  "assumptions": {
-    "deterministic_step_execution": true,
-    "ui_binding_enabled": true,
-    "ui_event_model": "not_standardized"
-  },
-  "units": [
-    {
-      "id": "lowered:main",
-      "role": "entry_unit",
-      "operations": [
-        {
-          "id": "op:status_in",
-          "kind": "public_input"
-        },
-        {
-          "id": "op:ctrl_gain_ref",
-          "kind": "ui_reference_handle",
-          "widget_id": "ctrl_gain"
-        },
-        {
-          "id": "op:write_label_text",
-          "kind": "ui_property_write",
-          "member": {
-            "part": "label",
-            "member": "text"
-          }
-        }
-      ],
-      "wires": [
-        {
-          "id": "w:e1",
-          "from": "op:status_in",
-          "to": "op:write_label_text",
-          "input": "value"
-        },
-        {
-          "id": "w:e2",
-          "from": "op:ctrl_gain_ref",
-          "to": "op:write_label_text",
-          "input": "ref"
-        }
-      ]
-    }
-  ],
+  "assumptions": {},
+  "units": [],
   "diagnostics": []
 }</code></pre>
 
 <p>
-Rules:
+This artifact SHOULD make explicit:
 </p>
 
 <ul>
-  <li>The lowered form may introduce backend-family-specialized operation kinds.</li>
-  <li>It must not erase attribution or semantic distinctions that still matter to the backend contract.</li>
-  <li>The first slice should keep the lowered form readable rather than aggressively flattened.</li>
+  <li>selected backend family,</li>
+  <li>lowered units,</li>
+  <li>specialization assumptions,</li>
+  <li>any narrowed runtime expectations.</li>
 </ul>
+
+<p>
+The lowered form remains downstream from canonical Execution IR.
+It is not a replacement for it.
+</p>
 
 <hr/>
 
-<h2 id="backend-contract-artifact">9. Backend Contract Artifact</h2>
+<h2 id="backend-contract-artifacts">10. Backend Contract Artifacts</h2>
 
 <p>
-The backend-contract artifact is the output of the contract emitter.
-It should match the published backend-contract boundary closely enough to be consumed by the reference runtime.
+The contract emission stage SHOULD produce a <code>frog_backend_contract</code> artifact.
 </p>
 
 <p>
-Minimal conceptual shape:
+Its job is to declare what the runtime or downstream backend-side consumer must accept and execute.
+</p>
+
+<p>
+Conceptual shape:
 </p>
 
 <pre><code>{
   "artifact_kind": "frog_backend_contract",
   "artifact_version": "0.1",
+  "program_id": "prog:05_bounded_ui_accumulator",
   "backend_family": "reference_host_runtime_ui_binding",
-  "producer": "reference_contract_emitter",
-  "compatibility": "family_specific",
-  "source_ref": {
-    "path": "Examples/04_stateful_feedback_delay/main.frog",
-    "content_hash": "sha256:..."
-  },
-  "assumptions": {
-    "profiles_required": [],
-    "state_model": "explicit_local_memory_preserved",
-    "scheduling": {
-      "fixed": true,
-      "family_rule": "deterministic_step_execution"
-    },
-    "ui_binding": {
-      "enabled": false
-    }
-  },
-  "units": [
-    {
-      "id": "main",
-      "role": "entry_unit",
-      "boundaries": [
-        {
-          "id": "b:x",
-          "kind": "public_input",
-          "value_type": "f64"
-        },
-        {
-          "id": "b:y",
-          "kind": "public_output",
-          "value_type": "f64"
-        }
-      ],
-      "state": [
-        {
-          "id": "state:delay_1",
-          "kind": "explicit_local_memory",
-          "initial": 0.0,
-          "source_origin": ["diagram.node:delay_1"]
-        }
-      ],
-      "operations": [],
-      "attribution": {
-        "source_mapping_available": true,
-        "fault_anchor_support": true,
-        "debug_anchor_support": true
-      }
-    }
-  ],
+  "assumptions": {},
+  "units": [],
   "unsupported": [],
   "diagnostics": []
 }</code></pre>
 
 <p>
-Rules:
+This artifact SHOULD make explicit:
 </p>
 
 <ul>
-  <li>The contract should be directly consumable by the reference runtime.</li>
-  <li>It must carry declared assumptions, not hidden ones.</li>
-  <li>The first slice should preserve state and UI distinctions where relevant to the selected family.</li>
+  <li>unit identities,</li>
+  <li>state-cell obligations when present,</li>
+  <li>UI bindings when present,</li>
+  <li>public boundary obligations when present,</li>
+  <li>unsupported surfaces preserved only as non-semantic metadata.</li>
 </ul>
 
 <hr/>
 
-<h2 id="runtime-result-artifact">10. Runtime Result Artifact</h2>
+<h2 id="runtime-artifacts">11. Runtime Artifacts</h2>
 
 <p>
-The runtime-result artifact is the output of the runtime stage.
-It is not a normative layer.
-It is an execution summary for the reference implementation.
+The runtime stage SHOULD produce a <code>frog_runtime_result</code> artifact.
 </p>
 
 <p>
-Minimal conceptual shape:
+Its job is to record the outcome of runtime-side consumption of the backend contract.
+</p>
+
+<p>
+Conceptual shape:
 </p>
 
 <pre><code>{
   "artifact_kind": "frog_runtime_result",
-  "artifact_version": "0.1-dev",
-  "backend_family": "reference_host_runtime_ui_binding",
+  "artifact_version": "0.1",
+  "program_id": "prog:05_bounded_ui_accumulator",
+  "status": "ok",
   "contract_ref": {
     "unit_ids": ["main"]
   },
-  "status": "ok",
-  "execution_summary": {
-    "mode": "deterministic_step_execution",
-    "state_initialized": true,
-    "ui_bound": true
-  },
-  "outputs": {
-    "public": {},
-    "ui": {}
-  },
+  "execution_summary": {},
+  "outputs": {},
   "diagnostics": []
 }</code></pre>
 
 <p>
-For a rejected contract:
-</p>
-
-<pre><code>{
-  "artifact_kind": "frog_runtime_result",
-  "artifact_version": "0.1-dev",
-  "backend_family": "reference_host_runtime_ui_binding",
-  "status": "error",
-  "error_code": "unsupported_ui_event_model",
-  "diagnostics": [
-    {
-      "severity": "error",
-      "message": "Contract requires a UI event model not supported by the reference family."
-    }
-  ]
-}</code></pre>
-
-<p>
-Rules:
+This artifact SHOULD distinguish:
 </p>
 
 <ul>
-  <li>The runtime must distinguish contract rejection from runtime execution failure.</li>
-  <li>The artifact may expose implementation-local execution summary fields.</li>
-  <li>The first slice should keep this artifact simple and diagnostic-oriented.</li>
+  <li>runtime success,</li>
+  <li>explicit runtime rejection,</li>
+  <li>runtime failure after contract acceptance.</li>
+</ul>
+
+<p>
+It SHOULD also preserve observable result surfaces separately, such as:
+</p>
+
+<ul>
+  <li>public outputs,</li>
+  <li>UI outputs,</li>
+  <li>UI effects,</li>
+  <li>explicit state surfaces.</li>
 </ul>
 
 <hr/>
 
-<h2 id="artifact-linking-rules">11. Artifact Linking Rules</h2>
+<h2 id="ui-host-artifacts">12. UI Host Artifacts</h2>
 
 <p>
-The first reference pipeline should maintain explicit links between artifacts:
+For UI-bearing slices, the implementation MAY use additional internal UI-host-facing helper artifacts.
+</p>
+
+<p>
+Examples include:
 </p>
 
 <ul>
-  <li><code>LoadedSource</code> links to canonical file identity,</li>
-  <li><code>ValidationResult</code> links back to source identity,</li>
-  <li><code>DerivedExecutionIR</code> links back to validation and source anchors,</li>
-  <li><code>LoweredForm</code> links back to the derived IR and backend family,</li>
-  <li><code>BackendContractArtifact</code> links back to the lowered form and source identity,</li>
-  <li><code>RuntimeResult</code> links back to the accepted backend contract.</li>
+  <li><code>frog_ui_binding_plan</code>,</li>
+  <li><code>frog_ui_host_state</code>,</li>
+  <li><code>frog_ui_effect_log</code>.</li>
 </ul>
 
 <p>
-The goal is not to freeze one global identity architecture.
-The goal is to keep the first reference pipeline debuggable and auditable.
+Such helper artifacts MAY be useful internally, especially for:
+</p>
+
+<ul>
+  <li>widget value reads and writes,</li>
+  <li>widget reference resolution,</li>
+  <li>property-write application,</li>
+  <li>UI effect reporting.</li>
+</ul>
+
+<p>
+However:
+</p>
+
+<ul>
+  <li>they SHOULD map clearly to the main artifact family chain,</li>
+  <li>they MUST NOT become hidden substitutes for the main stage artifacts,</li>
+  <li>they MUST NOT be mistaken for normative specification layers.</li>
+</ul>
+
+<hr/>
+
+<h2 id="subset-honesty-and-unsupported-status">13. Subset Honesty and Unsupported Status</h2>
+
+<p>
+Every stage that can encounter a broader published feature than the current reference subset supports SHOULD remain explicit about unsupported status.
+</p>
+
+<p>
+A useful diagnostic distinction is:
+</p>
+
+<ul>
+  <li><strong>rejected</strong> — invalid even in the published model being claimed against,</li>
+  <li><strong>unsupported_but_valid</strong> — valid in the broader published model, but outside the current reference subset,</li>
+  <li><strong>implementation_private_extension</strong> — available only as an explicit implementation-side extension.</li>
+</ul>
+
+<p>
+This distinction is especially important when the repository architecture already permits richer future widget-class families than the subset actually exercised by the reference pipeline.
 </p>
 
 <hr/>
 
-<h2 id="first-slice-expectations">12. First-Slice Expectations</h2>
+<h2 id="example-05-minimum-artifact-chain">14. Example 05 Minimum Artifact Chain</h2>
 
 <p>
-For the first slice:
+For the first priority slice:
+</p>
+
+<pre><code>Examples/05_bounded_ui_accumulator/main.frog</code></pre>
+
+<p>
+the minimum expected internal artifact chain is:
+</p>
+
+<pre><code>frog_loaded_source
+    -&gt; frog_validation_result
+    -&gt; frog_derived_execution_ir
+    -&gt; frog_lowered_form
+    -&gt; frog_backend_contract
+    -&gt; frog_runtime_result
+</code></pre>
+
+<p>
+The minimum observable facts that this chain must preserve include:
 </p>
 
 <ul>
-  <li>the loaded source artifact should remain close to the file,</li>
-  <li>the validation artifact should clearly distinguish success and failure,</li>
-  <li>the derived IR artifact should preserve attribution and core distinctions,</li>
-  <li>the lowered form should remain family-oriented but still readable,</li>
-  <li>the backend contract should be directly consumable by the reference runtime,</li>
-  <li>the runtime result should clearly distinguish success, rejection, and failure.</li>
+  <li>the existence of the u16 control and indicator widgets,</li>
+  <li>the distinction between <code>widget_value</code> and <code>widget_reference</code>,</li>
+  <li>the bounded loop count of five,</li>
+  <li>the explicit state path through <code>frog.core.delay</code>,</li>
+  <li>the final public output,</li>
+  <li>the final indicator value,</li>
+  <li>the separate reporting of presentation-property writes such as <code>face_color</code>,</li>
+  <li>the non-semantic status of source-persisted <code>face_template</code>.</li>
+</ul>
+
+<hr/>
+
+<h2 id="stability-rule">15. Stability Rule</h2>
+
+<p>
+The exact field spelling of these internal artifacts MAY evolve as the reference implementation grows.
+</p>
+
+<p>
+However, the following SHOULD remain stable unless a documented reference-side migration is introduced:
+</p>
+
+<ul>
+  <li>the primary artifact-kind names,</li>
+  <li>their stage ordering,</li>
+  <li>their semantic intent,</li>
+  <li>their role in CLI output and artifact requirements.</li>
 </ul>
 
 <p>
-The first slice should optimize for clarity and codability,
-not for compression or long-term transport standardization.
+This rule exists so that:
+</p>
+
+<ul>
+  <li><code>frogc.md</code>,</li>
+  <li><code>pipeline.md</code>,</li>
+  <li><code>example-artifact-requirements.md</code>,</li>
+  <li>and implementation code</li>
+</ul>
+
+<p>
+do not drift into competing internal vocabularies.
 </p>
 
 <hr/>
 
-<h2 id="summary">13. Summary</h2>
+<h2 id="summary">16. Summary</h2>
 
 <p>
-This document defines one minimal set of internal JSON artifacts for the first FROG reference pipeline.
-They are intentionally non-normative and implementation-local,
-but they provide a concrete coding target for the first reference toolchain:
-load,
-validate,
-derive open Execution IR,
-lower,
-emit a backend contract,
-and run.
+This document defines the reference implementation's internal artifact taxonomy.
+</p>
+
+<p>
+Its purpose is to keep the workspace aligned on one stage-separated internal chain:
+</p>
+
+<ul>
+  <li><code>frog_loaded_source</code>,</li>
+  <li><code>frog_validation_result</code>,</li>
+  <li><code>frog_derived_execution_ir</code>,</li>
+  <li><code>frog_lowered_form</code>,</li>
+  <li><code>frog_backend_contract</code>,</li>
+  <li><code>frog_runtime_result</code>.</li>
+</ul>
+
+<p>
+That alignment makes it possible for the reference implementation to remain explicit, traceable, and honest about what it really executes today, especially for the first priority bounded UI accumulator slice.
 </p>
