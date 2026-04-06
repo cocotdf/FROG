@@ -20,27 +20,28 @@
   <li><a href="#ownership-boundary">5. Ownership Boundary</a></li>
   <li><a href="#core-principles">6. Core Principles</a></li>
   <li><a href="#class-contract-model">7. Class Contract Model</a></li>
-  <li><a href="#widget-class-descriptor">8. Widget Class Descriptor</a></li>
-  <li><a href="#member-model">9. Member Model</a></li>
-  <li><a href="#property-contract">10. Property Contract</a></li>
-  <li><a href="#method-contract">11. Method Contract</a></li>
-  <li><a href="#event-contract">12. Event Contract</a></li>
-  <li><a href="#part-contract">13. Part Contract</a></li>
-  <li><a href="#member-addressing">14. Member Addressing</a></li>
-  <li><a href="#property-and-method-node-synthesis">15. Property and Method Node Synthesis</a></li>
-  <li><a href="#value-member-model">16. Value Member Model</a></li>
-  <li><a href="#capability-and-profile-gating">17. Capability and Profile Gating</a></li>
-  <li><a href="#lifecycle-and-state-boundary">18. Lifecycle and State Boundary</a></li>
-  <li><a href="#design-time-vs-runtime-owned-members">19. Design-Time vs Runtime-Owned Members</a></li>
-  <li><a href="#host-requirements">20. Host Requirements</a></li>
-  <li><a href="#canonical-source-shape">21. Canonical Source Shape</a></li>
-  <li><a href="#validation-rules">22. Validation Rules</a></li>
-  <li><a href="#diagnostics">23. Diagnostics</a></li>
-  <li><a href="#conformance-implications">24. Conformance Implications</a></li>
-  <li><a href="#non-goals">25. Non-Goals</a></li>
-  <li><a href="#minimal-v01-standardization-posture">26. Minimal v0.1 Standardization Posture</a></li>
-  <li><a href="#illustrative-example">27. Illustrative Example</a></li>
-  <li><a href="#summary">28. Summary</a></li>
+  <li><a href="#general-extensibility-posture">8. General Extensibility Posture</a></li>
+  <li><a href="#widget-class-descriptor">9. Widget Class Descriptor</a></li>
+  <li><a href="#member-model">10. Member Model</a></li>
+  <li><a href="#property-contract">11. Property Contract</a></li>
+  <li><a href="#method-contract">12. Method Contract</a></li>
+  <li><a href="#event-contract">13. Event Contract</a></li>
+  <li><a href="#part-contract">14. Part Contract</a></li>
+  <li><a href="#member-addressing">15. Member Addressing</a></li>
+  <li><a href="#property-and-method-node-synthesis">16. Property and Method Node Synthesis</a></li>
+  <li><a href="#value-member-model">17. Value Member Model</a></li>
+  <li><a href="#capability-and-profile-gating">18. Capability and Profile Gating</a></li>
+  <li><a href="#lifecycle-and-state-boundary">19. Lifecycle and State Boundary</a></li>
+  <li><a href="#design-time-vs-runtime-owned-members">20. Design-Time vs Runtime-Owned Members</a></li>
+  <li><a href="#host-requirements">21. Host Requirements</a></li>
+  <li><a href="#canonical-source-shape">22. Canonical Source Shape</a></li>
+  <li><a href="#validation-rules">23. Validation Rules</a></li>
+  <li><a href="#diagnostics">24. Diagnostics</a></li>
+  <li><a href="#conformance-implications">25. Conformance Implications</a></li>
+  <li><a href="#non-goals">26. Non-Goals</a></li>
+  <li><a href="#minimal-v01-standardization-posture">27. Minimal v0.1 Standardization Posture</a></li>
+  <li><a href="#illustrative-example">28. Illustrative Example</a></li>
+  <li><a href="#summary">29. Summary</a></li>
 </ul>
 
 <hr/>
@@ -68,6 +69,11 @@ The purpose of this document is to make widget classes sufficiently explicit tha
 </ul>
 
 <p>
+This document defines a general class-contract model capable of supporting a wide range of widget families over time.
+It does not claim that every possible widget family is already standardized in v0.1.
+</p>
+
+<p>
 This document does not define repository-wide version policy.
 Top-level <code>spec_version</code> identifies the source-format compatibility target of the containing <code>.frog</code> file, while the published specification corpus version and cumulative version-transition posture remain governed centrally in <code>Versioning/Readme.md</code>.
 </p>
@@ -91,7 +97,8 @@ It defines:
   <li>how property, method, and event surfaces are described at class level,</li>
   <li>how a class contract constrains legal object-style access,</li>
   <li>how IDEs may synthesize property-node and method-node surfaces from the class contract,</li>
-  <li>how profile and capability gating constrain widget availability.</li>
+  <li>how profile and capability gating constrain widget availability,</li>
+  <li>and how the contract model remains open to richer future widget families without forcing them all into v0.1.</li>
 </ul>
 
 <p>
@@ -118,7 +125,7 @@ This document does not define:
   <li><code>Widget interaction.md</code> defines diagram-side interaction with widget references through standardized executable forms such as property read, property write, and method invoke.</li>
   <li><code>Type.md</code> defines the type-expression system used by ordinary typed members.</li>
   <li><code>Diagram.md</code> defines the authoritative executable graph.</li>
-  <li><code>Profiles/</code> may define additional widget classes, capability gates, or host-side realization requirements.</li>
+  <li><code>Profiles/</code> may define additional widget classes, capability gates, standardized widget-class families, or host-side realization requirements.</li>
   <li><code>Versioning/Readme.md</code> defines the centralized distinction between specification corpus version, top-level <code>spec_version</code>, and program artifact versioning.</li>
 </ul>
 
@@ -179,6 +186,10 @@ If widget classes are underspecified, the following become implementation-privat
 This document closes that gap by defining the normative class-side contract behind widget instances.
 </p>
 
+<p>
+It also exists so that FROG can remain open to richer widget-class families over time without having to redefine the contract model each time a new class family is introduced.
+</p>
+
 <hr/>
 
 <h2 id="ownership-boundary">5. Ownership Boundary</h2>
@@ -210,6 +221,10 @@ This document does not own:
   <li>repository-wide version-transition doctrine.</li>
 </ul>
 
+<p>
+This document therefore defines the general contract model itself, while richer families and family-specific standardizations may be published elsewhere without changing these ownership boundaries.
+</p>
+
 <hr/>
 
 <h2 id="core-principles">6. Core Principles</h2>
@@ -224,6 +239,7 @@ This document does not own:
   <li>IDE convenience MUST NOT become hidden semantic law.</li>
   <li>Runtime realization MAY be richer than the standard contract, but non-standard richness MUST NOT be required for canonical source validity.</li>
   <li>Ordinary value typing, widget-reference identity, and UI sequencing MUST remain distinct.</li>
+  <li>The class-contract model MUST be general enough to support richer later widget families than those minimally standardized in v0.1.</li>
   <li>Later cumulative source-format versions SHOULD normally extend earlier valid class-contract surfaces rather than silently redefine them, unless an explicit breaking boundary is declared centrally.</li>
 </ul>
 
@@ -271,7 +287,51 @@ It does not itself serialize one runtime object instance, one runtime handle, or
 
 <hr/>
 
-<h2 id="widget-class-descriptor">8. Widget Class Descriptor</h2>
+<h2 id="general-extensibility-posture">8. General Extensibility Posture</h2>
+
+<p>
+The class-contract model defined by this document is intentionally general.
+</p>
+
+<p>
+It is designed so that FROG can support over time:
+</p>
+
+<ul>
+  <li>additional standardized widget classes,</li>
+  <li>richer standardized widget-class families,</li>
+  <li>profile-owned capability families,</li>
+  <li>recognized external class-family packages,</li>
+  <li>and implementation support claims that remain explicit and inspectable.</li>
+</ul>
+
+<p>
+The key rule is:
+</p>
+
+<pre><code>general contract capability
+    !=
+full family standardization in v0.1
+</code></pre>
+
+<p>
+Accordingly:
+</p>
+
+<ul>
+  <li>this document defines a contract model that is open-ended by construction,</li>
+  <li>v0.1 standardizes only a minimal executable subset elsewhere in the published corpus,</li>
+  <li>future families MAY be much richer while still remaining compatible with this contract model.</li>
+</ul>
+
+<p>
+This document therefore SHOULD NOT be interpreted as limiting FROG to only the widget classes explicitly standardized in the minimal v0.1 subset.
+It defines the class-contract model that those classes use and that richer families may also use.
+</p>
+
+<hr/>
+
+<h2 id="widget-class-descriptor">9. Widget Class Descriptor</h2>
 
 <p>
 Every widget class contract MUST provide a stable class descriptor.
@@ -314,7 +374,7 @@ A class-contract <code>version</code> identifies the contract revision of that w
 
 <hr/>
 
-<h2 id="member-model">9. Member Model</h2>
+<h2 id="member-model">10. Member Model</h2>
 
 <p>
 A widget member is a named object-surface element exposed by a widget class.
@@ -355,7 +415,7 @@ If a member consumes or emits interaction tokens, those token categories MUST re
 
 <hr/>
 
-<h2 id="property-contract">10. Property Contract</h2>
+<h2 id="property-contract">11. Property Contract</h2>
 
 <p>
 A property descriptor defines a named readable and/or writable member exposed by a widget class or part.
@@ -413,7 +473,7 @@ When a property is runtime-owned, that runtime ownership MUST NOT make canonical
 
 <hr/>
 
-<h2 id="method-contract">11. Method Contract</h2>
+<h2 id="method-contract">12. Method Contract</h2>
 
 <p>
 A method descriptor defines a named invocable operation exposed by a widget class or part.
@@ -468,7 +528,7 @@ When a method requires explicit UI ordering, that requirement MUST remain explic
 
 <hr/>
 
-<h2 id="event-contract">12. Event Contract</h2>
+<h2 id="event-contract">13. Event Contract</h2>
 
 <p>
 An event descriptor defines an observable occurrence emitted by a widget class or part.
@@ -509,7 +569,7 @@ This document does not standardize one mandatory event-runtime transport represe
 
 <hr/>
 
-<h2 id="part-contract">13. Part Contract</h2>
+<h2 id="part-contract">14. Part Contract</h2>
 
 <p>
 A part is a named object-owned sub-surface exposed by a widget class.
@@ -551,7 +611,7 @@ Part surfaces MUST remain explicitly attributable to the owning widget class con
 
 <hr/>
 
-<h2 id="member-addressing">14. Member Addressing</h2>
+<h2 id="member-addressing">15. Member Addressing</h2>
 
 <p>
 Object-style access MUST be addressable against the class contract.
@@ -597,7 +657,7 @@ The executable transport of a widget reference and any explicit sequencing requi
 
 <hr/>
 
-<h2 id="property-and-method-node-synthesis">15. Property and Method Node Synthesis</h2>
+<h2 id="property-and-method-node-synthesis">16. Property and Method Node Synthesis</h2>
 
 <p>
 A conforming IDE MAY synthesize property-node and method-node authoring surfaces from the widget class contract.
@@ -637,7 +697,7 @@ IDE synthesis MUST NOT silently collapse:
 
 <hr/>
 
-<h2 id="value-member-model">16. Value Member Model</h2>
+<h2 id="value-member-model">17. Value Member Model</h2>
 
 <p>
 For value-carrying widget classes, the relation between the main widget value and the object model MUST remain explicit.
@@ -684,7 +744,7 @@ A value-carrying class MUST therefore not be interpreted as making widget refere
 
 <hr/>
 
-<h2 id="capability-and-profile-gating">17. Capability and Profile Gating</h2>
+<h2 id="capability-and-profile-gating">18. Capability and Profile Gating</h2>
 
 <p>
 A widget class or member MAY be gated by a profile, a host capability, or both.
@@ -721,7 +781,7 @@ Later cumulative source-format versions MAY add new classes, parts, members, or 
 
 <hr/>
 
-<h2 id="lifecycle-and-state-boundary">18. Lifecycle and State Boundary</h2>
+<h2 id="lifecycle-and-state-boundary">19. Lifecycle and State Boundary</h2>
 
 <p>
 A widget class contract MAY declare lifecycle-related requirements for its members.
@@ -745,7 +805,7 @@ The class contract MUST NOT require one hidden runtime lifecycle implementation.
 
 <hr/>
 
-<h2 id="design-time-vs-runtime-owned-members">19. Design-Time vs Runtime-Owned Members</h2>
+<h2 id="design-time-vs-runtime-owned-members">20. Design-Time vs Runtime-Owned Members</h2>
 
 <p>
 The class contract MUST distinguish at least the following ownership classes:
@@ -777,7 +837,7 @@ Runtime-owned members MAY still be readable or observable at runtime, but they M
 
 <hr/>
 
-<h2 id="host-requirements">20. Host Requirements</h2>
+<h2 id="host-requirements">21. Host Requirements</h2>
 
 <p>
 A widget class contract MAY impose host requirements for realization.
@@ -806,7 +866,7 @@ Host requirements MUST remain explicit rather than being inferred from one priva
 
 <hr/>
 
-<h2 id="canonical-source-shape">21. Canonical Source Shape</h2>
+<h2 id="canonical-source-shape">22. Canonical Source Shape</h2>
 
 <p>
 Canonical v0.1 source does not require every FROG file to embed full widget class descriptors inline.
@@ -882,7 +942,7 @@ The example above uses canonical ordinary value type expressions such as <code>f
 
 <hr/>
 
-<h2 id="validation-rules">22. Validation Rules</h2>
+<h2 id="validation-rules">23. Validation Rules</h2>
 
 <p>
 Validators MUST enforce at least the following rules when class contracts are used normatively:
@@ -912,9 +972,13 @@ Validators SHOULD additionally preserve the following distinctions explicitly:
   <li>design-time legality versus runtime legality.</li>
 </ul>
 
+<p>
+Validators SHOULD also diagnose when an implementation-specific rich class surface is presented as though it were already part of the standardized minimal v0.1 subset without an explicit published contract.
+</p>
+
 <hr/>
 
-<h2 id="diagnostics">23. Diagnostics</h2>
+<h2 id="diagnostics">24. Diagnostics</h2>
 
 <p>
 Validators SHOULD diagnose at least the following classes of errors:
@@ -939,7 +1003,7 @@ Validators SHOULD diagnose at least the following classes of errors:
 
 <hr/>
 
-<h2 id="conformance-implications">24. Conformance Implications</h2>
+<h2 id="conformance-implications">25. Conformance Implications</h2>
 
 <p>
 When widget class contracts participate in conformance material, positive and negative cases SHOULD verify at least:
@@ -966,9 +1030,19 @@ Conformance cases SHOULD also verify that implementations do not silently collap
   <li>host-specific richness into normative class-contract requirements.</li>
 </ul>
 
+<p>
+Conformance SHOULD also distinguish clearly between:
+</p>
+
+<ul>
+  <li>what belongs to the minimal standardized v0.1 subset,</li>
+  <li>what belongs to richer but explicitly published class families,</li>
+  <li>and what is implementation-private only.</li>
+</ul>
+
 <hr/>
 
-<h2 id="non-goals">25. Non-Goals</h2>
+<h2 id="non-goals">26. Non-Goals</h2>
 
 <p>
 This document is not:
@@ -986,7 +1060,7 @@ This document is not:
 
 <hr/>
 
-<h2 id="minimal-v01-standardization-posture">26. Minimal v0.1 Standardization Posture</h2>
+<h2 id="minimal-v01-standardization-posture">27. Minimal v0.1 Standardization Posture</h2>
 
 <p>
 For v0.1, the minimum required standardization posture is:
@@ -1002,6 +1076,10 @@ For v0.1, the minimum required standardization posture is:
 </ul>
 
 <p>
+This posture defines the minimum coherent contract surface, not the maximum future richness of the FROG widget ecosystem.
+</p>
+
+<p>
 Future versions MAY extend this contract model with:
 </p>
 
@@ -1011,7 +1089,8 @@ Future versions MAY extend this contract model with:
   <li>collection-like parts,</li>
   <li>stronger host accessibility contracts,</li>
   <li>richer capability taxonomies,</li>
-  <li>more formal IDE exposure recommendations.</li>
+  <li>more formal IDE exposure recommendations,</li>
+  <li>and richer standardized widget families published through compatible profile surfaces.</li>
 </ul>
 
 <p>
@@ -1020,7 +1099,7 @@ Such growth SHOULD normally remain cumulative and centrally governed through the
 
 <hr/>
 
-<h2 id="illustrative-example">27. Illustrative Example</h2>
+<h2 id="illustrative-example">28. Illustrative Example</h2>
 
 <p>
 Conceptually:
@@ -1063,9 +1142,13 @@ An IDE may then expose:
   <li>diagnostics when a forbidden access mode is attempted.</li>
 </ul>
 
+<p>
+The same general contract model may later support richer families than this illustrative example without changing the architectural ownership boundaries defined by this document.
+</p>
+
 <hr/>
 
-<h2 id="summary">28. Summary</h2>
+<h2 id="summary">29. Summary</h2>
 
 <p>
 The widget class contract is the normative class-side object surface that makes widget interaction explicit, inspectable, and implementation-independent.
@@ -1099,3 +1182,7 @@ The document also keeps explicit the distinctions between:
   <li>local class-contract revision,</li>
   <li>centralized repository-wide version governance.</li>
 </ul>
+
+<p>
+The contract model is intentionally general enough to support open-ended widget-class families over time, while the minimal v0.1 standardized subset remains deliberately conservative.
+</p>
