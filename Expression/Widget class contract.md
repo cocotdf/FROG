@@ -54,7 +54,7 @@ This document defines the class-level contract model for FROG widgets.
 
 <p>
 A widget instance in canonical source is not only a placed front-panel element.
-It is an instance of a widget class whose exposed members, parts, events, and interaction surface must be describable in a stable, inspectable, implementation-independent way.
+It is an instance of a widget class whose exposed members, parts, events, value behavior, and interaction surface must be describable in a stable, inspectable, implementation-independent way.
 </p>
 
 <p>
@@ -73,6 +73,18 @@ The purpose of this document is to make widget classes sufficiently explicit tha
 This document defines a general class-contract model capable of supporting a wide range of widget families over time.
 It does not claim that every possible widget family is already standardized in v0.1.
 </p>
+
+<p>
+For the first complete executable corridor of v0.1, this document also standardizes one deliberately small but operational widget family sufficient to support:
+</p>
+
+<ul>
+  <li>one numeric control,</li>
+  <li>one numeric indicator,</li>
+  <li>natural value participation through <code>widget_value</code>,</li>
+  <li>minimal object-style property access through <code>widget_reference</code>,</li>
+  <li>and source-persisted front-face presentation metadata through <code>face_color</code> and <code>face_template</code>.</li>
+</ul>
 
 <p>
 This document does not define repository-wide version policy.
@@ -121,8 +133,8 @@ This document does not define:
 <h2 id="relation-with-other-specifications">3. Relation with Other Specifications</h2>
 
 <ul>
-  <li><code>Front panel.md</code> defines widget composition, containment, and serialized panel placement.</li>
-  <li><code>Widget.md</code> defines the widget object model at instance level, including value-carrying behavior, parts, properties, methods, and events.</li>
+  <li><code>Front panel.md</code> defines widget composition, containment, serialized panel placement, and source-level front-face persistence posture.</li>
+  <li><code>Widget.md</code> defines the widget object model at instance level, including value-carrying behavior, parts, properties, methods, events, and presentation metadata at source level.</li>
   <li><code>Widget interaction.md</code> defines diagram-side interaction with widget references through standardized executable forms such as property read, property write, and method invoke.</li>
   <li><code>Type.md</code> defines the type-expression system used by ordinary typed members.</li>
   <li><code>Diagram.md</code> defines the authoritative executable graph.</li>
@@ -134,7 +146,7 @@ This document does not define:
 Accordingly:
 </p>
 
-<pre><code>Front panel           = widget containment and placement
+<pre><code>Front panel           = widget containment, placement, and source-owned front-face persistence
 Widget                = instance-side widget object model
 Widget class contract = class-level object contract
 Widget interaction    = executable object access from the diagram
@@ -158,6 +170,12 @@ instance-side widget declaration
 class-side member legality
     !=
 primitive-local interaction semantics
+
+source-owned presentation metadata
+    !=
+class identity
+    !=
+executable program meaning
 </code></pre>
 
 <hr/>
@@ -180,7 +198,8 @@ If widget classes are underspecified, the following become implementation-privat
   <li>which parts may be targeted,</li>
   <li>how IDEs expose property-node and method-node surfaces,</li>
   <li>which accesses are valid at design time versus runtime,</li>
-  <li>which features are profile-gated or host-gated.</li>
+  <li>which features are profile-gated or host-gated,</li>
+  <li>which source-persisted front-face properties are legal.</li>
 </ul>
 
 <p>
@@ -203,7 +222,8 @@ This document owns:
   <li>class-level event exposure,</li>
   <li>member addressing rules,</li>
   <li>class-driven IDE exposure rules for object-style access,</li>
-  <li>profile and capability gates on widget members.</li>
+  <li>profile and capability gates on widget members,</li>
+  <li>the legality of class-recognized source-persisted presentation members.</li>
 </ul>
 
 <p>
@@ -236,8 +256,10 @@ This document therefore defines the general contract model itself, while richer 
   <li>Design-time metadata and runtime-owned state MUST remain distinct.</li>
   <li>IDE convenience MUST NOT become hidden semantic law.</li>
   <li>Runtime realization MAY be richer than the standard contract, but non-standard richness MUST NOT be required for canonical source validity.</li>
-  <li>Ordinary value typing, widget-reference identity, and UI sequencing MUST remain distinct.</li>
+  <li>Ordinary value typing, widget-reference identity, UI sequencing, and front-face presentation metadata MUST remain distinct.</li>
   <li>The class-contract model MUST be general enough to support richer later widget families than those minimally standardized in v0.1.</li>
+  <li>A source-persisted presentation property MUST NOT by itself create executable semantics.</li>
+  <li>A front-face template resource MUST NOT replace the class contract as the source of widget meaning.</li>
   <li>Later cumulative source-format versions SHOULD normally extend earlier valid class-contract surfaces rather than silently redefine them, unless an explicit breaking boundary is declared centrally.</li>
 </ul>
 
@@ -314,7 +336,7 @@ Accordingly:
 
 <ul>
   <li>this document defines a contract model that is open-ended by construction,</li>
-  <li>v0.1 standardizes only a minimal executable subset elsewhere in the published corpus,</li>
+  <li>v0.1 standardizes only a minimal executable subset in the published corpus,</li>
   <li>future families MAY be much richer while still remaining compatible with this contract model.</li>
 </ul>
 
@@ -391,6 +413,17 @@ A member contract MUST define at least:
   <li>its persistence posture where applicable.</li>
 </ul>
 
+<p>
+For presentation-oriented properties, the contract SHOULD also define whether the property is:
+</p>
+
+<ul>
+  <li>source-persisted,</li>
+  <li>host-interpreted,</li>
+  <li>runtime-writable,</li>
+  <li>and semantically non-executable.</li>
+</ul>
+
 <hr/>
 
 <h2 id="property-contract">11. Property Contract</h2>
@@ -437,6 +470,11 @@ Standard persistence categories are:
 
 <p>
 A source-persisted presentation property MUST NOT by itself create executable semantics.
+</p>
+
+<p>
+A property contract MAY be readable and writable without being executable program state.
+This is the standard posture for presentation properties such as <code>face_color</code>.
 </p>
 
 <hr/>
@@ -528,6 +566,17 @@ object-style property access
 The existence of a property called <code>value</code> does not collapse the natural value path into generic object-style access.
 </p>
 
+<p>
+Likewise:
+</p>
+
+<pre><code>source-owned face_template persistence
+    !=
+object-style value access
+    !=
+executable dataflow behavior
+</code></pre>
+
 <hr/>
 
 <h2 id="value-member-model">17. Value Member Model</h2>
@@ -554,6 +603,11 @@ The following distinction MUST remain explicit:
     !=
 property_read/property_write(value member path)
 </code></pre>
+
+<p>
+The first complete executable slice standardizes support for <code>u16</code> as the required value type of the minimal numeric control and indicator classes.
+Other value types MAY be standardized later without changing the contract model.
+</p>
 
 <hr/>
 
@@ -629,6 +683,17 @@ A source-persisted design-time presentation property such as <code>face_template
   <li>MUST NOT create hidden methods, hidden events, or hidden dataflow behavior.</li>
 </ul>
 
+<p>
+A source-persisted presentation property such as <code>face_color</code>:
+</p>
+
+<ul>
+  <li>MAY participate in runtime property writes if the class contract explicitly allows it,</li>
+  <li>MAY influence realized appearance,</li>
+  <li>MUST remain distinct from the primary value,</li>
+  <li>MUST NOT be treated as executable program state.</li>
+</ul>
+
 <hr/>
 
 <h2 id="host-requirements">21. Host Requirements</h2>
@@ -647,6 +712,11 @@ A conforming host that claims support for the minimal first executable slice MUS
 
 <p>
 If a host does not support the template family referenced by <code>face_template</code>, it MAY ignore the template while still preserving widget class behavior.
+</p>
+
+<p>
+If a host does support the template family, that support remains a realization concern.
+It MUST NOT redefine the source-level class contract.
 </p>
 
 <hr/>
@@ -720,7 +790,8 @@ Validators SHOULD diagnose at least the following classes of errors:
   <li>use of host-gated member without required host capability,</li>
   <li>ambiguous or invalid part addressing,</li>
   <li>illegal dependence on runtime-only property for source validity,</li>
-  <li>confusion between ordinary value typing and interaction-token categories.</li>
+  <li>confusion between ordinary value typing and interaction-token categories,</li>
+  <li>attempt to treat a front-face template resource as though it were a method, event, or executable semantic surface.</li>
 </ul>
 
 <hr/>
@@ -739,7 +810,8 @@ When widget class contracts participate in conformance material, positive and ne
   <li>profile-gated availability,</li>
   <li>host-gated availability,</li>
   <li>design-time versus runtime access constraints,</li>
-  <li>value-member consistency for value-carrying widgets.</li>
+  <li>value-member consistency for value-carrying widgets,</li>
+  <li>legality of persisted presentation members such as <code>face_color</code> and <code>face_template</code>.</li>
 </ul>
 
 <p>
@@ -749,7 +821,8 @@ Conformance cases SHOULD also verify that implementations do not silently collap
 <ul>
   <li>natural value access into generic object-style access,</li>
   <li>runtime-owned members into required serialized source members,</li>
-  <li>host-specific richness into normative class-contract requirements.</li>
+  <li>host-specific richness into normative class-contract requirements,</li>
+  <li>front-face template interpretation into executable semantic law.</li>
 </ul>
 
 <hr/>
@@ -961,10 +1034,10 @@ Conceptually:
 <pre><code>Widget class: frog.ui.standard.numeric_control
 
   Widget-level properties
-    - value         : u16                    read/write
-    - caption       : string                 read/write (design-time source-owned)
-    - face_color    : frog.ui.color          read/write
-    - face_template : frog.ui.face_template_ref  read/write (design-time source-owned)
+    - value         : u16                         read/write
+    - caption       : string                      read/write (design-time source-owned)
+    - face_color    : frog.ui.color               read/write
+    - face_template : frog.ui.face_template_ref   read/write (design-time source-owned)
 
   Widget-level methods
     - none required for the first executable slice
