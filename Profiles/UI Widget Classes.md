@@ -5,7 +5,7 @@
 <h1 align="center">FROG UI Widget Classes Profile</h1>
 
 <p align="center">
-  <strong>Optional standardized widget-class catalog and class-contract profile for rich front-panel object ecosystems</strong><br/>
+  <strong>Optional standardized widget-class catalog and class-contract profile for portable front-panel object ecosystems and the first executable UI slice</strong><br/>
   <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -31,7 +31,7 @@
   <li><a href="#interaction-node-consumption">16. Interaction-Node Consumption</a></li>
   <li><a href="#execution-facing-posture">17. Execution-Facing Posture</a></li>
   <li><a href="#profile-identification-and-claims">18. Profile Identification and Claims</a></li>
-  <li><a href="#minimal-standard-rich-ui-family">19. Minimal Standard Rich-UI Family</a></li>
+  <li><a href="#minimal-executable-widget-family">19. Minimal Executable Widget Family for the First Vertical Slice</a></li>
   <li><a href="#validation-rules">20. Validation Rules</a></li>
   <li><a href="#examples">21. Examples</a></li>
   <li><a href="#out-of-scope-for-v01">22. Out of Scope for v0.1</a></li>
@@ -47,7 +47,7 @@ This document defines an optional FROG profile for standardized UI widget classe
 </p>
 
 <p>
-The profile exists to make rich front-panel widget ecosystems portable, inspectable, and tool-consumable without collapsing widget-class definition into:
+The profile exists to make front-panel widget ecosystems portable, inspectable, and tool-consumable without collapsing widget-class definition into:
 </p>
 
 <ul>
@@ -55,11 +55,12 @@ The profile exists to make rich front-panel widget ecosystems portable, inspecta
   <li>intrinsic <code>frog.ui.*</code> interaction primitive ownership,</li>
   <li>runtime-private widget handles,</li>
   <li>one IDE's internal object model,</li>
-  <li>or one rendering toolkit's private reflection system.</li>
+  <li>one rendering toolkit's private reflection system,</li>
+  <li>or one host's private skinning system.</li>
 </ul>
 
 <p>
-The goal is to provide a standardized class-catalog layer that lets a conforming IDE, validator, IR pipeline, and runtime-facing backend understand what a widget class exposes:
+The goal is to provide a standardized class-catalog layer that lets a conforming IDE, validator, IR pipeline, lowering pipeline, backend-facing handoff, and runtime-facing host understand what a widget class exposes:
 </p>
 
 <ul>
@@ -70,7 +71,8 @@ The goal is to provide a standardized class-catalog layer that lets a conforming
   <li>its properties,</li>
   <li>its methods,</li>
   <li>its events,</li>
-  <li>and its design-time / runtime applicability boundaries.</li>
+  <li>its design-time / runtime applicability boundaries,</li>
+  <li>and its presentation-surface boundaries where the class supports front-panel skinning metadata.</li>
 </ul>
 
 <p>
@@ -83,23 +85,37 @@ Expression/Widget class contract.md
         +
 Expression/Widget interaction.md
         +
+Expression/Front panel.md
+        +
 Libraries/UI.md
         +
 IDE Program Model consumption
         +
-execution-facing lowering / backend handoff
+execution-facing preservation / lowering / backend handoff
 </code></pre>
 
 <p>
 without turning one private widget implementation into language law.
 </p>
 
+<p>
+For the current repository campaign, this profile also defines the smallest portable widget-class family needed to support the first complete executable vertical slice that includes:
+</p>
+
+<ul>
+  <li>one numeric control,</li>
+  <li>one numeric indicator,</li>
+  <li>natural <code>widget_value</code> participation,</li>
+  <li>minimal object-style property access,</li>
+  <li>and one optional SVG-based front-panel face template that remains non-semantic.</li>
+</ul>
+
 <hr/>
 
 <h2 id="purpose">2. Purpose of this Profile</h2>
 
 <p>
-This profile is intended to support richer UI-object ecosystems than the minimal built-in baseline defined directly in the core widget model.
+This profile is intended to support richer UI-object ecosystems than the minimal built-in baseline defined directly in the core widget model, while still remaining useful for the smallest serious executable corridor.
 </p>
 
 <p>
@@ -112,7 +128,8 @@ In particular, it exists so that:
   <li>part addressing can be validated against the owning widget class,</li>
   <li>event surfaces can be named and typed in a portable way,</li>
   <li>design-time editors can expose class-aware authoring behavior without redefining source meaning,</li>
-  <li>runtime-facing systems can consume an explicit class contract without depending on one editor-private reflection API.</li>
+  <li>runtime-facing systems can consume an explicit class contract without depending on one editor-private reflection API,</li>
+  <li>a portable presentation surface can be attached to a widget class without turning rendering metadata into executable semantics.</li>
 </ul>
 
 <p>
@@ -132,6 +149,7 @@ Within the FROG repository architecture:
   - canonical source representation of widget instances
   - class-side widget contract shape
   - diagram-side widget interaction shape
+  - front-panel composition
 
 Libraries/
   - intrinsic executable frog.ui interaction primitives
@@ -154,9 +172,11 @@ This profile lives in <code>Profiles/</code> because it standardizes an optional
 </p>
 
 <ul>
-  <li>richer widget-class catalogs,</li>
+  <li>portable widget-class catalogs,</li>
   <li>portable class contracts,</li>
   <li>tool-consumable event / property / method metadata,</li>
+  <li>part-aware object surfaces,</li>
+  <li>portable presentation-surface declarations,</li>
   <li>and profile-specific UI object ecosystems.</li>
 </ul>
 
@@ -177,10 +197,12 @@ For FROG v0.1, this profile defines:
   <li>the purpose and boundaries of a portable widget-class catalog,</li>
   <li>the required shape of a widget class contract,</li>
   <li>the required shape of property, method, event, and part contracts,</li>
-  <li>the distinction between design-time and runtime-visible members,</li>
+  <li>the distinction between semantic value members and non-semantic presentation members,</li>
+  <li>the distinction between design-time, source-persisted, runtime-readable, and runtime-writable members,</li>
   <li>the minimum information a conforming IDE needs to expose class-aware authoring,</li>
   <li>the minimum information a validator needs to check widget interaction against a class catalog,</li>
-  <li>the minimum information that may flow into execution-facing systems without forcing one runtime-private representation.</li>
+  <li>the minimum information that may flow into execution-facing systems without forcing one runtime-private representation,</li>
+  <li>and the first minimal standardized widget-class family needed by the first executable UI-bearing vertical slice.</li>
 </ul>
 
 <hr/>
@@ -197,10 +219,11 @@ This profile does not define:
   <li>general diagram structure,</li>
   <li>one mandatory rendering engine,</li>
   <li>pixel-perfect cross-runtime UI equivalence,</li>
-  <li>one mandatory event loop implementation,</li>
+  <li>one mandatory event-loop implementation,</li>
   <li>one runtime-private object-handle representation,</li>
   <li>one mandatory backend payload syntax,</li>
-  <li>one mandatory commercial widget toolkit.</li>
+  <li>one mandatory commercial widget toolkit,</li>
+  <li>one mandatory SVG renderer or one mandatory skin-resource packaging format.</li>
 </ul>
 
 <p>
@@ -211,7 +234,8 @@ This profile also does not redefine:
   <li>front-panel composition ownership,</li>
   <li>the authoritative executable graph,</li>
   <li>the generic backend handoff,</li>
-  <li>one universal runtime-side widget ABI.</li>
+  <li>one universal runtime-side widget ABI,</li>
+  <li>or the semantic meaning of programs outside widget-class surface definition.</li>
 </ul>
 
 <hr/>
@@ -251,6 +275,14 @@ runtime-private widget implementation
 widget class contract
     !=
 one IDE's private authoring model
+
+presentation template
+    !=
+widget semantic identity
+
+presentation template
+    !=
+widget value model
 </code></pre>
 
 <p>
@@ -274,11 +306,16 @@ A richer widget ecosystem does not belong in the minimal mandatory core because:
   <li>different execution environments may support different UI capability families,</li>
   <li>different IDEs may surface different authoring ergonomics,</li>
   <li>different runtimes may support different event, theme, and host-bridge capabilities,</li>
-  <li>third-party class families should be standardizable without redefining the whole language core.</li>
+  <li>third-party class families should be standardizable without redefining the whole language core,</li>
+  <li>presentation systems may vary substantially even when class contracts remain portable.</li>
 </ul>
 
 <p>
-Accordingly, rich widget-class families and their portable class-catalog rules are profile-owned.
+Accordingly, richer widget-class families and their portable class-catalog rules are profile-owned.
+</p>
+
+<p>
+This document also uses that profile-owned space to publish the smallest executable widget family needed by the first end-to-end UI-bearing vertical slice, while still keeping that family outside the irreducible language core.
 </p>
 
 <hr/>
@@ -300,7 +337,7 @@ A class contract MUST define enough information for all of the following:
   <li>IDE property-node and method-node generation,</li>
   <li>part-aware addressing validation,</li>
   <li>type-safe executable interaction,</li>
-  <li>execution-facing lowering and backend handoff preparation.</li>
+  <li>execution-facing preservation, lowering, and backend handoff preparation.</li>
 </ul>
 
 <p>
@@ -317,6 +354,27 @@ A class contract MAY be provided by:
 However, whenever a tool claims conformance to this profile, the class contract MUST remain inspectable and machine-consumable in an open form.
 </p>
 
+<p>
+The core rule for this profile is:
+</p>
+
+<pre><code>primary value contract
+    !=
+object-style property contract
+    !=
+presentation template contract
+</code></pre>
+
+<p>
+A value-carrying widget class therefore has at least three potentially distinct surfaces:
+</p>
+
+<ul>
+  <li>its primary value surface, typically consumed through <code>widget_value</code>,</li>
+  <li>its object-style member surface, consumed through <code>widget_reference</code> and <code>frog.ui.*</code> interaction primitives,</li>
+  <li>its optional presentation-template surface, consumed by design-time tools or runtime-capable hosts without changing executable semantics.</li>
+</ul>
+
 <hr/>
 
 <h2 id="widget-class-contract">9. Widget Class Contract</h2>
@@ -331,7 +389,7 @@ A widget class contract MUST define at least the following fields conceptually:
   <li><strong>display_name</strong> — human-readable class name,</li>
   <li><strong>description</strong> — concise class purpose,</li>
   <li><strong>allowed_roles</strong> — valid widget roles for the class,</li>
-  <li><strong>value_model</strong> — whether the class carries a primary value, and if so under what type constraints,</li>
+  <li><strong>value_model</strong> — whether the class carries a primary value, under what type constraints, and through which primary member,</li>
   <li><strong>container_capability</strong> — whether the class may own child widgets,</li>
   <li><strong>parts</strong> — declared part contracts,</li>
   <li><strong>properties</strong> — declared property contracts,</li>
@@ -339,7 +397,8 @@ A widget class contract MUST define at least the following fields conceptually:
   <li><strong>events</strong> — declared event contracts,</li>
   <li><strong>capabilities</strong> — optional host / UI capability requirements,</li>
   <li><strong>design_time_rules</strong> — authoring-side availability and editing constraints,</li>
-  <li><strong>runtime_rules</strong> — execution-facing applicability constraints.</li>
+  <li><strong>runtime_rules</strong> — execution-facing applicability constraints,</li>
+  <li><strong>presentation_rules</strong> — optional rules governing non-semantic presentation members and templates.</li>
 </ul>
 
 <p>
@@ -358,6 +417,17 @@ A class contract SHOULD also define:
 A class contract MUST NOT require one IDE-private binary metadata format in order to be understood.
 </p>
 
+<p>
+A class contract MUST keep the following distinctions explicit where relevant:
+</p>
+
+<ul>
+  <li>primary value member vs ordinary property member,</li>
+  <li>semantic member vs non-semantic presentation member,</li>
+  <li>source-persisted member vs runtime-transient member,</li>
+  <li>class-owned member vs part-owned member.</li>
+</ul>
+
 <hr/>
 
 <h2 id="property-contract">10. Property Contract</h2>
@@ -375,6 +445,7 @@ A property contract MUST define at least:
   <li><strong>value_type</strong>,</li>
   <li><strong>access</strong> — <code>read_only</code>, <code>write_only</code>, or <code>read_write</code>,</li>
   <li><strong>owner</strong> — class-level member or part-level member,</li>
+  <li><strong>semantic_role</strong> — primary_value, semantic_property, presentation_property, or profile-defined equivalent,</li>
   <li><strong>design_time_visibility</strong>,</li>
   <li><strong>runtime_visibility</strong>,</li>
   <li><strong>source_persisted</strong> — whether it may appear in canonical source,</li>
@@ -393,7 +464,8 @@ A property contract MAY also define:
   <li>editor grouping,</li>
   <li>reset behavior,</li>
   <li>whether writes are immediate, deferred, or host-scheduled,</li>
-  <li>whether changes may emit one or more named events.</li>
+  <li>whether changes may emit one or more named events,</li>
+  <li>whether the property is host-ignored when unsupported.</li>
 </ul>
 
 <p>
@@ -405,7 +477,19 @@ Property contracts MUST be sufficient for:
   <li>property-node generation,</li>
   <li>read/write validation,</li>
   <li>type checking of <code>frog.ui.property_read</code> and <code>frog.ui.property_write</code>,</li>
-  <li>execution-facing member resolution.</li>
+  <li>execution-facing member resolution,</li>
+  <li>and separation of semantic state from presentation-only metadata.</li>
+</ul>
+
+<p>
+A property declared as a non-semantic presentation property MUST NOT change:
+</p>
+
+<ul>
+  <li>the widget role contract,</li>
+  <li>the primary value type contract,</li>
+  <li>the executable meaning of the program,</li>
+  <li>or the validity of the surrounding dataflow graph.</li>
 </ul>
 
 <hr/>
@@ -531,6 +615,20 @@ widget.part.event
 A part MUST NOT exist independently from its owning widget instance in canonical meaning.
 </p>
 
+<p>
+When a widget class supports presentation templates, parts MAY be used as the portable named anchoring surface between:
+</p>
+
+<ul>
+  <li>the class contract,</li>
+  <li>design-time face-template authoring,</li>
+  <li>and host-side presentation binding.</li>
+</ul>
+
+<p>
+However, a presentation-facing part contract MUST NOT by itself create executable semantics.
+</p>
+
 <hr/>
 
 <h2 id="design-time-vs-runtime">14. Design-Time vs Runtime Distinction</h2>
@@ -566,7 +664,22 @@ runtime-readable
 editor-private convenience
     !=
 portable class contract
+
+presentation metadata
+    !=
+executable semantics
 </code></pre>
+
+<p>
+If a class supports a presentation template reference such as an SVG-based face template, that member SHOULD normally be classified as:
+</p>
+
+<ul>
+  <li>source-persisted,</li>
+  <li>design-time-visible,</li>
+  <li>non-semantic,</li>
+  <li>and host-optional at runtime.</li>
+</ul>
 
 <hr/>
 
@@ -583,7 +696,8 @@ A conforming IDE MAY use widget class contracts to provide:
   <li>event pickers,</li>
   <li>part-aware navigation,</li>
   <li>typed generation of property-read, property-write, and method-invoke nodes,</li>
-  <li>context-aware validation while editing.</li>
+  <li>context-aware validation while editing,</li>
+  <li>presentation-template-aware designer tooling.</li>
 </ul>
 
 <p>
@@ -596,6 +710,20 @@ The portable class catalog remains external to one IDE-private object model even
 
 <p>
 An IDE SHOULD be able to regenerate a property node or method node directly from the published class contract without requiring hidden reflection metadata.
+</p>
+
+<p>
+An IDE MAY also use:
+</p>
+
+<ul>
+  <li>presentation parts,</li>
+  <li>presentation properties,</li>
+  <li>and template references</li>
+</ul>
+
+<p>
+to support visual editing or previewing of the front panel, but such support MUST NOT redefine executable meaning.
 </p>
 
 <hr/>
@@ -629,6 +757,27 @@ Accordingly, the class contract MUST provide enough information to determine:
 This profile therefore strengthens resolution and validation of object-style interaction without moving ownership of the interaction primitives out of <code>Libraries/UI.md</code>.
 </p>
 
+<p>
+The intended default rule for value-carrying widgets remains:
+</p>
+
+<pre><code>natural value participation
+    -&gt; widget_value
+
+object-style property or method interaction
+    -&gt; widget_reference + frog.ui.property_* / frog.ui.method_invoke
+</code></pre>
+
+<p>
+Accordingly, even if a primary value member is also declared as a property, a class SHOULD still document which interaction path is:
+</p>
+
+<ul>
+  <li>the natural value path,</li>
+  <li>the object-style path,</li>
+  <li>and any restrictions on mixing them.</li>
+</ul>
+
 <hr/>
 
 <h2 id="execution-facing-posture">17. Execution-Facing Posture</h2>
@@ -646,7 +795,8 @@ Instead, it requires that execution-facing systems be able to consume a stable c
   <li>type-correct property access,</li>
   <li>type-correct method invocation,</li>
   <li>declared event payload shape,</li>
-  <li>member-level applicability constraints.</li>
+  <li>member-level applicability constraints,</li>
+  <li>and the distinction between semantic members and presentation-only members.</li>
 </ul>
 
 <p>
@@ -670,6 +820,17 @@ Those mappings remain downstream from the class catalog itself.
 This profile therefore standardizes enough class-side truth for preservation, lowering preparation, and backend handoff preparation, without pretending to standardize one private widget runtime.
 </p>
 
+<p>
+Where a class supports a presentation template reference, lowering and backend handoff MAY preserve that reference as host-consumable presentation metadata.
+However:
+</p>
+
+<ul>
+  <li>the reference MAY be ignored by a host that does not support that presentation family,</li>
+  <li>a host MAY substitute a standard rendering of the same class,</li>
+  <li>and such fallback MUST NOT change the program's executable meaning.</li>
+</ul>
+
 <hr/>
 
 <h2 id="profile-identification-and-claims">18. Profile Identification and Claims</h2>
@@ -683,7 +844,8 @@ An implementation claiming support for this profile MUST state:
   <li>which version of each class family it supports,</li>
   <li>whether it supports property reads, property writes, methods, and events for those classes,</li>
   <li>whether support is design-time only, runtime only, or both,</li>
-  <li>which host-capability restrictions apply.</li>
+  <li>which host-capability restrictions apply,</li>
+  <li>whether presentation-template members are supported, ignored, or partially supported.</li>
 </ul>
 
 <p>
@@ -692,28 +854,353 @@ An implementation MUST NOT claim generic support for this profile while only sup
 
 <hr/>
 
-<h2 id="minimal-standard-rich-ui-family">19. Minimal Standard Rich-UI Family</h2>
+<h2 id="minimal-executable-widget-family">19. Minimal Executable Widget Family for the First Vertical Slice</h2>
 
 <p>
-For v0.1, this document defines the contract shape and the profile boundary first.
+For v0.1, this document defines not only the profile boundary and generic class-contract shape, but also the smallest standardized widget family needed by the first executable UI-bearing vertical slice.
 </p>
 
 <p>
-A conservative initial published family under this profile MAY include richer standardized classes such as:
+That minimal family is intentionally conservative.
+Its purpose is not to standardize a broad industrial widget catalog first.
+Its purpose is to support one small but complete corridor that can go from canonical <code>.frog</code> source to validation, Execution IR, lowering, backend handoff, and first runtime execution while carrying:
 </p>
 
 <ul>
-  <li><code>frog.ui.standard.list_box</code>,</li>
-  <li><code>frog.ui.standard.table</code>,</li>
-  <li><code>frog.ui.standard.enum_control</code>,</li>
-  <li><code>frog.ui.standard.path_control</code>,</li>
-  <li><code>frog.ui.standard.waveform_graph</code>,</li>
-  <li><code>frog.ui.standard.image_view</code>.</li>
+  <li>one numeric control,</li>
+  <li>one numeric indicator,</li>
+  <li>one primary numeric value path,</li>
+  <li>one minimal object-style presentation property path,</li>
+  <li>and one optional face template for front-panel rendering.</li>
+</ul>
+
+<h3>19.1 Standard Classes</h3>
+
+<p>
+The following classes are standardized by this document for that first minimal family:
+</p>
+
+<ul>
+  <li><code>frog.ui.standard.numeric_control</code>,</li>
+  <li><code>frog.ui.standard.numeric_indicator</code>.</li>
 </ul>
 
 <p>
-Those richer classes are not fully standardized by this document alone.
-They require separate class-family publication or a later extension of this profile.
+These classes define the minimum portable surface needed by the first vertical slice.
+Richer standardized classes MAY be added later under this same profile or under compatible extensions.
+</p>
+
+<h3>19.2 Numeric Control Contract</h3>
+
+<p>
+The conceptual contract of <code>frog.ui.standard.numeric_control</code> is:
+</p>
+
+<pre><code>{
+  "class_id": "frog.ui.standard.numeric_control",
+  "version": "0.1",
+  "display_name": "Numeric Control",
+  "description": "Minimal value-carrying numeric front-panel control for the first executable UI slice.",
+  "allowed_roles": ["control"],
+  "value_model": {
+    "kind": "value_carrying",
+    "primary_member": "value",
+    "type_constraints": ["u16"]
+  },
+  "container_capability": false,
+  "parts": [
+    {
+      "part_name": "face",
+      "part_class": "frog.ui.standard.numeric_control.face",
+      "required": true,
+      "multiplicity": "single",
+      "addressability": "direct"
+    },
+    {
+      "part_name": "caption",
+      "part_class": "frog.ui.standard.numeric_control.caption",
+      "required": false,
+      "multiplicity": "single",
+      "addressability": "direct"
+    },
+    {
+      "part_name": "value_window",
+      "part_class": "frog.ui.standard.numeric_control.value_window",
+      "required": false,
+      "multiplicity": "single",
+      "addressability": "direct"
+    }
+  ],
+  "properties": [
+    {
+      "name": "value",
+      "value_type": "u16",
+      "access": "read_write",
+      "owner": "class",
+      "semantic_role": "primary_value",
+      "design_time_visibility": true,
+      "runtime_visibility": true,
+      "source_persisted": true,
+      "runtime_observable": true,
+      "runtime_mutable": true,
+      "default_value": 0
+    },
+    {
+      "name": "face_color",
+      "value_type": "frog.ui.color",
+      "access": "read_write",
+      "owner": "class",
+      "semantic_role": "presentation_property",
+      "design_time_visibility": true,
+      "runtime_visibility": true,
+      "source_persisted": true,
+      "runtime_observable": true,
+      "runtime_mutable": true
+    },
+    {
+      "name": "face_template",
+      "value_type": "frog.ui.svg_template_ref",
+      "access": "read_write",
+      "owner": "class",
+      "semantic_role": "presentation_property",
+      "design_time_visibility": true,
+      "runtime_visibility": false,
+      "source_persisted": true,
+      "runtime_observable": false,
+      "runtime_mutable": false
+    }
+  ],
+  "methods": [],
+  "events": [],
+  "capabilities": [],
+  "design_time_rules": {
+    "palette_visible": true,
+    "designer_surface_supported": true
+  },
+  "runtime_rules": {
+    "widget_value_supported": true,
+    "widget_reference_supported": true
+  },
+  "presentation_rules": {
+    "face_template_kind": "svg",
+    "face_template_optional": true,
+    "template_is_non_semantic": true,
+    "host_may_fallback_to_standard_rendering": true
+  }
+}</code></pre>
+
+<h3>19.3 Numeric Indicator Contract</h3>
+
+<p>
+The conceptual contract of <code>frog.ui.standard.numeric_indicator</code> is:
+</p>
+
+<pre><code>{
+  "class_id": "frog.ui.standard.numeric_indicator",
+  "version": "0.1",
+  "display_name": "Numeric Indicator",
+  "description": "Minimal value-carrying numeric front-panel indicator for the first executable UI slice.",
+  "allowed_roles": ["indicator"],
+  "value_model": {
+    "kind": "value_carrying",
+    "primary_member": "value",
+    "type_constraints": ["u16"]
+  },
+  "container_capability": false,
+  "parts": [
+    {
+      "part_name": "face",
+      "part_class": "frog.ui.standard.numeric_indicator.face",
+      "required": true,
+      "multiplicity": "single",
+      "addressability": "direct"
+    },
+    {
+      "part_name": "caption",
+      "part_class": "frog.ui.standard.numeric_indicator.caption",
+      "required": false,
+      "multiplicity": "single",
+      "addressability": "direct"
+    },
+    {
+      "part_name": "value_window",
+      "part_class": "frog.ui.standard.numeric_indicator.value_window",
+      "required": false,
+      "multiplicity": "single",
+      "addressability": "direct"
+    }
+  ],
+  "properties": [
+    {
+      "name": "value",
+      "value_type": "u16",
+      "access": "read_write",
+      "owner": "class",
+      "semantic_role": "primary_value",
+      "design_time_visibility": true,
+      "runtime_visibility": true,
+      "source_persisted": true,
+      "runtime_observable": true,
+      "runtime_mutable": true,
+      "default_value": 0
+    },
+    {
+      "name": "face_color",
+      "value_type": "frog.ui.color",
+      "access": "read_write",
+      "owner": "class",
+      "semantic_role": "presentation_property",
+      "design_time_visibility": true,
+      "runtime_visibility": true,
+      "source_persisted": true,
+      "runtime_observable": true,
+      "runtime_mutable": true
+    },
+    {
+      "name": "face_template",
+      "value_type": "frog.ui.svg_template_ref",
+      "access": "read_write",
+      "owner": "class",
+      "semantic_role": "presentation_property",
+      "design_time_visibility": true,
+      "runtime_visibility": false,
+      "source_persisted": true,
+      "runtime_observable": false,
+      "runtime_mutable": false
+    }
+  ],
+  "methods": [],
+  "events": [],
+  "capabilities": [],
+  "design_time_rules": {
+    "palette_visible": true,
+    "designer_surface_supported": true
+  },
+  "runtime_rules": {
+    "widget_value_supported": true,
+    "widget_reference_supported": true
+  },
+  "presentation_rules": {
+    "face_template_kind": "svg",
+    "face_template_optional": true,
+    "template_is_non_semantic": true,
+    "host_may_fallback_to_standard_rendering": true
+  }
+}</code></pre>
+
+<h3>19.4 Required Semantic Distinction for the Minimal Family</h3>
+
+<p>
+For the minimal family standardized here:
+</p>
+
+<ul>
+  <li><code>value</code> is the primary value member,</li>
+  <li><code>face_color</code> is a non-semantic presentation property,</li>
+  <li><code>face_template</code> is a non-semantic presentation-template reference.</li>
+</ul>
+
+<p>
+Accordingly:
+</p>
+
+<pre><code>value
+    !=
+face_color
+    !=
+face_template
+</code></pre>
+
+<p>
+Changing <code>face_color</code> or <code>face_template</code> MUST NOT:
+</p>
+
+<ul>
+  <li>change the widget role,</li>
+  <li>change the widget type constraints,</li>
+  <li>change the primary value contract,</li>
+  <li>change the executable meaning of the program.</li>
+</ul>
+
+<h3>19.5 SVG Face Template Boundary</h3>
+
+<p>
+This profile allows the minimal family to reference an SVG-based face template through <code>face_template</code>.
+</p>
+
+<p>
+That template reference MUST be treated as:
+</p>
+
+<ul>
+  <li>source-persisted,</li>
+  <li>design-time-visible,</li>
+  <li>presentation-only,</li>
+  <li>non-semantic,</li>
+  <li>and host-optional at runtime.</li>
+</ul>
+
+<p>
+An SVG face template MAY provide:
+</p>
+
+<ul>
+  <li>a previewable front-panel face,</li>
+  <li>a visual skin for a compatible host,</li>
+  <li>part anchoring for named presentation parts such as <code>face</code>, <code>caption</code>, or <code>value_window</code>.</li>
+</ul>
+
+<p>
+An SVG face template MUST NOT:
+</p>
+
+<ul>
+  <li>redefine the widget class identity,</li>
+  <li>redefine the primary value type,</li>
+  <li>introduce executable behavior,</li>
+  <li>introduce hidden methods or events,</li>
+  <li>or become the normative owner of widget semantics.</li>
+</ul>
+
+<p>
+A host that does not support SVG face templates MAY ignore <code>face_template</code> and render the same widget class through a standard fallback surface.
+Such fallback MUST preserve the widget class contract and the program's executable meaning.
+</p>
+
+<h3>19.6 Design Tokens and Presentation Properties</h3>
+
+<p>
+For the minimal family, <code>face_color</code> acts as the first standardized presentation token.
+Later compatible extensions MAY add additional presentation tokens such as:
+</p>
+
+<ul>
+  <li><code>border_color</code>,</li>
+  <li><code>text_color</code>,</li>
+  <li><code>accent_color</code>.</li>
+</ul>
+
+<p>
+Those later additions MUST remain presentation-only unless another specification explicitly states otherwise.
+</p>
+
+<h3>19.7 Why this Minimal Family Exists</h3>
+
+<p>
+This minimal family exists so that the first executable vertical slice can carry:
+</p>
+
+<ul>
+  <li>a real numeric control,</li>
+  <li>a real numeric indicator,</li>
+  <li>a natural value path via <code>widget_value</code>,</li>
+  <li>a minimal object-style property path via <code>widget_reference</code> and <code>frog.ui.property_write</code>,</li>
+  <li>and one serious but bounded front-panel presentation story.</li>
+</ul>
+
+<p>
+It is intentionally small.
+It is not intended to standardize the full future UI ecosystem in v0.1.
 </p>
 
 <hr/>
@@ -745,101 +1232,139 @@ A validator SHOULD also reject contradictory contracts such as:
   <li>a property declared both non-runtime-visible and runtime-readable,</li>
   <li>a method declared invokable but with no parameter / result contract,</li>
   <li>a part declared addressable but exposing no member surface definition,</li>
-  <li>an event declared with payload fields lacking FROG type definitions.</li>
+  <li>an event declared with payload fields lacking FROG type definitions,</li>
+  <li>a presentation-only property declared as executable semantic state,</li>
+  <li>a template reference declared as changing value-model meaning.</li>
+</ul>
+
+<p>
+For the minimal executable widget family defined in this document, a validator MUST also confirm at least:
+</p>
+
+<ul>
+  <li>that <code>frog.ui.standard.numeric_control</code> and <code>frog.ui.standard.numeric_indicator</code> are used only with their allowed roles,</li>
+  <li>that their primary value type is <code>u16</code>,</li>
+  <li>that <code>face_color</code> writes use a value compatible with <code>frog.ui.color</code>,</li>
+  <li>that <code>face_template</code>, when present, is treated as non-semantic presentation metadata,</li>
+  <li>that natural value participation uses <code>widget_value</code> rather than requiring object-style property access for ordinary dataflow.</li>
 </ul>
 
 <hr/>
 
 <h2 id="examples">21. Examples</h2>
 
-<h3>21.1 Conceptual Class Skeleton</h3>
+<h3>21.1 Minimal Numeric Control Class Contract</h3>
 
 <pre><code>{
-  "class_id": "frog.ui.standard.table",
+  "class_id": "frog.ui.standard.numeric_control",
   "version": "0.1",
-  "display_name": "Table",
-  "allowed_roles": ["control", "indicator"],
+  "display_name": "Numeric Control",
+  "allowed_roles": ["control"],
   "value_model": {
     "kind": "value_carrying",
-    "type_constraints": ["array&lt;record&gt;"]
+    "primary_member": "value",
+    "type_constraints": ["u16"]
   },
-  "parts": [
-    {
-      "part_name": "header",
-      "part_class": "frog.ui.standard.table_header",
-      "required": true,
-      "addressability": "direct"
-    }
-  ],
   "properties": [
     {
-      "name": "visible",
-      "value_type": "bool",
+      "name": "value",
+      "value_type": "u16",
       "access": "read_write",
+      "semantic_role": "primary_value",
       "source_persisted": true,
       "runtime_observable": true,
       "runtime_mutable": true
     },
     {
-      "name": "selected_row",
-      "value_type": "i32",
-      "access": "read_only",
-      "source_persisted": false,
+      "name": "face_color",
+      "value_type": "frog.ui.color",
+      "access": "read_write",
+      "semantic_role": "presentation_property",
+      "source_persisted": true,
       "runtime_observable": true,
+      "runtime_mutable": true
+    },
+    {
+      "name": "face_template",
+      "value_type": "frog.ui.svg_template_ref",
+      "access": "read_write",
+      "semantic_role": "presentation_property",
+      "source_persisted": true,
+      "runtime_observable": false,
       "runtime_mutable": false
     }
-  ],
-  "methods": [
-    {
-      "name": "refresh",
-      "parameters": [],
-      "results": [],
-      "sequencing_kind": "required",
-      "side_effect_kind": "visual_action"
-    }
-  ],
-  "events": [
-    {
-      "name": "selection_changed",
-      "payload": [
-        { "name": "row_index", "type": "i32" }
-      ],
-      "trigger_kind": "user_action"
-    }
   ]
-}
-</code></pre>
+}</code></pre>
 
-<h3>21.2 Property-Node Resolution Example</h3>
+<h3>21.2 Natural Value Participation Example</h3>
 
-<pre><code>widget_reference(table_1)
-    -&gt; frog.ui.property_read { "member": "selected_row" }
-    -&gt; i32
+<pre><code>widget_value(ctrl_count)
+    -&gt; u16
 </code></pre>
 
 <p>
-This is valid only if the active class contract declares <code>selected_row</code> as readable.
+This is the natural value path of the widget class.
+It is the preferred path for ordinary dataflow participation.
 </p>
 
-<h3>21.3 Part-Aware Method Resolution Example</h3>
+<h3>21.3 Presentation Property Write Example</h3>
 
-<pre><code>widget_reference(table_1)
-    -&gt; frog.ui.method_invoke {
-         "member": {
-           "part": "header",
-           "method": "autosize_columns"
-         }
+<pre><code>widget_reference(ctrl_count)
+    -&gt; frog.ui.property_write {
+         "member": "face_color"
        }
 </code></pre>
 
 <p>
-This is valid only if:
+This is valid only if the active class contract declares <code>face_color</code> as writable and class-owned.
 </p>
 
-<ul>
-  <li><code>header</code> is a valid declared part of the owning widget class, and</li>
-  <li>that part contract declares method <code>autosize_columns</code>.</li>
-</ul>
+<h3>21.4 Face Template Source Example</h3>
+
+<pre><code>{
+  "id": "ctrl_count",
+  "role": "control",
+  "widget": "frog.ui.standard.numeric_control",
+  "value_type": "u16",
+  "props": {
+    "caption": "Count",
+    "face_color": "#D0D0D0",
+    "face_template": {
+      "kind": "resource",
+      "path": "./assets/widgets/u16_numeric_control_face.svg"
+    }
+  }
+}</code></pre>
+
+<p>
+The presence of <code>face_template</code> does not change the executable meaning of the widget instance.
+It only contributes presentation metadata for design-time tools or compatible hosts.
+</p>
+
+<h3>21.5 Part-Aware Presentation Anchoring Example</h3>
+
+<pre><code>{
+  "class_id": "frog.ui.standard.numeric_indicator",
+  "parts": [
+    {
+      "part_name": "face",
+      "part_class": "frog.ui.standard.numeric_indicator.face",
+      "required": true,
+      "addressability": "direct"
+    },
+    {
+      "part_name": "value_window",
+      "part_class": "frog.ui.standard.numeric_indicator.value_window",
+      "required": false,
+      "addressability": "direct"
+    }
+  ]
+}</code></pre>
+
+<p>
+A compatible designer or host MAY use those named parts as a stable anchoring surface between the class contract and an SVG face template.
+That anchoring remains presentation-facing only unless another specification states otherwise.
+</p>
 
 <hr/>
 
@@ -852,7 +1377,10 @@ This is valid only if:
   <li>a mandatory first-class language-level event-structure execution model,</li>
   <li>one universal accessibility contract for every future host family,</li>
   <li>one mandatory serialization syntax for external class-catalog packages,</li>
-  <li>one mandatory runtime-private widget-handle ABI.</li>
+  <li>one mandatory runtime-private widget-handle ABI,</li>
+  <li>a large rich-widget family such as tables, graphs, trees, or industrial panels,</li>
+  <li>a mandatory event-heavy designer surface,</li>
+  <li>one universal SVG authoring package format.</li>
 </ul>
 
 <hr/>
@@ -860,7 +1388,7 @@ This is valid only if:
 <h2 id="summary">23. Summary</h2>
 
 <p>
-This profile defines the missing portable layer between source-declared widget instances and rich executable widget-object ecosystems.
+This profile defines the missing portable layer between source-declared widget instances and portable executable widget-object ecosystems.
 </p>
 
 <p>
@@ -873,7 +1401,7 @@ In this architecture:
   <li><code>Libraries/UI.md</code> continues to own intrinsic <code>frog.ui.*</code> executable primitive identities,</li>
   <li><code>IDE/</code> continues to own Program Model and authoring behavior,</li>
   <li><code>IR/</code> continues to own execution-facing preservation and lowering,</li>
-  <li>this profile owns the optional standardized widget-class catalog and class-contract surface for richer UI object families.</li>
+  <li>this profile owns the optional standardized widget-class catalog and class-contract surface for richer UI object families and for the first minimal executable UI-bearing widget family.</li>
 </ul>
 
 <p>
@@ -885,5 +1413,6 @@ That separation makes it possible to support:
   <li>typed property and method node generation,</li>
   <li>part-aware validation,</li>
   <li>future event-surface standardization,</li>
-  <li>backend-facing handoff without one IDE-private reflection model becoming normative truth.</li>
+  <li>presentation metadata without semantic confusion,</li>
+  <li>and backend-facing handoff without one IDE-private reflection model becoming normative truth.</li>
 </ul>
