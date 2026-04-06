@@ -1,0 +1,234 @@
+{
+  "spec_version": "0.1",
+  "metadata": {
+    "name": "05_bounded_ui_accumulator",
+    "summary": "Bounded front-panel accumulation example with explicit state, five-loop execution, and final indicator output.",
+    "description": "Reads one numeric control value from the front panel, executes a bounded loop of exactly five iterations, carries explicit state through frog.core.delay initialized to 0.0, and writes the final accumulated value both to one public output and to one numeric indicator.",
+    "author": "Graiphic",
+    "program_version": "0.1.0",
+    "tags": [
+      "example",
+      "ui",
+      "widget_value",
+      "bounded_loop",
+      "state",
+      "delay",
+      "accumulator",
+      "vertical_slice"
+    ],
+    "is_example": true,
+    "license": "Apache-2.0"
+  },
+  "interface": {
+    "inputs": [],
+    "outputs": [
+      {
+        "id": "result",
+        "type": "f64"
+      }
+    ]
+  },
+  "diagram": {
+    "nodes": [
+      {
+        "id": "ctrl_input_value",
+        "kind": "widget_value",
+        "widget": "ctrl_input"
+      },
+      {
+        "id": "const_zero",
+        "kind": "constant",
+        "type": "f64",
+        "value": 0.0
+      },
+      {
+        "id": "const_five",
+        "kind": "constant",
+        "type": "i32",
+        "value": 5
+      },
+      {
+        "id": "loop_accumulate",
+        "kind": "for_loop",
+        "count_from": {
+          "node": "const_five",
+          "port": "value"
+        },
+        "region": {
+          "nodes": [
+            {
+              "id": "delay_state",
+              "kind": "primitive",
+              "type": "frog.core.delay"
+            },
+            {
+              "id": "add_step",
+              "kind": "primitive",
+              "type": "frog.core.add"
+            }
+          ],
+          "edges": [
+            {
+              "id": "r_e1",
+              "from": {
+                "node": "loop_input_value",
+                "port": "value"
+              },
+              "to": {
+                "node": "add_step",
+                "port": "a"
+              }
+            },
+            {
+              "id": "r_e2",
+              "from": {
+                "node": "delay_state",
+                "port": "out"
+              },
+              "to": {
+                "node": "add_step",
+                "port": "b"
+              }
+            },
+            {
+              "id": "r_e3",
+              "from": {
+                "node": "add_step",
+                "port": "result"
+              },
+              "to": {
+                "node": "delay_state",
+                "port": "in"
+              }
+            },
+            {
+              "id": "r_e4",
+              "from": {
+                "node": "loop_initial_state",
+                "port": "value"
+              },
+              "to": {
+                "node": "delay_state",
+                "port": "initial"
+              }
+            }
+          ],
+          "inputs": [
+            {
+              "id": "loop_input_value",
+              "type": "f64"
+            },
+            {
+              "id": "loop_initial_state",
+              "type": "f64"
+            }
+          ],
+          "outputs": [
+            {
+              "id": "loop_final_state",
+              "from": {
+                "node": "add_step",
+                "port": "result"
+              },
+              "type": "f64"
+            }
+          ]
+        }
+      },
+      {
+        "id": "ind_result_value",
+        "kind": "widget_value",
+        "widget": "ind_result"
+      },
+      {
+        "id": "output_result",
+        "kind": "interface_output",
+        "interface_port": "result"
+      }
+    ],
+    "edges": [
+      {
+        "id": "e1",
+        "from": {
+          "node": "ctrl_input_value",
+          "port": "value"
+        },
+        "to": {
+          "node": "loop_accumulate",
+          "port": "loop_input_value"
+        }
+      },
+      {
+        "id": "e2",
+        "from": {
+          "node": "const_zero",
+          "port": "value"
+        },
+        "to": {
+          "node": "loop_accumulate",
+          "port": "loop_initial_state"
+        }
+      },
+      {
+        "id": "e3",
+        "from": {
+          "node": "loop_accumulate",
+          "port": "loop_final_state"
+        },
+        "to": {
+          "node": "ind_result_value",
+          "port": "value"
+        }
+      },
+      {
+        "id": "e4",
+        "from": {
+          "node": "loop_accumulate",
+          "port": "loop_final_state"
+        },
+        "to": {
+          "node": "output_result",
+          "port": "value"
+        }
+      }
+    ]
+  },
+  "front_panel": {
+    "canvas": {
+      "width": 460,
+      "height": 170
+    },
+    "widgets": [
+      {
+        "id": "ctrl_input",
+        "role": "control",
+        "widget": "frog.ui.standard.numeric_control",
+        "value_type": "f64",
+        "layout": {
+          "x": 20,
+          "y": 24,
+          "width": 140,
+          "height": 28
+        },
+        "props": {
+          "caption": "Input value"
+        }
+      },
+      {
+        "id": "ind_result",
+        "role": "indicator",
+        "widget": "frog.ui.standard.numeric_indicator",
+        "value_type": "f64",
+        "layout": {
+          "x": 240,
+          "y": 24,
+          "width": 160,
+          "height": 28
+        },
+        "props": {
+          "caption": "Accumulated result"
+        }
+      }
+    ]
+  }
+}
