@@ -22,11 +22,12 @@
   <li><a href="#widget-instances">7. Widget Instances</a></li>
   <li><a href="#composition-and-nesting">8. Composition and Nesting</a></li>
   <li><a href="#layout-and-canvas">9. Layout and Canvas</a></li>
-  <li><a href="#relation-with-the-diagram">10. Relation with the Diagram</a></li>
-  <li><a href="#relation-with-the-public-interface">11. Relation with the Public Interface</a></li>
-  <li><a href="#validation-rules">12. Validation Rules</a></li>
-  <li><a href="#examples">13. Examples</a></li>
-  <li><a href="#summary">14. Summary</a></li>
+  <li><a href="#presentation-metadata-boundary">10. Presentation Metadata Boundary</a></li>
+  <li><a href="#relation-with-the-diagram">11. Relation with the Diagram</a></li>
+  <li><a href="#relation-with-the-public-interface">12. Relation with the Public Interface</a></li>
+  <li><a href="#validation-rules">13. Validation Rules</a></li>
+  <li><a href="#examples">14. Examples</a></li>
+  <li><a href="#summary">15. Summary</a></li>
 </ul>
 
 <hr/>
@@ -49,7 +50,8 @@ The front panel defines:
   <li>widget instances,</li>
   <li>their containment structure,</li>
   <li>their visual composition,</li>
-  <li>their design-time layout information.</li>
+  <li>their design-time layout information,</li>
+  <li>and source-persisted presentation metadata where a widget class allows it.</li>
 </ul>
 
 <p>
@@ -62,7 +64,8 @@ The front panel does not define:
   <li>runtime scheduling semantics,</li>
   <li>the general language execution semantics,</li>
   <li>the full widget class contract,</li>
-  <li>the full executable interaction model for widgets.</li>
+  <li>the full executable interaction model for widgets,</li>
+  <li>the semantic meaning of presentation metadata.</li>
 </ul>
 
 <p>
@@ -97,6 +100,7 @@ It specifies:
   <li>how widget instances are declared in the front panel,</li>
   <li>how those widget instances are composed into a widget tree,</li>
   <li>how design-time layout and panel-level composition data are serialized,</li>
+  <li>how source-persisted presentation metadata is carried when a widget class supports it,</li>
   <li>the structural validation rules for the section.</li>
 </ul>
 
@@ -114,6 +118,10 @@ This document intentionally does not standardize:
   <li>the repository-wide version-transition doctrine.</li>
 </ul>
 
+<p>
+In particular, this document may serialize presentation-facing metadata such as color properties or face-template references, but it does not by itself grant executable meaning to those members.
+</p>
+
 <hr/>
 
 <h2 id="relation-with-other-specifications">3. Relation with Other Specifications</h2>
@@ -121,10 +129,11 @@ This document intentionally does not standardize:
 <ul>
   <li><code>Widget.md</code> defines the widget instance model, including roles, value-carrying behavior, parts, properties, methods, events, and widget identity.</li>
   <li><code>Widget class contract.md</code> defines the class-level widget contract, including members, part ownership, member legality, access modes, and IDE-facing object exposure constraints.</li>
-  <li><code>Widget interaction.md</code> defines diagram-side object-style interaction with widgets.</li>
+  <li><code>Widget interaction.md</code> defines diagram-side natural-value and object-style interaction with widgets.</li>
   <li><code>Diagram.md</code> defines the authoritative executable graph.</li>
   <li><code>Interface.md</code> defines the public contract of the FROG.</li>
   <li><code>Type.md</code> defines the value type system used by value-carrying widgets and typed widget members.</li>
+  <li><code>Profiles/UI Widget Classes.md</code> may define profile-owned widget families, including presentation properties and optional presentation-template posture.</li>
   <li><code>Versioning/Readme.md</code> defines the centralized distinction between specification corpus version, top-level <code>spec_version</code>, and program artifact versioning.</li>
 </ul>
 
@@ -150,6 +159,7 @@ Ownership boundary:
 - widget tree serialization
 - panel-level layout/canvas structure
 - source-level containment of widgets
+- source-persisted presentation metadata placement
 
 Front panel.md does not own:
 - public interface semantics
@@ -193,6 +203,7 @@ In this source shape:
 <ul>
   <li>top-level <code>spec_version</code> identifies the source-format compatibility target of the file,</li>
   <li><code>front_panel</code> defines optional UI composition only,</li>
+  <li>presentation metadata, when present, remains subordinate to widget-instance declaration,</li>
   <li>the published specification corpus version remains governed centrally in <code>Versioning/Readme.md</code>.</li>
 </ul>
 
@@ -205,6 +216,16 @@ The <code>front_panel</code> section owns the source-level declaration of the us
 </p>
 
 <p>
+The <code>front_panel</code> section also owns the source placement of optional widget-instance presentation metadata when:
+</p>
+
+<ul>
+  <li>the widget class recognizes the corresponding member,</li>
+  <li>the member is allowed to be source-persisted,</li>
+  <li>and the member belongs to front-panel composition or presentation rather than executable semantics.</li>
+</ul>
+
+<p>
 However, the <code>front_panel</code> section is not authoritative for:
 </p>
 
@@ -213,7 +234,8 @@ However, the <code>front_panel</code> section is not authoritative for:
   <li>public API definition,</li>
   <li>type-system definition,</li>
   <li>widget-object interaction semantics,</li>
-  <li>class-side widget member legality.</li>
+  <li>class-side widget member legality,</li>
+  <li>runtime-side rendering behavior beyond source persistence.</li>
 </ul>
 
 <p>
@@ -221,11 +243,12 @@ A practical interpretation rule is:
 </p>
 
 <pre><code>If the question is:
-- What is displayed and how widgets are composed? -> Front panel.md
-- What is the widget as an instance-side object?  -> Widget.md
-- What members does the class expose legally?     -> Widget class contract.md
-- How does execution use the widget?              -> Diagram.md / Widget interaction.md
-- What is the public API of the FROG?             -> Interface.md
+- What is displayed and how widgets are composed?         -&gt; Front panel.md
+- What is the widget as an instance-side object?          -&gt; Widget.md
+- What members does the class expose legally?             -&gt; Widget class contract.md
+- How does execution use the widget?                      -&gt; Diagram.md / Widget interaction.md
+- What is the public API of the FROG?                     -&gt; Interface.md
+- Where does source-persisted presentation metadata live? -&gt; Front panel.md
 </code></pre>
 
 <hr/>
@@ -259,6 +282,10 @@ All fields are optional. If present, they MUST follow the declared structure.
 
 <p>
 The absence of a field does not transfer its responsibility elsewhere. It only means the corresponding information is omitted from source.
+</p>
+
+<p>
+Presentation metadata for a widget instance belongs inside that widget instance, typically under source-owned instance fields such as <code>props</code>, not as a separate top-level front-panel semantic layer.
 </p>
 
 <hr/>
@@ -304,6 +331,21 @@ Example:
 
 <p>
 The front panel serializes widget instances as source objects. It does not redefine widget class semantics, member legality, member accessibility, or class-side part contracts already owned by <code>Widget.md</code> and <code>Widget class contract.md</code>.
+</p>
+
+<p>
+When a widget instance contains presentation-facing persisted metadata, that metadata is serialized as part of the widget instance. For example, a control MAY persist:
+</p>
+
+<ul>
+  <li><code>caption</code>,</li>
+  <li><code>face_color</code>,</li>
+  <li><code>face_template</code>,</li>
+  <li>or other class-recognized presentation members.</li>
+</ul>
+
+<p>
+Such members are valid in source only when the active widget class contract allows them.
 </p>
 
 <hr/>
@@ -379,9 +421,144 @@ This information is design-time composition data. It MUST NOT redefine execution
 The front panel does not require every implementation to render identically. The serialized meaning is structural and compositional, not pixel-perfect renderer identity.
 </p>
 
+<p>
+The same rule applies to persisted presentation metadata such as a face template reference: its source presence does not require one mandatory renderer and does not create pixel-perfect equivalence requirements.
+</p>
+
 <hr/>
 
-<h2 id="relation-with-the-diagram">10. Relation with the Diagram</h2>
+<h2 id="presentation-metadata-boundary">10. Presentation Metadata Boundary</h2>
+
+<p>
+A widget instance MAY contain source-persisted presentation metadata when its widget class contract allows it.
+</p>
+
+<p>
+Typical examples include:
+</p>
+
+<ul>
+  <li><code>caption</code>,</li>
+  <li><code>face_color</code>,</li>
+  <li><code>border_color</code>,</li>
+  <li><code>text_color</code>,</li>
+  <li><code>face_template</code>.</li>
+</ul>
+
+<p>
+For v0.1, such metadata SHOULD normally be serialized inside <code>props</code> unless another widget-instance field is explicitly standardized for that member family.
+</p>
+
+<h3>10.1 Source-Persisted Presentation Properties</h3>
+
+<p>
+A source-persisted presentation property:
+</p>
+
+<ul>
+  <li>MAY appear in the front panel source when the class contract allows it,</li>
+  <li>MAY be design-time-visible,</li>
+  <li>MAY be runtime-readable or runtime-writable when the class contract allows it,</li>
+  <li>and MUST remain distinct from the natural executable value path.</li>
+</ul>
+
+<p>
+For example, the following is a valid source pattern when allowed by the active widget class:
+</p>
+
+<pre><code>{
+  "id": "ctrl_count",
+  "role": "control",
+  "widget": "frog.ui.standard.numeric_control",
+  "value_type": "u16",
+  "props": {
+    "caption": "Count",
+    "face_color": "#D0D0D0"
+  }
+}
+</code></pre>
+
+<h3>10.2 Face Template Reference</h3>
+
+<p>
+A widget class MAY support a persisted presentation-template reference such as <code>face_template</code>.
+</p>
+
+<p>
+When present in source, such a member:
+</p>
+
+<ul>
+  <li>MUST be treated as source-persisted presentation metadata,</li>
+  <li>SHOULD be design-time-visible,</li>
+  <li>MUST NOT by itself create executable semantics,</li>
+  <li>MUST NOT change the widget role, primary value contract, or class identity,</li>
+  <li>and MAY be ignored by a host that does not support the referenced template family.</li>
+</ul>
+
+<p>
+For the minimal executable widget family, a face-template reference is carried as:
+</p>
+
+<pre><code>{
+  "id": "ctrl_count",
+  "role": "control",
+  "widget": "frog.ui.standard.numeric_control",
+  "value_type": "u16",
+  "props": {
+    "face_template": {
+      "kind": "resource",
+      "path": "./assets/widgets/u16_numeric_control_face.svg"
+    }
+  }
+}
+</code></pre>
+
+<h3>10.3 SVG Template Posture</h3>
+
+<p>
+When <code>face_template</code> references an SVG resource, that SVG is a presentation asset, not executable truth.
+</p>
+
+<p>
+Accordingly, an SVG face template:
+</p>
+
+<ul>
+  <li>MAY provide a designer preview or host skin,</li>
+  <li>MAY support stable named anchoring parts when another specification allows it,</li>
+  <li>MUST NOT define widget executable semantics,</li>
+  <li>MUST NOT create hidden methods, events, or dataflow meaning,</li>
+  <li>and MUST NOT replace the widget class contract as the normative owner of widget behavior.</li>
+</ul>
+
+<h3>10.4 Boundary Rule</h3>
+
+<p>
+The following distinction MUST remain explicit:
+</p>
+
+<pre><code>front_panel composition
+    !=
+widget executable interaction
+    !=
+presentation metadata
+</code></pre>
+
+<p>
+The presence of presentation metadata in the front panel does not, by itself:
+</p>
+
+<ul>
+  <li>create a diagram node,</li>
+  <li>create a public interface port,</li>
+  <li>create executable state,</li>
+  <li>or authorize runtime object-style mutation unless the class contract explicitly allows it.</li>
+</ul>
+
+<hr/>
+
+<h2 id="relation-with-the-diagram">11. Relation with the Diagram</h2>
 
 <p>
 The front panel does not define executable behavior. The diagram remains the authoritative executable graph of the FROG.
@@ -422,6 +599,8 @@ The relationship can be summarized as:
    |
    +-- declares widget instance
             |
+            +-- may persist presentation metadata in source
+            |
             +-- diagram may reference it through widget_value
             |
             +-- diagram may reference it through widget_reference
@@ -435,9 +614,13 @@ diagram declares executable interaction
 widget class contract constrains legal object access
 </code></pre>
 
+<p>
+A source-persisted member such as <code>face_template</code> does not become executable interaction merely because it is present in the widget instance source.
+</p>
+
 <hr/>
 
-<h2 id="relation-with-the-public-interface">11. Relation with the Public Interface</h2>
+<h2 id="relation-with-the-public-interface">12. Relation with the Public Interface</h2>
 
 <p>
 The front panel is independent from the public interface of the FROG.
@@ -461,9 +644,13 @@ This means:
 The front panel is therefore optional UI composition, not API definition.
 </p>
 
+<p>
+The same rule applies to source-persisted presentation metadata: it does not become a public API contract merely because it is serialized in the front panel.
+</p>
+
 <hr/>
 
-<h2 id="validation-rules">12. Validation Rules</h2>
+<h2 id="validation-rules">13. Validation Rules</h2>
 
 <p>
 If the <code>front_panel</code> section exists, validators MUST ensure:
@@ -485,6 +672,17 @@ Optional fields MUST follow their declared structure when present.
 </p>
 
 <p>
+If source-persisted presentation metadata is present, validators MUST also ensure:
+</p>
+
+<ul>
+  <li>the active widget class recognizes the corresponding member when such class-side validation is available,</li>
+  <li>the member is allowed to appear in source,</li>
+  <li>template references follow the declared source structure when such structure is standardized,</li>
+  <li>presentation metadata is not treated as a substitute for executable diagram structure.</li>
+</ul>
+
+<p>
 The front panel MUST NOT redefine:
 </p>
 
@@ -504,7 +702,10 @@ Validators SHOULD diagnose at least the following error classes:
   <li>invalid widget structure,</li>
   <li>invalid container ownership,</li>
   <li>unknown widget class under the active profile,</li>
-  <li>invalid child placement under a non-container widget.</li>
+  <li>invalid child placement under a non-container widget,</li>
+  <li>unknown source-persisted presentation member,</li>
+  <li>invalid template-reference structure,</li>
+  <li>attempt to treat presentation metadata as executable graph structure.</li>
 </ul>
 
 <p>
@@ -514,16 +715,16 @@ They do not, by themselves, redefine top-level <code>spec_version</code> policy 
 
 <hr/>
 
-<h2 id="examples">13. Examples</h2>
+<h2 id="examples">14. Examples</h2>
 
-<h3>13.1 Minimal Front Panel</h3>
+<h3>14.1 Minimal Front Panel</h3>
 
 <pre><code>"front_panel": {
   "widgets": []
 }
 </code></pre>
 
-<h3>13.2 Front Panel with One Widget</h3>
+<h3>14.2 Front Panel with One Widget</h3>
 
 <pre><code>"front_panel": {
   "widgets": [
@@ -543,7 +744,7 @@ They do not, by themselves, redefine top-level <code>spec_version</code> policy 
 }
 </code></pre>
 
-<h3>13.3 Front Panel with Container and Children</h3>
+<h3>14.3 Front Panel with Container and Children</h3>
 
 <pre><code>"front_panel": {
   "canvas": {
@@ -592,9 +793,66 @@ They do not, by themselves, redefine top-level <code>spec_version</code> policy 
 }
 </code></pre>
 
+<h3>14.4 Front Panel with Source-Persisted Presentation Properties</h3>
+
+<pre><code>"front_panel": {
+  "widgets": [
+    {
+      "id": "ctrl_count",
+      "role": "control",
+      "widget": "frog.ui.standard.numeric_control",
+      "value_type": "u16",
+      "layout": {
+        "x": 20,
+        "y": 20,
+        "width": 120,
+        "height": 32
+      },
+      "props": {
+        "caption": "Count",
+        "face_color": "#D0D0D0"
+      }
+    }
+  ]
+}
+</code></pre>
+
+<h3>14.5 Front Panel with SVG Face Template Reference</h3>
+
+<pre><code>"front_panel": {
+  "widgets": [
+    {
+      "id": "ctrl_count",
+      "role": "control",
+      "widget": "frog.ui.standard.numeric_control",
+      "value_type": "u16",
+      "layout": {
+        "x": 20,
+        "y": 20,
+        "width": 120,
+        "height": 32
+      },
+      "props": {
+        "caption": "Count",
+        "face_color": "#D0D0D0",
+        "face_template": {
+          "kind": "resource",
+          "path": "./assets/widgets/u16_numeric_control_face.svg"
+        }
+      }
+    }
+  ]
+}
+</code></pre>
+
+<p>
+This template reference contributes presentation metadata only.
+It does not by itself create a diagram node, an executable edge, or a public interface port.
+</p>
+
 <hr/>
 
-<h2 id="summary">14. Summary</h2>
+<h2 id="summary">15. Summary</h2>
 
 <p>
 The <code>front_panel</code> section is the optional canonical source home of user-facing widget composition in a FROG program.
@@ -608,7 +866,8 @@ It defines:
   <li>which widget instances exist on the panel,</li>
   <li>how they are serialized,</li>
   <li>how they are nested,</li>
-  <li>how their design-time layout is represented.</li>
+  <li>how their design-time layout is represented,</li>
+  <li>and where source-persisted presentation metadata is carried.</li>
 </ul>
 
 <p>
@@ -622,9 +881,10 @@ It does not define:
   <li>the executable widget interaction model,</li>
   <li>general language execution semantics,</li>
   <li>source-format compatibility law,</li>
-  <li>published specification corpus versioning.</li>
+  <li>published specification corpus versioning,</li>
+  <li>or one mandatory UI rendering architecture.</li>
 </ul>
 
 <p>
-Keeping that boundary explicit allows FROG to support rich panel composition without turning UI layout, one IDE, or one runtime into the hidden source of execution truth.
+Keeping that boundary explicit allows FROG to support rich panel composition and source-persisted presentation metadata without turning UI layout, one IDE, one renderer, or one runtime into the hidden source of execution truth.
 </p>
