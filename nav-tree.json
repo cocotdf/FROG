@@ -194,7 +194,15 @@
               "title": "05 bounded ui accumulator",
               "path": "/Examples/05_bounded_ui_accumulator/Readme.md",
               "kind": "category",
-              "children": []
+              "children": [
+                {
+                  "key": "examples/05_bounded_ui_accumulator/main.frog",
+                  "title": "main.frog",
+                  "path": "/Examples/05_bounded_ui_accumulator/main.frog",
+                  "kind": "code",
+                  "children": []
+                }
+              ]
             },
             {
               "key": "examples/compiler/",
@@ -2205,6 +2213,7 @@
     "/Examples/03_ui_property_write/Readme.md",
     "/Examples/04_stateful_feedback_delay/main.frog",
     "/Examples/04_stateful_feedback_delay/Readme.md",
+    "/Examples/05_bounded_ui_accumulator/main.frog",
     "/Examples/05_bounded_ui_accumulator/Readme.md",
     "/Examples/compiler/01_pure_arithmetic.md",
     "/Examples/compiler/02_structured_control.md",
