@@ -26,6 +26,7 @@
     - [main.frog](/Examples/03_ui_property_write/main.frog)
   - [04 stateful feedback delay](/Examples/04_stateful_feedback_delay/Readme.md)
     - [main.frog](/Examples/04_stateful_feedback_delay/main.frog)
+  - [05 bounded ui accumulator](/Examples/05_bounded_ui_accumulator/Readme.md)
   - [compiler](/Examples/compiler/Readme.md)
     - [01 pure arithmetic](/Examples/compiler/01_pure_arithmetic.md)
     - [02 structured control](/Examples/compiler/02_structured_control.md)
