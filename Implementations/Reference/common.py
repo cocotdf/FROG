@@ -8,12 +8,18 @@ from typing import Any, Dict, List, Optional, Tuple
 
 
 DEMO_ARTIFACT_VERSION = "0.1"
+
+# Conservative internal reference family used by the current Python runtime path.
 DEFAULT_BACKEND_FAMILY = "reference_host_runtime_ui_binding"
 
+# First explicit LLVM-oriented backend-family identifier for downstream contract emission.
+LLVM_BACKEND_FAMILY = "llvm_cpu_v1"
+
 SUPPORTED_SCALAR_TYPES = {
-    "f64",
     "u16",
     "i32",
+    "i64",
+    "f64",
     "string",
     "frog.ui.color",
 }
@@ -26,7 +32,7 @@ class FrogPipelineError(Exception):
         error_code: str,
         message: str,
         diagnostics: Optional[List[Dict[str, Any]]] = None,
-    ):
+    ) -> None:
         super().__init__(message)
         self.stage = stage
         self.error_code = error_code
