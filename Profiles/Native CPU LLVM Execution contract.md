@@ -36,8 +36,9 @@
   <li><a href="#producer-obligations">21. Producer Obligations</a></li>
   <li><a href="#consumer-obligations">22. Consumer Obligations</a></li>
   <li><a href="#conformance-reading">23. Conformance Reading</a></li>
-  <li><a href="#future-evolution">24. Future Evolution</a></li>
-  <li><a href="#summary">25. Summary</a></li>
+  <li><a href="#relation-with-other-specification-layers">24. Relation with Other Specification Layers</a></li>
+  <li><a href="#future-evolution">25. Future Evolution</a></li>
+  <li><a href="#summary">26. Summary</a></li>
 </ul>
 
 <hr/>
@@ -52,7 +53,7 @@ This document defines an optional execution contract for the <code>native_cpu_ll
 Its purpose is to close one specific gap that remains after:
 </p>
 
-<pre>.frog source
+<pre><code>.frog source
    -&gt;
 structural acceptance
    -&gt;
@@ -62,18 +63,21 @@ canonical FROG Execution IR
    -&gt;
 lowering
    -&gt;
-backend contract</pre>
+backend contract
+</code></pre>
 
 <p>
 namely:
 </p>
 
-<pre>Under what explicit assumptions
+<pre><code>Under what explicit assumptions
 may an accepted Native CPU LLVM program
-actually begin execution?</pre>
+actually begin execution?
+</code></pre>
 
 <p>
-This document does not redefine the language, the canonical Execution IR, lowering, or the generic backend contract. It defines an additional profile-level closure for bounded execution start under the Native CPU LLVM profile.
+This document does not redefine the language, the canonical Execution IR, lowering, or the generic backend contract.
+It defines an additional profile-level closure for bounded execution start under the Native CPU LLVM profile.
 </p>
 
 <hr/>
@@ -123,7 +127,7 @@ This document exists to answer those questions conservatively for the first Nati
 This document must be read under the repository-wide layering:
 </p>
 
-<pre>Expression/
+<pre><code>Expression/
    - canonical source form
 
 Language/
@@ -144,7 +148,8 @@ Profiles/
    - bounded profile-side capability closure
 
 Implementations/
-   - non-normative executable realization workspaces</pre>
+   - non-normative executable realization workspaces
+</code></pre>
 
 <p>
 Accordingly:
@@ -214,14 +219,15 @@ For the Native CPU LLVM profile, an <strong>execution contract</strong> is the e
 Compactly:
 </p>
 
-<pre>backend contract
+<pre><code>backend contract
    says
 what a downstream consumer may rely on
 
 execution contract
    says
 what else must be explicit
-before actual execution start may be claimed</pre>
+before actual execution start may be claimed
+</code></pre>
 
 <hr/>
 
@@ -239,14 +245,15 @@ This document defines the bounded execution-start closure that may accompany tha
 The distinction is:
 </p>
 
-<pre>Native CPU LLVM profile
+<pre><code>Native CPU LLVM profile
    =
 bounded route to native CPU LLVM-oriented backend-family consumability
 
 Native CPU LLVM execution contract
    =
 bounded route from consumability
-to explicit execution-start readiness</pre>
+to explicit execution-start readiness
+</code></pre>
 
 <p>
 A program may therefore be:
@@ -270,14 +277,15 @@ This document must be read as a companion to <code>IR/Backend contract.md</code>
 The intended architectural split is:
 </p>
 
-<pre>IR/Backend contract.md
+<pre><code>IR/Backend contract.md
    =
 generic standardized downstream handoff
 
 this document
    =
 profile-level execution-start closure
-for one bounded Native CPU LLVM corridor</pre>
+for one bounded Native CPU LLVM corridor
+</code></pre>
 
 <p>
 The generic backend contract remains owned by <code>IR/</code>.
@@ -292,7 +300,7 @@ This document does not move that ownership into <code>Profiles/</code>.
 The intended bounded corridor is:
 </p>
 
-<pre>.frog
+<pre><code>.frog
    -&gt;
 structural acceptance
    -&gt;
@@ -306,22 +314,24 @@ backend contract
    -&gt;
 execution contract satisfaction
    -&gt;
-native CPU LLVM execution start</pre>
+native CPU LLVM execution start
+</code></pre>
 
 <p>
 This document applies only at the last transition:
 </p>
 
-<pre>backend-contract-emitted
+<pre><code>backend-contract-emitted
    -&gt;
-execution-start-ready</pre>
+execution-start-ready
+</code></pre>
 
 <hr/>
 
 <h2 id="contract-entry-condition">10. Contract Entry Condition</h2>
 
 <p>
-A program scope may claim conformance with this execution contract only if all of the following are true:
+A program scope may only claim conformance with this execution contract if all of the following are true:
 </p>
 
 <ul>
@@ -398,11 +408,12 @@ This document does not require one universal concrete form.
 It does require that the following be explicit:
 </p>
 
-<pre>what must exist before activation
+<pre><code>what must exist before activation
 what values are supplied at activation
 what state already exists at activation
 what outputs become externally visible
-what condition counts as completion or quiescence</pre>
+what condition counts as completion or quiescence
+</code></pre>
 
 <hr/>
 
@@ -412,7 +423,7 @@ what condition counts as completion or quiescence</pre>
 The conservative lifecycle admitted by this document is:
 </p>
 
-<pre>prepare
+<pre><code>prepare
    -&gt;
 instantiate
    -&gt;
@@ -426,7 +437,8 @@ produce visible outputs
    -&gt;
 terminate, quiesce, or await next permitted activation
    -&gt;
-dispose</pre>
+dispose
+</code></pre>
 
 <p>
 A conforming implementation does not need to expose all these phases as public APIs, but it MUST preserve the architectural distinction between them whenever that distinction affects correctness.
@@ -469,9 +481,10 @@ The selected execution mode MUST be explicit.
 A conforming implementation MUST NOT silently assume:
 </p>
 
-<pre>compiled
+<pre><code>compiled
    implies
-always one-shot process-main execution</pre>
+always one-shot process-main execution
+</code></pre>
 
 <p>
 because some accepted scopes may instead rely on repeated explicit activation.
@@ -534,7 +547,7 @@ In particular:
 Compactly:
 </p>
 
-<pre>scheduler freedom
+<pre><code>scheduler freedom
    exists only inside
 the freedom still left open
 by
@@ -546,7 +559,8 @@ lowering
    -&gt;
 backend contract
    -&gt;
-execution contract</pre>
+execution contract
+</code></pre>
 
 <hr/>
 
@@ -620,9 +634,10 @@ The exact private representation remains downstream.
 What is forbidden is:
 </p>
 
-<pre>opaque hidden boundary assumption
+<pre><code>opaque hidden boundary assumption
 presented as though
-the profile had already standardized it</pre>
+the profile had already standardized it
+</code></pre>
 
 <hr/>
 
@@ -674,13 +689,14 @@ These states MUST NOT be silently collapsed.
 In particular:
 </p>
 
-<pre>language-valid
+<pre><code>language-valid
    +
 profile-valid
    +
 backend-consumable
 does not automatically imply
-execution-start success</pre>
+execution-start success
+</code></pre>
 
 <hr/>
 
@@ -745,7 +761,7 @@ This document is intended to support future executable conformance growth.
 A future executable conformance family may read cases through a corridor such as:
 </p>
 
-<pre>valid/executable/...
+<pre><code>valid/executable/...
    source accepted
    -&gt;
    IR preserved
@@ -756,7 +772,8 @@ A future executable conformance family may read cases through a corridor such as
    -&gt;
    execution contract satisfied
    -&gt;
-   observable execution outcome matches expectation</pre>
+   observable execution outcome matches expectation
+</code></pre>
 
 <p>
 Negative executable families may distinguish:
@@ -771,7 +788,43 @@ Negative executable families may distinguish:
 
 <hr/>
 
-<h2 id="future-evolution">24. Future Evolution</h2>
+<h2 id="relation-with-other-specification-layers">24. Relation with Other Specification Layers</h2>
+
+<p>
+This document remains subordinate to the rest of the published architecture:
+</p>
+
+<ul>
+  <li><code>Expression/</code> still owns source form,</li>
+  <li><code>Language/</code> still owns validated meaning,</li>
+  <li><code>Libraries/</code> still own intrinsic primitive law,</li>
+  <li><code>IR/</code> still owns canonical execution-facing representation, derivation, schema, lowering, and generic backend handoff,</li>
+  <li><code>Profiles/</code> only owns the optional execution-start closure stated here for one bounded profile corridor.</li>
+</ul>
+
+<p>
+This is critical:
+</p>
+
+<pre><code>Native CPU LLVM execution contract
+   is a profile-side execution-start closure
+
+it is not
+the language core
+
+it is not
+the canonical IR
+
+it is not
+the generic backend contract
+
+it is not
+the hidden definition of runtime realization for all FROG programs
+</code></pre>
+
+<hr/>
+
+<h2 id="future-evolution">25. Future Evolution</h2>
 
 <p>
 Later revisions may extend this execution contract with more detailed treatment of:
@@ -791,20 +844,30 @@ Later revisions may extend this execution contract with more detailed treatment 
 Any such extension MUST preserve the repository-wide rule:
 </p>
 
-<pre>open language and IR truth upstream
-private realization downstream</pre>
+<pre><code>open language and IR truth upstream
+private realization downstream
+</code></pre>
+
+<p>
+Future growth SHOULD also remain disciplined:
+</p>
+
+<pre><code>close one execution-ready corridor clearly
+before opening many partially specified runtime surfaces
+</code></pre>
 
 <hr/>
 
-<h2 id="summary">25. Summary</h2>
+<h2 id="summary">26. Summary</h2>
 
 <p>
 This document closes one specific missing question in the Native CPU LLVM corridor:
 </p>
 
-<pre>When may a bounded accepted FROG program,
+<pre><code>When may a bounded accepted FROG program,
 already lowered and backend-contract-emitted,
-actually be considered ready to begin execution?</pre>
+actually be considered ready to begin execution?
+</code></pre>
 
 <p>
 Its answer is conservative:
@@ -818,6 +881,30 @@ Its answer is conservative:
   <li>only when producer and consumer both honor the preserved corridor commitments,</li>
   <li>and without pretending that the whole future runtime ecosystem is already standardized.</li>
 </ul>
+
+<p>
+This document therefore closes:
+</p>
+
+<pre><code>backend-consumable under profile
+   -&gt;
+execution-start ready under explicit assumptions
+</code></pre>
+
+<p>
+without collapsing:
+</p>
+
+<pre><code>generic backend handoff
+   into
+profile-side execution-start closure
+
+or
+
+profile-side execution-start closure
+   into
+private runtime realization
+</code></pre>
 
 <p>
 That is the intended role of the Native CPU LLVM execution contract in FROG v0.1.
