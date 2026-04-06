@@ -6,9 +6,17 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-DEMO_ARTIFACT_VERSION = "0.1-dev"
+
+DEMO_ARTIFACT_VERSION = "0.1"
 DEFAULT_BACKEND_FAMILY = "reference_host_runtime_ui_binding"
-SUPPORTED_SCALAR_TYPES = {"f64", "string"}
+
+SUPPORTED_SCALAR_TYPES = {
+    "f64",
+    "u16",
+    "i32",
+    "string",
+    "frog.ui.color",
+}
 
 
 class FrogPipelineError(Exception):
@@ -27,6 +35,8 @@ class FrogPipelineError(Exception):
 
     def as_dict(self) -> Dict[str, Any]:
         return {
+            "artifact_kind": "frog_pipeline_error",
+            "artifact_version": DEMO_ARTIFACT_VERSION,
             "status": "error",
             "stage": self.stage,
             "error_code": self.error_code,
@@ -96,7 +106,10 @@ def load_json_file(path: Path) -> Tuple[str, Any]:
                 {
                     "severity": "error",
                     "message": str(exc),
-                    "source_anchor": {"line": exc.lineno, "column": exc.colno},
+                    "source_anchor": {
+                        "line": exc.lineno,
+                        "column": exc.colno,
+                    },
                 }
             ],
         ) from exc
@@ -130,7 +143,12 @@ def ensure(
     diagnostics: Optional[List[Dict[str, Any]]] = None,
 ) -> None:
     if not condition:
-        raise FrogPipelineError(stage=stage, error_code=error_code, message=message, diagnostics=diagnostics)
+        raise FrogPipelineError(
+            stage=stage,
+            error_code=error_code,
+            message=message,
+            diagnostics=diagnostics,
+        )
 
 
 def program_id_from_path(path: Path) -> str:
