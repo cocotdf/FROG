@@ -1,7 +1,11 @@
-<h1 align="center">🐸 FROG Control Structures Specification</h1>
+<p align="center">
+  <img src="../FROG logo.svg" alt="FROG logo" width="200" />
+</p>
+
+<h1 align="center">FROG Control Structures Specification</h1>
 
 <p align="center">
-  Source-facing representation of control structures in FROG programs<br/>
+  <strong>Source-facing representation of control structures in FROG programs</strong><br/>
   <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -38,8 +42,8 @@
 
 <p>
 FROG is a graphical dataflow language, but not every program behavior should be represented as an ordinary function call.
-Some behaviors are inherently structural: they select one executable region among several, or they repeat a region according
-to explicit structural rules. These behaviors are represented by control structures.
+Some behaviors are inherently structural: they select one executable region among several, or they repeat a region according to explicit structural rules.
+These behaviors are represented by control structures.
 </p>
 
 <p>
@@ -49,6 +53,7 @@ In canonical source, it is a structural region of the diagram with:
 
 <ul>
   <li>an explicit structure kind,</li>
+  <li>an explicit structure family,</li>
   <li>an explicit boundary,</li>
   <li>explicit structure terminals when required,</li>
   <li>one or more owned executable regions,</li>
@@ -77,6 +82,7 @@ There is no separate canonical <code>if</code> structure in base v0.1.
   <li><strong>Structural explicitness</strong> — make structure boundaries, terminals, and regions first-class in canonical source.</li>
   <li><strong>Extensibility</strong> — allow future structure families without redefining the foundations.</li>
   <li><strong>Compatibility with graphical practice</strong> — remain understandable to users familiar with established graphical dataflow environments.</li>
+  <li><strong>Executable-slice closure</strong> — provide a source form precise enough to support one complete published corridor from <code>.frog</code> source to derivation, lowering, backend handoff, and first runtime execution.</li>
 </ul>
 
 <hr/>
@@ -184,7 +190,7 @@ Those MAY be introduced later as their own structure families.
 <h2 id="standard-control-structures-for-v01">6. Standard Control Structures for v0.1</h2>
 
 <p>
-The standard structure kinds for FROG v0.1 are:
+The standard structure families for FROG v0.1 are:
 </p>
 
 <ul>
@@ -201,7 +207,7 @@ Tools SHOULD present them as dedicated structural elements in the diagram editor
 <p>
 For usability, tools MAY present a boolean <code>case</code> as <em>If / Else</em> in the UI.
 More generally, tools MAY expose authoring-facing derived forms such as <em>If</em>, <em>If / Else</em>, <em>Else If</em>, or <em>Switch</em>, provided that those forms normalize to the canonical structure family defined in source.
-However, the canonical source structure kind remains <code>case</code>.
+However, the canonical source structure family remains <code>case</code>.
 </p>
 
 <p>
@@ -210,7 +216,7 @@ Accordingly:
 
 <ul>
   <li>canonical source MUST serialize standardized structure families such as <code>case</code>, <code>for_loop</code>, and <code>while_loop</code>,</li>
-  <li>canonical source MUST NOT introduce separate structure kinds such as <code>if</code>, <code>if_else</code>, <code>else_if</code>, or <code>switch</code> in base v0.1,</li>
+  <li>canonical source MUST NOT introduce separate structure families such as <code>if</code>, <code>if_else</code>, <code>else_if</code>, or <code>switch</code> in base v0.1,</li>
   <li>tooling MAY preserve authoring intent in editor metadata, but MUST preserve canonical structural meaning when serializing source.</li>
 </ul>
 
@@ -261,9 +267,9 @@ Rules:
   <li><code>id</code> MUST exist.</li>
   <li><code>kind</code> MUST exist and MUST equal <code>"structure"</code>.</li>
   <li><code>structure_type</code> MUST exist.</li>
-  <li><code>boundary</code> MUST exist and MUST be valid for the selected structure type.</li>
-  <li><code>structure_terminals</code> MUST exist and MUST be valid for the selected structure type.</li>
-  <li><code>regions</code> MUST exist and MUST be valid for the selected structure type.</li>
+  <li><code>boundary</code> MUST exist and MUST be valid for the selected structure family.</li>
+  <li><code>structure_terminals</code> MUST exist and MUST be valid for the selected structure family.</li>
+  <li><code>regions</code> MUST exist and MUST be valid for the selected structure family.</li>
 </ul>
 
 <hr/>
@@ -277,10 +283,10 @@ Conceptually, these crossings behave like explicit tunnels.
 
 <pre><code>"boundary": {
   "inputs": [
-    { "id": "x", "type": "f64" }
+    { "id": "x", "type": "u16" }
   ],
   "outputs": [
-    { "id": "y", "type": "f64" }
+    { "id": "y", "type": "u16" }
   ]
 }</code></pre>
 
@@ -288,8 +294,7 @@ Conceptually, these crossings behave like explicit tunnels.
 
 <p>
 A boundary input carries a value from the outer graph into the structure.
-The exact structure-family-specific interpretation of that crossing is defined normatively by
-<code>Language/Control structures.md</code>.
+The exact structure-family-specific interpretation of that crossing is defined normatively by <code>Language/Control structures.md</code>.
 </p>
 
 <ul>
@@ -326,7 +331,7 @@ The only standardized loop-output mode in v0.1 is:
 Example:
 </p>
 
-<pre><code>{ "id": "sum_out", "type": "f64", "mode": "last_value", "zero_iteration_value": 0.0 }</code></pre>
+<pre><code>{ "id": "sum_out", "type": "u16", "mode": "last_value", "zero_iteration_value": 0 }</code></pre>
 
 <p>
 Source-shape rules for <code>mode: "last_value"</code>:
@@ -548,11 +553,6 @@ Tools MAY present this form as an <em>If / Else</em> structure in the UI.
 The canonical source remains <code>case</code>.
 </p>
 
-<p>
-If an IDE exposes an <em>If</em> view with a visually minimized or collapsed false branch, that presentation MUST still preserve the canonical meaning of the corresponding boolean <code>case</code> in source.
-Tool presentation MUST NOT silently redefine branch identity.
-</p>
-
 <h3>11.4 String case</h3>
 
 <p>
@@ -602,47 +602,8 @@ Canonical shape:
 ]</code></pre>
 
 <p>
-Tools MAY present this form as <em>Switch</em> or another equivalent authoring view in the UI.
-The canonical source remains <code>case</code>.
-</p>
-
-<p>
 Normative branch-selection behavior is defined by <code>Language/Control structures.md</code>.
 This document only fixes the canonical source form used to express that behavior.
-</p>
-
-<h3>11.5 Outputs</h3>
-
-<p>
-Every executable branch of a <code>case</code> structure MUST define the source representation of every required boundary output.
-Normative branch-selection and output-production semantics are defined by <code>Language/Control structures.md</code>.
-</p>
-
-<h3>11.6 Region count</h3>
-
-<p>
-A <code>case</code> MUST own at least one region, and in practice MUST own:
-</p>
-
-<ul>
-  <li>exactly two regions for a boolean case,</li>
-  <li>one or more matched regions plus exactly one default region for a string case.</li>
-</ul>
-
-<h3>11.7 Canonical-family rule</h3>
-
-<p>
-The canonical structural family is <code>case</code>.
-Base v0.1 MUST NOT introduce parallel canonical families such as <code>if</code>, <code>if_else</code>, <code>else_if</code>, or <code>switch</code>.
-Those are authoring-level presentations, not source-level structure kinds.
-</p>
-
-<h3>11.8 Future extensibility</h3>
-
-<p>
-Future revisions or stricter profiles MAY add selector categories such as integers, enums, or pattern-oriented matching.
-Such extensions MUST preserve structural explicitness and MUST remain compatible with the execution-semantics ownership of
-<code>Language/Control structures.md</code>.
 </p>
 
 <hr/>
@@ -658,6 +619,7 @@ This document standardizes how that structure is represented in canonical source
 
 <p>
 A for loop is used when the loop form is expressed through an explicit count terminal and a single body region.
+The source form is intended to support explicit loop-carried computation and explicit local memory inside the body when needed.
 </p>
 
 <h3>12.2 Canonical terminals</h3>
@@ -697,8 +659,8 @@ Rules:
 
 <p>
 The canonical <code>for_loop</code> source model represents counted iteration through terminal <code>count</code>.
-The normative interpretation of the resolved count value belongs to
-<code>Language/Control structures.md</code>.
+The resolved count value is provided from the outer graph through the terminal exposed at the structure boundary.
+The normative interpretation of the resolved count value belongs to <code>Language/Control structures.md</code>.
 </p>
 
 <h3>12.4 Negative counts</h3>
@@ -711,12 +673,23 @@ Normative rejection behavior belongs to <code>Language/Control structures.md</co
 <h3>12.5 Zero iterations</h3>
 
 <p>
-If zero iterations are possible under the active validated profile, every loop output MUST still have a complete source
-representation. If a loop output uses <code>mode: "last_value"</code>, it MUST define a valid
-<code>zero_iteration_value</code>.
+If zero iterations are possible under the active validated profile, every loop output MUST still have a complete source representation.
+If a loop output uses <code>mode: "last_value"</code>, it MUST define a valid <code>zero_iteration_value</code>.
 </p>
 
-<h3>12.6 Regions</h3>
+<h3>12.6 Boundary model for loop-carried values</h3>
+
+<p>
+A <code>for_loop</code> MAY use ordinary boundary inputs and outputs to express values that enter or leave the structure.
+When a loop computes a final accumulated result, the canonical source representation SHOULD use a boundary output with <code>mode: "last_value"</code>.
+</p>
+
+<p>
+This source model intentionally does not invent hidden source-level accumulator syntax.
+If accumulation requires explicit state, that state MUST still be represented explicitly inside the body region, typically through <code>frog.core.delay</code> in base v0.1.
+</p>
+
+<h3>12.7 Regions</h3>
 
 <p>
 A canonical <code>for_loop</code> MUST define exactly one region with <code>id: "body"</code>.
@@ -732,11 +705,28 @@ A canonical <code>for_loop</code> MUST define exactly one region with <code>id: 
   }
 ]</code></pre>
 
-<h3>12.7 Distinction from ordinary functions</h3>
+<h3>12.8 Distinction from ordinary functions</h3>
 
 <p>
 A for loop is not reducible to one ordinary function call.
 It governs repeated execution of a structural region and therefore requires its own canonical source form.
+</p>
+
+<h3>12.9 First executable-slice posture</h3>
+
+<p>
+For the first complete executable slice, a conforming source MAY use a <code>for_loop</code> with:
+</p>
+
+<ul>
+  <li>one boundary input carrying the loop-invariant external value,</li>
+  <li>one external count terminal resolved to a constant such as <code>5</code>,</li>
+  <li>one explicit local-memory element inside the body region initialized to <code>0</code>,</li>
+  <li>one boundary output using <code>mode: "last_value"</code> to expose the final accumulated value.</li>
+</ul>
+
+<p>
+This keeps loop structure, state, and final result explicit without introducing profile-specific hidden accumulation syntax.
 </p>
 
 <hr/>
@@ -757,8 +747,7 @@ A while loop is used when repetition is expressed through a dedicated continuati
 <h3>13.2 Canonical v0.1 loop form</h3>
 
 <p>
-The canonical v0.1 source model of <code>while_loop</code> is aligned with the standardized continue-while-true semantic family defined by
-<code>Language/Control structures.md</code>.
+The canonical v0.1 source model of <code>while_loop</code> is aligned with the standardized continue-while-true semantic family defined by <code>Language/Control structures.md</code>.
 </p>
 
 <p>
@@ -873,7 +862,8 @@ This section defines the source-level alignment points between the structures de
   <li><code>structure_terminals.count</code> identifies the source terminal used to express loop count,</li>
   <li><code>structure_terminals.index</code> identifies the source terminal exposed in the body,</li>
   <li>the region <code>body</code> identifies the owned loop body region,</li>
-  <li>loop-output metadata such as <code>mode</code> and <code>zero_iteration_value</code> provides source-level data consumed by loop-output semantics.</li>
+  <li>loop-output metadata such as <code>mode</code> and <code>zero_iteration_value</code> provides source-level data consumed by loop-output semantics,</li>
+  <li>explicit local memory inside the body remains represented by ordinary primitives such as <code>frog.core.delay</code> rather than by hidden loop-owned magic state.</li>
 </ul>
 
 <h3>14.3 While-loop alignment</h3>
@@ -908,8 +898,7 @@ Those topics are owned normatively by <code>Language/Control structures.md</code
 <h2 id="interaction-with-local-memory-and-cycles">15. Interaction with Local Memory and Cycles</h2>
 
 <p>
-Control structures interact with local memory and cycles at the source-representation level, but do not redefine the general
-semantic validity rule for cyclic graphs.
+Control structures interact with local memory and cycles at the source-representation level, but do not redefine the general semantic validity rule for cyclic graphs.
 </p>
 
 <p>
@@ -970,8 +959,7 @@ Their internal source representation is resolved from:
 </ul>
 
 <p>
-Tools SHOULD present these structures as dedicated visible structural elements rather than disguising them as ordinary
-primitive functions.
+Tools SHOULD present these structures as dedicated visible structural elements rather than disguising them as ordinary primitive functions.
 </p>
 
 <hr/>
@@ -995,6 +983,7 @@ Implementations MUST enforce the following source-level validation rules:
   <li>canonical source MUST NOT replace <code>case</code> with derived editor-facing kinds such as <code>if</code>, <code>if_else</code>, <code>else_if</code>, or <code>switch</code>,</li>
   <li>a <code>for_loop</code> MUST define a valid count terminal,</li>
   <li>a <code>for_loop</code> count MUST be represented in a way compatible with non-negative counted iteration in base v0.1,</li>
+  <li>a <code>for_loop</code> MUST define exactly one body region,</li>
   <li>a <code>while_loop</code> MUST define a valid boolean continuation terminal,</li>
   <li>a <code>while_loop</code> MUST use the canonical source shape aligned with the standardized continue-while-true rule of base v0.1,</li>
   <li>every loop output MUST have a complete source-level meaning,</li>
@@ -1024,10 +1013,10 @@ Tools SHOULD additionally warn when:
   "structure_type": "case",
   "boundary": {
     "inputs": [
-      { "id": "x", "type": "f64" }
+      { "id": "x", "type": "u16" }
     ],
     "outputs": [
-      { "id": "y", "type": "f64" }
+      { "id": "y", "type": "u16" }
     ]
   },
   "structure_terminals": {
@@ -1106,18 +1095,18 @@ Tools SHOULD additionally warn when:
   ]
 }</code></pre>
 
-<h3>18.3 For loop</h3>
+<h3>18.3 For loop with explicit final-value output</h3>
 
 <pre><code>{
-  "id": "loop_1",
+  "id": "loop_accumulate",
   "kind": "structure",
   "structure_type": "for_loop",
   "boundary": {
     "inputs": [
-      { "id": "x", "type": "f64" }
+      { "id": "input_value", "type": "u16" }
     ],
     "outputs": [
-      { "id": "sum_out", "type": "f64", "mode": "last_value", "zero_iteration_value": 0.0 }
+      { "id": "final_value", "type": "u16", "mode": "last_value", "zero_iteration_value": 0 }
     ]
   },
   "structure_terminals": {
@@ -1140,7 +1129,10 @@ Tools SHOULD additionally warn when:
     {
       "id": "body",
       "diagram": {
-        "nodes": [],
+        "nodes": [
+          { "id": "delay_state", "kind": "primitive", "type": "frog.core.delay" },
+          { "id": "add_step", "kind": "primitive", "type": "frog.core.add" }
+        ],
         "edges": []
       }
     }
@@ -1155,10 +1147,10 @@ Tools SHOULD additionally warn when:
   "structure_type": "while_loop",
   "boundary": {
     "inputs": [
-      { "id": "x", "type": "f64" }
+      { "id": "x", "type": "u16" }
     ],
     "outputs": [
-      { "id": "y", "type": "f64", "mode": "last_value" }
+      { "id": "y", "type": "u16", "mode": "last_value" }
     ]
   },
   "structure_terminals": {
@@ -1200,7 +1192,8 @@ Tools SHOULD additionally warn when:
   <li>exception-handling structures,</li>
   <li>advanced loop output modes such as implicit collection or generalized reduction,</li>
   <li>hidden automatic memory insertion inside structures,</li>
-  <li>standardized source-level aliases for authoring forms such as <code>if</code> or <code>switch</code>.</li>
+  <li>standardized source-level aliases for authoring forms such as <code>if</code> or <code>switch</code>,</li>
+  <li>profile-specific hidden accumulator syntax that would replace explicit local memory in the first executable slice.</li>
 </ul>
 
 <hr/>
@@ -1219,6 +1212,7 @@ This document defines how that structural control is represented in canonical so
   <li>Derived IDE-facing authoring forms such as <em>If</em>, <em>If / Else</em>, <em>Else If</em>, and <em>Switch</em> do not introduce separate canonical structure families in source.</li>
   <li>Loop structures remain source-distinct from ordinary functions.</li>
   <li>Structure boundaries, structure terminals, and owned regions are explicit parts of canonical source.</li>
+  <li>Explicit local memory inside loop regions remains represented by ordinary source primitives such as <code>frog.core.delay</code>.</li>
   <li>Normative execution semantics remain owned by <code>Language/Control structures.md</code>.</li>
 </ul>
 
