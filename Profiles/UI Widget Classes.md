@@ -21,21 +21,22 @@
   <li><a href="#relation-with-other-specifications">6. Relation with Other Specifications</a></li>
   <li><a href="#why-this-belongs-in-profiles">7. Why this Belongs in <code>Profiles/</code></a></li>
   <li><a href="#core-model">8. Core Model</a></li>
-  <li><a href="#widget-class-contract">9. Widget Class Contract</a></li>
-  <li><a href="#property-contract">10. Property Contract</a></li>
-  <li><a href="#method-contract">11. Method Contract</a></li>
-  <li><a href="#event-contract">12. Event Contract</a></li>
-  <li><a href="#part-contract">13. Part Contract</a></li>
-  <li><a href="#design-time-vs-runtime">14. Design-Time vs Runtime Distinction</a></li>
-  <li><a href="#program-model-and-ide-consumption">15. Program Model and IDE Consumption</a></li>
-  <li><a href="#interaction-node-consumption">16. Interaction-Node Consumption</a></li>
-  <li><a href="#execution-facing-posture">17. Execution-Facing Posture</a></li>
-  <li><a href="#profile-identification-and-claims">18. Profile Identification and Claims</a></li>
-  <li><a href="#minimal-executable-widget-family">19. Minimal Executable Widget Family for the First Vertical Slice</a></li>
-  <li><a href="#validation-rules">20. Validation Rules</a></li>
-  <li><a href="#examples">21. Examples</a></li>
-  <li><a href="#out-of-scope-for-v01">22. Out of Scope for v0.1</a></li>
-  <li><a href="#summary">23. Summary</a></li>
+  <li><a href="#open-ended-widget-families">9. Open-Ended Widget Families</a></li>
+  <li><a href="#widget-class-contract">10. Widget Class Contract</a></li>
+  <li><a href="#property-contract">11. Property Contract</a></li>
+  <li><a href="#method-contract">12. Method Contract</a></li>
+  <li><a href="#event-contract">13. Event Contract</a></li>
+  <li><a href="#part-contract">14. Part Contract</a></li>
+  <li><a href="#design-time-vs-runtime">15. Design-Time vs Runtime Distinction</a></li>
+  <li><a href="#program-model-and-ide-consumption">16. Program Model and IDE Consumption</a></li>
+  <li><a href="#interaction-node-consumption">17. Interaction-Node Consumption</a></li>
+  <li><a href="#execution-facing-posture">18. Execution-Facing Posture</a></li>
+  <li><a href="#profile-identification-and-claims">19. Profile Identification and Claims</a></li>
+  <li><a href="#minimal-executable-widget-family">20. Minimal Executable Widget Family for the First Vertical Slice</a></li>
+  <li><a href="#validation-rules">21. Validation Rules</a></li>
+  <li><a href="#examples">22. Examples</a></li>
+  <li><a href="#out-of-scope-for-v01">23. Out of Scope for v0.1</a></li>
+  <li><a href="#summary">24. Summary</a></li>
 </ul>
 
 <hr/>
@@ -99,7 +100,16 @@ without turning one private widget implementation into language law.
 </p>
 
 <p>
-For the current repository campaign, this profile also defines the smallest portable widget-class family needed to support the first complete executable vertical slice that includes:
+This profile is intentionally two-layered:
+</p>
+
+<ul>
+  <li>it defines a general contract model capable of supporting open-ended widget-class families over time,</li>
+  <li>and it standardizes only a very small executable subset for v0.1.</li>
+</ul>
+
+<p>
+For the current repository campaign, this profile therefore also defines the smallest portable widget-class family needed to support the first complete executable vertical slice that includes:
 </p>
 
 <ul>
@@ -129,7 +139,8 @@ In particular, it exists so that:
   <li>event surfaces can be named and typed in a portable way,</li>
   <li>design-time editors can expose class-aware authoring behavior without redefining source meaning,</li>
   <li>runtime-facing systems can consume an explicit class contract without depending on one editor-private reflection API,</li>
-  <li>a portable presentation surface can be attached to a widget class without turning rendering metadata into executable semantics.</li>
+  <li>a portable presentation surface can be attached to a widget class without turning rendering metadata into executable semantics,</li>
+  <li>the repository can remain open to much richer widget families than the first executable subset standardized for v0.1.</li>
 </ul>
 
 <p>
@@ -202,6 +213,7 @@ For FROG v0.1, this profile defines:
   <li>the minimum information a conforming IDE needs to expose class-aware authoring,</li>
   <li>the minimum information a validator needs to check widget interaction against a class catalog,</li>
   <li>the minimum information that may flow into execution-facing systems without forcing one runtime-private representation,</li>
+  <li>the doctrine that FROG supports open-ended widget-class families by contract,</li>
   <li>and the first minimal standardized widget-class family needed by the first executable UI-bearing vertical slice.</li>
 </ul>
 
@@ -237,6 +249,11 @@ This profile also does not redefine:
   <li>one universal runtime-side widget ABI,</li>
   <li>or the semantic meaning of programs outside widget-class surface definition.</li>
 </ul>
+
+<p>
+This profile also does not claim that v0.1 already standardizes every useful widget family.
+It standardizes the extensibility model and a minimal executable subset, not the full future UI ecosystem.
+</p>
 
 <hr/>
 
@@ -377,7 +394,73 @@ A value-carrying widget class therefore has at least three potentially distinct 
 
 <hr/>
 
-<h2 id="widget-class-contract">9. Widget Class Contract</h2>
+<h2 id="open-ended-widget-families">9. Open-Ended Widget Families</h2>
+
+<p>
+FROG is intended to support open-ended widget-class families over time.
+</p>
+
+<p>
+That support does not mean that every possible widget class is already standardized in v0.1.
+It means that the architecture and contract model are intentionally general enough to permit:
+</p>
+
+<ul>
+  <li>additional standardized widget families published later under this profile,</li>
+  <li>compatible widget families published under other profiles,</li>
+  <li>external class-family packages recognized by conforming implementations,</li>
+  <li>progressive growth of property, method, event, part, and presentation surfaces,</li>
+  <li>future richer design systems without collapsing class semantics into one renderer or one IDE.</li>
+</ul>
+
+<p>
+The key doctrinal rule is:
+</p>
+
+<pre><code>open-ended class-family capability
+    !=
+fully standardized catalog in v0.1
+</code></pre>
+
+<p>
+Accordingly:
+</p>
+
+<ul>
+  <li>FROG supports an extensible widget-class model by contract,</li>
+  <li>v0.1 standardizes only a minimal executable subset,</li>
+  <li>later published families MAY be much richer without changing the core architectural boundaries defined here.</li>
+</ul>
+
+<p>
+A conforming implementation MAY support widget-class families beyond the minimal subset standardized in this document.
+However, when it claims profile support for those additional families, it MUST still preserve:
+</p>
+
+<ul>
+  <li>portable inspectable class contracts,</li>
+  <li>explicit member legality,</li>
+  <li>clear design-time vs runtime boundaries,</li>
+  <li>clear separation between semantic and presentation members,</li>
+  <li>and explicit support claims.</li>
+</ul>
+
+<p>
+This profile therefore standardizes both:
+</p>
+
+<ul>
+  <li>a general extensibility model,</li>
+  <li>and one conservative standard starting point.</li>
+</ul>
+
+<p>
+It does not claim that the starting point exhausts the model.
+</p>
+
+<hr/>
+
+<h2 id="widget-class-contract">10. Widget Class Contract</h2>
 
 <p>
 A widget class contract MUST define at least the following fields conceptually:
@@ -430,7 +513,7 @@ A class contract MUST keep the following distinctions explicit where relevant:
 
 <hr/>
 
-<h2 id="property-contract">10. Property Contract</h2>
+<h2 id="property-contract">11. Property Contract</h2>
 
 <p>
 Each declared property MUST expose a portable property contract.
@@ -494,7 +577,7 @@ A property declared as a non-semantic presentation property MUST NOT change:
 
 <hr/>
 
-<h2 id="method-contract">11. Method Contract</h2>
+<h2 id="method-contract">12. Method Contract</h2>
 
 <p>
 Each declared method MUST expose a portable method contract.
@@ -540,7 +623,7 @@ Method contracts MUST be sufficient for:
 
 <hr/>
 
-<h2 id="event-contract">12. Event Contract</h2>
+<h2 id="event-contract">13. Event Contract</h2>
 
 <p>
 This profile recognizes events as named runtime-originated interaction surfaces of widget classes and widget parts.
@@ -580,7 +663,7 @@ For v0.1, the presence of an event contract does not by itself require one manda
 
 <hr/>
 
-<h2 id="part-contract">13. Part Contract</h2>
+<h2 id="part-contract">14. Part Contract</h2>
 
 <p>
 A widget part contract standardizes named sub-objects of a widget class that may expose their own properties, methods, and events.
@@ -631,7 +714,7 @@ However, a presentation-facing part contract MUST NOT by itself create executabl
 
 <hr/>
 
-<h2 id="design-time-vs-runtime">14. Design-Time vs Runtime Distinction</h2>
+<h2 id="design-time-vs-runtime">15. Design-Time vs Runtime Distinction</h2>
 
 <p>
 A conforming class contract MUST keep design-time and runtime distinctions explicit.
@@ -683,7 +766,7 @@ If a class supports a presentation template reference such as an SVG-based face 
 
 <hr/>
 
-<h2 id="program-model-and-ide-consumption">15. Program Model and IDE Consumption</h2>
+<h2 id="program-model-and-ide-consumption">16. Program Model and IDE Consumption</h2>
 
 <p>
 A conforming IDE MAY use widget class contracts to provide:
@@ -728,7 +811,7 @@ to support visual editing or previewing of the front panel, but such support MUS
 
 <hr/>
 
-<h2 id="interaction-node-consumption">16. Interaction-Node Consumption</h2>
+<h2 id="interaction-node-consumption">17. Interaction-Node Consumption</h2>
 
 <p>
 When validating object-style widget interaction:
@@ -780,7 +863,7 @@ Accordingly, even if a primary value member is also declared as a property, a cl
 
 <hr/>
 
-<h2 id="execution-facing-posture">17. Execution-Facing Posture</h2>
+<h2 id="execution-facing-posture">18. Execution-Facing Posture</h2>
 
 <p>
 This profile does not require one mandatory runtime-private object representation.
@@ -833,7 +916,7 @@ However:
 
 <hr/>
 
-<h2 id="profile-identification-and-claims">18. Profile Identification and Claims</h2>
+<h2 id="profile-identification-and-claims">19. Profile Identification and Claims</h2>
 
 <p>
 An implementation claiming support for this profile MUST state:
@@ -852,9 +935,19 @@ An implementation claiming support for this profile MUST state:
 An implementation MUST NOT claim generic support for this profile while only supporting one editor-private undocumented class surface.
 </p>
 
+<p>
+An implementation claiming support beyond the minimal v0.1 subset SHOULD also state:
+</p>
+
+<ul>
+  <li>which additional families are supported,</li>
+  <li>whether they are standardized, profile-owned, or implementation-recognized external families,</li>
+  <li>and which parts of their contract surface are actually consumable.</li>
+</ul>
+
 <hr/>
 
-<h2 id="minimal-executable-widget-family">19. Minimal Executable Widget Family for the First Vertical Slice</h2>
+<h2 id="minimal-executable-widget-family">20. Minimal Executable Widget Family for the First Vertical Slice</h2>
 
 <p>
 For v0.1, this document defines not only the profile boundary and generic class-contract shape, but also the smallest standardized widget family needed by the first executable UI-bearing vertical slice.
@@ -874,7 +967,12 @@ Its purpose is to support one small but complete corridor that can go from canon
   <li>and one optional face template for front-panel rendering.</li>
 </ul>
 
-<h3>19.1 Standard Classes</h3>
+<p>
+This minimal family is a starting point, not a ceiling.
+It demonstrates that the contract model is executable and portable without claiming that the full open-ended widget ecosystem is already standardized in v0.1.
+</p>
+
+<h3>20.1 Standard Classes</h3>
 
 <p>
 The following classes are standardized by this document for that first minimal family:
@@ -890,7 +988,7 @@ These classes define the minimum portable surface needed by the first vertical s
 Richer standardized classes MAY be added later under this same profile or under compatible extensions.
 </p>
 
-<h3>19.2 Numeric Control Contract</h3>
+<h3>20.2 Numeric Control Contract</h3>
 
 <p>
 The conceptual contract of <code>frog.ui.standard.numeric_control</code> is:
@@ -989,7 +1087,7 @@ The conceptual contract of <code>frog.ui.standard.numeric_control</code> is:
   }
 }</code></pre>
 
-<h3>19.3 Numeric Indicator Contract</h3>
+<h3>20.3 Numeric Indicator Contract</h3>
 
 <p>
 The conceptual contract of <code>frog.ui.standard.numeric_indicator</code> is:
@@ -1088,7 +1186,7 @@ The conceptual contract of <code>frog.ui.standard.numeric_indicator</code> is:
   }
 }</code></pre>
 
-<h3>19.4 Required Semantic Distinction for the Minimal Family</h3>
+<h3>20.4 Required Semantic Distinction for the Minimal Family</h3>
 
 <p>
 For the minimal family standardized here:
@@ -1122,7 +1220,7 @@ Changing <code>face_color</code> or <code>face_template</code> MUST NOT:
   <li>change the executable meaning of the program.</li>
 </ul>
 
-<h3>19.5 SVG Face Template Boundary</h3>
+<h3>20.5 SVG Face Template Boundary</h3>
 
 <p>
 This profile allows the minimal family to reference an SVG-based face template through <code>face_template</code>.
@@ -1167,7 +1265,7 @@ A host that does not support SVG face templates MAY ignore <code>face_template</
 Such fallback MUST preserve the widget class contract and the program's executable meaning.
 </p>
 
-<h3>19.6 Design Tokens and Presentation Properties</h3>
+<h3>20.6 Design Tokens and Presentation Properties</h3>
 
 <p>
 For the minimal family, <code>face_color</code> acts as the first standardized presentation token.
@@ -1184,7 +1282,7 @@ Later compatible extensions MAY add additional presentation tokens such as:
 Those later additions MUST remain presentation-only unless another specification explicitly states otherwise.
 </p>
 
-<h3>19.7 Why this Minimal Family Exists</h3>
+<h3>20.7 Why this Minimal Family Exists</h3>
 
 <p>
 This minimal family exists so that the first executable vertical slice can carry:
@@ -1205,7 +1303,7 @@ It is not intended to standardize the full future UI ecosystem in v0.1.
 
 <hr/>
 
-<h2 id="validation-rules">20. Validation Rules</h2>
+<h2 id="validation-rules">21. Validation Rules</h2>
 
 <p>
 For a program to be valid under this profile:
@@ -1251,9 +1349,9 @@ For the minimal executable widget family defined in this document, a validator M
 
 <hr/>
 
-<h2 id="examples">21. Examples</h2>
+<h2 id="examples">22. Examples</h2>
 
-<h3>21.1 Minimal Numeric Control Class Contract</h3>
+<h3>22.1 Minimal Numeric Control Class Contract</h3>
 
 <pre><code>{
   "class_id": "frog.ui.standard.numeric_control",
@@ -1296,7 +1394,7 @@ For the minimal executable widget family defined in this document, a validator M
   ]
 }</code></pre>
 
-<h3>21.2 Natural Value Participation Example</h3>
+<h3>22.2 Natural Value Participation Example</h3>
 
 <pre><code>widget_value(ctrl_count)
     -&gt; u16
@@ -1307,7 +1405,7 @@ This is the natural value path of the widget class.
 It is the preferred path for ordinary dataflow participation.
 </p>
 
-<h3>21.3 Presentation Property Write Example</h3>
+<h3>22.3 Presentation Property Write Example</h3>
 
 <pre><code>widget_reference(ctrl_count)
     -&gt; frog.ui.property_write {
@@ -1319,7 +1417,7 @@ It is the preferred path for ordinary dataflow participation.
 This is valid only if the active class contract declares <code>face_color</code> as writable and class-owned.
 </p>
 
-<h3>21.4 Face Template Source Example</h3>
+<h3>22.4 Face Template Source Example</h3>
 
 <pre><code>{
   "id": "ctrl_count",
@@ -1341,7 +1439,7 @@ The presence of <code>face_template</code> does not change the executable meanin
 It only contributes presentation metadata for design-time tools or compatible hosts.
 </p>
 
-<h3>21.5 Part-Aware Presentation Anchoring Example</h3>
+<h3>22.5 Part-Aware Presentation Anchoring Example</h3>
 
 <pre><code>{
   "class_id": "frog.ui.standard.numeric_indicator",
@@ -1366,9 +1464,27 @@ A compatible designer or host MAY use those named parts as a stable anchoring su
 That anchoring remains presentation-facing only unless another specification states otherwise.
 </p>
 
+<h3>22.6 Open-Ended Family Example</h3>
+
+<p>
+A later compatible publication MAY define a richer family such as:
+</p>
+
+<ul>
+  <li><code>frog.ui.standard.table</code>,</li>
+  <li><code>frog.ui.standard.tree</code>,</li>
+  <li><code>frog.ui.standard.waveform_graph</code>,</li>
+  <li><code>frog.ui.vendor_x.3d_viewport</code>,</li>
+  <li>or another recognized external family.</li>
+</ul>
+
+<p>
+Such a publication remains compatible with this profile only if it preserves portable class contracts and the architectural boundaries defined here.
+</p>
+
 <hr/>
 
-<h2 id="out-of-scope-for-v01">22. Out of Scope for v0.1</h2>
+<h2 id="out-of-scope-for-v01">23. Out of Scope for v0.1</h2>
 
 <ul>
   <li>a universal industrial widget catalog,</li>
@@ -1385,7 +1501,7 @@ That anchoring remains presentation-facing only unless another specification sta
 
 <hr/>
 
-<h2 id="summary">23. Summary</h2>
+<h2 id="summary">24. Summary</h2>
 
 <p>
 This profile defines the missing portable layer between source-declared widget instances and portable executable widget-object ecosystems.
@@ -1414,5 +1530,10 @@ That separation makes it possible to support:
   <li>part-aware validation,</li>
   <li>future event-surface standardization,</li>
   <li>presentation metadata without semantic confusion,</li>
+  <li>open-ended class-family growth by contract,</li>
   <li>and backend-facing handoff without one IDE-private reflection model becoming normative truth.</li>
 </ul>
+
+<p>
+FROG therefore supports extensible widget-class families by architecture and contract model, while v0.1 standardizes only a conservative executable subset.
+</p>
