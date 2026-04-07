@@ -2101,6 +2101,13 @@
                   "children": []
                 },
                 {
+                  "key": "implementations/reference/runtime/run_slice05_contract.py",
+                  "title": "run_slice05_contract.py",
+                  "path": "/Implementations/Reference/Runtime/run_slice05_contract.py",
+                  "kind": "code",
+                  "children": []
+                },
+                {
                   "key": "implementations/reference/runtime/rust/",
                   "title": "rust",
                   "path": "/Implementations/Reference/Runtime/rust/Readme.md",
@@ -2491,6 +2498,7 @@
     "/Implementations/Reference/Runtime/accept_contract_and_execute.md",
     "/Implementations/Reference/Runtime/responsibilities.md",
     "/Implementations/Reference/Runtime/reference_runtime.py",
+    "/Implementations/Reference/Runtime/run_slice05_contract.py",
     "/Implementations/Reference/Runtime/rust/Readme.md",
     "/Implementations/Reference/Runtime/Readme.md",
     "/Implementations/Reference/UIHost/responsibilities.md",
