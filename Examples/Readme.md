@@ -20,10 +20,12 @@
   <li><a href="#relation-with-conformance">5. Relation with Conformance</a></li>
   <li><a href="#relation-with-ir-profiles-and-reference-implementation">6. Relation with IR, Profiles, and Reference Implementation</a></li>
   <li><a href="#published-example-families">7. Published Example Families</a></li>
-  <li><a href="#compiler-corridor-positive-mirror">8. Compiler-Corridor Positive Mirror</a></li>
-  <li><a href="#reading-discipline">9. Reading Discipline</a></li>
-  <li><a href="#growth-discipline">10. Growth Discipline</a></li>
-  <li><a href="#summary">11. Summary</a></li>
+  <li><a href="#core-language-example-slices">8. Core Language Example Slices</a></li>
+  <li><a href="#applicative-vertical-slice">9. Applicative Vertical Slice</a></li>
+  <li><a href="#compiler-corridor-positive-mirror">10. Compiler-Corridor Positive Mirror</a></li>
+  <li><a href="#reading-discipline">11. Reading Discipline</a></li>
+  <li><a href="#growth-discipline">12. Growth Discipline</a></li>
+  <li><a href="#summary">13. Summary</a></li>
 </ul>
 
 <hr/>
@@ -196,7 +198,7 @@ Examples may mirror:
 
 <p>
 Where a declared compiler corridor is involved, examples should remain bounded and conservative.
-They should illustrate only a corridor that the repository already exposes clearly enough across specification, conformance, and implementation-facing support material.
+Where an applicative vertical slice is involved, examples should still remain bounded enough that the repository-visible ownership chain can be followed clearly.
 </p>
 
 <p>
@@ -237,33 +239,98 @@ Published example growth should remain small, architecture-first, and repository
 </p>
 
 <p>
-At the current published state, the first coherent family is the positive compiler-corridor mirror for the conservative <code>native_cpu_llvm</code> route.
-</p>
-
-<p>
-That choice is deliberate.
-It opens a bounded vertical slice where readers can follow:
+At the current published state, this directory contains two complementary public reading surfaces:
 </p>
 
 <ul>
-  <li>canonical source intent,</li>
-  <li>semantic acceptance,</li>
-  <li>IR relevance,</li>
-  <li>profile corridor relevance,</li>
-  <li>reference implementation consumption.</li>
+  <li>a sequence of core named slices under <code>Examples/01_*</code> through <code>Examples/05_*</code>,</li>
+  <li>and a conservative compiler-corridor positive mirror under <code>Examples/compiler/</code>.</li>
 </ul>
 
 <p>
+That split is intentional.
+The numbered example slices help the repository expose progressively richer source-to-semantics and source-to-execution situations,
+while the compiler mirror keeps a deliberately narrower and more conservative corridor visible for compiler-facing reading.
+</p>
+
+<p>
 The goal is not to maximize example count immediately.
-The goal is to expose one disciplined and inspectable corridor clearly before broadening the example surface.
+The goal is to expose disciplined and inspectable corridors clearly before broadening the example surface further.
 </p>
 
 <hr/>
 
-<h2 id="compiler-corridor-positive-mirror">8. Compiler-Corridor Positive Mirror</h2>
+<h2 id="core-language-example-slices">8. Core Language Example Slices</h2>
 
 <p>
-The initial positive mirror is:
+The currently published numbered slices are:
+</p>
+
+<pre><code>Examples/
+├── 01_pure_addition/
+├── 02_ui_value_roundtrip/
+├── 03_ui_property_write/
+├── 04_stateful_feedback_delay/
+└── 05_bounded_ui_accumulator/</code></pre>
+
+<p>
+Taken together, these slices expose a useful progression:
+</p>
+
+<ul>
+  <li><strong>01_pure_addition</strong> keeps the first reading corridor centered on simple dataflow computation,</li>
+  <li><strong>02_ui_value_roundtrip</strong> introduces front-panel value participation without opening object-style UI access yet,</li>
+  <li><strong>03_ui_property_write</strong> introduces bounded object-style property-write participation,</li>
+  <li><strong>04_stateful_feedback_delay</strong> introduces explicit state through a bounded feedback / delay pattern,</li>
+  <li><strong>05_bounded_ui_accumulator</strong> combines front-panel participation, bounded iteration, explicit state, public output, and minimal UI object-style access in one coherent applicative slice.</li>
+</ul>
+
+<p>
+This progression should be read as architectural layering, not as hidden semantic law.
+Each slice remains illustrative and subordinate to the documents that own source, semantic, IR, profile, and runtime-boundary meaning.
+</p>
+
+<hr/>
+
+<h2 id="applicative-vertical-slice">9. Applicative Vertical Slice</h2>
+
+<p>
+The first repository-visible applicative vertical slice is:
+</p>
+
+<pre><code>Examples/05_bounded_ui_accumulator/</code></pre>
+
+<p>
+This slice matters because it is the first published example in this directory that intentionally touches multiple major layers in one bounded corridor, including:
+</p>
+
+<ul>
+  <li>canonical source structure,</li>
+  <li>public interface participation,</li>
+  <li>front-panel participation,</li>
+  <li>simple widget-value use,</li>
+  <li>minimal widget-reference use,</li>
+  <li>bounded loop behavior,</li>
+  <li>explicit state,</li>
+  <li>observable final output,</li>
+  <li>and a published non-normative runtime-consumption posture in <code>Implementations/Reference/Runtime/</code>.</li>
+</ul>
+
+<p>
+This does not make the example the owner of the corridor.
+It means the repository now contains a more complete applicative reading anchor than the earlier narrower mirrors alone.
+</p>
+
+<p>
+Accordingly, readers interested in the first published end-to-end executable posture should treat <code>05_bounded_ui_accumulator</code> as the primary named example anchor for that bounded corridor.
+</p>
+
+<hr/>
+
+<h2 id="compiler-corridor-positive-mirror">10. Compiler-Corridor Positive Mirror</h2>
+
+<p>
+The conservative compiler-oriented mirror remains:
 </p>
 
 <pre><code>Examples/compiler/
@@ -272,7 +339,7 @@ The initial positive mirror is:
 └── 03_explicit_state.md</code></pre>
 
 <p>
-These examples correspond to the first named positive corridor:
+These examples correspond to a narrower positive corridor centered on:
 </p>
 
 <ul>
@@ -282,8 +349,8 @@ These examples correspond to the first named positive corridor:
 </ul>
 
 <p>
-Together, they form a conservative first mirror of a bounded compiler-oriented path.
-They are intentionally modest in scope:
+Together, they still form a useful conservative mirror of a bounded compiler-facing path.
+They remain intentionally modest in scope:
 </p>
 
 <ul>
@@ -293,14 +360,14 @@ They are intentionally modest in scope:
 </ul>
 
 <p>
-This progression is architecture-first.
-It does not attempt to open every front at once.
-It opens one coherent corridor that can be mirrored by conformance and consumed by a reference path.
+This mirror remains valuable.
+However, it should no longer be read as the only coherent published example family in the repository.
+It now coexists with the numbered example slices and with the first applicative vertical slice under <code>05_bounded_ui_accumulator</code>.
 </p>
 
 <hr/>
 
-<h2 id="reading-discipline">9. Reading Discipline</h2>
+<h2 id="reading-discipline">11. Reading Discipline</h2>
 
 <p>
 Examples should normally be read together with their neighboring ownership and support layers.
@@ -323,6 +390,26 @@ Conformance expectations
 Reference implementation workspace where published</code></pre>
 
 <p>
+For the first applicative executable corridor, a practical entry point is:
+</p>
+
+<pre><code>Examples/05_bounded_ui_accumulator
+   -&gt;
+Expression/Front panel.md
+Expression/Widget.md
+Expression/Widget interaction.md
+Language/Control structures.md
+Language/State and cycles.md
+   -&gt;
+IR/
+   -&gt;
+Profiles/ where relevant
+   -&gt;
+Conformance/
+   -&gt;
+Implementations/Reference/Runtime/</code></pre>
+
+<p>
 This prevents two common mistakes:
 </p>
 
@@ -333,7 +420,7 @@ This prevents two common mistakes:
 
 <hr/>
 
-<h2 id="growth-discipline">10. Growth Discipline</h2>
+<h2 id="growth-discipline">12. Growth Discipline</h2>
 
 <p>
 Future example growth should remain disciplined.
@@ -358,13 +445,20 @@ The preferred direction is therefore:
 
 <pre><code>close one coherent mirror
    -&gt;
+close one applicative vertical slice
+   -&gt;
 align conformance and reference consumption
    -&gt;
 only then broaden the next example family</code></pre>
 
+<p>
+This directory should therefore grow by strengthening repository-visible corridor closure,
+not by accumulating disconnected demonstrations.
+</p>
+
 <hr/>
 
-<h2 id="summary">11. Summary</h2>
+<h2 id="summary">13. Summary</h2>
 
 <p>
 Examples are illustrative named slices of the specification.
@@ -372,17 +466,19 @@ They remain subordinate to the owning specification documents and complementary 
 </p>
 
 <p>
-The first coherent published mirror is the positive compiler corridor for the conservative <code>native_cpu_llvm</code> route.
-That mirror currently consists of:
+The published example surface now has two complementary forms:
 </p>
 
 <ul>
-  <li><code>01_pure_arithmetic.md</code>,</li>
-  <li><code>02_structured_control.md</code>,</li>
-  <li><code>03_explicit_state.md</code>.</li>
+  <li>a numbered slice progression from <code>01_pure_addition</code> through <code>05_bounded_ui_accumulator</code>,</li>
+  <li>and a conservative compiler-oriented positive mirror under <code>Examples/compiler/</code>.</li>
 </ul>
 
 <p>
+Among these, <code>05_bounded_ui_accumulator</code> is currently the primary applicative vertical-slice anchor because it is the first bounded example that visibly combines front-panel participation, bounded iteration, explicit state, public output, and reference-runtime consumption posture in one named corridor.
+</p>
+
+<p>
 Examples help make the specification readable across layers,
-but they do not replace the documents that own source law, semantic law, execution-facing law, profile law, or public conformance expectations.
+but they do not replace the documents that own source law, semantic law, execution-facing law, profile law, runtime-boundary law, or public conformance expectations.
 </p>
