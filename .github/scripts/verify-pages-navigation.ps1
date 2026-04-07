@@ -153,6 +153,7 @@ foreach ($requiredFile in $requiredFiles) {
 $sidebarText = Get-Content -LiteralPath $sidebarPath -Raw
 $navTree = Get-Content -LiteralPath $navTreePath -Raw | ConvertFrom-Json
 $workflowText = Get-Content -LiteralPath (Join-Path $repoRoot ".github/workflows/refresh-pages-navigation.yml") -Raw
+$indexHtmlText = Get-Content -LiteralPath (Join-Path $repoRoot "index.html") -Raw
 
 foreach ($token in @(
     ".github/scripts/build-pages-navigation.ps1",
@@ -165,6 +166,18 @@ foreach ($token in @(
 )) {
     if ($workflowText -notmatch [regex]::Escape($token)) {
         throw "Workflow is missing expected token: $token"
+    }
+}
+
+foreach ($token in @(
+    "--overview-color:",
+    "isOverview: true",
+    "graiphic-nav-overview-icon",
+    "graiphic-nav-overview-label",
+    "is-overview"
+)) {
+    if ($indexHtmlText -notmatch [regex]::Escape($token)) {
+        throw "index.html is missing expected overview-navigation token: $token"
     }
 }
 

@@ -58,6 +58,7 @@
       --code-bg: rgba(15, 23, 42, 0.06);
       --page-glow-start: rgba(31, 157, 85, 0.14);
       --page-glow-end: rgba(22, 101, 52, 0.08);
+      --overview-color: #1b6e45;
     }
 
     html[data-theme="dark"] {
@@ -89,6 +90,7 @@
       --code-bg: rgba(110, 118, 129, 0.16);
       --page-glow-start: rgba(88, 166, 255, 0.06);
       --page-glow-end: rgba(139, 148, 158, 0.04);
+      --overview-color: #7ee787;
     }
 
     html:not([data-theme="dark"]) {
@@ -292,6 +294,30 @@
     .graiphic-nav-link.is-category,
     .graiphic-nav-label-button.is-category {
       font-weight: 600;
+    }
+
+    .graiphic-nav-link.is-overview,
+    .graiphic-nav-label-button.is-overview {
+      display: flex;
+      align-items: center;
+      gap: 0.42rem;
+      color: var(--overview-color);
+      font-weight: 600;
+    }
+
+    .graiphic-nav-overview-icon {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1rem;
+      font-size: 0.94rem;
+      line-height: 1;
+      opacity: 0.96;
+    }
+
+    .graiphic-nav-overview-label {
+      min-width: 0;
     }
 
     .graiphic-nav-link.is-active,
@@ -853,6 +879,7 @@
         title: "Overview",
         path: normalizedPath,
         kind: "page",
+        isOverview: true,
         children: []
       }].concat(children);
     }
@@ -870,6 +897,7 @@
         nodes.map(function (node, index) {
           var children = getNavigationChildren(node);
           var hasChildren = children.length > 0;
+          var isOverview = !!(node && node.isOverview);
           var statePath = nodeStatePath(node, parentPath, index);
           var active = !!node.path && normalizeDisplayPath(node.path) === currentFile;
           var activeTrail = hasChildren && nodeContainsCurrentFile(node, currentFile);
@@ -894,23 +922,26 @@
             ? '<button class="frog-nav-toggle graiphic-nav-toggle-button" type="button" data-nav-path="' + escapeHtml(statePath) + '" aria-expanded="' + String(open) + '" aria-label="' + escapeHtml(open ? "Collapse section" : "Expand section") + '">' + (open ? "-" : "+") + "</button>"
             : '<span class="frog-nav-spacer" aria-hidden="true"></span>';
 
-          var labelClass = "graiphic-nav-link " + (hasChildren ? "is-category" : "is-page") + (active ? " is-active" : "");
+          var labelClass = "graiphic-nav-link " + (hasChildren ? "is-category" : "is-page") + (isOverview ? " is-overview" : "") + (active ? " is-active" : "");
+          var labelInnerHtml = isOverview
+            ? '<span class="graiphic-nav-overview-icon" aria-hidden="true">&#128214;</span><span class="graiphic-nav-overview-label">' + escapeHtml(node.title) + "</span>"
+            : escapeHtml(node.title);
           var labelHtml = "";
 
           if (hasChildren) {
             labelHtml =
               '<button class="' + labelClass + ' graiphic-nav-label-button' + (activeTrail ? " is-active" : "") + '" type="button" data-nav-path="' + escapeHtml(statePath) + '">' +
-                escapeHtml(node.title) +
+                labelInnerHtml +
               "</button>";
           } else if (node.path) {
             labelHtml =
               '<a class="' + labelClass + '" href="' + docsifyRouteForPath(node.path) + '">' +
-                escapeHtml(node.title) +
+                labelInnerHtml +
               "</a>";
           } else {
             labelHtml =
               '<button class="' + labelClass + ' graiphic-nav-label-button' + (activeTrail ? " is-active" : "") + '" type="button" data-nav-path="' + escapeHtml(statePath) + '">' +
-                escapeHtml(node.title) +
+                labelInnerHtml +
               "</button>";
           }
 
