@@ -5,7 +5,7 @@
 </div>
 
 <p align="center">
-  <img src="FROG logo.svg" alt="FROG logo" width="200" />
+  <img src="FROG logo.svg" alt="FROG logo" width="140" />
 </p>
 
 <h1 align="center">🐸 FROG — Free Open Graphical Language</h1>
@@ -145,7 +145,7 @@ The repository also contains repository-level support areas and repository-level
 </p>
 
 <ul>
-  <li><strong><code>Examples/</code></strong> — illustrative named source slices and bounded compiler-corridor mirrors,</li>
+  <li><strong><code>Examples/</code></strong> — illustrative named source slices, applicative vertical-slice anchors, and bounded compiler-corridor mirrors,</li>
   <li><strong><code>Conformance/</code></strong> — public accept / reject / preserve expectations for the published repository state,</li>
   <li><strong><code>Implementations/Reference/</code></strong> — a non-normative reference implementation workspace used to exercise a disciplined minimal execution path,</li>
   <li><strong><code>Versioning/</code></strong> — centralized specification-version governance and current-status reporting for the published specification corpus,</li>
@@ -154,7 +154,63 @@ The repository also contains repository-level support areas and repository-level
 </ul>
 
 <p>
-The currently published example corridor is a first positive compiler-corridor mirror under <code>Examples/compiler/</code>.
+The published example surface now has two complementary forms:
+</p>
+
+<ul>
+  <li>a numbered example-slice progression under <code>Examples/01_*</code> through <code>Examples/05_*</code>,</li>
+  <li>a narrower conservative compiler-corridor mirror under <code>Examples/compiler/</code>.</li>
+</ul>
+
+<p>
+The first repository-visible applicative vertical-slice anchor is now:
+</p>
+
+<pre><code>Examples/05_bounded_ui_accumulator/</code></pre>
+
+<p>
+That slice is currently the primary named source-to-contract-to-runtime anchor because it visibly combines:
+</p>
+
+<ul>
+  <li>front-panel participation,</li>
+  <li>widget-value participation,</li>
+  <li>minimal widget-reference participation,</li>
+  <li>bounded structured control,</li>
+  <li>explicit local state,</li>
+  <li>public output publication,</li>
+  <li>a published backend contract artifact,</li>
+  <li>and published downstream reference runtime consumers.</li>
+</ul>
+
+<p>
+The corresponding repository-visible backend handoff artifact is:
+</p>
+
+<pre><code>Implementations/Reference/ContractEmitter/examples/
+└── 05_bounded_ui_accumulator.reference_host_runtime_ui_binding.contract.json</code></pre>
+
+<p>
+That contract is then consumed downstream by the published reference runtime family under:
+</p>
+
+<pre><code>Implementations/Reference/Runtime/</code></pre>
+
+<p>
+Accordingly, the first materially inspectable bounded execution corridor is now:
+</p>
+
+<pre><code>Examples/05_bounded_ui_accumulator/
+      |
+      v
+Implementations/Reference/ContractEmitter/examples/
+05_bounded_ui_accumulator.reference_host_runtime_ui_binding.contract.json
+      |
+      v
+Implementations/Reference/Runtime/</code></pre>
+
+<p>
+The conservative compiler-corridor mirror remains valuable and published.
 Its initial named slices are:
 </p>
 
@@ -165,17 +221,22 @@ Its initial named slices are:
 </ul>
 
 <p>
-The published repository now also makes the overall execution corridor more explicit:
+However, that mirror should no longer be read as the only coherent published example corridor.
+It now coexists with a more explicit applicative source-to-contract-to-runtime anchor under <code>Examples/05_bounded_ui_accumulator/</code>.
+</p>
+
+<p>
+The published repository now makes the overall execution corridor more explicit:
 canonical source ownership and source-schema posture are published in <code>Expression/</code>,
 validated program meaning is staged in <code>Language/</code>,
 open execution-facing representation is staged in <code>IR/</code>,
-and the repository-level examples, conformance material, and reference implementation workspace together expose the first repository-visible executable vertical slices.
-The repository also now carries explicit strategic, roadmap, and specification-versioning surfaces so that long-term purpose, closure order, and current corpus-version posture remain visible without displacing normative ownership.
+and the repository-level examples, conformance material, contract-emitter artifacts, and reference implementation workspace together expose the first repository-visible executable vertical slice.
+The repository also carries explicit strategic, roadmap, and specification-versioning surfaces so that long-term purpose, closure order, and current corpus-version posture remain visible without displacing normative ownership.
 </p>
 
 <p>
 Together, these published materials show that the repository is no longer only architectural prose.
-It already exposes a first repository-visible reference path where a controlled published subset can be loaded, structurally validated, semantically validated, derived into a canonical open execution-facing representation, lowered toward a backend family, emitted as a backend-facing contract, and consumed by a reference runtime experiment.
+It already exposes a first repository-visible reference path where a controlled published subset can be loaded, structurally validated, semantically validated, derived into a canonical open execution-facing representation, lowered toward a backend family, emitted as a backend-facing contract, and consumed by published reference runtime experiments.
 </p>
 
 <p>
@@ -571,7 +632,7 @@ The support areas exist to make that baseline more inspectable, testable, and ex
 <pre><code>FROG/
 │
 ├── Conformance/                      Public accept / reject / preserve expectations
-├── Examples/                         Illustrative named source slices and bounded compiler-corridor mirrors
+├── Examples/                         Illustrative named source slices, applicative anchors, and bounded compiler mirrors
 ├── Expression/                       Canonical source specification for .frog programs
 ├── IDE/                              IDE architecture, authoring, observability, debugging, and inspection
 ├── IR/                               Canonical open execution-facing representation and downstream handoff boundaries
@@ -615,7 +676,7 @@ The current repository-level support and governance areas are:
 </p>
 
 <ul>
-  <li><strong><code>Examples/</code></strong> — illustrative named source cases and bounded compiler-corridor slices,</li>
+  <li><strong><code>Examples/</code></strong> — illustrative named source cases, applicative vertical-slice anchors, and bounded compiler-corridor slices,</li>
   <li><strong><code>Conformance/</code></strong> — expected outcomes for validation, preservation, and rejection,</li>
   <li><strong><code>Implementations/Reference/</code></strong> — non-normative prototype workspace used to exercise the current reference path,</li>
   <li><strong><code>Versioning/</code></strong> — centralized current corpus-version governance and per-surface current-status reporting.</li>
@@ -658,11 +719,19 @@ preservation expectations
 
 <p>
 This directory contains minimal example programs for the published FROG specification.
-Its role is to provide compact named source cases that help make the architecture readable, teach boundary distinctions, and support the first executable vertical slices without turning examples into hidden semantic law.
+Its role is to provide compact named source cases that help make the architecture readable, teach boundary distinctions, and support executable vertical slices without turning examples into hidden semantic law.
 </p>
 
 <p>
-At the current published state, the first visible example corridor is the positive compiler-corridor mirror:
+At the current published state, the primary applicative example anchor is:
+</p>
+
+<ul>
+  <li><code>Examples/05_bounded_ui_accumulator/</code>.</li>
+</ul>
+
+<p>
+The conservative compiler-corridor mirror also remains published:
 </p>
 
 <ul>
@@ -846,8 +915,8 @@ The map below summarizes the intended role of the Markdown documents in the curr
 │
 ├── Examples/
 │   └── Readme.md
-│       -&gt; architectural role of illustrative named slices, compiler-corridor mirror,
-│          and relation with conformance and reference implementation
+│       -&gt; architectural role of illustrative named slices, applicative vertical-slice anchor,
+│          compiler-corridor mirror, and relation with conformance and reference implementation
 │
 ├── Conformance/
 │   └── Readme.md
@@ -859,7 +928,7 @@ The map below summarizes the intended role of the Markdown documents in the curr
 │   └── Reference/
 │       └── Readme.md
 │           -&gt; non-normative reference workspace, executable-slice purpose,
-│              staged validator posture, prototype status,
+│              staged validator posture, published contract/runtime corridor,
 │              and future compiler direction
 │
 ├── Versioning/
@@ -1072,20 +1141,32 @@ Readers who want to understand the currently published repository-level executab
 Examples/Readme.md
    |
    v
+Examples/05_bounded_ui_accumulator/Readme.md
+   |
+   v
 Conformance/Readme.md
    |
    v
 Implementations/Reference/Readme.md
+   |
+   v
+Implementations/Reference/ContractEmitter/Readme.md
+   |
+   v
+Implementations/Reference/Runtime/Readme.md
 </pre>
 
 <p>
-That second path answers three different questions in order:
+That second path answers a staged set of questions:
 </p>
 
 <ul>
   <li><strong><code>Examples/</code></strong> — which illustrative named slices are being used,</li>
+  <li><strong><code>Examples/05_bounded_ui_accumulator/</code></strong> — which bounded applicative corridor is currently the primary anchor,</li>
   <li><strong><code>Conformance/</code></strong> — what those slices are expected to validate, preserve, or reject,</li>
-  <li><strong><code>Implementations/Reference/</code></strong> — how a non-normative prototype pipeline currently tries to process them.</li>
+  <li><strong><code>Implementations/Reference/</code></strong> — how a non-normative prototype pipeline currently tries to process them,</li>
+  <li><strong><code>ContractEmitter/</code></strong> — what backend contract artifact is published for the current corridor,</li>
+  <li><strong><code>Runtime/</code></strong> — how the published reference-family consumers read that contract.</li>
 </ul>
 
 <p>
@@ -1967,22 +2048,26 @@ It already contains:
 </p>
 
 <ul>
-  <li>a published <code>Examples/</code> directory with a first bounded compiler-corridor mirror,</li>
+  <li>a published <code>Examples/</code> directory with numbered named slices and a bounded compiler-corridor mirror,</li>
+  <li>a published first applicative vertical-slice anchor under <code>Examples/05_bounded_ui_accumulator/</code>,</li>
   <li>a published <code>Conformance/</code> directory with explicit staged expected-outcome posture,</li>
   <li>a published <code>Implementations/Reference/</code> workspace whose current purpose is to exercise disciplined minimal executable vertical slices for a controlled subset,</li>
+  <li>a published backend contract artifact for the first reference runtime family under <code>Implementations/Reference/ContractEmitter/examples/</code>,</li>
+  <li>a published <code>Runtime/</code> surface with reference-family Python and Rust consumers for that bounded corridor,</li>
   <li>a published <code>Versioning/</code> surface for centralized corpus-version doctrine and current-status reporting,</li>
   <li>a published <code>Strategy/</code> layer for non-normative strategic framing,</li>
   <li>a published <code>Roadmap/</code> layer for non-normative closure sequencing.</li>
 </ul>
 
 <p>
-The first currently published illustrative example slices are:
+The published example surfaces now include both:
 </p>
 
 <ul>
   <li><code>Examples/compiler/01_pure_arithmetic.md</code>,</li>
   <li><code>Examples/compiler/02_structured_control.md</code>,</li>
-  <li><code>Examples/compiler/03_explicit_state.md</code>.</li>
+  <li><code>Examples/compiler/03_explicit_state.md</code>,</li>
+  <li>and the first bounded applicative source-to-contract-to-runtime anchor under <code>Examples/05_bounded_ui_accumulator/</code>.</li>
 </ul>
 
 <p>
@@ -2010,6 +2095,7 @@ Current repository direction therefore includes both <strong>architectural stabi
   <li>defining guided Express authoring as an IDE convenience layer that normalizes to canonical FROG content,</li>
   <li>keeping the executable reference path clean, reproducible, and inspectable,</li>
   <li>keeping <code>Examples/</code>, <code>Conformance/</code>, and <code>Implementations/Reference/</code> aligned without letting them silently become hidden language law,</li>
+  <li>keeping the source → contract → runtime corridor around <code>05_bounded_ui_accumulator</code> materially inspectable,</li>
   <li>keeping <code>Versioning/</code> centralized so current corpus-version truth and current-surface status are not scattered,</li>
   <li>keeping <code>Strategy/</code> and <code>Roadmap/</code> explicit without letting them replace normative ownership,</li>
   <li>preparing the path from canonical <code>.frog</code> source toward a serious future compiler/runtime story, including downstream compiler-family paths such as LLVM-oriented ones,</li>
@@ -2022,7 +2108,12 @@ It does not yet claim that the repository already contains the final normative p
 </p>
 
 <p>
-At the same time, some broader execution-facing and deployment-facing areas remain architectural direction rather than fully closed top-level repository families.
+At the same time, the repository now does contain a first materially inspectable bounded reference corridor from named canonical source slice to published backend contract artifact to published reference runtime consumers.
+That corridor should be read as a first closed executable proof surface for a controlled subset, not as full-language closure.
+</p>
+
+<p>
+Some broader execution-facing and deployment-facing areas remain architectural direction rather than fully closed top-level repository families.
 Topics such as deployment, runtime profiles, target-profile taxonomies, and broader conformance or certification growth MAY be refined further over time.
 </p>
 
