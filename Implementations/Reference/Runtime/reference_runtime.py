@@ -1,361 +1,394 @@
 from __future__ import annotations
 
-from copy import deepcopy
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Tuple
 
 from Implementations.Reference.common import (
-    BackendContract,
     DEFAULT_BACKEND_FAMILY,
+    BackendContract,
     DEMO_ARTIFACT_VERSION,
     FrogPipelineError,
     RuntimeResult,
     ensure,
 )
 
-LLVM_BACKEND_FAMILY = "llvm_cpu_v1"
+
+def _ensure_dict(value: Any, *, stage: str, error_code: str, message: str) -> Dict[str, Any]:
+    ensure(isinstance(value, dict), stage=stage, error_code=error_code, message=message)
+    return value
 
 
-class ReferenceRuntime:
-    def __init__(self, backend_family: str = DEFAULT_BACKEND_FAMILY) -> None:
+def _ensure_list(value: Any, *, stage: str, error_code: str, message: str) -> List[Any]:
+    ensure(isinstance(value, list), stage=stage, error_code=error_code, message=message)
+    return value
+
+
+def _coerce_u16(value: Any, *, stage: str, error_code: str, label: str) -> int:
+    try:
+        numeric = int(value)
+    except (TypeError, ValueError) as exc:
+        raise FrogPipelineError(
+            stage=stage,
+            error_code=error_code,
+            message=f"{label} must be coercible to u16.",
+        ) from exc
+
+    ensure(
+        0 <= numeric <= 65535,
+        stage=stage,
+        error_code=error_code,
+        message=f"{label} must remain within the u16 domain.",
+    )
+    return numeric
+
+
+def _extract_face_color(write: Dict[str, Any], *, stage: str) -> str:
+    value = _ensure_dict(
+        write.get("value"),
+        stage=stage,
+        error_code="invalid_property_write_value",
+        message="Property write value must be a JSON object.",
+    )
+    literal = value.get("value")
+    ensure(
+        isinstance(literal, str) and literal != "",
+        stage=stage,
+        error_code="invalid_property_write_literal",
+        message="face_color property writes must carry a non-empty string literal value.",
+    )
+    return literal
+
+
+class ReferenceHostRuntime:
+    def __init__(self, backend_family: str = DEFAULT_BACKEND_FAMILY):
+        ensure(
+            backend_family == DEFAULT_BACKEND_FAMILY,
+            stage="runtime-create",
+            error_code="unsupported_backend_family",
+            message=f"Unsupported runtime family: {backend_family}",
+        )
         self.backend_family = backend_family
-        self._accepted_contract: Optional[Dict[str, Any]] = None
 
-    def accept_contract(self, contract: BackendContract) -> None:
+    def accept_contract(self, contract: BackendContract) -> Dict[str, Any]:
         artifact = contract.artifact
 
         ensure(
             artifact.get("artifact_kind") == "frog_backend_contract",
-            stage="runtime",
-            error_code="invalid_contract_artifact_kind",
-            message="Reference runtime expects a frog_backend_contract artifact.",
+            stage="runtime-accept",
+            error_code="invalid_contract_kind",
+            message="Runtime expected a frog_backend_contract artifact.",
         )
-
-        contract_family = artifact.get("contract_family")
         ensure(
-            contract_family in {DEFAULT_BACKEND_FAMILY, LLVM_BACKEND_FAMILY},
-            stage="runtime",
-            error_code="unsupported_contract_family",
-            message=f"Unsupported backend contract family for reference runtime: {contract_family}",
+            artifact.get("backend_family") == self.backend_family,
+            stage="runtime-accept",
+            error_code="backend_family_mismatch",
+            message="Runtime backend family mismatch.",
         )
 
-        units = artifact.get("units", [])
+        assumptions = _ensure_dict(
+            artifact.get("assumptions"),
+            stage="runtime-accept",
+            error_code="missing_assumptions",
+            message="Runtime expected assumptions on the backend contract.",
+        )
+        scheduling = _ensure_dict(
+            assumptions.get("scheduling"),
+            stage="runtime-accept",
+            error_code="missing_scheduling_assumptions",
+            message="Runtime expected scheduling assumptions on the backend contract.",
+        )
         ensure(
-            isinstance(units, list) and len(units) == 1 and isinstance(units[0], dict),
-            stage="runtime",
-            error_code="invalid_contract_units",
-            message="Reference runtime expects exactly one contract unit.",
+            scheduling.get("family_rule") == "deterministic_step_execution",
+            stage="runtime-accept",
+            error_code="unsupported_scheduling_rule",
+            message="Runtime expected deterministic_step_execution scheduling.",
         )
 
-        self._accepted_contract = deepcopy(artifact)
+        units = _ensure_list(
+            artifact.get("units"),
+            stage="runtime-accept",
+            error_code="missing_units",
+            message="Runtime expected contract units.",
+        )
+        ensure(
+            len(units) == 1,
+            stage="runtime-accept",
+            error_code="unsupported_unit_count",
+            message="Demo runtime expects exactly one contract unit.",
+        )
+
+        unit = _ensure_dict(
+            units[0],
+            stage="runtime-accept",
+            error_code="invalid_unit",
+            message="Runtime expected one JSON object contract unit.",
+        )
+        ensure(
+            unit.get("kind") == "bounded_executable_ui_unit",
+            stage="runtime-accept",
+            error_code="unsupported_unit_kind",
+            message="Demo runtime expects one bounded_executable_ui_unit.",
+        )
+
+        execution_model = _ensure_dict(
+            unit.get("execution_model"),
+            stage="runtime-accept",
+            error_code="missing_execution_model",
+            message="Runtime expected execution_model on the contract unit.",
+        )
+        ensure(
+            execution_model.get("structure") == "for_loop",
+            stage="runtime-accept",
+            error_code="unsupported_structure",
+            message="Demo runtime expects a for_loop execution structure.",
+        )
+        ensure(
+            execution_model.get("iteration_count") == 5,
+            stage="runtime-accept",
+            error_code="unsupported_iteration_count",
+            message="Demo runtime expects exactly 5 iterations for the slice 05 contract.",
+        )
+
+        state_model = _ensure_dict(
+            unit.get("state_model"),
+            stage="runtime-accept",
+            error_code="missing_state_model",
+            message="Runtime expected state_model on the contract unit.",
+        )
+        ensure(
+            state_model.get("explicit_state") is True,
+            stage="runtime-accept",
+            error_code="missing_explicit_state",
+            message="Demo runtime requires explicit_state = true.",
+        )
+        carrier = _ensure_dict(
+            state_model.get("carrier"),
+            stage="runtime-accept",
+            error_code="missing_state_carrier",
+            message="Runtime expected an explicit state carrier.",
+        )
+        ensure(
+            carrier.get("primitive") == "frog.core.delay",
+            stage="runtime-accept",
+            error_code="unsupported_state_carrier",
+            message="Demo runtime expects frog.core.delay as the state carrier.",
+        )
+        initial_state = _coerce_u16(
+            carrier.get("initial_value"),
+            stage="runtime-accept",
+            error_code="invalid_initial_state",
+            label="Initial state",
+        )
+
+        public_interface = _ensure_dict(
+            unit.get("public_interface"),
+            stage="runtime-accept",
+            error_code="missing_public_interface",
+            message="Runtime expected public_interface on the contract unit.",
+        )
+        public_inputs = _ensure_list(
+            public_interface.get("inputs"),
+            stage="runtime-accept",
+            error_code="missing_public_inputs",
+            message="Runtime expected one public input.",
+        )
+        public_outputs = _ensure_list(
+            public_interface.get("outputs"),
+            stage="runtime-accept",
+            error_code="missing_public_outputs",
+            message="Runtime expected one public output.",
+        )
+        ensure(
+            len(public_inputs) == 1 and public_inputs[0].get("id") == "input_value",
+            stage="runtime-accept",
+            error_code="unsupported_public_inputs",
+            message="Demo runtime expects one public input named input_value.",
+        )
+        ensure(
+            len(public_outputs) == 1 and public_outputs[0].get("id") == "result",
+            stage="runtime-accept",
+            error_code="unsupported_public_outputs",
+            message="Demo runtime expects one public output named result.",
+        )
+
+        ui_binding = _ensure_dict(
+            unit.get("ui_binding"),
+            stage="runtime-accept",
+            error_code="missing_ui_binding",
+            message="Runtime expected ui_binding on the contract unit.",
+        )
+        widgets = _ensure_list(
+            ui_binding.get("widgets"),
+            stage="runtime-accept",
+            error_code="missing_widgets",
+            message="Runtime expected widget declarations.",
+        )
+        ensure(
+            len(widgets) == 2,
+            stage="runtime-accept",
+            error_code="unsupported_widget_count",
+            message="Demo runtime expects exactly two widgets.",
+        )
+
+        widget_ids = {widget.get("widget_id") for widget in widgets}
+        ensure(
+            widget_ids == {"ctrl_input", "ind_result"},
+            stage="runtime-accept",
+            error_code="unsupported_widget_ids",
+            message="Demo runtime expects ctrl_input and ind_result widget ids.",
+        )
+
+        property_writes = _ensure_list(
+            unit.get("property_writes"),
+            stage="runtime-accept",
+            error_code="missing_property_writes",
+            message="Runtime expected property_writes on the contract unit.",
+        )
+        ensure(
+            len(property_writes) == 2,
+            stage="runtime-accept",
+            error_code="unsupported_property_write_count",
+            message="Demo runtime expects exactly two property_write operations.",
+        )
+
+        for write in property_writes:
+            write_dict = _ensure_dict(
+                write,
+                stage="runtime-accept",
+                error_code="invalid_property_write",
+                message="Runtime expected property_write entries to be JSON objects.",
+            )
+            ensure(
+                write_dict.get("operation") == "frog.ui.property_write",
+                stage="runtime-accept",
+                error_code="unsupported_property_write_operation",
+                message="Demo runtime only supports frog.ui.property_write operations.",
+            )
+            ensure(
+                write_dict.get("member") == "face_color",
+                stage="runtime-accept",
+                error_code="unsupported_property_write_member",
+                message="Demo runtime only supports face_color property writes.",
+            )
+            ensure(
+                write_dict.get("widget_id") in {"ctrl_input", "ind_result"},
+                stage="runtime-accept",
+                error_code="unsupported_property_write_widget",
+                message="Property writes must target ctrl_input or ind_result.",
+            )
+            _extract_face_color(write_dict, stage="runtime-accept")
+
+        return {
+            "status": "ok",
+            "unit_ids": [unit["unit_id"]],
+            "backend_family": artifact["backend_family"],
+            "example_id": artifact.get("source_ref", {}).get("example_id"),
+            "initial_state": initial_state,
+        }
 
     def execute(self, contract: BackendContract, public_inputs: Dict[str, Any]) -> RuntimeResult:
+        self.accept_contract(contract)
+
         artifact = contract.artifact
-
-        if self._accepted_contract is None:
-            self.accept_contract(contract)
-
-        ensure(
-            isinstance(public_inputs, dict),
-            stage="runtime",
-            error_code="invalid_public_inputs_shape",
-            message="Runtime public inputs must be provided as an object.",
+        unit = artifact["units"][0]
+        carrier = unit["state_model"]["carrier"]
+        iterations = int(unit["execution_model"]["iteration_count"])
+        initial_state = _coerce_u16(
+            carrier["initial_value"],
+            stage="run",
+            error_code="invalid_initial_state",
+            label="Initial state",
         )
 
-        source_ref = dict(artifact["source_ref"])
-        contract_family = artifact["contract_family"]
-        unit = artifact["units"][0]
+        control_value_raw = public_inputs.get("input_value", public_inputs.get("ctrl_input"))
+        ensure(
+            control_value_raw is not None,
+            stage="run",
+            error_code="missing_control_input",
+            message="Missing control value. Expected input_value or ctrl_input.",
+        )
+        control_value = _coerce_u16(
+            control_value_raw,
+            stage="run",
+            error_code="invalid_control_input",
+            label="Control value",
+        )
 
-        consumer_surface = unit.get("consumer_surface", {})
-        execution_requirements = unit.get("execution_requirements", {})
-        operations = unit.get("operations", [])
-        region_units = unit.get("region_units", [])
-        ui_declarations = deepcopy(unit.get("ui_declarations", {"widgets": []}))
-        non_semantic_ui_metadata = deepcopy(unit.get("non_semantic_ui_metadata", {}))
-        assumptions = deepcopy(artifact.get("assumptions", {}))
-
-        widgets_by_id = {widget["id"]: deepcopy(widget) for widget in ui_declarations.get("widgets", [])}
-
-        widget_values: Dict[str, Any] = {}
-        widget_refs: Dict[str, str] = {}
-        public_outputs: Dict[str, Any] = {}
-        state_cells: Dict[str, Any] = {}
-
-        ui_inputs = consumer_surface.get("ui_inputs", [])
-        ui_outputs = consumer_surface.get("ui_outputs", [])
-        ui_widget_references = consumer_surface.get("ui_widget_references", [])
-        ui_property_writes = consumer_surface.get("ui_property_writes", [])
-        public_input_surface = consumer_surface.get("public_inputs", [])
-        public_output_surface = consumer_surface.get("public_outputs", [])
-
-        counted_loops = execution_requirements.get("bounded_loop", {}).get("counted_loops", [])
-        explicit_state_cells = execution_requirements.get("state", {}).get("state_cells", [])
-
-        for widget_ref in ui_widget_references:
-            widget_id = widget_ref["widget_id"]
-            widget_refs[widget_id] = widget_id
-
-        for state_cell in explicit_state_cells:
-            initial_value = state_cell.get("initial_value")
-            state_cells[state_cell["state_id"]] = initial_value
-
-        for ui_input in ui_inputs:
-            widget_id = ui_input["widget_id"]
-            widget = widgets_by_id.get(widget_id)
-            if widget is None:
-                raise FrogPipelineError(
-                    stage="runtime",
-                    error_code="missing_ui_input_widget",
-                    message=f"Runtime could not find declared widget '{widget_id}'.",
-                )
-
-            value_type = ui_input["value_type"]
-
-            if widget_id in public_inputs:
-                raw_value = public_inputs[widget_id]
-            elif "default_value" in ui_input:
-                raw_value = ui_input["default_value"]
-            else:
-                raw_value = widget.get("props", {}).get("default_value", 0)
-
-            widget_values[widget_id] = _coerce_runtime_value(raw_value, value_type)
-
-        for public_input in public_input_surface:
-            interface_port = public_input["interface_port"]
-            value_type = public_input["value_type"]
-            if interface_port in public_inputs:
-                public_inputs[interface_port] = _coerce_runtime_value(public_inputs[interface_port], value_type)
-
-        for property_write in ui_property_writes:
-            target_widget_id = property_write.get("target_widget_id")
-            widget_member = property_write.get("widget_member", {})
-            member_name = widget_member.get("member")
-
-            if target_widget_id is None or member_name is None:
-                raise FrogPipelineError(
-                    stage="runtime",
-                    error_code="invalid_ui_property_write_contract",
-                    message="Runtime received an invalid ui_property_write contract entry.",
-                )
-
-            target_widget = widgets_by_id.get(target_widget_id)
-            if target_widget is None:
-                raise FrogPipelineError(
-                    stage="runtime",
-                    error_code="missing_property_write_target_widget",
-                    message=f"Runtime could not find target widget '{target_widget_id}' for property write.",
-                )
-
-            if member_name != "face_color":
-                raise FrogPipelineError(
-                    stage="runtime",
-                    error_code="unsupported_runtime_property_write",
-                    message=f"Reference runtime supports property_write on 'face_color' only, got '{member_name}'.",
-                )
-
-            resolved_value = _resolve_property_write_value(
-                property_write=property_write,
-                operations=operations,
+        widget_face_colors: Dict[str, str] = {}
+        applied_widget_references: List[Dict[str, Any]] = []
+        for write in unit["property_writes"]:
+            widget_id = write["widget_id"]
+            color = _extract_face_color(write, stage="run")
+            widget_face_colors[widget_id] = color
+            applied_widget_references.append(
+                {
+                    "widget_id": widget_id,
+                    "member": "face_color",
+                    "value": write["value"],
+                }
             )
 
-            target_widget.setdefault("props", {})
-            target_widget["props"][member_name] = resolved_value
-
-        for counted_loop in counted_loops:
-            iteration_count = int(counted_loop["iteration_count"])
-            value_type = counted_loop["value_type"]
-            initial_value = _coerce_runtime_value(counted_loop.get("initial_value", 0), value_type)
-
-            input_value = _resolve_loop_input_value(
-                counted_loop=counted_loop,
-                ui_inputs=ui_inputs,
-                widget_values=widget_values,
-                public_inputs=public_inputs,
+        state_current = initial_state
+        for _ in range(iterations):
+            state_next = state_current + control_value
+            ensure(
+                0 <= state_next <= 65535,
+                stage="run",
+                error_code="u16_overflow",
+                message="u16 overflow during bounded accumulation.",
             )
-            input_value = _coerce_runtime_value(input_value, value_type)
+            state_current = state_next
 
-            current_state = initial_value
+        final_value = state_current
 
-            matching_region_units = [
-                region_unit
-                for region_unit in region_units
-                if region_unit.get("id") in counted_loop.get("region_units", [])
-            ]
-
-            if len(matching_region_units) != 1:
-                raise FrogPipelineError(
-                    stage="runtime",
-                    error_code="invalid_loop_region_units",
-                    message="Reference runtime expects exactly one region unit for the counted loop.",
-                )
-
-            region_unit = matching_region_units[0]
-            current_state = _execute_counted_loop_region(
-                counted_loop=counted_loop,
-                region_unit=region_unit,
-                input_value=input_value,
-                initial_state=current_state,
-                state_cells=state_cells,
-                value_type=value_type,
-            )
-
-            final_value = _coerce_runtime_value(current_state, value_type)
-
-            for ui_output in ui_outputs:
-                widget_id = ui_output["widget_id"]
-                widget_values[widget_id] = final_value
-
-            for public_output in public_output_surface:
-                public_outputs[public_output["interface_port"]] = final_value
-
-        runtime_widgets = []
-        for widget_id, widget in widgets_by_id.items():
-            runtime_widget = deepcopy(widget)
-            if widget_id in widget_values:
-                runtime_widget.setdefault("runtime", {})
-                runtime_widget["runtime"]["value"] = widget_values[widget_id]
-            runtime_widgets.append(runtime_widget)
-
-        artifact_out = {
+        artifact = {
             "artifact_kind": "frog_runtime_result",
             "artifact_version": DEMO_ARTIFACT_VERSION,
             "status": "ok",
-            "source_ref": source_ref,
-            "backend_family": contract_family,
-            "program_result": {
-                "public_outputs": public_outputs,
+            "contract_ref": {
+                "unit_ids": [unit["unit_id"]],
+                "backend_family": contract.artifact["backend_family"],
+                "source_ref": contract.artifact.get("source_ref"),
             },
-            "ui_result": {
-                "widgets": runtime_widgets,
-                "widget_values": widget_values,
-                "applied_widget_references": widget_refs,
+            "execution_summary": {
+                "mode": "deterministic_step_execution",
+                "executed_unit": unit["unit_id"],
+                "iterations": iterations,
+                "state_initialized": True,
+                "initial_state": initial_state,
+                "final_state": final_value,
             },
-            "state_result": {
-                "state_cells": state_cells,
+            "outputs": {
+                "public": {
+                    unit["public_output_publication"]["output_id"]: final_value,
+                },
+                "ui": {
+                    "ctrl_input": control_value,
+                    "ind_result": final_value,
+                },
             },
-            "assumptions": assumptions,
-            "non_semantic_ui_metadata": non_semantic_ui_metadata,
+            "ui_runtime": {
+                "widgets": [
+                    {
+                        "widget_id": "ctrl_input",
+                        "runtime": {
+                            "value": control_value,
+                            "face_color": widget_face_colors.get("ctrl_input"),
+                        },
+                    },
+                    {
+                        "widget_id": "ind_result",
+                        "runtime": {
+                            "value": final_value,
+                            "face_color": widget_face_colors.get("ind_result"),
+                        },
+                    },
+                ],
+                "applied_widget_references": applied_widget_references,
+            },
             "diagnostics": [],
         }
-
-        return RuntimeResult(artifact=artifact_out)
-
-
-def _coerce_runtime_value(value: Any, value_type: str) -> Any:
-    if value_type == "u16":
-        ivalue = int(value)
-        if ivalue < 0:
-            ivalue = 0
-        if ivalue > 65535:
-            ivalue = 65535
-        return ivalue
-
-    if value_type == "i32":
-        return int(value)
-
-    if value_type == "i64":
-        return int(value)
-
-    if value_type == "f64":
-        return float(value)
-
-    return value
+        return RuntimeResult(artifact=artifact)
 
 
-def _resolve_property_write_value(
-    *,
-    property_write: Dict[str, Any],
-    operations: List[Dict[str, Any]],
-) -> Any:
-    source_operation_id = property_write["source_operation"]
-    target_widget_id = property_write["target_widget_id"]
-
-    if target_widget_id == "ctrl_input":
-        return "#D0D0D0"
-    if target_widget_id == "ind_result":
-        return "#D8E6FF"
-
-    raise FrogPipelineError(
-        stage="runtime",
-        error_code="unsupported_property_write_value_resolution",
-        message=(
-            "Reference runtime currently resolves face_color writes only for the "
-            "published Example 05 widgets 'ctrl_input' and 'ind_result'."
-        ),
-    )
-
-
-def _resolve_loop_input_value(
-    *,
-    counted_loop: Dict[str, Any],
-    ui_inputs: List[Dict[str, Any]],
-    widget_values: Dict[str, Any],
-    public_inputs: Dict[str, Any],
-) -> Any:
-    if len(ui_inputs) == 1:
-        widget_id = ui_inputs[0]["widget_id"]
-        return widget_values[widget_id]
-
-    if "input_value" in public_inputs:
-        return public_inputs["input_value"]
-
-    raise FrogPipelineError(
-        stage="runtime",
-        error_code="missing_loop_input_value",
-        message="Reference runtime could not resolve the counted-loop input value.",
-    )
-
-
-def _execute_counted_loop_region(
-    *,
-    counted_loop: Dict[str, Any],
-    region_unit: Dict[str, Any],
-    input_value: Any,
-    initial_state: Any,
-    state_cells: Dict[str, Any],
-    value_type: str,
-) -> Any:
-    iteration_count = int(counted_loop["iteration_count"])
-    current_state = _coerce_runtime_value(initial_state, value_type)
-
-    delay_state_ops = [
-        op for op in region_unit.get("operations", [])
-        if op["kind"] == "state_init"
-    ]
-    add_ops = [
-        op for op in region_unit.get("operations", [])
-        if op["kind"] == "core_primitive_add"
-    ]
-
-    ensure(
-        len(delay_state_ops) == 1,
-        stage="runtime",
-        error_code="invalid_region_state_ops",
-        message="Reference runtime expects exactly one state_init operation inside the loop body region.",
-    )
-    ensure(
-        len(add_ops) == 1,
-        stage="runtime",
-        error_code="invalid_region_add_ops",
-        message="Reference runtime expects exactly one core_primitive_add operation inside the loop body region.",
-    )
-
-    delay_state_id = delay_state_ops[0]["state_id"]
-    state_cells[delay_state_id] = current_state
-
-    for _ in range(iteration_count):
-        state_current = _coerce_runtime_value(state_cells[delay_state_id], value_type)
-        state_next = _coerce_runtime_value(state_current + input_value, value_type)
-        state_cells[delay_state_id] = state_next
-        current_state = state_next
-
-    return current_state
-
-
-def create_runtime_for_family(backend_family: str = DEFAULT_BACKEND_FAMILY) -> ReferenceRuntime:
-    if backend_family not in {DEFAULT_BACKEND_FAMILY, LLVM_BACKEND_FAMILY}:
-        raise FrogPipelineError(
-            stage="runtime",
-            error_code="unsupported_runtime_backend_family",
-            message=f"Unsupported runtime backend family: {backend_family}",
-        )
-    return ReferenceRuntime(backend_family=backend_family)
+def create_runtime_for_family(backend_family: str = DEFAULT_BACKEND_FAMILY) -> ReferenceHostRuntime:
+    return ReferenceHostRuntime(backend_family=backend_family)
