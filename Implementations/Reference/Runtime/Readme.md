@@ -21,8 +21,9 @@
   <li><a href="#what-this-directory-does-not-own">6. What This Directory Does Not Own</a></li>
   <li><a href="#design-rules">7. Design Rules</a></li>
   <li><a href="#first-execution-posture">8. First Execution Posture</a></li>
-  <li><a href="#multi-runtime-posture">9. Multi-Runtime Posture</a></li>
-  <li><a href="#summary">10. Summary</a></li>
+  <li><a href="#minimal-demonstration-entry-points">9. Minimal Demonstration Entry Points</a></li>
+  <li><a href="#multi-runtime-posture">10. Multi-Runtime Posture</a></li>
+  <li><a href="#summary">11. Summary</a></li>
 </ul>
 
 <hr/>
@@ -191,7 +192,54 @@ It does not require continuous event-driven UI behavior, hidden persistence betw
 
 <hr/>
 
-<h2 id="multi-runtime-posture">9. Multi-Runtime Posture</h2>
+<h2 id="minimal-demonstration-entry-points">9. Minimal Demonstration Entry Points</h2>
+
+<p>
+This directory also contains minimal reference-facing entry points that exercise the published contract artifact directly rather than through a private simplified schema.
+</p>
+
+<p>
+The intended first bounded demonstration surfaces are:
+</p>
+
+<pre><code>Implementations/Reference/Runtime/
+├── reference_runtime.py
+├── run_slice05_contract.py
+└── rust/
+    └── tests/
+        ├── slice05_contract_smoke.rs
+        └── slice05_execution.rs</code></pre>
+
+<p>
+The Python entry point:
+</p>
+
+<pre><code>run_slice05_contract.py</code></pre>
+
+<p>
+loads the published contract artifact for <code>05_bounded_ui_accumulator</code>,
+binds a sampled control value,
+executes the bounded accumulation corridor,
+and prints the resulting runtime artifact.
+</p>
+
+<p>
+The Rust tests serve two complementary purposes:
+</p>
+
+<ul>
+  <li><code>slice05_contract_smoke.rs</code> verifies that the published contract artifact deserializes and exposes the expected bounded slice shape,</li>
+  <li><code>slice05_execution.rs</code> verifies that the runtime executes the published contract artifact and produces the expected final result.</li>
+</ul>
+
+<p>
+These entry points do not make the runtime normative.
+They make the first published contract-to-runtime demonstration materially inspectable.
+</p>
+
+<hr/>
+
+<h2 id="multi-runtime-posture">10. Multi-Runtime Posture</h2>
 
 <p>
 This directory defines a runtime family boundary, not a single mandatory runtime language.
@@ -223,7 +271,7 @@ but they should remain aligned on:
 
 <hr/>
 
-<h2 id="summary">10. Summary</h2>
+<h2 id="summary">11. Summary</h2>
 
 <p>
 The reference runtime is the first private consumer-side realization of the reference backend family.
@@ -237,4 +285,8 @@ That makes the runtime boundary more concrete:
 the contract is visible,
 the consumer is visible,
 and the ownership boundary between them remains explicit.
+</p>
+
+<p>
+The first bounded demonstration is now intended to be readable directly from the published contract artifact to Python and Rust reference-family consumers.
 </p>
