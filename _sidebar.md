@@ -293,6 +293,7 @@
     - [accept contract and execute](/Implementations/Reference/Runtime/accept_contract_and_execute.md)
     - [responsibilities](/Implementations/Reference/Runtime/responsibilities.md)
     - [reference_runtime.py](/Implementations/Reference/Runtime/reference_runtime.py)
+    - [rust](/Implementations/Reference/Runtime/rust/Readme.md)
   - [UIHost](/Implementations/Reference/UIHost/Readme.md)
     - [responsibilities](/Implementations/Reference/UIHost/responsibilities.md)
   - [Validator](/Implementations/Reference/Validator/Readme.md)

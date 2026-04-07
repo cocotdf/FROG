@@ -2099,6 +2099,13 @@
                   "path": "/Implementations/Reference/Runtime/reference_runtime.py",
                   "kind": "code",
                   "children": []
+                },
+                {
+                  "key": "implementations/reference/runtime/rust/",
+                  "title": "rust",
+                  "path": "/Implementations/Reference/Runtime/rust/Readme.md",
+                  "kind": "category",
+                  "children": []
                 }
               ]
             },
@@ -2484,6 +2491,7 @@
     "/Implementations/Reference/Runtime/accept_contract_and_execute.md",
     "/Implementations/Reference/Runtime/responsibilities.md",
     "/Implementations/Reference/Runtime/reference_runtime.py",
+    "/Implementations/Reference/Runtime/rust/Readme.md",
     "/Implementations/Reference/Runtime/Readme.md",
     "/Implementations/Reference/UIHost/responsibilities.md",
     "/Implementations/Reference/UIHost/Readme.md",
