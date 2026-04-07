@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="../../FROG logo.svg" alt="FROG logo" width="200" />
+  <img src="../../FROG logo.svg" alt="FROG logo" width="140" />
 </p>
 
 <h1 align="center">Example 05 — Bounded UI Accumulator</h1>
@@ -24,7 +24,7 @@
   <li><a href="#validation-expectation">9. Validation Expectation</a></li>
   <li><a href="#derivation-expectation">10. Derivation Expectation</a></li>
   <li><a href="#lowering-expectation">11. Lowering Expectation</a></li>
-  <li><a href="#backend-contract-expectation">12. Backend Contract Expectation</a></li>
+  <li><a href="#published-backend-contract">12. Published Backend Contract</a></li>
   <li><a href="#reference-runtime-expectation">13. Reference Runtime Expectation</a></li>
   <li><a href="#why-this-example-matters">14. Why This Example Matters</a></li>
   <li><a href="#summary">15. Summary</a></li>
@@ -179,10 +179,10 @@ Conceptually:
   ctrl_input   : numeric_control(u16)
   ind_result   : numeric_indicator(u16)
 
-  ctrl_input.props.face_color   = "#D0D0D0"
+  ctrl_input.props.face_color    = "#D0D0D0"
   ctrl_input.props.face_template = resource(svg, "./assets/widgets/u16_numeric_control_face.svg")
 
-  ind_result.props.face_color   = "#D8E6FF"
+  ind_result.props.face_color    = "#D8E6FF"
   ind_result.props.face_template = resource(svg, "./assets/widgets/u16_numeric_indicator_face.svg")
 
 diagram:
@@ -435,10 +435,23 @@ However, lowering must preserve that:
 
 <hr/>
 
-<h2 id="backend-contract-expectation">12. Backend Contract Expectation</h2>
+<h2 id="published-backend-contract">12. Published Backend Contract</h2>
 
 <p>
-After lowering, a backend contract for this example should still make clear:
+This example is now paired with one repository-visible backend contract artifact for the first published reference runtime family:
+</p>
+
+<pre><code>Implementations/Reference/ContractEmitter/examples/
+└── 05_bounded_ui_accumulator.reference_host_runtime_ui_binding.contract.json</code></pre>
+
+<p>
+That artifact is the published reference handoff surface for the first bounded executable corridor of this example.
+It is downstream from canonical source, validation, semantic interpretation, Execution IR, and lowering.
+It is upstream from runtime-private execution realization.
+</p>
+
+<p>
+The published contract is expected to make explicit at least:
 </p>
 
 <ul>
@@ -463,6 +476,11 @@ A backend family may choose its own private realization strategy, but it must no
   <li>and explicit object-style UI access.</li>
 </ul>
 
+<p>
+This makes the corridor more explicit than a contract expectation described only in prose.
+The artifact itself is now part of the repository-visible reading chain for this named slice.
+</p>
+
 <hr/>
 
 <h2 id="reference-runtime-expectation">13. Reference Runtime Expectation</h2>
@@ -476,10 +494,8 @@ A conservative execution reading is:
 </p>
 
 <ol>
-  <li>load the canonical <code>.frog</code> source,</li>
-  <li>validate the source and the bounded supported subset,</li>
-  <li>derive Execution IR,</li>
-  <li>lower into the conservative backend contract corridor,</li>
+  <li>load the published backend contract artifact for the selected runtime family,</li>
+  <li>accept or reject the contract explicitly,</li>
   <li>prepare one host-side execution unit,</li>
   <li>read the current numeric control value once for the run,</li>
   <li>apply the two explicit <code>face_color</code> property writes,</li>
@@ -504,6 +520,10 @@ This runtime expectation does not require:
 
 <p>
 The first runtime corridor is therefore intentionally bounded: one sampled input value, one deterministic execution, a small explicit UI write surface, and one final observable output value.
+</p>
+
+<p>
+Where the reference implementation publishes more than one runtime language realization, those runtimes remain parallel consumers of the same corridor rather than competing definitions of FROG.
 </p>
 
 <hr/>
@@ -555,5 +575,10 @@ It combines:
 </ul>
 
 <p>
-It should become the primary named anchor for the first end-to-end executable-slice closure campaign.
+It is now also paired with one repository-visible backend contract artifact for the first reference runtime family.
+Together, the named example and the published contract make the first bounded executable corridor materially inspectable across source, contract, and runtime-consumption layers.
+</p>
+
+<p>
+It should remain the primary named anchor for the first end-to-end executable-slice closure campaign.
 </p>
