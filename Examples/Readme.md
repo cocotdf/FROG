@@ -21,7 +21,7 @@
   <li><a href="#relation-with-ir-profiles-and-reference-implementation">6. Relation with IR, Profiles, and Reference Implementation</a></li>
   <li><a href="#published-example-families">7. Published Example Families</a></li>
   <li><a href="#core-language-example-slices">8. Core Language Example Slices</a></li>
-  <li><a href="#applicative-vertical-slice">9. Applicative Vertical Slice</a></li>
+  <li><a href="#applicative-vertical-slice-anchor">9. Applicative Vertical-Slice Anchor</a></li>
   <li><a href="#compiler-corridor-positive-mirror">10. Compiler-Corridor Positive Mirror</a></li>
   <li><a href="#reading-discipline">11. Reading Discipline</a></li>
   <li><a href="#growth-discipline">12. Growth Discipline</a></li>
@@ -243,7 +243,7 @@ At the current published state, this directory contains two complementary public
 </p>
 
 <ul>
-  <li>a sequence of core named slices under <code>Examples/01_*</code> through <code>Examples/05_*</code>,</li>
+  <li>a sequence of numbered named slices under <code>Examples/01_*</code> through <code>Examples/05_*</code>,</li>
   <li>and a conservative compiler-corridor positive mirror under <code>Examples/compiler/</code>.</li>
 </ul>
 
@@ -282,7 +282,7 @@ Taken together, these slices expose a useful progression:
   <li><strong>02_ui_value_roundtrip</strong> introduces front-panel value participation without opening object-style UI access yet,</li>
   <li><strong>03_ui_property_write</strong> introduces bounded object-style property-write participation,</li>
   <li><strong>04_stateful_feedback_delay</strong> introduces explicit state through a bounded feedback / delay pattern,</li>
-  <li><strong>05_bounded_ui_accumulator</strong> combines front-panel participation, bounded iteration, explicit state, public output, and minimal UI object-style access in one coherent applicative slice.</li>
+  <li><strong>05_bounded_ui_accumulator</strong> combines front-panel participation, bounded iteration, explicit state, public output, published backend handoff, and published reference-runtime consumption posture in one coherent applicative slice.</li>
 </ul>
 
 <p>
@@ -292,10 +292,10 @@ Each slice remains illustrative and subordinate to the documents that own source
 
 <hr/>
 
-<h2 id="applicative-vertical-slice">9. Applicative Vertical Slice</h2>
+<h2 id="applicative-vertical-slice-anchor">9. Applicative Vertical-Slice Anchor</h2>
 
 <p>
-The first repository-visible applicative vertical slice is:
+The first repository-visible applicative vertical-slice anchor is:
 </p>
 
 <pre><code>Examples/05_bounded_ui_accumulator/</code></pre>
@@ -313,16 +313,30 @@ This slice matters because it is the first published example in this directory t
   <li>bounded loop behavior,</li>
   <li>explicit state,</li>
   <li>observable final output,</li>
-  <li>and a published non-normative runtime-consumption posture in <code>Implementations/Reference/Runtime/</code>.</li>
+  <li>a published backend contract artifact under <code>Implementations/Reference/ContractEmitter/examples/</code>,</li>
+  <li>and published downstream reference consumers under <code>Implementations/Reference/Runtime/</code>.</li>
 </ul>
 
 <p>
+The intended bounded reading corridor is therefore:
+</p>
+
+<pre><code>Examples/05_bounded_ui_accumulator/
+      |
+      v
+Implementations/Reference/ContractEmitter/examples/
+05_bounded_ui_accumulator.reference_host_runtime_ui_binding.contract.json
+      |
+      v
+Implementations/Reference/Runtime/</code></pre>
+
+<p>
 This does not make the example the owner of the corridor.
-It means the repository now contains a more complete applicative reading anchor than the earlier narrower mirrors alone.
+It means the repository now contains a materially inspectable applicative source-to-contract-to-runtime reading anchor in addition to narrower example mirrors.
 </p>
 
 <p>
-Accordingly, readers interested in the first published end-to-end executable posture should treat <code>05_bounded_ui_accumulator</code> as the primary named example anchor for that bounded corridor.
+Accordingly, readers interested in the first published executable posture should treat <code>05_bounded_ui_accumulator</code> as the primary named example anchor for that bounded corridor.
 </p>
 
 <hr/>
@@ -362,7 +376,7 @@ They remain intentionally modest in scope:
 <p>
 This mirror remains valuable.
 However, it should no longer be read as the only coherent published example family in the repository.
-It now coexists with the numbered example slices and with the first applicative vertical slice under <code>05_bounded_ui_accumulator</code>.
+It now coexists with the numbered example slices and with the first applicative vertical-slice anchor under <code>05_bounded_ui_accumulator</code>.
 </p>
 
 <hr/>
@@ -407,6 +421,9 @@ Profiles/ where relevant
    -&gt;
 Conformance/
    -&gt;
+Implementations/Reference/ContractEmitter/examples/
+05_bounded_ui_accumulator.reference_host_runtime_ui_binding.contract.json
+   -&gt;
 Implementations/Reference/Runtime/</code></pre>
 
 <p>
@@ -447,7 +464,9 @@ The preferred direction is therefore:
    -&gt;
 close one applicative vertical slice
    -&gt;
-align conformance and reference consumption
+publish backend handoff
+   -&gt;
+align reference consumption
    -&gt;
 only then broaden the next example family</code></pre>
 
@@ -475,7 +494,7 @@ The published example surface now has two complementary forms:
 </ul>
 
 <p>
-Among these, <code>05_bounded_ui_accumulator</code> is currently the primary applicative vertical-slice anchor because it is the first bounded example that visibly combines front-panel participation, bounded iteration, explicit state, public output, and reference-runtime consumption posture in one named corridor.
+Among these, <code>05_bounded_ui_accumulator</code> is currently the primary applicative vertical-slice anchor because it is the first bounded example that visibly combines front-panel participation, bounded iteration, explicit state, public output, a published backend contract artifact, and published reference-runtime consumer surfaces in one named corridor.
 </p>
 
 <p>
