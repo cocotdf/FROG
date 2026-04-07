@@ -1,11 +1,11 @@
 <p align="center">
-  <img src="../../FROG logo.svg" alt="FROG logo" width="200" />
+  <img src="../../FROG logo.svg" alt="FROG logo" width="140" />
 </p>
 
-<h1 align="center">frogc Command Surface</h1>
+<h1 align="center">frogc</h1>
 
 <p align="center">
-  <strong>Reference CLI surface for the bounded executable corridors exercised by the FROG reference implementation</strong><br/>
+  <strong>Reference pipeline entry point for the first bounded executable corridor in the non-normative FROG reference workspace</strong><br/>
   <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -14,19 +14,19 @@
 <h2>Contents</h2>
 <ul>
   <li><a href="#overview">1. Overview</a></li>
-  <li><a href="#status-and-boundary">2. Status and Boundary</a></li>
-  <li><a href="#design-goals">3. Design Goals</a></li>
-  <li><a href="#current-priority-slice">4. Current Priority Slice</a></li>
-  <li><a href="#command-family">5. Command Family</a></li>
-  <li><a href="#shared-options">6. Shared Options</a></li>
-  <li><a href="#validate-command">7. <code>validate</code> Command</a></li>
-  <li><a href="#derive-ir-command">8. <code>derive-ir</code> Command</a></li>
-  <li><a href="#lower-command">9. <code>lower</code> Command</a></li>
-  <li><a href="#emit-contract-command">10. <code>emit-contract</code> Command</a></li>
-  <li><a href="#run-command">11. <code>run</code> Command</a></li>
-  <li><a href="#stage-separation-rule">12. Stage Separation Rule</a></li>
-  <li><a href="#subset-honesty-rule">13. Subset Honesty Rule</a></li>
-  <li><a href="#example-session">14. Example Session</a></li>
+  <li><a href="#non-normative-status">2. Non-Normative Status</a></li>
+  <li><a href="#why-frogc-exists">3. Why frogc Exists</a></li>
+  <li><a href="#current-closure-target">4. Current Closure Target</a></li>
+  <li><a href="#architectural-position">5. Architectural Position</a></li>
+  <li><a href="#first-supported-reading">6. First Supported Reading</a></li>
+  <li><a href="#published-corridor-anchor">7. Published Corridor Anchor</a></li>
+  <li><a href="#recommended-stage-flow">8. Recommended Stage Flow</a></li>
+  <li><a href="#minimum-expected-behavior">9. Minimum Expected Behavior</a></li>
+  <li><a href="#explicit-non-goals">10. Explicit Non-Goals</a></li>
+  <li><a href="#interface-shape">11. Interface Shape</a></li>
+  <li><a href="#illustrative-command-posture">12. Illustrative Command Posture</a></li>
+  <li><a href="#error-posture">13. Error Posture</a></li>
+  <li><a href="#multi-runtime-posture">14. Multi-Runtime Posture</a></li>
   <li><a href="#summary">15. Summary</a></li>
 </ul>
 
@@ -35,456 +35,350 @@
 <h2 id="overview">1. Overview</h2>
 
 <p>
-This document records the intended command surface for the FROG reference implementation CLI.
+<code>frogc</code> is the reference pipeline entry point of the non-normative FROG reference workspace.
+Its purpose is to expose one inspectable command-facing route through the currently published bounded executable corridor.
 </p>
 
 <p>
-It is an implementation-side document.
-It does not redefine the language.
-Its purpose is to make the reference pipeline visible and stage-separated through a small command family that mirrors the published architecture rather than bypassing it.
+In the current published state, <code>frogc</code> should be understood first as the façade for the closed corridor centered on:
 </p>
 
-<p>
-The reference CLI should therefore let a user perform, explicitly and separately:
-</p>
-
-<ul>
-  <li>validation,</li>
-  <li>Execution IR derivation,</li>
-  <li>lowering,</li>
-  <li>backend contract emission,</li>
-  <li>and runtime-side execution.</li>
-</ul>
-
-<hr/>
-
-<h2 id="status-and-boundary">2. Status and Boundary</h2>
+<pre><code>Examples/05_bounded_ui_accumulator/</code></pre>
 
 <p>
-This command surface is non-normative.
-It belongs to the reference implementation workspace.
-</p>
-
-<p>
-It does not own:
-</p>
-
-<ul>
-  <li>canonical source shape,</li>
-  <li>validated semantic meaning,</li>
-  <li>canonical Execution IR law,</li>
-  <li>lowering law,</li>
-  <li>backend contract law.</li>
-</ul>
-
-<p>
-It only exposes a practical way to consume those published repository surfaces for the supported reference subset.
+It is therefore not merely a generic future compiler name.
+It is the first command-facing entry point for a real repository-visible corridor from canonical source to emitted backend contract to reference runtime consumption.
 </p>
 
 <hr/>
 
-<h2 id="design-goals">3. Design Goals</h2>
+<h2 id="non-normative-status">2. Non-Normative Status</h2>
 
 <p>
-The command surface should satisfy the following goals:
+<code>frogc</code> is part of the non-normative reference implementation workspace.
+It is not the language definition.
+It is not the universal command-line interface for all future FROG implementations.
 </p>
 
-<ul>
-  <li><strong>stage visibility</strong> — each major pipeline stage should remain explicit,</li>
-  <li><strong>artifact visibility</strong> — each command should emit a recognizable artifact kind,</li>
-  <li><strong>subset honesty</strong> — unsupported-but-valid situations should be reported explicitly,</li>
-  <li><strong>slice-first usefulness</strong> — the first complete vertical slice should be directly runnable through this CLI,</li>
-  <li><strong>no hidden semantic shortcuts</strong> — <code>run</code> should not pretend to bypass validation, derivation, lowering, and contract emission conceptually, even if the implementation internally pipelines them.</li>
-</ul>
+<p>
+Its role is to orchestrate the reference stages that consume published specification layers without owning them.
+That keeps the ownership chain explicit:
+</p>
+
+<pre><code>published specification layers
+   -&gt; define and bound meaning
+
+frogc
+   -&gt; drives a reference-family executable corridor through explicit stages</code></pre>
 
 <hr/>
 
-<h2 id="current-priority-slice">4. Current Priority Slice</h2>
+<h2 id="why-frogc-exists">3. Why frogc Exists</h2>
 
 <p>
-The current reference priority is the first complete executable vertical slice:
+A stage-separated reference workspace benefits from one visible orchestration surface.
+Without that façade, the repository can still contain all the right stages while remaining harder to inspect as one coherent executable path.
 </p>
 
-<pre><code>Examples/05_bounded_ui_accumulator/main.frog</code></pre>
-
 <p>
-The command surface should therefore be sufficient to make this slice observable through:
+<code>frogc</code> therefore exists to:
 </p>
 
 <ul>
-  <li>successful validation of the supported subset,</li>
-  <li>visible Execution IR derivation,</li>
-  <li>visible lowering,</li>
-  <li>visible backend contract emission,</li>
-  <li>visible runtime-side outputs and UI effects.</li>
+  <li>load canonical source,</li>
+  <li>drive bounded validation,</li>
+  <li>drive bounded Execution IR derivation,</li>
+  <li>drive backend-family lowering,</li>
+  <li>drive backend contract emission,</li>
+  <li>and optionally hand the emitted contract to a reference runtime consumer.</li>
 </ul>
 
 <p>
-This slice remains the first success target.
-The CLI should not imply that every richer future widget family is already supported just because the underlying architectural model is open-ended.
-</p>
-
-<hr/>
-
-<h2 id="command-family">5. Command Family</h2>
-
-<p>
-The reference command family is intentionally small:
-</p>
-
-<pre><code>frogc validate &lt;file.frog&gt;
-frogc derive-ir &lt;file.frog&gt;
-frogc lower &lt;file.frog&gt;
-frogc emit-contract &lt;file.frog&gt;
-frogc run &lt;file.frog&gt;
-</code></pre>
-
-<p>
-A future implementation MAY add additional helper commands.
-However, the core stage family above SHOULD remain recognizable because it mirrors the published repository corridor.
+For the current closure target, its value is not breadth.
+Its value is that one reader can follow one small real corridor through one visible entry point.
 </p>
 
 <hr/>
 
-<h2 id="shared-options">6. Shared Options</h2>
+<h2 id="current-closure-target">4. Current Closure Target</h2>
 
 <p>
-The exact option set may evolve, but the following shared options are useful and aligned with the current reference posture:
+The current closure target for <code>frogc</code> is the first bounded applicative corridor:
 </p>
 
-<pre><code>--backend-family &lt;family_id&gt;
---output &lt;path&gt;
---format json
---strict-subset
---example-id &lt;example_id&gt;
-</code></pre>
+<pre><code>Examples/05_bounded_ui_accumulator/</code></pre>
 
 <p>
-Intended meanings:
+That example is the current anchor because it already combines:
 </p>
 
 <ul>
-  <li><code>--backend-family</code> selects the backend family used by <code>lower</code>, <code>emit-contract</code>, or <code>run</code>.</li>
-  <li><code>--output</code> writes the resulting artifact to a file.</li>
-  <li><code>--format json</code> requests a JSON artifact surface when applicable.</li>
-  <li><code>--strict-subset</code> rejects unsupported-but-valid source instead of allowing best-effort continuation.</li>
-  <li><code>--example-id</code> makes the intended bounded reference slice explicit in diagnostics or logs.</li>
+  <li>front-panel value participation,</li>
+  <li>minimal object-style UI access,</li>
+  <li>bounded structured control,</li>
+  <li>explicit state,</li>
+  <li>public output publication,</li>
+  <li>a published backend contract artifact,</li>
+  <li>and published downstream reference runtime consumers.</li>
 </ul>
 
 <p>
-These options are implementation-side convenience.
-They do not replace the architectural stage boundaries.
+Accordingly, the first serious reading of <code>frogc</code> is:
+</p>
+
+<pre><code>frogc = reference driver for the first closed bounded corridor</code></pre>
+
+<p>
+It should not yet be described as a broadly closed front-end for arbitrary FROG programs if the workspace does not publish that broader support.
 </p>
 
 <hr/>
 
-<h2 id="validate-command">7. <code>validate</code> Command</h2>
+<h2 id="architectural-position">5. Architectural Position</h2>
 
-<h3>7.1 Surface</h3>
-
-<pre><code>frogc validate &lt;file.frog&gt; [--format json] [--output &lt;path&gt;] [--strict-subset]</code></pre>
-
-<h3>7.2 Intent</h3>
+<pre><code>canonical .frog source
+      |
+      v
+Loader
+      |
+      v
+Validator
+      |
+      v
+Deriver
+      |
+      v
+Lowerer
+      |
+      v
+ContractEmitter
+      |
+      v
+Runtime
+      ^
+      |
+    frogc
+(reference orchestration entry point)</code></pre>
 
 <p>
-The <code>validate</code> command checks the input file against the supported published reference subset and distinguishes:
+The key rule is that <code>frogc</code> orchestrates the stages.
+It does not erase them.
+It does not collapse lowering, contract emission, and runtime into one hidden action with unclear boundaries.
 </p>
-
-<ul>
-  <li>load failure,</li>
-  <li>structural invalidity,</li>
-  <li>semantic rejection,</li>
-  <li>unsupported-but-valid situations,</li>
-  <li>successful validation.</li>
-</ul>
-
-<h3>7.3 Minimum artifact posture</h3>
-
-<p>
-When <code>--format json</code> is used, the result SHOULD include at least:
-</p>
-
-<ul>
-  <li><code>artifact_kind</code>,</li>
-  <li><code>status</code>,</li>
-  <li><code>source_ref</code>,</li>
-  <li><code>validated_subset</code>,</li>
-  <li><code>validated_program</code> when successful.</li>
-</ul>
-
-<h3>7.4 Example</h3>
-
-<pre><code>frogc validate Examples/05_bounded_ui_accumulator/main.frog --format json</code></pre>
 
 <hr/>
 
-<h2 id="derive-ir-command">8. <code>derive-ir</code> Command</h2>
-
-<h3>8.1 Surface</h3>
-
-<pre><code>frogc derive-ir &lt;file.frog&gt; [--format json] [--output &lt;path&gt;] [--strict-subset]</code></pre>
-
-<h3>8.2 Intent</h3>
+<h2 id="first-supported-reading">6. First Supported Reading</h2>
 
 <p>
-The <code>derive-ir</code> command produces an execution-facing derived artifact from a successfully validated source program.
-</p>
-
-<p>
-It SHOULD preserve:
+In the current repository state, the first supported reading of <code>frogc</code> is conservative:
 </p>
 
 <ul>
-  <li>source attribution,</li>
-  <li>execution-unit identity,</li>
-  <li>boundary objects,</li>
-  <li>explicit state when present,</li>
-  <li>the distinction between semantic state and presentation-only metadata.</li>
+  <li>take one canonical source file for the bounded slice,</li>
+  <li>run the reference stages against the supported subset,</li>
+  <li>materialize the backend handoff artifact for the selected family,</li>
+  <li>and optionally pass that contract to a reference runtime family consumer.</li>
 </ul>
-
-<h3>8.3 Minimum artifact posture</h3>
 
 <p>
-When <code>--format json</code> is used, the result SHOULD include at least:
+The currently preferred family for that first closed corridor remains:
 </p>
 
-<ul>
-  <li><code>artifact_kind</code>,</li>
-  <li><code>execution_unit</code> or equivalent attributable root object,</li>
-  <li><code>objects</code>,</li>
-  <li><code>connections</code>.</li>
-</ul>
+<pre><code>reference_host_runtime_ui_binding</code></pre>
 
-<h3>8.4 Example</h3>
-
-<pre><code>frogc derive-ir Examples/05_bounded_ui_accumulator/main.frog --format json</code></pre>
+<p>
+This is the family already used by the published contract artifact and the published reference runtime posture.
+</p>
 
 <hr/>
 
-<h2 id="lower-command">9. <code>lower</code> Command</h2>
-
-<h3>9.1 Surface</h3>
-
-<pre><code>frogc lower &lt;file.frog&gt; [--backend-family &lt;family_id&gt;] [--format json] [--output &lt;path&gt;]</code></pre>
-
-<h3>9.2 Intent</h3>
+<h2 id="published-corridor-anchor">7. Published Corridor Anchor</h2>
 
 <p>
-The <code>lower</code> command specializes the derived open Execution IR for a selected backend family.
+The first published corridor that <code>frogc</code> should be understood to drive is:
 </p>
+
+<pre><code>Examples/05_bounded_ui_accumulator/
+      |
+      v
+Implementations/Reference/ContractEmitter/examples/
+05_bounded_ui_accumulator.reference_host_runtime_ui_binding.contract.json
+      |
+      v
+Implementations/Reference/Runtime/</code></pre>
 
 <p>
-It SHOULD keep explicit:
+That matters because <code>frogc</code> is no longer describing a purely hypothetical route.
+It can now be read against a source anchor, a published emitted contract, and published runtime-family consumers.
 </p>
-
-<ul>
-  <li>the selected backend family,</li>
-  <li>the lowered unit set,</li>
-  <li>the assumptions introduced by specialization,</li>
-  <li>and the fact that the lowered form is downstream from canonical FROG IR.</li>
-</ul>
-
-<h3>9.3 Minimum artifact posture</h3>
-
-<p>
-When <code>--format json</code> is used, the result SHOULD include at least:
-</p>
-
-<ul>
-  <li><code>artifact_kind</code>,</li>
-  <li><code>backend_family</code>,</li>
-  <li><code>assumptions</code>,</li>
-  <li><code>units</code>.</li>
-</ul>
-
-<h3>9.4 Example</h3>
-
-<pre><code>frogc lower Examples/05_bounded_ui_accumulator/main.frog \
-  --backend-family reference_host_runtime_ui_binding \
-  --format json</code></pre>
 
 <hr/>
 
-<h2 id="emit-contract-command">10. <code>emit-contract</code> Command</h2>
-
-<h3>10.1 Surface</h3>
-
-<pre><code>frogc emit-contract &lt;file.frog&gt; [--backend-family &lt;family_id&gt;] [--format json] [--output &lt;path&gt;]</code></pre>
-
-<h3>10.2 Intent</h3>
+<h2 id="recommended-stage-flow">8. Recommended Stage Flow</h2>
 
 <p>
-The <code>emit-contract</code> command produces the backend contract artifact consumed by the selected runtime or backend-side consumer.
+The first bounded execution flow for <code>frogc</code> should be read as:
 </p>
+
+<ol>
+  <li>load <code>Examples/05_bounded_ui_accumulator/main.frog</code>,</li>
+  <li>validate the bounded supported subset,</li>
+  <li>derive the open execution-facing representation,</li>
+  <li>lower for <code>reference_host_runtime_ui_binding</code>,</li>
+  <li>emit the backend contract artifact,</li>
+  <li>optionally hand the emitted contract to a selected reference runtime realization,</li>
+  <li>return explicit success, rejection, or failure with stage attribution.</li>
+</ol>
 
 <p>
-It SHOULD make visible:
+If the contract is already published and selected directly, a runtime-facing entry may also start at the contract artifact rather than at canonical source.
+That does not change the ownership model.
+It only changes the entry stage.
 </p>
-
-<ul>
-  <li>unit identities,</li>
-  <li>boundary obligations,</li>
-  <li>state-cell obligations when present,</li>
-  <li>UI bindings when present,</li>
-  <li>unsupported surfaces that are preserved only as non-semantic metadata.</li>
-</ul>
-
-<h3>10.3 Minimum artifact posture</h3>
-
-<p>
-When <code>--format json</code> is used, the result SHOULD include at least:
-</p>
-
-<ul>
-  <li><code>artifact_kind</code>,</li>
-  <li><code>backend_family</code>,</li>
-  <li><code>assumptions</code>,</li>
-  <li><code>units</code>,</li>
-  <li><code>unsupported</code>.</li>
-</ul>
-
-<h3>10.4 Example</h3>
-
-<pre><code>frogc emit-contract Examples/05_bounded_ui_accumulator/main.frog \
-  --backend-family reference_host_runtime_ui_binding \
-  --format json</code></pre>
 
 <hr/>
 
-<h2 id="run-command">11. <code>run</code> Command</h2>
-
-<h3>11.1 Surface</h3>
-
-<pre><code>frogc run &lt;file.frog&gt; [--backend-family &lt;family_id&gt;] [--format json] [--output &lt;path&gt;]</code></pre>
-
-<h3>11.2 Intent</h3>
+<h2 id="minimum-expected-behavior">9. Minimum Expected Behavior</h2>
 
 <p>
-The <code>run</code> command executes the selected supported corridor through the reference runtime family.
-</p>
-
-<p>
-Conceptually, it still depends on:
+For the current closure target, <code>frogc</code> should be expected to preserve at least:
 </p>
 
 <ul>
-  <li>validation,</li>
-  <li>Execution IR derivation,</li>
-  <li>lowering,</li>
-  <li>backend contract emission.</li>
+  <li>the bounded loop identity,</li>
+  <li>the exact iteration count of five,</li>
+  <li>the explicit local-memory requirement,</li>
+  <li>the deterministic initial state of <code>0</code>,</li>
+  <li>the sampled numeric control value as input,</li>
+  <li>the final public output publication,</li>
+  <li>the final indicator publication,</li>
+  <li>and the minimal object-style UI property-write surface for <code>face_color</code>.</li>
 </ul>
 
 <p>
-An implementation MAY internally pipeline those stages for convenience.
-However, it MUST remain possible to understand the command as runtime-side consumption of a bounded validated corridor rather than as a hidden direct source-to-execution shortcut.
+For this first corridor, the relevant carried value domain is <code>u16</code>.
+The reference path driven by <code>frogc</code> should therefore remain coherent with a first bounded scalar surface that includes <code>u16</code>.
 </p>
-
-<h3>11.3 Minimum artifact posture</h3>
-
-<p>
-When <code>--format json</code> is used, the result SHOULD include at least:
-</p>
-
-<ul>
-  <li><code>artifact_kind</code>,</li>
-  <li><code>status</code>,</li>
-  <li><code>contract_ref</code>,</li>
-  <li><code>execution_summary</code>,</li>
-  <li><code>outputs</code>.</li>
-</ul>
-
-<h3>11.4 Example</h3>
-
-<pre><code>frogc run Examples/05_bounded_ui_accumulator/main.frog \
-  --backend-family reference_host_runtime_ui_binding \
-  --format json</code></pre>
-
-<h3>11.5 Expected observable facts for the first priority slice</h3>
-
-<p>
-For the current bounded UI accumulator slice, a successful <code>run</code> SHOULD make it possible to observe at least:
-</p>
-
-<ul>
-  <li>the final public output value,</li>
-  <li>the final indicator value,</li>
-  <li>the counted loop execution summary,</li>
-  <li>the explicit state surface,</li>
-  <li>minimal UI property-write effects such as <code>face_color</code> writes.</li>
-</ul>
 
 <hr/>
 
-<h2 id="stage-separation-rule">12. Stage Separation Rule</h2>
+<h2 id="explicit-non-goals">10. Explicit Non-Goals</h2>
 
 <p>
-The CLI surface MUST preserve the conceptual distinction between stages:
-</p>
-
-<pre><code>validate
-    !=
-derive-ir
-    !=
-lower
-    !=
-emit-contract
-    !=
-run
-</code></pre>
-
-<p>
-This means:
+At the current published stage, <code>frogc</code> does not need to claim:
 </p>
 
 <ul>
-  <li><code>derive-ir</code> MUST NOT pretend to succeed when validation failed,</li>
-  <li><code>lower</code> MUST NOT pretend to succeed when no valid execution-facing artifact exists,</li>
-  <li><code>emit-contract</code> MUST NOT pretend to succeed when no valid lowered form exists,</li>
-  <li><code>run</code> MUST NOT claim success without a conceptually valid contract path.</li>
+  <li>full-language universal source support,</li>
+  <li>all widget families,</li>
+  <li>all property / method / event UI interaction forms,</li>
+  <li>all backend families,</li>
+  <li>all runtime families,</li>
+  <li>or universal deployment packaging.</li>
 </ul>
+
+<p>
+Its current job is narrower and more important:
+to make the first closed bounded executable corridor explicit and inspectable.
+</p>
 
 <hr/>
 
-<h2 id="subset-honesty-rule">13. Subset Honesty Rule</h2>
+<h2 id="interface-shape">11. Interface Shape</h2>
 
 <p>
-The CLI MUST remain explicit about the difference between:
+The exact CLI syntax may evolve.
+However, the command-facing contract of <code>frogc</code> should already distinguish clearly between:
 </p>
 
 <ul>
-  <li>the general extensible FROG model published by the repository,</li>
-  <li>the bounded subset currently supported by the reference implementation,</li>
-  <li>implementation-private convenience behavior.</li>
+  <li>source-oriented entry,</li>
+  <li>contract-emission entry,</li>
+  <li>and runtime-driving entry where that runtime handoff is explicitly requested.</li>
 </ul>
 
 <p>
-Accordingly:
+A conservative conceptual shape is:
 </p>
 
-<ul>
-  <li>unsupported-but-valid situations SHOULD be reported explicitly,</li>
-  <li>the CLI SHOULD identify the selected backend family when relevant,</li>
-  <li>the CLI SHOULD avoid implying support for all future widget families, profiles, or runtime forms unless such support is actually implemented and claimed.</li>
-</ul>
+<pre><code>frogc validate &lt;program.frog&gt;
+frogc derive-ir &lt;program.frog&gt;
+frogc lower --family reference_host_runtime_ui_binding &lt;program.frog&gt;
+frogc emit-contract --family reference_host_runtime_ui_binding &lt;program.frog&gt;
+frogc run --family reference_host_runtime_ui_binding &lt;program.frog&gt;
+frogc run-contract &lt;contract.json&gt;</code></pre>
+
+<p>
+This is an interface posture, not a claim that every command is already implemented identically in the published workspace.
+The important point is that the stage boundaries remain legible.
+</p>
 
 <hr/>
 
-<h2 id="example-session">14. Example Session</h2>
+<h2 id="illustrative-command-posture">12. Illustrative Command Posture</h2>
 
 <p>
-A typical first-priority bounded slice session may look like:
+For the first closed corridor, the most important command-facing readings are:
 </p>
 
-<pre><code>frogc validate Examples/05_bounded_ui_accumulator/main.frog --format json
-frogc derive-ir Examples/05_bounded_ui_accumulator/main.frog --format json
-frogc lower Examples/05_bounded_ui_accumulator/main.frog --backend-family reference_host_runtime_ui_binding --format json
-frogc emit-contract Examples/05_bounded_ui_accumulator/main.frog --backend-family reference_host_runtime_ui_binding --format json
-frogc run Examples/05_bounded_ui_accumulator/main.frog --backend-family reference_host_runtime_ui_binding --format json
-</code></pre>
+<pre><code>frogc emit-contract \
+  --family reference_host_runtime_ui_binding \
+  Examples/05_bounded_ui_accumulator/main.frog
+
+frogc run \
+  --family reference_host_runtime_ui_binding \
+  Examples/05_bounded_ui_accumulator/main.frog
+
+frogc run-contract \
+  Implementations/Reference/ContractEmitter/examples/05_bounded_ui_accumulator.reference_host_runtime_ui_binding.contract.json</code></pre>
 
 <p>
-This sequence is intentionally small.
-Its purpose is to make one bounded published corridor inspectable from source to runtime-visible outcome.
+The third form is especially important for the current published state because the contract artifact is already repository-visible and the runtime-family consumers are already published against that handoff surface.
+</p>
+
+<hr/>
+
+<h2 id="error-posture">13. Error Posture</h2>
+
+<p>
+<code>frogc</code> should report failures with explicit stage attribution.
+A useful minimal model is:
+</p>
+
+<ul>
+  <li><code>load</code> failure,</li>
+  <li><code>validate</code> failure,</li>
+  <li><code>derive-ir</code> failure,</li>
+  <li><code>lower</code> failure,</li>
+  <li><code>emit-contract</code> failure,</li>
+  <li><code>runtime-accept</code> rejection,</li>
+  <li><code>run</code> failure.</li>
+</ul>
+
+<p>
+This matters because a closed corridor remains inspectable only if failures remain attributable rather than collapsing into one opaque “compile failed” message.
+</p>
+
+<hr/>
+
+<h2 id="multi-runtime-posture">14. Multi-Runtime Posture</h2>
+
+<p>
+<code>frogc</code> must not collapse the language into one runtime realization.
+For the current corridor, the intended posture is:
+</p>
+
+<ul>
+  <li>one named source slice,</li>
+  <li>one emitted backend contract family,</li>
+  <li>one bounded execution meaning,</li>
+  <li>and more than one published downstream runtime consumer where available.</li>
+</ul>
+
+<p>
+For the current published state, that means a Python consumer and a Rust consumer may both remain downstream of the same handoff surface.
+<code>frogc</code> should therefore be read as the driver of a corridor that stays open above runtime implementation language.
 </p>
 
 <hr/>
@@ -492,24 +386,20 @@ Its purpose is to make one bounded published corridor inspectable from source to
 <h2 id="summary">15. Summary</h2>
 
 <p>
-The <code>frogc</code> command surface is the small reference CLI that mirrors the published FROG architecture through explicit stages:
+<code>frogc</code> is the reference orchestration entry point of the non-normative FROG reference workspace.
+Its current architectural value is not broad genericity.
+Its current value is that it can now be read against one materially closed bounded corridor.
 </p>
-
-<ul>
-  <li><code>validate</code>,</li>
-  <li><code>derive-ir</code>,</li>
-  <li><code>lower</code>,</li>
-  <li><code>emit-contract</code>,</li>
-  <li><code>run</code>.</li>
-</ul>
 
 <p>
-Its current mission is to help the reference implementation prove one complete bounded executable corridor, especially the first priority UI-bearing accumulator slice, while remaining explicit about:
+That corridor is:
 </p>
 
-<ul>
-  <li>stage boundaries,</li>
-  <li>artifact boundaries,</li>
-  <li>backend-family selection,</li>
-  <li>and supported-subset boundaries.</li>
-</ul>
+<pre><code>Examples/05_bounded_ui_accumulator/
+  -&gt; ContractEmitter/examples/...contract.json
+  -&gt; Runtime/</code></pre>
+
+<p>
+Accordingly, <code>frogc</code> should now be described first as the command-facing façade of that first closed source-to-contract-to-runtime reference corridor,
+while keeping the stage boundaries and ownership boundaries explicit.
+</p>
