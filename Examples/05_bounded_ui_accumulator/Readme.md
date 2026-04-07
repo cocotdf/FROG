@@ -25,9 +25,10 @@
   <li><a href="#derivation-expectation">10. Derivation Expectation</a></li>
   <li><a href="#lowering-expectation">11. Lowering Expectation</a></li>
   <li><a href="#published-backend-contract">12. Published Backend Contract</a></li>
-  <li><a href="#reference-runtime-expectation">13. Reference Runtime Expectation</a></li>
-  <li><a href="#why-this-example-matters">14. Why This Example Matters</a></li>
-  <li><a href="#summary">15. Summary</a></li>
+  <li><a href="#published-reference-consumers">13. Published Reference Consumers</a></li>
+  <li><a href="#reference-runtime-expectation">14. Reference Runtime Expectation</a></li>
+  <li><a href="#why-this-example-matters">15. Why This Example Matters</a></li>
+  <li><a href="#summary">16. Summary</a></li>
 </ul>
 
 <hr/>
@@ -483,7 +484,52 @@ The artifact itself is now part of the repository-visible reading chain for this
 
 <hr/>
 
-<h2 id="reference-runtime-expectation">13. Reference Runtime Expectation</h2>
+<h2 id="published-reference-consumers">13. Published Reference Consumers</h2>
+
+<p>
+The first published downstream reference consumers for this contract live under:
+</p>
+
+<pre><code>Implementations/Reference/Runtime/</code></pre>
+
+<p>
+The bounded demonstration corridor is intended to be readable as:
+</p>
+
+<pre><code>Examples/05_bounded_ui_accumulator/
+      |
+      v
+Implementations/Reference/ContractEmitter/examples/
+05_bounded_ui_accumulator.reference_host_runtime_ui_binding.contract.json
+      |
+      v
+Implementations/Reference/Runtime/
+      |
+      +-- reference_runtime.py
+      +-- run_slice05_contract.py
+      \-- rust/
+          \-- tests/
+              +-- slice05_contract_smoke.rs
+              \-- slice05_execution.rs</code></pre>
+
+<p>
+In that reading:
+</p>
+
+<ul>
+  <li>the named example remains the source-level and corridor-level anchor,</li>
+  <li>the emitted contract remains the backend handoff artifact,</li>
+  <li>and the runtime surfaces remain downstream private consumers of that artifact.</li>
+</ul>
+
+<p>
+This does not make the runtime normative.
+It makes the first contract-to-runtime proof materially inspectable from the published repository itself.
+</p>
+
+<hr/>
+
+<h2 id="reference-runtime-expectation">14. Reference Runtime Expectation</h2>
 
 <p>
 The first non-normative reference runtime path for this example may remain minimal and host-oriented.
@@ -528,7 +574,7 @@ Where the reference implementation publishes more than one runtime language real
 
 <hr/>
 
-<h2 id="why-this-example-matters">14. Why This Example Matters</h2>
+<h2 id="why-this-example-matters">15. Why This Example Matters</h2>
 
 <p>
 A serious open graphical language cannot remain credible if UI participation, object-style widget access, structured control, explicit state, IR preservation, lowering, backend handoff, and executable runtime posture are only published as separate partial slices.
@@ -557,7 +603,7 @@ That is why this example is the preferred anchor for the first complete executab
 
 <hr/>
 
-<h2 id="summary">15. Summary</h2>
+<h2 id="summary">16. Summary</h2>
 
 <p>
 This example is the first complete small applicative corridor for the published FROG repository.
@@ -575,8 +621,8 @@ It combines:
 </ul>
 
 <p>
-It is now also paired with one repository-visible backend contract artifact for the first reference runtime family.
-Together, the named example and the published contract make the first bounded executable corridor materially inspectable across source, contract, and runtime-consumption layers.
+It is now also paired with one repository-visible backend contract artifact and with published downstream reference consumers for that same bounded corridor.
+Together, the named example, the published contract, and the published consumer surfaces make the first bounded executable corridor materially inspectable across source, contract, and runtime-consumption layers.
 </p>
 
 <p>
