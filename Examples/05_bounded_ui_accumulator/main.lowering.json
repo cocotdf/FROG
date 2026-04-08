@@ -53,13 +53,15 @@
         "reference_writes": [
           {
             "widget_id": "ctrl_input",
-            "member": "face_color",
-            "value_literal": "#D8E6FF"
+            "member": "foreground_color",
+            "value_type": "frog.color.rgba8",
+            "value_literal": "#5B9BD5"
           },
           {
             "widget_id": "ind_result",
-            "member": "face_color",
-            "value_literal": "#D8E6FF"
+            "member": "foreground_color",
+            "value_type": "frog.color.rgba8",
+            "value_literal": "#70AD47"
           }
         ]
       },
