@@ -8,7 +8,7 @@
   },
   "metadata": {
     "title": "Bounded UI Accumulator Front Panel",
-    "description": "Concrete front-panel package for Example 05 with a minimal executable widget model."
+    "description": "Concrete front-panel package for Example 05 with a bounded executable widget model."
   },
   "front_panels": [
     {
@@ -19,6 +19,27 @@
         "height": 280
       },
       "widgets": [
+        {
+          "instance_id": "main_panel_container",
+          "class_ref": "frog.widgets.panel",
+          "role": "container",
+          "layout": {
+            "x": 16,
+            "y": 16,
+            "width": 608,
+            "height": 200
+          },
+          "initial_properties": {
+            "label": "Bounded UI Accumulator",
+            "visible": true,
+            "enabled": true,
+            "face_color": "#E8EEF7"
+          },
+          "parts": {
+            "root": {},
+            "label": {}
+          }
+        },
         {
           "instance_id": "ctrl_input",
           "class_ref": "frog.widgets.numeric_control",
@@ -88,27 +109,6 @@
             "visible": true,
             "enabled": true,
             "face_color": "#F3F3F3"
-          },
-          "parts": {
-            "root": {},
-            "label": {}
-          }
-        },
-        {
-          "instance_id": "main_panel_container",
-          "class_ref": "frog.widgets.panel",
-          "role": "container",
-          "layout": {
-            "x": 16,
-            "y": 16,
-            "width": 608,
-            "height": 200
-          },
-          "initial_properties": {
-            "label": "Bounded UI Accumulator",
-            "visible": true,
-            "enabled": true,
-            "face_color": "#E8EEF7"
           },
           "parts": {
             "root": {},
