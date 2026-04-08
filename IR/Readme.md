@@ -5,7 +5,7 @@
 <h1 align="center">FROG Intermediate Representation Architecture</h1>
 
 <p align="center">
-  <strong>Architectural definition of the IR layer for FROG v0.1</strong><br/>
+  <strong>Architectural definition of the open execution-facing IR layer for FROG v0.1</strong><br/>
   <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -21,12 +21,13 @@
   <li><a href="#scope-of-this-directory">6. Scope of this Directory</a></li>
   <li><a href="#what-this-directory-does-not-own">7. What this Directory Does Not Own</a></li>
   <li><a href="#relation-with-surrounding-layers">8. Relation with Surrounding Layers</a></li>
-  <li><a href="#internal-document-structure">9. Internal Document Structure</a></li>
-  <li><a href="#document-ownership-split">10. Document Ownership Split</a></li>
-  <li><a href="#ownership-quick-check">11. Ownership Quick Check</a></li>
-  <li><a href="#practical-reading-path">12. Practical Reading Path</a></li>
-  <li><a href="#status-in-v01">13. Status in v0.1</a></li>
-  <li><a href="#summary">14. Summary</a></li>
+  <li><a href="#widget-object-and-ui-corridor">9. Widget Object and UI Corridor</a></li>
+  <li><a href="#internal-document-structure">10. Internal Document Structure</a></li>
+  <li><a href="#document-ownership-split">11. Document Ownership Split</a></li>
+  <li><a href="#ownership-quick-check">12. Ownership Quick Check</a></li>
+  <li><a href="#practical-reading-path">13. Practical Reading Path</a></li>
+  <li><a href="#status-in-v01">14. Status in v0.1</a></li>
+  <li><a href="#summary">15. Summary</a></li>
 </ul>
 
 <hr/>
@@ -38,8 +39,7 @@ This directory defines the architectural home of open execution-facing represent
 </p>
 
 <p>
-A FROG program is not authored directly as an execution IR.
-It is authored as canonical source, admitted through structural validity, interpreted as validated program meaning, and only then represented as a canonical open execution intermediate representation.
+A FROG program is not authored directly as an execution IR. It is authored as canonical source, admitted through structural validity, interpreted as validated program meaning, and only then represented as a canonical open execution intermediate representation.
 </p>
 
 <p>
@@ -53,7 +53,8 @@ The purpose of <code>IR/</code> is to ensure that execution-facing representatio
   <li>cache payload examples,</li>
   <li>primitive or profile catalogs,</li>
   <li>runtime-private scheduler forms,</li>
-  <li>backend-specific realization documents.</li>
+  <li>backend-specific realization documents,</li>
+  <li>host-private UI realization layers.</li>
 </ul>
 
 <p>
@@ -84,8 +85,7 @@ backend-facing handoff
 private realization</code></pre>
 
 <p>
-The core of this layer is the canonical open Execution IR bundle.
-The directory also contains downstream-adjacent documents that define how open IR connects to later stages without collapsing the open IR layer into runtime-private form.
+The core of this layer is the canonical open Execution IR bundle. The directory also contains downstream-adjacent documents that define how open IR connects to later stages without collapsing the open IR layer into runtime-private form.
 </p>
 
 <hr/>
@@ -130,7 +130,8 @@ Without a dedicated IR layer, execution-facing representation tends to drift int
   <li>cache examples,</li>
   <li>runtime-private scheduler graphs,</li>
   <li>compiler-specific internal pipelines,</li>
-  <li>backend-private deployment formats.</li>
+  <li>backend-private deployment formats,</li>
+  <li>UI-runtime-private object tables treated as if they were language truth.</li>
 </ul>
 
 <p>
@@ -228,6 +229,15 @@ The downstream IR-adjacent documents are:
   <li><code>Backend contract.md</code>.</li>
 </ul>
 
+<p>
+This architectural boundary also applies to UI and widget-related execution-facing structure:
+</p>
+
+<ul>
+  <li>IR may preserve execution-relevant widget identities, widget references, member addresses, and event categories where validated meaning requires them,</li>
+  <li>IR MUST NOT absorb host-side widget realization, SVG rendering strategy, or runtime-private UI object storage as if those were open IR truth.</li>
+</ul>
+
 <hr/>
 
 <h2 id="position-in-the-representation-pipeline">5. Position in the Representation Pipeline</h2>
@@ -288,8 +298,7 @@ runtime realization
 deployment-specific forms</code></pre>
 
 <p>
-The transition into <code>IR/</code> begins after the program has validated program meaning.
-An implementation MAY derive IR directly from canonical source, from a validated Program Model, or from another equivalent validated internal form, but the resulting IR MUST remain semantically grounded in validated program meaning rather than in parser-only acceptance, structural-source admission alone, or editor-only convenience state.
+The transition into <code>IR/</code> begins after the program has validated program meaning. An implementation MAY derive IR directly from canonical source, from a validated Program Model, or from another equivalent validated internal form, but the resulting IR MUST remain semantically grounded in validated program meaning rather than in parser-only acceptance, structural-source admission alone, or editor-only convenience state.
 </p>
 
 <p>
@@ -367,6 +376,7 @@ This directory owns the architectural answers to questions such as:
   <li>How is the canonical JSON form of the Execution IR validated?</li>
   <li>Where does open IR stop and later specialization begin?</li>
   <li>What downstream handoff assumptions may be standardized without collapsing into runtime-private realization?</li>
+  <li>How widget-object interaction surfaces are preserved into open execution-facing form without absorbing host realization?</li>
 </ul>
 
 <p>
@@ -404,6 +414,7 @@ This directory does not define:
   <li>the public interface source model in full,</li>
   <li>the front-panel source model in full,</li>
   <li>the complete widget source model in full,</li>
+  <li>the complete <code>.wfrog</code> package-family definition in full,</li>
   <li>the normative execution semantics of the language in full,</li>
   <li>the intrinsic primitive catalogs in full,</li>
   <li>the optional standardized profile catalogs in full,</li>
@@ -411,14 +422,16 @@ This directory does not define:
   <li>IDE-facing debug UX or observability UX,</li>
   <li>cache ownership,</li>
   <li>runtime-private execution formats,</li>
+  <li>runtime-private widget object storage,</li>
+  <li>host-side widget realization packages,</li>
+  <li>SVG rendering strategy as such,</li>
   <li>one mandatory compiler architecture,</li>
   <li>one mandatory backend-family implementation,</li>
   <li>one mandatory runtime-private storage model.</li>
 </ul>
 
 <p>
-This non-ownership rule is essential.
-Without it, the IR layer would become a catch-all replacement for other parts of the architecture.
+This non-ownership rule is essential. Without it, the IR layer would become a catch-all replacement for other parts of the architecture.
 </p>
 
 <hr/>
@@ -428,8 +441,7 @@ Without it, the IR layer would become a catch-all replacement for other parts of
 <h3>8.1 Relation with Expression</h3>
 
 <p>
-<code>Expression/</code> owns canonical source representation and structural validity.
-That ownership remains authoritative even when canonical IR exists.
+<code>Expression/</code> owns canonical source representation and structural validity. That ownership remains authoritative even when canonical IR exists.
 </p>
 
 <ul>
@@ -451,11 +463,20 @@ structural validity
    is not
 Execution IR</code></pre>
 
+<p>
+The same rule applies to related widget-oriented source packages:
+</p>
+
+<ul>
+  <li><code>.wfrog</code> packages remain source-side package artifacts owned by the relevant Expression-side architecture,</li>
+  <li>IR may preserve the resolved consequences of validated widget package usage,</li>
+  <li>IR does not become the owner of widget package definition or realization-package architecture.</li>
+</ul>
+
 <h3>8.2 Relation with Language</h3>
 
 <p>
-<code>Language/</code> defines what a validated FROG program means when it executes.
-That semantic layer remains authoritative even when one or more execution IR artifacts exist.
+<code>Language/</code> defines what a validated FROG program means when it executes. That semantic layer remains authoritative even when one or more execution IR artifacts exist.
 </p>
 
 <ul>
@@ -472,12 +493,20 @@ IR/ answers:
 "What open execution-facing representation is built
 from that truth?"</code></pre>
 
+<p>
+For widget-object interaction, this means:
+</p>
+
+<ul>
+  <li>Language/ owns the validated meaning of widget-value participation and object-style widget interaction,</li>
+  <li>IR/ may encode execution-facing consequences of that validated meaning,</li>
+  <li>IR/ must not redefine widget law or host realization law.</li>
+</ul>
+
 <h3>8.3 Relation with Libraries and Profiles</h3>
 
 <p>
-<code>Libraries/</code> owns intrinsic primitive vocabularies.
-<code>Profiles/</code> owns optional standardized capability families.
-The IR layer does not re-own either catalog.
+<code>Libraries/</code> owns intrinsic primitive vocabularies. <code>Profiles/</code> owns optional standardized capability families. The IR layer does not re-own either catalog.
 </p>
 
 <ul>
@@ -487,11 +516,24 @@ The IR layer does not re-own either catalog.
   <li><code>IR/</code> may standardize how those validated uses appear in open IR, but not what primitives or profiles exist in the first place.</li>
 </ul>
 
+<p>
+This includes UI primitives such as:
+</p>
+
+<ul>
+  <li><code>frog.ui.property_read</code>,</li>
+  <li><code>frog.ui.property_write</code>,</li>
+  <li><code>frog.ui.method_invoke</code>.</li>
+</ul>
+
+<p>
+IR may standardize the execution-facing representation of validated uses of those primitives. IR does not own the primitive families themselves.
+</p>
+
 <h3>8.4 Relation with the IDE Program Model</h3>
 
 <p>
-The IDE Program Model is an authoring-facing internal or semi-internal representation used to support editing, round-trip operations, diagnostics workflows, and related tooling.
-It is not the same thing as the canonical open Execution IR.
+The IDE Program Model is an authoring-facing internal or semi-internal representation used to support editing, round-trip operations, diagnostics workflows, and related tooling. It is not the same thing as the canonical open Execution IR.
 </p>
 
 <ul>
@@ -500,12 +542,22 @@ It is not the same thing as the canonical open Execution IR.
   <li>the canonical Execution IR SHOULD NOT depend on editor-only presentation state as if that state were part of validated program meaning.</li>
 </ul>
 
+<p>
+This also applies to UI authoring state such as:
+</p>
+
+<ul>
+  <li>selection state,</li>
+  <li>zoom state,</li>
+  <li>designer-only handles,</li>
+  <li>panel editing overlays,</li>
+  <li>temporary widget inspection panels.</li>
+</ul>
+
 <h3>8.5 Relation with Cache Artifacts</h3>
 
 <p>
-A FROG source or toolchain MAY embed or associate cache artifacts that store derived execution-facing data such as <code>frog.ir</code>.
-However, the cache container does not own the architectural definition of IR.
-It only provides a storage or transport location for derived artifacts.
+A FROG source or toolchain MAY embed or associate cache artifacts that store derived execution-facing data such as <code>frog.ir</code>. However, the cache container does not own the architectural definition of IR. It only provides a storage or transport location for derived artifacts.
 </p>
 
 <ul>
@@ -530,8 +582,7 @@ IR ownership</code></pre>
 <h3>8.6 Relation with Observation, Debugging, and Diagnostics</h3>
 
 <p>
-This directory does not own debugger UX, probe presentation, watch presentation, or runtime command surfaces.
-It does own part of what makes later source-aligned observation and diagnostics possible:
+This directory does not own debugger UX, probe presentation, watch presentation, or runtime command surfaces. It does own part of what makes later source-aligned observation and diagnostics possible:
 </p>
 
 <ul>
@@ -555,7 +606,91 @@ what makes source-aligned inspection and attribution possible</code></pre>
 
 <hr/>
 
-<h2 id="internal-document-structure">9. Internal Document Structure</h2>
+<h2 id="widget-object-and-ui-corridor">9. Widget Object and UI Corridor</h2>
+
+<p>
+FROG v0.1 already distinguishes:
+</p>
+
+<ul>
+  <li>widget instance declaration in canonical source,</li>
+  <li>class-level widget law,</li>
+  <li>diagram-side widget interaction,</li>
+  <li>widget-oriented package definitions,</li>
+  <li>runtime interpretation,</li>
+  <li>host realization.</li>
+</ul>
+
+<p>
+The IR layer must preserve that separation while still providing an execution-facing corridor for widget-relevant validated meaning.
+</p>
+
+<h3>9.1 What IR may preserve</h3>
+
+<p>
+IR may preserve execution-relevant widget-related information such as:
+</p>
+
+<ul>
+  <li>stable widget identities needed by execution-facing interaction,</li>
+  <li>distinction between natural widget value participation and object-style widget reference participation,</li>
+  <li>validated widget member addressing consequences,</li>
+  <li>event categories and event payload shapes where execution-facing form needs them,</li>
+  <li>attribution back to widget instances and addressed members.</li>
+</ul>
+
+<h3>9.2 What IR must not absorb</h3>
+
+<p>
+IR must not absorb:
+</p>
+
+<ul>
+  <li>widget class package ownership,</li>
+  <li>widget realization package ownership,</li>
+  <li>SVG asset ownership,</li>
+  <li>host-private widget composition strategies,</li>
+  <li>runtime-private UI object tables,</li>
+  <li>one implementation's rendering pipeline as if it were canonical open IR.</li>
+</ul>
+
+<h3>9.3 Practical corridor</h3>
+
+<p>
+The practical widget-related IR corridor is therefore:
+</p>
+
+<pre><code>widget instance in canonical source
+        -&gt;
+validated widget participation meaning
+        -&gt;
+validated widget reference / member access meaning
+        -&gt;
+execution-facing IR preservation of identities and accesses
+        -&gt;
+later lowering / target adaptation
+        -&gt;
+runtime and host realization</code></pre>
+
+<p>
+This corridor is especially important for:
+</p>
+
+<ul>
+  <li><code>widget_value</code>,</li>
+  <li><code>widget_reference</code>,</li>
+  <li><code>frog.ui.property_read</code>,</li>
+  <li><code>frog.ui.property_write</code>,</li>
+  <li><code>frog.ui.method_invoke</code>.</li>
+</ul>
+
+<p>
+Open IR may preserve their validated execution-facing structure. Open IR does not become the owner of widget realization itself.
+</p>
+
+<hr/>
+
+<h2 id="internal-document-structure">10. Internal Document Structure</h2>
 
 <p>
 The current directory structure is:
@@ -603,9 +738,22 @@ The downstream IR-adjacent bundle is:
   <li><code>Backend contract.md</code></li>
 </ul>
 
+<p>
+A coherent next closure direction for widget-object execution-facing structure would also make room for dedicated IR companion documents such as:
+</p>
+
+<ul>
+  <li><code>Widget object mapping.md</code>,</li>
+  <li><code>UI interaction lowering.md</code>,</li>
+</ul>
+
+<p>
+Those documents are not required to understand the present directory posture, but they are a natural extension of the corridor defined here.
+</p>
+
 <hr/>
 
-<h2 id="document-ownership-split">10. Document Ownership Split</h2>
+<h2 id="document-ownership-split">11. Document Ownership Split</h2>
 
 <p>
 The ownership split inside <code>IR/</code> is:
@@ -641,7 +789,7 @@ This split matters because it prevents one giant document from blurring architec
 
 <hr/>
 
-<h2 id="ownership-quick-check">11. Ownership Quick Check</h2>
+<h2 id="ownership-quick-check">12. Ownership Quick Check</h2>
 
 <p>
 A fast ownership check is:
@@ -679,9 +827,30 @@ If the question is:
 "What may a downstream backend consumer rely on?"
    -&gt; IR/Backend contract.md</code></pre>
 
+<p>
+For widget-related execution-facing questions:
+</p>
+
+<pre><code>If the question is:
+"What is the widget instance source model?"
+   -&gt; Expression/
+
+If the question is:
+"What is the widget class law?"
+   -&gt; Expression/
+
+If the question is:
+"What is the host realization package model?"
+   -&gt; Expression/
+
+If the question is:
+"What execution-facing representation preserves validated
+widget interaction meaning?"
+   -&gt; IR/</code></pre>
+
 <hr/>
 
-<h2 id="practical-reading-path">12. Practical Reading Path</h2>
+<h2 id="practical-reading-path">13. Practical Reading Path</h2>
 
 <p>
 A practical reading path for this directory is:
@@ -719,13 +888,28 @@ Lowering.md
    -&gt;
 Backend contract.md</code></pre>
 
+<p>
+When the concrete question is specifically about widget-object execution-facing preservation, a useful reading sequence is:
+</p>
+
+<pre><code>Expression/Widget interaction.md
+   -&gt;
+IR/Readme.md
+   -&gt;
+IR/Execution IR.md
+   -&gt;
+IR/Derivation rules.md
+   -&gt;
+IR/Identity and Mapping.md
+   -&gt;
+IR/Lowering.md</code></pre>
+
 <hr/>
 
-<h2 id="status-in-v01">13. Status in v0.1</h2>
+<h2 id="status-in-v01">14. Status in v0.1</h2>
 
 <p>
-In the current published v0.1 posture, the IR layer is no longer only architectural prose.
-It already defines a real corridor:
+In the current published v0.1 posture, the IR layer is no longer only architectural prose. It already defines a real corridor:
 </p>
 
 <ul>
@@ -738,8 +922,7 @@ It already defines a real corridor:
 </ul>
 
 <p>
-This means the repository is already beyond a purely aspirational architecture-only stage.
-It already exposes the documents needed to reason about a serious compiler-oriented handoff, while keeping LLVM or any other compiler family strictly downstream from the language-owned IR layer.
+This means the repository is already beyond a purely aspirational architecture-only stage. It already exposes the documents needed to reason about a serious compiler-oriented handoff, while keeping LLVM or any other compiler family strictly downstream from the language-owned IR layer.
 </p>
 
 <p>
@@ -751,12 +934,13 @@ The active closure direction in v0.1 is therefore not to invent a new IR concept
   <li>identity and recoverability law,</li>
   <li>derivation correctness,</li>
   <li>schema posture,</li>
-  <li>lowering and backend-contract discipline.</li>
+  <li>lowering and backend-contract discipline,</li>
+  <li>the execution-facing preservation corridor for widget-object interaction without collapsing into host realization.</li>
 </ul>
 
 <hr/>
 
-<h2 id="summary">14. Summary</h2>
+<h2 id="summary">15. Summary</h2>
 
 <p>
 <code>IR/</code> is the architectural home of canonical open execution-facing representation in FROG.
@@ -786,6 +970,15 @@ The internal split of the directory is intentional:
 <ul>
   <li>the core open-IR bundle defines the canonical execution-facing layer itself,</li>
   <li>the downstream IR-adjacent documents define how later stages connect to that layer without replacing it.</li>
+</ul>
+
+<p>
+That same discipline now applies explicitly to widget-related execution-facing structure:
+</p>
+
+<ul>
+  <li>validated widget interaction meaning may be preserved in open IR,</li>
+  <li>but widget package ownership, host realization, SVG rendering logic, and runtime-private UI object structures remain outside the ownership boundary of <code>IR/</code>.</li>
 </ul>
 
 <p>
