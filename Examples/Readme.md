@@ -5,7 +5,7 @@
 <h1 align="center">FROG Examples</h1>
 
 <p align="center">
-  <strong>Illustrative named slices of the published FROG specification</strong><br/>
+  <strong>Illustrative named slices and executable example dossiers of the published FROG specification</strong><br/>
   <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -17,15 +17,18 @@
   <li><a href="#why-this-directory-exists">2. Why This Directory Exists</a></li>
   <li><a href="#what-examples-are">3. What Examples Are</a></li>
   <li><a href="#what-examples-are-not">4. What Examples Are Not</a></li>
-  <li><a href="#relation-with-conformance">5. Relation with Conformance</a></li>
-  <li><a href="#relation-with-ir-profiles-and-reference-implementation">6. Relation with IR, Profiles, and Reference Implementation</a></li>
-  <li><a href="#published-example-families">7. Published Example Families</a></li>
-  <li><a href="#core-language-example-slices">8. Core Language Example Slices</a></li>
-  <li><a href="#applicative-vertical-slice-anchor">9. Applicative Vertical-Slice Anchor</a></li>
-  <li><a href="#compiler-corridor-positive-mirror">10. Compiler-Corridor Positive Mirror</a></li>
-  <li><a href="#reading-discipline">11. Reading Discipline</a></li>
-  <li><a href="#growth-discipline">12. Growth Discipline</a></li>
-  <li><a href="#summary">13. Summary</a></li>
+  <li><a href="#closure-direction">5. Closure Direction</a></li>
+  <li><a href="#relation-with-conformance">6. Relation with Conformance</a></li>
+  <li><a href="#relation-with-fir-lowering-runtime-and-native-paths">7. Relation with FIR, Lowering, Runtime, and Native Paths</a></li>
+  <li><a href="#published-example-families">8. Published Example Families</a></li>
+  <li><a href="#useful-file-tree">9. Useful File Tree</a></li>
+  <li><a href="#file-responsibilities">10. File Responsibilities</a></li>
+  <li><a href="#core-language-example-slices">11. Core Language Example Slices</a></li>
+  <li><a href="#applicative-vertical-slice-anchor">12. Applicative Vertical-Slice Anchor</a></li>
+  <li><a href="#compiler-corridor-positive-mirror">13. Compiler-Corridor Positive Mirror</a></li>
+  <li><a href="#reading-discipline">14. Reading Discipline</a></li>
+  <li><a href="#growth-discipline">15. Growth Discipline</a></li>
+  <li><a href="#summary">16. Summary</a></li>
 </ul>
 
 <hr/>
@@ -34,11 +37,12 @@
 
 <p>
 This directory provides illustrative named slices of the published FROG specification.
+It also increasingly serves as the repository-visible entry point for <strong>serious executable example dossiers</strong>.
 </p>
 
 <p>
 Examples exist to make the repository easier to read across layers.
-They give readers compact, recognizable cases that can be followed across canonical source structure, semantic interpretation, IR consequences, profile relevance, and bounded implementation consumption where such a corridor is already published.
+They give readers compact, recognizable cases that can be followed across canonical source structure, semantic interpretation, FIR consequences, lowering posture, backend contract posture, runtime-family consumption, and native-path direction where such a corridor is already published.
 </p>
 
 <p>
@@ -62,16 +66,12 @@ Examples therefore exist to:
 <ul>
   <li>illustrate published source structures,</li>
   <li>illustrate published semantic boundaries,</li>
-  <li>illustrate published IR consequences,</li>
-  <li>illustrate declared profile corridors where relevant,</li>
-  <li>make repository-visible vertical slices easier to discuss across documents,</li>
-  <li>support comparison between specification, conformance, and implementation-facing prototype corridors.</li>
+  <li>illustrate published FIR consequences,</li>
+  <li>illustrate lowering and backend handoff posture,</li>
+  <li>illustrate declared runtime-consumer corridors where published,</li>
+  <li>illustrate native-path direction where applicable,</li>
+  <li>make repository-visible vertical slices easier to discuss across documents.</li>
 </ul>
-
-<p>
-Their role is explanatory and alignment-oriented.
-They help readers see how the specification is intended to be read in practice without turning prose documents into the only usable surface.
-</p>
 
 <hr/>
 
@@ -91,15 +91,11 @@ An example may illustrate:
   <li>a semantic pattern,</li>
   <li>a control pattern,</li>
   <li>a state pattern,</li>
-  <li>an IR-relevant derivation situation,</li>
-  <li>a declared profile corridor,</li>
+  <li>a front-panel interaction pattern,</li>
+  <li>a FIR-relevant derivation situation,</li>
+  <li>a lowering or backend-handoff situation,</li>
   <li>a bounded execution-facing reference path where such a path is already published.</li>
 </ul>
-
-<p>
-A good example does not try to demonstrate everything at once.
-It isolates one coherent architectural situation clearly enough that the reader can follow it across the neighboring published layers.
-</p>
 
 <hr/>
 
@@ -109,13 +105,10 @@ It isolates one coherent architectural situation clearly enough that the reader 
 Examples do not become hidden semantic law.
 </p>
 
-<p>
-The rule remains:
-</p>
-
 <pre><code>Specification defines
 Conformance exposes public expectations
-Examples illustrate</code></pre>
+Examples illustrate and document closure state
+</code></pre>
 
 <p>
 An example therefore does not replace the owning documents in:
@@ -130,31 +123,47 @@ An example therefore does not replace the owning documents in:
   <li><code>IDE/</code> where IDE-facing behavior is concerned.</li>
 </ul>
 
+<hr/>
+
+<h2 id="closure-direction">5. Closure Direction</h2>
+
 <p>
-Likewise:
+The repository direction for serious examples is now explicit:
+a serious example should progressively converge toward <strong>A-to-Z inspectability</strong>.
+</p>
+
+<p>
+That does not mean every example is already fully closed.
+It means each serious example dossier should make visible:
 </p>
 
 <ul>
-  <li>an example is not a substitute for conformance,</li>
-  <li>an example is not a substitute for version-governance policy,</li>
-  <li>an example is not a substitute for a reference implementation,</li>
-  <li>an example does not authorize unstated semantic assumptions.</li>
+  <li>what the example does,</li>
+  <li>where the canonical <code>.frog</code> source lives,</li>
+  <li>where the front-panel posture lives,</li>
+  <li>where a peripheral UI object file should live when applicable,</li>
+  <li>where the FIR posture lives,</li>
+  <li>where the lowering posture lives,</li>
+  <li>where the backend contract lives,</li>
+  <li>how Python, Rust, and C/C++ runtime paths do or do not exist yet,</li>
+  <li>and whether an LLVM-oriented native path exists yet.</li>
 </ul>
 
 <p>
-Examples may be useful teaching surfaces, but they must remain subordinate to the published specification owners.
+Accordingly, example README files should not remain abstract descriptions only.
+They should function as <strong>operational dossiers</strong>.
 </p>
 
 <hr/>
 
-<h2 id="relation-with-conformance">5. Relation with Conformance</h2>
+<h2 id="relation-with-conformance">6. Relation with Conformance</h2>
 
 <p>
 Examples and conformance are related but distinct.
 </p>
 
 <ul>
-  <li><strong>Examples</strong> illustrate named slices.</li>
+  <li><strong>Examples</strong> illustrate named slices and document closure posture.</li>
   <li><strong>Conformance</strong> exposes accept / reject / preserve truth.</li>
 </ul>
 
@@ -166,24 +175,14 @@ A useful reading model is:
    -&gt;
 conformance expectation
    -&gt;
-IR / profile reading where relevant
+FIR / lowering reading where relevant
    -&gt;
-reference consumption where published</code></pre>
-
-<p>
-This distinction matters because a readable example and a conforming acceptance boundary are not the same thing.
-An example may help a reader understand a corridor,
-but conformance is the public surface that states what must be accepted, rejected, preserved, or reported explicitly.
-</p>
-
-<p>
-Examples should therefore stay synchronized with published conformance material where a named corridor is intentionally mirrored,
-without allowing the example itself to become the hidden owner of the rule.
-</p>
+runtime-family and native-path reading where published
+</code></pre>
 
 <hr/>
 
-<h2 id="relation-with-ir-profiles-and-reference-implementation">6. Relation with IR, Profiles, and Reference Implementation</h2>
+<h2 id="relation-with-fir-lowering-runtime-and-native-paths">7. Relation with FIR, Lowering, Runtime, and Native Paths</h2>
 
 <p>
 Examples may mirror:
@@ -191,32 +190,18 @@ Examples may mirror:
 
 <ul>
   <li>core source / semantic slices,</li>
-  <li>IR-relevant slices,</li>
-  <li>profile-relevant slices,</li>
-  <li>bounded implementation-facing corridors that consume the published layers without owning them.</li>
+  <li>FIR-relevant slices,</li>
+  <li>lowering-relevant slices,</li>
+  <li>runtime-family corridors,</li>
+  <li>native compiler-oriented corridors where declared.</li>
 </ul>
 
 <p>
-Where a declared compiler corridor is involved, examples should remain bounded and conservative.
-Where an applicative vertical slice is involved, examples should still remain bounded enough that the repository-visible ownership chain can be followed clearly.
-</p>
-
-<p>
-This means an example may be read alongside:
-</p>
-
-<ul>
-  <li><code>IR/</code> when execution-facing derivation matters,</li>
-  <li><code>Profiles/</code> when an optional corridor is being bounded,</li>
-  <li><code>Implementations/Reference/</code> when the published repository already contains a non-normative consumer path for the same slice.</li>
-</ul>
-
-<p>
-The ownership model still remains explicit:
+The ownership model remains explicit:
 </p>
 
 <pre><code>Examples
-   -&gt; illustrate
+   -&gt; illustrate and expose closure state
 
 Conformance
    -&gt; expose public expectations
@@ -224,15 +209,16 @@ Conformance
 IR
    -&gt; define canonical execution-facing law
 
-Profiles
-   -&gt; bound optional downstream corridors
+Implementations/Reference/Runtime
+   -&gt; consume the published corridor in runtime families
 
-Implementations/Reference
-   -&gt; consume the published layers without owning them</code></pre>
+Implementations/Reference/LLVM
+   -&gt; consume lowered forms in a native compiler-oriented corridor
+</code></pre>
 
 <hr/>
 
-<h2 id="published-example-families">7. Published Example Families</h2>
+<h2 id="published-example-families">8. Published Example Families</h2>
 
 <p>
 Published example growth should remain small, architecture-first, and repository-coherent.
@@ -247,20 +233,49 @@ At the current published state, this directory contains two complementary public
   <li>and a conservative compiler-corridor positive mirror under <code>Examples/compiler/</code>.</li>
 </ul>
 
-<p>
-That split is intentional.
-The numbered example slices help the repository expose progressively richer source-to-semantics and source-to-execution situations,
-while the compiler mirror keeps a deliberately narrower and more conservative corridor visible for compiler-facing reading.
-</p>
+<hr/>
 
-<p>
-The goal is not to maximize example count immediately.
-The goal is to expose disciplined and inspectable corridors clearly before broadening the example surface further.
-</p>
+<h2 id="useful-file-tree">9. Useful File Tree</h2>
+
+<pre><code>Examples/
+├── Readme.md
+├── 01_pure_addition/
+├── 02_ui_value_roundtrip/
+├── 03_ui_property_write/
+├── 04_stateful_feedback_delay/
+├── 05_bounded_ui_accumulator/
+│   ├── Readme.md
+│   └── main.frog
+└── compiler/
+    ├── 01_pure_arithmetic.md
+    ├── 02_structured_control.md
+    └── 03_explicit_state.md
+</code></pre>
 
 <hr/>
 
-<h2 id="core-language-example-slices">8. Core Language Example Slices</h2>
+<h2 id="file-responsibilities">10. File Responsibilities</h2>
+
+<ul>
+  <li><code>Examples/Readme.md</code><br/>
+      Directory-level entry point for the example surface. It explains what examples are for, how they should be read, and how serious examples should expose closure status.</li>
+  <li><code>Examples/01_pure_addition/</code><br/>
+      Minimal arithmetic source slice used to illustrate a first simple dataflow corridor.</li>
+  <li><code>Examples/02_ui_value_roundtrip/</code><br/>
+      Slice used to introduce basic front-panel value participation.</li>
+  <li><code>Examples/03_ui_property_write/</code><br/>
+      Slice used to introduce bounded object-style UI property access.</li>
+  <li><code>Examples/04_stateful_feedback_delay/</code><br/>
+      Slice used to introduce explicit local memory and bounded feedback through delay.</li>
+  <li><code>Examples/05_bounded_ui_accumulator/</code><br/>
+      First serious applicative vertical-slice dossier, currently the main source → contract → runtime example anchor.</li>
+  <li><code>Examples/compiler/</code><br/>
+      Conservative compiler-oriented reading mirror that remains narrower than the applicative example dossiers.</li>
+</ul>
+
+<hr/>
+
+<h2 id="core-language-example-slices">11. Core Language Example Slices</h2>
 
 <p>
 The currently published numbered slices are:
@@ -271,7 +286,8 @@ The currently published numbered slices are:
 ├── 02_ui_value_roundtrip/
 ├── 03_ui_property_write/
 ├── 04_stateful_feedback_delay/
-└── 05_bounded_ui_accumulator/</code></pre>
+└── 05_bounded_ui_accumulator/
+</code></pre>
 
 <p>
 Taken together, these slices expose a useful progression:
@@ -282,17 +298,12 @@ Taken together, these slices expose a useful progression:
   <li><strong>02_ui_value_roundtrip</strong> introduces front-panel value participation without opening object-style UI access yet,</li>
   <li><strong>03_ui_property_write</strong> introduces bounded object-style property-write participation,</li>
   <li><strong>04_stateful_feedback_delay</strong> introduces explicit state through a bounded feedback / delay pattern,</li>
-  <li><strong>05_bounded_ui_accumulator</strong> combines front-panel participation, bounded iteration, explicit state, public output, published backend handoff, and published reference-runtime consumption posture in one coherent applicative slice.</li>
+  <li><strong>05_bounded_ui_accumulator</strong> combines front-panel participation, bounded iteration, explicit state, public output, published backend handoff, and published runtime consumption posture in one coherent applicative slice.</li>
 </ul>
-
-<p>
-This progression should be read as architectural layering, not as hidden semantic law.
-Each slice remains illustrative and subordinate to the documents that own source, semantic, IR, profile, and runtime-boundary meaning.
-</p>
 
 <hr/>
 
-<h2 id="applicative-vertical-slice-anchor">9. Applicative Vertical-Slice Anchor</h2>
+<h2 id="applicative-vertical-slice-anchor">12. Applicative Vertical-Slice Anchor</h2>
 
 <p>
 The first repository-visible applicative vertical-slice anchor is:
@@ -313,8 +324,8 @@ This slice matters because it is the first published example in this directory t
   <li>bounded loop behavior,</li>
   <li>explicit state,</li>
   <li>observable final output,</li>
-  <li>a published backend contract artifact under <code>Implementations/Reference/ContractEmitter/examples/</code>,</li>
-  <li>and published downstream reference consumers under <code>Implementations/Reference/Runtime/</code>.</li>
+  <li>a published backend contract artifact,</li>
+  <li>and published downstream runtime-family consumers.</li>
 </ul>
 
 <p>
@@ -328,20 +339,17 @@ Implementations/Reference/ContractEmitter/examples/
 05_bounded_ui_accumulator.reference_host_runtime_ui_binding.contract.json
       |
       v
-Implementations/Reference/Runtime/</code></pre>
-
-<p>
-This does not make the example the owner of the corridor.
-It means the repository now contains a materially inspectable applicative source-to-contract-to-runtime reading anchor in addition to narrower example mirrors.
-</p>
-
-<p>
-Accordingly, readers interested in the first published executable posture should treat <code>05_bounded_ui_accumulator</code> as the primary named example anchor for that bounded corridor.
-</p>
+Implementations/Reference/Runtime/
+      +-- python/
+      +-- rust/
+      \-- cpp/            (target closure direction)
+      |
+      \-- Implementations/Reference/LLVM/  (native-path direction)
+</code></pre>
 
 <hr/>
 
-<h2 id="compiler-corridor-positive-mirror">10. Compiler-Corridor Positive Mirror</h2>
+<h2 id="compiler-corridor-positive-mirror">13. Compiler-Corridor Positive Mirror</h2>
 
 <p>
 The conservative compiler-oriented mirror remains:
@@ -350,7 +358,8 @@ The conservative compiler-oriented mirror remains:
 <pre><code>Examples/compiler/
 ├── 01_pure_arithmetic.md
 ├── 02_structured_control.md
-└── 03_explicit_state.md</code></pre>
+└── 03_explicit_state.md
+</code></pre>
 
 <p>
 These examples correspond to a narrower positive corridor centered on:
@@ -362,26 +371,9 @@ These examples correspond to a narrower positive corridor centered on:
   <li><strong>explicit state</strong>.</li>
 </ul>
 
-<p>
-Together, they still form a useful conservative mirror of a bounded compiler-facing path.
-They remain intentionally modest in scope:
-</p>
-
-<ul>
-  <li><code>01_pure_arithmetic.md</code> keeps the corridor centered on direct computation,</li>
-  <li><code>02_structured_control.md</code> introduces control-structure relevance without opening unrelated complexity,</li>
-  <li><code>03_explicit_state.md</code> introduces explicit state and valid feedback discipline as a distinct step.</li>
-</ul>
-
-<p>
-This mirror remains valuable.
-However, it should no longer be read as the only coherent published example family in the repository.
-It now coexists with the numbered example slices and with the first applicative vertical-slice anchor under <code>05_bounded_ui_accumulator</code>.
-</p>
-
 <hr/>
 
-<h2 id="reading-discipline">11. Reading Discipline</h2>
+<h2 id="reading-discipline">14. Reading Discipline</h2>
 
 <p>
 Examples should normally be read together with their neighboring ownership and support layers.
@@ -397,47 +389,16 @@ owning Expression / Language documents
    -&gt;
 IR documents where execution-facing consequences matter
    -&gt;
-Profiles documents where an optional corridor is involved
-   -&gt;
 Conformance expectations
    -&gt;
-Reference implementation workspace where published</code></pre>
-
-<p>
-For the first applicative executable corridor, a practical entry point is:
-</p>
-
-<pre><code>Examples/05_bounded_ui_accumulator
+Reference runtime-family consumers where published
    -&gt;
-Expression/Front panel.md
-Expression/Widget.md
-Expression/Widget interaction.md
-Language/Control structures.md
-Language/State and cycles.md
-   -&gt;
-IR/
-   -&gt;
-Profiles/ where relevant
-   -&gt;
-Conformance/
-   -&gt;
-Implementations/Reference/ContractEmitter/examples/
-05_bounded_ui_accumulator.reference_host_runtime_ui_binding.contract.json
-   -&gt;
-Implementations/Reference/Runtime/</code></pre>
-
-<p>
-This prevents two common mistakes:
-</p>
-
-<ul>
-  <li>treating examples as if they defined the language,</li>
-  <li>reading examples in isolation and inferring unstated closure that the repository has not published.</li>
-</ul>
+LLVM-oriented native path posture where declared
+</code></pre>
 
 <hr/>
 
-<h2 id="growth-discipline">12. Growth Discipline</h2>
+<h2 id="growth-discipline">15. Growth Discipline</h2>
 
 <p>
 Future example growth should remain disciplined.
@@ -445,43 +406,29 @@ New example families should be added when they close a meaningful repository-vis
 </p>
 
 <p>
-In practice, new examples should preferably:
-</p>
-
-<ul>
-  <li>illustrate one coherent architectural situation,</li>
-  <li>map cleanly to neighboring conformance material where relevant,</li>
-  <li>remain compatible with published IR and profile boundaries,</li>
-  <li>avoid silently introducing new semantic law,</li>
-  <li>avoid broad mixed-purpose scenarios when a smaller slice would communicate the corridor more clearly.</li>
-</ul>
-
-<p>
 The preferred direction is therefore:
 </p>
 
-<pre><code>close one coherent mirror
+<pre><code>close one coherent source slice
    -&gt;
-close one applicative vertical slice
+close one serious example dossier
    -&gt;
 publish backend handoff
    -&gt;
-align reference consumption
+align Python / Rust / C/C++ runtime consumers
    -&gt;
-only then broaden the next example family</code></pre>
-
-<p>
-This directory should therefore grow by strengthening repository-visible corridor closure,
-not by accumulating disconnected demonstrations.
-</p>
+align LLVM-native direction where applicable
+   -&gt;
+only then broaden the next example family
+</code></pre>
 
 <hr/>
 
-<h2 id="summary">13. Summary</h2>
+<h2 id="summary">16. Summary</h2>
 
 <p>
 Examples are illustrative named slices of the specification.
-They remain subordinate to the owning specification documents and complementary to conformance, IR, profiles, and the non-normative reference implementation workspace.
+They remain subordinate to the owning specification documents and complementary to conformance, FIR / lowering, runtime-family consumers, and the non-normative reference implementation workspace.
 </p>
 
 <p>
@@ -494,10 +441,5 @@ The published example surface now has two complementary forms:
 </ul>
 
 <p>
-Among these, <code>05_bounded_ui_accumulator</code> is currently the primary applicative vertical-slice anchor because it is the first bounded example that visibly combines front-panel participation, bounded iteration, explicit state, public output, a published backend contract artifact, and published reference-runtime consumer surfaces in one named corridor.
-</p>
-
-<p>
-Examples help make the specification readable across layers,
-but they do not replace the documents that own source law, semantic law, execution-facing law, profile law, runtime-boundary law, or public conformance expectations.
+Among these, <code>05_bounded_ui_accumulator</code> is currently the primary applicative vertical-slice anchor because it is the first bounded example that visibly combines front-panel participation, bounded iteration, explicit state, public output, a published backend contract artifact, and published runtime-family consumer surfaces in one named corridor.
 </p>
