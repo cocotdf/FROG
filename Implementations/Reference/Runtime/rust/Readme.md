@@ -16,21 +16,22 @@
   <li><a href="#overview">1. Overview</a></li>
   <li><a href="#status">2. Status</a></li>
   <li><a href="#why-this-directory-exists">3. Why This Directory Exists</a></li>
-  <li><a href="#primary-slice-target">4. Primary Slice Target</a></li>
-  <li><a href="#relation-with-runtime-boundary">5. Relation to the Published Runtime Boundary</a></li>
-  <li><a href="#ownership-boundary">6. Ownership Boundary</a></li>
-  <li><a href="#what-this-runtime-consumes">7. What This Runtime Consumes</a></li>
-  <li><a href="#what-this-runtime-produces">8. What This Runtime Produces</a></li>
-  <li><a href="#minimal-supported-behavior">9. Minimal Supported Behavior</a></li>
-  <li><a href="#minimal-ui-surface">10. Minimal UI Surface</a></li>
-  <li><a href="#published-pipe">11. Published Pipe for Example 05</a></li>
-  <li><a href="#recommended-directory-shape">12. Recommended Directory Shape</a></li>
-  <li><a href="#design-rules">13. Design Rules</a></li>
-  <li><a href="#explicit-non-goals">14. Explicit Non-Goals</a></li>
-  <li><a href="#relationship-with-python">15. Relationship with the Python Reference Runtime</a></li>
-  <li><a href="#closure-status">16. Rust Closure Status</a></li>
-  <li><a href="#future-growth">17. Future Growth</a></li>
-  <li><a href="#summary">18. Summary</a></li>
+  <li><a href="#directory-shape">4. Directory Shape</a></li>
+  <li><a href="#role-of-each-file">5. Role of Each File</a></li>
+  <li><a href="#primary-slice-target">6. Primary Slice Target</a></li>
+  <li><a href="#relation-with-runtime-boundary">7. Relation to the Published Runtime Boundary</a></li>
+  <li><a href="#ownership-boundary">8. Ownership Boundary</a></li>
+  <li><a href="#what-this-runtime-consumes">9. What This Runtime Consumes</a></li>
+  <li><a href="#what-this-runtime-produces">10. What This Runtime Produces</a></li>
+  <li><a href="#minimal-supported-behavior">11. Minimal Supported Behavior</a></li>
+  <li><a href="#minimal-ui-surface">12. Minimal UI Surface</a></li>
+  <li><a href="#published-pipe">13. Published Pipe for Example 05</a></li>
+  <li><a href="#design-rules">14. Design Rules</a></li>
+  <li><a href="#explicit-non-goals">15. Explicit Non-Goals</a></li>
+  <li><a href="#relationship-with-python-and-cpp">16. Relationship with Python and C/C++ Consumers</a></li>
+  <li><a href="#closure-status">17. Rust Closure Status</a></li>
+  <li><a href="#future-growth">18. Future Growth</a></li>
+  <li><a href="#summary">19. Summary</a></li>
 </ul>
 
 <hr/>
@@ -39,9 +40,6 @@
 
 <p>
 This directory defines the minimal Rust realization of the published reference runtime boundary for the FROG reference implementation.
-</p>
-
-<p>
 It is a downstream runtime consumer.
 It does not redefine the language, the source model, the semantic layer, the open FIR / execution-facing layer, the lowering layer, or the backend contract boundary.
 </p>
@@ -66,10 +64,6 @@ At the current published state, the Rust side already proves:
   <li>and parity of the final observable result with the Python runtime path.</li>
 </ul>
 
-<p>
-What it does not yet publish is one dedicated example-runner binary or one rendered UI host path.
-</p>
-
 <hr/>
 
 <h2 id="why-this-directory-exists">3. Why This Directory Exists</h2>
@@ -86,33 +80,72 @@ This Rust directory exists to demonstrate the same architectural rule with a sec
   <li>and more than one runtime language may consume the resulting backend contract.</li>
 </ul>
 
+<hr/>
+
+<h2 id="directory-shape">4. Directory Shape</h2>
+
+<pre><code>Implementations/Reference/Runtime/rust/
+├── Readme.md
+├── Cargo.toml
+├── src/
+│   ├── main.rs
+│   ├── lib.rs
+│   ├── cli.rs
+│   ├── contract.rs
+│   ├── diagnostics.rs
+│   ├── runtime.rs
+│   ├── execute.rs
+│   └── ui.rs
+└── tests/
+    ├── slice05_contract_smoke.rs
+    └── slice05_execution.rs
+</code></pre>
+
 <p>
-This is therefore a modular-runtime proof point, not a second language definition.
+The current published subset may be smaller than this full target shape.
+The tree above is the intended useful structure for keeping responsibilities explicit as the Rust consumer grows.
 </p>
 
 <hr/>
 
-<h2 id="primary-slice-target">4. Primary Slice Target</h2>
+<h2 id="role-of-each-file">5. Role of Each File</h2>
+
+<ul>
+  <li><code>Readme.md</code><br/>
+      Explains the Rust-side runtime posture and the role of this directory.</li>
+  <li><code>Cargo.toml</code><br/>
+      Rust package manifest for the Rust runtime consumer.</li>
+  <li><code>src/main.rs</code><br/>
+      Future command-line entry point for direct Rust-side example execution.</li>
+  <li><code>src/lib.rs</code><br/>
+      Library entry surface that re-exports the Rust runtime pieces.</li>
+  <li><code>src/cli.rs</code><br/>
+      Command-line parsing and dispatch for example or contract execution.</li>
+  <li><code>src/contract.rs</code><br/>
+      Rust-side contract loading and contract-shape data structures.</li>
+  <li><code>src/diagnostics.rs</code><br/>
+      Runtime-side diagnostic reporting helpers.</li>
+  <li><code>src/runtime.rs</code><br/>
+      Runtime state structures and contract-consumption orchestration.</li>
+  <li><code>src/execute.rs</code><br/>
+      Execution logic for accepted contracts.</li>
+  <li><code>src/ui.rs</code><br/>
+      UI binding helpers for the supported subset of widget-value and widget-reference behavior.</li>
+  <li><code>tests/slice05_contract_smoke.rs</code><br/>
+      Validates that the example-05 contract loads and exposes the expected shape.</li>
+  <li><code>tests/slice05_execution.rs</code><br/>
+      Verifies that the Rust runtime executes the same corridor and reaches the expected bounded result.</li>
+</ul>
+
+<hr/>
+
+<h2 id="primary-slice-target">6. Primary Slice Target</h2>
 
 <p>
 The first target for this runtime is the published example:
 </p>
 
-<pre><code>Examples/05_bounded_ui_accumulator/
-</code></pre>
-
-<p>
-That example already establishes a bounded executable corridor with:
-</p>
-
-<ul>
-  <li>one numeric front-panel control,</li>
-  <li>one numeric front-panel indicator,</li>
-  <li>one bounded loop of exactly five iterations,</li>
-  <li>one explicit local-memory path,</li>
-  <li>one final public output,</li>
-  <li>and a minimal object-style UI write surface through <code>frog.ui.property_write</code>.</li>
-</ul>
+<pre><code>Examples/05_bounded_ui_accumulator/</code></pre>
 
 <p>
 This Rust runtime must consume that same corridor.
@@ -121,7 +154,7 @@ It must not introduce a separate source example, a parallel semantic story, or a
 
 <hr/>
 
-<h2 id="relation-with-runtime-boundary">5. Relation to the Published Runtime Boundary</h2>
+<h2 id="relation-with-runtime-boundary">7. Relation to the Published Runtime Boundary</h2>
 
 <p>
 The published runtime boundary already defines the first reference runtime family as:
@@ -146,7 +179,7 @@ It therefore follows the already-published runtime-side assumptions:
 
 <hr/>
 
-<h2 id="ownership-boundary">6. Ownership Boundary</h2>
+<h2 id="ownership-boundary">8. Ownership Boundary</h2>
 
 <h3>What this directory owns</h3>
 
@@ -171,18 +204,9 @@ It therefore follows the already-published runtime-side assumptions:
   <li>and the universal definition of runtime behavior for every future host.</li>
 </ul>
 
-<p>
-The key architectural rule remains:
-</p>
-
-<pre><code>validated meaning != runtime implementation
-backend contract != runtime-private structures
-Rust runtime != universal FROG runtime
-</code></pre>
-
 <hr/>
 
-<h2 id="what-this-runtime-consumes">7. What This Runtime Consumes</h2>
+<h2 id="what-this-runtime-consumes">9. What This Runtime Consumes</h2>
 
 <p>
 This Rust runtime starts after source loading, structural validation, semantic validation, FIR-target derivation, and lowering have already produced an acceptable backend contract.
@@ -204,7 +228,7 @@ For the first bounded published slice, it consumes:
 
 <hr/>
 
-<h2 id="what-this-runtime-produces">8. What This Runtime Produces</h2>
+<h2 id="what-this-runtime-produces">10. What This Runtime Produces</h2>
 
 <p>
 For the current bounded corridor, the Rust consumer produces runtime-visible evidence that:
@@ -222,7 +246,7 @@ For the current bounded corridor, the Rust consumer produces runtime-visible evi
 
 <hr/>
 
-<h2 id="minimal-supported-behavior">9. Minimal Supported Behavior</h2>
+<h2 id="minimal-supported-behavior">11. Minimal Supported Behavior</h2>
 
 <p>
 The current first published slice supports:
@@ -238,14 +262,9 @@ The current first published slice supports:
   <li>and bounded object-style UI property writes.</li>
 </ul>
 
-<p>
-This does not imply that the Rust runtime already supports the full future FROG language surface.
-It only proves that one serious named example can already be consumed in Rust without redefining the corridor.
-</p>
-
 <hr/>
 
-<h2 id="minimal-ui-surface">10. Minimal UI Surface</h2>
+<h2 id="minimal-ui-surface">12. Minimal UI Surface</h2>
 
 <p>
 The supported UI posture is intentionally narrow:
@@ -258,14 +277,9 @@ The supported UI posture is intentionally narrow:
   <li><code>frog.ui.property_write</code> on member <code>face_color</code>.</li>
 </ul>
 
-<p>
-This is enough to prove that the Rust consumer preserves the distinction between value participation and object-style interaction.
-It is not yet a full widget object-model implementation.
-</p>
-
 <hr/>
 
-<h2 id="published-pipe">11. Published Pipe for Example 05</h2>
+<h2 id="published-pipe">13. Published Pipe for Example 05</h2>
 
 <p>
 At the current published state, the Rust pipe for the first serious example is test-driven:
@@ -284,49 +298,9 @@ The relevant example-facing test files are:
 └── slice05_execution.rs
 </code></pre>
 
-<p>
-Their roles are:
-</p>
-
-<ul>
-  <li><code>slice05_contract_smoke.rs</code> — verify that the published contract artifact deserializes and exposes the expected bounded shape,</li>
-  <li><code>slice05_execution.rs</code> — verify that the Rust runtime executes the same published contract corridor and reaches the expected final result.</li>
-</ul>
-
-<p>
-This is already a real downstream consumer pipe.
-What is still missing is one dedicated Rust runner binary comparable to the Python entry point.
-</p>
-
 <hr/>
 
-<h2 id="recommended-directory-shape">12. Recommended Directory Shape</h2>
-
-<pre><code>Implementations/Reference/Runtime/rust/
-├── Readme.md
-├── Cargo.toml
-├── src/
-│   ├── main.rs
-│   ├── lib.rs
-│   ├── cli.rs
-│   ├── contract.rs
-│   ├── diagnostics.rs
-│   ├── runtime.rs
-│   ├── execute.rs
-│   └── ui.rs
-└── tests/
-    ├── slice05_contract_smoke.rs
-    └── slice05_execution.rs
-</code></pre>
-
-<p>
-This shape is only a recommended first skeleton.
-It should remain small until the published corridor requires more.
-</p>
-
-<hr/>
-
-<h2 id="design-rules">13. Design Rules</h2>
+<h2 id="design-rules">14. Design Rules</h2>
 
 <ul>
   <li>Accept or reject contracts explicitly.</li>
@@ -340,7 +314,7 @@ It should remain small until the published corridor requires more.
 
 <hr/>
 
-<h2 id="explicit-non-goals">14. Explicit Non-Goals</h2>
+<h2 id="explicit-non-goals">15. Explicit Non-Goals</h2>
 
 <ul>
   <li>This directory does not define the language.</li>
@@ -354,10 +328,10 @@ It should remain small until the published corridor requires more.
 
 <hr/>
 
-<h2 id="relationship-with-python">15. Relationship with the Python Reference Runtime</h2>
+<h2 id="relationship-with-python-and-cpp">16. Relationship with Python and C/C++ Consumers</h2>
 
 <p>
-The Python and Rust runtimes are parallel consumers of the same published contract corridor.
+The Python, Rust, and future C/C++ runtimes are parallel consumers of the same published contract corridor.
 They may differ in private structures, packaging, and host mechanics, but they should stay aligned on:
 </p>
 
@@ -369,14 +343,9 @@ They may differ in private structures, packaging, and host mechanics, but they s
   <li>and final public behavior.</li>
 </ul>
 
-<p>
-The Python runtime currently provides the clearest direct execution entry point.
-The Rust runtime currently provides the strongest second-language parity proof through tests.
-</p>
-
 <hr/>
 
-<h2 id="closure-status">16. Rust Closure Status</h2>
+<h2 id="closure-status">17. Rust Closure Status</h2>
 
 <table>
   <thead>
@@ -422,18 +391,19 @@ The Rust runtime currently provides the strongest second-language parity proof t
 
 <hr/>
 
-<h2 id="future-growth">17. Future Growth</h2>
+<h2 id="future-growth">18. Future Growth</h2>
 
 <ol>
   <li>add one dedicated Rust CLI runner for the example contract,</li>
+  <li>keep parity with the Python runtime path,</li>
   <li>add one C/C++ sibling consumer for full three-language modularity,</li>
   <li>add one peripheral UI object realization file contract for rendered hosts,</li>
-  <li>and later participate in a native FIR → lowering → LLVM-oriented path where applicable.</li>
+  <li>and later participate in a native FIR -> lowering -> LLVM-oriented path where applicable.</li>
 </ol>
 
 <hr/>
 
-<h2 id="summary">18. Summary</h2>
+<h2 id="summary">19. Summary</h2>
 
 <p>
 This Rust directory is already a real downstream consumer of the first published executable corridor.
