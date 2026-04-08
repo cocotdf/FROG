@@ -5,7 +5,7 @@
 <h1 align="center">Reference Runtime</h1>
 
 <p align="center">
-  <strong>First runtime-family consumer for the non-normative FROG reference implementation</strong><br/>
+  <strong>Runtime-family consumers for the non-normative FROG reference implementation</strong><br/>
   <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -15,17 +15,18 @@
 <ul>
   <li><a href="#overview">1. Overview</a></li>
   <li><a href="#status">2. Status</a></li>
-  <li><a href="#runtime-family">3. First Runtime Family</a></li>
-  <li><a href="#published-contract">4. Published Reference Contract Artifact</a></li>
-  <li><a href="#owns">5. What This Directory Owns</a></li>
-  <li><a href="#does-not-own">6. What This Directory Does Not Own</a></li>
-  <li><a href="#design-rules">7. Design Rules</a></li>
-  <li><a href="#execution-posture">8. First Execution Posture</a></li>
-  <li><a href="#entry-points">9. Published Demonstration Entry Points</a></li>
-  <li><a href="#closure-status">10. Runtime Closure Status</a></li>
-  <li><a href="#multi-runtime">11. Multi-Runtime Posture</a></li>
-  <li><a href="#next-closure">12. Next Closure Targets</a></li>
-  <li><a href="#summary">13. Summary</a></li>
+  <li><a href="#runtime-family">3. Reference Runtime Family</a></li>
+  <li><a href="#directory-shape">4. Directory Shape</a></li>
+  <li><a href="#role-of-each-file-and-subdirectory">5. Role of Each File and Subdirectory</a></li>
+  <li><a href="#published-contract">6. Published Reference Contract Artifact</a></li>
+  <li><a href="#execution-posture">7. First Execution Posture</a></li>
+  <li><a href="#entry-points">8. Published Demonstration Entry Points</a></li>
+  <li><a href="#closure-status">9. Runtime Closure Status</a></li>
+  <li><a href="#multi-runtime">10. Multi-Runtime Posture</a></li>
+  <li><a href="#what-this-directory-owns">11. What This Directory Owns</a></li>
+  <li><a href="#what-this-directory-does-not-own">12. What This Directory Does Not Own</a></li>
+  <li><a href="#next-closure">13. Next Closure Targets</a></li>
+  <li><a href="#summary">14. Summary</a></li>
 </ul>
 
 <hr/>
@@ -33,14 +34,14 @@
 <h2 id="overview">1. Overview</h2>
 
 <p>
-This directory contains the first runtime-side consumer of backend contracts in the non-normative FROG reference implementation.
+This directory contains runtime-family consumers of backend contracts in the non-normative FROG reference implementation.
 Its role is to accept a contract for one selected backend family and realize execution privately while staying faithful to the declared contract obligations.
 </p>
 
 <p>
 The runtime therefore begins downstream from canonical source, validation, semantic interpretation, FIR-target execution-facing derivation, lowering, and backend contract emission.
-It consumes a published backend contract artifact.
-It does not replace or absorb the layers that produced that contract.
+It consumes published backend contract artifacts.
+It does not replace or absorb the layers that produced those contracts.
 </p>
 
 <hr/>
@@ -50,22 +51,22 @@ It does not replace or absorb the layers that produced that contract.
 <p>
 This runtime family is non-normative.
 It exists to prove that the published repository corridor is no longer only prose.
-It already has one repository-visible contract artifact and two repository-visible downstream consumer languages.
 </p>
 
 <p>
-At the current published state, the runtime family demonstrates:
+At the current intended structure, this runtime-family directory is also the place where symmetry between runtime languages should become explicit:
 </p>
 
 <ul>
-  <li>one Python execution entry point for the published example <code>05_bounded_ui_accumulator</code>,</li>
-  <li>one Rust consumer posture that validates and executes that same contract through tests,</li>
-  <li>and no published C/C++ runtime consumer yet.</li>
+  <li>one Python runtime posture,</li>
+  <li>one Rust runtime posture,</li>
+  <li>one C/C++ runtime posture,</li>
+  <li>and optional shared runtime-family helpers at the parent level.</li>
 </ul>
 
 <hr/>
 
-<h2 id="runtime-family">3. First Runtime Family</h2>
+<h2 id="runtime-family">3. Reference Runtime Family</h2>
 
 <p>
 The first published runtime family is:
@@ -85,14 +86,57 @@ A useful initial shape is:
   <li>basic UI value and UI reference support where declared by the contract.</li>
 </ul>
 
-<p>
-This first family is intentionally conservative.
-It exists to prove a bounded source-to-contract-to-execution corridor, not to freeze the long-term universal runtime architecture.
-</p>
+<hr/>
+
+<h2 id="directory-shape">4. Directory Shape</h2>
+
+<pre><code>Implementations/Reference/Runtime/
+├── Readme.md
+├── accept_contract_and_execute.md
+├── reference_runtime.py
+├── run_slice05_contract.py
+├── python/
+│   └── Readme.md
+├── rust/
+│   ├── Readme.md
+│   ├── Cargo.toml
+│   └── tests/
+│       ├── slice05_contract_smoke.rs
+│       └── slice05_execution.rs
+└── cpp/
+    └── Readme.md
+</code></pre>
 
 <hr/>
 
-<h2 id="published-contract">4. Published Reference Contract Artifact</h2>
+<h2 id="role-of-each-file-and-subdirectory">5. Role of Each File and Subdirectory</h2>
+
+<ul>
+  <li><code>Runtime/Readme.md</code><br/>
+      Explains the runtime-family boundary, directory shape, and multi-runtime direction.</li>
+  <li><code>accept_contract_and_execute.md</code><br/>
+      Non-normative explanation of how accepted contracts are consumed and executed.</li>
+  <li><code>reference_runtime.py</code><br/>
+      Python-side reference runtime realization for the current bounded corridor.</li>
+  <li><code>run_slice05_contract.py</code><br/>
+      Python entry point that loads and executes the published contract for example 05.</li>
+  <li><code>python/Readme.md</code><br/>
+      Python-specific runtime posture and file-role explanation.</li>
+  <li><code>rust/Readme.md</code><br/>
+      Rust-specific runtime posture and file-role explanation.</li>
+  <li><code>rust/Cargo.toml</code><br/>
+      Rust package manifest for the Rust runtime consumer.</li>
+  <li><code>rust/tests/slice05_contract_smoke.rs</code><br/>
+      Contract-shape validation test against the published example-05 contract.</li>
+  <li><code>rust/tests/slice05_execution.rs</code><br/>
+      Execution test proving bounded accumulation behavior and parity with the Python path.</li>
+  <li><code>cpp/Readme.md</code><br/>
+      C/C++ runtime target posture for the same canonical corridor.</li>
+</ul>
+
+<hr/>
+
+<h2 id="published-contract">6. Published Reference Contract Artifact</h2>
 
 <p>
 The first named executable slice has a repository-visible backend contract artifact:
@@ -109,76 +153,9 @@ That artifact is the published handoff surface this runtime family consumes for 
 <pre><code>Examples/05_bounded_ui_accumulator/
 </code></pre>
 
-<p>
-This matters because the runtime is no longer aligned only with a prose description of the contract boundary.
-It aligns with one concrete repository-visible contract artifact that preserves:
-</p>
-
-<ul>
-  <li>the bounded loop requirement,</li>
-  <li>the explicit state requirement,</li>
-  <li>the deterministic initial value,</li>
-  <li>the control input binding,</li>
-  <li>the indicator publication path,</li>
-  <li>the public output publication path,</li>
-  <li>and the minimal object-style UI write surface for <code>face_color</code>.</li>
-</ul>
-
 <hr/>
 
-<h2 id="owns">5. What This Directory Owns</h2>
-
-<ul>
-  <li>private execution realization of accepted backend contracts,</li>
-  <li>state management for the reference family,</li>
-  <li>family-specific runtime objects,</li>
-  <li>family-specific scheduling mechanics,</li>
-  <li>runtime-private UI binding helpers for the accepted subset,</li>
-  <li>and runtime-private success / failure reporting.</li>
-</ul>
-
-<hr/>
-
-<h2 id="does-not-own">6. What This Directory Does Not Own</h2>
-
-<ul>
-  <li>the language,</li>
-  <li>the canonical <code>.frog</code> source model,</li>
-  <li>the semantic acceptance boundary,</li>
-  <li>the open FIR / execution-facing layer,</li>
-  <li>the lowering boundary,</li>
-  <li>the backend contract boundary,</li>
-  <li>the normative meaning of UI constructs,</li>
-  <li>the structural-validation boundary,</li>
-  <li>or the semantic-acceptance boundary.</li>
-</ul>
-
-<p>
-The architectural rule remains:
-</p>
-
-<pre><code>validated meaning != runtime implementation
-backend contract != runtime-private structures
-reference runtime != universal FROG runtime
-</code></pre>
-
-<hr/>
-
-<h2 id="design-rules">7. Design Rules</h2>
-
-<ul>
-  <li>Accept or reject contracts explicitly.</li>
-  <li>Do not silently reinterpret undeclared assumptions.</li>
-  <li>Preserve explicit local-memory meaning where required.</li>
-  <li>Preserve source-aligned attribution where the contract claims support for it.</li>
-  <li>Reject unsupported runtime obligations explicitly.</li>
-  <li>Keep <code>widget_value</code> handling and <code>widget_reference</code> handling distinguishable where the contract distinguishes them.</li>
-  <li>Do not promote runtime-private convenience into normative language law.</li>
-</ul>
-
-<hr/>
-
-<h2 id="execution-posture">8. First Execution Posture</h2>
+<h2 id="execution-posture">7. First Execution Posture</h2>
 
 <p>
 The first execution posture is intentionally bounded.
@@ -198,50 +175,40 @@ The current bounded corridor already supports:
   <li>and minimal object-style UI property writes for <code>face_color</code>.</li>
 </ul>
 
-<p>
-This first execution posture does not require continuous event-driven UI behavior, hidden persistence between runs, or a broad widget object model.
-</p>
-
 <hr/>
 
-<h2 id="entry-points">9. Published Demonstration Entry Points</h2>
+<h2 id="entry-points">8. Published Demonstration Entry Points</h2>
 
 <p>
 This directory already contains repository-visible entry points that exercise the published contract artifact directly rather than through a private simplified schema.
 </p>
 
-<pre><code>Implementations/Reference/Runtime/
-├── reference_runtime.py
-├── run_slice05_contract.py
-└── rust/
-    └── tests/
-        ├── slice05_contract_smoke.rs
-        └── slice05_execution.rs
+<pre><code>Python direct execution
+python -m Implementations.Reference.Runtime.run_slice05_contract 3
+</code></pre>
+
+<pre><code>Rust verification
+cd Implementations/Reference/Runtime/rust
+cargo test
 </code></pre>
 
 <p>
-The Python entry point:
+The intended future symmetry is:
 </p>
 
-<pre><code>python -m Implementations.Reference.Runtime.run_slice05_contract 3
+<pre><code>Python
+   -> direct example runner
+
+Rust
+   -> direct example runner plus tests
+
+C/C++
+   -> direct example runner plus tests where useful
 </code></pre>
-
-<p>
-loads the published contract artifact for <code>05_bounded_ui_accumulator</code>, binds a sampled control value, executes the bounded accumulation corridor, and prints the resulting runtime artifact.
-</p>
-
-<p>
-The Rust tests serve two complementary purposes:
-</p>
-
-<ul>
-  <li><code>slice05_contract_smoke.rs</code> verifies that the published contract artifact deserializes and exposes the expected bounded slice shape,</li>
-  <li><code>slice05_execution.rs</code> verifies that the runtime executes the published contract artifact and produces the expected final result.</li>
-</ul>
 
 <hr/>
 
-<h2 id="closure-status">10. Runtime Closure Status</h2>
+<h2 id="closure-status">9. Runtime Closure Status</h2>
 
 <table>
   <thead>
@@ -279,15 +246,15 @@ The Rust tests serve two complementary purposes:
     </tr>
     <tr>
       <td>LLVM-oriented native path</td>
-      <td>Missing</td>
-      <td>No runtime-family native executable corridor is published here yet.</td>
+      <td>Downstream and separate</td>
+      <td>Belongs to a compiler-family corridor, not to the runtime-family definition itself.</td>
     </tr>
   </tbody>
 </table>
 
 <hr/>
 
-<h2 id="multi-runtime">11. Multi-Runtime Posture</h2>
+<h2 id="multi-runtime">10. Multi-Runtime Posture</h2>
 
 <p>
 This directory defines a runtime-family boundary, not a single mandatory runtime language.
@@ -318,19 +285,52 @@ They may differ in private structures and host mechanics, but they should remain
 
 <hr/>
 
-<h2 id="next-closure">12. Next Closure Targets</h2>
+<h2 id="what-this-directory-owns">11. What This Directory Owns</h2>
+
+<ul>
+  <li>private execution realization of accepted backend contracts,</li>
+  <li>state management for the reference family,</li>
+  <li>family-specific runtime objects,</li>
+  <li>family-specific scheduling mechanics,</li>
+  <li>runtime-private UI binding helpers for the accepted subset,</li>
+  <li>and runtime-private success / failure reporting.</li>
+</ul>
+
+<hr/>
+
+<h2 id="what-this-directory-does-not-own">12. What This Directory Does Not Own</h2>
+
+<ul>
+  <li>the language,</li>
+  <li>the canonical <code>.frog</code> source model,</li>
+  <li>the semantic acceptance boundary,</li>
+  <li>the FIR / execution-facing layer,</li>
+  <li>the lowering boundary,</li>
+  <li>the backend contract boundary,</li>
+  <li>the normative meaning of UI constructs,</li>
+  <li>or the structural-validation boundary.</li>
+</ul>
+
+<pre><code>validated meaning != runtime implementation
+backend contract != runtime-private structures
+reference runtime != universal FROG runtime
+</code></pre>
+
+<hr/>
+
+<h2 id="next-closure">13. Next Closure Targets</h2>
 
 <ol>
   <li>publish one explicit C/C++ consumer for the same example corridor,</li>
   <li>publish one dedicated Rust runner command in addition to the tests,</li>
   <li>publish one distinct peripheral UI object realization file,</li>
   <li>publish one rendered front-panel host path,</li>
-  <li>and publish one LLVM-oriented native executable corridor for declared native examples.</li>
+  <li>and align runtime-family consumption with an optional downstream LLVM-oriented native executable corridor.</li>
 </ol>
 
 <hr/>
 
-<h2 id="summary">13. Summary</h2>
+<h2 id="summary">14. Summary</h2>
 
 <p>
 The reference runtime is the first private consumer-side realization of the reference backend family.
@@ -338,6 +338,5 @@ It proves executability, but it does not become the language definition.
 </p>
 
 <p>
-At the current published state, the runtime family already supports one real Python execution path and one real Rust consumer posture for the same named example corridor.
-What is still missing is the third runtime language, a rendered host UI, and a native LLVM-oriented executable closure.
+The current closure direction is to make the same canonical example corridor visibly consumable through Python, Rust, and C/C++ while preserving that runtime families remain downstream from source, meaning, FIR, lowering, and backend handoff.
 </p>
