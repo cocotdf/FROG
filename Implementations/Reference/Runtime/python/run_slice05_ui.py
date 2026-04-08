@@ -21,12 +21,12 @@ def main() -> None:
         nargs="?",
         type=int,
         default=None,
-        help="Optional initial value for ctrl_input.",
+        help="Optional initial value for ctrl_input."
     )
     parser.add_argument(
         "--autorun",
         action="store_true",
-        help="Execute the bounded accumulator immediately after the window is built.",
+        help="Execute the bounded accumulator immediately after the window is built."
     )
     args = parser.parse_args()
 
