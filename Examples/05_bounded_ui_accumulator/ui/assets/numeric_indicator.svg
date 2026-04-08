@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="92" viewBox="0 0 220 92" role="img" aria-labelledby="title desc">
+  <title id="title">Numeric Indicator</title>
+  <desc id="desc">Proposed SVG visual asset for a FROG numeric indicator widget.</desc>
+
+  <defs>
+    <linearGradient id="panelFill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#315fba"/>
+      <stop offset="1" stop-color="#203d75"/>
+    </linearGradient>
+  </defs>
+
+  <rect id="panel_background" x="1" y="1" width="218" height="90" rx="10" ry="10" fill="url(#panelFill)" stroke="#11254b" stroke-width="2"/>
+
+  <text id="label_anchor" x="18" y="28" font-family="Segoe UI, Arial, sans-serif" font-size="16" fill="#dfe8ff">Count</text>
+
+  <text id="value_anchor" x="18" y="68" font-family="Consolas, Segoe UI, Arial, sans-serif" font-size="34" fill="#ffffff">0</text>
+</svg>
