@@ -65,7 +65,7 @@
         "id": "const_ctrl_face_color",
         "kind": "constant",
         "type": "frog.ui.color",
-        "value": "#D0D0D0"
+        "value": "#D8E6FF"
       },
       {
         "id": "const_ind_face_color",
@@ -358,7 +358,7 @@
         },
         "props": {
           "caption": "Input value",
-          "face_color": "#D0D0D0",
+          "face_color": "#D8E6FF",
           "face_template": {
             "kind": "resource",
             "format": "svg",
