@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="../FROG logo.svg" alt="FROG logo" width="200" />
+  <img src="../FROG logo.svg" alt="FROG logo" width="140" />
 </p>
 
 <h1 align="center">FROG Execution IR Specification</h1>
@@ -28,13 +28,14 @@
   <li><a href="#ports-and-connectivity">13. Ports and Connectivity</a></li>
   <li><a href="#regions-and-structured-control">14. Regions and Structured Control</a></li>
   <li><a href="#interface-and-ui-boundaries">15. Interface and UI Boundaries</a></li>
-  <li><a href="#state-local-memory-and-cycles">16. State, Local Memory, and Cycles</a></li>
-  <li><a href="#relation-with-identity-and-mapping">17. Relation with Identity and Mapping</a></li>
-  <li><a href="#relation-with-derivation-and-construction-rules">18. Relation with Derivation and Construction Rules</a></li>
-  <li><a href="#relation-with-lowering-backend-contract-and-runtime-private-forms">19. Relation with Lowering, Backend Contract, and Runtime-Private Forms</a></li>
-  <li><a href="#relation-with-cache-and-tooling">20. Relation with Cache and Tooling</a></li>
-  <li><a href="#out-of-scope">21. Out of Scope</a></li>
-  <li><a href="#summary">22. Summary</a></li>
+  <li><a href="#widget-object-preservation-corridor">16. Widget Object Preservation Corridor</a></li>
+  <li><a href="#state-local-memory-and-cycles">17. State, Local Memory, and Cycles</a></li>
+  <li><a href="#relation-with-identity-and-mapping">18. Relation with Identity and Mapping</a></li>
+  <li><a href="#relation-with-derivation-and-construction-rules">19. Relation with Derivation and Construction Rules</a></li>
+  <li><a href="#relation-with-lowering-backend-contract-and-runtime-private-forms">20. Relation with Lowering, Backend Contract, and Runtime-Private Forms</a></li>
+  <li><a href="#relation-with-cache-and-tooling">21. Relation with Cache and Tooling</a></li>
+  <li><a href="#out-of-scope">22. Out of Scope</a></li>
+  <li><a href="#summary">23. Summary</a></li>
 </ul>
 
 <hr />
@@ -46,15 +47,11 @@ This document defines the base <strong>canonical open execution intermediate rep
 </p>
 
 <p>
-The FROG Execution IR is a <strong>derived, standardized, execution-facing representation</strong> produced from a semantically validated FROG program.
-It is the first normative execution-layer artifact in the FROG pipeline.
-It exists to provide a portable, inspectable, attributable, structured representation that remains upstream of lowering, backend specialization, and runtime-private realization.
+The FROG Execution IR is a <strong>derived, standardized, execution-facing representation</strong> produced from a semantically validated FROG program. It is the first normative execution-layer artifact in the FROG pipeline. It exists to provide a portable, inspectable, attributable, structured representation that remains upstream of lowering, backend specialization, and runtime-private realization.
 </p>
 
 <p>
-For v0.1, the Execution IR is no longer merely an abstract architectural layer.
-A conforming implementation MUST be able to produce one <strong>Execution IR Document</strong> for one validated FROG program.
-That document is the canonical open IR artifact of the program at the execution-IR boundary.
+For v0.1, the Execution IR is no longer merely an abstract architectural layer. A conforming implementation MUST be able to produce one <strong>Execution IR Document</strong> for one validated FROG program. That document is the canonical open IR artifact of the program at the execution-IR boundary.
 </p>
 
 <ul>
@@ -63,6 +60,7 @@ That document is the canonical open IR artifact of the program at the execution-
   <li>It is <strong>not</strong> a backend-specific lowered form.</li>
   <li>It is <strong>not</strong> a compiled artifact.</li>
   <li>It is <strong>not</strong> a runtime history form.</li>
+  <li>It is <strong>not</strong> a host-private widget realization graph.</li>
 </ul>
 
 <pre><code>canonical .frog source
@@ -81,8 +79,7 @@ runtime-private realization
 </code></pre>
 
 <p>
-The Execution IR therefore plays the role of the first standardized execution-normalized representation of a validated FROG program.
-It is the open, inspectable, DFIR-like layer of the language stack.
+The Execution IR therefore plays the role of the first standardized execution-normalized representation of a validated FROG program. It is the open, inspectable, DFIR-like layer of the language stack.
 </p>
 
 <hr />
@@ -132,13 +129,16 @@ Lowering
    how that canonical representation is later specialized
 </code></pre>
 
+<p>
+This boundary applies equally to UI-facing execution structure. Execution IR may preserve validated execution-facing consequences of widget interaction, but it MUST NOT absorb widget package ownership, host realization ownership, or SVG asset ownership as if those were open IR truth.
+</p>
+
 <hr />
 
 <h2 id="role-of-this-document">3. Role of this Document</h2>
 
 <p>
-This document defines <strong>what the FROG Execution IR is</strong> at the architectural level and at the canonical artifact level.
-It defines:
+This document defines <strong>what the FROG Execution IR is</strong> at the architectural level and at the canonical artifact level. It defines:
 </p>
 
 <ul>
@@ -216,7 +216,9 @@ This document does <strong>not</strong> define:
   <li>one mandatory compiled artifact format,</li>
   <li>one mandatory lowering pipeline,</li>
   <li>one mandatory backend contract payload shape,</li>
-  <li>one mandatory private execution engine architecture.</li>
+  <li>one mandatory private execution engine architecture,</li>
+  <li>the full widget-package architecture,</li>
+  <li>the full host-side widget realization model.</li>
 </ul>
 
 <pre><code>This document owns:
@@ -238,6 +240,8 @@ This document does not own:
 - runtime scheduler internals
 - compiled artifact formats
 - backend-private realization
+- widget package definitions
+- host realization package definitions
 </code></pre>
 
 <hr />
@@ -273,13 +277,11 @@ runtime-private realization
 </code></pre>
 
 <p>
-Validated program meaning is the language-level truth of the program.
-The Execution IR is the canonical open execution-facing document built from that validated meaning.
+Validated program meaning is the language-level truth of the program. The Execution IR is the canonical open execution-facing document built from that validated meaning.
 </p>
 
 <p>
-Execution IR therefore begins <strong>after semantic validation</strong> and remains <strong>before lowering</strong>.
-It is also <strong>before backend contract emission</strong> and <strong>before private realization</strong>.
+Execution IR therefore begins <strong>after semantic validation</strong> and remains <strong>before lowering</strong>. It is also <strong>before backend contract emission</strong> and <strong>before private realization</strong>.
 </p>
 
 <pre><code>semantic truth
@@ -295,6 +297,25 @@ standardized consumable handoff
       |
       v
 private execution machinery
+</code></pre>
+
+<p>
+The same pipeline discipline applies to widget-related execution structure:
+</p>
+
+<pre><code>widget instance in source
+      |
+      v
+validated widget participation meaning
+      |
+      v
+Execution IR preservation of execution-facing widget roles
+      |
+      v
+lowering / target adaptation
+      |
+      v
+runtime + host realization
 </code></pre>
 
 <hr />
@@ -327,6 +348,16 @@ stable enough    -&gt; schema-checkable / comparable
 not frozen as    -&gt; one private runtime design
 </code></pre>
 
+<p>
+For UI and widget-related execution structure, the design goal is similar:
+</p>
+
+<ul>
+  <li>preserve validated execution-facing widget distinctions,</li>
+  <li>do not prematurely collapse them into private object tables or host widgets,</li>
+  <li>do not let IR become a surrogate realization package or rendering graph.</li>
+</ul>
+
 <hr />
 
 <h2 id="core-invariants">7. Core Invariants</h2>
@@ -352,6 +383,7 @@ The following invariants apply to the canonical open Execution IR of v0.1:
   <li>The canonical document MUST be serializable in the normative open wire format defined for the Execution IR.</li>
   <li>The Execution IR MUST NOT encode editor-only presentation state as execution semantics.</li>
   <li>The Execution IR MUST NOT be treated as a runtime history, event trace, or debugger session log.</li>
+  <li>The Execution IR MUST NOT absorb widget realization packages, SVG state graphs, or host-private visual nodes as open IR truth.</li>
 </ul>
 
 <pre><code>Core invariants
@@ -373,6 +405,7 @@ canonically serializable
 
 not editor-state semantics
 not runtime history
+not host-realization truth
 </code></pre>
 
 <hr />
@@ -384,13 +417,11 @@ A validated FROG program MUST produce exactly one <strong>Execution IR Document<
 </p>
 
 <p>
-That document is the canonical open execution artifact of the program at the Execution IR boundary.
-It is the normative IR artifact that later stages consume for lowering, transformation, checking, and implementation-specific preparation.
+That document is the canonical open execution artifact of the program at the Execution IR boundary. It is the normative IR artifact that later stages consume for lowering, transformation, checking, and implementation-specific preparation.
 </p>
 
 <p>
-In base v0.1, the canonical Execution IR Document MUST contain exactly one top-level execution unit representing one validated program.
-That execution unit MUST own the execution-facing objects and relationships needed to represent the validated program in canonical open execution form.
+In base v0.1, the canonical Execution IR Document MUST contain exactly one top-level execution unit representing one validated program. That execution unit MUST own the execution-facing objects and relationships needed to represent the validated program in canonical open execution form.
 </p>
 
 <pre><code>Execution IR Document
@@ -423,12 +454,12 @@ It is not required to match:
   <li>the canonical source file shape,</li>
   <li>the editable Program Model shape,</li>
   <li>a backend-oriented lowered unit,</li>
-  <li>a runtime-private scheduled unit.</li>
+  <li>a runtime-private scheduled unit,</li>
+  <li>a host-private UI object graph.</li>
 </ul>
 
 <p>
-One source file, one package, or one tool session may contain additional non-authoritative material.
-That does not change the rule that the validated program yields exactly one canonical Execution IR Document at the open IR boundary.
+One source file, one package, or one tool session may contain additional non-authoritative material. That does not change the rule that the validated program yields exactly one canonical Execution IR Document at the open IR boundary.
 </p>
 
 <hr />
@@ -487,8 +518,7 @@ This rule exists to ensure that the open IR is:
 </ul>
 
 <p>
-The complete field-level payload shape is owned by companion IR documents, especially the Construction and Schema material.
-This document defines the architectural fact that a canonical JSON wire form exists and is mandatory for conforming open IR emission.
+The complete field-level payload shape is owned by companion IR documents, especially the Construction and Schema material. This document defines the architectural fact that a canonical JSON wire form exists and is mandatory for conforming open IR emission.
 </p>
 
 <hr />
@@ -534,6 +564,15 @@ not opaque replacement machinery
 not hidden semantic redefinition
 not premature backend-private invention
 </code></pre>
+
+<p>
+For widget-related execution structure, the same object-model rule applies:
+</p>
+
+<ul>
+  <li>execution-facing widget roles may appear as primary or support execution objects when justified by validated meaning,</li>
+  <li>but host-private realization objects do not become canonical Execution IR objects merely because an implementation happens to use them.</li>
+</ul>
 
 <hr />
 
@@ -586,9 +625,18 @@ immediate backend-shaped flattening
 </code></pre>
 
 <p>
-This does not prevent later specialization.
-It means that specialization belongs to later stages, not to the base open Execution IR itself.
+This does not prevent later specialization. It means that specialization belongs to later stages, not to the base open Execution IR itself.
 </p>
+
+<p>
+For UI-related execution structure, the preserved family distinction is especially important:
+</p>
+
+<ul>
+  <li><code>widget_value</code> remains a distinct execution-facing participation family,</li>
+  <li><code>widget_reference</code> remains a distinct execution-facing participation family,</li>
+  <li>UI primitive operations remain distinct from merely carrying a widget reference.</li>
+</ul>
 
 <hr />
 
@@ -622,8 +670,7 @@ Conversely, the existence of source-visible content does <strong>not</strong> im
 </p>
 
 <p>
-This document therefore defines the architectural object model of the open IR, but it does not claim that every source-visible family produces one primary IR object.
-The exact correspondence rules belong to <code>Derivation rules.md</code>, and the exact recoverability obligations belong to <code>Identity and Mapping.md</code>.
+This document therefore defines the architectural object model of the open IR, but it does not claim that every source-visible family produces one primary IR object. The exact correspondence rules belong to <code>Derivation rules.md</code>, and the exact recoverability obligations belong to <code>Identity and Mapping.md</code>.
 </p>
 
 <pre><code>Execution IR object roles
@@ -637,6 +684,17 @@ support object
 source-visible content
    -&gt; may remain non-primary at the open-IR boundary
 </code></pre>
+
+<p>
+Typical non-primary source content at this boundary may include:
+</p>
+
+<ul>
+  <li>purely authoring-facing front-panel layout detail,</li>
+  <li>widget realization package detail,</li>
+  <li>SVG layer detail,</li>
+  <li>IDE preferences and cache content.</li>
+</ul>
 
 <hr />
 
@@ -659,8 +717,7 @@ At minimum:
 </ul>
 
 <p>
-The open IR MAY be more explicit than source where validation has already resolved execution-relevant facts.
-That explicitness belongs to open execution-facing representation, not yet to target-specific lowering.
+The open IR MAY be more explicit than source where validation has already resolved execution-relevant facts. That explicitness belongs to open execution-facing representation, not yet to target-specific lowering.
 </p>
 
 <pre><code>Connectivity invariants
@@ -680,6 +737,17 @@ Execution IR connectivity MUST therefore remain:
   <li>structurally inspectable,</li>
   <li>directionally unambiguous,</li>
   <li>semantically grounded in validated dependency meaning.</li>
+</ul>
+
+<p>
+This applies equally to connectivity involving:
+</p>
+
+<ul>
+  <li>public interface participation,</li>
+  <li>widget primary-value participation,</li>
+  <li>standardized UI primitive execution objects,</li>
+  <li>stateful feedback paths.</li>
 </ul>
 
 <hr />
@@ -778,13 +846,122 @@ widget object-style reference participation
 standardized UI-object primitive operation
 </code></pre>
 
+<p>
+This distinction is mandatory for later lowering, because these families may eventually be consumed differently by:
+</p>
+
+<ul>
+  <li>non-UI execution targets,</li>
+  <li>UI-capable runtimes,</li>
+  <li>native executable front-panel targets,</li>
+  <li>mixed targets that split compute and UI realization.</li>
+</ul>
+
 <hr />
 
-<h2 id="state-local-memory-and-cycles">16. State, Local Memory, and Cycles</h2>
+<h2 id="widget-object-preservation-corridor">16. Widget Object Preservation Corridor</h2>
 
 <p>
-Explicit local memory remains explicit in the base Execution IR.
-This is a hard architectural requirement.
+FROG v0.1 already distinguishes:
+</p>
+
+<ul>
+  <li>widget instance declaration in canonical source,</li>
+  <li>class-level widget law,</li>
+  <li>diagram-side widget interaction,</li>
+  <li>widget-oriented package definitions,</li>
+  <li>runtime interpretation,</li>
+  <li>host realization.</li>
+</ul>
+
+<p>
+The Execution IR MUST preserve that separation while still providing an execution-facing corridor for widget-relevant validated meaning.
+</p>
+
+<h3>16.1 Preserved execution-facing distinctions</h3>
+
+<p>
+The following distinctions MUST remain explicit in the open Execution IR:
+</p>
+
+<ul>
+  <li><code>widget_value</code> participation versus public interface participation,</li>
+  <li><code>widget_reference</code> participation versus <code>widget_value</code> participation,</li>
+  <li>UI primitive execution objects versus widget reference carriers,</li>
+  <li>root widget access versus addressed member access,</li>
+  <li>member access to <code>value</code> versus ordinary primary-value participation.</li>
+</ul>
+
+<h3>16.2 What IR may preserve</h3>
+
+<p>
+The open Execution IR MAY preserve execution-relevant widget-related information such as:
+</p>
+
+<ul>
+  <li>stable widget identities needed by execution-facing interaction,</li>
+  <li>validated class-resolved addressing consequences where needed by execution,</li>
+  <li>widget-reference carrying objects,</li>
+  <li>member-address descriptors for standardized UI primitive operations,</li>
+  <li>event categories and event payload shapes where execution-facing form needs them,</li>
+  <li>attribution back to widget instances and addressed members.</li>
+</ul>
+
+<h3>16.3 What IR must not absorb</h3>
+
+<p>
+The open Execution IR MUST NOT absorb:
+</p>
+
+<ul>
+  <li>widget class package ownership,</li>
+  <li>widget realization package ownership,</li>
+  <li>SVG asset ownership,</li>
+  <li>host-private widget composition strategies,</li>
+  <li>runtime-private UI object tables,</li>
+  <li>one implementation's rendering pipeline as if it were canonical open IR.</li>
+</ul>
+
+<h3>16.4 Practical corridor</h3>
+
+<p>
+The practical widget-related IR corridor is therefore:
+</p>
+
+<pre><code>widget instance in canonical source
+        -&gt;
+validated widget participation meaning
+        -&gt;
+validated widget reference / member access meaning
+        -&gt;
+execution-facing IR preservation of identities and accesses
+        -&gt;
+later lowering / target adaptation
+        -&gt;
+runtime and host realization</code></pre>
+
+<p>
+This corridor is especially important for:
+</p>
+
+<ul>
+  <li><code>widget_value</code>,</li>
+  <li><code>widget_reference</code>,</li>
+  <li><code>frog.ui.property_read</code>,</li>
+  <li><code>frog.ui.property_write</code>,</li>
+  <li><code>frog.ui.method_invoke</code>.</li>
+</ul>
+
+<p>
+Open IR may preserve their validated execution-facing structure. Open IR does not become the owner of widget realization itself.
+</p>
+
+<hr />
+
+<h2 id="state-local-memory-and-cycles">17. State, Local Memory, and Cycles</h2>
+
+<p>
+Explicit local memory remains explicit in the base Execution IR. This is a hard architectural requirement.
 </p>
 
 <p>
@@ -824,11 +1001,10 @@ State elimination, storage remapping, or state-cell realization belong to later 
 
 <hr />
 
-<h2 id="relation-with-identity-and-mapping">17. Relation with Identity and Mapping</h2>
+<h2 id="relation-with-identity-and-mapping">18. Relation with Identity and Mapping</h2>
 
 <p>
-This document defines the open Execution IR as an attributable execution-facing representation.
-It does not define the full normative mapping contract by which every source-visible object, validated semantic object, and IR object remain recoverably related.
+This document defines the open Execution IR as an attributable execution-facing representation. It does not define the full normative mapping contract by which every source-visible object, validated semantic object, and IR object remain recoverably related.
 </p>
 
 <p>
@@ -854,13 +1030,22 @@ Identity and Mapping.md
       to validated meaning and source-visible origin
 </code></pre>
 
+<p>
+For widget-related execution-facing content, this means:
+</p>
+
+<ul>
+  <li>widget identities used at execution-facing level must remain recoverable,</li>
+  <li>member-addressed UI primitive operations must remain attributable,</li>
+  <li>the mapping layer must distinguish ordinary valueflow participation from object-style widget access.</li>
+</ul>
+
 <hr />
 
-<h2 id="relation-with-derivation-and-construction-rules">18. Relation with Derivation and Construction Rules</h2>
+<h2 id="relation-with-derivation-and-construction-rules">19. Relation with Derivation and Construction Rules</h2>
 
 <p>
-This document defines the architectural shape of the open Execution IR and the existence of a canonical Execution IR Document.
-It does not fully define either:
+This document defines the architectural shape of the open Execution IR and the existence of a canonical Execution IR Document. It does not fully define either:
 </p>
 
 <ul>
@@ -899,11 +1084,10 @@ This separation is important:
 
 <hr />
 
-<h2 id="relation-with-lowering-backend-contract-and-runtime-private-forms">19. Relation with Lowering, Backend Contract, and Runtime-Private Forms</h2>
+<h2 id="relation-with-lowering-backend-contract-and-runtime-private-forms">20. Relation with Lowering, Backend Contract, and Runtime-Private Forms</h2>
 
 <p>
-The open Execution IR sits before lowering and before runtime-private realization.
-It also sits before the backend-facing contract boundary that later consumers may rely on.
+The open Execution IR sits before lowering and before runtime-private realization. It also sits before the backend-facing contract boundary that later consumers may rely on.
 </p>
 
 <p>
@@ -953,9 +1137,19 @@ The architectural reading rule is:
   <li><strong>private realization</strong> is later and is not owned by this document.</li>
 </ul>
 
+<p>
+For widget-related execution structure, this also means:
+</p>
+
+<ul>
+  <li>lowering may adapt validated widget interaction toward runtime-usable forms,</li>
+  <li>backend contract may describe what a downstream consumer receives,</li>
+  <li>runtime-private widget object storage and host rendering remain downstream and private.</li>
+</ul>
+
 <hr />
 
-<h2 id="relation-with-cache-and-tooling">20. Relation with Cache and Tooling</h2>
+<h2 id="relation-with-cache-and-tooling">21. Relation with Cache and Tooling</h2>
 
 <p>
 A tool MAY serialize an Execution IR artifact inside a cache entry such as <code>frog.ir</code>.
@@ -973,8 +1167,7 @@ However:
 </ul>
 
 <p>
-This document owns the architectural meaning of the Execution IR itself.
-Cache specifications only define how such derived artifacts may be stored or associated.
+This document owns the architectural meaning of the Execution IR itself. Cache specifications only define how such derived artifacts may be stored or associated.
 </p>
 
 <p>
@@ -1013,7 +1206,7 @@ But such uses MUST NOT redefine the architectural meaning of the open Execution 
 
 <hr />
 
-<h2 id="out-of-scope">21. Out of Scope</h2>
+<h2 id="out-of-scope">22. Out of Scope</h2>
 
 <p>
 The following topics remain out of scope for this document in v0.1:
@@ -1028,7 +1221,10 @@ The following topics remain out of scope for this document in v0.1:
   <li>asynchronous execution IR beyond the baseline language model,</li>
   <li>one mandatory runtime state snapshot format,</li>
   <li>one mandatory trace or observability event protocol,</li>
-  <li>all field-level JSON rules of the canonical payload shape.</li>
+  <li>all field-level JSON rules of the canonical payload shape,</li>
+  <li>the full host-side widget realization model,</li>
+  <li>the full SVG asset model,</li>
+  <li>one mandatory runtime UI object model.</li>
 </ul>
 
 <pre><code>Not frozen in v0.1
@@ -1040,6 +1236,8 @@ one mandatory lowering pipeline
 one mandatory backend contract payload
 one mandatory trace / observability transport
 all field-level schema constraints in this document
+one mandatory runtime UI object model
+one mandatory host realization model
 </code></pre>
 
 <p>
@@ -1049,16 +1247,16 @@ What <strong>is</strong> frozen here is narrower and more important:
 <ul>
   <li>the existence of a canonical Execution IR Document,</li>
   <li>the fact that one validated program yields one such document,</li>
-  <li>the fact that the open wire form of that document is canonical JSON.</li>
+  <li>the fact that the open wire form of that document is canonical JSON,</li>
+  <li>the preservation of key execution-facing distinctions required for later lowering and conformance, including widget-related distinctions.</li>
 </ul>
 
 <hr />
 
-<h2 id="summary">22. Summary</h2>
+<h2 id="summary">23. Summary</h2>
 
 <p>
-The FROG Execution IR of v0.1 is a <strong>canonical open execution intermediate representation</strong> built from <strong>validated program meaning</strong>.
-It is the first normative execution artifact of the FROG language stack.
+The FROG Execution IR of v0.1 is a <strong>canonical open execution intermediate representation</strong> built from <strong>validated program meaning</strong>. It is the first normative execution artifact of the FROG language stack.
 </p>
 
 <p>
@@ -1105,6 +1303,8 @@ between validated program meaning
 and later specialization for execution realization.
 
 It is the DFIR-like open execution layer of FROG,
-while remaining upstream of backend contract
-and outside private runtime realization.
+while remaining upstream of backend contract,
+outside private runtime realization,
+and distinct from widget package ownership
+and host-side UI realization.
 </code></pre>
