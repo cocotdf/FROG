@@ -5,7 +5,7 @@
 <h1 align="center">Example 05 — Bounded UI Accumulator</h1>
 
 <p align="center">
-  <strong>Operational A-to-Z dossier for the first published bounded source → contract → runtime executable slice</strong><br/>
+  <strong>Operational A-to-Z dossier for the first published bounded source → UI object file → FIR → lowering → contract → runtime executable slice</strong><br/>
   <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -46,7 +46,9 @@ It combines:
   <li>one bounded counted loop,</li>
   <li>one explicit local-memory path through <code>frog.core.delay</code>,</li>
   <li>one numeric control and one numeric indicator,</li>
-  <li>one public output,</li>
+  <li>one example-local peripheral UI object realization file,</li>
+  <li>one example-local FIR artifact,</li>
+  <li>one example-local lowered artifact,</li>
   <li>one published backend contract artifact,</li>
   <li>one published Python runtime consumer,</li>
   <li>and one published Rust runtime consumer posture.</li>
@@ -54,7 +56,7 @@ It combines:
 
 <p>
 Its role is not to prove the full long-term closure of FROG.
-Its role is to provide one serious small slice where the reader can inspect the source, follow the downstream handoff, and execute the same corridor through more than one runtime language.
+Its role is to provide one serious small slice where the reader can inspect the source, the UI-host realization posture, the execution-facing reading, the lowering posture, and the downstream runtime handoff in one place.
 </p>
 
 <hr/>
@@ -105,7 +107,7 @@ result = state
     <tr>
       <td>Canonical source</td>
       <td>Closed</td>
-      <td><code>main.frog</code> is published.</td>
+      <td><code>main.frog</code> is present.</td>
     </tr>
     <tr>
       <td>Source-owned front panel</td>
@@ -119,18 +121,18 @@ result = state
     </tr>
     <tr>
       <td>Peripheral UI object realization file</td>
-      <td>Missing</td>
-      <td>No distinct example-local host realization file is published yet.</td>
+      <td>Defined</td>
+      <td><code>front_panel.objects.json</code> now makes host-side object realization explicit.</td>
     </tr>
     <tr>
       <td>FIR-readable corridor</td>
-      <td>Partial</td>
-      <td>The execution-facing reading is clear, but no example-local FIR artifact is published yet in this directory.</td>
+      <td>Defined example-local</td>
+      <td><code>main.fir.json</code> now exposes an example-local execution-facing artifact.</td>
     </tr>
     <tr>
       <td>Lowering posture</td>
-      <td>Partial</td>
-      <td>The lowering intent is explicit, but the example does not yet publish one example-local lowered artifact.</td>
+      <td>Defined example-local</td>
+      <td><code>main.lowering.json</code> now exposes an example-local lowered artifact.</td>
     </tr>
     <tr>
       <td>Backend contract</td>
@@ -170,12 +172,12 @@ result = state
     <tr>
       <td>Rendered front panel</td>
       <td>Missing</td>
-      <td>Runtime output exposes UI state, but no real rendered host UI path is published yet.</td>
+      <td>The host realization file is explicit, but no rendered host path is published yet.</td>
     </tr>
     <tr>
       <td>LLVM-oriented native executable path</td>
       <td>Missing</td>
-      <td>No example-local FIR → lowering → LLVM-family → native executable corridor is published yet.</td>
+      <td>The example-local FIR and lowering artifacts now exist, but no native LLVM-family bridge, build, or executable is published yet.</td>
     </tr>
   </tbody>
 </table>
@@ -187,7 +189,10 @@ result = state
 <pre><code>Examples/
 └── 05_bounded_ui_accumulator/
     ├── Readme.md
-    └── main.frog
+    ├── main.frog
+    ├── front_panel.objects.json
+    ├── main.fir.json
+    └── main.lowering.json
 
 Implementations/
 └── Reference/
@@ -219,6 +224,12 @@ Implementations/
 <ul>
   <li><code>Examples/05_bounded_ui_accumulator/main.frog</code><br/>
       Canonical source of the example. This remains the source of truth for example-level program meaning.</li>
+  <li><code>Examples/05_bounded_ui_accumulator/front_panel.objects.json</code><br/>
+      Peripheral host-side UI object realization file. It defines concrete widget realization and visual host metadata without redefining executable semantics.</li>
+  <li><code>Examples/05_bounded_ui_accumulator/main.fir.json</code><br/>
+      Example-local execution-facing artifact describing the bounded executable unit, explicit state, UI binding surface, and result publication path.</li>
+  <li><code>Examples/05_bounded_ui_accumulator/main.lowering.json</code><br/>
+      Example-local lowered artifact that prepares the corridor for backend-family runtime consumption and future compiler-family paths.</li>
   <li><code>Examples/05_bounded_ui_accumulator/Readme.md</code><br/>
       Operational example dossier. It explains what the example does, how the corridor is staged, what is already runnable, and what is still missing.</li>
   <li><code>Implementations/Reference/ContractEmitter/examples/05_bounded_ui_accumulator.reference_host_runtime_ui_binding.contract.json</code><br/>
@@ -253,7 +264,7 @@ The intended reading is:
 <pre><code>canonical .frog source
         |
         v
-validated example meaning
+peripheral UI object realization file
         |
         v
 FIR / execution-facing representation
@@ -271,12 +282,6 @@ Python runtime consumer        Rust runtime consumer        C/C++ runtime consum
         |
         \-------------------- optional LLVM-oriented native path ----/
 </code></pre>
-
-<p>
-This example must not be read as “Python defines the example” or “Rust defines the example”.
-The source and the downstream handoff corridor remain primary.
-The runtimes and compiler-family paths are downstream consumers.
-</p>
 
 <hr/>
 
@@ -299,6 +304,11 @@ The canonical source declares:
   <li>and two explicit <code>frog.ui.property_write</code> operations for <code>face_color</code>.</li>
 </ul>
 
+<p>
+The source also now contains one explicit pointer to a peripheral UI object realization file.
+That file remains downstream and non-authoritative for semantics.
+</p>
+
 <hr/>
 
 <h2 id="ui-posture">8. Front-Panel and UI Object Posture</h2>
@@ -313,51 +323,60 @@ This example demonstrates two distinct UI interaction surfaces:
 </ul>
 
 <p>
-At the current published state, the source owns widget declarations and face-template references.
-However, the repository does not yet publish one separate example-local peripheral UI object realization file that would define host-side object realization independently from the canonical source.
-That boundary remains open work for this example.
+The new <code>front_panel.objects.json</code> file makes the host-side realization boundary explicit:
 </p>
+
+<ul>
+  <li>the canonical source keeps widget identity and program meaning,</li>
+  <li>the peripheral file defines host widget classes, concrete visual configuration, and runtime-facing realization metadata,</li>
+  <li>and neither file alone is allowed to erase the distinction between source-owned meaning and host-owned realization.</li>
+</ul>
 
 <hr/>
 
 <h2 id="fir-posture">9. FIR / Execution-Facing Posture</h2>
 
 <p>
-The example already has a clear execution-facing reading:
+The example now carries one explicit example-local FIR artifact:
+</p>
+
+<pre><code>Examples/05_bounded_ui_accumulator/main.fir.json</code></pre>
+
+<p>
+That artifact makes visible:
 </p>
 
 <ul>
-  <li>one bounded executable unit,</li>
-  <li>one counted loop,</li>
-  <li>one explicit state carrier,</li>
-  <li>one deterministic initial value,</li>
-  <li>one final result publication path,</li>
-  <li>and one bounded UI property-write surface.</li>
+  <li>the bounded executable unit,</li>
+  <li>the public input and output binding model,</li>
+  <li>the UI binding surface,</li>
+  <li>the explicit state carrier,</li>
+  <li>the loop execution model,</li>
+  <li>and the final result publication rule.</li>
 </ul>
-
-<p>
-However, this example directory does not yet publish one explicit example-local FIR artifact or FIR JSON file.
-The FIR reading is therefore architecturally clear but not yet materialized as one repository-visible example-local artifact.
-</p>
 
 <hr/>
 
 <h2 id="lowering-posture">10. Lowering and Backend-Contract Posture</h2>
 
 <p>
-The example already crosses the most important downstream boundary currently visible in the repository:
+The example now also carries one explicit example-local lowered artifact:
 </p>
 
-<pre><code>Example source
-    ->
-backend-family contract artifact
-    ->
-runtime-family execution
-</code></pre>
+<pre><code>Examples/05_bounded_ui_accumulator/main.lowering.json</code></pre>
 
 <p>
-What is still missing is a more explicit example-local intermediate lowered artifact and a clearer FIR-to-lowering publication surface for this example itself.
+This lowered artifact is not yet the compiler-family artifact itself.
+It is the explicit target-oriented bridge between the FIR reading and downstream runtime-family or compiler-family consumers.
 </p>
+
+<p>
+The already-published backend contract remains the first repository-visible runtime-family handoff artifact:
+</p>
+
+<pre><code>Implementations/Reference/ContractEmitter/examples/
+05_bounded_ui_accumulator.reference_host_runtime_ui_binding.contract.json
+</code></pre>
 
 <hr/>
 
@@ -390,13 +409,6 @@ Equivalent direct script-style invocation:
   <li>publishes the final value to the public output and the indicator surface,</li>
   <li>prints a runtime-result JSON artifact.</li>
 </ol>
-
-<h3>Expected observable result for input 3</h3>
-
-<pre><code>public.result = 15
-ui.ctrl_input = 3
-ui.ind_result = 15
-</code></pre>
 
 <hr/>
 
@@ -436,23 +448,18 @@ Accordingly:
   <li>and runtime modularity is therefore only partially demonstrated today at the repository level.</li>
 </ul>
 
-<p>
-The target direction is that a future C/C++ consumer should read the same corridor rather than define a separate variant of the example.
-</p>
-
 <hr/>
 
 <h2 id="llvm-path">14. LLVM-Oriented Native Path</h2>
 
 <p>
-This example does not yet publish a closed LLVM-oriented downstream path to a native executable.
+The example-local FIR and lowered artifacts now make the compiler-facing corridor easier to close, but this example still does not publish a closed LLVM-oriented downstream path to a native executable.
 In particular, the repository does not yet expose, for this example:
 </p>
 
 <ul>
-  <li>one explicit FIR-to-lowering bridge artifact,</li>
   <li>one explicit lowering-to-LLVM-family bridge artifact,</li>
-  <li>one compiler-facing lowered artifact for this example,</li>
+  <li>one compiler-facing lowered artifact specialized for LLVM-family consumption,</li>
   <li>one native build command,</li>
   <li>one packaged executable result,</li>
   <li>or one rendered native front-panel host path.</li>
@@ -508,14 +515,12 @@ For the canonical example case <code>input = 3</code>, the expected observable e
 <h2 id="published-gaps">16. Published Gaps Still To Close</h2>
 
 <ol>
-  <li>publish one explicit example-local FIR artifact or FIR serialization surface,</li>
-  <li>publish one explicit example-local lowered artifact or clearer example-local lowering output,</li>
-  <li>publish one distinct peripheral UI object realization file,</li>
-  <li>publish one C/C++ mini runtime consumer and its build/run pipe,</li>
+  <li>publish one real C/C++ mini runtime consumer and its build/run pipe,</li>
   <li>publish one dedicated Rust runner entry point comparable to the Python runner,</li>
   <li>publish one real rendered front-panel host path,</li>
+  <li>publish one lowering-to-LLVM-family bridge artifact,</li>
   <li>publish one LLVM-oriented native build corridor,</li>
-  <li>and keep source, contract, and runtime-visible UI metadata aligned across the corridor.</li>
+  <li>and keep source, FIR, lowering, contract, and runtime-visible UI metadata aligned across the corridor.</li>
 </ol>
 
 <hr/>
@@ -524,18 +529,29 @@ For the canonical example case <code>input = 3</code>, the expected observable e
 
 <p>
 This example is currently the strongest published bounded executable slice in the FROG repository.
-It already proves that:
+It now exposes, in one named location:
 </p>
 
 <ul>
-  <li>a canonical FROG source can define a bounded UI-participating executable program,</li>
-  <li>that source can be lowered into a repository-visible backend-family contract artifact,</li>
-  <li>the contract can be consumed by a Python runtime path,</li>
-  <li>the same corridor can also be consumed by a Rust runtime path,</li>
-  <li>and the example remains attributable as explicit loop plus explicit state rather than runtime-private hidden behavior.</li>
+  <li>a canonical FROG source,</li>
+  <li>a peripheral UI object realization file,</li>
+  <li>an example-local FIR artifact,</li>
+  <li>an example-local lowered artifact,</li>
+  <li>a repository-visible backend-family contract artifact,</li>
+  <li>a Python runtime path,</li>
+  <li>and a Rust runtime proof path.</li>
 </ul>
 
 <pre><code>serious bounded executable slice:
+yes
+
+example-local UI object file:
+yes
+
+example-local FIR artifact:
+yes
+
+example-local lowered artifact:
 yes
 
 full multi-runtime closure:
