@@ -12,7 +12,7 @@
   ],
   "properties": {
     "id": {
-      "$ref": "#/$defs/id_string"
+      "$ref": "frog.execution-ir.common.schema.json#/$defs/id_string"
     },
     "source_ref": {
       "type": "string",
@@ -32,41 +32,14 @@
     "target_refs": {
       "type": "array",
       "items": {
-        "$ref": "#/$defs/id_string"
+        "$ref": "frog.execution-ir.common.schema.json#/$defs/id_string"
       }
     },
     "metadata": {
       "type": "object",
       "additionalProperties": {
-        "$ref": "#/$defs/typed_value"
+        "$ref": "frog.execution-ir.common.schema.json#/$defs/typed_value"
       }
-    }
-  },
-  "$defs": {
-    "id_string": {
-      "type": "string",
-      "minLength": 1,
-      "pattern": "^[A-Za-z0-9._:-]+$"
-    },
-    "typed_value": {
-      "oneOf": [
-        { "type": "null" },
-        { "type": "boolean" },
-        { "type": "number" },
-        { "type": "string" },
-        {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/typed_value"
-          }
-        },
-        {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/$defs/typed_value"
-          }
-        }
-      ]
     }
   }
 }
