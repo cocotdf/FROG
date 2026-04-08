@@ -120,6 +120,20 @@
               "path": "/Expression/Widget%20class%20contract.md",
               "kind": "page",
               "children": []
+            },
+            {
+              "key": "expression/widget-package.md",
+              "title": "Widget package",
+              "path": "/Expression/Widget%20package.md",
+              "kind": "page",
+              "children": []
+            },
+            {
+              "key": "expression/widget-realization.md",
+              "title": "Widget realization",
+              "path": "/Expression/Widget%20realization.md",
+              "kind": "page",
+              "children": []
             }
           ]
         },
@@ -2246,6 +2260,8 @@
     "/Expression/Widget%20interaction.md",
     "/Expression/Widget.md",
     "/Expression/Widget%20class%20contract.md",
+    "/Expression/Widget%20package.md",
+    "/Expression/Widget%20realization.md",
     "/Expression/Readme.md",
     "/Examples/01_pure_addition/main.frog",
     "/Examples/01_pure_addition/Readme.md",

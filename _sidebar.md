@@ -17,6 +17,8 @@
   - [Widget interaction](/Expression/Widget%20interaction.md)
   - [Widget](/Expression/Widget.md)
   - [Widget class contract](/Expression/Widget%20class%20contract.md)
+  - [Widget package](/Expression/Widget%20package.md)
+  - [Widget realization](/Expression/Widget%20realization.md)
 - [Examples](/Examples/Readme.md)
   - [01 pure addition](/Examples/01_pure_addition/Readme.md)
     - [main.frog](/Examples/01_pure_addition/main.frog)
