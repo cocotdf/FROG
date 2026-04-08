@@ -1,11 +1,11 @@
 <p align="center">
-  <img src="../FROG logo.svg" alt="FROG logo" width="200" />
+  <img src="../FROG logo.svg" alt="FROG logo" width="140" />
 </p>
 
 <h1 align="center">FROG Expression Specification</h1>
 
 <p align="center">
-  <strong>Canonical source specification for <code>.frog</code> programs</strong><br/>
+  <strong>Canonical source specification for <code>.frog</code> programs and related source-owned widget artifacts</strong><br/>
   <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -16,22 +16,24 @@
   <li><a href="#overview">1. Overview</a></li>
   <li><a href="#why-expression-exists">2. Why Expression Exists</a></li>
   <li><a href="#scope-of-this-directory">3. Scope of this Directory</a></li>
-  <li><a href="#specification-documents">4. Specification Documents</a></li>
-  <li><a href="#what-a-frog-file-describes">5. What a <code>.frog</code> File Describes</a></li>
-  <li><a href="#representation-levels">6. Representation Levels</a></li>
-  <li><a href="#file-tree-and-artifact-families">7. File Tree and Artifact Families</a></li>
-  <li><a href="#file-types">8. File Types</a></li>
-  <li><a href="#top-level-json-structure">9. Top-Level JSON Structure</a></li>
-  <li><a href="#section-presence-rules">10. Section Presence Rules</a></li>
-  <li><a href="#sections-overview">11. Sections Overview</a></li>
-  <li><a href="#cross-cutting-subsystems">12. Cross-Cutting Subsystems</a></li>
-  <li><a href="#interface-connector-diagram-and-front-panel">13. Interface, Connector, Diagram, and Front Panel</a></li>
-  <li><a href="#source-well-formedness-and-structural-validity">14. Source Well-Formedness and Structural Validity</a></li>
-  <li><a href="#execution-relevance-validation-and-derivation-boundary">15. Execution Relevance, Validation, and Derivation Boundary</a></li>
-  <li><a href="#canonical-formatting-and-ordering">16. Canonical Formatting and Ordering</a></li>
-  <li><a href="#normative-terminology">17. Normative Terminology</a></li>
-  <li><a href="#status">18. Status</a></li>
-  <li><a href="#license">19. License</a></li>
+  <li><a href="#architectural-position">4. Architectural Position</a></li>
+  <li><a href="#specification-documents">5. Specification Documents</a></li>
+  <li><a href="#what-a-frog-file-describes">6. What a <code>.frog</code> File Describes</a></li>
+  <li><a href="#representation-levels">7. Representation Levels</a></li>
+  <li><a href="#file-tree-and-artifact-families">8. File Tree and Artifact Families</a></li>
+  <li><a href="#file-types">9. File Types</a></li>
+  <li><a href="#top-level-json-structure">10. Top-Level JSON Structure</a></li>
+  <li><a href="#section-presence-rules">11. Section Presence Rules</a></li>
+  <li><a href="#sections-overview">12. Sections Overview</a></li>
+  <li><a href="#cross-cutting-subsystems">13. Cross-Cutting Subsystems</a></li>
+  <li><a href="#frog-and-wfrog-boundary">14. <code>.frog</code> and <code>.wfrog</code> Boundary</a></li>
+  <li><a href="#interface-connector-diagram-and-front-panel">15. Interface, Connector, Diagram, and Front Panel</a></li>
+  <li><a href="#source-well-formedness-and-structural-validity">16. Source Well-Formedness and Structural Validity</a></li>
+  <li><a href="#execution-relevance-validation-and-derivation-boundary">17. Execution Relevance, Validation, and Derivation Boundary</a></li>
+  <li><a href="#canonical-formatting-and-ordering">18. Canonical Formatting and Ordering</a></li>
+  <li><a href="#normative-terminology">19. Normative Terminology</a></li>
+  <li><a href="#status">20. Status</a></li>
+  <li><a href="#license">21. License</a></li>
 </ul>
 
 <hr/>
@@ -58,13 +60,17 @@ The purpose of this directory is to define:
   <li>the canonical top-level structure of a <code>.frog</code> file,</li>
   <li>the required and optional source sections of that file,</li>
   <li>the source-level representation of those sections,</li>
-  <li>the source-visible families and cross-cutting source subsystems that appear in canonical source, including the type system, the widget model, the widget class contract model, the widget interaction model, and the source-facing representation of structures and local-memory constructs,</li>
+  <li>the source-visible cross-cutting subsystems that appear in canonical source, including the type system, the widget instance model, the widget class contract model, the widget interaction model, and the source-facing representation of structures and local-memory constructs,</li>
   <li>the structural validity boundary that a canonical <code>.frog</code> source file MUST satisfy before later semantic validation and execution-facing derivation,</li>
-  <li>the source-schema posture under which parts of canonical source shape may be made machine-checkable without collapsing source structure into semantic validation or implementation-specific behavior.</li>
+  <li>the source-schema posture under which parts of canonical source shape may be made machine-checkable without collapsing source structure into semantic validation or implementation-private behavior.</li>
 </ul>
 
 <p>
 This directory is about the authoritative source form of a FROG. It is not the complete runtime architecture, not the complete IDE implementation model, not the complete semantic interpretation of validated programs, and not the open execution-facing IR layer.
+</p>
+
+<p>
+This directory also defines the source-owned boundary between the canonical <code>.frog</code> program file and related widget-oriented source artifacts such as <code>.wfrog</code> packages. The canonical program source remains the <code>.frog</code> file. Widget-oriented packages do not replace that role.
 </p>
 
 <p>
@@ -87,6 +93,7 @@ IDE/          -&gt; authoring, observability, debugging, inspection
 Expression/ owns source structure and source-visible object shape.
 Expression/ owns source well-formedness and structural validity.
 Expression/ owns source-schema posture for canonical source.
+Expression/ owns the source-side boundary between .frog and related .wfrog packages.
 Expression/ does not own validated program meaning.
 Expression/ does not own open execution-facing derivation.
 </code></pre>
@@ -126,6 +133,7 @@ Accordingly, this directory defines how a FROG is serialized, how canonical sour
 - Which source-level cross-cutting models apply?
 - What makes source structurally valid as canonical source?
 - What belongs to source-schema posture and machine-checkable source shape?
+- How does canonical .frog source relate to source-side .wfrog widget packages?
 
 Expression/ does not answer by itself:
 
@@ -152,6 +160,7 @@ It includes:
   <li>top-level source sections,</li>
   <li>cross-cutting source subsystems used by multiple sections,</li>
   <li>source-facing structure and state representation,</li>
+  <li>the source-owned boundary for widget-oriented package references,</li>
   <li>source-schema posture for machine-checkable canonical source shape.</li>
 </ul>
 
@@ -166,13 +175,71 @@ It does not define:
   <li>the complete cross-cutting execution semantics of the language,</li>
   <li>the complete intrinsic primitive vocabulary of FROG,</li>
   <li>the complete optional profile surface of FROG,</li>
-  <li>the complete standard widget catalog of every possible IDE or UI system,</li>
   <li>the full repository-wide policy for specification-version transition.</li>
+</ul>
+
+<p>
+This directory also does not collapse widget class law, widget realization, or host rendering into the canonical <code>.frog</code> file. Those concerns may be referenced from source, but they remain distinct architectural layers.
+</p>
+
+<hr/>
+
+<h2 id="architectural-position">4. Architectural Position</h2>
+
+<p>
+The Expression layer is the source-owned entry point of the representation pipeline.
+</p>
+
+<pre><code>canonical .frog source
+  -&gt; structural validity
+  -&gt; validated program meaning
+  -&gt; canonical open execution-facing IR
+  -&gt; lowering
+  -&gt; backend contract
+  -&gt; downstream backend-family consumption
+</code></pre>
+
+<p>
+This directory governs the first two items only insofar as they concern source shape and structural validity.
+</p>
+
+<p>
+The following distinctions MUST remain explicit:
+</p>
+
+<ul>
+  <li>loadable source is not identical to structurally valid canonical source,</li>
+  <li>structurally valid canonical source is not identical to semantically accepted program meaning,</li>
+  <li>canonical source is not identical to execution-facing IR,</li>
+  <li>execution-facing IR is not identical to lowered form,</li>
+  <li>lowered form is not identical to backend contract,</li>
+  <li>backend contract is not identical to one private runtime realization.</li>
+</ul>
+
+<p>
+The following source-package distinction MUST also remain explicit:
+</p>
+
+<ul>
+  <li>the canonical program source artifact is the <code>.frog</code> file,</li>
+  <li>a <code>.wfrog</code> package is a widget-oriented source artifact family,</li>
+  <li>a <code>.wfrog</code> package may be referenced by canonical source,</li>
+  <li>a <code>.wfrog</code> package does not replace the canonical program-owned role of <code>.frog</code>.</li>
+</ul>
+
+<p>
+The following versioning distinction MUST also remain explicit:
+</p>
+
+<ul>
+  <li>the source file's <code>spec_version</code> identifies the source-format compatibility target of that artifact,</li>
+  <li>a <code>.wfrog</code> package may carry its own <code>wfrog_version</code> for widget-package format compatibility,</li>
+  <li>the full repository-wide version-transition policy remains centralized in <code>Versioning/Readme.md</code>.</li>
 </ul>
 
 <hr/>
 
-<h2 id="specification-documents">4. Specification Documents</h2>
+<h2 id="specification-documents">5. Specification Documents</h2>
 
 <p>
 The FROG Expression is defined through the following documents in this directory:
@@ -199,11 +266,17 @@ The FROG Expression is defined through the following documents in this directory
 ├── Front panel.md
 │   -&gt; optional front-panel composition and user-facing interaction surface
 ├── Widget.md
-│   -&gt; widget instance model, widget identity, roles, value behavior, properties, methods, events, and parts
+│   -&gt; widget instance model, widget identity, roles, class reference, value participation, and source-side asset references
 ├── Widget class contract.md
-│   -&gt; class-level widget contract for members, parts, events, access legality, and IDE-facing object exposure
+│   -&gt; class-level widget contract for members, parts, events, access legality, and object-surface exposure
 ├── Widget interaction.md
 │   -&gt; diagram-side widget interaction paths and execution-facing widget access model
+├── Widget package.md
+│   -&gt; architectural definition of the .wfrog widget-oriented artifact family
+├── Widget realization.md
+│   -&gt; host-facing realization boundary, visual assets, and SVG integration
+├── Widget behavior.md
+│   -&gt; widget behavior model, declarative rules, controlled expressions, and optional hooks
 ├── Control structures.md
 │   -&gt; source-facing representation of canonical control structures
 ├── State and cycles.md
@@ -217,16 +290,17 @@ The FROG Expression is defined through the following documents in this directory
 </code></pre>
 
 <p>
-The documents in this directory play three different roles:
+The documents in this directory play four different roles:
 </p>
 
 <ul>
   <li>top-level source-section specifications,</li>
   <li>cross-cutting source subsystems,</li>
+  <li>widget-oriented source package boundary documents,</li>
   <li>source-schema posture and machine-checkable structural support artifacts.</li>
 </ul>
 
-<h3>4.1 Top-level source-section specifications</h3>
+<h3>5.1 Top-level source-section specifications</h3>
 
 <p>
 Some documents define dedicated top-level source sections such as:
@@ -243,7 +317,7 @@ Some documents define dedicated top-level source sections such as:
   <li><code>cache</code>.</li>
 </ul>
 
-<h3>4.2 Cross-cutting source subsystems</h3>
+<h3>5.2 Cross-cutting source subsystems</h3>
 
 <p>
 Other documents define cross-cutting source subsystems used throughout the source format. In particular:
@@ -251,13 +325,29 @@ Other documents define cross-cutting source subsystems used throughout the sourc
 
 <ul>
   <li><code>Type.md</code> defines canonical value-type expressions and source-level type rules used throughout the source format.</li>
-  <li><code>Widget.md</code> defines the widget instance model, including classes, roles, value behavior, parts, properties, methods, and events.</li>
-  <li><code>Widget class contract.md</code> defines the class-level widget contract behind standardized widget-object surfaces, including part ownership, member legality, capability gating, and IDE-facing property/method exposure.</li>
+  <li><code>Widget.md</code> defines the widget instance model used inside <code>front_panel</code>.</li>
+  <li><code>Widget class contract.md</code> defines the class-level widget contract behind standardized widget-object surfaces, including part ownership, member legality, and access constraints.</li>
   <li><code>Widget interaction.md</code> defines how executable diagrams may interact with widgets through standardized diagram-level interaction mechanisms.</li>
   <li><code>Control structures.md</code> and <code>State and cycles.md</code> define source-facing representation rules that participate in later semantic interpretation but must appear explicitly in canonical source.</li>
 </ul>
 
-<h3>4.3 Source-schema posture</h3>
+<h3>5.3 Widget-oriented source package boundary documents</h3>
+
+<p>
+The widget-oriented package documents define how canonical source relates to source-side widget packages.
+</p>
+
+<ul>
+  <li><code>Widget package.md</code> defines the <code>.wfrog</code> artifact family and its typed package kinds.</li>
+  <li><code>Widget realization.md</code> defines the host-facing realization boundary, including SVG integration.</li>
+  <li><code>Widget behavior.md</code> defines the behavior model used by widget classes and related package content.</li>
+</ul>
+
+<p>
+These documents do not turn widget packages into top-level canonical program files. They define how source may reference those packages while preserving ownership boundaries.
+</p>
+
+<h3>5.4 Source-schema posture</h3>
 
 <p>
 <code>Schema.md</code> and the files under <code>schema/</code> define the conservative machine-checkable posture of canonical source shape.
@@ -269,7 +359,7 @@ They do not replace semantic validation. They provide machine-checkable support 
 
 <hr/>
 
-<h2 id="what-a-frog-file-describes">5. What a <code>.frog</code> File Describes</h2>
+<h2 id="what-a-frog-file-describes">6. What a <code>.frog</code> File Describes</h2>
 
 <p>
 A canonical <code>.frog</code> file describes one complete FROG program as source.
@@ -298,12 +388,16 @@ It may additionally describe:
 </ul>
 
 <p>
+When a front panel is present, the <code>.frog</code> file may also reference widget-oriented packages needed to interpret widget class law or host-facing realization. Even in those cases, the <code>.frog</code> file remains canonical program source, not a container for all widget package contents.
+</p>
+
+<p>
 The <code>.frog</code> file is canonical source, not compiled output, not IR, and not one implementation's private runtime representation.
 </p>
 
 <hr/>
 
-<h2 id="representation-levels">6. Representation Levels</h2>
+<h2 id="representation-levels">7. Representation Levels</h2>
 
 <p>
 The repository architecture distinguishes several layers:
@@ -336,20 +430,22 @@ The following distinctions MUST remain explicit:
 </ul>
 
 <p>
-The following versioning distinction MUST also remain explicit:
+The following source-artifact distinction MUST also remain explicit:
 </p>
 
 <ul>
-  <li>the source file's <code>spec_version</code> identifies the source-format compatibility target of that artifact,</li>
-  <li>the full repository-wide version-transition policy remains centralized in <code>Versioning/Readme.md</code>.</li>
+  <li>canonical program source is not identical to widget-package source,</li>
+  <li>widget-package source is not identical to host-private rendering logic,</li>
+  <li>visual assets are not identical to widget class law,</li>
+  <li>runtime-private convenience is not identical to language-owned object law.</li>
 </ul>
 
 <hr/>
 
-<h2 id="file-tree-and-artifact-families">7. File Tree and Artifact Families</h2>
+<h2 id="file-tree-and-artifact-families">8. File Tree and Artifact Families</h2>
 
 <p>
-A FROG source file is a single JSON document whose internal sections refer to source-level artifact families.
+A canonical <code>.frog</code> source file is a single JSON document whose internal sections refer to source-level artifact families.
 </p>
 
 <p>
@@ -360,7 +456,8 @@ At the top level, canonical source remains intentionally compact.
   <li>type information is embedded locally through canonical type expressions,</li>
   <li>widget instances are embedded inside <code>front_panel</code> when a front panel is present,</li>
   <li>widget interactions are expressed inside <code>diagram</code>,</li>
-  <li>structure and state constructs are embedded where they naturally belong in the source graph.</li>
+  <li>structure and state constructs are embedded where they naturally belong in the source graph,</li>
+  <li>widget-oriented package references may appear where relevant without becoming separate top-level program sections.</li>
 </ul>
 
 <pre><code>Top-level simplicity rule
@@ -371,13 +468,24 @@ No dedicated top-level:
 - widget_interactions
 - control_structures
 - state_model
+- widget_packages
 
 These concerns are embedded where they naturally belong.
 </code></pre>
 
+<p>
+The broader source artifact family therefore includes:
+</p>
+
+<ul>
+  <li>the canonical program file <code>.frog</code>,</li>
+  <li>optional referenced <code>.wfrog</code> packages for widget classes, realization, or bundle content,</li>
+  <li>optional visual assets such as SVG where referenced by widget realization packages.</li>
+</ul>
+
 <hr/>
 
-<h2 id="file-types">8. File Types</h2>
+<h2 id="file-types">9. File Types</h2>
 
 <p>
 The canonical editable source artifact of a FROG program is a file with the <code>.frog</code> extension.
@@ -388,12 +496,20 @@ That file MUST contain canonical JSON source conforming to the structural rules 
 </p>
 
 <p>
+The widget-oriented package family uses the <code>.wfrog</code> extension. A <code>.wfrog</code> package is a structured JSON widget-oriented artifact that may be referenced by canonical source.
+</p>
+
+<p>
+A <code>.wfrog</code> package is not a second canonical program file. It is a related source artifact family with its own typed package kinds and version line.
+</p>
+
+<p>
 Repository support artifacts such as schema files, examples, conformance material, or implementation workspaces are not themselves canonical <code>.frog</code> source unless explicitly stated otherwise.
 </p>
 
 <hr/>
 
-<h2 id="top-level-json-structure">9. Top-Level JSON Structure</h2>
+<h2 id="top-level-json-structure">10. Top-Level JSON Structure</h2>
 
 <p>
 At the top level, a canonical <code>.frog</code> source file is a JSON object.
@@ -425,9 +541,13 @@ Conceptually:
 This top-level simplicity is deliberate. Many cross-cutting subsystems participate in canonical source without becoming separate top-level sections.
 </p>
 
+<p>
+Widget-oriented package references, when present, appear inside the relevant source-owned structures such as widget instances in the front panel. They do not become standalone top-level program sections merely because they are important.
+</p>
+
 <hr/>
 
-<h2 id="section-presence-rules">10. Section Presence Rules</h2>
+<h2 id="section-presence-rules">11. Section Presence Rules</h2>
 
 <p>
 A canonical <code>.frog</code> source file MUST contain:
@@ -481,14 +601,18 @@ MAY:
 </code></pre>
 
 <p>
-The presence of <code>spec_version</code> is also the source-level anchor for cumulative source evolution. Later source-format versions should normally extend earlier valid forms rather than silently invalidate them, as governed centrally in <code>Versioning/Readme.md</code>.
+The presence of <code>spec_version</code> is the source-level anchor for cumulative source evolution. Later source-format versions should normally extend earlier valid forms rather than silently invalidate them, as governed centrally in <code>Versioning/Readme.md</code>.
+</p>
+
+<p>
+Widget-oriented package references are governed by the relevant source structures that use them. Their presence does not create new mandatory top-level sections in canonical <code>.frog</code> source.
 </p>
 
 <hr/>
 
-<h2 id="sections-overview">11. Sections Overview</h2>
+<h2 id="sections-overview">12. Sections Overview</h2>
 
-<h3>11.1 Metadata</h3>
+<h3>12.1 Metadata</h3>
 
 <p>
 Required section defining identity, documentation, authorship, and related descriptive information.
@@ -498,7 +622,7 @@ Required section defining identity, documentation, authorship, and related descr
 Detailed specification: <code>Metadata.md</code>
 </p>
 
-<h3>11.2 Interface</h3>
+<h3>12.2 Interface</h3>
 
 <p>
 Required section defining the public typed inputs and outputs of the FROG. All declared types MUST use canonical FROG type expressions.
@@ -508,7 +632,7 @@ Required section defining the public typed inputs and outputs of the FROG. All d
 Detailed specifications: <code>Interface.md</code>, <code>Type.md</code>
 </p>
 
-<h3>11.3 Connector</h3>
+<h3>12.3 Connector</h3>
 
 <p>
 Optional section defining the graphical mapping of interface ports when the FROG is reused as a node. The connector never defines new logical ports.
@@ -518,7 +642,7 @@ Optional section defining the graphical mapping of interface ports when the FROG
 Detailed specification: <code>Connector.md</code>
 </p>
 
-<h3>11.4 Diagram</h3>
+<h3>12.4 Diagram</h3>
 
 <p>
 Required section defining the executable dataflow graph of the FROG. The diagram contains nodes, edges, dependencies, regions, boundaries, and annotations as source-level constructs. It is the authoritative source-level execution structure of the program.
@@ -528,7 +652,7 @@ Required section defining the executable dataflow graph of the FROG. The diagram
 Detailed specifications: <code>Diagram.md</code>, <code>Type.md</code>, <code>Widget interaction.md</code>, the source-facing companion documents <code>Control structures.md</code> and <code>State and cycles.md</code>, the normative semantic documents in <code>Language/</code>, the relevant intrinsic primitive-library specifications in <code>Libraries/</code>, and any relevant optional standardized capability specifications in <code>Profiles/</code>.
 </p>
 
-<h3>11.5 Front Panel</h3>
+<h3>12.5 Front Panel</h3>
 
 <p>
 Optional section defining the user interaction layer of the FROG through widget instances, layout, style, and related UI composition data.
@@ -543,10 +667,10 @@ The front panel defines widget containment and panel-side composition. It does n
 </p>
 
 <p>
-Detailed specifications: <code>Front panel.md</code>, <code>Widget.md</code>, <code>Widget class contract.md</code>
+Detailed specifications: <code>Front panel.md</code>, <code>Widget.md</code>, <code>Widget class contract.md</code>, <code>Widget package.md</code>, <code>Widget realization.md</code>, <code>Widget behavior.md</code>
 </p>
 
-<h3>11.6 Icon</h3>
+<h3>12.6 Icon</h3>
 
 <p>
 Optional section containing the icon used by tools when the FROG is represented as a reusable node.
@@ -556,7 +680,7 @@ Optional section containing the icon used by tools when the FROG is represented 
 Detailed specification: <code>Icon.md</code>
 </p>
 
-<h3>11.7 IDE Preferences</h3>
+<h3>12.7 IDE Preferences</h3>
 
 <p>
 Optional section containing IDE-facing preferences and recoverability metadata serialized with the FROG itself. This section belongs to the FROG Expression because a FROG behaves as a durable editable program unit and may embed source-level IDE preferences together with non-authoritative authoring recoverability aids.
@@ -570,7 +694,7 @@ Runtimes and other execution-facing systems MUST ignore this section for executi
 Detailed specification: <code>IDE preferences.md</code>
 </p>
 
-<h3>11.8 Cache</h3>
+<h3>12.8 Cache</h3>
 
 <p>
 Optional section containing derived, non-authoritative tooling data used to accelerate workflows.
@@ -594,9 +718,9 @@ cache       -&gt; non-authoritative tooling cache
 
 <hr/>
 
-<h2 id="cross-cutting-subsystems">12. Cross-Cutting Subsystems</h2>
+<h2 id="cross-cutting-subsystems">13. Cross-Cutting Subsystems</h2>
 
-<h3>12.1 Type System</h3>
+<h3>13.1 Type System</h3>
 
 <p>
 FROG v0.1 defines a normative built-in type system described in <code>Type.md</code>.
@@ -619,21 +743,21 @@ This subsystem applies wherever values are declared, connected, constrained, val
 The type system is cross-cutting. It is not represented as a dedicated required top-level section.
 </p>
 
-<h3>12.2 Widget Model</h3>
+<h3>13.2 Widget Instance Model</h3>
 
 <p>
-FROG v0.1 defines a normative widget model described in <code>Widget.md</code>.
+FROG v0.1 defines a normative widget instance model described in <code>Widget.md</code>.
 </p>
 
 <p>
-A widget is not merely a drawing. It is a structured UI object with identity, class, role, optional typed value, properties, methods, events, and optional attached parts.
+A widget is not merely a drawing. At source level, it is a structured UI object instance with identity, class reference, role, optional typed value, persisted instance-side properties where allowed, and optional source-side references to widget-oriented packages.
 </p>
 
 <p>
-The widget model is cross-cutting. It governs widget instances contained inside <code>front_panel</code> when that section is present.
+The widget instance model is cross-cutting. It governs widget instances contained inside <code>front_panel</code> when that section is present.
 </p>
 
-<h3>12.3 Widget Class Contract Model</h3>
+<h3>13.3 Widget Class Contract Model</h3>
 
 <p>
 FROG v0.1 defines a normative class-level widget contract model described in <code>Widget class contract.md</code>.
@@ -650,8 +774,8 @@ This model governs the stable object-surface contract behind widget classes, inc
   <li>property readability and writability,</li>
   <li>method invocability,</li>
   <li>event exposure,</li>
-  <li>profile and host gating,</li>
-  <li>IDE-facing synthesis constraints for property-node and method-node surfaces.</li>
+  <li>mutability boundaries,</li>
+  <li>addressing legality.</li>
 </ul>
 
 <p>
@@ -665,7 +789,7 @@ This class-level contract remains distinct from:
   <li>one private runtime realization.</li>
 </ul>
 
-<h3>12.4 Widget Interaction Model</h3>
+<h3>13.4 Widget Interaction Model</h3>
 
 <p>
 FROG v0.1 defines a normative widget interaction model described in <code>Widget interaction.md</code>.
@@ -676,6 +800,8 @@ This model governs diagram-level interaction with widgets through standardized m
 </p>
 
 <ul>
+  <li>natural value participation through <code>widget_value</code>,</li>
+  <li>object-style widget access through <code>widget_reference</code>,</li>
   <li>property read,</li>
   <li>property write,</li>
   <li>method invocation.</li>
@@ -689,7 +815,29 @@ These interactions are represented inside the executable diagram rather than as 
 The current source-level widget interaction model already uses standardized primitive identifiers in the <code>frog.ui.*</code> namespace. Future intrinsic UI primitive specifications and future profile-based capability expansions MUST remain consistent with that source-level interaction model and with the class-level member contracts declared for widgets.
 </p>
 
-<h3>12.5 Control-Structure and Local-Memory Source Dependencies</h3>
+<h3>13.5 Widget Package Boundary</h3>
+
+<p>
+FROG v0.1 defines a source-owned widget package boundary described in <code>Widget package.md</code>, <code>Widget realization.md</code>, and <code>Widget behavior.md</code>.
+</p>
+
+<p>
+This boundary governs how canonical source may refer to widget-oriented packages without collapsing architectural layers.
+</p>
+
+<p>
+In particular:
+</p>
+
+<ul>
+  <li><code>.frog</code> remains the canonical program source file,</li>
+  <li><code>.wfrog</code> defines widget-oriented package artifacts,</li>
+  <li>widget class law is not the same thing as widget realization,</li>
+  <li>widget realization is not the same thing as host-private rendering logic,</li>
+  <li>SVG is a visual asset layer, not hidden executable truth.</li>
+</ul>
+
+<h3>13.6 Control-Structure and Local-Memory Source Dependencies</h3>
 
 <p>
 FROG v0.1 includes source-facing representation rules for structures, explicit local memory, and feedback-cycle formation inside this directory:
@@ -713,14 +861,55 @@ Optional capability meaning             -&gt; Profiles/
 Widget instance-side source shape       -&gt; Expression/
 Widget class-side contract shape        -&gt; Expression/
 Diagram-side widget interaction shape   -&gt; Expression/
+Source-side widget package boundary     -&gt; Expression/
 Validated meaning of widget interaction -&gt; Language/ and related primitive/profile ownership
 </code></pre>
 
 <hr/>
 
-<h2 id="interface-connector-diagram-and-front-panel">13. Interface, Connector, Diagram, and Front Panel</h2>
+<h2 id="frog-and-wfrog-boundary">14. <code>.frog</code> and <code>.wfrog</code> Boundary</h2>
 
-<h3>13.1 Interface</h3>
+<p>
+The canonical program source artifact of FROG is the <code>.frog</code> file.
+</p>
+
+<p>
+The widget-oriented package artifact family uses the <code>.wfrog</code> extension.
+</p>
+
+<p>
+This boundary is intentional and normative.
+</p>
+
+<ul>
+  <li><code>.frog</code> owns canonical program source.</li>
+  <li><code>.frog</code> owns program sections such as <code>metadata</code>, <code>interface</code>, <code>diagram</code>, and optional <code>front_panel</code>.</li>
+  <li><code>.frog</code> owns widget instances used by the program when a front panel is present.</li>
+  <li><code>.wfrog</code> may own widget class package content, widget realization package content, or bundle content.</li>
+  <li><code>.wfrog</code> does not replace the canonical program-owned role of <code>.frog</code>.</li>
+</ul>
+
+<p>
+The following distinctions MUST remain explicit:
+</p>
+
+<pre><code>canonical program source      != widget-oriented package
+widget instance declaration   != widget class definition
+widget class law              != widget realization
+widget semantics              != SVG visual asset
+runtime interpretation        != language ownership
+one runtime implementation    != FROG widget definition
+</code></pre>
+
+<p>
+A canonical <code>.frog</code> file MAY reference <code>.wfrog</code> packages through source-owned structures such as widget instances. Those package references must remain explicit and reviewable.
+</p>
+
+<hr/>
+
+<h2 id="interface-connector-diagram-and-front-panel">15. Interface, Connector, Diagram, and Front Panel</h2>
+
+<h3>15.1 Interface</h3>
 
 <p>
 The interface defines the public typed boundary of a FROG.
@@ -737,7 +926,7 @@ It answers:
   <li>what their source-level metadata is.</li>
 </ul>
 
-<h3>13.2 Connector</h3>
+<h3>15.2 Connector</h3>
 
 <p>
 The connector defines how those public interface ports are projected graphically when the FROG is reused as a node inside another diagram.
@@ -747,7 +936,7 @@ The connector defines how those public interface ports are projected graphically
 The connector does not create new interface meaning. It is a graphical perimeter mapping of already-declared interface ports.
 </p>
 
-<h3>13.3 Diagram</h3>
+<h3>15.3 Diagram</h3>
 
 <p>
 The diagram is the authoritative executable graph of the FROG.
@@ -770,7 +959,7 @@ It defines:
 The diagram remains the executable authority. Front-panel composition and connector appearance do not replace it.
 </p>
 
-<h3>13.4 Front Panel</h3>
+<h3>15.4 Front Panel</h3>
 
 <p>
 When present, the front panel defines widgets, layout, and visual interaction for the FROG itself. It does not define the public API and it does not replace the executable graph.
@@ -806,11 +995,12 @@ The following distinction MUST also remain explicit:
 widget instance model   -&gt; instance-side object shape
 widget class contract   -&gt; class-side member legality and exposure
 widget interaction      -&gt; diagram-side executable object access
+widget packages         -&gt; related source-side package artifacts
 </code></pre>
 
 <hr/>
 
-<h2 id="source-well-formedness-and-structural-validity">14. Source Well-Formedness and Structural Validity</h2>
+<h2 id="source-well-formedness-and-structural-validity">16. Source Well-Formedness and Structural Validity</h2>
 
 <p>
 A canonical <code>.frog</code> file MUST first be loadable as source.
@@ -829,7 +1019,8 @@ Structural validity concerns whether the source:
   <li>uses the correct source-owned section shapes,</li>
   <li>uses canonical field structures where required,</li>
   <li>respects source-level identity and containment rules,</li>
-  <li>respects source-level addressing constraints for cross-cutting subsystems such as widget interaction.</li>
+  <li>respects source-level addressing constraints for cross-cutting subsystems such as widget interaction,</li>
+  <li>uses source-owned package references in structurally valid locations when such references are present.</li>
 </ul>
 
 <p>
@@ -840,9 +1031,13 @@ Structural validity does not by itself establish the full validated meaning of t
 Structural validity also does not by itself define cross-version policy. The repository-wide cumulative version model and related transition doctrine remain centralized in <code>Versioning/Readme.md</code>.
 </p>
 
+<p>
+Likewise, structural validity of source-owned package references does not by itself establish the full semantic validity of widget law, realization law, or runtime support claims.
+</p>
+
 <hr/>
 
-<h2 id="execution-relevance-validation-and-derivation-boundary">15. Execution Relevance, Validation, and Derivation Boundary</h2>
+<h2 id="execution-relevance-validation-and-derivation-boundary">17. Execution Relevance, Validation, and Derivation Boundary</h2>
 
 <p>
 Expression/ governs canonical source before semantic validation and before open execution-facing derivation.
@@ -868,7 +1063,8 @@ Some source constructs are clearly execution-relevant, including:
   <li>diagram connectivity,</li>
   <li>structure boundaries,</li>
   <li>explicit local memory,</li>
-  <li>widget interaction expressed in the diagram.</li>
+  <li>widget interaction expressed in the diagram,</li>
+  <li>source-visible widget-package references that later guide widget-class and realization interpretation.</li>
 </ul>
 
 <p>
@@ -877,7 +1073,7 @@ Even so, Expression/ owns them only as source representation and structural vali
 
 <hr/>
 
-<h2 id="canonical-formatting-and-ordering">16. Canonical Formatting and Ordering</h2>
+<h2 id="canonical-formatting-and-ordering">18. Canonical Formatting and Ordering</h2>
 
 <p>
 Canonical source SHOULD remain stable, explicit, and diff-friendly.
@@ -898,9 +1094,13 @@ Tools SHOULD preserve:
 Non-authoritative IDE or cache sections MUST NOT be allowed to obscure the authoritative source meaning of required executable sections.
 </p>
 
+<p>
+Likewise, source-owned references to widget packages SHOULD remain explicit and readable rather than being hidden inside one implementation's private resolution metadata.
+</p>
+
 <hr/>
 
-<h2 id="normative-terminology">17. Normative Terminology</h2>
+<h2 id="normative-terminology">19. Normative Terminology</h2>
 
 <p>
 The key words <strong>MUST</strong>, <strong>MUST NOT</strong>, <strong>SHOULD</strong>, <strong>SHOULD NOT</strong>, and <strong>MAY</strong> in this document are to be interpreted as normative requirement language.
@@ -912,7 +1112,7 @@ When this document describes ownership boundaries, those boundaries are normativ
 
 <hr/>
 
-<h2 id="status">18. Status</h2>
+<h2 id="status">20. Status</h2>
 
 <p>
 This directory defines the canonical source layer of the published FROG specification.
@@ -929,9 +1129,13 @@ Some parts of the source model are intentionally conservative in v0.1 so that:
   <li>later source-format versions can remain cumulative extensions of earlier valid forms rather than silent replacements.</li>
 </ul>
 
+<p>
+The active closure direction for the widget architecture in this layer is to keep the canonical program source compact while making the source-owned boundary to widget-oriented <code>.wfrog</code> packages explicit, inspectable, and multi-runtime compatible.
+</p>
+
 <hr/>
 
-<h2 id="license">19. License</h2>
+<h2 id="license">21. License</h2>
 
 <p>
 See the repository-level license information for the licensing terms governing this specification.
