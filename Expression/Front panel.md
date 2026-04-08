@@ -5,7 +5,7 @@
 <h1 align="center">FROG Front Panel</h1>
 
 <p align="center">
-  <strong>Normative source model for front-panel composition, widget instances, placement, and source-owned presentation references</strong><br/>
+  <strong>Normative source model for front-panel composition, widget instances, panel-owned layout intent, and source-visible references to widget-oriented packages</strong><br/>
   <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -14,24 +14,27 @@
 <h2>Contents</h2>
 <ul>
   <li><a href="#overview">1. Overview</a></li>
-  <li><a href="#scope">2. Scope</a></li>
-  <li><a href="#architectural-position">3. Architectural Position</a></li>
-  <li><a href="#ownership-boundary">4. Ownership Boundary</a></li>
-  <li><a href="#location-in-a-frog-file">5. Location in a <code>.frog</code> File</a></li>
-  <li><a href="#front-panel-structure">6. Front-Panel Structure</a></li>
-  <li><a href="#widget-instances">7. Widget Instances</a></li>
-  <li><a href="#composition-and-nesting">8. Composition and Nesting</a></li>
-  <li><a href="#canvas-metadata">9. Canvas Metadata</a></li>
-  <li><a href="#source-persisted-presentation-metadata">10. Source-Persisted Presentation Metadata</a></li>
-  <li><a href="#widget-asset-references">11. Widget Asset References</a></li>
-  <li><a href="#svg-visual-posture">12. SVG Visual Posture</a></li>
-  <li><a href="#relation-with-the-diagram">13. Relation with the Diagram</a></li>
-  <li><a href="#relation-with-widget-class-law">14. Relation with Widget Class Law</a></li>
-  <li><a href="#relation-with-wfrog-packages">15. Relation with <code>.wfrog</code> Packages</a></li>
-  <li><a href="#validation-rules">16. Validation Rules</a></li>
-  <li><a href="#minimal-v01-posture">17. Minimal v0.1 Posture</a></li>
-  <li><a href="#example">18. Example</a></li>
-  <li><a href="#summary">19. Summary</a></li>
+  <li><a href="#why-this-document-exists">2. Why This Document Exists</a></li>
+  <li><a href="#scope">3. Scope</a></li>
+  <li><a href="#architectural-position">4. Architectural Position</a></li>
+  <li><a href="#ownership-boundary">5. Ownership Boundary</a></li>
+  <li><a href="#location-in-a-frog-file">6. Location in a <code>.frog</code> File</a></li>
+  <li><a href="#front-panel-core-posture">7. Front-Panel Core Posture</a></li>
+  <li><a href="#front-panel-structure">8. Front-Panel Structure</a></li>
+  <li><a href="#widget-instances">9. Widget Instances</a></li>
+  <li><a href="#composition-and-nesting">10. Composition and Nesting</a></li>
+  <li><a href="#canvas-and-layout-intent">11. Canvas and Layout Intent</a></li>
+  <li><a href="#source-owned-instance-metadata">12. Source-Owned Instance Metadata</a></li>
+  <li><a href="#relation-with-widget-class-law">13. Relation with Widget Class Law</a></li>
+  <li><a href="#relation-with-wfrog-packages">14. Relation with <code>.wfrog</code> Packages</a></li>
+  <li><a href="#widget-package-references">15. Widget Package References</a></li>
+  <li><a href="#svg-visual-posture">16. SVG Visual Posture</a></li>
+  <li><a href="#relation-with-the-diagram">17. Relation with the Diagram</a></li>
+  <li><a href="#runtime-and-host-interpretation-boundary">18. Runtime and Host Interpretation Boundary</a></li>
+  <li><a href="#validation-rules">19. Validation Rules</a></li>
+  <li><a href="#minimal-v01-posture">20. Minimal v0.1 Posture</a></li>
+  <li><a href="#example">21. Example</a></li>
+  <li><a href="#summary">22. Summary</a></li>
 </ul>
 
 <hr/>
@@ -39,8 +42,8 @@
 <h2 id="overview">1. Overview</h2>
 
 <p>
-The <code>front_panel</code> section defines the canonical source-level declaration of the user-facing widget composition of a FROG.
-It is the source home of the serialized widget tree, placement metadata, canvas metadata, and source-owned presentation references associated with widget instances.
+The <code>front_panel</code> section defines the canonical source-level declaration of the user-facing panel composition of a FROG program.
+It is the source home of widget instances, panel composition, containment, layout intent, and source-visible references to widget-oriented package artifacts.
 </p>
 
 <p>
@@ -48,11 +51,11 @@ The front panel may declare:
 </p>
 
 <ul>
-  <li>which widget instances exist,</li>
-  <li>where they are placed,</li>
-  <li>how they are nested,</li>
-  <li>which source-owned instance properties are persisted,</li>
-  <li>which widget-oriented assets are referenced by those instances.</li>
+  <li>which widget instances participate in the panel,</li>
+  <li>which widget class each instance references,</li>
+  <li>which panel-owned layout and placement metadata are persisted,</li>
+  <li>which source-owned instance metadata is persisted when allowed by the active widget class contract,</li>
+  <li>which widget-oriented packages are referenced by the authored source.</li>
 </ul>
 
 <p>
@@ -61,13 +64,38 @@ The diagram remains the authoritative executable graph of the FROG.
 </p>
 
 <p>
-The front panel also does not define full widget class law and does not define host rendering internals.
+The front panel also does not define complete widget class law, runtime-private widget structures, or host rendering internals.
 Those concerns belong to distinct specification layers.
 </p>
 
 <hr/>
 
-<h2 id="scope">2. Scope</h2>
+<h2 id="why-this-document-exists">2. Why This Document Exists</h2>
+
+<p>
+FROG must preserve a clear architectural distinction between:
+</p>
+
+<ul>
+  <li>the canonical authored program source,</li>
+  <li>the class-level law of widgets,</li>
+  <li>the package format used to publish widget-oriented artifacts,</li>
+  <li>the runtime interpretation of those artifacts,</li>
+  <li>the host-side realization of the live front panel.</li>
+</ul>
+
+<p>
+Without that distinction, the front panel becomes overloaded.
+It starts to absorb class law, host realization details, and visual package internals that do not belong to canonical program source.
+</p>
+
+<p>
+This document therefore defines the front panel as a disciplined source-level composition layer rather than as a catch-all UI definition surface.
+</p>
+
+<hr/>
+
+<h2 id="scope">3. Scope</h2>
 
 <p>
 This document standardizes:
@@ -75,12 +103,11 @@ This document standardizes:
 
 <ul>
   <li>the top-level source shape of the <code>front_panel</code> section,</li>
-  <li>source ownership of widget composition,</li>
-  <li>source ownership of widget containment and placement,</li>
-  <li>canvas metadata,</li>
-  <li>the source-persistence posture of instance-level presentation properties,</li>
-  <li>the source-level posture of widget-oriented asset references,</li>
-  <li>the architectural boundary between front-panel serialization and execution semantics.</li>
+  <li>source ownership of widget composition and containment,</li>
+  <li>source ownership of panel-level layout intent,</li>
+  <li>source-visible references to widget-oriented packages,</li>
+  <li>the relation between front-panel serialization and widget class law,</li>
+  <li>the relation between front-panel serialization and diagram-side executable interaction.</li>
 </ul>
 
 <p>
@@ -88,30 +115,32 @@ This document does not standardize:
 </p>
 
 <ul>
-  <li>public interface semantics,</li>
+  <li>public interface meaning,</li>
   <li>diagram execution semantics,</li>
   <li>the full class-level legality of widget properties, methods, events, and parts,</li>
-  <li>diagram-side UI interaction primitive semantics,</li>
-  <li>one mandatory rendering toolkit,</li>
-  <li>pixel-identical rendering across hosts.</li>
+  <li>one mandatory host toolkit,</li>
+  <li>pixel-identical rendering across hosts,</li>
+  <li>runtime-private UI object structures.</li>
 </ul>
 
 <hr/>
 
-<h2 id="architectural-position">3. Architectural Position</h2>
+<h2 id="architectural-position">4. Architectural Position</h2>
 
 <p>
-The front panel is a source-owned composition layer.
-It sits beside, but not above, the diagram.
+The front panel is a source-owned panel composition layer.
+It sits beside the diagram, not above it, and it does not replace external widget-oriented packages.
 </p>
 
 <p>
 The required architectural distinction is:
 </p>
 
-<pre><code>front_panel serialization
+<pre><code>front_panel source composition
     !=
 widget class law
+    !=
+widget-oriented package content
     !=
 diagram executable interaction
     !=
@@ -122,12 +151,12 @@ host rendering strategy
 
 <p>
 This distinction is mandatory.
-If these layers are blurred, source persistence, object legality, runtime interpretation, and rendering portability become difficult to reason about and difficult to validate.
+If these layers are blurred, source ownership, legality, interpretation, and portability become difficult to reason about and difficult to validate.
 </p>
 
 <hr/>
 
-<h2 id="ownership-boundary">4. Ownership Boundary</h2>
+<h2 id="ownership-boundary">5. Ownership Boundary</h2>
 
 <p>
 <code>Front panel.md</code> owns:
@@ -136,9 +165,9 @@ If these layers are blurred, source persistence, object legality, runtime interp
 <ul>
   <li>source-level panel composition,</li>
   <li>source-level widget containment,</li>
-  <li>source-level placement and canvas metadata,</li>
-  <li>source-persisted instance metadata when allowed by the widget class contract,</li>
-  <li>source-visible references to widget-oriented assets.</li>
+  <li>source-level layout intent and canvas metadata,</li>
+  <li>source-owned instance metadata when allowed by widget class law,</li>
+  <li>source-visible references to widget-oriented packages.</li>
 </ul>
 
 <p>
@@ -150,13 +179,14 @@ If these layers are blurred, source persistence, object legality, runtime interp
   <li>diagram executable semantics,</li>
   <li>complete widget class legality,</li>
   <li>object-style interaction primitive law,</li>
+  <li>the full machine-readable definition of widget-oriented packages,</li>
   <li>runtime-private live object structure,</li>
   <li>host-private rendering internals.</li>
 </ul>
 
 <hr/>
 
-<h2 id="location-in-a-frog-file">5. Location in a <code>.frog</code> File</h2>
+<h2 id="location-in-a-frog-file">6. Location in a <code>.frog</code> File</h2>
 
 <p>
 When present, the front panel appears as an optional top-level section of a <code>.frog</code> file.
@@ -178,7 +208,32 @@ This does not affect the validity of the FROG as an executable program.
 
 <hr/>
 
-<h2 id="front-panel-structure">6. Front-Panel Structure</h2>
+<h2 id="front-panel-core-posture">7. Front-Panel Core Posture</h2>
+
+<p>
+The front panel is the canonical source-level declaration of:
+</p>
+
+<ul>
+  <li>which widget instances exist in the panel,</li>
+  <li>how those instances are composed and nested,</li>
+  <li>which panel-owned layout intent is persisted in source,</li>
+  <li>which external widget-oriented packages are referenced by source.</li>
+</ul>
+
+<p>
+The front panel is not the place where full widget class definitions are authored.
+It is also not the place where host realization internals are fully authored.
+Those concerns belong to widget class contracts and <code>.wfrog</code> packages.
+</p>
+
+<p>
+Accordingly, a front panel is source-visible and canonical, but intentionally incomplete with respect to full realization law.
+</p>
+
+<hr/>
+
+<h2 id="front-panel-structure">8. Front-Panel Structure</h2>
 
 <p>
 The canonical source shape of the front panel object is:
@@ -186,8 +241,8 @@ The canonical source shape of the front panel object is:
 
 <pre><code>"front_panel": {
   "canvas": {},
-  "widgets": [],
-  "ui_libraries": []
+  "package_refs": [],
+  "widgets": []
 }</code></pre>
 
 <p>
@@ -195,20 +250,20 @@ Fields:
 </p>
 
 <ul>
-  <li><code>canvas</code> — optional design-time panel or coordinate-space metadata,</li>
-  <li><code>widgets</code> — top-level widget instances of the panel,</li>
-  <li><code>ui_libraries</code> — optional list of UI libraries, package families, or namespaces referenced by the panel.</li>
+  <li><code>canvas</code> — optional panel-level layout or coordinate-space metadata,</li>
+  <li><code>package_refs</code> — optional list of referenced widget-oriented packages relevant to this panel,</li>
+  <li><code>widgets</code> — top-level widget instances in the panel.</li>
 </ul>
 
 <p>
 All fields are optional.
 If present, they MUST follow the declared structure.
-Widget instance metadata belongs inside widget instances, not in a separate front-panel semantic layer.
+Widget instance metadata belongs inside widget instances rather than in a separate hidden semantic layer.
 </p>
 
 <hr/>
 
-<h2 id="widget-instances">7. Widget Instances</h2>
+<h2 id="widget-instances">9. Widget Instances</h2>
 
 <p>
 Widgets are serialized as source-level instances following the widget instance model defined in <code>Widget.md</code>.
@@ -222,12 +277,12 @@ Typical widget instance fields include:
   <li><code>id</code>,</li>
   <li><code>role</code>,</li>
   <li><code>class_ref</code>,</li>
+  <li><code>instance_ref</code> when panel instance identity is distinguished from diagram identity,</li>
   <li><code>value_type</code> when applicable,</li>
   <li><code>layout</code>,</li>
   <li><code>props</code>,</li>
-  <li><code>parts</code>,</li>
   <li><code>children</code>,</li>
-  <li><code>widget_assets</code>.</li>
+  <li><code>package_refs</code>.</li>
 </ul>
 
 <p>
@@ -237,7 +292,8 @@ Example:
 <pre><code>{
   "id": "ctrl_count",
   "role": "control",
-  "class_ref": "frog.ui.standard.numeric_control",
+  "class_ref": "frog.widgets.numeric_control",
+  "instance_ref": "ctrl_count",
   "value_type": "u16",
   "layout": {
     "x": 20,
@@ -246,13 +302,11 @@ Example:
     "height": 32
   },
   "props": {
-    "caption": "Count",
-    "face_color": "#D0D0D0"
+    "label": "Count"
   },
-  "widget_assets": {
-    "class_package": "./ui/classes/standard-numeric.wfrog",
-    "realization_package": "./ui/realizations/default-theme.wfrog"
-  }
+  "package_refs": [
+    "./ui/accumulator_panel.wfrog"
+  ]
 }</code></pre>
 
 <p>
@@ -262,10 +316,10 @@ It does not redefine widget class semantics, member legality, member accessibili
 
 <hr/>
 
-<h2 id="composition-and-nesting">8. Composition and Nesting</h2>
+<h2 id="composition-and-nesting">10. Composition and Nesting</h2>
 
 <p>
-The front panel defines a widget tree.
+The front panel defines a source-owned widget tree.
 Top-level widgets appear in <code>front_panel.widgets</code>.
 Container widgets MAY define child widgets through <code>children</code>.
 </p>
@@ -287,10 +341,10 @@ A runtime or host MAY realize the same source composition using a different inte
 
 <hr/>
 
-<h2 id="canvas-metadata">9. Canvas Metadata</h2>
+<h2 id="canvas-and-layout-intent">11. Canvas and Layout Intent</h2>
 
 <p>
-The optional <code>canvas</code> object carries design-time panel geometry or coordinate-space metadata.
+The optional <code>canvas</code> object carries panel-level layout intent or design-time coordinate-space metadata.
 </p>
 
 <p>
@@ -299,26 +353,31 @@ Example:
 
 <pre><code>"canvas": {
   "width": 460,
-  "height": 170
+  "height": 170,
+  "coordinate_space": "panel_pixels"
 }</code></pre>
 
 <p>
-Canvas metadata:
+Canvas and layout intent:
 </p>
 
 <ul>
-  <li>MAY guide designer layout,</li>
+  <li>MAY guide design-time layout,</li>
   <li>MAY guide preview sizing,</li>
   <li>MAY guide initial host window sizing,</li>
   <li>MUST NOT define execution semantics by itself.</li>
 </ul>
 
+<p>
+Likewise, widget <code>layout</code> fields define source-owned placement intent, not executable graph behavior.
+</p>
+
 <hr/>
 
-<h2 id="source-persisted-presentation-metadata">10. Source-Persisted Presentation Metadata</h2>
+<h2 id="source-owned-instance-metadata">12. Source-Owned Instance Metadata</h2>
 
 <p>
-A widget instance MAY contain source-persisted presentation metadata when the active widget class contract allows it.
+A widget instance MAY contain source-owned instance metadata when the active widget class contract allows it.
 </p>
 
 <p>
@@ -326,11 +385,10 @@ Typical examples include:
 </p>
 
 <ul>
-  <li><code>caption</code>,</li>
-  <li><code>face_color</code>,</li>
-  <li><code>border_color</code>,</li>
-  <li><code>text_color</code>,</li>
-  <li>other instance-level presentation members explicitly allowed by the widget class.</li>
+  <li><code>label</code>,</li>
+  <li>formatting posture,</li>
+  <li>default visual state references,</li>
+  <li>instance-level options explicitly allowed by the widget class.</li>
 </ul>
 
 <p>
@@ -338,14 +396,14 @@ For baseline source serialization, such metadata SHOULD normally appear inside <
 </p>
 
 <p>
-Presentation metadata:
+Source-owned instance metadata:
 </p>
 
 <ul>
-  <li>MUST remain source-owned instance metadata,</li>
   <li>MUST remain subordinate to widget class legality,</li>
   <li>MUST remain distinct from diagram executable interaction,</li>
-  <li>MUST NOT create execution semantics by mere presence in source.</li>
+  <li>MUST remain distinct from host-private realization internals,</li>
+  <li>MUST NOT create execution semantics merely by appearing in source.</li>
 </ul>
 
 <p>
@@ -354,128 +412,16 @@ The following distinction MUST remain explicit:
 
 <pre><code>widget primary value
     !=
-presentation property
+source-owned instance metadata
     !=
-widget-oriented asset reference
+panel-owned layout intent
+    !=
+widget-oriented package reference
 </code></pre>
 
 <hr/>
 
-<h2 id="widget-asset-references">11. Widget Asset References</h2>
-
-<p>
-A widget instance MAY reference widget-oriented assets through a source-visible field such as <code>widget_assets</code>.
-</p>
-
-<p>
-Such references are source-owned declarations pointing to artifacts that may define class law, realization information, or both.
-They are not themselves executable graph operations.
-</p>
-
-<p>
-Typical references include:
-</p>
-
-<ul>
-  <li>a class package reference,</li>
-  <li>a realization package reference,</li>
-  <li>other future widget-oriented package references defined by later specifications.</li>
-</ul>
-
-<p>
-Example:
-</p>
-
-<pre><code>{
-  "widget_assets": {
-    "class_package": "./ui/classes/standard-numeric.wfrog",
-    "realization_package": "./ui/realizations/default-theme.wfrog"
-  }
-}</code></pre>
-
-<p>
-Rules:
-</p>
-
-<ul>
-  <li>asset references MUST remain source-visible and inspectable,</li>
-  <li>asset references MUST NOT by themselves redefine class identity,</li>
-  <li>asset references MUST NOT create hidden executable behavior,</li>
-  <li>unsupported asset families MAY be ignored or diagnosed by a host or runtime according to profile and capability claims.</li>
-</ul>
-
-<hr/>
-
-<h2 id="svg-visual-posture">12. SVG Visual Posture</h2>
-
-<p>
-When a widget realization package or another permitted widget-oriented asset references SVG content, that SVG is a visual resource, not executable truth.
-</p>
-
-<p>
-Accordingly, SVG-backed realization content:
-</p>
-
-<ul>
-  <li>MAY provide a designer preview or host skin,</li>
-  <li>MAY define named visual layers or anchors,</li>
-  <li>MAY support scalable visual rendering,</li>
-  <li>MUST NOT define hidden methods, events, or dataflow meaning,</li>
-  <li>MUST NOT replace widget class law as the normative owner of widget behavior.</li>
-</ul>
-
-<p>
-The required distinction remains:
-</p>
-
-<pre><code>front_panel composition
-    !=
-source-persisted presentation metadata
-    !=
-widget class law
-    !=
-SVG visual resource content
-</code></pre>
-
-<p>
-A host MAY:
-</p>
-
-<ul>
-  <li>render SVG-backed realization faithfully,</li>
-  <li>substitute a compatible native realization,</li>
-  <li>ignore unsupported SVG-specific details,</li>
-  <li>or ignore an unsupported realization package entirely,</li>
-  <li>but it MUST preserve the source-owned meaning of the widget instance.</li>
-</ul>
-
-<hr/>
-
-<h2 id="relation-with-the-diagram">13. Relation with the Diagram</h2>
-
-<p>
-The front panel does not define executable behavior.
-The diagram remains the authoritative executable graph of the FROG.
-</p>
-
-<p>
-Widget participation in execution is expressed in the diagram, not in the front panel itself.
-Canonical diagram interaction mechanisms include:
-</p>
-
-<ul>
-  <li><code>widget_value</code> — natural access to a widget primary value,</li>
-  <li><code>widget_reference</code> — object-style access anchor,</li>
-  <li><code>frog.ui.property_read</code>, <code>frog.ui.property_write</code>, and <code>frog.ui.method_invoke</code> — executable UI interaction primitives when allowed.</li>
-</ul>
-
-<p>
-A source-persisted asset reference or presentation property does not become executable interaction merely because it appears in source.
-</p>
-
-<hr/>
-
-<h2 id="relation-with-widget-class-law">14. Relation with Widget Class Law</h2>
+<h2 id="relation-with-widget-class-law">13. Relation with Widget Class Law</h2>
 
 <p>
 The front panel serializes widget instances.
@@ -494,20 +440,20 @@ Accordingly:
 
 <hr/>
 
-<h2 id="relation-with-wfrog-packages">15. Relation with <code>.wfrog</code> Packages</h2>
+<h2 id="relation-with-wfrog-packages">14. Relation with <code>.wfrog</code> Packages</h2>
 
 <p>
-The front panel MAY reference one or more <code>.wfrog</code> packages through widget instances.
+The front panel MAY reference one or more <code>.wfrog</code> packages.
+Those packages remain external widget-oriented artifacts rather than absorbed front-panel content.
 </p>
 
 <p>
-Typical package roles include:
+In v0.1, the preferred package kinds are:
 </p>
 
 <ul>
-  <li><code>widget_class_package</code> — machine-readable class law,</li>
-  <li><code>widget_realization_package</code> — host-facing realization definitions,</li>
-  <li><code>widget_bundle_package</code> — combined packaging form.</li>
+  <li><code>widget_class_package</code> — machine-readable widget class content,</li>
+  <li><code>front_panel_package</code> — machine-readable panel realization content.</li>
 </ul>
 
 <p>
@@ -516,7 +462,147 @@ The front panel references these packages but does not absorb their ownership.
 
 <hr/>
 
-<h2 id="validation-rules">16. Validation Rules</h2>
+<h2 id="widget-package-references">15. Widget Package References</h2>
+
+<p>
+A front panel MAY reference widget-oriented packages through:
+</p>
+
+<ul>
+  <li>panel-level <code>package_refs</code>,</li>
+  <li>widget-level <code>package_refs</code>,</li>
+  <li>future source-visible forms defined by later specifications.</li>
+</ul>
+
+<p>
+Such references are source-owned declarations pointing to artifacts that may define class content, front-panel package content, visual assets, or host realization metadata.
+They are not themselves executable graph operations.
+</p>
+
+<p>
+Example:
+</p>
+
+<pre><code>"package_refs": [
+  "./ui/accumulator_panel.wfrog"
+]</code></pre>
+
+<p>
+Rules:
+</p>
+
+<ul>
+  <li>package references MUST remain source-visible and inspectable,</li>
+  <li>package references MUST NOT by themselves redefine class identity,</li>
+  <li>package references MUST NOT create hidden executable behavior,</li>
+  <li>unsupported package families MAY be ignored or diagnosed by a runtime or host according to profile and capability claims.</li>
+</ul>
+
+<hr/>
+
+<h2 id="svg-visual-posture">16. SVG Visual Posture</h2>
+
+<p>
+When a referenced <code>.wfrog</code> package or another permitted widget-oriented artifact references SVG content, that SVG is a visual resource rather than executable truth.
+</p>
+
+<p>
+Accordingly, SVG-backed realization content:
+</p>
+
+<ul>
+  <li>MAY provide a visual skin, face template, or scalable panel resource,</li>
+  <li>MAY define named visual layers or anchors,</li>
+  <li>MAY support part placement, clipping, or scalable decoration,</li>
+  <li>MUST NOT define hidden methods, events, or dataflow meaning,</li>
+  <li>MUST NOT replace widget class law as the normative owner of widget behavior,</li>
+  <li>MUST NOT be treated as the normative owner of dynamic widget values or dynamic widget text.</li>
+</ul>
+
+<p>
+This means that a static SVG asset MUST NOT be treated as the source of the live numeric value of a numeric control or indicator.
+Likewise, a static SVG asset MUST NOT be treated as the normative owner of changing label text, runtime state text, or object-style widget behavior.
+</p>
+
+<p>
+The required distinction remains:
+</p>
+
+<pre><code>front_panel composition
+    !=
+source-owned instance metadata
+    !=
+widget class law
+    !=
+widget-oriented package content
+    !=
+SVG visual resource content
+</code></pre>
+
+<p>
+A host MAY:
+</p>
+
+<ul>
+  <li>render SVG-backed realization faithfully,</li>
+  <li>substitute a compatible native realization,</li>
+  <li>ignore unsupported SVG-specific visual details,</li>
+  <li>or ignore an unsupported realization package entirely,</li>
+  <li>but it MUST preserve the source-owned meaning of the widget instance.</li>
+</ul>
+
+<hr/>
+
+<h2 id="relation-with-the-diagram">17. Relation with the Diagram</h2>
+
+<p>
+The front panel does not define executable behavior.
+The diagram remains the authoritative executable graph of the FROG.
+</p>
+
+<p>
+Widget participation in execution is expressed in the diagram, not in the front panel itself.
+Canonical diagram interaction mechanisms include:
+</p>
+
+<ul>
+  <li><code>widget_value</code> — natural access to a widget primary value,</li>
+  <li><code>widget_reference</code> — object-style access anchor,</li>
+  <li><code>frog.ui.property_read</code>, <code>frog.ui.property_write</code>, and <code>frog.ui.method_invoke</code> — executable UI interaction primitives when allowed.</li>
+</ul>
+
+<p>
+A source-owned package reference, a layout field, or a visual metadata field does not become executable interaction merely because it appears in source.
+</p>
+
+<hr/>
+
+<h2 id="runtime-and-host-interpretation-boundary">18. Runtime and Host Interpretation Boundary</h2>
+
+<p>
+A runtime interprets the front panel together with the relevant widget class content and any referenced widget-oriented packages.
+A host realizes the live panel using its rendering toolkit and platform capabilities.
+</p>
+
+<p>
+Accordingly:
+</p>
+
+<ul>
+  <li>the runtime interprets source-owned widget identity and referenced package content,</li>
+  <li>the runtime constructs live widget objects according to published class and package rules,</li>
+  <li>the host realizes those live objects visually and interactively,</li>
+  <li>the host does not become the owner of canonical program meaning.</li>
+</ul>
+
+<p>
+One runtime implementation MUST NOT redefine the front-panel meaning of the language.
+One host toolkit MUST NOT become the definition of FROG panel semantics.
+</p>
+
+<hr/>
+
+<h2 id="validation-rules">19. Validation Rules</h2>
 
 <p>
 Validators MUST verify at least that:
@@ -528,8 +614,8 @@ Validators MUST verify at least that:
   <li>widget identifiers are unique across the full widget tree,</li>
   <li>each widget instance is structurally valid,</li>
   <li>persisted instance metadata is recognized by the active widget class contract when such validation is available,</li>
-  <li>widget-oriented asset references follow the published source shape,</li>
-  <li>source-persisted presentation metadata is not misinterpreted as executable semantics.</li>
+  <li>referenced widget-oriented packages follow the published source shape,</li>
+  <li>source-owned panel content is not misinterpreted as executable graph semantics.</li>
 </ul>
 
 <p>
@@ -538,13 +624,14 @@ Validators SHOULD additionally diagnose:
 
 <ul>
   <li>unsupported package families under the active profile,</li>
-  <li>structurally valid but unsupported realization references under the active host claim,</li>
-  <li>attempts to blur source presentation with executable behavior.</li>
+  <li>structurally valid but unsupported realization references under the active runtime or host claim,</li>
+  <li>attempts to blur source-owned metadata with hidden executable behavior,</li>
+  <li>attempts to use static SVG content as the normative owner of dynamic widget values or dynamic widget text.</li>
 </ul>
 
 <hr/>
 
-<h2 id="minimal-v01-posture">17. Minimal v0.1 Posture</h2>
+<h2 id="minimal-v01-posture">20. Minimal v0.1 Posture</h2>
 
 <p>
 A minimal v0.1 front panel MAY contain:
@@ -554,8 +641,8 @@ A minimal v0.1 front panel MAY contain:
   <li>one top-level numeric control widget,</li>
   <li>one top-level numeric indicator widget,</li>
   <li>one canvas object,</li>
-  <li>source-persisted instance properties in <code>props</code>,</li>
-  <li>source-visible references to widget-oriented packages where needed.</li>
+  <li>source-owned instance metadata in <code>props</code>,</li>
+  <li>one or more source-visible references to widget-oriented packages where needed.</li>
 </ul>
 
 <p>
@@ -565,25 +652,31 @@ For that posture:
 <ul>
   <li>the front panel remains a serious but bounded source composition layer,</li>
   <li>widget class law remains externalized and inspectable,</li>
-  <li>realization remains host-facing,</li>
+  <li>package content remains externalized and inspectable,</li>
+  <li>runtime interpretation remains distinct from host realization,</li>
   <li>the diagram remains the sole owner of executable graph semantics.</li>
 </ul>
 
 <hr/>
 
-<h2 id="example">18. Example</h2>
+<h2 id="example">21. Example</h2>
 
 <pre><code>{
   "front_panel": {
     "canvas": {
       "width": 460,
-      "height": 170
+      "height": 170,
+      "coordinate_space": "panel_pixels"
     },
+    "package_refs": [
+      "./ui/accumulator_panel.wfrog"
+    ],
     "widgets": [
       {
         "id": "ctrl_count",
         "role": "control",
-        "class_ref": "frog.ui.standard.numeric_control",
+        "class_ref": "frog.widgets.numeric_control",
+        "instance_ref": "ctrl_count",
         "value_type": "u16",
         "layout": {
           "x": 20,
@@ -592,18 +685,14 @@ For that posture:
           "height": 32
         },
         "props": {
-          "caption": "Count",
-          "face_color": "#D0D0D0"
-        },
-        "widget_assets": {
-          "class_package": "./ui/classes/standard-numeric.wfrog",
-          "realization_package": "./ui/realizations/default-theme.wfrog"
+          "label": "Count"
         }
       },
       {
         "id": "ind_total",
         "role": "indicator",
-        "class_ref": "frog.ui.standard.numeric_indicator",
+        "class_ref": "frog.widgets.numeric_indicator",
+        "instance_ref": "ind_total",
         "value_type": "u16",
         "layout": {
           "x": 220,
@@ -612,12 +701,7 @@ For that posture:
           "height": 32
         },
         "props": {
-          "caption": "Total",
-          "face_color": "#E0E0E0"
-        },
-        "widget_assets": {
-          "class_package": "./ui/classes/standard-numeric.wfrog",
-          "realization_package": "./ui/realizations/default-theme.wfrog"
+          "label": "Total"
         }
       }
     ]
@@ -626,7 +710,7 @@ For that posture:
 
 <hr/>
 
-<h2 id="summary">19. Summary</h2>
+<h2 id="summary">22. Summary</h2>
 
 <p>
 This document defines the canonical source model for front-panel composition.
@@ -638,12 +722,13 @@ It stabilizes:
 
 <ul>
   <li>source-owned widget composition,</li>
-  <li>source-owned placement and canvas metadata,</li>
-  <li>source-persisted instance presentation metadata,</li>
-  <li>source-visible widget-oriented asset references,</li>
+  <li>source-owned containment and layout intent,</li>
+  <li>source-owned instance metadata when allowed by class law,</li>
+  <li>source-visible references to widget-oriented packages,</li>
   <li>and a strict separation between front-panel serialization and executable graph meaning.</li>
 </ul>
 
 <p>
-This allows a FROG program to persist a credible front face in canonical source while preserving the architectural rule that the diagram remains the authoritative executable graph.
+It also makes explicit that visual assets such as SVG remain visual resources rather than hidden semantic truth.
+Dynamic widget values, dynamic widget text, object-style widget access, and executable UI behavior remain owned by the language, widget class, package, runtime, and host boundaries defined elsewhere in the specification corpus.
 </p>
