@@ -2108,6 +2108,13 @@
                   "children": []
                 },
                 {
+                  "key": "implementations/reference/runtime/python/",
+                  "title": "python",
+                  "path": "/Implementations/Reference/Runtime/python/Readme.md",
+                  "kind": "category",
+                  "children": []
+                },
+                {
                   "key": "implementations/reference/runtime/rust/",
                   "title": "rust",
                   "path": "/Implementations/Reference/Runtime/rust/Readme.md",
@@ -2499,6 +2506,7 @@
     "/Implementations/Reference/Runtime/responsibilities.md",
     "/Implementations/Reference/Runtime/reference_runtime.py",
     "/Implementations/Reference/Runtime/run_slice05_contract.py",
+    "/Implementations/Reference/Runtime/python/Readme.md",
     "/Implementations/Reference/Runtime/rust/Readme.md",
     "/Implementations/Reference/Runtime/Readme.md",
     "/Implementations/Reference/UIHost/responsibilities.md",
