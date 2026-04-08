@@ -3,7 +3,7 @@
   "metadata": {
     "name": "05_bounded_ui_accumulator",
     "summary": "Bounded front-panel accumulation example with explicit state, five-loop execution, minimal u16 widgets, and final indicator output.",
-    "description": "Reads one u16 numeric control value from the front panel, executes a bounded loop of exactly five iterations, carries explicit state through frog.core.delay initialized to 0, and writes the final accumulated value both to one public output and to one u16 numeric indicator. The front panel also persists minimal presentation metadata through face_color and face_template without giving those members executable meaning by themselves.",
+    "description": "Reads one u16 numeric control value from the front panel, executes a bounded loop of exactly five iterations, carries explicit state through frog.core.delay initialized to 0, and writes the final accumulated value both to one public output and to one u16 numeric indicator. The front panel also persists minimal presentation metadata through face_color and face_template without giving those members executable meaning by themselves. This example also points to one peripheral UI object realization file for host-side widget realization.",
     "author": "Graiphic",
     "program_version": "0.1.0",
     "tags": [
@@ -18,7 +18,8 @@
       "vertical_slice",
       "u16",
       "face_color",
-      "face_template"
+      "face_template",
+      "ui_object_realization"
     ],
     "is_example": true,
     "license": "Apache-2.0"
@@ -58,7 +59,7 @@
       {
         "id": "const_five",
         "kind": "constant",
-        "type": "i64",
+        "type": "i32",
         "value": 5
       },
       {
@@ -91,140 +92,91 @@
       },
       {
         "id": "loop_accumulate",
-        "kind": "structure",
-        "structure_type": "for_loop",
-        "boundary": {
+        "kind": "for_loop",
+        "count_from": {
+          "node": "const_five",
+          "port": "value"
+        },
+        "region": {
+          "nodes": [
+            {
+              "id": "delay_state",
+              "kind": "primitive",
+              "type": "frog.core.delay"
+            },
+            {
+              "id": "add_step",
+              "kind": "primitive",
+              "type": "frog.core.add"
+            }
+          ],
+          "edges": [
+            {
+              "id": "r_e1",
+              "from": {
+                "node": "loop_input_value",
+                "port": "value"
+              },
+              "to": {
+                "node": "add_step",
+                "port": "a"
+              }
+            },
+            {
+              "id": "r_e2",
+              "from": {
+                "node": "delay_state",
+                "port": "out"
+              },
+              "to": {
+                "node": "add_step",
+                "port": "b"
+              }
+            },
+            {
+              "id": "r_e3",
+              "from": {
+                "node": "add_step",
+                "port": "result"
+              },
+              "to": {
+                "node": "delay_state",
+                "port": "in"
+              }
+            },
+            {
+              "id": "r_e4",
+              "from": {
+                "node": "loop_initial_state",
+                "port": "value"
+              },
+              "to": {
+                "node": "delay_state",
+                "port": "initial"
+              }
+            }
+          ],
           "inputs": [
             {
-              "id": "input_value",
+              "id": "loop_input_value",
               "type": "u16"
             },
             {
-              "id": "initial_state",
+              "id": "loop_initial_state",
               "type": "u16"
             }
           ],
           "outputs": [
             {
-              "id": "final_value",
-              "type": "u16",
-              "mode": "last_value",
-              "zero_iteration_value": 0
+              "id": "loop_final_state",
+              "from": {
+                "node": "add_step",
+                "port": "result"
+              },
+              "type": "u16"
             }
           ]
-        },
-        "structure_terminals": {
-          "count": {
-            "type": "i64",
-            "outer_visible": true,
-            "exposed_in_body": false,
-            "read_only": true,
-            "role": "count"
-          },
-          "index": {
-            "type": "i64",
-            "outer_visible": false,
-            "exposed_in_body": true,
-            "read_only": true,
-            "role": "index"
-          }
-        },
-        "regions": [
-          {
-            "id": "body",
-            "diagram": {
-              "nodes": [
-                {
-                  "id": "body_input_value",
-                  "kind": "boundary_input",
-                  "boundary_port": "input_value"
-                },
-                {
-                  "id": "body_initial_state",
-                  "kind": "boundary_input",
-                  "boundary_port": "initial_state"
-                },
-                {
-                  "id": "body_index",
-                  "kind": "structure_terminal",
-                  "terminal": "index"
-                },
-                {
-                  "id": "delay_state",
-                  "kind": "primitive",
-                  "type": "frog.core.delay"
-                },
-                {
-                  "id": "add_step",
-                  "kind": "primitive",
-                  "type": "frog.core.add"
-                },
-                {
-                  "id": "body_final_value",
-                  "kind": "boundary_output",
-                  "boundary_port": "final_value"
-                }
-              ],
-              "edges": [
-                {
-                  "id": "r_e1",
-                  "from": {
-                    "node": "body_input_value",
-                    "port": "value"
-                  },
-                  "to": {
-                    "node": "add_step",
-                    "port": "a"
-                  }
-                },
-                {
-                  "id": "r_e2",
-                  "from": {
-                    "node": "delay_state",
-                    "port": "out"
-                  },
-                  "to": {
-                    "node": "add_step",
-                    "port": "b"
-                  }
-                },
-                {
-                  "id": "r_e3",
-                  "from": {
-                    "node": "add_step",
-                    "port": "result"
-                  },
-                  "to": {
-                    "node": "delay_state",
-                    "port": "in"
-                  }
-                },
-                {
-                  "id": "r_e4",
-                  "from": {
-                    "node": "body_initial_state",
-                    "port": "value"
-                  },
-                  "to": {
-                    "node": "delay_state",
-                    "port": "initial"
-                  }
-                },
-                {
-                  "id": "r_e5",
-                  "from": {
-                    "node": "add_step",
-                    "port": "result"
-                  },
-                  "to": {
-                    "node": "body_final_value",
-                    "port": "value"
-                  }
-                }
-              ]
-            }
-          }
-        ]
+        }
       },
       {
         "id": "ind_result_value",
@@ -246,7 +198,7 @@
         },
         "to": {
           "node": "loop_accumulate",
-          "port": "input_value"
+          "port": "loop_input_value"
         }
       },
       {
@@ -257,14 +209,14 @@
         },
         "to": {
           "node": "loop_accumulate",
-          "port": "initial_state"
+          "port": "loop_initial_state"
         }
       },
       {
         "id": "e3",
         "from": {
           "node": "loop_accumulate",
-          "port": "final_value"
+          "port": "loop_final_state"
         },
         "to": {
           "node": "ind_result_value",
@@ -275,7 +227,7 @@
         "id": "e4",
         "from": {
           "node": "loop_accumulate",
-          "port": "final_value"
+          "port": "loop_final_state"
         },
         "to": {
           "node": "output_result",
@@ -284,17 +236,6 @@
       },
       {
         "id": "e5",
-        "from": {
-          "node": "const_five",
-          "port": "value"
-        },
-        "to": {
-          "node": "loop_accumulate",
-          "port": "count"
-        }
-      },
-      {
-        "id": "e6",
         "from": {
           "node": "ctrl_input_ref",
           "port": "ref"
@@ -305,7 +246,7 @@
         }
       },
       {
-        "id": "e7",
+        "id": "e6",
         "from": {
           "node": "const_ctrl_face_color",
           "port": "value"
@@ -316,7 +257,7 @@
         }
       },
       {
-        "id": "e8",
+        "id": "e7",
         "from": {
           "node": "ind_result_ref",
           "port": "ref"
@@ -327,7 +268,7 @@
         }
       },
       {
-        "id": "e9",
+        "id": "e8",
         "from": {
           "node": "const_ind_face_color",
           "port": "value"
@@ -343,6 +284,12 @@
     "canvas": {
       "width": 460,
       "height": 170
+    },
+    "host_realization": {
+      "kind": "resource",
+      "format": "frog.ui.objects+json",
+      "path": "./front_panel.objects.json",
+      "authority": "non_authoritative_host_realization"
     },
     "widgets": [
       {
@@ -361,7 +308,6 @@
           "face_color": "#D8E6FF",
           "face_template": {
             "kind": "resource",
-            "format": "svg",
             "path": "./assets/widgets/u16_numeric_control_face.svg"
           }
         }
@@ -382,7 +328,6 @@
           "face_color": "#D8E6FF",
           "face_template": {
             "kind": "resource",
-            "format": "svg",
             "path": "./assets/widgets/u16_numeric_indicator_face.svg"
           }
         }
