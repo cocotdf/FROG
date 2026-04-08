@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://graiphic.io/frog/ir/schema/frog.execution-ir.correspondence.schema.json",
+  "title": "FROG Execution IR Correspondence Record Schema",
+  "description": "Component schema for canonical Execution IR correspondence records in base v0.1.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "source_ref",
+    "relation_kind"
+  ],
+  "properties": {
+    "id": {
+      "$ref": "#/$defs/id_string"
+    },
+    "source_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "relation_kind": {
+      "type": "string",
+      "enum": [
+        "declaration_reference",
+        "non_primary_outcome",
+        "support_relation",
+        "realization_reference",
+        "widget_package_reference",
+        "other"
+      ]
+    },
+    "target_refs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/id_string"
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/typed_value"
+      }
+    }
+  },
+  "$defs": {
+    "id_string": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9._:-]+$"
+    },
+    "typed_value": {
+      "oneOf": [
+        { "type": "null" },
+        { "type": "boolean" },
+        { "type": "number" },
+        { "type": "string" },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/typed_value"
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/typed_value"
+          }
+        }
+      ]
+    }
+  }
+}
