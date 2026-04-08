@@ -14,9 +14,9 @@
 <h2>Contents</h2>
 <ul>
   <li><a href="#overview">1. Overview</a></li>
-  <li><a href="#scope">2. Scope</a></li>
-  <li><a href="#design-objectives">3. Design Objectives</a></li>
-  <li><a href="#scope-for-v01">4. Scope for v0.1</a></li>
+  <li><a href="#why-this-document-exists">2. Why This Document Exists</a></li>
+  <li><a href="#scope">3. Scope</a></li>
+  <li><a href="#design-objectives">4. Design Objectives</a></li>
   <li><a href="#relation-with-other-specifications">5. Relation with Other Specifications</a></li>
   <li><a href="#core-model">6. Core Model</a></li>
   <li><a href="#natural-value-path-vs-object-style-path">7. Natural Value Path vs Object-Style Path</a></li>
@@ -30,7 +30,7 @@
   <li><a href="#validation-rules">15. Validation Rules</a></li>
   <li><a href="#source-to-library-mapping">16. Source-to-Library Mapping</a></li>
   <li><a href="#examples">17. Examples</a></li>
-  <li><a href="#out-of-scope-for-v01">18. Out of Scope for v0.1</a></li>
+  <li><a href="#out-of-scope">18. Out of Scope</a></li>
   <li><a href="#summary">19. Summary</a></li>
 </ul>
 
@@ -67,7 +67,7 @@ The object-style path is the canonical representation of explicit member interac
 </ul>
 
 <p>
-In v0.1, FROG standardizes three widget interaction primitive families for the object-style path:
+FROG standardizes three widget interaction primitive families for the object-style path:
 </p>
 
 <ul>
@@ -90,16 +90,41 @@ Accordingly, the same conceptual primary value may be reachable through two diff
 </p>
 
 <p>
-This document also preserves the separation between executable value participation and presentation-oriented members. A widget MAY expose non-semantic presentation members such as <code>face_color</code>, and a widget instance MAY persist presentation-oriented asset references such as a face or realization template reference. Those members belong to object-style access or source-persisted presentation metadata, not to the natural typed value path.
-</p>
-
-<p>
-This document does not define repository-wide version policy. The top-level <code>spec_version</code> field of a <code>.frog</code> file identifies the source-format compatibility target of that file. Repository-wide versioning governance remains defined elsewhere.
+This document also preserves the separation between executable value participation and presentation-oriented members. A widget MAY expose non-semantic presentation members such as <code>face_color</code>, and a widget instance MAY persist presentation-oriented package or asset references through source-owned metadata. Those members belong to object-style access or source-owned instance metadata, not to the natural typed value path.
 </p>
 
 <hr/>
 
-<h2 id="scope">2. Scope</h2>
+<h2 id="why-this-document-exists">2. Why This Document Exists</h2>
+
+<p>
+A serious widget system requires more than a front-panel declaration. It also requires a disciplined way to express how a diagram interacts with widgets as values and as objects.
+</p>
+
+<p>
+Without that distinction, several architectural collapses appear:
+</p>
+
+<ul>
+  <li>ordinary typed dataflow gets mixed with object-style member access,</li>
+  <li>presentation properties get confused with semantic primary values,</li>
+  <li>widget references get confused with ordinary typed values,</li>
+  <li>runtime convenience gets confused with language truth.</li>
+</ul>
+
+<p>
+This document therefore fixes a clean interaction corridor:
+</p>
+
+<ul>
+  <li><code>widget_value</code> for natural primary-value participation,</li>
+  <li><code>widget_reference</code> for object-style widget access,</li>
+  <li><code>frog.ui.*</code> primitives for explicit reads, writes, and invocations.</li>
+</ul>
+
+<hr/>
+
+<h2 id="scope">3. Scope</h2>
 
 <p>
 This document specifies:
@@ -125,13 +150,12 @@ This document does not specify:
   <li>the full primitive identities and complete primitive signatures beyond their source-facing use here,</li>
   <li>the primitive-local execution semantics of UI interaction operations,</li>
   <li>the general execution semantics of the diagram,</li>
-  <li>repository-wide version-transition doctrine,</li>
   <li>one mandatory rendering engine or one mandatory realization stack.</li>
 </ul>
 
 <hr/>
 
-<h2 id="design-objectives">3. Design Objectives</h2>
+<h2 id="design-objectives">4. Design Objectives</h2>
 
 <p>
 The widget interaction model is designed to satisfy the following objectives:
@@ -151,51 +175,6 @@ The widget interaction model is designed to satisfy the following objectives:
 
 <hr/>
 
-<h2 id="scope-for-v01">4. Scope for v0.1</h2>
-
-<p>
-FROG v0.1 standardizes:
-</p>
-
-<ul>
-  <li>the conceptual addressing model for widget members,</li>
-  <li>the source-facing representation of property reads,</li>
-  <li>the source-facing representation of property writes,</li>
-  <li>the source-facing representation of method invocation,</li>
-  <li>their integration with <code>widget_reference</code>,</li>
-  <li>their canonical descriptor fields,</li>
-  <li>their diagram-level representation constraints,</li>
-  <li>their source-level validation rules,</li>
-  <li>the explicit separation between natural primary-value access and object-style member access.</li>
-</ul>
-
-<p>
-FROG v0.1 does not fully standardize in this document:
-</p>
-
-<ul>
-  <li>the complete executable primitive catalog beyond its source-facing use here,</li>
-  <li>the detailed primitive port signatures of <code>frog.ui.*</code>,</li>
-  <li>the primitive execution semantics of property read, property write, and method invocation,</li>
-  <li>a complete event registration and delivery model,</li>
-  <li>asynchronous UI message transport,</li>
-  <li>widget references as general-purpose first-class user-declared value types,</li>
-  <li>a complete effect system covering every UI runtime profile.</li>
-</ul>
-
-<p>
-In particular, v0.1 keeps the following distinctions explicit:
-</p>
-
-<ul>
-  <li>a widget reference is an object-access token, not an ordinary user-declared value type expression,</li>
-  <li><code>ui_in</code> and <code>ui_out</code> are sequencing tokens, not ordinary typed value ports,</li>
-  <li>ordinary value ports remain governed by <code>Type.md</code>,</li>
-  <li>presentation-oriented asset references remain source-persisted presentation metadata unless another specification explicitly grants them executable interaction meaning.</li>
-</ul>
-
-<hr/>
-
 <h2 id="relation-with-other-specifications">5. Relation with Other Specifications</h2>
 
 <p>
@@ -206,11 +185,10 @@ This document depends on and complements the following specifications:
   <li><code>Expression/Type.md</code> — ordinary value types, compatibility rules, and implicit coercion rules.</li>
   <li><code>Expression/Widget.md</code> — widget instances, roles, value behavior at instance level, source-visible widget parts, and widget identity.</li>
   <li><code>Expression/Widget class contract.md</code> — class-side member contracts, part ownership, member legality, access modes, profile gating, host gating, and class-level object exposure.</li>
-  <li><code>Expression/Front panel.md</code> — declaration and serialization of widget instances and source-persisted presentation metadata.</li>
+  <li><code>Expression/Front panel.md</code> — declaration and serialization of widget instances and source-owned instance metadata.</li>
   <li><code>Expression/Diagram.md</code> — executable graph structure, node categories, canonical widget node kinds, and port-resolution rules.</li>
-  <li><code>Libraries/UI.md</code> — the standardized <code>frog.ui.*</code> primitive surface, primitive signatures, primitive typing rules, sequencing rules, and primitive-local semantics.</li>
-  <li><code>Expression/Widget package.md</code> — the architectural role of <code>.wfrog</code> packages when class law or realization mappings are resolved through external widget-oriented artifacts.</li>
-  <li><code>Expression/Widget realization.md</code> — realization-side host bindings and visual asset boundaries.</li>
+  <li><code>Libraries/UI.md</code> — the standardized <code>frog.ui.*</code> primitive surface, primitive signatures, sequencing rules, and primitive-local semantics.</li>
+  <li><code>Expression/Widget package (.wfrog).md</code> — the architectural role of <code>.wfrog</code> packages when class law or realization mappings are resolved through external widget-oriented artifacts.</li>
 </ul>
 
 <p>
@@ -241,7 +219,7 @@ Widget.md
   -&gt; widget instance model
   -&gt; widget roles
   -&gt; instance-side value behavior
-  -&gt; source-visible widget identity and source-owned properties
+  -&gt; source-visible widget identity and source-owned metadata
 
 Widget class contract.md
   -&gt; class-side member contracts
@@ -252,7 +230,7 @@ Widget class contract.md
 
 Front panel.md
   -&gt; widget declaration and front-panel composition
-  -&gt; source-persisted presentation metadata
+  -&gt; source-owned instance metadata
 
 Diagram.md
   -&gt; executable graph structure
@@ -265,12 +243,9 @@ Libraries/UI.md
   -&gt; primitive-local typing and sequencing rules
   -&gt; primitive-local interaction semantics
 
-Widget package.md / Widget realization.md
+Widget package (.wfrog).md
   -&gt; external widget-oriented class and realization artifacts
-  -&gt; realization-side asset and host bindings
-
-Versioning/Readme.md
-  -&gt; repository-wide version-transition doctrine
+  -&gt; package-level asset and host-binding boundaries
 </code></pre>
 
 <hr/>
@@ -344,7 +319,7 @@ The following distinction MUST also remain explicit:
     !=
 object-style property access
     !=
-source-persisted presentation metadata
+source-owned instance metadata
 </code></pre>
 
 <hr/>
@@ -400,7 +375,7 @@ The object-style path is the canonical path for:
   <li>method invocation,</li>
   <li>addressing named parts,</li>
   <li>accessing presentation properties such as <code>face_color</code>,</li>
-  <li>any member that has no natural value-path representation.</li>
+  <li>accessing members that have no natural value-path representation.</li>
 </ul>
 
 <p>
@@ -439,11 +414,11 @@ A widget class MAY expose presentation-oriented members such as:
   <li><code>face_color</code>,</li>
   <li><code>border_color</code>,</li>
   <li><code>text_color</code>,</li>
-  <li>a realization-oriented or template-oriented asset reference member where the class surface defines one.</li>
+  <li>other explicitly declared presentation-facing properties.</li>
 </ul>
 
 <p>
-These members belong to object-style access or source-persisted presentation metadata. They MUST NOT be treated as natural value-path equivalents.
+These members belong to object-style access or source-owned instance metadata. They MUST NOT be treated as natural value-path equivalents.
 </p>
 
 <p>
@@ -452,7 +427,7 @@ In particular:
 
 <ul>
   <li><code>face_color</code> MAY be read or written through object-style property access when the class contract allows it,</li>
-  <li>a source-persisted presentation asset reference MAY exist without becoming an ordinary executable value-flow member.</li>
+  <li>a source-owned asset or template reference MAY exist without becoming an ordinary executable value-flow member.</li>
 </ul>
 
 <h3>7.5 Prohibited Collapses</h3>
@@ -465,7 +440,7 @@ The following collapses are invalid unless another specification explicitly stat
   <li>treating <code>widget_reference</code> as an ordinary typed value,</li>
   <li>treating a presentation property as if it were the natural primary value of the widget,</li>
   <li>treating a presentation asset reference as executable semantic state by default,</li>
-  <li>treating design-time presentation metadata as a substitute for <code>widget_value</code>.</li>
+  <li>treating source-owned instance metadata as a substitute for <code>widget_value</code>.</li>
 </ul>
 
 <hr/>
@@ -509,7 +484,7 @@ For methods:
 <h3>8.2 Primitive-Local Member Descriptor</h3>
 
 <p>
-In the canonical v0.1 diagram model, widget identity is carried by the incoming <code>ref</code> port rather than embedded directly in the primitive node.
+In the canonical diagram model, widget identity is carried by the incoming <code>ref</code> port rather than embedded directly in the primitive node.
 </p>
 
 <p>
@@ -602,7 +577,7 @@ These legality rules are owned by the corresponding widget class contract, not b
 <h2 id="interaction-node-families">9. Interaction Node Families</h2>
 
 <p>
-In v0.1, widget object-style interactions are represented canonically as <code>primitive</code> nodes in the diagram.
+Widget object-style interactions are represented canonically as <code>primitive</code> nodes in the diagram.
 </p>
 
 <p>
@@ -741,11 +716,11 @@ A presentation-property write MAY affect host-visible appearance. It MUST NOT by
 <h3>11.6 Presentation Asset Reference Boundary</h3>
 
 <p>
-When a widget surface exposes a source-persisted presentation-oriented asset reference member, runtime object-style writes are valid only if the corresponding class contract explicitly declares that member runtime-writable.
+When a widget surface exposes a source-owned presentation-oriented reference member, runtime object-style writes are valid only if the corresponding class contract explicitly declares that member runtime-writable.
 </p>
 
 <p>
-By default, source-persisted presentation asset references do not become runtime-writable executable state merely because they appear in source.
+By default, source-owned presentation references do not become runtime-writable executable state merely because they appear in source.
 </p>
 
 <hr/>
@@ -878,11 +853,11 @@ The following distinction MUST also remain explicit:
   !=
 presentation property
   !=
-presentation asset reference
+presentation reference
 </code></pre>
 
 <p>
-Accordingly, a diagram that writes <code>face_color</code> is not equivalent to a diagram that writes the widget primary value, and a source-persisted presentation asset reference is not by itself an executable value-flow edge.
+Accordingly, a diagram that writes <code>face_color</code> is not equivalent to a diagram that writes the widget primary value, and a source-owned presentation reference is not by itself an executable value-flow edge.
 </p>
 
 <hr/>
@@ -924,7 +899,7 @@ This separation is intentional:
 </ul>
 
 <p>
-Presentation metadata remains outside this executable interaction chain unless:
+Source-owned instance metadata remains outside this executable interaction chain unless:
 </p>
 
 <ul>
@@ -970,11 +945,11 @@ Validators SHOULD diagnose at least the following error classes:
   <li>invocation of non-invocable method,</li>
   <li>use of profile-gated member outside the required profile,</li>
   <li>use of host-gated member without required host capability,</li>
-  <li>attempt to use object-style access where only natural value access is valid,</li>
+  <li>attempt to use object-style access where only natural value access is intended,</li>
   <li>treating a widget reference token as an ordinary typed value,</li>
   <li>treating a sequencing port as an ordinary typed value port,</li>
   <li>treating a non-semantic presentation property as the natural value path,</li>
-  <li>treating a source-persisted presentation asset reference as runtime-writable when the class contract forbids it,</li>
+  <li>treating a source-owned presentation reference as runtime-writable when the class contract forbids it,</li>
   <li>treating presentation-oriented metadata as executable semantic state without an explicit enabling specification.</li>
 </ul>
 
@@ -1090,16 +1065,16 @@ This is valid only if the active widget class contract declares <code>face_color
 This is invalid. The natural value path MUST NOT be reinterpreted as a presentation-property path.
 </p>
 
-<h3>17.8 Presentation asset reference boundary example</h3>
+<h3>17.8 Presentation reference boundary example</h3>
 
 <pre><code>{
   "id": "ctrl_count",
   "role": "control",
-  "class_ref": "frog.ui.standard.numeric_control",
+  "class_ref": "frog.widgets.numeric_control",
   "value_type": "u16",
   "props": {
-    "face_asset": {
-      "kind": "resource",
+    "face_asset_ref": {
+      "kind": "resource_ref",
       "path": "./assets/widgets/u16_numeric_control_face.svg"
     }
   }
@@ -1107,15 +1082,15 @@ This is invalid. The natural value path MUST NOT be reinterpreted as a presentat
 </code></pre>
 
 <p>
-This source-persisted presentation asset reference does not by itself create an executable value-flow edge. It remains presentation metadata unless another specification explicitly grants additional meaning.
+This source-owned presentation reference does not by itself create an executable value-flow edge. It remains source-owned instance metadata unless another specification explicitly grants additional meaning.
 </p>
 
 <hr/>
 
-<h2 id="out-of-scope-for-v01">18. Out of Scope for v0.1</h2>
+<h2 id="out-of-scope">18. Out of Scope</h2>
 
 <p>
-The following are intentionally out of scope for this document in v0.1:
+The following are intentionally out of scope for this document:
 </p>
 
 <ul>
@@ -1147,7 +1122,7 @@ It standardizes:
   <li>how a targeted property or method is identified,</li>
   <li>how property reads, property writes, and method invocations are represented in source,</li>
   <li>how those interactions are validated structurally,</li>
-  <li>how semantic primary value flow remains distinct from presentation-oriented members.</li>
+  <li>how semantic primary value flow remains distinct from presentation-oriented members and source-owned presentation references.</li>
 </ul>
 
 <p>
@@ -1159,11 +1134,9 @@ It does not standardize:
   <li>widget class member legality,</li>
   <li>primitive-local execution semantics,</li>
   <li>general execution semantics of the language,</li>
-  <li>source-format compatibility law,</li>
-  <li>published specification corpus versioning,</li>
-  <li>or one mandatory UI realization architecture.</li>
+  <li>one mandatory UI realization architecture.</li>
 </ul>
 
 <p>
-That separation allows FROG to support rich widget-object interaction while keeping instance model, class contract, diagram representation, primitive semantics, presentation metadata, and host realization explicitly distinct.
+That separation allows FROG to support rich widget-object interaction while keeping instance model, class contract, diagram representation, primitive semantics, source-owned metadata, package content, and host realization explicitly distinct.
 </p>
