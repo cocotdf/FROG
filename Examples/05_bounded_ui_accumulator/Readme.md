@@ -27,7 +27,7 @@
   <li><a href="#rust-pipe">12. Rust Runtime Pipe</a></li>
   <li><a href="#cpp-pipe">13. C/C++ Runtime Pipe</a></li>
   <li><a href="#llvm-path">14. LLVM-Oriented Native Path</a></li>
-  <li><a href="#observable-parity">15. Observable Parity Across Published Runtimes</a></li>
+  <li><a href="#observable-parity">15. Observable Parity Across Runtime Families</a></li>
   <li><a href="#published-gaps">16. Published Gaps Still To Close</a></li>
   <li><a href="#summary">17. Summary</a></li>
 </ul>
@@ -113,14 +113,14 @@ result = state
       <td>Two widgets are declared in canonical source.</td>
     </tr>
     <tr>
-      <td>Peripheral UI object realization file</td>
-      <td>Missing as distinct example-local file</td>
-      <td>The source owns widget declaration, but one separate downstream peripheral UI object realization file is not yet published.</td>
-    </tr>
-    <tr>
       <td>Behavioral model</td>
       <td>Closed</td>
       <td>Bounded counted loop, explicit delay-backed state, final result publication.</td>
+    </tr>
+    <tr>
+      <td>Peripheral UI object realization file</td>
+      <td>Missing</td>
+      <td>No distinct example-local host realization file is published yet.</td>
     </tr>
     <tr>
       <td>FIR-readable corridor</td>
@@ -139,18 +139,18 @@ result = state
     </tr>
     <tr>
       <td>Python runtime consumer</td>
-      <td>Closed enough for the first slice</td>
-      <td>A runnable Python entry point is published at runtime root level.</td>
+      <td>Closed</td>
+      <td>A runnable Python entry point is published.</td>
     </tr>
     <tr>
       <td>Python build / run pipe</td>
-      <td>Closed enough for the first slice</td>
-      <td>The current README states the operational command explicitly.</td>
+      <td>Closed</td>
+      <td>The operational command is explicit.</td>
     </tr>
     <tr>
       <td>Rust runtime consumer</td>
       <td>Partial-to-closed</td>
-      <td>A Rust consumer and tests are published; the proof currently lives in test-driven execution rather than one dedicated example runner binary.</td>
+      <td>A Rust consumer and tests are published; proof currently lives in test-driven execution rather than one dedicated example runner binary.</td>
     </tr>
     <tr>
       <td>Rust build / run pipe</td>
@@ -224,21 +224,21 @@ Implementations/
   <li><code>Implementations/Reference/ContractEmitter/examples/05_bounded_ui_accumulator.reference_host_runtime_ui_binding.contract.json</code><br/>
       Published backend-family contract artifact consumed downstream by the reference runtime family.</li>
   <li><code>Implementations/Reference/Runtime/reference_runtime.py</code><br/>
-      Shared Python-side reference runtime realization currently used by the published bounded corridor.</li>
+      Python-side reference runtime realization for the bounded reference family.</li>
   <li><code>Implementations/Reference/Runtime/run_slice05_contract.py</code><br/>
       Python demonstration entry point for executing the published contract of this example.</li>
   <li><code>Implementations/Reference/Runtime/python/Readme.md</code><br/>
-      Directory-level posture for the dedicated Python mini-runtime family surface.</li>
+      Python runtime-family boundary, goals, and example-facing posture.</li>
   <li><code>Implementations/Reference/Runtime/rust/Readme.md</code><br/>
-      Rust runtime-family posture and directory-level boundary explanation.</li>
+      Rust runtime-family boundary, goals, and example-facing posture.</li>
   <li><code>Implementations/Reference/Runtime/rust/tests/slice05_contract_smoke.rs</code><br/>
       Rust contract-shape validation test against the published contract artifact.</li>
   <li><code>Implementations/Reference/Runtime/rust/tests/slice05_execution.rs</code><br/>
       Rust execution test showing that the published contract produces the expected bounded result.</li>
   <li><code>Implementations/Reference/Runtime/cpp/Readme.md</code><br/>
-      Planned C/C++ mini-runtime surface for the same canonical example corridor.</li>
+      C/C++ runtime-family target posture for the same canonical corridor.</li>
   <li><code>Implementations/Reference/LLVM/Readme.md</code><br/>
-      Native compiler-oriented downstream path posture, distinct from runtime-family consumers.</li>
+      Downstream compiler-family posture for LLVM-oriented native paths.</li>
 </ul>
 
 <hr/>
@@ -256,7 +256,7 @@ The intended reading is:
 validated example meaning
         |
         v
-execution-facing representation (FIR target posture)
+FIR / execution-facing representation
         |
         v
 lowering posture
@@ -264,18 +264,18 @@ lowering posture
         v
 backend-family contract artifact
         |
-        +------------------------------+------------------------------+------------------------------+
+        +------------------------------+------------------------------+
         |                              |                              |
         v                              v                              v
-Python mini runtime             Rust mini runtime              C/C++ mini runtime
+Python runtime consumer        Rust runtime consumer        C/C++ runtime consumer
         |
-        \-------------------------- optional LLVM-oriented native executable path -----------------------&gt;
+        \-------------------- optional LLVM-oriented native path ----/
 </code></pre>
 
 <p>
 This example must not be read as “Python defines the example” or “Rust defines the example”.
 The source and the downstream handoff corridor remain primary.
-The runtimes and native path are downstream consumers.
+The runtimes and compiler-family paths are downstream consumers.
 </p>
 
 <hr/>
@@ -318,11 +318,6 @@ However, the repository does not yet publish one separate example-local peripher
 That boundary remains open work for this example.
 </p>
 
-<p>
-Likewise, the published runtime result posture already exposes runtime-side widget state, but this is not yet equivalent to a real rendered front panel.
-A true rendered host UI corridor is therefore still open work.
-</p>
-
 <hr/>
 
 <h2 id="fir-posture">9. FIR / Execution-Facing Posture</h2>
@@ -354,18 +349,10 @@ The example already crosses the most important downstream boundary currently vis
 </p>
 
 <pre><code>Example source
-    -&gt; FIR posture
-    -&gt; lowering posture
-    -&gt; backend-family contract artifact
-    -&gt; runtime-family execution
-</code></pre>
-
-<p>
-The published contract proves that this example is no longer only prose.
-It already supports a repository-visible handoff into the family:
-</p>
-
-<pre><code>reference_host_runtime_ui_binding
+    ->
+backend-family contract artifact
+    ->
+runtime-family execution
 </code></pre>
 
 <p>
@@ -404,12 +391,19 @@ Equivalent direct script-style invocation:
   <li>prints a runtime-result JSON artifact.</li>
 </ol>
 
+<h3>Expected observable result for input 3</h3>
+
+<pre><code>public.result = 15
+ui.ctrl_input = 3
+ui.ind_result = 15
+</code></pre>
+
 <hr/>
 
 <h2 id="rust-pipe">12. Rust Runtime Pipe</h2>
 
 <p>
-The published Rust corridor already proves downstream multi-runtime consumption, but it is currently exposed primarily through tests rather than through one example-local runner binary.
+The published Rust corridor already proves downstream multi-runtime consumption, but it is currently exposed primarily through tests rather than through one dedicated example runner binary.
 </p>
 
 <h3>Rust verification command</h3>
@@ -443,8 +437,7 @@ Accordingly:
 </ul>
 
 <p>
-The target closure rule is nevertheless explicit:
-the same canonical example corridor should eventually be consumable by a C/C++ mini runtime in parallel with the Python and Rust consumers.
+The target direction is that a future C/C++ consumer should read the same corridor rather than define a separate variant of the example.
 </p>
 
 <hr/>
@@ -465,13 +458,9 @@ In particular, the repository does not yet expose, for this example:
   <li>or one rendered native front-panel host path.</li>
 </ul>
 
-<p>
-Therefore this example is not yet allowed to claim native-executable closure.
-</p>
-
 <hr/>
 
-<h2 id="observable-parity">15. Observable Parity Across Published Runtimes</h2>
+<h2 id="observable-parity">15. Observable Parity Across Runtime Families</h2>
 
 <p>
 At the current published state, the strongest shared parity statement that can be made is:
@@ -524,7 +513,6 @@ For the canonical example case <code>input = 3</code>, the expected observable e
   <li>publish one distinct peripheral UI object realization file,</li>
   <li>publish one C/C++ mini runtime consumer and its build/run pipe,</li>
   <li>publish one dedicated Rust runner entry point comparable to the Python runner,</li>
-  <li>publish one dedicated Python mini-runtime directory-level implementation surface rather than only root-level runner files,</li>
   <li>publish one real rendered front-panel host path,</li>
   <li>publish one LLVM-oriented native build corridor,</li>
   <li>and keep source, contract, and runtime-visible UI metadata aligned across the corridor.</li>
@@ -541,19 +529,11 @@ It already proves that:
 
 <ul>
   <li>a canonical FROG source can define a bounded UI-participating executable program,</li>
-  <li>that source can be handed to a repository-visible backend-family contract artifact,</li>
+  <li>that source can be lowered into a repository-visible backend-family contract artifact,</li>
   <li>the contract can be consumed by a Python runtime path,</li>
   <li>the same corridor can also be consumed by a Rust runtime path,</li>
   <li>and the example remains attributable as explicit loop plus explicit state rather than runtime-private hidden behavior.</li>
 </ul>
-
-<p>
-What it does <strong>not</strong> prove yet is full closure.
-C/C++ runtime parity is still missing.
-A real rendered front panel is still missing.
-An LLVM-native executable path is still missing.
-A distinct peripheral UI object realization file is still missing.
-</p>
 
 <pre><code>serious bounded executable slice:
 yes
