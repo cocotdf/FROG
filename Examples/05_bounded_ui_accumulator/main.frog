@@ -18,7 +18,7 @@
       "vertical_slice",
       "u16",
       "property_write",
-      "face_color",
+      "foreground_color",
       "wfrog",
       "front_panel_package"
     ],
@@ -64,31 +64,31 @@
         "value": 5
       },
       {
-        "id": "const_ctrl_face_color",
+        "id": "const_ctrl_foreground_color",
         "kind": "constant",
-        "type": "frog.ui.color",
+        "type": "frog.color.rgba8",
         "value": "#5B9BD5"
       },
       {
-        "id": "const_ind_face_color",
+        "id": "const_ind_foreground_color",
         "kind": "constant",
-        "type": "frog.ui.color",
+        "type": "frog.color.rgba8",
         "value": "#70AD47"
       },
       {
-        "id": "write_ctrl_face_color",
+        "id": "write_ctrl_foreground_color",
         "kind": "primitive",
         "type": "frog.ui.property_write",
         "widget_member": {
-          "member": "face_color"
+          "member": "foreground_color"
         }
       },
       {
-        "id": "write_ind_face_color",
+        "id": "write_ind_foreground_color",
         "kind": "primitive",
         "type": "frog.ui.property_write",
         "widget_member": {
-          "member": "face_color"
+          "member": "foreground_color"
         }
       },
       {
@@ -242,18 +242,18 @@
           "port": "ref"
         },
         "to": {
-          "node": "write_ctrl_face_color",
+          "node": "write_ctrl_foreground_color",
           "port": "ref"
         }
       },
       {
         "id": "e6",
         "from": {
-          "node": "const_ctrl_face_color",
+          "node": "const_ctrl_foreground_color",
           "port": "value"
         },
         "to": {
-          "node": "write_ctrl_face_color",
+          "node": "write_ctrl_foreground_color",
           "port": "value"
         }
       },
@@ -264,18 +264,18 @@
           "port": "ref"
         },
         "to": {
-          "node": "write_ind_face_color",
+          "node": "write_ind_foreground_color",
           "port": "ref"
         }
       },
       {
         "id": "e8",
         "from": {
-          "node": "const_ind_face_color",
+          "node": "const_ind_foreground_color",
           "port": "value"
         },
         "to": {
-          "node": "write_ind_face_color",
+          "node": "write_ind_foreground_color",
           "port": "value"
         }
       }
