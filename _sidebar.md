@@ -49,6 +49,7 @@
   - [Identity and Mapping](/IR/Identity%20and%20Mapping.md)
   - [Lowering](/IR/Lowering.md)
   - [Schema](/IR/Schema.md)
+  - [schema](/IR/schema/README.md)
 - [Libraries](/Libraries/Readme.md)
   - [Collections](/Libraries/Collections.md)
   - [Connectivity](/Libraries/Connectivity.md)
