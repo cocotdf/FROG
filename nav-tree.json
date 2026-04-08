@@ -229,6 +229,13 @@
                   "path": "/Examples/05_bounded_ui_accumulator/main.frog",
                   "kind": "code",
                   "children": []
+                },
+                {
+                  "key": "examples/05_bounded_ui_accumulator/ui/",
+                  "title": "ui",
+                  "path": "/Examples/05_bounded_ui_accumulator/ui/Readme.md",
+                  "kind": "category",
+                  "children": []
                 }
               ]
             },
@@ -2295,6 +2302,7 @@
     "/Examples/04_stateful_feedback_delay/main.frog",
     "/Examples/04_stateful_feedback_delay/Readme.md",
     "/Examples/05_bounded_ui_accumulator/main.frog",
+    "/Examples/05_bounded_ui_accumulator/ui/Readme.md",
     "/Examples/05_bounded_ui_accumulator/Readme.md",
     "/Examples/compiler/01_pure_arithmetic.md",
     "/Examples/compiler/02_structured_control.md",
