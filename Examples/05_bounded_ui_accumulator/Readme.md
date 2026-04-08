@@ -89,11 +89,6 @@ repeat 5 times:
 result = state
 </code></pre>
 
-<p>
-This mathematical summary is informative only.
-The intended reading remains the explicit loop-and-state corridor, not a semantic rewrite into “multiply by five”.
-</p>
-
 <hr/>
 
 <h2 id="closure-status">3. Closure Status</h2>
@@ -118,6 +113,11 @@ The intended reading remains the explicit loop-and-state corridor, not a semanti
       <td>Two widgets are declared in canonical source.</td>
     </tr>
     <tr>
+      <td>Peripheral UI object realization file</td>
+      <td>Missing as distinct example-local file</td>
+      <td>The source owns widget declaration, but one separate downstream peripheral UI object realization file is not yet published.</td>
+    </tr>
+    <tr>
       <td>Behavioral model</td>
       <td>Closed</td>
       <td>Bounded counted loop, explicit delay-backed state, final result publication.</td>
@@ -139,13 +139,13 @@ The intended reading remains the explicit loop-and-state corridor, not a semanti
     </tr>
     <tr>
       <td>Python runtime consumer</td>
-      <td>Closed</td>
-      <td>A runnable Python entry point is published.</td>
+      <td>Closed enough for the first slice</td>
+      <td>A runnable Python entry point is published at runtime root level.</td>
     </tr>
     <tr>
       <td>Python build / run pipe</td>
-      <td>Closed</td>
-      <td>The README now states the operational command explicitly.</td>
+      <td>Closed enough for the first slice</td>
+      <td>The current README states the operational command explicitly.</td>
     </tr>
     <tr>
       <td>Rust runtime consumer</td>
@@ -166,11 +166,6 @@ The intended reading remains the explicit loop-and-state corridor, not a semanti
       <td>C/C++ build / run pipe</td>
       <td>Missing</td>
       <td>No published pipe exists yet.</td>
-    </tr>
-    <tr>
-      <td>Peripheral UI object realization file</td>
-      <td>Missing as distinct example-local file</td>
-      <td>The source owns widget declaration, but one separate downstream peripheral UI object realization file is not yet published.</td>
     </tr>
     <tr>
       <td>Rendered front panel</td>
@@ -199,17 +194,22 @@ Implementations/
     ├── ContractEmitter/
     │   └── examples/
     │       └── 05_bounded_ui_accumulator.reference_host_runtime_ui_binding.contract.json
-    └── Runtime/
-        ├── Readme.md
-        ├── accept_contract_and_execute.md
-        ├── reference_runtime.py
-        ├── run_slice05_contract.py
-        └── rust/
-            ├── Cargo.toml
-            ├── Readme.md
-            └── tests/
-                ├── slice05_contract_smoke.rs
-                └── slice05_execution.rs
+    ├── Runtime/
+    │   ├── Readme.md
+    │   ├── reference_runtime.py
+    │   ├── run_slice05_contract.py
+    │   ├── python/
+    │   │   └── Readme.md
+    │   ├── rust/
+    │   │   ├── Readme.md
+    │   │   ├── Cargo.toml
+    │   │   └── tests/
+    │   │       ├── slice05_contract_smoke.rs
+    │   │       └── slice05_execution.rs
+    │   └── cpp/
+    │       └── Readme.md
+    └── LLVM/
+        └── Readme.md
 </code></pre>
 
 <hr/>
@@ -224,17 +224,21 @@ Implementations/
   <li><code>Implementations/Reference/ContractEmitter/examples/05_bounded_ui_accumulator.reference_host_runtime_ui_binding.contract.json</code><br/>
       Published backend-family contract artifact consumed downstream by the reference runtime family.</li>
   <li><code>Implementations/Reference/Runtime/reference_runtime.py</code><br/>
-      Python-side reference runtime realization for the bounded reference family.</li>
+      Shared Python-side reference runtime realization currently used by the published bounded corridor.</li>
   <li><code>Implementations/Reference/Runtime/run_slice05_contract.py</code><br/>
       Python demonstration entry point for executing the published contract of this example.</li>
-  <li><code>Implementations/Reference/Runtime/accept_contract_and_execute.md</code><br/>
-      Non-normative runtime execution sketch and staged execution posture.</li>
+  <li><code>Implementations/Reference/Runtime/python/Readme.md</code><br/>
+      Directory-level posture for the dedicated Python mini-runtime family surface.</li>
   <li><code>Implementations/Reference/Runtime/rust/Readme.md</code><br/>
-      Rust-side runtime-family posture and directory-level boundary explanation.</li>
+      Rust runtime-family posture and directory-level boundary explanation.</li>
   <li><code>Implementations/Reference/Runtime/rust/tests/slice05_contract_smoke.rs</code><br/>
       Rust contract-shape validation test against the published contract artifact.</li>
   <li><code>Implementations/Reference/Runtime/rust/tests/slice05_execution.rs</code><br/>
       Rust execution test showing that the published contract produces the expected bounded result.</li>
+  <li><code>Implementations/Reference/Runtime/cpp/Readme.md</code><br/>
+      Planned C/C++ mini-runtime surface for the same canonical example corridor.</li>
+  <li><code>Implementations/Reference/LLVM/Readme.md</code><br/>
+      Native compiler-oriented downstream path posture, distinct from runtime-family consumers.</li>
 </ul>
 
 <hr/>
@@ -260,16 +264,18 @@ lowering posture
         v
 backend-family contract artifact
         |
-        +------------------------------+
-        |                              |
-        v                              v
-Python reference runtime        Rust reference runtime
+        +------------------------------+------------------------------+------------------------------+
+        |                              |                              |
+        v                              v                              v
+Python mini runtime             Rust mini runtime              C/C++ mini runtime
+        |
+        \-------------------------- optional LLVM-oriented native executable path -----------------------&gt;
 </code></pre>
 
 <p>
 This example must not be read as “Python defines the example” or “Rust defines the example”.
 The source and the downstream handoff corridor remain primary.
-The runtimes are downstream consumers.
+The runtimes and native path are downstream consumers.
 </p>
 
 <hr/>
@@ -292,14 +298,6 @@ The canonical source declares:
   <li>one interface output path,</li>
   <li>and two explicit <code>frog.ui.property_write</code> operations for <code>face_color</code>.</li>
 </ul>
-
-<p>
-This keeps the example semantically attributable at the source level.
-The loop is explicit.
-The state is explicit.
-The UI value participation is explicit.
-The UI object-style property-write path is explicit.
-</p>
 
 <hr/>
 
@@ -356,10 +354,10 @@ The example already crosses the most important downstream boundary currently vis
 </p>
 
 <pre><code>Example source
-    ->
-backend-family contract artifact
-    ->
-runtime-family execution
+    -&gt; FIR posture
+    -&gt; lowering posture
+    -&gt; backend-family contract artifact
+    -&gt; runtime-family execution
 </code></pre>
 
 <p>
@@ -406,13 +404,6 @@ Equivalent direct script-style invocation:
   <li>prints a runtime-result JSON artifact.</li>
 </ol>
 
-<h3>Expected observable result for input 3</h3>
-
-<pre><code>public.result = 15
-ui.ctrl_input = 3
-ui.ind_result = 15
-</code></pre>
-
 <hr/>
 
 <h2 id="rust-pipe">12. Rust Runtime Pipe</h2>
@@ -435,12 +426,6 @@ cargo test
   <li>and the final result for input <code>3</code> is <code>15</code>.</li>
 </ul>
 
-<h3>Current limitation</h3>
-<p>
-The Rust side is already a real downstream consumer, but the example does not yet publish one dedicated Rust runner command comparable to the Python entry point.
-So the Rust consumer exists, but its example-local operational pipe is still best classified as partial rather than fully closed.
-</p>
-
 <hr/>
 
 <h2 id="cpp-pipe">13. C/C++ Runtime Pipe</h2>
@@ -456,6 +441,11 @@ Accordingly:
   <li>there is no published C/C++ run pipe,</li>
   <li>and runtime modularity is therefore only partially demonstrated today at the repository level.</li>
 </ul>
+
+<p>
+The target closure rule is nevertheless explicit:
+the same canonical example corridor should eventually be consumable by a C/C++ mini runtime in parallel with the Python and Rust consumers.
+</p>
 
 <hr/>
 
@@ -533,7 +523,8 @@ For the canonical example case <code>input = 3</code>, the expected observable e
   <li>publish one explicit example-local lowered artifact or clearer example-local lowering output,</li>
   <li>publish one distinct peripheral UI object realization file,</li>
   <li>publish one C/C++ mini runtime consumer and its build/run pipe,</li>
-  <li>publish one Rust runner entry point comparable to the Python runner,</li>
+  <li>publish one dedicated Rust runner entry point comparable to the Python runner,</li>
+  <li>publish one dedicated Python mini-runtime directory-level implementation surface rather than only root-level runner files,</li>
   <li>publish one real rendered front-panel host path,</li>
   <li>publish one LLVM-oriented native build corridor,</li>
   <li>and keep source, contract, and runtime-visible UI metadata aligned across the corridor.</li>
@@ -550,7 +541,7 @@ It already proves that:
 
 <ul>
   <li>a canonical FROG source can define a bounded UI-participating executable program,</li>
-  <li>that source can be lowered into a repository-visible backend-family contract artifact,</li>
+  <li>that source can be handed to a repository-visible backend-family contract artifact,</li>
   <li>the contract can be consumed by a Python runtime path,</li>
   <li>the same corridor can also be consumed by a Rust runtime path,</li>
   <li>and the example remains attributable as explicit loop plus explicit state rather than runtime-private hidden behavior.</li>
