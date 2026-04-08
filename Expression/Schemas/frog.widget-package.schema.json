@@ -1,0 +1,351 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:frog:expression:schema:frog.widget-package:0.1",
+  "title": "FROG Widget Package",
+  "description": "Schema for FROG .wfrog widget-oriented packages.",
+  "type": "object",
+  "required": [
+    "$schema",
+    "$id",
+    "format",
+    "spec_version",
+    "kind",
+    "package"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "$id": {
+      "type": "string"
+    },
+    "format": {
+      "const": "frog.wfrog"
+    },
+    "spec_version": {
+      "type": "string"
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "widget_class_package",
+        "front_panel_package"
+      ]
+    },
+    "package": {
+      "type": "object",
+      "required": [
+        "name",
+        "version"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "imports": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "package_ref": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "package_ref"
+        ],
+        "additionalProperties": true
+      }
+    },
+    "metadata": {
+      "type": "object"
+    },
+    "widget_classes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/widgetClass"
+      }
+    },
+    "front_panels": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/frontPanel"
+      }
+    },
+    "svg_assets": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/svgAsset"
+      }
+    },
+    "host_bindings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/hostBinding"
+      }
+    },
+    "behavior_modules": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "themes": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "resources": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "extensions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    }
+  },
+  "additionalProperties": true,
+  "$defs": {
+    "widgetClass": {
+      "type": "object",
+      "required": [
+        "class_id"
+      ],
+      "properties": {
+        "class_id": {
+          "type": "string"
+        },
+        "display_name": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string"
+        },
+        "primary_value": {
+          "type": "object"
+        },
+        "properties": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/property"
+          }
+        },
+        "methods": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/method"
+          }
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/event"
+          }
+        },
+        "parts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/part"
+          }
+        },
+        "visual_contract": {
+          "type": "object"
+        },
+        "host_contract": {
+          "type": "object"
+        },
+        "conformance": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    },
+    "property": {
+      "type": "object",
+      "required": [
+        "name",
+        "type"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "access": {
+          "type": "string"
+        },
+        "mutability": {
+          "type": "string"
+        },
+        "persistent": {
+          "type": "boolean"
+        },
+        "default": {},
+        "nullable": {
+          "type": "boolean"
+        },
+        "applies_to_part": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "method": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "parameters": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "returns": {
+          "type": "object"
+        },
+        "availability": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "event": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "payload": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    },
+    "part": {
+      "type": "object",
+      "required": [
+        "part_id",
+        "kind"
+      ],
+      "properties": {
+        "part_id": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "parent_part": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "frontPanel": {
+      "type": "object",
+      "required": [
+        "panel_id"
+      ],
+      "properties": {
+        "panel_id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "size": {
+          "type": "object",
+          "properties": {
+            "width": {
+              "type": "number"
+            },
+            "height": {
+              "type": "number"
+            }
+          },
+          "additionalProperties": false
+        },
+        "widgets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/widgetInstance"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "widgetInstance": {
+      "type": "object",
+      "required": [
+        "instance_id",
+        "class_ref"
+      ],
+      "properties": {
+        "instance_id": {
+          "type": "string"
+        },
+        "class_ref": {
+          "type": "string"
+        },
+        "layout": {
+          "type": "object"
+        },
+        "initial_properties": {
+          "type": "object"
+        },
+        "visual": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    },
+    "svgAsset": {
+      "type": "object",
+      "required": [
+        "asset_id",
+        "path"
+      ],
+      "properties": {
+        "asset_id": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "hostBinding": {
+      "type": "object",
+      "properties": {
+        "binding_id": {
+          "type": "string"
+        },
+        "host_family": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}
