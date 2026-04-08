@@ -27,15 +27,16 @@
   <li><a href="#port-terminal-and-connection-construction">12. Port, Terminal, and Connection Construction</a></li>
   <li><a href="#region-and-structure-construction">13. Region and Structure Construction</a></li>
   <li><a href="#boundary-and-ui-construction">14. Boundary and UI Construction</a></li>
-  <li><a href="#state-and-cycle-construction">15. State and Cycle Construction</a></li>
-  <li><a href="#source-attribution-and-correspondence-construction">16. Source Attribution and Correspondence Construction</a></li>
-  <li><a href="#support-object-construction">17. Support Object Construction</a></li>
-  <li><a href="#non-primary-correspondence-handling">18. Non-Primary Correspondence Handling</a></li>
-  <li><a href="#canonical-json-payload-shape">19. Canonical JSON Payload Shape</a></li>
-  <li><a href="#ir-validity-checks">20. IR Validity Checks</a></li>
-  <li><a href="#determinism-and-stability">21. Determinism and Stability</a></li>
-  <li><a href="#out-of-scope-for-v01">22. Out of Scope for v0.1</a></li>
-  <li><a href="#summary">23. Summary</a></li>
+  <li><a href="#widget-object-construction-corridor">15. Widget Object Construction Corridor</a></li>
+  <li><a href="#state-and-cycle-construction">16. State and Cycle Construction</a></li>
+  <li><a href="#source-attribution-and-correspondence-construction">17. Source Attribution and Correspondence Construction</a></li>
+  <li><a href="#support-object-construction">18. Support Object Construction</a></li>
+  <li><a href="#non-primary-correspondence-handling">19. Non-Primary Correspondence Handling</a></li>
+  <li><a href="#canonical-json-payload-shape">20. Canonical JSON Payload Shape</a></li>
+  <li><a href="#ir-validity-checks">21. IR Validity Checks</a></li>
+  <li><a href="#determinism-and-stability">22. Determinism and Stability</a></li>
+  <li><a href="#out-of-scope-for-v01">23. Out of Scope for v0.1</a></li>
+  <li><a href="#summary">24. Summary</a></li>
 </ul>
 
 <hr/>
@@ -60,8 +61,7 @@ Where <code>IR/Derivation rules.md</code> defines what must correspond between v
 </ul>
 
 <p>
-This document does not standardize one private compiler pipeline.
-It standardizes the construction obligations that make the produced Execution IR recognizable, inspectable, recoverable, serializable, and suitable for later specialization.
+This document does not standardize one private compiler pipeline. It standardizes the construction obligations that make the produced Execution IR recognizable, inspectable, recoverable, serializable, and suitable for later specialization.
 </p>
 
 <pre><code>validated program meaning
@@ -82,8 +82,7 @@ backend-facing contract
 private realization</code></pre>
 
 <p>
-In base v0.1, construction is intentionally conservative.
-It builds:
+In base v0.1, construction is intentionally conservative. It builds:
 </p>
 
 <ul>
@@ -91,6 +90,15 @@ It builds:
   <li>support objects only when they make already-validated execution-facing structure explicit,</li>
   <li>recoverable correspondence for source-visible content that does not become a primary execution object in the open IR,</li>
   <li>one canonical JSON-serializable Execution IR Document for one validated program.</li>
+</ul>
+
+<p>
+This conservatism applies directly to widget-related execution structure:
+</p>
+
+<ul>
+  <li>construction may preserve execution-facing widget roles,</li>
+  <li>construction must not materialize host-private widget realization as if it were canonical open IR.</li>
 </ul>
 
 <hr/>
@@ -133,7 +141,9 @@ This document does not fully define:
   <li>the semantic meaning of language constructs,</li>
   <li>the full cross-stage identity model,</li>
   <li>backend-specific lowering or runtime-private realization,</li>
-  <li>the full field-by-field machine-checkable schema.</li>
+  <li>the full field-by-field machine-checkable schema,</li>
+  <li>the full widget-package architecture,</li>
+  <li>the full host realization model.</li>
 </ul>
 
 <pre><code>This document defines:
@@ -145,7 +155,9 @@ language semantics
 full cross-stage identity contract
 lowering
 private realization
-full schema text</code></pre>
+full schema text
+widget-package ownership
+host realization ownership</code></pre>
 
 <hr/>
 
@@ -189,13 +201,22 @@ Schema              -&gt; machine-checkable payload form
 Lowering            -&gt; later specialization
 Backend contract    -&gt; later consumer-facing handoff</code></pre>
 
+<p>
+The same ownership discipline applies to widget-related execution structure:
+</p>
+
+<ul>
+  <li>Expression/ owns widget instance source shape and widget-package architecture,</li>
+  <li>Construction rules own how validated widget participation consequences become material IR records,</li>
+  <li>Construction rules do not own host realization or runtime UI object storage.</li>
+</ul>
+
 <hr/>
 
 <h2 id="construction-entry-condition">5. Construction Entry Condition</h2>
 
 <p>
-Execution IR construction begins only after the program has validated program meaning.
-Construction MUST NOT be claimed for a program that has not already satisfied the applicable validation rules.
+Execution IR construction begins only after the program has validated program meaning. Construction MUST NOT be claimed for a program that has not already satisfied the applicable validation rules.
 </p>
 
 <p>
@@ -209,7 +230,8 @@ At minimum, the following validation classes MUST already be satisfied:
   <li>interface / diagram consistency validation,</li>
   <li>region and structure-boundary validation,</li>
   <li>state and cycle legality validation,</li>
-  <li>execution-relevant distinction resolution.</li>
+  <li>execution-relevant distinction resolution,</li>
+  <li>widget interaction legality resolution where applicable.</li>
 </ul>
 
 <p>
@@ -221,7 +243,8 @@ Construction therefore begins from validated meaning, not from:
   <li>mere structural validity,</li>
   <li>editor-only convenience state,</li>
   <li>runtime-private scheduling assumptions,</li>
-  <li>backend-private storage assumptions.</li>
+  <li>backend-private storage assumptions,</li>
+  <li>host-private widget realization assumptions.</li>
 </ul>
 
 <pre><code>no validated meaning
@@ -282,6 +305,21 @@ one canonical Execution IR Document
               +-- source_map
               +-- correspondence</code></pre>
 
+<p>
+For widget-related execution structure, the result MAY contain:
+</p>
+
+<ul>
+  <li>widget execution-facing participation carriers,</li>
+  <li>widget identity anchors,</li>
+  <li>member-addressed UI-operation records,</li>
+  <li>correspondence for non-primary widget-related source content.</li>
+</ul>
+
+<p>
+It MUST NOT contain host-private widget trees, rendering scene graphs, or SVG layer execution graphs as if they were canonical open IR.
+</p>
+
 <hr/>
 
 <h2 id="construction-principles">7. Construction Principles</h2>
@@ -309,6 +347,16 @@ Construction therefore does not mean:
   <li>scheduler-private normalization presented as canonical IR,</li>
   <li>ABI commitment disguised as open IR,</li>
   <li>loss of category distinctions still required by the specification.</li>
+</ul>
+
+<p>
+For widget-related execution structure, portability requires:
+</p>
+
+<ul>
+  <li>keeping execution-facing widget roles explicit,</li>
+  <li>keeping member-addressed UI operations explicit,</li>
+  <li>refusing to substitute one runtime's UI realization model for the open IR model.</li>
 </ul>
 
 <hr/>
@@ -346,13 +394,28 @@ canonical JSON payload assembly
 IR validity checks</code></pre>
 
 <p>
-An implementation MAY merge internal phases.
-The obligations they perform MUST still be satisfied.
+An implementation MAY merge internal phases. The obligations they perform MUST still be satisfied.
 </p>
 
 <p>
 This is a construction pipeline, not a lowering pipeline and not a runtime realization pipeline.
 </p>
+
+<p>
+A widget-aware reading of the same construction pipeline is:
+</p>
+
+<pre><code>validated widget participation meaning
+   -&gt;
+widget-related primary object construction where required
+   -&gt;
+widget-related boundary / UI construction
+   -&gt;
+member-address and operation-family construction
+   -&gt;
+widget attribution / correspondence construction
+   -&gt;
+no host realization import</code></pre>
 
 <hr/>
 
@@ -380,7 +443,8 @@ The top-level document MUST NOT be constructed as:
   <li>an anonymous bag of arrays with no document identity,</li>
   <li>a runtime-private scheduler dump,</li>
   <li>a target-specific lowered module,</li>
-  <li>a deployment package.</li>
+  <li>a deployment package,</li>
+  <li>a host-private UI realization package.</li>
 </ul>
 
 <p>
@@ -393,7 +457,9 @@ lowered form
    !=
 backend contract
    !=
-runtime-private realization</code></pre>
+runtime-private realization
+   !=
+host realization graph</code></pre>
 
 <hr/>
 
@@ -416,8 +482,7 @@ That execution unit MUST be able to carry the canonical major categories:
 </ul>
 
 <p>
-The execution unit MUST remain the primary carrier of execution-facing content.
-It MUST NOT collapse:
+The execution unit MUST remain the primary carrier of execution-facing content. It MUST NOT collapse:
 </p>
 
 <ul>
@@ -425,6 +490,16 @@ It MUST NOT collapse:
   <li>connections into positional adjacency,</li>
   <li>regions into comments or layout hints,</li>
   <li>source attribution into undocumented ordering assumptions.</li>
+</ul>
+
+<p>
+When widget-related execution structure is present, the execution unit MUST remain able to carry:
+</p>
+
+<ul>
+  <li>widget-related primary or support objects where required,</li>
+  <li>execution-facing UI operation objects where required,</li>
+  <li>widget-related attribution and non-primary correspondence where required.</li>
 </ul>
 
 <hr/>
@@ -459,9 +534,29 @@ A constructor MUST NOT:
 </ul>
 
 <p>
-Where one validated contributor yields one primary object, that relation SHOULD remain direct and clear.
-Where one validated contributor yields one primary object plus support objects, the primary-versus-support distinction MUST remain explicit.
+Where one validated contributor yields one primary object, that relation SHOULD remain direct and clear. Where one validated contributor yields one primary object plus support objects, the primary-versus-support distinction MUST remain explicit.
 </p>
+
+<p>
+For widget-related execution structure, primary object construction applies especially to:
+</p>
+
+<ul>
+  <li><code>widget_value</code> participation objects,</li>
+  <li><code>widget_reference</code> participation objects,</li>
+  <li>standardized UI-object primitive execution objects where validated meaning requires them.</li>
+</ul>
+
+<p>
+It does not automatically apply to:
+</p>
+
+<ul>
+  <li>widget realization-package records,</li>
+  <li>SVG anchors,</li>
+  <li>visual state layers,</li>
+  <li>host control classes.</li>
+</ul>
 
 <hr/>
 
@@ -507,6 +602,16 @@ Connection construction MUST preserve the difference between:
   <li>structure-boundary participation,</li>
   <li>explicit state participation,</li>
   <li>explicit UI sequencing where relevant.</li>
+</ul>
+
+<p>
+For UI-related execution structure, connection construction MUST also preserve the difference between:
+</p>
+
+<ul>
+  <li>carrying a widget reference,</li>
+  <li>invoking a standardized UI primitive operation,</li>
+  <li>moving a primary widget value through ordinary valueflow.</li>
 </ul>
 
 <hr/>
@@ -579,7 +684,86 @@ Where a source-visible UI declaration does not become a primary execution object
 
 <hr/>
 
-<h2 id="state-and-cycle-construction">15. State and Cycle Construction</h2>
+<h2 id="widget-object-construction-corridor">15. Widget Object Construction Corridor</h2>
+
+<p>
+The widget object system already distinguishes:
+</p>
+
+<ul>
+  <li>widget instances in canonical source,</li>
+  <li>class-level widget law,</li>
+  <li>diagram-side widget interaction,</li>
+  <li>widget-oriented package content,</li>
+  <li>runtime interpretation,</li>
+  <li>host realization.</li>
+</ul>
+
+<p>
+Construction MUST preserve the execution-facing part of that corridor without absorbing the downstream realization layers.
+</p>
+
+<h3>15.1 Widget identity construction</h3>
+
+<ul>
+  <li>Where validated meaning requires widget identity at execution-facing level, construction MUST materialize a stable widget-related identity anchor in the canonical IR.</li>
+  <li>That identity anchor MUST remain attributable to the relevant widget instance contributor.</li>
+</ul>
+
+<h3>15.2 Member-address construction</h3>
+
+<ul>
+  <li>Where validated widget interaction addresses a widget member or part, construction MUST materialize a recoverable member-address carrier or descriptor.</li>
+  <li>The carrier MUST remain execution-facing and MUST NOT become a host-private visual-node address.</li>
+</ul>
+
+<h3>15.3 UI primitive operation construction</h3>
+
+<ul>
+  <li>Standardized UI-object primitive operations such as property read, property write, and method invocation MUST be materially constructed as explicit operation-family records or objects.</li>
+  <li>The operation family MUST remain explicit.</li>
+  <li>The addressed widget or addressed member MUST remain recoverable.</li>
+</ul>
+
+<h3>15.4 Widget-value construction</h3>
+
+<ul>
+  <li><code>widget_value</code> participation MUST be materially constructed as widget-value participation, not as disguised property access to a member named <code>value</code>.</li>
+</ul>
+
+<h3>15.5 Non-primary widget-package handling</h3>
+
+<ul>
+  <li>Widget class packages, realization packages, SVG assets, anchors, and host-private hints SHOULD normally be handled through correspondence or downstream consumption rather than as primary execution objects.</li>
+  <li>If they remain relevant to recoverability, construction MUST preserve that relation explicitly through correspondence handling.</li>
+</ul>
+
+<h3>15.6 Forbidden widget-related construction shortcuts</h3>
+
+<p>
+Construction MUST NOT:
+</p>
+
+<ul>
+  <li>replace widget identity with one runtime's native object pointer notion,</li>
+  <li>replace member addressing with host-private node paths,</li>
+  <li>replace UI primitive operation construction with platform-specific API call records,</li>
+  <li>import SVG scene structure as if it were canonical execution structure.</li>
+</ul>
+
+<pre><code>validated widget interaction meaning
+        -&gt;
+constructed execution-facing widget identity / access / operation records
+        -/&gt;
+runtime-native pointer model
+        -/&gt;
+host widget tree
+        -/&gt;
+SVG render graph</code></pre>
+
+<hr/>
+
+<h2 id="state-and-cycle-construction">16. State and Cycle Construction</h2>
 
 <p>
 Construction of validated explicit state MUST preserve explicit state.
@@ -621,7 +805,7 @@ hidden persistence as a construction shortcut</code></pre>
 
 <hr/>
 
-<h2 id="source-attribution-and-correspondence-construction">16. Source Attribution and Correspondence Construction</h2>
+<h2 id="source-attribution-and-correspondence-construction">17. Source Attribution and Correspondence Construction</h2>
 
 <p>
 Construction MUST build explicit attribution and correspondence carriers sufficient to satisfy the recoverability obligations of the IR layer.
@@ -660,9 +844,20 @@ Construction MUST NOT rely on:
 as the only means of reconstruction.
 </p>
 
+<p>
+For widget-related execution-facing content, construction SHOULD ensure that attribution and correspondence can distinguish at least:
+</p>
+
+<ul>
+  <li>widget instance contributor,</li>
+  <li>widget member-address contributor where applicable,</li>
+  <li>UI primitive operation contributor,</li>
+  <li>non-primary widget-package or realization-package correspondence where preserved.</li>
+</ul>
+
 <hr/>
 
-<h2 id="support-object-construction">17. Support Object Construction</h2>
+<h2 id="support-object-construction">18. Support Object Construction</h2>
 
 <p>
 Construction MAY introduce support objects, but only when doing so makes already-validated execution structure explicit.
@@ -688,7 +883,8 @@ Typical valid support-object situations include:
   <li>making initialization carriers explicit,</li>
   <li>making structure-boundary participation explicit,</li>
   <li>making connection-side or boundary-side support roles explicit,</li>
-  <li>making state participation explicit.</li>
+  <li>making state participation explicit,</li>
+  <li>making member-address descriptors explicit for UI operations.</li>
 </ul>
 
 <p>
@@ -699,16 +895,16 @@ Support objects MUST NOT be used to:
   <li>invent new semantics,</li>
   <li>smuggle in target-specific lowered commitments,</li>
   <li>replace missing derivation law,</li>
-  <li>hide the loss of required attribution.</li>
+  <li>hide the loss of required attribution,</li>
+  <li>smuggle host-private UI realization into the open IR.</li>
 </ul>
 
 <hr/>
 
-<h2 id="non-primary-correspondence-handling">18. Non-Primary Correspondence Handling</h2>
+<h2 id="non-primary-correspondence-handling">19. Non-Primary Correspondence Handling</h2>
 
 <p>
-Some source-visible contributors may remain relevant without becoming primary execution objects in the canonical IR.
-Construction MUST handle those situations explicitly when recoverability requires it.
+Some source-visible contributors may remain relevant without becoming primary execution objects in the canonical IR. Construction MUST handle those situations explicitly when recoverability requires it.
 </p>
 
 <p>
@@ -718,7 +914,10 @@ Typical non-primary cases include:
 <ul>
   <li>declaration-reference relations,</li>
   <li>source-visible declarations that influence execution participation indirectly,</li>
-  <li>intentional non-primary outcomes where forcing a primary execution object would be architecturally wrong.</li>
+  <li>intentional non-primary outcomes where forcing a primary execution object would be architecturally wrong,</li>
+  <li>widget realization-package detail,</li>
+  <li>SVG asset references,</li>
+  <li>pure visual layout or styling detail.</li>
 </ul>
 
 <p>
@@ -738,7 +937,7 @@ That distinction is one of the reasons why <code>correspondence</code> remains a
 
 <hr/>
 
-<h2 id="canonical-json-payload-shape">19. Canonical JSON Payload Shape</h2>
+<h2 id="canonical-json-payload-shape">20. Canonical JSON Payload Shape</h2>
 
 <p>
 A conforming implementation MUST be able to emit the constructed canonical IR in a canonical JSON form compatible with the published schema posture.
@@ -761,8 +960,7 @@ In base v0.1, the minimum conceptual payload shape is:
 }</code></pre>
 
 <p>
-The exact field-by-field machine-checkable schema belongs to <code>IR/Schema.md</code> and <code>IR/schema/</code>.
-This document owns the construction obligation to produce a payload in that canonical category posture.
+The exact field-by-field machine-checkable schema belongs to <code>IR/Schema.md</code> and <code>IR/schema/</code>. This document owns the construction obligation to produce a payload in that canonical category posture.
 </p>
 
 <p>
@@ -775,9 +973,20 @@ Construction MUST therefore ensure that:
   <li>object, connection, region, source-map, and correspondence construction all result in payload-compatible records.</li>
 </ul>
 
+<p>
+When widget-related execution structure is present, the payload MUST remain able to carry:
+</p>
+
+<ul>
+  <li>widget-related objects or descriptors where required,</li>
+  <li>member-address records where required,</li>
+  <li>widget-related attribution and correspondence where required,</li>
+  <li>without turning host-realization detail into a required top-level payload family.</li>
+</ul>
+
 <hr/>
 
-<h2 id="ir-validity-checks">20. IR Validity Checks</h2>
+<h2 id="ir-validity-checks">21. IR Validity Checks</h2>
 
 <p>
 Once construction is complete, a conforming implementation MUST be able to check the validity of the constructed IR document against the published obligations.
@@ -798,8 +1007,7 @@ These checks include, at minimum:
 </ul>
 
 <p>
-These checks are not a substitute for semantic validation.
-They are construction-time and IR-validity checks applied after semantic eligibility already exists.
+These checks are not a substitute for semantic validation. They are construction-time and IR-validity checks applied after semantic eligibility already exists.
 </p>
 
 <pre><code>semantic validity
@@ -811,9 +1019,20 @@ IR construction validity
 lowering validity
    is downstream</code></pre>
 
+<p>
+For widget-related execution-facing content, IR-validity checks SHOULD also ensure, where applicable:
+</p>
+
+<ul>
+  <li>required widget identity anchors exist,</li>
+  <li>required member-address records are coherent,</li>
+  <li>required operation-family distinctions are preserved,</li>
+  <li>non-primary widget-package correspondence is not silently dropped when required.</li>
+</ul>
+
 <hr/>
 
-<h2 id="determinism-and-stability">21. Determinism and Stability</h2>
+<h2 id="determinism-and-stability">22. Determinism and Stability</h2>
 
 <p>
 Construction SHOULD be stable and deterministic under the same:
@@ -827,8 +1046,7 @@ Construction SHOULD be stable and deterministic under the same:
 </ul>
 
 <p>
-This does not require that every future implementation choose identical identifier syntax.
-It does require that construction not drift arbitrarily or rely on hidden nondeterministic ordering where the canonical JSON artifact is supposed to be inspectable and comparable.
+This does not require that every future implementation choose identical identifier syntax. It does require that construction not drift arbitrarily or rely on hidden nondeterministic ordering where the canonical JSON artifact is supposed to be inspectable and comparable.
 </p>
 
 <p>
@@ -842,9 +1060,19 @@ Determinism matters because it improves:
   <li>compiler-corridor auditability.</li>
 </ul>
 
+<p>
+For widget-related execution structure, determinism also means:
+</p>
+
+<ul>
+  <li>stable operation-family construction,</li>
+  <li>stable widget identity anchoring,</li>
+  <li>stable member-address materialization under the same validated meaning and construction assumptions.</li>
+</ul>
+
 <hr/>
 
-<h2 id="out-of-scope-for-v01">22. Out of Scope for v0.1</h2>
+<h2 id="out-of-scope-for-v01">23. Out of Scope for v0.1</h2>
 
 <p>
 The following are out of scope for this document in base v0.1:
@@ -858,17 +1086,18 @@ The following are out of scope for this document in base v0.1:
   <li>one mandatory compiler-side storage builder,</li>
   <li>one mandatory ABI construction layer,</li>
   <li>runtime-private activation object construction,</li>
-  <li>backend-family-specific lowered artifact construction.</li>
+  <li>backend-family-specific lowered artifact construction,</li>
+  <li>one mandatory runtime UI object ABI,</li>
+  <li>one mandatory host realization payload family.</li>
 </ul>
 
 <p>
-Those may appear later.
-They do not weaken the current obligations for building the canonical open Execution IR Document.
+Those may appear later. They do not weaken the current obligations for building the canonical open Execution IR Document.
 </p>
 
 <hr/>
 
-<h2 id="summary">23. Summary</h2>
+<h2 id="summary">24. Summary</h2>
 
 <p>
 This document defines how a conforming implementation materially builds the canonical Execution IR Document from validated FROG program meaning.
@@ -888,6 +1117,14 @@ Its core rules are:
 </ul>
 
 <p>
-The result is not an arbitrary implementation artifact.
-It is the materially built canonical open execution-facing representation that sits between validated program meaning and later target-oriented specialization.
+The result is not an arbitrary implementation artifact. It is the materially built canonical open execution-facing representation that sits between validated program meaning and later target-oriented specialization.
 </p>
+
+<p>
+That same discipline now applies explicitly to widget-related execution structure:
+</p>
+
+<ul>
+  <li>construction may materially build execution-facing widget identities, accesses, and operation-family records,</li>
+  <li>but widget-package ownership, host realization, SVG visual structure, and runtime-private UI storage remain outside the ownership of canonical IR construction.</li>
+</ul>
