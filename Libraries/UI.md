@@ -5,7 +5,7 @@
 <h1 align="center">FROG UI Library</h1>
 
 <p align="center">
-  <strong>Normative specification of the intrinsic <code>frog.ui</code> primitive library for FROG v0.1</strong><br/>
+  <strong>Normative specification of the intrinsic <code>frog.ui</code> primitive library for object-style widget interaction</strong><br/>
   <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -15,21 +15,22 @@
 
 <ul>
   <li><a href="#overview">1. Overview</a></li>
-  <li><a href="#design-goals">2. Design Goals</a></li>
-  <li><a href="#architectural-position">3. Architectural Position</a></li>
-  <li><a href="#scope">4. Scope</a></li>
-  <li><a href="#relation-with-other-specifications">5. Relation with Other Specifications</a></li>
-  <li><a href="#namespace">6. Namespace</a></li>
-  <li><a href="#standard-primitives-for-v01">7. Standard Primitives for v0.1</a></li>
-  <li><a href="#froguiproperty_read">8. <code>frog.ui.property_read</code></a></li>
-  <li><a href="#froguiproperty_write">9. <code>frog.ui.property_write</code></a></li>
-  <li><a href="#froguimethod_invoke">10. <code>frog.ui.method_invoke</code></a></li>
-  <li><a href="#typing-and-sequencing">11. Typing and Sequencing</a></li>
-  <li><a href="#validation-rules">12. Validation Rules</a></li>
-  <li><a href="#execution-facing-posture">13. Execution-Facing Posture</a></li>
-  <li><a href="#examples">14. Examples</a></li>
-  <li><a href="#out-of-scope-for-v01">15. Out of Scope for v0.1</a></li>
-  <li><a href="#summary">16. Summary</a></li>
+  <li><a href="#why-this-document-exists">2. Why This Document Exists</a></li>
+  <li><a href="#design-goals">3. Design Goals</a></li>
+  <li><a href="#architectural-position">4. Architectural Position</a></li>
+  <li><a href="#scope">5. Scope</a></li>
+  <li><a href="#relation-with-other-specifications">6. Relation with Other Specifications</a></li>
+  <li><a href="#namespace">7. Namespace</a></li>
+  <li><a href="#standard-primitives">8. Standard Primitives</a></li>
+  <li><a href="#froguiproperty_read">9. <code>frog.ui.property_read</code></a></li>
+  <li><a href="#froguiproperty_write">10. <code>frog.ui.property_write</code></a></li>
+  <li><a href="#froguimethod_invoke">11. <code>frog.ui.method_invoke</code></a></li>
+  <li><a href="#typing-and-sequencing">12. Typing and Sequencing</a></li>
+  <li><a href="#validation-rules">13. Validation Rules</a></li>
+  <li><a href="#execution-facing-posture">14. Execution-Facing Posture</a></li>
+  <li><a href="#examples">15. Examples</a></li>
+  <li><a href="#out-of-scope">16. Out of Scope</a></li>
+  <li><a href="#summary">17. Summary</a></li>
 </ul>
 
 <hr/>
@@ -37,7 +38,7 @@
 <h2 id="overview">1. Overview</h2>
 
 <p>
-This document defines the intrinsic <code>frog.ui</code> primitive library for FROG v0.1.
+This document defines the intrinsic <code>frog.ui</code> primitive library.
 </p>
 
 <p>
@@ -52,6 +53,7 @@ FROG intentionally separates:
   <li>natural primary widget-value participation,</li>
   <li>object-style widget interaction,</li>
   <li>widget class law,</li>
+  <li>widget-oriented package content,</li>
   <li>host-side widget realization.</li>
 </ul>
 
@@ -59,8 +61,7 @@ FROG intentionally separates:
 Accordingly:
 </p>
 
-<pre>
-widget_value
+<pre><code>widget_value
     -&gt; natural primary-value path
 
 widget_reference
@@ -69,40 +70,69 @@ widget_reference
 frog.ui.*
     -&gt; intrinsic executable primitive vocabulary
        for object-style widget interaction
-</pre>
+</code></pre>
 
 <p>
-This document defines the intrinsic primitive catalog for that interaction layer. It does not define the widget class catalog, front-panel serialization, widget realization packages, general diagram graph structure, open Execution IR structure, lowering families, backend contracts, or runtime-private widget-handle architectures.
+This document defines the intrinsic primitive catalog for that interaction layer. It does not define the widget class catalog, front-panel serialization, widget realization packages, general diagram graph structure, open execution-facing representations, lowering families, backend contracts, or runtime-private widget-handle architectures.
 </p>
 
 <hr/>
 
-<h2 id="design-goals">2. Design Goals</h2>
+<h2 id="why-this-document-exists">2. Why This Document Exists</h2>
+
+<p>
+A widget system needs more than widget declarations and class contracts. It also needs a stable executable vocabulary for interacting with widgets as objects inside diagrams.
+</p>
+
+<p>
+Without such a library, object-style widget interaction tends to collapse into:
+</p>
 
 <ul>
-  <li><strong>Clarity</strong> — define a small, explicit, stable primitive vocabulary for object-style UI interaction.</li>
-  <li><strong>Architectural discipline</strong> — keep executable UI primitives distinct from widget instance declarations, widget class law, front-panel source, IR ownership, and host realization.</li>
-  <li><strong>Portability</strong> — provide primitive identities and primitive-local contracts that can be recognized across multiple conforming runtimes.</li>
-  <li><strong>Recoverability</strong> — preserve the semantic distinction between natural <code>widget_value</code> participation and object-style <code>widget_reference</code>-driven interaction.</li>
-  <li><strong>Execution usefulness</strong> — support explicit property reads, property writes, and method invocation without forcing a larger standardized event-execution model into v0.1.</li>
+  <li>runtime-private conventions,</li>
+  <li>editor-private shortcuts,</li>
+  <li>backend-specific helper nodes,</li>
+  <li>or implicit rewrites that are difficult to validate and difficult to preserve across runtimes.</li>
+</ul>
+
+<p>
+This document therefore gives <code>frog.ui</code> a narrow but explicit role:
+</p>
+
+<ul>
+  <li>provide stable primitive identities,</li>
+  <li>define primitive-local contracts,</li>
+  <li>preserve the distinction between natural value participation and object-style interaction,</li>
+  <li>allow several runtimes to recognize the same UI-interaction intent without turning one runtime implementation into the definition of the language.</li>
 </ul>
 
 <hr/>
 
-<h2 id="architectural-position">3. Architectural Position</h2>
+<h2 id="design-goals">3. Design Goals</h2>
+
+<ul>
+  <li><strong>Clarity</strong> — define a small, explicit, stable primitive vocabulary for object-style UI interaction.</li>
+  <li><strong>Architectural discipline</strong> — keep executable UI primitives distinct from widget instance declarations, widget class law, front-panel source, widget-package ownership, IR ownership, and host realization.</li>
+  <li><strong>Portability</strong> — provide primitive identities and primitive-local contracts that can be recognized across multiple conforming runtimes.</li>
+  <li><strong>Recoverability</strong> — preserve the semantic distinction between natural <code>widget_value</code> participation and object-style <code>widget_reference</code>-driven interaction.</li>
+  <li><strong>Execution usefulness</strong> — support explicit property reads, property writes, and method invocation without forcing a larger standardized event-execution model into the current library surface.</li>
+</ul>
+
+<hr/>
+
+<h2 id="architectural-position">4. Architectural Position</h2>
 
 <p>
 The architectural position of <code>frog.ui</code> is intentionally narrow and explicit:
 </p>
 
-<pre>
-Expression/   -&gt; canonical source representation
+<pre><code>Expression/   -&gt; canonical source representation
 Language/     -&gt; validated-program meaning
 Libraries/    -&gt; intrinsic primitive identities and primitive-local contracts
 Profiles/     -&gt; optional standardized capability families
-IR/           -&gt; open execution-facing representation, lowering, and backend-facing boundaries
+IR/           -&gt; execution-facing representation, lowering, and backend-facing boundaries
 IDE/          -&gt; authoring, observability, debugging, inspection
-</pre>
+</code></pre>
 
 <p>
 Within that architecture:
@@ -112,10 +142,10 @@ Within that architecture:
   <li><code>Expression/Widget.md</code> owns source-level widget instances and their source-facing presence,</li>
   <li><code>Expression/Widget class contract.md</code> owns class-level widget legality,</li>
   <li><code>Expression/Widget interaction.md</code> owns the source-facing interaction model, including <code>widget_value</code> and <code>widget_reference</code>,</li>
-  <li><code>Expression/Widget package.md</code> and related widget-package documents own the <code>.wfrog</code> artifact family,</li>
-  <li><code>Libraries/UI.md</code> owns intrinsic primitive identities, primitive-local signatures, metadata requirements, primitive typing, sequencing behavior, and primitive-local execution contracts for <code>frog.ui.*</code>,</li>
+  <li><code>Expression/Widget package (.wfrog).md</code> owns the <code>.wfrog</code> artifact family,</li>
+  <li><code>Libraries/UI.md</code> owns intrinsic primitive identities, primitive-local signatures, metadata requirements, primitive typing, sequencing posture, and primitive-local execution contracts for <code>frog.ui.*</code>,</li>
   <li><code>Language/</code> owns the cross-cutting validated-program meaning of UI participation and UI interaction,</li>
-  <li><code>IR/</code> may later preserve these primitives in open execution-facing form and then specialize them through lowering,</li>
+  <li><code>IR/</code> may later preserve these primitives in execution-facing form and then specialize them through lowering,</li>
   <li><code>IDE/</code> may surface these primitives in authoring workflows without redefining them.</li>
 </ul>
 
@@ -123,8 +153,7 @@ Within that architecture:
 The key ownership rule is:
 </p>
 
-<pre>
-widget class law
+<pre><code>widget class law
     !=
 widget interaction primitive library
 
@@ -132,21 +161,21 @@ front-panel widget declaration
     !=
 executable object-style UI primitive
 
-open Execution IR representation
+execution-facing representation
     !=
 primitive catalog ownership
 
 runtime-private widget handle
     !=
 intrinsic frog.ui primitive identity
-</pre>
+</code></pre>
 
 <hr/>
 
-<h2 id="scope">4. Scope</h2>
+<h2 id="scope">5. Scope</h2>
 
 <p>
-For FROG v0.1, this library standardizes the following intrinsic primitive identifiers:
+For the current library surface, this document standardizes the following intrinsic primitive identifiers:
 </p>
 
 <ul>
@@ -164,7 +193,7 @@ This specification defines:
   <li>required primitive-local metadata,</li>
   <li>canonical port signatures,</li>
   <li>primitive-local typing constraints,</li>
-  <li>primitive-local sequencing behavior,</li>
+  <li>primitive-local sequencing posture,</li>
   <li>primitive-level validation rules,</li>
   <li>primitive-local execution-facing semantics.</li>
 </ul>
@@ -189,7 +218,7 @@ This specification does not define:
 
 <hr/>
 
-<h2 id="relation-with-other-specifications">5. Relation with Other Specifications</h2>
+<h2 id="relation-with-other-specifications">6. Relation with Other Specifications</h2>
 
 <p>
 This document is used together with the rest of the FROG specification.
@@ -203,9 +232,9 @@ This document is used together with the rest of the FROG specification.
   <li><code>Expression/Widget class contract.md</code> defines class-level widget legality.</li>
   <li><code>Expression/Widget interaction.md</code> defines the canonical source-facing interaction model used by these primitives.</li>
   <li><code>Expression/Front panel.md</code> defines front-panel widget declaration and composition.</li>
-  <li><code>Expression/Widget package.md</code> defines the architectural role of <code>.wfrog</code> packages.</li>
+  <li><code>Expression/Widget package (.wfrog).md</code> defines the architectural role of <code>.wfrog</code> packages.</li>
   <li><code>Language/Readme.md</code> defines semantic ownership for validated FROG programs.</li>
-  <li><code>IR/</code> documents define the open execution-facing representation, recoverable mapping, lowering, and backend-facing handoff corridors that may later preserve and specialize these primitives.</li>
+  <li><code>IR/</code> documents define execution-facing representation, recoverable mapping, lowering, and backend-facing handoff corridors that may later preserve and specialize these primitives.</li>
 </ul>
 
 <p>
@@ -225,8 +254,7 @@ Ownership remains intentionally split:
 In particular:
 </p>
 
-<pre>
-Libraries/UI.md
+<pre><code>Libraries/UI.md
     does not own
 widget class law
 
@@ -240,7 +268,7 @@ Libraries/UI.md
 
 Libraries/UI.md
     does not own
-Execution IR object schemas
+execution-facing object schemas
 
 Libraries/UI.md
     does not own
@@ -249,11 +277,11 @@ host-side realization rules
 Libraries/UI.md
     owns
 intrinsic executable UI-interaction primitive contracts
-</pre>
+</code></pre>
 
 <hr/>
 
-<h2 id="namespace">6. Namespace</h2>
+<h2 id="namespace">7. Namespace</h2>
 
 <p>
 The intrinsic primitive namespace defined by this library is:
@@ -269,7 +297,7 @@ This namespace is reserved for intrinsic executable UI-interaction primitives.
 It MUST be distinguished from widget-class namespaces such as:
 </p>
 
-<pre><code>frog.ui.standard.*</code></pre>
+<pre><code>frog.widgets.*</code></pre>
 
 <p>
 Accordingly:
@@ -277,16 +305,16 @@ Accordingly:
 
 <ul>
   <li><code>frog.ui.property_read</code>, <code>frog.ui.property_write</code>, and <code>frog.ui.method_invoke</code> are intrinsic primitive identifiers,</li>
-  <li><code>frog.ui.standard.numeric_control</code> and similar identifiers are widget-class identifiers,</li>
+  <li><code>frog.widgets.numeric_control</code> and similar identifiers are widget-class identifiers,</li>
   <li>namespace prefix similarity does not collapse primitive-library ownership and widget-class ownership into one concept.</li>
 </ul>
 
 <hr/>
 
-<h2 id="standard-primitives-for-v01">7. Standard Primitives for v0.1</h2>
+<h2 id="standard-primitives">8. Standard Primitives</h2>
 
 <p>
-FROG v0.1 standardizes the following intrinsic <code>frog.ui</code> primitives:
+This library standardizes the following intrinsic <code>frog.ui</code> primitives:
 </p>
 
 <ul>
@@ -314,8 +342,7 @@ These primitives are object-style interaction primitives. They do not replace th
 The semantic distinction MUST remain recoverable:
 </p>
 
-<pre>
-widget_value
+<pre><code>widget_value
     !=
 widget_reference
 
@@ -326,11 +353,11 @@ frog.ui.property_read / property_write / method_invoke
 property access to member "value"
     !=
 natural widget_value participation
-</pre>
+</code></pre>
 
 <hr/>
 
-<h2 id="froguiproperty_read">8. <code>frog.ui.property_read</code></h2>
+<h2 id="froguiproperty_read">9. <code>frog.ui.property_read</code></h2>
 
 <p>
 Primitive identifier:
@@ -390,7 +417,7 @@ Primitive-local semantics:
 
 <hr/>
 
-<h2 id="froguiproperty_write">9. <code>frog.ui.property_write</code></h2>
+<h2 id="froguiproperty_write">10. <code>frog.ui.property_write</code></h2>
 
 <p>
 Primitive identifier:
@@ -449,9 +476,13 @@ Primitive-local semantics:
   <li>the primitive remains an object-style UI-interaction primitive even when the addressed member is named <code>value</code>.</li>
 </ul>
 
+<p>
+A presentation-property write such as <code>{ "member": "face_color" }</code> MAY affect host-visible appearance. It MUST NOT by itself redefine the executable meaning of the program.
+</p>
+
 <hr/>
 
-<h2 id="froguimethod_invoke">10. <code>frog.ui.method_invoke</code></h2>
+<h2 id="froguimethod_invoke">11. <code>frog.ui.method_invoke</code></h2>
 
 <p>
 Primitive identifier:
@@ -469,7 +500,7 @@ Required primitive-local metadata:
 
 <pre><code>{
   "widget_method": {
-    "name": "reset_to_default"
+    "name": "reset_to_default_style"
   }
 }</code></pre>
 
@@ -511,31 +542,31 @@ Primitive-local semantics:
 
 <hr/>
 
-<h2 id="typing-and-sequencing">11. Typing and Sequencing</h2>
+<h2 id="typing-and-sequencing">12. Typing and Sequencing</h2>
 
-<h3>11.1 Widget-reference typing</h3>
+<h3>12.1 Widget-reference typing</h3>
 
 <p>
 The required input port <code>ref</code> carries an opaque widget-reference token.
-In v0.1, this token is interaction-oriented and diagram-internal.
+This token is interaction-oriented and diagram-internal.
 It is not standardized here as a general-purpose first-class value type for arbitrary storage, transport, comparison, or computation.
 </p>
 
-<h3>11.2 Property typing</h3>
+<h3>12.2 Property typing</h3>
 
 <p>
 Property-read and property-write primitives MUST use the declared property type of the addressed widget member.
 Compatibility checks and implicit coercions MUST follow the ordinary FROG type rules.
 </p>
 
-<h3>11.3 Method typing</h3>
+<h3>12.3 Method typing</h3>
 
 <p>
 Method-invoke primitives MUST use the declared method signature of the addressed widget member.
 Argument and result ports MUST follow the canonical method signature defined by the active widget class law.
 </p>
 
-<h3>11.4 UI sequencing ports</h3>
+<h3>12.4 UI sequencing ports</h3>
 
 <p>
 The optional ports <code>ui_in</code> and <code>ui_out</code> define explicit ordering between UI interactions.
@@ -550,18 +581,29 @@ These ports:
 </ul>
 
 <p>
-In v0.1, the sequencing token carried by <code>ui_in</code> and <code>ui_out</code> is opaque. Its runtime representation is implementation-defined, but its ordering meaning between standardized UI-interaction primitives is defined by this specification.
+The sequencing token carried by <code>ui_in</code> and <code>ui_out</code> is opaque. Its runtime representation is implementation-defined, but its ordering meaning between standardized UI-interaction primitives is defined by this specification.
 </p>
 
-<h3>11.5 Boundary rule</h3>
+<h3>12.5 Boundary rule</h3>
 
 <p>
 The presence of sequencing ports does not convert these primitives into a general event model, callback model, or asynchronous orchestration model. They remain explicit object-style UI-interaction primitives with optional ordering support.
 </p>
 
+<p>
+The following distinction MUST remain explicit:
+</p>
+
+<pre><code>ordinary typed value ports
+    !=
+widget reference ports
+    !=
+UI sequencing ports
+</code></pre>
+
 <hr/>
 
-<h2 id="validation-rules">12. Validation Rules</h2>
+<h2 id="validation-rules">13. Validation Rules</h2>
 
 <p>
 Implementations MUST enforce at least the following primitive-level rules:
@@ -600,7 +642,7 @@ Source-level graph-shape constraints remain owned by <code>Expression/Widget int
 
 <hr/>
 
-<h2 id="execution-facing-posture">13. Execution-Facing Posture</h2>
+<h2 id="execution-facing-posture">14. Execution-Facing Posture</h2>
 
 <p>
 This document defines intrinsic primitive-local truth, not one execution-facing representation.
@@ -611,7 +653,7 @@ Accordingly:
 </p>
 
 <ul>
-  <li>open Execution IR MAY preserve recognizable primitive execution objects corresponding to <code>frog.ui.property_read</code>, <code>frog.ui.property_write</code>, and <code>frog.ui.method_invoke</code>,</li>
+  <li>execution-facing representations MAY preserve recognizable primitive execution objects corresponding to <code>frog.ui.property_read</code>, <code>frog.ui.property_write</code>, and <code>frog.ui.method_invoke</code>,</li>
   <li>derivation MAY add execution-facing explicitness such as resolved member descriptors, method descriptors, classification records, or source-attribution records,</li>
   <li>identity and mapping rules MAY require these primitives to remain distinguishable from widget-reference participation and from natural widget-value participation,</li>
   <li>lowering MAY later specialize these primitives into backend-oriented UI-binding operations, callable descriptors, handle-oriented operations, or equivalent lower forms,</li>
@@ -624,14 +666,13 @@ Accordingly:
 This corridor matters:
 </p>
 
-<pre>
-intrinsic primitive truth
+<pre><code>intrinsic primitive truth
     -&gt; frog.ui.* primitive-local contract
 
 validated meaning
     -&gt; preserves semantic distinction between participation roles and UI-operation roles
 
-open Execution IR
+execution-facing representation
     -&gt; may preserve recognizable UI-operation execution objects
 
 lowered form
@@ -642,7 +683,7 @@ backend contract
 
 private runtime
     -&gt; may realize them through private widget-handle and host-binding machinery
-</pre>
+</code></pre>
 
 <p>
 The primitive stays the same intrinsic primitive across that corridor. Only the later representation and realization change.
@@ -650,9 +691,9 @@ The primitive stays the same intrinsic primitive across that corridor. Only the 
 
 <hr/>
 
-<h2 id="examples">14. Examples</h2>
+<h2 id="examples">15. Examples</h2>
 
-<h3>14.1 Property read</h3>
+<h3>15.1 Property read</h3>
 
 <pre><code>{
   "id": "read_label_text",
@@ -664,7 +705,7 @@ The primitive stays the same intrinsic primitive across that corridor. Only the 
   }
 }</code></pre>
 
-<h3>14.2 Property write</h3>
+<h3>15.2 Property write</h3>
 
 <pre><code>{
   "id": "write_visible",
@@ -675,7 +716,7 @@ The primitive stays the same intrinsic primitive across that corridor. Only the 
   }
 }</code></pre>
 
-<h3>14.3 Method invoke</h3>
+<h3>15.3 Method invoke</h3>
 
 <pre><code>{
   "id": "invoke_focus",
@@ -686,7 +727,7 @@ The primitive stays the same intrinsic primitive across that corridor. Only the 
   }
 }</code></pre>
 
-<h3>14.4 Example diagram fragment</h3>
+<h3>15.4 Example diagram fragment</h3>
 
 <pre><code>{
   "nodes": [
@@ -732,7 +773,7 @@ In this example, reading member <code>value</code> through <code>frog.ui.propert
 
 <hr/>
 
-<h2 id="out-of-scope-for-v01">15. Out of Scope for v0.1</h2>
+<h2 id="out-of-scope">16. Out of Scope</h2>
 
 <ul>
   <li>a full standardized widget catalog,</li>
@@ -744,7 +785,7 @@ In this example, reading member <code>value</code> through <code>frog.ui.propert
   <li>complete theme and style systems,</li>
   <li>automatic inference of UI sequencing in all cases,</li>
   <li>full standardization of all possible widget member sets,</li>
-  <li>one mandatory Execution IR UI-object schema,</li>
+  <li>one mandatory execution-facing UI-object schema,</li>
   <li>one mandatory lowering family for UI interaction,</li>
   <li>one mandatory backend-family UI contract model,</li>
   <li>one mandatory runtime-private widget-handle architecture.</li>
@@ -752,10 +793,10 @@ In this example, reading member <code>value</code> through <code>frog.ui.propert
 
 <hr/>
 
-<h2 id="summary">16. Summary</h2>
+<h2 id="summary">17. Summary</h2>
 
 <p>
-The <code>frog.ui</code> library defines the intrinsic executable UI-interaction primitives of FROG v0.1:
+The <code>frog.ui</code> library defines the intrinsic executable UI-interaction primitives of FROG:
 </p>
 
 <ul>
@@ -773,7 +814,7 @@ These primitives:
   <li>use <code>widget_member</code> or <code>widget_method</code> metadata,</li>
   <li>support optional explicit UI sequencing through <code>ui_in</code> and <code>ui_out</code>,</li>
   <li>complement, but do not replace, the natural <code>widget_value</code> path,</li>
-  <li>remain distinct from widget class law, widget declarations, front-panel source, <code>.wfrog</code> package ownership, IR ownership, backend-contract ownership, and runtime-private realization.</li>
+  <li>remain distinct from widget class law, widget declarations, front-panel source, <code>.wfrog</code> package ownership, execution-facing representation ownership, backend-contract ownership, and runtime-private realization.</li>
 </ul>
 
 <p>
