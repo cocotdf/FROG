@@ -21,7 +21,7 @@
       "const": "0.1"
     },
     "document_id": {
-      "$ref": "#/$defs/id_string"
+      "$ref": "frog.execution-ir.common.schema.json#/$defs/id_string"
     },
     "metadata": {
       "$ref": "#/$defs/document_metadata"
@@ -31,37 +31,6 @@
     }
   },
   "$defs": {
-    "id_string": {
-      "type": "string",
-      "minLength": 1,
-      "pattern": "^[A-Za-z0-9._:-]+$"
-    },
-
-    "non_empty_string": {
-      "type": "string",
-      "minLength": 1
-    },
-
-    "typed_value": {
-      "description": "Conservative JSON value carrier used where schema posture must allow payload-bearing fields without freezing the full type system here.",
-      "oneOf": [
-        { "type": "null" },
-        { "type": "boolean" },
-        { "type": "number" },
-        { "type": "string" },
-        {
-          "type": "array",
-          "items": { "$ref": "#/$defs/typed_value" }
-        },
-        {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/$defs/typed_value"
-          }
-        }
-      ]
-    },
-
     "document_metadata": {
       "type": "object",
       "additionalProperties": false,
@@ -86,58 +55,6 @@
         }
       }
     },
-
-    "execution_unit": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "id",
-        "objects",
-        "connections",
-        "regions",
-        "source_map",
-        "correspondence"
-      ],
-      "properties": {
-        "id": {
-          "$ref": "#/$defs/id_string"
-        },
-        "metadata": {
-          "$ref": "#/$defs/unit_metadata"
-        },
-        "objects": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/object_record"
-          }
-        },
-        "connections": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/connection_record"
-          }
-        },
-        "regions": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/region_record"
-          }
-        },
-        "source_map": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/source_map_record"
-          }
-        },
-        "correspondence": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/correspondence_record"
-          }
-        }
-      }
-    },
-
     "unit_metadata": {
       "type": "object",
       "additionalProperties": false,
@@ -161,627 +78,53 @@
         }
       }
     },
-
-    "object_record": {
+    "execution_unit": {
       "type": "object",
       "additionalProperties": false,
       "required": [
         "id",
-        "family",
-        "kind",
-        "ports"
+        "objects",
+        "connections",
+        "regions",
+        "source_map",
+        "correspondence"
       ],
       "properties": {
         "id": {
-          "$ref": "#/$defs/id_string"
-        },
-        "family": {
-          "type": "string",
-          "enum": [
-            "primitive",
-            "subfrog_invocation",
-            "structure",
-            "interface_input",
-            "interface_output",
-            "widget_value",
-            "widget_reference",
-            "ui_property_read",
-            "ui_property_write",
-            "ui_method_invoke",
-            "state",
-            "support"
-          ]
-        },
-        "kind": {
-          "type": "string",
-          "minLength": 1
-        },
-        "role": {
-          "type": "string",
-          "minLength": 1
-        },
-        "classification": {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "primary_or_support": {
-              "type": "string",
-              "enum": [
-                "primary",
-                "support"
-              ]
-            },
-            "library_id": {
-              "type": "string",
-              "minLength": 1
-            },
-            "profile_id": {
-              "type": "string",
-              "minLength": 1
-            },
-            "structure_family": {
-              "type": "string",
-              "enum": [
-                "case",
-                "for_loop",
-                "while_loop"
-              ]
-            }
-          }
-        },
-        "ports": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/port_record"
-          }
-        },
-        "regions_owned": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/id_string"
-          }
-        },
-        "member_address": {
-          "$ref": "#/$defs/member_address"
-        },
-        "ui_operation": {
-          "$ref": "#/$defs/ui_operation_descriptor"
-        },
-        "state": {
-          "$ref": "#/$defs/state_descriptor"
-        },
-        "attributes": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/$defs/typed_value"
-          }
-        },
-        "attribution": {
-          "$ref": "#/$defs/inline_attribution"
-        },
-        "correspondence_refs": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/id_string"
-          }
-        }
-      },
-      "allOf": [
-        {
-          "if": {
-            "properties": {
-              "family": {
-                "const": "widget_reference"
-              }
-            },
-            "required": [
-              "family"
-            ]
-          },
-          "then": {
-            "properties": {
-              "classification": {
-                "properties": {
-                  "primary_or_support": {
-                    "const": "primary"
-                  }
-                }
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "family": {
-                "enum": [
-                  "ui_property_read",
-                  "ui_property_write",
-                  "ui_method_invoke"
-                ]
-              }
-            },
-            "required": [
-              "family"
-            ]
-          },
-          "then": {
-            "required": [
-              "ui_operation"
-            ]
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "family": {
-                "const": "state"
-              }
-            },
-            "required": [
-              "family"
-            ]
-          },
-          "then": {
-            "required": [
-              "state"
-            ]
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "family": {
-                "const": "structure"
-              }
-            },
-            "required": [
-              "family"
-            ]
-          },
-          "then": {
-            "properties": {
-              "classification": {
-                "required": [
-                  "structure_family"
-                ]
-              }
-            }
-          }
-        }
-      ]
-    },
-
-    "port_record": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "id",
-        "direction",
-        "role"
-      ],
-      "properties": {
-        "id": {
-          "$ref": "#/$defs/id_string"
-        },
-        "name": {
-          "type": "string",
-          "minLength": 1
-        },
-        "direction": {
-          "type": "string",
-          "enum": [
-            "in",
-            "out",
-            "inout"
-          ]
-        },
-        "role": {
-          "type": "string",
-          "enum": [
-            "data",
-            "selector",
-            "condition",
-            "iteration",
-            "index",
-            "state_read",
-            "state_write",
-            "ui_in",
-            "ui_out",
-            "boundary",
-            "other"
-          ]
-        },
-        "type_ref": {
-          "type": "string",
-          "minLength": 1
-        },
-        "boundary_kind": {
-          "type": "string",
-          "enum": [
-            "none",
-            "public_interface",
-            "structure_boundary",
-            "state_boundary",
-            "ui_sequence"
-          ]
+          "$ref": "frog.execution-ir.common.schema.json#/$defs/id_string"
         },
         "metadata": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/$defs/typed_value"
-          }
-        }
-      }
-    },
-
-    "connection_record": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "id",
-        "kind",
-        "from",
-        "to"
-      ],
-      "properties": {
-        "id": {
-          "$ref": "#/$defs/id_string"
+          "$ref": "#/$defs/unit_metadata"
         },
-        "kind": {
-          "type": "string",
-          "enum": [
-            "dataflow",
-            "public_interface_boundary",
-            "structure_boundary",
-            "state_participation",
-            "ui_sequence"
-          ]
-        },
-        "from": {
-          "$ref": "#/$defs/endpoint_ref"
-        },
-        "to": {
-          "$ref": "#/$defs/endpoint_ref"
-        },
-        "attribution": {
-          "$ref": "#/$defs/inline_attribution"
-        },
-        "metadata": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/$defs/typed_value"
-          }
-        }
-      }
-    },
-
-    "endpoint_ref": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "object_id",
-        "port_id"
-      ],
-      "properties": {
-        "object_id": {
-          "$ref": "#/$defs/id_string"
-        },
-        "port_id": {
-          "$ref": "#/$defs/id_string"
-        }
-      }
-    },
-
-    "region_record": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "id",
-        "owner_object_id",
-        "role"
-      ],
-      "properties": {
-        "id": {
-          "$ref": "#/$defs/id_string"
-        },
-        "owner_object_id": {
-          "$ref": "#/$defs/id_string"
-        },
-        "role": {
-          "type": "string",
-          "enum": [
-            "body",
-            "case_arm",
-            "condition",
-            "init",
-            "update",
-            "other"
-          ]
-        },
-        "label": {
-          "type": "string",
-          "minLength": 1
-        },
-        "member_object_ids": {
+        "objects": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/id_string"
+            "$ref": "frog.execution-ir.object.schema.json"
           }
         },
-        "attribution": {
-          "$ref": "#/$defs/inline_attribution"
-        }
-      }
-    },
-
-    "source_map_record": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "id",
-        "source_kind",
-        "source_ref",
-        "target_kind",
-        "target_refs"
-      ],
-      "properties": {
-        "id": {
-          "$ref": "#/$defs/id_string"
-        },
-        "source_kind": {
-          "type": "string",
-          "enum": [
-            "diagram_node",
-            "diagram_edge",
-            "interface_port",
-            "widget_instance",
-            "widget_member",
-            "structure",
-            "structure_terminal",
-            "state_construct",
-            "other"
-          ]
-        },
-        "source_ref": {
-          "type": "string",
-          "minLength": 1
-        },
-        "target_kind": {
-          "type": "string",
-          "enum": [
-            "object",
-            "connection",
-            "region",
-            "support_object",
-            "none"
-          ]
-        },
-        "target_refs": {
+        "connections": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/id_string"
+            "$ref": "frog.execution-ir.connection.schema.json"
           }
         },
-        "relation": {
-          "type": "string",
-          "enum": [
-            "direct_primary",
-            "support_only",
-            "multi_target",
-            "non_primary"
-          ]
-        },
-        "notes": {
+        "regions": {
           "type": "array",
           "items": {
-            "type": "string"
+            "$ref": "frog.execution-ir.region.schema.json"
           }
-        }
-      }
-    },
-
-    "correspondence_record": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "id",
-        "source_ref",
-        "relation_kind"
-      ],
-      "properties": {
-        "id": {
-          "$ref": "#/$defs/id_string"
         },
-        "source_ref": {
-          "type": "string",
-          "minLength": 1
-        },
-        "relation_kind": {
-          "type": "string",
-          "enum": [
-            "declaration_reference",
-            "non_primary_outcome",
-            "support_relation",
-            "realization_reference",
-            "widget_package_reference",
-            "other"
-          ]
-        },
-        "target_refs": {
+        "source_map": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/id_string"
+            "$ref": "frog.execution-ir.source-map.schema.json"
           }
         },
-        "metadata": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/$defs/typed_value"
-          }
-        }
-      }
-    },
-
-    "inline_attribution": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "source_refs"
-      ],
-      "properties": {
-        "source_refs": {
+        "correspondence": {
           "type": "array",
           "items": {
-            "type": "string",
-            "minLength": 1
-          },
-          "minItems": 1
-        },
-        "mode": {
-          "type": "string",
-          "enum": [
-            "direct",
-            "multi_contributor",
-            "support"
-          ]
-        }
-      }
-    },
-
-    "member_address": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "widget_ref",
-        "path"
-      ],
-      "properties": {
-        "widget_ref": {
-          "type": "string",
-          "minLength": 1
-        },
-        "path": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/member_address_segment"
-          },
-          "minItems": 1
-        }
-      }
-    },
-
-    "member_address_segment": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "kind",
-        "name"
-      ],
-      "properties": {
-        "kind": {
-          "type": "string",
-          "enum": [
-            "property",
-            "method",
-            "event",
-            "part"
-          ]
-        },
-        "name": {
-          "type": "string",
-          "minLength": 1
-        }
-      }
-    },
-
-    "ui_operation_descriptor": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "operation_family",
-        "widget_ref"
-      ],
-      "properties": {
-        "operation_family": {
-          "type": "string",
-          "enum": [
-            "property_read",
-            "property_write",
-            "method_invoke"
-          ]
-        },
-        "widget_ref": {
-          "type": "string",
-          "minLength": 1
-        },
-        "member_address": {
-          "$ref": "#/$defs/member_address"
-        }
-      },
-      "allOf": [
-        {
-          "if": {
-            "properties": {
-              "operation_family": {
-                "enum": [
-                  "property_read",
-                  "property_write"
-                ]
-              }
-            },
-            "required": [
-              "operation_family"
-            ]
-          },
-          "then": {
-            "required": [
-              "member_address"
-            ]
+            "$ref": "frog.execution-ir.correspondence.schema.json"
           }
-        },
-        {
-          "if": {
-            "properties": {
-              "operation_family": {
-                "const": "method_invoke"
-              }
-            },
-            "required": [
-              "operation_family"
-            ]
-          },
-          "then": {
-            "required": [
-              "member_address"
-            ]
-          }
-        }
-      ]
-    },
-
-    "state_descriptor": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "state_family"
-      ],
-      "properties": {
-        "state_family": {
-          "type": "string",
-          "enum": [
-            "explicit_local_memory",
-            "delay",
-            "register",
-            "other"
-          ]
-        },
-        "has_initialization": {
-          "type": "boolean"
-        },
-        "initialization_ref": {
-          "type": "string",
-          "minLength": 1
         }
       }
     }
