@@ -5,7 +5,7 @@
 <h1 align="center">FROG Widget Class Contract</h1>
 
 <p align="center">
-  <strong>Normative class-level contract for widget classes, members, parts, events, and IDE/runtime-facing object exposure</strong><br/>
+  <strong>Normative class-level contract for widget classes, members, parts, events, and object-surface legality</strong><br/>
   <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -20,28 +20,26 @@
   <li><a href="#ownership-boundary">5. Ownership Boundary</a></li>
   <li><a href="#core-principles">6. Core Principles</a></li>
   <li><a href="#class-contract-model">7. Class Contract Model</a></li>
-  <li><a href="#general-extensibility-posture">8. General Extensibility Posture</a></li>
-  <li><a href="#widget-class-descriptor">9. Widget Class Descriptor</a></li>
+  <li><a href="#extensibility-posture">8. Extensibility Posture</a></li>
+  <li><a href="#class-descriptor">9. Class Descriptor</a></li>
   <li><a href="#member-model">10. Member Model</a></li>
   <li><a href="#property-contract">11. Property Contract</a></li>
   <li><a href="#method-contract">12. Method Contract</a></li>
   <li><a href="#event-contract">13. Event Contract</a></li>
   <li><a href="#part-contract">14. Part Contract</a></li>
   <li><a href="#member-addressing">15. Member Addressing</a></li>
-  <li><a href="#property-and-method-node-synthesis">16. Property and Method Node Synthesis</a></li>
-  <li><a href="#value-member-model">17. Value Member Model</a></li>
+  <li><a href="#value-model">16. Value Model</a></li>
+  <li><a href="#design-time-and-runtime-boundaries">17. Design-Time and Runtime Boundaries</a></li>
   <li><a href="#capability-and-profile-gating">18. Capability and Profile Gating</a></li>
-  <li><a href="#lifecycle-and-state-boundary">19. Lifecycle and State Boundary</a></li>
-  <li><a href="#design-time-vs-runtime-owned-members">20. Design-Time vs Runtime-Owned Members</a></li>
-  <li><a href="#host-requirements">21. Host Requirements</a></li>
-  <li><a href="#canonical-source-shape">22. Canonical Source Shape</a></li>
-  <li><a href="#validation-rules">23. Validation Rules</a></li>
-  <li><a href="#diagnostics">24. Diagnostics</a></li>
-  <li><a href="#conformance-implications">25. Conformance Implications</a></li>
-  <li><a href="#non-goals">26. Non-Goals</a></li>
-  <li><a href="#minimal-v01-standardization-posture">27. Minimal v0.1 Standardization Posture</a></li>
-  <li><a href="#illustrative-example">28. Illustrative Example</a></li>
-  <li><a href="#summary">29. Summary</a></li>
+  <li><a href="#host-requirements">19. Host Requirements</a></li>
+  <li><a href="#source-shape-and-serialization-posture">20. Source Shape and Serialization Posture</a></li>
+  <li><a href="#validation-rules">21. Validation Rules</a></li>
+  <li><a href="#diagnostics">22. Diagnostics</a></li>
+  <li><a href="#conformance-implications">23. Conformance Implications</a></li>
+  <li><a href="#non-goals">24. Non-Goals</a></li>
+  <li><a href="#minimal-v01-posture">25. Minimal v0.1 Posture</a></li>
+  <li><a href="#illustrative-example">26. Illustrative Example</a></li>
+  <li><a href="#summary">27. Summary</a></li>
 </ul>
 
 <hr/>
@@ -49,35 +47,44 @@
 <h2 id="overview">1. Overview</h2>
 
 <p>
-This document defines the class-level contract model for FROG widgets.
+This document defines the normative class-level contract model for FROG widgets.
 </p>
 
 <p>
-A widget instance in canonical source is not only a placed front-panel element.
-It is an instance of a widget class whose exposed members, parts, events, and interaction surface must be describable in a stable, inspectable, implementation-independent way.
+A widget instance in canonical source is not merely a placed front-panel element. It is an instance of a widget class whose object surface must be describable in a stable, inspectable, implementation-independent way.
 </p>
 
 <p>
-The purpose of this document is to make widget classes sufficiently explicit that:
+That class-level surface includes:
 </p>
 
 <ul>
-  <li>an IDE can expose coherent property and method access for widget objects,</li>
-  <li>a validator can verify whether member access is legal,</li>
-  <li>a derivation pipeline can preserve object-level intent into execution-facing representation where applicable,</li>
-  <li>a lowering pipeline can preserve the declared member surface into backend-facing handoff where applicable,</li>
-  <li>a runtime or UI host can realize the widget without becoming the hidden source of semantic truth,</li>
-  <li>independent implementations can converge on the same object-surface interpretation.</li>
+  <li>class identity,</li>
+  <li>role compatibility,</li>
+  <li>value behavior where applicable,</li>
+  <li>properties,</li>
+  <li>methods,</li>
+  <li>events,</li>
+  <li>parts,</li>
+  <li>member addressing legality,</li>
+  <li>design-time and runtime access boundaries,</li>
+  <li>host realization requirements where relevant.</li>
 </ul>
 
 <p>
-This document defines a general class-contract model capable of supporting a wide range of widget families over time.
-It does not claim that every possible widget family is already standardized in v0.1.
+The purpose of this document is to ensure that widget classes are explicit enough that:
 </p>
 
+<ul>
+  <li>a validator can determine whether a widget instance or member access is legal,</li>
+  <li>an IDE can expose coherent property and method authoring surfaces,</li>
+  <li>a runtime can interpret widget object surfaces without becoming the hidden source of widget law,</li>
+  <li>a host can realize widgets without redefining their semantics,</li>
+  <li>independent implementations can converge on the same class-level interpretation.</li>
+</ul>
+
 <p>
-This document does not define repository-wide version policy.
-Top-level <code>spec_version</code> identifies the source-format compatibility target of the containing <code>.frog</code> file, while the published specification corpus version and cumulative version-transition posture remain governed centrally in <code>Versioning/Readme.md</code>.
+This document defines the class-contract model itself. It does not claim that every possible widget family is already standardized in v0.1.
 </p>
 
 <hr/>
@@ -85,7 +92,7 @@ Top-level <code>spec_version</code> identifies the source-format compatibility t
 <h2 id="scope">2. Scope</h2>
 
 <p>
-This document standardizes the normative contract shape of a widget class.
+This document standardizes the normative class-side contract shape of a widget class.
 </p>
 
 <p>
@@ -95,13 +102,12 @@ It defines:
 <ul>
   <li>how a widget class is described,</li>
   <li>how members are categorized and declared,</li>
-  <li>how parts participate in member ownership and addressing,</li>
-  <li>how property, method, and event surfaces are described at class level,</li>
-  <li>how a class contract constrains legal object-style access,</li>
-  <li>how IDEs may synthesize property-node and method-node surfaces from the class contract,</li>
-  <li>how profile and capability gating constrain widget availability,</li>
-  <li>how host realization requirements are declared,</li>
-  <li>and how the contract model remains open to richer future widget families without forcing them all into v0.1.</li>
+  <li>how parts participate in ownership and addressing,</li>
+  <li>how property, method, and event surfaces are defined,</li>
+  <li>how access legality is derived from the class contract,</li>
+  <li>how design-time and runtime boundaries remain explicit,</li>
+  <li>how profile and capability gates constrain class and member availability,</li>
+  <li>how host realization requirements are declared.</li>
 </ul>
 
 <p>
@@ -112,11 +118,11 @@ This document does not define:
   <li>pixel rendering behavior,</li>
   <li>theme systems,</li>
   <li>private runtime memory layouts,</li>
-  <li>one mandatory UI toolkit,</li>
+  <li>one mandatory GUI toolkit,</li>
   <li>one mandatory event loop implementation,</li>
-  <li>diagram-side executable node semantics for widget interaction primitives,</li>
+  <li>diagram-side execution semantics of UI interaction primitives,</li>
   <li>runtime-private transport layouts for widget references,</li>
-  <li>repository-wide version-transition doctrine.</li>
+  <li>repository-wide version-governance policy.</li>
 </ul>
 
 <hr/>
@@ -124,47 +130,53 @@ This document does not define:
 <h2 id="relation-with-other-specifications">3. Relation with Other Specifications</h2>
 
 <ul>
-  <li><code>Front panel.md</code> defines widget composition, containment, and serialized panel placement.</li>
-  <li><code>Widget.md</code> defines the widget object model at instance level, including value-carrying behavior, parts, properties, methods, and events.</li>
-  <li><code>Widget interaction.md</code> defines diagram-side interaction with widget references through standardized executable forms such as property read, property write, and method invoke.</li>
+  <li><code>Front panel.md</code> defines source-level widget composition, containment, and placement.</li>
+  <li><code>Widget.md</code> defines the source-level widget instance model.</li>
+  <li><code>Widget interaction.md</code> defines diagram-side widget interaction through executable forms such as property read, property write, and method invoke.</li>
+  <li><code>Widget package.md</code> defines the <code>.wfrog</code> package family used to serialize widget-oriented artifacts.</li>
+  <li><code>Widget realization.md</code> defines host-side realization boundaries, visual bindings, and SVG integration.</li>
+  <li><code>Widget behavior.md</code> defines declarative behavior, controlled expressions, and optional hooks where applicable.</li>
   <li><code>Type.md</code> defines the type-expression system used by ordinary typed members.</li>
   <li><code>Diagram.md</code> defines the authoritative executable graph.</li>
-  <li><code>IR/</code> defines execution-facing representation derived from validated meaning.</li>
-  <li><code>Profiles/</code> may define additional widget classes, capability gates, standardized widget-class families, or host-side realization requirements.</li>
-  <li><code>IDE/</code> may define authoring, inspection, and observability behavior that consumes the class contract without owning it.</li>
-  <li><code>Versioning/Readme.md</code> defines the centralized distinction between specification corpus version, top-level <code>spec_version</code>, and program artifact versioning.</li>
+  <li><code>IR/</code> defines execution-facing derived representation.</li>
+  <li><code>Profiles/</code> may define additional widget families, capability families, or realization requirements.</li>
+  <li><code>IDE/</code> may define authoring and inspection behavior that consumes class contracts without owning them.</li>
 </ul>
 
 <p>
 Accordingly:
 </p>
 
-<pre><code>Front panel           = widget containment and placement
-Widget                = instance-side widget object model
-Widget class contract = class-level object contract
-Widget interaction    = executable object access from the diagram
-Diagram               = authoritative executable behavior
+<pre><code>Front panel           = widget instance placement and composition
+Widget                = instance-side widget declaration
+Widget class contract = class-side object-surface legality
+Widget interaction    = executable access from the diagram
+Widget package        = widget-oriented serialization family
+Widget realization    = host-facing realization boundary
+Widget behavior       = bounded widget behavior model
+Diagram               = authoritative executable graph
 IR                    = execution-facing derived representation
-Profiles              = optional capability and target gating
+Profiles              = optional capability and target families
 IDE                   = authoring and inspection consumption
-Versioning            = centralized cross-version governance
 </code></pre>
 
 <p>
 The following distinctions MUST remain explicit:
 </p>
 
-<pre><code>ordinary typed value
+<pre><code>widget instance
     !=
-widget reference token
+widget class
+
+widget class law
+    !=
+host realization
+
+ordinary typed value
+    !=
+widget reference
     !=
 UI sequencing token
-
-instance-side widget declaration
-    !=
-class-side member legality
-    !=
-primitive-local interaction semantics
 </code></pre>
 
 <hr/>
@@ -184,11 +196,11 @@ If widget classes are underspecified, the following become implementation-privat
   <li>which properties are readable or writable,</li>
   <li>which methods exist,</li>
   <li>which events may be observed,</li>
-  <li>which parts may be targeted,</li>
-  <li>how IDEs expose property-node and method-node surfaces,</li>
-  <li>which accesses are valid at design time versus runtime,</li>
-  <li>which features are profile-gated or host-gated,</li>
-  <li>which minimal member surfaces are preserved across lowering and backend handoff.</li>
+  <li>which parts exist and how they are addressed,</li>
+  <li>which accesses are legal at design time versus runtime,</li>
+  <li>which classes or members are profile-gated or host-gated,</li>
+  <li>how IDEs expose object-style authoring surfaces,</li>
+  <li>how runtimes know what object surface they are required to interpret.</li>
 </ul>
 
 <p>
@@ -196,21 +208,7 @@ This document closes that gap by defining the normative class-side contract behi
 </p>
 
 <p>
-It also exists so that FROG can remain open to richer widget-class families over time without having to redefine the contract model each time a new class family is introduced.
-</p>
-
-<p>
-For the first bounded executable corridor, this document also helps make clear why operations such as:
-</p>
-
-<ul>
-  <li><code>widget_reference(ctrl_input)</code>,</li>
-  <li><code>widget_reference(ind_result)</code>,</li>
-  <li><code>frog.ui.property_write(member = "face_color")</code></li>
-</ul>
-
-<p>
-can be validated and preserved without requiring one private IDE or runtime object system to become the hidden owner of member legality.
+It also ensures that FROG can grow toward richer widget families over time without requiring each new family to reinvent the class-contract model.
 </p>
 
 <hr/>
@@ -227,8 +225,8 @@ This document owns:
   <li>part-level contract structure,</li>
   <li>class-level event exposure,</li>
   <li>member addressing rules,</li>
-  <li>class-driven IDE exposure rules for object-style access,</li>
-  <li>profile and capability gates on widget members,</li>
+  <li>design-time and runtime access boundaries,</li>
+  <li>capability and profile gating of classes and members,</li>
   <li>host-requirement declarations for class realization.</li>
 </ul>
 
@@ -237,18 +235,14 @@ This document does not own:
 </p>
 
 <ul>
-  <li>actual widget instance placement on the panel,</li>
+  <li>widget instance placement on the panel,</li>
   <li>authoritative executable graph semantics,</li>
-  <li>the semantics of <code>frog.ui.property_read</code>, <code>frog.ui.property_write</code>, or <code>frog.ui.method_invoke</code>,</li>
-  <li>Execution IR structure or lowering rules,</li>
-  <li>one required runtime realization strategy,</li>
-  <li>one required IDE product behavior beyond the normative exposure surface implied by the class contract,</li>
-  <li>repository-wide version-transition doctrine.</li>
+  <li>the execution semantics of <code>frog.ui.property_read</code>, <code>frog.ui.property_write</code>, or <code>frog.ui.method_invoke</code>,</li>
+  <li>runtime-private live object structures,</li>
+  <li>host-private rendering internals,</li>
+  <li>one required runtime strategy,</li>
+  <li>one required IDE product behavior beyond the normative object surface implied by the contract.</li>
 </ul>
-
-<p>
-This document therefore defines the general contract model itself, while richer families and family-specific standardizations may be published elsewhere without changing these ownership boundaries.
-</p>
 
 <hr/>
 
@@ -259,14 +253,12 @@ This document therefore defines the general contract model itself, while richer 
   <li>A widget instance MUST be interpretable against its declared widget class.</li>
   <li>Object-style member access MUST be validated against the widget class contract.</li>
   <li>Part access MUST remain explicit and MUST NOT rely on hidden runtime reflection.</li>
-  <li>Profile-gated members and classes MUST remain explicit.</li>
+  <li>Widget class law MUST remain distinct from host realization.</li>
   <li>Design-time metadata and runtime-owned state MUST remain distinct.</li>
   <li>IDE convenience MUST NOT become hidden semantic law.</li>
-  <li>Runtime realization MAY be richer than the standard contract, but non-standard richness MUST NOT be required for canonical source validity.</li>
-  <li>Ordinary value typing, widget-reference identity, and UI sequencing MUST remain distinct.</li>
-  <li>The class-contract model MUST be general enough to support richer later widget families than those minimally standardized in v0.1.</li>
-  <li>Later cumulative source-format versions SHOULD normally extend earlier valid class-contract surfaces rather than silently redefine them, unless an explicit breaking boundary is declared centrally.</li>
-  <li>Lowering and backend handoff MUST preserve declared member intent where the active corridor claims object-style widget support.</li>
+  <li>Runtime enrichment MAY exist, but non-standard enrichment MUST NOT become required for canonical validity.</li>
+  <li>Ordinary value typing, widget-reference identity, and UI sequencing MUST remain distinct categories.</li>
+  <li>The class-contract model MUST be general enough to support richer future widget families than the minimal v0.1 subset.</li>
 </ul>
 
 <hr/>
@@ -274,7 +266,7 @@ This document therefore defines the general contract model itself, while richer 
 <h2 id="class-contract-model">7. Class Contract Model</h2>
 
 <p>
-A widget class contract is the normative description of the object surface shared by all instances of the class.
+A widget class contract is the normative description of the object surface shared by all instances of a class.
 </p>
 
 <p>
@@ -284,15 +276,15 @@ Conceptually:
 <pre><code>widget class contract
   ├── class identity
   ├── role compatibility
-  ├── value behavior
+  ├── value model
   ├── properties
   ├── methods
   ├── events
   ├── parts
+  ├── access boundaries
   ├── capability gates
-  ├── design-time constraints
-  ├── host realization requirements
-  └── contract revision
+  ├── host requirements
+  └── revision metadata
 </code></pre>
 
 <p>
@@ -303,18 +295,17 @@ A widget instance then binds:
   <li>an instance identifier,</li>
   <li>a class identity,</li>
   <li>a role-compatible instance declaration,</li>
-  <li>instance property values where permitted,</li>
-  <li>optional part-instance data where permitted.</li>
+  <li>instance-level values and settings where permitted,</li>
+  <li>optional instance-side part data where permitted.</li>
 </ul>
 
 <p>
-The class contract defines the legal object surface.
-It does not itself serialize one runtime object instance, one runtime handle, or one runtime scheduling policy.
+The class contract defines the legal object surface. It does not serialize one live runtime object, one transport handle, or one host-specific rendering strategy.
 </p>
 
 <hr/>
 
-<h2 id="general-extensibility-posture">8. General Extensibility Posture</h2>
+<h2 id="extensibility-posture">8. Extensibility Posture</h2>
 
 <p>
 The class-contract model defined by this document is intentionally general.
@@ -326,40 +317,29 @@ It is designed so that FROG can support over time:
 
 <ul>
   <li>additional standardized widget classes,</li>
-  <li>richer standardized widget-class families,</li>
+  <li>richer standardized widget families,</li>
   <li>profile-owned capability families,</li>
-  <li>recognized external class-family packages,</li>
-  <li>implementation support claims that remain explicit and inspectable,</li>
-  <li>and backend or runtime families that preserve object-surface obligations without owning them semantically.</li>
+  <li>recognized external widget-class packages,</li>
+  <li>multiple runtime families that interpret the same class-level law,</li>
+  <li>multiple host families that realize the same class-level law differently but compatibly.</li>
 </ul>
 
 <p>
 The key rule is:
 </p>
 
-<pre><code>general contract capability
+<pre><code>general class-contract capability
     !=
-full family standardization in v0.1
+full widget-family standardization in v0.1
 </code></pre>
 
 <p>
-Accordingly:
-</p>
-
-<ul>
-  <li>this document defines a contract model that is open-ended by construction,</li>
-  <li>v0.1 standardizes only a minimal executable subset elsewhere in the published corpus,</li>
-  <li>future families MAY be much richer while still remaining compatible with this contract model.</li>
-</ul>
-
-<p>
-This document therefore SHOULD NOT be interpreted as limiting FROG to only the widget classes explicitly standardized in the minimal v0.1 subset.
-It defines the class-contract model that those classes use and that richer families may also use.
+This document therefore defines the contract model that minimal v0.1 classes use and that richer future families may also use.
 </p>
 
 <hr/>
 
-<h2 id="widget-class-descriptor">9. Widget Class Descriptor</h2>
+<h2 id="class-descriptor">9. Class Descriptor</h2>
 
 <p>
 Every widget class contract MUST provide a stable class descriptor.
@@ -370,18 +350,20 @@ A class descriptor MUST include:
 </p>
 
 <ul>
-  <li><code>class</code>: canonical class identifier,</li>
-  <li><code>version</code>: contract version identifier,</li>
+  <li><code>class_id</code>: canonical class identifier,</li>
+  <li><code>contract_version</code>: class-contract revision identifier,</li>
   <li><code>roles</code>: allowed widget roles for the class,</li>
-  <li><code>value_behavior</code>: whether the class is value-carrying, reference-only, event-producing, or mixed,</li>
-  <li><code>members</code>: declared properties, methods, and events,</li>
-  <li><code>parts</code>: declared parts exposed by the class, if any,</li>
-  <li><code>profile_requirements</code>: required profile capabilities, if any,</li>
-  <li><code>host_requirements</code>: realization requirements that a conforming host must satisfy for supported execution modes.</li>
+  <li><code>value_model</code>: whether and how the class participates in primary value flow,</li>
+  <li><code>properties</code>,</li>
+  <li><code>methods</code>,</li>
+  <li><code>events</code>,</li>
+  <li><code>parts</code>,</li>
+  <li><code>profile_requirements</code> where applicable,</li>
+  <li><code>host_requirements</code> where applicable.</li>
 </ul>
 
 <p>
-A class descriptor MAY include:
+A class descriptor MAY additionally include:
 </p>
 
 <ul>
@@ -393,12 +375,7 @@ A class descriptor MAY include:
 </ul>
 
 <p>
-A widget class identifier MUST be stable across implementations for the same standardized class.
-</p>
-
-<p>
-A class-contract <code>version</code> identifies the contract revision of that widget class surface.
-It MUST NOT be confused with the repository-wide specification corpus version, the file-level <code>spec_version</code> carried by a <code>.frog</code> program, or the program artifact version carried in metadata.
+A standardized widget class identifier MUST be stable across implementations for the same class.
 </p>
 
 <hr/>
@@ -414,9 +391,9 @@ Standard member categories are:
 </p>
 
 <ul>
-  <li><strong>property</strong>: stateful readable and/or writable member,</li>
+  <li><strong>property</strong>: readable and/or writable stateful member,</li>
   <li><strong>method</strong>: invocable operation,</li>
-  <li><strong>event</strong>: observable occurrence emitted by the widget or part.</li>
+  <li><strong>event</strong>: observable occurrence emitted by the widget or one of its parts.</li>
 </ul>
 
 <p>
@@ -427,10 +404,9 @@ Each member descriptor MUST declare:
   <li><code>name</code>,</li>
   <li><code>kind</code>,</li>
   <li><code>owner_scope</code>: widget or part,</li>
-  <li><code>availability</code>: always, role-gated, profile-gated, host-gated, or state-gated,</li>
+  <li><code>availability</code>: always, role-gated, profile-gated, host-gated, state-gated, or a combination thereof,</li>
   <li><code>design_time_access</code>,</li>
-  <li><code>runtime_access</code>,</li>
-  <li><code>diagnostic_name</code> when a more user-facing label is needed.</li>
+  <li><code>runtime_access</code>.</li>
 </ul>
 
 <p>
@@ -438,20 +414,8 @@ A member descriptor MUST NOT rely on runtime-only discovery for normative validi
 </p>
 
 <p>
-If a member exposes ordinary values, its type information MUST follow <code>Type.md</code>.
-If a member consumes or emits interaction tokens, those token categories MUST remain explicit and MUST NOT be silently treated as ordinary value types.
+If a member uses ordinary values, its types MUST follow <code>Type.md</code>. Widget references and UI sequencing tokens MUST remain distinct from ordinary value types.
 </p>
-
-<p>
-A contractable member MAY additionally declare whether it is expected to be:
-</p>
-
-<ul>
-  <li>source-visible only,</li>
-  <li>runtime-visible only,</li>
-  <li>IR-preservable where relevant,</li>
-  <li>backend-contract-preservable where the active corridor claims support for it.</li>
-</ul>
 
 <hr/>
 
@@ -473,7 +437,7 @@ A property descriptor MUST include:
   <li><code>design_time_writable</code>,</li>
   <li><code>runtime_writable</code>,</li>
   <li><code>persistence</code>: source-owned, runtime-owned, or mixed-boundary,</li>
-  <li><code>effects</code>: pure-read, UI-side-effect, layout-side-effect, host-side-effect, or implementation-defined-extended,</li>
+  <li><code>effects</code>: none, UI-side-effect, layout-side-effect, host-side-effect, or profile-defined,</li>
   <li><code>default_value_policy</code>.</li>
 </ul>
 
@@ -487,8 +451,6 @@ A property descriptor MAY include:
   <li><code>unit</code>,</li>
   <li><code>deprecated</code>,</li>
   <li><code>requires_ui_thread</code>,</li>
-  <li><code>requires_idle_state</code>,</li>
-  <li><code>preserve_in_backend_contract</code>,</li>
   <li><code>notes</code>.</li>
 </ul>
 
@@ -501,17 +463,12 @@ Examples:
 </p>
 
 <ul>
-  <li><code>value</code> on a control class may be readable and writable at runtime,</li>
+  <li><code>value</code> on a numeric control may be readable and writable at runtime,</li>
   <li><code>visible</code> may be readable and writable,</li>
   <li><code>bounds</code> may be design-time writable and runtime readable only,</li>
   <li><code>render_handle</code> may be runtime-owned and not source-owned,</li>
-  <li><code>face_color</code> may be source-owned and runtime-writable in a bounded corridor that supports <code>frog.ui.property_write</code>.</li>
+  <li><code>face_color</code> may be mixed-boundary if source declaration and runtime property writes are both allowed.</li>
 </ul>
-
-<p>
-When a property carries an ordinary value, its <code>type</code> MUST be a valid ordinary value type expression or another explicitly standardized member-type form allowed by the active profile.
-When a property is runtime-owned, that runtime ownership MUST NOT make canonical source validity depend on hidden runtime reflection data.
-</p>
 
 <hr/>
 
@@ -532,8 +489,8 @@ A method descriptor MUST include:
   <li><code>runtime_invocable</code>,</li>
   <li><code>design_time_invocable</code>,</li>
   <li><code>effects</code>,</li>
-  <li><code>ordering_requirements</code> when invocation must participate in explicit UI sequencing,</li>
-  <li><code>failure_surface</code>: none, standard-error-output, raised-diagnostic, or profile-defined.</li>
+  <li><code>ordering_requirements</code> where explicit UI ordering matters,</li>
+  <li><code>failure_surface</code>.</li>
 </ul>
 
 <p>
@@ -545,12 +502,11 @@ A method descriptor MAY include:
   <li><code>requires_focus</code>,</li>
   <li><code>requires_ui_thread</code>,</li>
   <li><code>availability_state</code>,</li>
-  <li><code>preserve_in_backend_contract</code>,</li>
   <li><code>deprecated</code>.</li>
 </ul>
 
 <p>
-A method MUST NOT be treated as a property write shortcut.
+A method MUST NOT be treated as a property-write shortcut.
 </p>
 
 <p>
@@ -561,13 +517,8 @@ Examples:
   <li><code>reset_to_default()</code>,</li>
   <li><code>focus()</code>,</li>
   <li><code>scroll_into_view()</code>,</li>
-  <li><code>append_series_point(value)</code> for a profile-defined graph widget class.</li>
+  <li><code>append_series_point(value)</code> for a richer graph widget family.</li>
 </ul>
-
-<p>
-When a method parameter or result carries an ordinary value, its type MUST follow <code>Type.md</code>.
-When a method requires explicit UI ordering, that requirement MUST remain explicit rather than being inferred from one private host implementation.
-</p>
 
 <hr/>
 
@@ -586,12 +537,12 @@ An event descriptor MUST include:
   <li><code>payload</code>,</li>
   <li><code>emission_scope</code>: widget or part,</li>
   <li><code>emission_conditions</code>,</li>
-  <li><code>ordering_notes</code> when observable ordering matters,</li>
-  <li><code>runtime_only</code> or mixed availability.</li>
+  <li><code>ordering_notes</code> where observable ordering matters,</li>
+  <li><code>availability</code>.</li>
 </ul>
 
 <p>
-Event descriptors MAY define:
+An event descriptor MAY define:
 </p>
 
 <ul>
@@ -602,13 +553,7 @@ Event descriptors MAY define:
 </ul>
 
 <p>
-This document defines the object-surface event contract only.
-It does not define one mandatory event-processing runtime model.
-</p>
-
-<p>
-If an event payload carries ordinary values, those payload value types MUST remain attributable and explicit.
-This document does not standardize one mandatory event-runtime transport representation.
+This document defines the event contract as part of the object surface. It does not define one mandatory event-runtime processing model.
 </p>
 
 <hr/>
@@ -625,12 +570,12 @@ Examples of parts include:
 
 <ul>
   <li>label,</li>
-  <li>plot area,</li>
+  <li>plot_area,</li>
   <li>cursor,</li>
   <li>legend,</li>
   <li>axis,</li>
-  <li>increment button,</li>
-  <li>decrement button.</li>
+  <li>increment_button,</li>
+  <li>decrement_button.</li>
 </ul>
 
 <p>
@@ -639,18 +584,18 @@ A part descriptor MUST include:
 
 <ul>
   <li><code>name</code>,</li>
-  <li><code>class</code> or part contract identity,</li>
+  <li><code>part_class</code> or equivalent part-contract identity,</li>
   <li><code>cardinality</code>: single, indexed, keyed, or profile-defined,</li>
-  <li><code>members</code>: properties, methods, and events exposed by the part,</li>
+  <li><code>members</code>,</li>
   <li><code>presence_rule</code>: always present, optional, or configuration-dependent.</li>
 </ul>
 
 <p>
-A part MUST NOT be treated as an independent top-level widget unless another specification explicitly says so.
+A part MUST NOT be treated as an independent top-level widget unless another specification explicitly defines such a transformation.
 </p>
 
 <p>
-Part surfaces MUST remain explicitly attributable to the owning widget class contract rather than to hidden runtime reflection behavior.
+Part surfaces MUST remain attributable to the owning widget class contract rather than to hidden runtime reflection behavior.
 </p>
 
 <hr/>
@@ -677,7 +622,7 @@ Conceptual addressing forms:
 </p>
 
 <pre><code>widget.member
-widget.part(member_scope).member
+widget.part.member
 widget.part[index].member
 widget.part[key].member
 </code></pre>
@@ -695,53 +640,12 @@ A member access is valid only if:
 </ul>
 
 <p>
-The class contract defines the legal target surface.
-The executable transport of a widget reference and any explicit sequencing requirements remain owned elsewhere.
+The class contract defines the legal target surface. The executable transport of widget references and any sequencing requirements remain owned elsewhere.
 </p>
 
 <hr/>
 
-<h2 id="property-and-method-node-synthesis">16. Property and Method Node Synthesis</h2>
-
-<p>
-A conforming IDE MAY synthesize property-node and method-node authoring surfaces from the widget class contract.
-</p>
-
-<p>
-When it does so, the synthesis MUST respect the normative contract.
-</p>
-
-<p>
-The following rules apply:
-</p>
-
-<ul>
-  <li>a property marked non-readable MUST NOT appear as a readable property target,</li>
-  <li>a property marked non-writable MUST NOT appear as a writable property target,</li>
-  <li>a method marked non-invocable in the current context MUST NOT appear as invocable in that context,</li>
-  <li>role-gated, profile-gated, or host-gated members MUST be hidden or diagnosed when unavailable,</li>
-  <li>deprecated members SHOULD be distinguishable,</li>
-  <li>part-level members MUST remain visibly attributable to the owning part,</li>
-  <li>mixed-boundary members SHOULD distinguish design-time from runtime access.</li>
-</ul>
-
-<p>
-An IDE MAY offer richer authoring affordances, but those affordances MUST NOT contradict the class contract.
-</p>
-
-<p>
-IDE synthesis MUST NOT silently collapse:
-</p>
-
-<ul>
-  <li>natural <code>widget_value</code> access into generic object-style property access,</li>
-  <li>ordinary value typing into widget-reference transport,</li>
-  <li>host-specific convenience behavior into normative member legality.</li>
-</ul>
-
-<hr/>
-
-<h2 id="value-member-model">17. Value Member Model</h2>
+<h2 id="value-model">16. Value Model</h2>
 
 <p>
 For value-carrying widget classes, the relation between the main widget value and the object model MUST remain explicit.
@@ -752,10 +656,11 @@ A value-carrying widget class MUST define:
 </p>
 
 <ul>
-  <li>whether <code>value</code> exists as a named property in the object model,</li>
+  <li>whether a primary value exists,</li>
   <li>the value type,</li>
-  <li>whether the value is readable, writable, or both,</li>
-  <li>whether value access is equivalent to or distinct from diagram-side <code>widget_value</code> access.</li>
+  <li>whether an object-style <code>value</code> property exists,</li>
+  <li>whether the primary value is readable, writable, or both,</li>
+  <li>how natural <code>widget_value</code> participation relates to object-style access.</li>
 </ul>
 
 <p>
@@ -768,33 +673,52 @@ object-style property access to value
 </code></pre>
 
 <p>
-They may target related semantics, but they are not the same abstraction layer.
+They may be related, but they are not the same abstraction layer.
 </p>
 
 <p>
 The following distinction MUST also remain explicit:
 </p>
 
-<pre><code>ordinary value member typing
+<pre><code>ordinary value typing
   !=
 widget reference transport
   !=
 UI sequencing transport
 </code></pre>
 
-<p>
-A value-carrying class MUST therefore not be interpreted as making widget references or sequencing ports ordinary user-declared value types.
-</p>
+<hr/>
+
+<h2 id="design-time-and-runtime-boundaries">17. Design-Time and Runtime Boundaries</h2>
 
 <p>
-For the first bounded executable corridor, a class MAY explicitly declare that:
+The class contract MUST distinguish at least the following ownership and access classes:
 </p>
 
 <ul>
-  <li><code>widget_value</code> is the natural execution-facing value path,</li>
-  <li><code>value</code> is a contractable object-style member,</li>
-  <li>those two surfaces are related but not identical in authoring and validation posture.</li>
+  <li><strong>source-owned</strong>: serializable in canonical source,</li>
+  <li><strong>runtime-owned</strong>: not authoritative in canonical source,</li>
+  <li><strong>mixed-boundary</strong>: source-declared but runtime-updatable under explicit rules.</li>
 </ul>
+
+<p>
+Examples:
+</p>
+
+<ul>
+  <li>caption text may be source-owned,</li>
+  <li>current focus state may be runtime-owned,</li>
+  <li>visible may be mixed-boundary,</li>
+  <li><code>face_color</code> may be mixed-boundary if the active class contract allows both source declaration and runtime writes.</li>
+</ul>
+
+<p>
+This distinction is necessary so that canonical source validity does not depend on opaque runtime reflection data.
+</p>
+
+<p>
+Runtime-owned members MAY still be readable or observable at runtime, but they MUST NOT become hidden mandatory serialized state for canonical source validity.
+</p>
 
 <hr/>
 
@@ -809,10 +733,10 @@ Examples:
 </p>
 
 <ul>
-  <li>a base boolean button class may belong to the core widget vocabulary,</li>
-  <li>a waveform graph class may require a richer UI capability family,</li>
+  <li>a basic boolean button may belong to the core widget vocabulary,</li>
+  <li>a waveform graph may require a richer UI capability family,</li>
   <li>a drag-and-drop method may require host support not guaranteed by every runtime,</li>
-  <li>a hardware-backed display widget may require a profile-specific UI host.</li>
+  <li>a hardware-backed display widget may require a profile-specific host family.</li>
 </ul>
 
 <p>
@@ -829,71 +753,9 @@ A conforming validator MUST be able to diagnose when:
   <li>a part exists only under a profile or capability not currently active.</li>
 </ul>
 
-<p>
-Later cumulative source-format versions MAY add new classes, parts, members, or gates, but repository-wide compatibility posture for such growth remains centralized in <code>Versioning/Readme.md</code>.
-</p>
-
 <hr/>
 
-<h2 id="lifecycle-and-state-boundary">19. Lifecycle and State Boundary</h2>
-
-<p>
-A widget class contract MAY declare lifecycle-related requirements for its members.
-</p>
-
-<p>
-These may include:
-</p>
-
-<ul>
-  <li>creation-time only members,</li>
-  <li>design-time only members,</li>
-  <li>runtime-only readable members,</li>
-  <li>members available only after initialization,</li>
-  <li>members invalid after disposal or detachment.</li>
-</ul>
-
-<p>
-The class contract MUST NOT require one hidden runtime lifecycle implementation.
-It only standardizes which member availability constraints exist.
-</p>
-
-<hr/>
-
-<h2 id="design-time-vs-runtime-owned-members">20. Design-Time vs Runtime-Owned Members</h2>
-
-<p>
-The class contract MUST distinguish at least the following ownership classes:
-</p>
-
-<ul>
-  <li><strong>source-owned</strong>: serializable in canonical source,</li>
-  <li><strong>runtime-owned</strong>: not authoritative in canonical source,</li>
-  <li><strong>mixed-boundary</strong>: source-declared but runtime-updatable under explicit rules.</li>
-</ul>
-
-<p>
-Examples:
-</p>
-
-<ul>
-  <li>caption text may be source-owned,</li>
-  <li>current focus state may be runtime-owned,</li>
-  <li>visible may be mixed-boundary if source-defaulted but runtime-writable,</li>
-  <li><code>face_color</code> may be mixed-boundary if the active class contract and corridor allow both source declaration and runtime write access.</li>
-</ul>
-
-<p>
-This distinction is necessary so that canonical source validity does not depend on opaque runtime reflection data.
-</p>
-
-<p>
-Runtime-owned members MAY still be readable or observable at runtime, but they MUST NOT become hidden mandatory serialized state for canonical source validity.
-</p>
-
-<hr/>
-
-<h2 id="host-requirements">21. Host Requirements</h2>
+<h2 id="host-requirements">19. Host Requirements</h2>
 
 <p>
 A widget class contract MAY impose host requirements for realization.
@@ -913,35 +775,34 @@ Examples:
 </ul>
 
 <p>
-A host requirement declaration MUST NOT redefine program semantics.
-It only constrains whether a host can realize the class or member as declared.
+A host requirement declaration MUST NOT redefine program semantics. It only constrains whether a host can realize the class or member as declared.
 </p>
 
 <p>
 Host requirements MUST remain explicit rather than being inferred from one private renderer or runtime stack.
 </p>
 
-<p>
-Where a bounded runtime family claims support for a class member, that support claim SHOULD remain attributable to the class contract and to explicit family capability declarations rather than to hidden host reflection.
-</p>
-
 <hr/>
 
-<h2 id="canonical-source-shape">22. Canonical Source Shape</h2>
+<h2 id="source-shape-and-serialization-posture">20. Source Shape and Serialization Posture</h2>
 
 <p>
-Canonical v0.1 source does not require every FROG file to embed full widget class descriptors inline.
+Canonical <code>.frog</code> source does not need to embed full widget class descriptors inline.
 </p>
 
 <p>
-However, when a widget class contract is serialized or referenced in canonical source or repository-visible support material, the conceptual shape SHOULD follow this structure:
+Widget class law may instead be serialized through widget-oriented packages such as <code>.wfrog</code> class packages.
+</p>
+
+<p>
+However, when a widget class contract is serialized in a machine-readable form, its conceptual structure SHOULD follow a shape like the following:
 </p>
 
 <pre><code>{
-  "class": "frog.ui.standard.numeric_control",
-  "version": "0.1",
+  "class_id": "frog.ui.standard.numeric_control",
+  "contract_version": "0.1",
   "roles": ["control"],
-  "value_behavior": {
+  "value_model": {
     "kind": "value_carrying",
     "value_type": "f64",
     "object_value_member": "value"
@@ -990,12 +851,12 @@ However, when a widget class contract is serialized or referenced in canonical s
         "old_value": "f64",
         "new_value": "f64"
       },
-      "runtime_only": true
+      "availability": "runtime"
     }
   },
   "parts": {
     "label": {
-      "class": "frog.ui.standard.label_part",
+      "part_class": "frog.ui.standard.label_part",
       "cardinality": "single"
     }
   }
@@ -1003,18 +864,12 @@ However, when a widget class contract is serialized or referenced in canonical s
 </code></pre>
 
 <p>
-The exact serialization home of standardized widget class contracts may be defined by future specification work.
-This document defines the contract model itself.
-</p>
-
-<p>
-The example above uses canonical ordinary value type expressions such as <code>f64</code> and <code>bool</code>.
-It does not imply that widget references or sequencing tokens are declared through the same ordinary source type-expression vocabulary.
+This document defines the contract model itself. The exact long-term serialization home of standardized widget class contracts may be defined elsewhere in the specification corpus.
 </p>
 
 <hr/>
 
-<h2 id="validation-rules">23. Validation Rules</h2>
+<h2 id="validation-rules">21. Validation Rules</h2>
 
 <p>
 Validators MUST enforce at least the following rules when class contracts are used normatively:
@@ -1022,14 +877,14 @@ Validators MUST enforce at least the following rules when class contracts are us
 
 <ul>
   <li>a class identifier MUST be present,</li>
-  <li>a class contract version MUST be present,</li>
-  <li>member names MUST be unique within their owner scope and member kind where ambiguity would arise,</li>
+  <li>a class-contract version MUST be present,</li>
+  <li>member names MUST be unique within their owner scope where ambiguity would arise,</li>
   <li>a property MUST declare a type,</li>
   <li>a method parameter list and result list MUST be structurally valid,</li>
   <li>a part contract MUST declare its cardinality,</li>
-  <li>a member MUST NOT be both available and forbidden in the same access context,</li>
+  <li>a member MUST NOT be simultaneously available and forbidden in the same access context,</li>
   <li>profile-gated or host-gated members MUST carry explicit gating metadata,</li>
-  <li>a value-carrying class MUST define its value behavior coherently,</li>
+  <li>a value-carrying class MUST define its value model coherently,</li>
   <li>a class MUST NOT require private runtime-only reflection metadata for canonical validity.</li>
 </ul>
 
@@ -1045,13 +900,9 @@ Validators SHOULD additionally preserve the following distinctions explicitly:
   <li>natural <code>widget_value</code> participation versus object-style property access.</li>
 </ul>
 
-<p>
-Validators SHOULD also diagnose when an implementation-specific rich class surface is presented as though it were already part of the standardized minimal v0.1 subset without an explicit published contract.
-</p>
-
 <hr/>
 
-<h2 id="diagnostics">24. Diagnostics</h2>
+<h2 id="diagnostics">22. Diagnostics</h2>
 
 <p>
 Validators SHOULD diagnose at least the following classes of errors:
@@ -1059,7 +910,7 @@ Validators SHOULD diagnose at least the following classes of errors:
 
 <ul>
   <li>unknown widget class,</li>
-  <li>unsupported class version,</li>
+  <li>unsupported class-contract version,</li>
   <li>unknown member,</li>
   <li>unknown part,</li>
   <li>invalid owner scope,</li>
@@ -1067,26 +918,26 @@ Validators SHOULD diagnose at least the following classes of errors:
   <li>attempted write to read-only property,</li>
   <li>attempted read from write-only property,</li>
   <li>invocation of unavailable method,</li>
-  <li>use of profile-gated member outside the required profile,</li>
-  <li>use of host-gated member without required host capability,</li>
+  <li>use of a profile-gated member outside the required profile,</li>
+  <li>use of a host-gated member without the required host capability,</li>
   <li>ambiguous or invalid part addressing,</li>
-  <li>illegal dependence on runtime-only property for source validity,</li>
+  <li>illegal dependence on a runtime-only member for source validity,</li>
   <li>confusion between ordinary value typing and interaction-token categories.</li>
 </ul>
 
 <p>
-Where the active corridor supports backend handoff of widget object obligations, diagnostics SHOULD also distinguish between:
+Where an implementation distinguishes backend or runtime-family support from class-level legality, diagnostics SHOULD distinguish between:
 </p>
 
 <ul>
-  <li>member access illegal at validation time,</li>
+  <li>member access illegal by class contract,</li>
   <li>member access legal in principle but unavailable for the selected profile,</li>
   <li>member access legal in principle but unsupported by the selected backend or runtime family.</li>
 </ul>
 
 <hr/>
 
-<h2 id="conformance-implications">25. Conformance Implications</h2>
+<h2 id="conformance-implications">23. Conformance Implications</h2>
 
 <p>
 When widget class contracts participate in conformance material, positive and negative cases SHOULD verify at least:
@@ -1100,7 +951,7 @@ When widget class contracts participate in conformance material, positive and ne
   <li>profile-gated availability,</li>
   <li>host-gated availability,</li>
   <li>design-time versus runtime access constraints,</li>
-  <li>value-member consistency for value-carrying widgets.</li>
+  <li>value-model consistency for value-carrying widgets.</li>
 </ul>
 
 <p>
@@ -1113,19 +964,9 @@ Conformance cases SHOULD also verify that implementations do not silently collap
   <li>host-specific richness into normative class-contract requirements.</li>
 </ul>
 
-<p>
-Conformance SHOULD also distinguish clearly between:
-</p>
-
-<ul>
-  <li>what belongs to the minimal standardized v0.1 subset,</li>
-  <li>what belongs to richer but explicitly published class families,</li>
-  <li>and what is implementation-private only.</li>
-</ul>
-
 <hr/>
 
-<h2 id="non-goals">26. Non-Goals</h2>
+<h2 id="non-goals">24. Non-Goals</h2>
 
 <p>
 This document is not:
@@ -1136,14 +977,13 @@ This document is not:
   <li>a rendering engine specification,</li>
   <li>a theme or styling guide,</li>
   <li>a complete event-loop specification,</li>
-  <li>a private runtime object layout specification,</li>
-  <li>a mandate that every implementation expose identical authoring ergonomics,</li>
-  <li>a repository-wide versioning policy.</li>
+  <li>a private runtime object-layout specification,</li>
+  <li>a mandate that every implementation expose identical authoring ergonomics.</li>
 </ul>
 
 <hr/>
 
-<h2 id="minimal-v01-standardization-posture">27. Minimal v0.1 Standardization Posture</h2>
+<h2 id="minimal-v01-posture">25. Minimal v0.1 Posture</h2>
 
 <p>
 For v0.1, the minimum required standardization posture is:
@@ -1170,30 +1010,12 @@ For the first bounded executable corridor, the minimum useful class-side surface
 </ul>
 
 <p>
-This posture defines the minimum coherent contract surface, not the maximum future richness of the FROG widget ecosystem.
-</p>
-
-<p>
-Future versions MAY extend this contract model with:
-</p>
-
-<ul>
-  <li>inheritance or interface-style class factoring,</li>
-  <li>richer event routing,</li>
-  <li>collection-like parts,</li>
-  <li>stronger host accessibility contracts,</li>
-  <li>richer capability taxonomies,</li>
-  <li>more formal IDE exposure recommendations,</li>
-  <li>and richer standardized widget families published through compatible profile surfaces.</li>
-</ul>
-
-<p>
-Such growth SHOULD normally remain cumulative and centrally governed through the published versioning surface rather than being redefined independently by local widget documents.
+This posture defines the minimum coherent class-contract surface, not the maximum future richness of the FROG widget ecosystem.
 </p>
 
 <hr/>
 
-<h2 id="illustrative-example">28. Illustrative Example</h2>
+<h2 id="illustrative-example">26. Illustrative Example</h2>
 
 <p>
 Conceptually:
@@ -1231,8 +1053,8 @@ An IDE may then expose:
 </p>
 
 <ul>
-  <li><code>value</code>, <code>visible</code>, <code>enabled</code>, and <code>face_color</code> in a property-node surface,</li>
-  <li><code>reset_to_default()</code> and <code>focus()</code> in a method-node surface,</li>
+  <li><code>value</code>, <code>visible</code>, <code>enabled</code>, and <code>face_color</code> in a property-authoring surface,</li>
+  <li><code>reset_to_default()</code> and <code>focus()</code> in a method-authoring surface,</li>
   <li><code>label.text</code> as a part-scoped property target,</li>
   <li>diagnostics when a forbidden access mode is attempted.</li>
 </ul>
@@ -1247,13 +1069,9 @@ A bounded executable slice may then use:
   <li>while keeping those two interaction surfaces distinct.</li>
 </ul>
 
-<p>
-The same general contract model may later support richer families than this illustrative example without changing the architectural ownership boundaries defined by this document.
-</p>
-
 <hr/>
 
-<h2 id="summary">29. Summary</h2>
+<h2 id="summary">27. Summary</h2>
 
 <p>
 The widget class contract is the normative class-side object surface that makes widget interaction explicit, inspectable, and implementation-independent.
@@ -1264,15 +1082,15 @@ It closes the gap between:
 </p>
 
 <ul>
-  <li>instance-side front-panel serialization,</li>
+  <li>instance-side front-panel declaration,</li>
   <li>diagram-side widget interaction primitives,</li>
   <li>IDE-side property and method exposure,</li>
-  <li>IR- and lowering-side preservation of object intent where relevant,</li>
-  <li>runtime-side realization constraints.</li>
+  <li>runtime-side interpretation obligations,</li>
+  <li>host-side realization constraints.</li>
 </ul>
 
 <p>
-By keeping widget classes explicit, FROG can support rich widget-object interaction without turning one private IDE or runtime into the hidden source of truth.
+By keeping widget classes explicit, FROG can support rich widget-object interaction without turning one private IDE, runtime, or host stack into the hidden source of truth.
 </p>
 
 <p>
@@ -1285,10 +1103,10 @@ The document also keeps explicit the distinctions between:
   <li>UI sequencing transport,</li>
   <li>source-owned members,</li>
   <li>runtime-owned members,</li>
-  <li>local class-contract revision,</li>
-  <li>centralized repository-wide version governance.</li>
+  <li>class-side law,</li>
+  <li>host-side realization.</li>
 </ul>
 
 <p>
-The contract model is intentionally general enough to support open-ended widget-class families over time, while the minimal v0.1 standardized subset remains deliberately conservative.
+The model is intentionally general enough to support open-ended widget-class families over time, while the minimal v0.1 standardized subset remains deliberately conservative.
 </p>
