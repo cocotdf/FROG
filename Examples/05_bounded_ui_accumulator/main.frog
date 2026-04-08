@@ -2,8 +2,8 @@
   "spec_version": "0.1",
   "metadata": {
     "name": "05_bounded_ui_accumulator",
-    "summary": "Bounded front-panel accumulation example with explicit state, five-loop execution, minimal u16 widgets, and final indicator output.",
-    "description": "Reads one u16 numeric control value from the front panel, executes a bounded loop of exactly five iterations, carries explicit state through frog.core.delay initialized to 0, and writes the final accumulated value both to one public output and to one u16 numeric indicator. The front panel also persists minimal presentation metadata through face_color and face_template without giving those members executable meaning by themselves. This example also points to one peripheral UI object realization file for host-side widget realization.",
+    "summary": "Bounded front-panel accumulation example with explicit state, five-loop execution, minimal u16 widgets, object-style UI property writes, and final indicator/public output publication.",
+    "description": "Reads one u16 numeric control value from the front panel, executes a bounded loop of exactly five iterations, carries explicit state through frog.core.delay initialized to 0, and writes the final accumulated value both to one public output and to one u16 numeric indicator. The canonical source remains the owner of program meaning and widget participation, while the peripheral .wfrog package owns widget-oriented panel realization, initial widget realization state, and visual resource references.",
     "author": "Graiphic",
     "program_version": "0.1.0",
     "tags": [
@@ -17,9 +17,10 @@
       "accumulator",
       "vertical_slice",
       "u16",
+      "property_write",
       "face_color",
-      "face_template",
-      "ui_object_realization"
+      "wfrog",
+      "front_panel_package"
     ],
     "is_example": true,
     "license": "Apache-2.0"
@@ -66,13 +67,13 @@
         "id": "const_ctrl_face_color",
         "kind": "constant",
         "type": "frog.ui.color",
-        "value": "#D8E6FF"
+        "value": "#5B9BD5"
       },
       {
         "id": "const_ind_face_color",
         "kind": "constant",
         "type": "frog.ui.color",
-        "value": "#D8E6FF"
+        "value": "#70AD47"
       },
       {
         "id": "write_ctrl_face_color",
@@ -283,19 +284,18 @@
   "front_panel": {
     "canvas": {
       "width": 460,
-      "height": 170
+      "height": 170,
+      "coordinate_space": "panel_pixels"
     },
-    "host_realization": {
-      "kind": "resource",
-      "format": "frog.ui.objects+json",
-      "path": "./front_panel.objects.json",
-      "authority": "non_authoritative_host_realization"
-    },
+    "package_refs": [
+      "./ui/accumulator_panel.wfrog"
+    ],
     "widgets": [
       {
         "id": "ctrl_input",
         "role": "control",
-        "widget": "frog.ui.standard.numeric_control",
+        "class_ref": "frog.widgets.numeric_control",
+        "instance_ref": "ctrl_input",
         "value_type": "u16",
         "layout": {
           "x": 20,
@@ -304,18 +304,19 @@
           "height": 32
         },
         "props": {
-          "caption": "Input value",
-          "face_color": "#D8E6FF",
-          "face_template": {
-            "kind": "resource",
-            "path": "./assets/widgets/u16_numeric_control_face.svg"
-          }
+          "label": "Input"
+        },
+        "parts": {
+          "root": {},
+          "label": {},
+          "value_display": {}
         }
       },
       {
         "id": "ind_result",
         "role": "indicator",
-        "widget": "frog.ui.standard.numeric_indicator",
+        "class_ref": "frog.widgets.numeric_indicator",
+        "instance_ref": "ind_result",
         "value_type": "u16",
         "layout": {
           "x": 240,
@@ -324,12 +325,12 @@
           "height": 32
         },
         "props": {
-          "caption": "Accumulated result",
-          "face_color": "#D8E6FF",
-          "face_template": {
-            "kind": "resource",
-            "path": "./assets/widgets/u16_numeric_indicator_face.svg"
-          }
+          "label": "Accumulated result"
+        },
+        "parts": {
+          "root": {},
+          "label": {},
+          "value_display": {}
         }
       }
     ]
