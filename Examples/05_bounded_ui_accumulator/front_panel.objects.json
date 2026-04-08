@@ -1,0 +1,98 @@
+{
+  "artifact_kind": "frog_ui_object_realization",
+  "artifact_version": "0.1-draft",
+  "example_ref": {
+    "example_id": "05_bounded_ui_accumulator",
+    "source_path": "Examples/05_bounded_ui_accumulator/main.frog"
+  },
+  "ownership_boundary": {
+    "semantic_authority": "canonical_source",
+    "object_contract_authority": "published_widget_contracts",
+    "host_realization_authority": "this_file",
+    "notes": [
+      "This file is downstream from canonical source-owned meaning.",
+      "This file must not redefine executable semantics.",
+      "This file may define concrete host widgets, styles, bindings, and realization-specific metadata."
+    ]
+  },
+  "host_family": {
+    "name": "reference_host_runtime_ui_binding",
+    "ui_host_kind": "reference_windowed_host",
+    "rendering_model": "immediate_value_and_property_application"
+  },
+  "window": {
+    "id": "main_window",
+    "title": "Bounded UI Accumulator",
+    "width": 460,
+    "height": 170,
+    "resizable": false,
+    "background": "#F5F7FA"
+  },
+  "objects": [
+    {
+      "object_id": "ctrl_input",
+      "widget_id": "ctrl_input",
+      "widget_class": "frog.ui.numeric_control",
+      "host_class": "reference.numeric_spinbox",
+      "layout": {
+        "x": 20,
+        "y": 24,
+        "width": 140,
+        "height": 32
+      },
+      "visual": {
+        "caption_text": "Input value",
+        "face_color": "#D8E6FF",
+        "text_color": "#1F2937",
+        "font_family": "default_sans",
+        "font_size": 12,
+        "border_radius": 4
+      },
+      "value_model": {
+        "value_type": "u16",
+        "default_value": 3,
+        "minimum": 0,
+        "maximum": 65535,
+        "step": 1
+      },
+      "runtime_binding": {
+        "widget_value_binding": true,
+        "widget_reference_binding": true,
+        "supported_members": [
+          "face_color"
+        ]
+      }
+    },
+    {
+      "object_id": "ind_result",
+      "widget_id": "ind_result",
+      "widget_class": "frog.ui.numeric_indicator",
+      "host_class": "reference.numeric_display",
+      "layout": {
+        "x": 240,
+        "y": 24,
+        "width": 160,
+        "height": 32
+      },
+      "visual": {
+        "caption_text": "Accumulated result",
+        "face_color": "#D8E6FF",
+        "text_color": "#1F2937",
+        "font_family": "default_sans",
+        "font_size": 12,
+        "border_radius": 4
+      },
+      "value_model": {
+        "value_type": "u16",
+        "default_value": 0
+      },
+      "runtime_binding": {
+        "widget_value_binding": true,
+        "widget_reference_binding": true,
+        "supported_members": [
+          "face_color"
+        ]
+      }
+    }
+  ]
+}
