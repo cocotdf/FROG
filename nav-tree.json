@@ -2170,6 +2170,13 @@
                   "kind": "category",
                   "children": [
                     {
+                      "key": "implementations/reference/runtime/python/run_slice05_ui.py",
+                      "title": "run_slice05_ui.py",
+                      "path": "/Implementations/Reference/Runtime/python/run_slice05_ui.py",
+                      "kind": "code",
+                      "children": []
+                    },
+                    {
                       "key": "implementations/reference/runtime/python/ui_runtime.py",
                       "title": "ui_runtime.py",
                       "path": "/Implementations/Reference/Runtime/python/ui_runtime.py",
@@ -2578,6 +2585,7 @@
     "/Implementations/Reference/Runtime/reference_runtime.py",
     "/Implementations/Reference/Runtime/run_slice05_contract.py",
     "/Implementations/Reference/Runtime/cpp/Readme.md",
+    "/Implementations/Reference/Runtime/python/run_slice05_ui.py",
     "/Implementations/Reference/Runtime/python/ui_runtime.py",
     "/Implementations/Reference/Runtime/python/Readme.md",
     "/Implementations/Reference/Runtime/rust/Readme.md",
