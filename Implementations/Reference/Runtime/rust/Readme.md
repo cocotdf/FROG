@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="../../../../FROG logo.svg" alt="FROG logo" width="200" />
+  <img src="../../../../FROG logo.svg" alt="FROG logo" width="140" />
 </p>
 
 <h1 align="center">Reference Runtime (Rust)</h1>
@@ -17,19 +17,20 @@
   <li><a href="#status">2. Status</a></li>
   <li><a href="#why-this-directory-exists">3. Why This Directory Exists</a></li>
   <li><a href="#primary-slice-target">4. Primary Slice Target</a></li>
-  <li><a href="#relation-to-the-published-runtime-boundary">5. Relation to the Published Runtime Boundary</a></li>
+  <li><a href="#relation-with-runtime-boundary">5. Relation to the Published Runtime Boundary</a></li>
   <li><a href="#ownership-boundary">6. Ownership Boundary</a></li>
   <li><a href="#what-this-runtime-consumes">7. What This Runtime Consumes</a></li>
   <li><a href="#what-this-runtime-produces">8. What This Runtime Produces</a></li>
   <li><a href="#minimal-supported-behavior">9. Minimal Supported Behavior</a></li>
   <li><a href="#minimal-ui-surface">10. Minimal UI Surface</a></li>
-  <li><a href="#execution-shape">11. Execution Shape</a></li>
+  <li><a href="#published-pipe">11. Published Pipe for Example 05</a></li>
   <li><a href="#recommended-directory-shape">12. Recommended Directory Shape</a></li>
   <li><a href="#design-rules">13. Design Rules</a></li>
   <li><a href="#explicit-non-goals">14. Explicit Non-Goals</a></li>
-  <li><a href="#relationship-with-the-python-reference-runtime">15. Relationship with the Python Reference Runtime</a></li>
-  <li><a href="#future-growth">16. Future Growth</a></li>
-  <li><a href="#summary">17. Summary</a></li>
+  <li><a href="#relationship-with-python">15. Relationship with the Python Reference Runtime</a></li>
+  <li><a href="#closure-status">16. Rust Closure Status</a></li>
+  <li><a href="#future-growth">17. Future Growth</a></li>
+  <li><a href="#summary">18. Summary</a></li>
 </ul>
 
 <hr/>
@@ -41,7 +42,8 @@ This directory defines the minimal Rust realization of the published reference r
 </p>
 
 <p>
-It is a <strong>downstream runtime consumer</strong>. It does not redefine the language, the source model, the semantic layer, the Execution IR, the lowering layer, or the backend contract boundary.
+It is a downstream runtime consumer.
+It does not redefine the language, the source model, the semantic layer, the open FIR / execution-facing layer, the lowering layer, or the backend contract boundary.
 </p>
 
 <hr/>
@@ -49,11 +51,23 @@ It is a <strong>downstream runtime consumer</strong>. It does not redefine the l
 <h2 id="status">2. Status</h2>
 
 <p>
-This directory is <strong>non-normative</strong>.
+This directory is non-normative.
+It exists to prove that one canonical executable corridor may be consumed by more than one runtime-language realization while keeping the language and contract surfaces open and repository-visible.
 </p>
 
 <p>
-It exists to prove that one canonical executable corridor may be consumed by more than one runtime family realization while keeping the language and contract surfaces open and repository-visible.
+At the current published state, the Rust side already proves:
+</p>
+
+<ul>
+  <li>deserialization of the published example-05 contract artifact,</li>
+  <li>shape validation for that contract,</li>
+  <li>execution of the bounded accumulation corridor,</li>
+  <li>and parity of the final observable result with the Python runtime path.</li>
+</ul>
+
+<p>
+What it does not yet publish is one dedicated example-runner binary or one rendered UI host path.
 </p>
 
 <hr/>
@@ -61,7 +75,7 @@ It exists to prove that one canonical executable corridor may be consumed by mor
 <h2 id="why-this-directory-exists">3. Why This Directory Exists</h2>
 
 <p>
-The reference implementation already publishes a runtime boundary and a first Python-side realization posture for the reference family.
+The reference implementation already publishes a runtime boundary and a Python-side realization posture for the reference family.
 This Rust directory exists to demonstrate the same architectural rule with a second runtime language:
 </p>
 
@@ -69,7 +83,7 @@ This Rust directory exists to demonstrate the same architectural rule with a sec
   <li>one canonical FROG source remains the source of truth,</li>
   <li>one validated semantic reading remains the source of truth,</li>
   <li>one open execution-facing corridor remains the source of truth,</li>
-  <li>and more than one runtime may consume the resulting backend contract.</li>
+  <li>and more than one runtime language may consume the resulting backend contract.</li>
 </ul>
 
 <p>
@@ -84,7 +98,8 @@ This is therefore a modular-runtime proof point, not a second language definitio
 The first target for this runtime is the published example:
 </p>
 
-<pre><code>Examples/05_bounded_ui_accumulator/</code></pre>
+<pre><code>Examples/05_bounded_ui_accumulator/
+</code></pre>
 
 <p>
 That example already establishes a bounded executable corridor with:
@@ -100,19 +115,20 @@ That example already establishes a bounded executable corridor with:
 </ul>
 
 <p>
-This Rust runtime must consume <strong>that same corridor</strong>.
+This Rust runtime must consume that same corridor.
 It must not introduce a separate source example, a parallel semantic story, or a runtime-only reinterpretation of the example.
 </p>
 
 <hr/>
 
-<h2 id="relation-to-the-published-runtime-boundary">5. Relation to the Published Runtime Boundary</h2>
+<h2 id="relation-with-runtime-boundary">5. Relation to the Published Runtime Boundary</h2>
 
 <p>
 The published runtime boundary already defines the first reference runtime family as:
 </p>
 
-<pre><code>reference_host_runtime_ui_binding</code></pre>
+<pre><code>reference_host_runtime_ui_binding
+</code></pre>
 
 <p>
 This Rust runtime is a consumer of that family posture.
@@ -126,16 +142,6 @@ It therefore follows the already-published runtime-side assumptions:
   <li>optional UI reference binding,</li>
   <li>explicit local-memory preservation when present,</li>
   <li>and no first-class standardized UI event execution model in this first corridor.</li>
-</ul>
-
-<p>
-This runtime must remain compatible with the published distinction between:
-</p>
-
-<ul>
-  <li>contract rejection,</li>
-  <li>accepted execution,</li>
-  <li>and accepted-but-failed execution.</li>
 </ul>
 
 <hr/>
@@ -158,7 +164,7 @@ This runtime must remain compatible with the published distinction between:
   <li>the FROG language definition,</li>
   <li>the canonical <code>.frog</code> source model,</li>
   <li>the semantic acceptance boundary,</li>
-  <li>the open Execution IR,</li>
+  <li>the open FIR / execution-facing layer,</li>
   <li>the lowering boundary,</li>
   <li>the backend contract boundary,</li>
   <li>the normative meaning of widget classes, properties, methods, or events,</li>
@@ -171,43 +177,29 @@ The key architectural rule remains:
 
 <pre><code>validated meaning != runtime implementation
 backend contract != runtime-private structures
-Rust runtime != universal FROG runtime</code></pre>
+Rust runtime != universal FROG runtime
+</code></pre>
 
 <hr/>
 
 <h2 id="what-this-runtime-consumes">7. What This Runtime Consumes</h2>
 
 <p>
-This runtime consumes a successful backend contract artifact for the published reference runtime family.
-Conceptually, it consumes a payload compatible with the already-published runtime contract corridor:
-</p>
-
-<pre><code>{
-  "artifact_kind": "frog_backend_contract",
-  "artifact_version": "0.1",
-  "backend_family": "reference_host_runtime_ui_binding",
-  "producer": "...",
-  "compatibility": "family_specific",
-  "source_ref": { ... },
-  "assumptions": { ... },
-  "units": [ ... ],
-  "unsupported": [],
-  "diagnostics": []
-}</code></pre>
-
-<p>
-This Rust runtime therefore starts <strong>after</strong> source loading, structural validation, semantic validation, Execution IR derivation, and lowering have already produced an acceptable backend contract.
+This Rust runtime starts after source loading, structural validation, semantic validation, FIR-target derivation, and lowering have already produced an acceptable backend contract.
 </p>
 
 <p>
-It must not silently accept:
+For the first bounded published slice, it consumes:
 </p>
 
 <ul>
-  <li>the wrong backend family,</li>
-  <li>missing required assumptions,</li>
-  <li>unsupported declarations that it claims not to handle,</li>
-  <li>or malformed contract entries for state, loop, widget, or property-write obligations.</li>
+  <li>one backend contract artifact from the reference contract emitter,</li>
+  <li>one declared backend family equal to <code>reference_host_runtime_ui_binding</code>,</li>
+  <li>one explicit bounded loop model,</li>
+  <li>one explicit delay-backed state carrier,</li>
+  <li>one control-input binding,</li>
+  <li>one indicator/public-output publication rule,</li>
+  <li>and one minimal <code>face_color</code> property-write surface.</li>
 </ul>
 
 <hr/>
@@ -215,63 +207,40 @@ It must not silently accept:
 <h2 id="what-this-runtime-produces">8. What This Runtime Produces</h2>
 
 <p>
-On successful execution, this runtime returns a runtime result artifact compatible with the published runtime result posture.
-Conceptually:
+For the current bounded corridor, the Rust consumer produces runtime-visible evidence that:
 </p>
 
-<pre><code>{
-  "artifact_kind": "frog_runtime_result",
-  "artifact_version": "0.1-dev",
-  "backend_family": "reference_host_runtime_ui_binding",
-  "contract_ref": {
-    "unit_ids": ["main"]
-  },
-  "status": "ok",
-  "execution_summary": {
-    "mode": "deterministic_step_execution",
-    "state_initialized": true,
-    "ui_bound": true
-  },
-  "outputs": {
-    "public": { ... },
-    "ui": { ... }
-  },
-  "diagnostics": []
-}</code></pre>
-
-<p>
-On rejection or failure, it returns an explicit error-shaped runtime result rather than silently degrading execution meaning.
-</p>
+<ul>
+  <li>the contract was accepted,</li>
+  <li>the loop ran exactly five iterations,</li>
+  <li>the state started at zero,</li>
+  <li>the final state for input <code>3</code> is <code>15</code>,</li>
+  <li>the public output is correct,</li>
+  <li>the indicator value is correct,</li>
+  <li>and the minimal UI runtime state is preserved for the supported widgets.</li>
+</ul>
 
 <hr/>
 
 <h2 id="minimal-supported-behavior">9. Minimal Supported Behavior</h2>
 
 <p>
-For the first executable slice, this runtime only needs to support the smallest sufficient behavior required by <code>Examples/05_bounded_ui_accumulator</code>.
+The current first published slice supports:
 </p>
 
-<p>
-The conservative supported reading is:
-</p>
-
-<ol>
-  <li>accept one successful contract for the family <code>reference_host_runtime_ui_binding</code>,</li>
-  <li>prepare one host-side execution session,</li>
-  <li>bind the numeric control value once for the run,</li>
-  <li>apply the declared minimal UI property writes supported by this runtime,</li>
-  <li>initialize the explicit state to <code>0</code>,</li>
-  <li>execute exactly five iterations,</li>
-  <li>compute <code>state_next = state_current + input_value</code> at each iteration,</li>
-  <li>commit state explicitly at the required commit point,</li>
-  <li>publish the final state to the numeric indicator,</li>
-  <li>publish the same final state to the public output surface,</li>
-  <li>and report success or explicit failure.</li>
-</ol>
+<ul>
+  <li>bounded loop execution,</li>
+  <li>explicit local state,</li>
+  <li>u16 numeric accumulation,</li>
+  <li>public input binding,</li>
+  <li>public output publication,</li>
+  <li>indicator publication,</li>
+  <li>and bounded object-style UI property writes.</li>
+</ul>
 
 <p>
-Even if the mathematical outcome is equivalent to <code>5 * input</code>, this runtime must preserve the explicit loop-and-state reading of the slice.
-It must not treat the example as a narrative shortcut.
+This does not imply that the Rust runtime already supports the full future FROG language surface.
+It only proves that one serious named example can already be consumed in Rust without redefining the corridor.
 </p>
 
 <hr/>
@@ -279,88 +248,59 @@ It must not treat the example as a narrative shortcut.
 <h2 id="minimal-ui-surface">10. Minimal UI Surface</h2>
 
 <p>
-The first Rust runtime surface is intentionally small.
-</p>
-
-<p>
-For the initial slice, the required UI posture is:
+The supported UI posture is intentionally narrow:
 </p>
 
 <ul>
-  <li>one numeric control value binding,</li>
-  <li>one numeric indicator value publication,</li>
-  <li>minimal widget-reference support where the contract explicitly declares it,</li>
-  <li>and support for the small property-write surface actually exercised by the published slice.</li>
+  <li><code>widget_value</code> participation for the control,</li>
+  <li><code>widget_value</code> publication for the indicator,</li>
+  <li><code>widget_reference</code> resolution for both widgets,</li>
+  <li><code>frog.ui.property_write</code> on member <code>face_color</code>.</li>
 </ul>
 
 <p>
-For the initial example, the explicitly exercised property-write surface is currently limited to:
-</p>
-
-<pre><code>face_color</code></pre>
-
-<p>
-Accordingly, the first Rust runtime may conservatively reject unsupported property writes outside that bounded surface.
-</p>
-
-<p>
-This bounded support is sufficient for the first executable proof.
-It is not a statement that the long-term widget object model is limited to that property.
+This is enough to prove that the Rust consumer preserves the distinction between value participation and object-style interaction.
+It is not yet a full widget object-model implementation.
 </p>
 
 <hr/>
 
-<h2 id="execution-shape">11. Execution Shape</h2>
+<h2 id="published-pipe">11. Published Pipe for Example 05</h2>
 
 <p>
-The recommended execution shape for the first Rust runtime is:
+At the current published state, the Rust pipe for the first serious example is test-driven:
 </p>
 
-<pre><code>accepted backend contract
-        |
-        v
-family compatibility check
-        |
-        v
-assumption / unsupported check
-        |
-        v
-host-side execution session creation
-        |
-        v
-UI value binding + UI reference preparation
-        |
-        v
-explicit state initialization
-        |
-        v
-deterministic counted-loop execution
-        |
-        v
-indicator publication + public output collection
-        |
-        v
-runtime result artifact</code></pre>
+<pre><code>cd Implementations/Reference/Runtime/rust
+cargo test
+</code></pre>
 
 <p>
-This execution shape remains:
+The relevant example-facing test files are:
+</p>
+
+<pre><code>tests/
+├── slice05_contract_smoke.rs
+└── slice05_execution.rs
+</code></pre>
+
+<p>
+Their roles are:
 </p>
 
 <ul>
-  <li>host-oriented,</li>
-  <li>deterministic,</li>
-  <li>bounded,</li>
-  <li>single-run,</li>
-  <li>and intentionally free of event-loop-heavy requirements for the first slice.</li>
+  <li><code>slice05_contract_smoke.rs</code> — verify that the published contract artifact deserializes and exposes the expected bounded shape,</li>
+  <li><code>slice05_execution.rs</code> — verify that the Rust runtime executes the same published contract corridor and reaches the expected final result.</li>
 </ul>
+
+<p>
+This is already a real downstream consumer pipe.
+What is still missing is one dedicated Rust runner binary comparable to the Python entry point.
+</p>
 
 <hr/>
 
 <h2 id="recommended-directory-shape">12. Recommended Directory Shape</h2>
-
-<p>
-A conservative directory shape for this runtime family is:
-</p>
 
 <pre><code>Implementations/Reference/Runtime/rust/
 ├── Readme.md
@@ -376,7 +316,8 @@ A conservative directory shape for this runtime family is:
 │   └── ui.rs
 └── tests/
     ├── slice05_contract_smoke.rs
-    └── slice05_execution.rs</code></pre>
+    └── slice05_execution.rs
+</code></pre>
 
 <p>
 This shape is only a recommended first skeleton.
@@ -395,96 +336,112 @@ It should remain small until the published corridor requires more.
   <li>Keep runtime-private helper structures downstream from the published backend contract.</li>
   <li>Reject unsupported widget-reference or property-write operations explicitly.</li>
   <li>Keep diagnostics attributable when the consumed contract carries source-aligned anchors.</li>
-  <li>Do not promote Rust-private implementation convenience into normative language law.</li>
 </ul>
 
 <hr/>
 
 <h2 id="explicit-non-goals">14. Explicit Non-Goals</h2>
 
+<ul>
+  <li>This directory does not define the language.</li>
+  <li>This directory does not define the canonical source format.</li>
+  <li>This directory does not define the FIR architecture.</li>
+  <li>This directory does not define lowering law.</li>
+  <li>This directory does not define the backend contract boundary.</li>
+  <li>This directory does not define a universal host UI.</li>
+  <li>This directory does not yet define a native executable LLVM corridor.</li>
+</ul>
+
+<hr/>
+
+<h2 id="relationship-with-python">15. Relationship with the Python Reference Runtime</h2>
+
 <p>
-The first Rust runtime does not need to provide:
+The Python and Rust runtimes are parallel consumers of the same published contract corridor.
+They may differ in private structures, packaging, and host mechanics, but they should stay aligned on:
 </p>
 
 <ul>
-  <li>a universal FROG runtime architecture,</li>
-  <li>direct execution from raw <code>.frog</code> source,</li>
-  <li>a complete widget toolkit,</li>
-  <li>a full property / method / event object system,</li>
-  <li>continuous interactive re-execution,</li>
-  <li>hidden persistence between runs,</li>
-  <li>pixel-identical rendering across hosts,</li>
-  <li>or direct LLVM ownership or LLVM-private runtime coupling.</li>
+  <li>acceptance criteria,</li>
+  <li>loop meaning,</li>
+  <li>explicit-state meaning,</li>
+  <li>UI binding obligations,</li>
+  <li>and final public behavior.</li>
 </ul>
 
 <p>
-LLVM remains a downstream backend-family topic, not the definition of this runtime and not the definition of FROG.
+The Python runtime currently provides the clearest direct execution entry point.
+The Rust runtime currently provides the strongest second-language parity proof through tests.
 </p>
 
 <hr/>
 
-<h2 id="relationship-with-the-python-reference-runtime">15. Relationship with the Python Reference Runtime</h2>
+<h2 id="closure-status">16. Rust Closure Status</h2>
 
-<p>
-The Python reference runtime and the Rust reference runtime must be understood as <strong>parallel consumers of the same published corridor</strong>.
-</p>
-
-<p>
-They should aim to agree on:
-</p>
-
-<ul>
-  <li>family acceptance criteria,</li>
-  <li>explicit-state preservation,</li>
-  <li>counted-loop behavior for the supported slice,</li>
-  <li>bounded UI property-write support for the supported slice,</li>
-  <li>public output publication,</li>
-  <li>and result / error-shape expectations.</li>
-</ul>
-
-<p>
-They do not need to share identical internal data structures, helper APIs, or host-specific execution mechanics.
-</p>
+<table>
+  <thead>
+    <tr>
+      <th>Rust-side surface</th>
+      <th>Status</th>
+      <th>Published posture</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Contract loading</td>
+      <td>Closed</td>
+      <td>Published contract artifact is consumed successfully.</td>
+    </tr>
+    <tr>
+      <td>Contract shape proof</td>
+      <td>Closed</td>
+      <td><code>slice05_contract_smoke.rs</code> exists.</td>
+    </tr>
+    <tr>
+      <td>Execution proof</td>
+      <td>Closed enough for the first slice</td>
+      <td><code>slice05_execution.rs</code> proves bounded execution and final result parity.</td>
+    </tr>
+    <tr>
+      <td>Dedicated example runner</td>
+      <td>Missing</td>
+      <td>No dedicated <code>cargo run</code> example pipe is published yet.</td>
+    </tr>
+    <tr>
+      <td>Rendered UI host</td>
+      <td>Missing</td>
+      <td>Runtime-visible UI state exists, but no rendered Rust host UI is published yet.</td>
+    </tr>
+    <tr>
+      <td>Native LLVM corridor</td>
+      <td>Missing</td>
+      <td>No Rust-side native executable closure is published yet for this example.</td>
+    </tr>
+  </tbody>
+</table>
 
 <hr/>
 
-<h2 id="future-growth">16. Future Growth</h2>
+<h2 id="future-growth">17. Future Growth</h2>
 
-<p>
-If the published corridor grows, this runtime may later expand in carefully bounded steps, for example:
-</p>
-
-<ul>
-  <li>additional supported widget properties,</li>
-  <li>additional supported widget classes,</li>
-  <li>broader counted-loop and state forms,</li>
-  <li>broader public interface binding,</li>
-  <li>richer diagnostics and attribution preservation,</li>
-  <li>or a stronger test matrix shared with the Python reference runtime.</li>
-</ul>
-
-<p>
-Such growth must remain downstream from the language-owned specification surfaces and must stay aligned with published examples, conformance material, and backend-contract expectations.
-</p>
+<ol>
+  <li>add one dedicated Rust CLI runner for the example contract,</li>
+  <li>add one C/C++ sibling consumer for full three-language modularity,</li>
+  <li>add one peripheral UI object realization file contract for rendered hosts,</li>
+  <li>and later participate in a native FIR → lowering → LLVM-oriented path where applicable.</li>
+</ol>
 
 <hr/>
 
-<h2 id="summary">17. Summary</h2>
+<h2 id="summary">18. Summary</h2>
 
 <p>
-This directory defines the first minimal Rust runtime consumer for the published reference runtime family.
+This Rust directory is already a real downstream consumer of the first published executable corridor.
+It proves that the repository is not locked to one runtime language.
 </p>
 
 <p>
-Its purpose is not to redefine FROG.
-Its purpose is to prove that one canonical executable slice can remain language-owned and contract-owned while being consumed by more than one runtime language.
-</p>
-
-<p>
-For the first closure target, this runtime is intentionally narrow:
-one accepted backend contract family,
-one bounded host-side execution posture,
-one explicit-state counted-loop example,
-one minimal UI write surface,
-and one final observable result.
+What is still missing is not a new semantic story.
+What is still missing is the next layer of closure:
+a dedicated Rust runner, a C/C++ peer runtime, a rendered UI host path, and a native executable corridor.
 </p>
