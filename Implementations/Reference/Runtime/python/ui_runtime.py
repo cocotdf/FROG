@@ -16,6 +16,20 @@ SUPPORTED_WIDGET_CLASSES = {
     "frog.widgets.label",
 }
 
+SUPPORTED_PROPERTIES = {
+    "value",
+    "label",
+    "visible",
+    "enabled",
+    "face_color",
+}
+
+SUPPORTED_PARTS = {
+    "root",
+    "label",
+    "value_display",
+}
+
 
 @dataclass
 class WidgetInstance:
@@ -44,6 +58,10 @@ class WidgetInstance:
         self.properties["visible"] = self.default_properties.get("visible", True)
         self.properties["enabled"] = self.default_properties.get("enabled", True)
         self.properties["label"] = self.default_properties.get("label", "")
+
+        if "value" in self.default_properties:
+            self.properties["value"] = self.default_properties["value"]
+
         self.sync_to_view()
 
     def sync_to_view(self) -> None:
@@ -68,11 +86,17 @@ class WidgetInstance:
         self.frame.configure(bg=face_color)
 
         if self.label_widget is not None:
-            self.label_widget.configure(text=label_text, bg=face_color)
+            fg = "#FFFFFF" if self.class_ref in {"frog.widgets.numeric_control", "frog.widgets.numeric_indicator"} else "#202020"
+            self.label_widget.configure(text=label_text, bg=face_color, fg=fg)
 
         if self.class_ref == "frog.widgets.label":
             if self.value_widget is not None:
-                self.value_widget.configure(text=label_text, bg=face_color)
+                self.value_widget.configure(text=label_text, bg=face_color, fg="#202020")
+            return
+
+        if self.class_ref == "frog.widgets.panel":
+            if self.value_widget is not None:
+                self.value_widget.configure(text=label_text, bg=face_color, fg="#1E1E1E")
             return
 
         state = "normal" if enabled else "disabled"
@@ -89,7 +113,11 @@ class WidgetInstance:
 
         elif self.class_ref == "frog.widgets.numeric_indicator":
             if self.value_widget is not None:
-                self.value_widget.configure(text=str(self.properties.get("value", 0)), bg="#F8FFF0")
+                self.value_widget.configure(
+                    text=str(self.properties.get("value", 0)),
+                    bg="#F8FFF0",
+                    fg="#1E1E1E",
+                )
 
 
 class FrogUIRuntime:
@@ -119,7 +147,7 @@ class FrogUIRuntime:
         self.widgets.clear()
 
         for widget_data in self.panel_spec.get("widgets", []):
-            class_ref = widget_data.get("class_ref", "")
+            class_ref = str(widget_data.get("class_ref", ""))
             if class_ref not in SUPPORTED_WIDGET_CLASSES:
                 raise ValueError(f"Unsupported widget class: {class_ref}")
 
@@ -152,7 +180,15 @@ class FrogUIRuntime:
         self.root.resizable(False, False)
         self.root.configure(bg="#F4F6F8")
 
-        for widget in self.widgets.values():
+        panel_widget = self.widgets.get("main_panel_container")
+        if panel_widget is not None:
+            self._create_widget_view(panel_widget)
+            if panel_widget.frame is not None:
+                panel_widget.frame.lower()
+
+        for instance_id, widget in self.widgets.items():
+            if instance_id == "main_panel_container":
+                continue
             self._create_widget_view(widget)
 
         run_button = ttk.Button(self.root, text="Run Example 05", command=self.run_example_05)
@@ -165,11 +201,10 @@ class FrogUIRuntime:
         assert self.root is not None
 
         face_color = str(widget.properties.get("face_color", "#DDDDDD"))
+        layout = widget.layout
 
         frame = tk.Frame(self.root, bg=face_color, bd=1, relief="solid", highlightthickness=0)
         widget.frame = frame
-
-        layout = widget.layout
         frame.place(
             x=int(layout.get("x", 0)),
             y=int(layout.get("y", 0)),
@@ -177,16 +212,17 @@ class FrogUIRuntime:
             height=int(layout.get("height", 60)),
         )
 
-        label = tk.Label(
-            frame,
-            text=str(widget.properties.get("label", "")),
-            anchor="w",
-            bg=face_color,
-            fg="#FFFFFF" if widget.class_ref != "frog.widgets.label" else "#202020",
-            font=("Segoe UI", 10, "bold"),
-        )
-        label.place(x=10, y=8, width=max(int(layout.get("width", 100)) - 20, 40), height=20)
-        widget.label_widget = label
+        if widget.class_ref in {"frog.widgets.numeric_control", "frog.widgets.numeric_indicator"}:
+            label = tk.Label(
+                frame,
+                text=str(widget.properties.get("label", "")),
+                anchor="w",
+                bg=face_color,
+                fg="#FFFFFF",
+                font=("Segoe UI", 10, "bold"),
+            )
+            label.place(x=10, y=8, width=max(int(layout.get("width", 100)) - 20, 40), height=20)
+            widget.label_widget = label
 
         if widget.class_ref == "frog.widgets.numeric_control":
             var = tk.StringVar(value=str(widget.properties.get("value", 0)))
@@ -220,12 +256,9 @@ class FrogUIRuntime:
             )
             value_label.place(x=0, y=0, width=int(layout.get("width", 100)), height=int(layout.get("height", 24)))
             widget.value_widget = value_label
-            if widget.label_widget is not None:
-                widget.label_widget.place_forget()
-                widget.label_widget = None
 
         elif widget.class_ref == "frog.widgets.panel":
-            panel_title = tk.Label(
+            title_label = tk.Label(
                 frame,
                 text=str(widget.properties.get("label", "")),
                 anchor="w",
@@ -233,28 +266,26 @@ class FrogUIRuntime:
                 fg="#1E1E1E",
                 font=("Segoe UI", 10, "bold"),
             )
-            panel_title.place(x=8, y=6, width=max(int(layout.get("width", 100)) - 16, 40), height=20)
-            widget.value_widget = panel_title
-            if widget.label_widget is not None:
-                widget.label_widget.place_forget()
-                widget.label_widget = None
-            frame.lower()
+            title_label.place(x=8, y=6, width=max(int(layout.get("width", 100)) - 16, 40), height=20)
+            widget.value_widget = title_label
 
         widget.sync_to_view()
 
     def property_read(self, widget_id: str, member: str, part: Optional[str] = None) -> Any:
         widget = self._get_widget(widget_id)
-        self._validate_property(member, part)
+        self._validate_member_access(widget, member, part)
+
+        if member == "value" and widget.class_ref == "frog.widgets.numeric_control":
+            return self._read_control_value(widget)
+
         return widget.get_property(member)
 
     def property_write(self, widget_id: str, member: str, value: Any, part: Optional[str] = None) -> None:
         widget = self._get_widget(widget_id)
-        self._validate_property(member, part)
+        self._validate_member_access(widget, member, part)
 
         if member == "value":
-            if widget.class_ref == "frog.widgets.numeric_indicator":
-                widget.set_property("value", int(value))
-            elif widget.class_ref == "frog.widgets.numeric_control":
+            if widget.class_ref in {"frog.widgets.numeric_control", "frog.widgets.numeric_indicator"}:
                 widget.set_property("value", int(value))
             else:
                 raise ValueError(f"'value' is not supported on class {widget.class_ref}")
@@ -284,8 +315,7 @@ class FrogUIRuntime:
 
     def run_example_05(self) -> int:
         input_widget = self._get_widget("ctrl_input")
-        result_widget = self._get_widget("ind_result")
-        status_widget = self._get_widget("lbl_status")
+        self.method_invoke("ctrl_input", "focus")
 
         input_value = self._read_control_value(input_widget)
 
@@ -316,13 +346,15 @@ class FrogUIRuntime:
             raise ValueError(f"Unknown widget instance: {widget_id}")
         return self.widgets[widget_id]
 
-    def _validate_property(self, member: str, part: Optional[str]) -> None:
-        supported_properties = {"value", "label", "visible", "enabled", "face_color"}
-        if member not in supported_properties:
+    def _validate_member_access(self, widget: WidgetInstance, member: str, part: Optional[str]) -> None:
+        if member not in SUPPORTED_PROPERTIES:
             raise ValueError(f"Unsupported property '{member}'")
 
-        if part is not None and part not in {"root", "label", "value_display"}:
-            raise ValueError(f"Unsupported widget part '{part}'")
+        if part is not None:
+            if part not in SUPPORTED_PARTS:
+                raise ValueError(f"Unsupported widget part '{part}'")
+            if part not in widget.parts:
+                raise ValueError(f"Part '{part}' is not declared on widget '{widget.instance_id}'")
 
     def _read_control_value(self, widget: WidgetInstance) -> int:
         if widget.class_ref != "frog.widgets.numeric_control":
