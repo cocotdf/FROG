@@ -14,7 +14,7 @@
   ],
   "properties": {
     "id": {
-      "$ref": "#/$defs/id_string"
+      "$ref": "frog.execution-ir.common.schema.json#/$defs/id_string"
     },
     "source_kind": {
       "type": "string",
@@ -47,7 +47,7 @@
     "target_refs": {
       "type": "array",
       "items": {
-        "$ref": "#/$defs/id_string"
+        "$ref": "frog.execution-ir.common.schema.json#/$defs/id_string"
       }
     },
     "relation": {
@@ -64,13 +64,6 @@
       "items": {
         "type": "string"
       }
-    }
-  },
-  "$defs": {
-    "id_string": {
-      "type": "string",
-      "minLength": 1,
-      "pattern": "^[A-Za-z0-9._:-]+$"
     }
   }
 }
