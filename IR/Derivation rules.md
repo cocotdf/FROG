@@ -27,12 +27,13 @@
   <li><a href="#connectivity-derivation">12. Connectivity Derivation</a></li>
   <li><a href="#structured-control-derivation">13. Structured Control Derivation</a></li>
   <li><a href="#interface-and-ui-derivation">14. Interface and UI Derivation</a></li>
-  <li><a href="#state-and-cycle-preservation">15. State and Cycle Preservation</a></li>
-  <li><a href="#allowed-normalization-during-derivation">16. Allowed Normalization During Derivation</a></li>
-  <li><a href="#forbidden-derivation-outcomes">17. Forbidden Derivation Outcomes</a></li>
-  <li><a href="#relation-with-construction-schema-lowering-and-backend-contract">18. Relation with Construction, Schema, Lowering, and Backend Contract</a></li>
-  <li><a href="#out-of-scope-for-v01">19. Out of Scope for v0.1</a></li>
-  <li><a href="#summary">20. Summary</a></li>
+  <li><a href="#widget-object-derivation-corridor">15. Widget Object Derivation Corridor</a></li>
+  <li><a href="#state-and-cycle-preservation">16. State and Cycle Preservation</a></li>
+  <li><a href="#allowed-normalization-during-derivation">17. Allowed Normalization During Derivation</a></li>
+  <li><a href="#forbidden-derivation-outcomes">18. Forbidden Derivation Outcomes</a></li>
+  <li><a href="#relation-with-construction-schema-lowering-and-backend-contract">19. Relation with Construction, Schema, Lowering, and Backend Contract</a></li>
+  <li><a href="#out-of-scope-for-v01">20. Out of Scope for v0.1</a></li>
+  <li><a href="#summary">21. Summary</a></li>
 </ul>
 
 <hr/>
@@ -57,8 +58,7 @@ It specifies:
 </ul>
 
 <p>
-This document is intentionally about derivation law.
-It is not:
+This document is intentionally about derivation law. It is not:
 </p>
 
 <ul>
@@ -96,8 +96,7 @@ backend-facing contract
 runtime-private realization</code></pre>
 
 <p>
-In base v0.1, derivation is intentionally conservative.
-It preserves validated meaning, preserves attribution, preserves recoverable identity, preserves explicit structured control, preserves explicit local memory, preserves validated dependency structure, and preserves the distinction between:
+In base v0.1, derivation is intentionally conservative. It preserves validated meaning, preserves attribution, preserves recoverable identity, preserves explicit structured control, preserves explicit local memory, preserves validated dependency structure, and preserves the distinction between:
 </p>
 
 <ul>
@@ -106,6 +105,22 @@ It preserves validated meaning, preserves attribution, preserves recoverable ide
   <li><code>widget_reference</code> participation,</li>
   <li>standardized UI-object primitive operation.</li>
 </ul>
+
+<p>
+It also preserves the architectural separation between:
+</p>
+
+<ul>
+  <li>widget instance participation,</li>
+  <li>widget class law,</li>
+  <li>widget realization packages,</li>
+  <li>runtime interpretation,</li>
+  <li>host realization.</li>
+</ul>
+
+<p>
+Execution IR may preserve validated execution-facing consequences of those layers. It does not absorb ownership of all of them.
+</p>
 
 <hr/>
 
@@ -149,7 +164,9 @@ This document does not define:
   <li>the JSON schema text of the canonical payload,</li>
   <li>the lowering strategy of every backend family,</li>
   <li>the backend contract in full,</li>
-  <li>the private scheduler, storage, or ABI policy of any runtime.</li>
+  <li>the private scheduler, storage, or ABI policy of any runtime,</li>
+  <li>the full widget-package architecture,</li>
+  <li>the full host realization model.</li>
 </ul>
 
 <pre><code>This document defines:
@@ -166,7 +183,9 @@ This document does not define:
 - full open IR model                    -&gt; Execution IR.md
 - material payload construction         -&gt; Construction rules.md
 - machine-checkable schema text         -&gt; Schema.md / IR/schema/
-- runtime-private realization           -&gt; outside IR ownership</code></pre>
+- runtime-private realization           -&gt; outside IR ownership
+- widget-package ownership              -&gt; Expression/
+- host-side realization law             -&gt; Expression/ + downstream runtime/host</code></pre>
 
 <hr/>
 
@@ -217,6 +236,8 @@ This document should be read together with:
   <li><code>Expression/Front panel.md</code>,</li>
   <li><code>Expression/Widget.md</code>,</li>
   <li><code>Expression/Widget interaction.md</code>,</li>
+  <li><code>Expression/Widget package.md</code>,</li>
+  <li><code>Expression/Widget realization.md</code>,</li>
   <li><code>Language/Control structures.md</code>,</li>
   <li><code>Language/State and cycles.md</code>.</li>
 </ul>
@@ -230,10 +251,7 @@ Derivation is the normative correspondence boundary from validated program meani
 </p>
 
 <p>
-This boundary does not decide whether a program is valid.
-That decision has already been made upstream.
-This boundary does not invent missing semantics.
-It only derives execution-facing representation from already-validated meaning.
+This boundary does not decide whether a program is valid. That decision has already been made upstream. This boundary does not invent missing semantics. It only derives execution-facing representation from already-validated meaning.
 </p>
 
 <pre><code>validation decides:
@@ -264,6 +282,15 @@ Derivation is therefore neither:
   <li>a lowering stage,</li>
   <li>a backend-family adaptation stage,</li>
   <li>a runtime realization stage.</li>
+</ul>
+
+<p>
+The same boundary rule applies to widget-related execution structure:
+</p>
+
+<ul>
+  <li>derivation may preserve execution-facing widget identities and accesses,</li>
+  <li>derivation may not reinterpret widget realization assets or host-private convenience as validated meaning.</li>
 </ul>
 
 <hr/>
@@ -297,8 +324,7 @@ The derivation input is:
 </ul>
 
 <p>
-An implementation MAY internally start from canonical source, a validated Program Model, or another validated internal form that is semantically equivalent.
-However, the canonical Execution IR it derives MUST be grounded in validated meaning rather than in editor-only convenience or runtime-private invention.
+An implementation MAY internally start from canonical source, a validated Program Model, or another validated internal form that is semantically equivalent. However, the canonical Execution IR it derives MUST be grounded in validated meaning rather than in editor-only convenience or runtime-private invention.
 </p>
 
 <pre><code>raw source ------------&gt; structural validity ------------&gt; semantic validation ------------&gt; derivation
@@ -313,7 +339,8 @@ Derivation is therefore not the place where an implementation:
   <li>adds hidden memory,</li>
   <li>adds opaque backend partitions,</li>
   <li>collapses structured control into private machinery,</li>
-  <li>promotes presentation metadata into execution semantics.</li>
+  <li>promotes presentation metadata into execution semantics,</li>
+  <li>promotes widget realization-package detail into execution semantics.</li>
 </ul>
 
 <p>
@@ -326,7 +353,8 @@ Preconditions for conforming derivation include:
   <li>resolved structure legality,</li>
   <li>resolved boundary legality,</li>
   <li>resolved cycle legality,</li>
-  <li>resolved distinction between execution-relevant and non-execution source content.</li>
+  <li>resolved distinction between execution-relevant and non-execution source content,</li>
+  <li>resolved distinction between widget participation meaning and widget realization detail.</li>
 </ul>
 
 <hr/>
@@ -334,8 +362,7 @@ Preconditions for conforming derivation include:
 <h2 id="derivation-result">7. Derivation Result</h2>
 
 <p>
-The result of derivation in base v0.1 is one canonical Execution IR Document for one validated FROG program.
-That document contains one execution unit.
+The result of derivation in base v0.1 is one canonical Execution IR Document for one validated FROG program. That document contains one execution unit.
 </p>
 
 <p>
@@ -387,7 +414,8 @@ The derivation result is not yet:
 <ul>
   <li>a lowered target-facing form,</li>
   <li>a backend-facing contract artifact,</li>
-  <li>a runtime-private artifact.</li>
+  <li>a runtime-private artifact,</li>
+  <li>a host-private UI realization graph.</li>
 </ul>
 
 <hr/>
@@ -417,6 +445,7 @@ All conforming derivations in base v0.1 MUST satisfy the following invariants:
   <li>Derivation MUST NOT import editor-only geometry, styling, annotation placement, or similar presentation state as execution semantics.</li>
   <li>Derivation MUST NOT standardize one runtime-private scheduler policy as though it were the open IR.</li>
   <li>Derivation MUST NOT erase attribution or correspondence that the canonical open-IR boundary still requires.</li>
+  <li>Derivation MUST NOT collapse widget package ownership, realization-package detail, or SVG visual detail into open execution categories.</li>
 </ul>
 
 <pre><code>Core invariants
@@ -436,7 +465,8 @@ preserve non-primary correspondence distinctions where required
 do not promote non-execution source content
 do not import editor-only state
 do not standardize private scheduler policy
-do not erase required correspondence early</code></pre>
+do not erase required correspondence early
+do not import realization-package detail as execution truth</code></pre>
 
 <hr/>
 
@@ -454,8 +484,7 @@ Base v0.1 distinguishes four broad derivation relation shapes:
 </ul>
 
 <p>
-The first three shapes apply to execution-facing derived content.
-The fourth applies to content that remains respected at the boundary without becoming a primary execution object.
+The first three shapes apply to execution-facing derived content. The fourth applies to content that remains respected at the boundary without becoming a primary execution object.
 </p>
 
 <p>
@@ -484,6 +513,18 @@ A conforming implementation MUST NOT use an accidental omission where an explici
 <p>
 A conforming implementation MUST NOT aggregate multiple contributors into one object if that aggregation destroys contributor attribution, role distinctions, or category-safe recoverability.
 </p>
+
+<p>
+Typical valid <code>1 -&gt; 0</code> outcomes may include:
+</p>
+
+<ul>
+  <li>front-panel layout declarations,</li>
+  <li>pure visual styling declarations,</li>
+  <li>widget realization-package detail,</li>
+  <li>SVG layer detail,</li>
+  <li>IDE-only metadata.</li>
+</ul>
 
 <hr/>
 
@@ -545,6 +586,14 @@ This section defines the base v0.1 correspondence posture from validated executi
   <li>When they still matter for declaration linkage, attribution, recoverability, or validation explanation, their correspondence MUST remain explicit.</li>
 </ul>
 
+<h3>10.8 Widget-package and realization contributors</h3>
+
+<ul>
+  <li>Validated use of widget package content MAY influence execution-facing legality and addressing consequences.</li>
+  <li>Widget package contents do not automatically derive to primary execution objects.</li>
+  <li>Realization-package detail, visual assets, SVG anchors, and host-private hints SHOULD normally remain non-primary at the open-IR boundary unless a future profile explicitly standardizes a narrower execution-facing family.</li>
+</ul>
+
 <hr/>
 
 <h2 id="identity-and-attribution-rules">11. Identity and Attribution Rules</h2>
@@ -597,6 +646,17 @@ non-primary outcome
 
 accidental omission
    -/&gt; acceptable substitute for correspondence</code></pre>
+
+<p>
+For widget-related execution-facing objects, attribution MUST remain able to distinguish at least:
+</p>
+
+<ul>
+  <li>widget identity attribution,</li>
+  <li>member-address attribution where applicable,</li>
+  <li>operation-family attribution for UI primitives,</li>
+  <li>non-primary realization-package correspondence where preserved.</li>
+</ul>
 
 <hr/>
 
@@ -651,6 +711,15 @@ Forbidden outcomes include:
   <li>rewriting ordinary connectivity as structure-boundary participation,</li>
   <li>rewriting ordinary connectivity as explicit UI sequencing,</li>
   <li>losing endpoint attribution through opaque connection collapse.</li>
+</ul>
+
+<p>
+The same rule applies to UI-related execution connectivity:
+</p>
+
+<ul>
+  <li>execution ordering or dependencies involving UI primitive operations must remain attributable as such,</li>
+  <li>they must not be rewritten as host-render-order assumptions or visual adjacency.</li>
 </ul>
 
 <hr/>
@@ -762,7 +831,87 @@ Forbidden category collapses include:
 
 <hr/>
 
-<h2 id="state-and-cycle-preservation">15. State and Cycle Preservation</h2>
+<h2 id="widget-object-derivation-corridor">15. Widget Object Derivation Corridor</h2>
+
+<p>
+FROG v0.1 already distinguishes:
+</p>
+
+<ul>
+  <li>widget instance declaration in canonical source,</li>
+  <li>class-level widget law,</li>
+  <li>diagram-side widget interaction,</li>
+  <li>widget-oriented package definitions,</li>
+  <li>runtime interpretation,</li>
+  <li>host realization.</li>
+</ul>
+
+<p>
+Derivation MUST preserve that architectural split while still producing an execution-facing IR that is useful for later lowering and runtime consumption.
+</p>
+
+<h3>15.1 Widget instance participation</h3>
+
+<ul>
+  <li>Validated widget instance participation MAY give rise to execution-facing identities and participation carriers in the IR.</li>
+  <li>The mere existence of a widget instance declaration does not require every panel-side attribute to become a primary IR object.</li>
+</ul>
+
+<h3>15.2 Class-law consequences</h3>
+
+<ul>
+  <li>Validated class-law consequences such as legal member addressing MAY influence derivation.</li>
+  <li>Class-law documents or packages do not themselves automatically derive as execution objects.</li>
+</ul>
+
+<h3>15.3 Realization-package consequences</h3>
+
+<ul>
+  <li>Realization packages MAY matter downstream to runtime and host realization.</li>
+  <li>Their detailed contents SHOULD normally remain non-primary at the canonical open-IR boundary.</li>
+</ul>
+
+<h3>15.4 Member-address preservation</h3>
+
+<ul>
+  <li>When validated widget interaction addresses a member or part, derivation MUST preserve enough information to keep that addressed target recoverable.</li>
+  <li>The preservation target is execution-facing addressing, not host-private node addressing.</li>
+</ul>
+
+<h3>15.5 Event-family preservation</h3>
+
+<ul>
+  <li>When validated meaning includes widget-related event categories relevant to execution-facing form, derivation MAY preserve them as execution-facing event categories or support-side descriptors.</li>
+  <li>Such preservation MUST NOT silently become a host-native event taxonomy.</li>
+</ul>
+
+<h3>15.6 What must remain downstream</h3>
+
+<p>
+The following remain downstream from derivation and MUST NOT be absorbed as open-IR truth:
+</p>
+
+<ul>
+  <li>host widget trees,</li>
+  <li>SVG layer graphs,</li>
+  <li>platform-native control classes,</li>
+  <li>render-order optimizations,</li>
+  <li>focus-loop implementation details,</li>
+  <li>runtime-private object tables.</li>
+</ul>
+
+<pre><code>validated widget interaction meaning
+        -&gt;
+derivation preserves execution-facing widget identities
+        + addressed access consequences
+        + operation-family distinctions
+        -/&gt; host widget tree
+        -/&gt; SVG render graph
+        -/&gt; runtime-private UI storage</code></pre>
+
+<hr/>
+
+<h2 id="state-and-cycle-preservation">16. State and Cycle Preservation</h2>
 
 <p>
 Validated explicit local memory MUST derive as explicit local memory.
@@ -806,7 +955,7 @@ If a cycle was accepted only because explicit local memory made it legal, the de
 
 <hr/>
 
-<h2 id="allowed-normalization-during-derivation">16. Allowed Normalization During Derivation</h2>
+<h2 id="allowed-normalization-during-derivation">17. Allowed Normalization During Derivation</h2>
 
 <p>
 Derivation MAY introduce additional explicitness when all of the following remain true:
@@ -847,13 +996,32 @@ or
 recoverability loss</code></pre>
 
 <p>
-Lowering-readiness MAY motivate additional explicitness.
-It MUST NOT justify early erasure of required open-IR distinctions.
+Lowering-readiness MAY motivate additional explicitness. It MUST NOT justify early erasure of required open-IR distinctions.
 </p>
+
+<p>
+For widget-related execution structure, allowed normalization may include:
+</p>
+
+<ul>
+  <li>introducing explicit member-address descriptors,</li>
+  <li>introducing explicit operation-family tags for UI primitives,</li>
+  <li>introducing explicit widget identity anchors.</li>
+</ul>
+
+<p>
+It MUST NOT include:
+</p>
+
+<ul>
+  <li>converting validated widget interaction into one target's native widget API calls,</li>
+  <li>expanding a widget interaction into host-private visual-node operations,</li>
+  <li>embedding SVG runtime behavior as if it were open IR structure.</li>
+</ul>
 
 <hr/>
 
-<h2 id="forbidden-derivation-outcomes">17. Forbidden Derivation Outcomes</h2>
+<h2 id="forbidden-derivation-outcomes">18. Forbidden Derivation Outcomes</h2>
 
 <p>
 The following derivation outcomes are forbidden:
@@ -874,7 +1042,8 @@ The following derivation outcomes are forbidden:
   <li>importing editor-only geometry, styling, or presentation state as execution truth,</li>
   <li>introducing runtime-private scheduler policy as though it were canonical IR law,</li>
   <li>introducing backend-family partitions as though they were canonical open-IR categories,</li>
-  <li>using derivation to perform lowering, target adaptation, or ABI commitment too early.</li>
+  <li>using derivation to perform lowering, target adaptation, or ABI commitment too early,</li>
+  <li>promoting widget realization packages, SVG assets, anchor maps, or host-private hints into primary execution categories without explicit language-level standardization.</li>
 </ul>
 
 <pre><code>forbidden
@@ -884,11 +1053,10 @@ or destroys the recoverable open-IR boundary</code></pre>
 
 <hr/>
 
-<h2 id="relation-with-construction-schema-lowering-and-backend-contract">18. Relation with Construction, Schema, Lowering, and Backend Contract</h2>
+<h2 id="relation-with-construction-schema-lowering-and-backend-contract">19. Relation with Construction, Schema, Lowering, and Backend Contract</h2>
 
 <p>
-Derivation is only one stage in the IR corridor.
-It is upstream from construction, schema validation, lowering, and backend-facing handoff.
+Derivation is only one stage in the IR corridor. It is upstream from construction, schema validation, lowering, and backend-facing handoff.
 </p>
 
 <pre><code>validated meaning
@@ -923,8 +1091,7 @@ Derivation MUST therefore produce an IR that is:
 </ul>
 
 <p>
-This distinction matters directly to an industrial compiler corridor.
-A future LLVM-oriented consumer remains downstream from:
+This distinction matters directly to an industrial compiler corridor. A future LLVM-oriented consumer remains downstream from:
 </p>
 
 <ul>
@@ -937,9 +1104,18 @@ A future LLVM-oriented consumer remains downstream from:
 LLVM or any other backend family MUST NOT become the place where missing derivation law is invented retroactively.
 </p>
 
+<p>
+The same rule applies to UI-capable execution targets:
+</p>
+
+<ul>
+  <li>target adaptation for Python, Rust, C/C++, native front-panel hosts, or mixed compute/UI runtimes remains downstream,</li>
+  <li>derivation must already have preserved the relevant execution-facing distinctions correctly before those targets consume the IR.</li>
+</ul>
+
 <hr/>
 
-<h2 id="out-of-scope-for-v01">19. Out of Scope for v0.1</h2>
+<h2 id="out-of-scope-for-v01">20. Out of Scope for v0.1</h2>
 
 <p>
 The following are out of scope for this document in base v0.1:
@@ -953,17 +1129,18 @@ The following are out of scope for this document in base v0.1:
   <li>private scheduler token models,</li>
   <li>ABI-level lowering commitments,</li>
   <li>full debug-information emission standards,</li>
-  <li>cross-build persistent identity guarantees.</li>
+  <li>cross-build persistent identity guarantees,</li>
+  <li>one mandatory execution-facing event protocol for host UI systems,</li>
+  <li>one mandatory runtime UI object ABI.</li>
 </ul>
 
 <p>
-These may be specified later.
-They do not weaken the current derivation obligations at the canonical open-IR boundary.
+These may be specified later. They do not weaken the current derivation obligations at the canonical open-IR boundary.
 </p>
 
 <hr/>
 
-<h2 id="summary">20. Summary</h2>
+<h2 id="summary">21. Summary</h2>
 
 <p>
 This document defines the normative derivation rules from validated FROG program meaning to the canonical Execution IR Document.
@@ -983,12 +1160,18 @@ Its core rules are:
 </ul>
 
 <p>
-The canonical open IR is therefore not an arbitrary implementation artifact.
-It is the normalized, attributable, recoverable execution-facing representation derived from validated meaning.
+The canonical open IR is therefore not an arbitrary implementation artifact. It is the normalized, attributable, recoverable execution-facing representation derived from validated meaning.
 </p>
 
 <p>
-A serious downstream compilation path depends on this discipline.
-FROG may later lower toward backend-facing consumers, including LLVM-oriented routes.
-That downstream route must still begin from a canonical Execution IR whose derivation law was already satisfied correctly.
+A serious downstream compilation path depends on this discipline. FROG may later lower toward backend-facing consumers, including LLVM-oriented routes. That downstream route must still begin from a canonical Execution IR whose derivation law was already satisfied correctly.
 </p>
+
+<p>
+The same discipline now applies explicitly to widget-related execution structure:
+</p>
+
+<ul>
+  <li>validated widget interaction meaning may derive into execution-facing IR carriers,</li>
+  <li>but widget-package ownership, realization-package detail, SVG assets, and host-private visual realization remain outside the ownership of derivation at the canonical open-IR boundary.</li>
+</ul>
