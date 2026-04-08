@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:frog:expression:schema:frog.front-panel-package:0.1",
+  "format": "frog.wfrog",
+  "spec_version": "0.1",
+  "kind": "front_panel_package",
+  "package": {
+    "name": "frog.examples.accumulator.ui",
+    "version": "0.1.0"
+  },
+  "imports": [
+    {
+      "package_ref": "frog.widgets.core"
+    }
+  ],
+  "metadata": {
+    "title": "Bounded UI Accumulator Front Panel",
+    "description": "Proposed front-panel package for the Example 05 accumulator slice."
+  },
+  "front_panels": [
+    {
+      "panel_id": "main_panel",
+      "title": "Bounded UI Accumulator",
+      "size": {
+        "width": 640,
+        "height": 240
+      },
+      "widgets": [
+        {
+          "instance_id": "count_indicator",
+          "class_ref": "frog.widgets.numeric_indicator",
+          "layout": {
+            "x": 36,
+            "y": 36,
+            "width": 220,
+            "height": 92
+          },
+          "initial_properties": {
+            "label": "Count",
+            "format": "%.0f",
+            "foreground_color": {
+              "r": 255,
+              "g": 255,
+              "b": 255,
+              "a": 255
+            },
+            "background_color": {
+              "r": 36,
+              "g": 72,
+              "b": 132,
+              "a": 255
+            }
+          },
+          "visual": {
+            "svg_asset_ref": "assets/numeric_indicator.svg"
+          }
+        }
+      ]
+    }
+  ],
+  "svg_assets": [
+    {
+      "asset_id": "assets/numeric_indicator.svg",
+      "path": "assets/numeric_indicator.svg"
+    }
+  ]
+}
