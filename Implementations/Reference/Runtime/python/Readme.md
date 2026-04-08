@@ -18,10 +18,10 @@
   <li><a href="#directory-shape">3. Directory Shape</a></li>
   <li><a href="#role-of-each-file">4. Role of Each File</a></li>
   <li><a href="#primary-slice-target">5. Primary Slice Target</a></li>
-  <li><a href="#relation-with-runtime-boundary">6. Relation to the Runtime Boundary</a></li>
+  <li><a href="#relation-to-the-runtime-boundary">6. Relation to the Runtime Boundary</a></li>
   <li><a href="#what-this-runtime-consumes">7. What This Runtime Consumes</a></li>
   <li><a href="#what-this-runtime-produces">8. What This Runtime Produces</a></li>
-  <li><a href="#published-pipes">9. Published Pipes for Example 05</a></li>
+  <li><a href="#published-pipes-for-example-05">9. Published Pipes for Example 05</a></li>
   <li><a href="#bounded-widget-surface">10. Bounded Widget Surface</a></li>
   <li><a href="#design-rules">11. Design Rules</a></li>
   <li><a href="#relationship-with-rust-and-cpp">12. Relationship with Rust and C/C++ Consumers</a></li>
@@ -51,7 +51,7 @@ The Python runtime now serves two distinct but aligned purposes:
 
 <p>
 Accordingly, this directory is not just a convenience folder for incidental Python code.
-It is the first explicit language realization of a runtime family that is intended to remain parallel to Rust and future C/C++ consumers.
+It is the first explicit language realization of a runtime family that is intended to remain parallel to Rust and C/C++ consumers.
 </p>
 
 <hr/>
@@ -74,36 +74,12 @@ This directory therefore exists to make the Python side explicit and symmetric w
 </ul>
 
 <p>
-It also now provides a natural home for the first concrete widget-rendering runtime files:
+It also provides a natural home for the concrete widget-rendering runtime files and Python-side execution helpers.
 </p>
-
-<ul>
-  <li><code>ui_runtime.py</code>,</li>
-  <li><code>run_slice05_ui.py</code>.</li>
-</ul>
 
 <hr/>
 
 <h2 id="directory-shape">3. Directory Shape</h2>
-
-<pre><code>Implementations/Reference/Runtime/python/
-├── Readme.md
-├── ui_runtime.py
-└── run_slice05_ui.py
-</code></pre>
-
-<p>
-The parent runtime directory still carries contract-oriented Python files such as:
-</p>
-
-<ul>
-  <li><code>Implementations/Reference/Runtime/reference_runtime.py</code>,</li>
-  <li><code>Implementations/Reference/Runtime/run_slice05_contract.py</code>.</li>
-</ul>
-
-<p>
-That current split is acceptable for the bounded slice, but the longer-term useful shape is:
-</p>
 
 <pre><code>Implementations/Reference/Runtime/python/
 ├── Readme.md
@@ -118,8 +94,18 @@ That current split is acceptable for the bounded slice, but the longer-term usef
 </code></pre>
 
 <p>
-The important point is not the exact future filenames.
-The important point is that Python-side responsibilities become explicit instead of remaining mixed invisibly at parent level.
+The parent runtime directory still carries shared runtime-family files such as:
+</p>
+
+<ul>
+  <li><code>Implementations/Reference/Runtime/reference_runtime.py</code>,</li>
+  <li><code>Implementations/Reference/Runtime/run_slice05_contract.py</code>,</li>
+  <li><code>Implementations/Reference/Runtime/accept_contract_and_execute.md</code>.</li>
+</ul>
+
+<p>
+That current split is acceptable for the bounded slice.
+The important point is that Python-side responsibilities are now explicit instead of remaining mixed invisibly at parent level.
 </p>
 
 <hr/>
@@ -130,11 +116,26 @@ The important point is that Python-side responsibilities become explicit instead
   <li><code>Readme.md</code><br/>
       Explains the Python-side runtime posture and the role of this directory.</li>
 
+  <li><code>runtime_core.py</code><br/>
+      Python runtime core for the bounded reference corridor. It centralizes accepted-contract execution behavior for the Python consumer family.</li>
+
+  <li><code>execute_contract.py</code><br/>
+      Python-side contract execution entry surface within the Python runtime family split.</li>
+
   <li><code>ui_runtime.py</code><br/>
-      Concrete bounded host-rendered Python widget runtime for the current Example 05 widget subset. It loads one <code>.wfrog</code> front-panel package, constructs live widget objects, interprets a bounded property/method surface, opens a real window, and updates the visible widget state.</li>
+      Concrete bounded host-rendered Python widget runtime for the current Example 05 widget subset. It loads one <code>.wfrog</code> front-panel package, constructs live widget objects, interprets a bounded property and method surface, opens a real window, and updates visible widget state.</li>
 
   <li><code>run_slice05_ui.py</code><br/>
       Python runner for the rendered Example 05 slice. It loads the example-local <code>.wfrog</code> package, optionally injects an initial input value, optionally autoruns the bounded accumulator, and starts the host UI loop.</li>
+
+  <li><code>cli.py</code><br/>
+      Python-side command-line dispatch surface for bounded runtime operations.</li>
+
+  <li><code>tests/test_slice05_contract.py</code><br/>
+      Python contract-level verification for the Example 05 corridor.</li>
+
+  <li><code>tests/test_slice05_ui_runtime.py</code><br/>
+      Python runtime verification for the bounded UI slice.</li>
 </ul>
 
 <p>
@@ -191,7 +192,7 @@ The bounded rendered widget subset currently exercised by the Python runtime is:
 
 <hr/>
 
-<h2 id="relation-with-runtime-boundary">6. Relation to the Runtime Boundary</h2>
+<h2 id="relation-to-the-runtime-boundary">6. Relation to the Runtime Boundary</h2>
 
 <p>
 The published runtime family is:
@@ -201,7 +202,7 @@ The published runtime family is:
 
 <p>
 This Python runtime is one consumer of that family posture.
-It follows the same runtime-side assumptions as the parallel Rust and future C/C++ consumers.
+It follows the same runtime-side assumptions as the parallel Rust and C/C++ consumers.
 </p>
 
 <p>
@@ -240,7 +241,7 @@ For the current bounded published slice, the Python family consumes:
   <li>one explicit bounded loop model,</li>
   <li>one explicit delay-backed state carrier,</li>
   <li>one control-input binding,</li>
-  <li>one indicator/public-output publication rule,</li>
+  <li>one indicator and public-output publication rule,</li>
   <li>and one minimal property-write surface.</li>
 </ul>
 
@@ -265,7 +266,7 @@ The rendered runtime currently interprets the following property surface:
   <li><code>label</code>,</li>
   <li><code>visible</code>,</li>
   <li><code>enabled</code>,</li>
-  <li><code>face_color</code>.</li>
+  <li><code>foreground_color</code>.</li>
 </ul>
 
 <p>
@@ -309,7 +310,7 @@ For the rendered UI corridor, the Python runtime also produces:
 
 <hr/>
 
-<h2 id="published-pipes">9. Published Pipes for Example 05</h2>
+<h2 id="published-pipes-for-example-05">9. Published Pipes for Example 05</h2>
 
 <p>
 The Python family currently exposes two useful execution pipes for Example 05.
@@ -384,7 +385,7 @@ The currently supported property surface is:
   <li><code>label</code></li>
   <li><code>visible</code></li>
   <li><code>enabled</code></li>
-  <li><code>face_color</code></li>
+  <li><code>foreground_color</code></li>
 </ul>
 
 <p>
@@ -421,7 +422,7 @@ This bounded surface is enough to make the first widget corridor concrete withou
   <li>Keep explicit local-memory meaning visible in runtime execution.</li>
   <li>Keep loop iteration count explicit where the contract declares it.</li>
   <li>Keep runtime-private helper structures downstream from the published backend contract and widget package surfaces.</li>
-  <li>Reject unsupported widget classes, widget parts, properties, or methods explicitly.</li>
+  <li>Reject unsupported widget classes, widget parts, properties, methods, or events explicitly.</li>
   <li>Do not let Python implementation convenience become semantic law.</li>
   <li>Do not let visual assets become the owner of widget semantics, dynamic values, or dynamic text.</li>
 </ul>
@@ -438,7 +439,7 @@ It must remain aligned with:
 
 <ul>
   <li>the Rust consumer,</li>
-  <li>the future C/C++ consumer,</li>
+  <li>the C/C++ consumer,</li>
   <li>and the same canonical example corridor.</li>
 </ul>
 
@@ -487,8 +488,8 @@ The long-term goal remains one shared corridor consumed by several runtime-langu
     </tr>
     <tr>
       <td>Parity with C/C++</td>
-      <td>Missing</td>
-      <td>No C/C++ peer consumer is published yet.</td>
+      <td>Partial</td>
+      <td>A C/C++ peer consumer family now exists structurally, but operational parity for Example 05 is not yet closed.</td>
     </tr>
     <tr>
       <td>General widget-system closure</td>
@@ -508,10 +509,10 @@ The long-term goal remains one shared corridor consumed by several runtime-langu
 <h2 id="future-growth">14. Future Growth</h2>
 
 <ol>
-  <li>factor parent-level contract Python files into a clearer Python-side structure,</li>
+  <li>factor parent-level contract Python files into an even clearer Python-side structure,</li>
   <li>connect the rendered UI path more directly to the contract-driven corridor,</li>
-  <li>add Python-side tests for widget-package loading and rendered Example 05 behavior,</li>
-  <li>align Python, Rust, and future C/C++ pipes around the same example-local artifact set,</li>
+  <li>keep Python-side tests aligned with the same example-local artifact set,</li>
+  <li>align Python, Rust, and C/C++ pipes around the same example-local artifact set,</li>
   <li>extend the bounded widget subset carefully instead of growing an unstructured UI surface.</li>
 </ol>
 
