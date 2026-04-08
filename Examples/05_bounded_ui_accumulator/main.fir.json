@@ -1,0 +1,133 @@
+{
+  "artifact_kind": "frog_fir_document",
+  "artifact_version": "0.1-draft",
+  "fir_version": "0.1-draft",
+  "source_ref": {
+    "example_id": "05_bounded_ui_accumulator",
+    "path": "Examples/05_bounded_ui_accumulator/main.frog",
+    "spec_version": "0.1",
+    "entry_unit": "main"
+  },
+  "identity_mapping": {
+    "unit_id": "main",
+    "source_nodes": [
+      "ctrl_input_value",
+      "ctrl_input_ref",
+      "ind_result_ref",
+      "const_zero",
+      "const_five",
+      "const_ctrl_face_color",
+      "const_ind_face_color",
+      "write_ctrl_face_color",
+      "write_ind_face_color",
+      "loop_accumulate",
+      "ind_result_value",
+      "output_result"
+    ]
+  },
+  "units": [
+    {
+      "unit_id": "main",
+      "kind": "bounded_executable_ui_unit",
+      "public_interface": {
+        "inputs": [
+          {
+            "id": "input_value",
+            "type": "u16",
+            "binding_origin": "widget.ctrl_input.value"
+          }
+        ],
+        "outputs": [
+          {
+            "id": "result",
+            "type": "u16",
+            "binding_target": "widget.ind_result.value"
+          }
+        ]
+      },
+      "ui_surface": {
+        "widgets": [
+          {
+            "widget_id": "ctrl_input",
+            "role": "control",
+            "widget_class": "frog.ui.numeric_control",
+            "value_type": "u16",
+            "value_mode": "widget_value",
+            "reference_mode": true
+          },
+          {
+            "widget_id": "ind_result",
+            "role": "indicator",
+            "widget_class": "frog.ui.numeric_indicator",
+            "value_type": "u16",
+            "value_mode": "widget_value",
+            "reference_mode": true
+          }
+        ],
+        "property_writes": [
+          {
+            "widget_id": "ctrl_input",
+            "member": "face_color",
+            "value_type": "frog.ui.color",
+            "value": "#D8E6FF"
+          },
+          {
+            "widget_id": "ind_result",
+            "member": "face_color",
+            "value_type": "frog.ui.color",
+            "value": "#D8E6FF"
+          }
+        ],
+        "host_realization_ref": {
+          "path": "Examples/05_bounded_ui_accumulator/front_panel.objects.json",
+          "authority": "downstream_non_authoritative"
+        }
+      },
+      "state_model": {
+        "explicit_state": true,
+        "carrier": {
+          "state_id": "accumulator_state",
+          "primitive": "frog.core.delay",
+          "type": "u16",
+          "initial_value": 0
+        }
+      },
+      "execution_model": {
+        "structure": "for_loop",
+        "iteration_count": 5,
+        "loop_inputs": [
+          {
+            "id": "loop_input_value",
+            "type": "u16",
+            "source": "input_value"
+          },
+          {
+            "id": "loop_initial_state",
+            "type": "u16",
+            "source": "state.initial_value"
+          }
+        ],
+        "body_operations": [
+          {
+            "op_id": "delay_state",
+            "kind": "state_read_write",
+            "primitive": "frog.core.delay",
+            "state_id": "accumulator_state"
+          },
+          {
+            "op_id": "add_step",
+            "kind": "primitive",
+            "primitive": "frog.core.add",
+            "inputs": [
+              "loop_input_value",
+              "state.current"
+            ],
+            "output": "state.next"
+          }
+        ],
+        "commit_rule": "state_next becomes state_current at each loop iteration commit point",
+        "result_rule": "final_state is published to public output result and to indicator ind_result"
+      }
+    }
+  ]
+}
