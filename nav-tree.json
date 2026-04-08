@@ -2023,6 +2023,13 @@
               ]
             },
             {
+              "key": "implementations/reference/llvm/",
+              "title": "LLVM",
+              "path": "/Implementations/Reference/LLVM/Readme.md",
+              "kind": "category",
+              "children": []
+            },
+            {
               "key": "implementations/reference/loader/",
               "title": "Loader",
               "path": "/Implementations/Reference/Loader/Readme.md",
@@ -2502,6 +2509,7 @@
     "/Implementations/Reference/Deriver/responsibilities.md",
     "/Implementations/Reference/Deriver/reference_deriver.py",
     "/Implementations/Reference/Deriver/Readme.md",
+    "/Implementations/Reference/LLVM/Readme.md",
     "/Implementations/Reference/Loader/responsibilities.md",
     "/Implementations/Reference/Loader/reference_loader.py",
     "/Implementations/Reference/Loader/Readme.md",
