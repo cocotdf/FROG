@@ -115,6 +115,13 @@
               "children": []
             },
             {
+              "key": "expression/widget-behavior.md",
+              "title": "Widget behavior",
+              "path": "/Expression/Widget%20behavior.md",
+              "kind": "page",
+              "children": []
+            },
+            {
               "key": "expression/widget-class-contract.md",
               "title": "Widget class contract",
               "path": "/Expression/Widget%20class%20contract.md",
@@ -2259,6 +2266,7 @@
     "/Expression/Type.md",
     "/Expression/Widget%20interaction.md",
     "/Expression/Widget.md",
+    "/Expression/Widget%20behavior.md",
     "/Expression/Widget%20class%20contract.md",
     "/Expression/Widget%20package.md",
     "/Expression/Widget%20realization.md",

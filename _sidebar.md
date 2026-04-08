@@ -16,6 +16,7 @@
   - [Type](/Expression/Type.md)
   - [Widget interaction](/Expression/Widget%20interaction.md)
   - [Widget](/Expression/Widget.md)
+  - [Widget behavior](/Expression/Widget%20behavior.md)
   - [Widget class contract](/Expression/Widget%20class%20contract.md)
   - [Widget package](/Expression/Widget%20package.md)
   - [Widget realization](/Expression/Widget%20realization.md)
