@@ -30,9 +30,10 @@
   <li><a href="#forbidden-transformations">15. Forbidden Transformations</a></li>
   <li><a href="#relation-with-schema-construction-lowering-and-backend-contract">16. Relation with Schema, Construction, Lowering, and Backend Contract</a></li>
   <li><a href="#relation-with-observation-and-debugging">17. Relation with Observation and Debugging</a></li>
-  <li><a href="#examples">18. Examples</a></li>
-  <li><a href="#out-of-scope-for-v01">19. Out of Scope for v0.1</a></li>
-  <li><a href="#summary">20. Summary</a></li>
+  <li><a href="#widget-object-and-ui-recoverability">18. Widget Object and UI Recoverability</a></li>
+  <li><a href="#examples">19. Examples</a></li>
+  <li><a href="#out-of-scope-for-v01">20. Out of Scope for v0.1</a></li>
+  <li><a href="#summary">21. Summary</a></li>
 </ul>
 
 <hr/>
@@ -62,8 +63,7 @@ Its purpose is to ensure that the canonical open Execution IR remains:
 </ul>
 
 <p>
-Identity in the canonical Execution IR is not decoration.
-It is part of correctness.
+Identity in the canonical Execution IR is not decoration. It is part of correctness.
 </p>
 
 <p>
@@ -89,6 +89,10 @@ This document exists so that canonical IR identity does not drift into:
   <li>loss of source attribution or non-primary correspondence.</li>
 </ul>
 
+<p>
+The same rule applies explicitly to widget-related execution structure. Canonical open IR identity must remain able to distinguish execution-facing widget roles from widget-package ownership, host realization, and runtime-private UI storage.
+</p>
+
 <hr/>
 
 <h2 id="boundary-contract">2. Boundary Contract</h2>
@@ -110,8 +114,7 @@ Every conforming mapping MUST allow recovery of:
 </ul>
 
 <p>
-Identity is therefore not optional metadata.
-It is part of the correctness of the canonical open Execution IR.
+Identity is therefore not optional metadata. It is part of the correctness of the canonical open Execution IR.
 </p>
 
 <pre><code>valid canonical IR
@@ -131,6 +134,18 @@ A conforming implementation MUST NOT treat identity as disposable convenience da
 <p>
 A conforming implementation MUST NOT rely on later runtime-private structure to restore distinctions that were already required at the canonical open-IR boundary.
 </p>
+
+<p>
+This includes widget-related distinctions such as:
+</p>
+
+<ul>
+  <li><code>widget_value</code> participation,</li>
+  <li><code>widget_reference</code> participation,</li>
+  <li>standardized UI-object primitive operation,</li>
+  <li>member-addressed access,</li>
+  <li>intentional non-primary widget-package correspondence.</li>
+</ul>
 
 <hr/>
 
@@ -158,7 +173,9 @@ This document does not define:
   <li>the full construction procedure for materially building IR payloads,</li>
   <li>the machine-checkable JSON schema itself,</li>
   <li>backend-family-specific private identity models,</li>
-  <li>runtime activation identities, scheduler tokens, or internal debugging handles.</li>
+  <li>runtime activation identities, scheduler tokens, or internal debugging handles,</li>
+  <li>the full widget-package architecture,</li>
+  <li>host realization identity models.</li>
 </ul>
 
 <p>
@@ -225,9 +242,7 @@ It is the point where the canonical Execution IR must remain:
 </ul>
 
 <p>
-This is especially important for a serious compiler corridor.
-A downstream backend consumer may be LLVM-oriented or otherwise target-oriented.
-That downstream consumer still remains downstream from the canonical open-IR identity boundary.
+This is especially important for a serious compiler corridor. A downstream backend consumer may be LLVM-oriented or otherwise target-oriented. That downstream consumer still remains downstream from the canonical open-IR identity boundary.
 </p>
 
 <hr/>
@@ -235,15 +250,13 @@ That downstream consumer still remains downstream from the canonical open-IR ide
 <h2 id="identity-layers">5. Identity Layers</h2>
 
 <p>
-Identity in the canonical Execution IR is layered.
-A conforming implementation MUST preserve enough structure to distinguish the following layers whenever they are relevant.
+Identity in the canonical Execution IR is layered. A conforming implementation MUST preserve enough structure to distinguish the following layers whenever they are relevant.
 </p>
 
 <h3>5.1 Source-visible contributor identity</h3>
 
 <p>
-This is the identity of the validated source-visible contributor as recognized by the source and language layers.
-It is not yet execution-facing IR identity.
+This is the identity of the validated source-visible contributor as recognized by the source and language layers. It is not yet execution-facing IR identity.
 </p>
 
 <p>
@@ -261,8 +274,7 @@ Examples include:
 <h3>5.2 Validated semantic contributor identity</h3>
 
 <p>
-This is the contributor identity as admitted by validated program meaning.
-Semantic validation may reject, constrain, or reinterpret source-visible material before canonical IR is allowed to exist.
+This is the contributor identity as admitted by validated program meaning. Semantic validation may reject, constrain, or reinterpret source-visible material before canonical IR is allowed to exist.
 </p>
 
 <p>
@@ -286,8 +298,7 @@ In base v0.1:
 </ul>
 
 <p>
-Document identity is distinct from source identity and distinct from execution-object identity.
-It identifies the open IR artifact itself.
+Document identity is distinct from source identity and distinct from execution-object identity. It identifies the open IR artifact itself.
 </p>
 
 <h3>5.4 Open Execution IR unit and object identity</h3>
@@ -303,15 +314,13 @@ This is the identity of the execution unit and of the objects inside it:
 </ul>
 
 <p>
-IR identity is execution-facing representation identity.
-It is not yet runtime activation identity.
+IR identity is execution-facing representation identity. It is not yet runtime activation identity.
 </p>
 
 <h3>5.5 Explicit attribution and correspondence record identity</h3>
 
 <p>
-At the canonical open-IR boundary, attribution and correspondence are not merely implied concepts.
-Where they are materialized as explicit records, those records carry their own identity-bearing role inside the document.
+At the canonical open-IR boundary, attribution and correspondence are not merely implied concepts. Where they are materialized as explicit records, those records carry their own identity-bearing role inside the document.
 </p>
 
 <p>
@@ -326,13 +335,29 @@ In base v0.1, the preferred canonical JSON posture is:
 <h3>5.6 Downstream-added private identity</h3>
 
 <p>
-Later lowering, backend handoff, runtime realization, or debugging systems MAY introduce additional identities.
-Those identities are not canonical open-IR identity.
+Later lowering, backend handoff, runtime realization, or debugging systems MAY introduce additional identities. Those identities are not canonical open-IR identity.
 </p>
 
 <p>
-They MUST remain downstream additions.
-They MUST NOT be retroactively treated as though they were the canonical identity law of FROG.
+They MUST remain downstream additions. They MUST NOT be retroactively treated as though they were the canonical identity law of FROG.
+</p>
+
+<h3>5.7 Widget-related execution identity</h3>
+
+<p>
+When widget-related execution structure is present, identity layering MUST also distinguish:
+</p>
+
+<ul>
+  <li>widget instance contributor identity,</li>
+  <li>widget-related execution-facing carrier identity,</li>
+  <li>member-address identity where applicable,</li>
+  <li>UI-operation identity where applicable,</li>
+  <li>non-primary widget-package correspondence identity where preserved.</li>
+</ul>
+
+<p>
+These layers are not identical to host widget identities, platform control identities, or runtime UI object handles.
 </p>
 
 <hr/>
@@ -394,6 +419,17 @@ This means:
 A conforming implementation MUST NOT use accidental omission as a substitute for explicit non-primary correspondence.
 </p>
 
+<p>
+For widget-related execution structure, the same general model applies:
+</p>
+
+<ul>
+  <li>a validated widget interaction may yield one primary operation object,</li>
+  <li>it may also yield support-side addressing records,</li>
+  <li>widget-package detail may remain non-primary but corresponded,</li>
+  <li>no widget-related execution-facing object may remain unattributable.</li>
+</ul>
+
 <hr/>
 
 <h2 id="preconditions">7. Preconditions</h2>
@@ -428,7 +464,8 @@ In particular, canonical IR identity MUST NOT be used to smuggle in:
   <li>structure participation where no valid structure-boundary relation existed,</li>
   <li>UI sequencing where only ordinary connectivity existed,</li>
   <li>public-interface participation where the source only described front-panel content,</li>
-  <li>backend-driven interpretation of an otherwise semantically unresolved construct.</li>
+  <li>backend-driven interpretation of an otherwise semantically unresolved construct,</li>
+  <li>widget realization meaning where only widget execution participation was validated.</li>
 </ul>
 
 <hr/>
@@ -476,9 +513,19 @@ These recoverability requirements are the minimum architectural surface that lat
 </p>
 
 <p>
-Recoverability does not require that every contributor become a top-level primary object.
-It does require that the relevant relation remain inspectable and unambiguous.
+Recoverability does not require that every contributor become a top-level primary object. It does require that the relevant relation remain inspectable and unambiguous.
 </p>
+
+<p>
+For widget-related execution structure, recoverability also includes, where relevant:
+</p>
+
+<ul>
+  <li>widget identity versus member-address identity,</li>
+  <li>widget reference versus UI primitive operation,</li>
+  <li>member-addressed access versus root-level widget access,</li>
+  <li>execution-facing widget interaction versus non-primary widget realization correspondence.</li>
+</ul>
 
 <hr/>
 
@@ -549,6 +596,14 @@ A conforming implementation MUST NOT present inferred persistence as though it h
   <li>A conforming implementation MUST NOT rely on absence alone where the distinction between intentional non-primary outcome and accidental loss would otherwise become ambiguous.</li>
 </ul>
 
+<h3>9.8 Widget-related recoverability rules</h3>
+
+<ul>
+  <li>Execution-facing widget interaction MUST remain linked to the relevant widget contributor identity.</li>
+  <li>When a member or part is addressed, that addressed target MUST remain recoverable at execution-facing level.</li>
+  <li>Widget package, realization package, SVG, and host-private realization information MAY remain non-primary, but their relation to validated execution-facing use MUST remain correspondable where needed.</li>
+</ul>
+
 <hr/>
 
 <h2 id="document-unit-and-object-identity">10. Document, Unit, and Object Identity</h2>
@@ -592,17 +647,25 @@ into one ambiguous identifier role.
 </p>
 
 <p>
-Identifier syntax MAY vary across conforming implementations.
-Identity role ambiguity MUST NOT.
+Identifier syntax MAY vary across conforming implementations. Identity role ambiguity MUST NOT.
 </p>
+
+<p>
+For widget-related execution structure, this same rule implies:
+</p>
+
+<ul>
+  <li>widget identity anchors are not document identity,</li>
+  <li>member-address descriptors are not object identity by default,</li>
+  <li>UI-operation identity is not interchangeable with widget-reference carrier identity.</li>
+</ul>
 
 <hr/>
 
 <h2 id="ports-terminals-connections-and-regions">11. Ports, Terminals, Connections, and Regions</h2>
 
 <p>
-Ports, terminals, connections, and regions are execution-facing carriers of structure.
-Their identity posture must remain sufficient for recoverability.
+Ports, terminals, connections, and regions are execution-facing carriers of structure. Their identity posture must remain sufficient for recoverability.
 </p>
 
 <ul>
@@ -630,13 +693,22 @@ structure
 This rule exists so that canonical open IR stays implementation-portable without forcing one single private internal layout.
 </p>
 
+<p>
+For widget-related execution structure, the same logic applies to:
+</p>
+
+<ul>
+  <li>member-address carriers,</li>
+  <li>UI-operation attachment points,</li>
+  <li>widget-related boundary distinctions where applicable.</li>
+</ul>
+
 <hr/>
 
 <h2 id="attribution-and-correspondence-records">12. Attribution and Correspondence Records</h2>
 
 <p>
-Attribution and correspondence are not merely diagnostic conveniences.
-They are part of the canonical open IR boundary.
+Attribution and correspondence are not merely diagnostic conveniences. They are part of the canonical open IR boundary.
 </p>
 
 <p>
@@ -677,6 +749,18 @@ preferred canonical JSON carriers
 A conforming implementation MUST NOT rely on undocumented ordering conventions or positional coincidence as the only mapping mechanism.
 </p>
 
+<p>
+For widget-related execution structure, attribution and correspondence records SHOULD be able to represent, where relevant:
+</p>
+
+<ul>
+  <li>widget instance contributor,</li>
+  <li>widget member-address contributor,</li>
+  <li>UI primitive operation contributor,</li>
+  <li>intentional non-primary widget-package correspondence,</li>
+  <li>intentional non-primary realization-package correspondence.</li>
+</ul>
+
 <hr/>
 
 <h2 id="canonical-json-shape-posture">13. Canonical JSON Shape Posture</h2>
@@ -715,19 +799,28 @@ The canonical JSON Execution IR form SHOULD expose or imply information equivale
 }</code></pre>
 
 <p>
-In base v0.1, the preferred canonical JSON posture is explicit record arrays for <code>source_map</code> and <code>correspondence</code>.
-That posture keeps the open IR inspection-friendly, schema-checkable, and portable across implementations.
+In base v0.1, the preferred canonical JSON posture is explicit record arrays for <code>source_map</code> and <code>correspondence</code>. That posture keeps the open IR inspection-friendly, schema-checkable, and portable across implementations.
 </p>
 
 <p>
-The exact field names above are illustrative only.
-What matters here is the recoverable presence of equivalent information.
-The machine-checkable schema layer owns the exact published payload validation surface.
+The exact field names above are illustrative only. What matters here is the recoverable presence of equivalent information. The machine-checkable schema layer owns the exact published payload validation surface.
 </p>
 
 <p>
 A schema-valid payload is not automatically architecturally sufficient unless the required recoverability surface is actually preserved.
 </p>
+
+<p>
+For widget-related execution structure, canonical JSON posture SHOULD remain able to encode, where required:
+</p>
+
+<ul>
+  <li>widget-related object identity,</li>
+  <li>member-address descriptors,</li>
+  <li>UI-operation identity,</li>
+  <li>non-primary widget-package correspondence,</li>
+  <li>without introducing host-realization payload families as canonical requirements.</li>
+</ul>
 
 <hr/>
 
@@ -762,14 +855,33 @@ These normalizations are allowed only if all of the following remain true:
 </ul>
 
 <p>
-Canonicalization of identifier syntax is permitted.
-Loss of identity relation is not.
+Canonicalization of identifier syntax is permitted. Loss of identity relation is not.
 </p>
 
 <p>
-Lowering-readiness is allowed to motivate additional explicit carriers.
-It is not allowed to justify early loss of required open-IR recoverability.
+Lowering-readiness is allowed to motivate additional explicit carriers. It is not allowed to justify early loss of required open-IR recoverability.
 </p>
+
+<p>
+For widget-related execution structure, allowed normalization includes:
+</p>
+
+<ul>
+  <li>introducing explicit widget identity anchors,</li>
+  <li>introducing explicit member-address carriers,</li>
+  <li>introducing explicit UI-operation role tags,</li>
+  <li>normalizing equivalent validated widget accesses into one canonical execution-facing representation.</li>
+</ul>
+
+<p>
+It does not permit:
+</p>
+
+<ul>
+  <li>rewriting canonical widget interaction into one runtime's native API vocabulary,</li>
+  <li>replacing widget-member addressing with host-widget-tree paths,</li>
+  <li>using SVG node identity as the canonical open-IR identity law.</li>
+</ul>
 
 <hr/>
 
@@ -793,7 +905,9 @@ The following are forbidden:
   <li>rewriting support objects as though they were independently authored semantic truth,</li>
   <li>treating one runtime-private identity model as though it were the canonical open IR identity model,</li>
   <li>using backend-family convenience to erase a distinction that the canonical open IR still requires,</li>
-  <li>using lowering pressure to erase intentional non-primary correspondence before the permitted downstream boundary.</li>
+  <li>using lowering pressure to erase intentional non-primary correspondence before the permitted downstream boundary,</li>
+  <li>collapsing widget identity, widget-reference participation, and UI-operation identity into one undifferentiated UI identity class,</li>
+  <li>promoting widget realization packages, SVG assets, host-native controls, or runtime-private UI handles into canonical execution identity without explicit language-owned standardization.</li>
 </ul>
 
 <pre><code>forbidden
@@ -806,8 +920,7 @@ or destroys required recoverability</code></pre>
 <h2 id="relation-with-schema-construction-lowering-and-backend-contract">16. Relation with Schema, Construction, Lowering, and Backend Contract</h2>
 
 <p>
-This document defines recoverability obligations at the canonical open-IR boundary.
-Schema, construction, lowering, and backend contract remain distinct concerns.
+This document defines recoverability obligations at the canonical open-IR boundary. Schema, construction, lowering, and backend contract remain distinct concerns.
 </p>
 
 <p>
@@ -843,10 +956,17 @@ must survive
 until the specification explicitly permits a later downstream boundary</code></pre>
 
 <p>
-This matters directly to a compiler corridor.
-A backend-oriented consumer may later compress, specialize, or reframe execution structures.
-That consumer must still start from an IR whose identity, attribution, and category distinctions were valid at the canonical boundary.
+This matters directly to a compiler corridor. A backend-oriented consumer may later compress, specialize, or reframe execution structures. That consumer must still start from an IR whose identity, attribution, and category distinctions were valid at the canonical boundary.
 </p>
+
+<p>
+The same applies to UI-aware downstream consumers:
+</p>
+
+<ul>
+  <li>Python, Rust, C/C++, or mixed runtime families may later realize widget interaction differently,</li>
+  <li>but they all remain downstream from the same canonical open-IR recoverability boundary.</li>
+</ul>
 
 <hr/>
 
@@ -878,11 +998,80 @@ It does mean that canonical IR identity must remain sufficient so that:
   <li>future observation surfaces do not need to invent upstream identity after the fact.</li>
 </ul>
 
+<p>
+For widget-related execution structure, this also means:
+</p>
+
+<ul>
+  <li>diagnostics can distinguish widget-value flow from widget-reference flow,</li>
+  <li>diagnostics can distinguish reference carrying from property or method operation,</li>
+  <li>diagnostics do not need host-native widget handles to recover canonical execution intent.</li>
+</ul>
+
 <hr/>
 
-<h2 id="examples">18. Examples</h2>
+<h2 id="widget-object-and-ui-recoverability">18. Widget Object and UI Recoverability</h2>
 
-<h3>18.1 One validated contributor becomes one primary IR object</h3>
+<p>
+The widget object system introduces a particularly important recoverability corridor because it crosses:
+</p>
+
+<ul>
+  <li>canonical source,</li>
+  <li>class-law resolution,</li>
+  <li>diagram-side executable interaction,</li>
+  <li>open execution IR,</li>
+  <li>later lowering,</li>
+  <li>runtime and host realization.</li>
+</ul>
+
+<p>
+At the canonical open-IR boundary, the following widget-related distinctions MUST remain recoverable whenever relevant:
+</p>
+
+<ul>
+  <li>widget declaration identity versus widget execution participation identity,</li>
+  <li><code>widget_value</code> participation versus <code>widget_reference</code> participation,</li>
+  <li><code>widget_reference</code> participation versus standardized UI-object primitive operation,</li>
+  <li>root widget access versus member-addressed access,</li>
+  <li>member-addressed access versus host-visual-node addressing,</li>
+  <li>execution-facing widget interaction versus non-primary realization-package correspondence.</li>
+</ul>
+
+<p>
+The open-IR identity layer MAY preserve:
+</p>
+
+<ul>
+  <li>widget identity anchors,</li>
+  <li>member-address descriptors,</li>
+  <li>UI-operation family identity,</li>
+  <li>non-primary widget-package correspondence where needed.</li>
+</ul>
+
+<p>
+It MUST NOT require:
+</p>
+
+<ul>
+  <li>host control identities,</li>
+  <li>platform widget pointers,</li>
+  <li>SVG node identifiers as semantic truth,</li>
+  <li>runtime-private UI object tables.</li>
+</ul>
+
+<pre><code>canonical widget interaction recoverability
+   =
+widget execution-facing identity
+ + addressed-access recoverability
+ + operation-family recoverability
+ - host-private realization dependency</code></pre>
+
+<hr/>
+
+<h2 id="examples">19. Examples</h2>
+
+<h3>19.1 One validated contributor becomes one primary IR object</h3>
 
 <pre><code>validated contributor: pure arithmetic primitive node
    -&gt;
@@ -890,7 +1079,7 @@ primary IR object: canonical arithmetic object
    -&gt;
 direct attribution preserved</code></pre>
 
-<h3>18.2 One validated contributor becomes one primary object plus support objects</h3>
+<h3>19.2 One validated contributor becomes one primary object plus support objects</h3>
 
 <pre><code>validated contributor: explicit local-memory construct
    -&gt;
@@ -902,7 +1091,7 @@ support IR object: state-boundary carrier
 
 all remain attributable to validated meaning</code></pre>
 
-<h3>18.3 Source-visible contributor remains non-primary but recoverable</h3>
+<h3>19.3 Source-visible contributor remains non-primary but recoverable</h3>
 
 <pre><code>validated source-visible declaration
    -&gt;
@@ -912,7 +1101,7 @@ correspondence record retained
    -&gt;
 intentional non-primary outcome remains explicit</code></pre>
 
-<h3>18.4 Forbidden collapse</h3>
+<h3>19.4 Forbidden collapse</h3>
 
 <pre><code>validated widget reference
    +
@@ -923,7 +1112,7 @@ one undifferentiated "UI object"
 Result: non-conforming
 Reason: widget-reference participation and standardized UI-object primitive role were collapsed</code></pre>
 
-<h3>18.5 Forbidden backend-driven early erasure</h3>
+<h3>19.5 Forbidden backend-driven early erasure</h3>
 
 <pre><code>canonical IR preserves explicit state participation
    -&gt;
@@ -933,9 +1122,22 @@ source attribution and state-boundary recoverability are lost before the permitt
 
 Result: non-conforming at the canonical open-IR identity layer</code></pre>
 
+<h3>19.6 Valid widget-related non-primary correspondence</h3>
+
+<pre><code>validated widget interaction uses class-law-resolved addressing
+   -&gt;
+primary IR object: UI property write operation
+   -&gt;
+support record: member-address descriptor
+   -&gt;
+correspondence record: realization package remains non-primary
+
+Result: conforming
+Reason: execution-facing access is preserved while realization ownership remains downstream</code></pre>
+
 <hr/>
 
-<h2 id="out-of-scope-for-v01">19. Out of Scope for v0.1</h2>
+<h2 id="out-of-scope-for-v01">20. Out of Scope for v0.1</h2>
 
 <p>
 The following are out of scope for this document in base v0.1:
@@ -948,17 +1150,18 @@ The following are out of scope for this document in base v0.1:
   <li>backend-family-specific object identity conventions,</li>
   <li>full source-to-machine-code debug information standards,</li>
   <li>persistent cross-build identity guarantees,</li>
-  <li>multi-unit canonical IR documents.</li>
+  <li>multi-unit canonical IR documents,</li>
+  <li>one mandatory runtime UI object ABI,</li>
+  <li>one mandatory host-side event identity taxonomy.</li>
 </ul>
 
 <p>
-Those may appear later.
-They do not weaken the current obligations at the canonical open-IR boundary.
+Those may appear later. They do not weaken the current obligations at the canonical open-IR boundary.
 </p>
 
 <hr/>
 
-<h2 id="summary">20. Summary</h2>
+<h2 id="summary">21. Summary</h2>
 
 <p>
 This document defines the identity and mapping law of the canonical Execution IR Document.
@@ -977,8 +1180,7 @@ Its core rules are:
 </ul>
 
 <p>
-The canonical open IR is therefore not only execution-facing.
-It is also:
+The canonical open IR is therefore not only execution-facing. It is also:
 </p>
 
 <ul>
@@ -989,7 +1191,14 @@ It is also:
 </ul>
 
 <p>
-A serious downstream compilation path depends on this discipline.
-FROG may later lower toward backend-facing consumers, including LLVM-oriented routes.
-That downstream path must still begin from a canonical Execution IR whose attribution, correspondence, and recoverability were preserved correctly.
+A serious downstream compilation path depends on this discipline. FROG may later lower toward backend-facing consumers, including LLVM-oriented routes. That downstream path must still begin from a canonical Execution IR whose attribution, correspondence, and recoverability were preserved correctly.
 </p>
+
+<p>
+The same discipline now applies explicitly to widget-related execution structure:
+</p>
+
+<ul>
+  <li>execution-facing widget identities and accesses remain recoverable in the canonical open IR,</li>
+  <li>but widget-package ownership, realization-package detail, SVG visual structure, and runtime-private UI handles remain downstream and non-canonical.</li>
+</ul>
