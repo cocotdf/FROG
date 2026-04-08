@@ -16,10 +16,10 @@
       "ind_result_ref",
       "const_zero",
       "const_five",
-      "const_ctrl_face_color",
-      "const_ind_face_color",
-      "write_ctrl_face_color",
-      "write_ind_face_color",
+      "const_ctrl_foreground_color",
+      "const_ind_foreground_color",
+      "write_ctrl_foreground_color",
+      "write_ind_foreground_color",
       "loop_accumulate",
       "ind_result_value",
       "output_result"
@@ -41,16 +41,19 @@
           {
             "id": "result",
             "type": "u16",
-            "binding_target": "widget.ind_result.value"
+            "binding_target": "interface.result"
           }
         ]
       },
       "ui_surface": {
+        "package_refs": [
+          "./ui/accumulator_panel.wfrog"
+        ],
         "widgets": [
           {
             "widget_id": "ctrl_input",
             "role": "control",
-            "widget_class": "frog.ui.numeric_control",
+            "widget_class": "frog.widgets.numeric_control",
             "value_type": "u16",
             "value_mode": "widget_value",
             "reference_mode": true
@@ -58,7 +61,7 @@
           {
             "widget_id": "ind_result",
             "role": "indicator",
-            "widget_class": "frog.ui.numeric_indicator",
+            "widget_class": "frog.widgets.numeric_indicator",
             "value_type": "u16",
             "value_mode": "widget_value",
             "reference_mode": true
@@ -67,19 +70,26 @@
         "property_writes": [
           {
             "widget_id": "ctrl_input",
-            "member": "face_color",
-            "value_type": "frog.ui.color",
-            "value": "#D8E6FF"
+            "member": "foreground_color",
+            "value_type": "frog.color.rgba8",
+            "value": "#5B9BD5"
           },
           {
             "widget_id": "ind_result",
-            "member": "face_color",
-            "value_type": "frog.ui.color",
-            "value": "#D8E6FF"
+            "member": "foreground_color",
+            "value_type": "frog.color.rgba8",
+            "value": "#70AD47"
+          }
+        ],
+        "indicator_bindings": [
+          {
+            "widget_id": "ind_result",
+            "member": "value",
+            "source": "result"
           }
         ],
         "host_realization_ref": {
-          "path": "Examples/05_bounded_ui_accumulator/front_panel.objects.json",
+          "path": "Examples/05_bounded_ui_accumulator/ui/accumulator_panel.wfrog",
           "authority": "downstream_non_authoritative"
         }
       },
