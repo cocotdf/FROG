@@ -5,7 +5,7 @@
 <h1 align="center">FROG Widget Class Contract</h1>
 
 <p align="center">
-  <strong>Normative class-level contract for widget classes, properties, methods, events, parts, and object addressing</strong><br/>
+  <strong>Normative class-level contract for widget classes, primary values, properties, methods, events, parts, object addressing, and bounded behavior surfaces</strong><br/>
   <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -16,19 +16,25 @@
   <li><a href="#overview">1. Overview</a></li>
   <li><a href="#why-this-document-exists">2. Why This Document Exists</a></li>
   <li><a href="#scope">3. Scope</a></li>
-  <li><a href="#ownership-boundary">4. Ownership Boundary</a></li>
-  <li><a href="#class-contract-purpose">5. Class Contract Purpose</a></li>
-  <li><a href="#required-class-surfaces">6. Required Class Surfaces</a></li>
-  <li><a href="#primary-value-model">7. Primary Value Model</a></li>
-  <li><a href="#property-model">8. Property Model</a></li>
-  <li><a href="#method-model">9. Method Model</a></li>
-  <li><a href="#event-model">10. Event Model</a></li>
-  <li><a href="#part-model">11. Part Model</a></li>
-  <li><a href="#object-addressing">12. Object Addressing</a></li>
-  <li><a href="#mutability-and-persistence">13. Mutability and Persistence</a></li>
-  <li><a href="#design-time-vs-runtime">14. Design-Time vs Runtime</a></li>
-  <li><a href="#conformance">15. Conformance</a></li>
-  <li><a href="#example-class-outline">16. Example Class Outline</a></li>
+  <li><a href="#relation-with-other-specifications">4. Relation with Other Specifications</a></li>
+  <li><a href="#ownership-boundary">5. Ownership Boundary</a></li>
+  <li><a href="#design-goals">6. Design Goals</a></li>
+  <li><a href="#class-contract-purpose">7. Class Contract Purpose</a></li>
+  <li><a href="#required-class-surfaces">8. Required Class Surfaces</a></li>
+  <li><a href="#class-identity-and-category">9. Class Identity and Category</a></li>
+  <li><a href="#primary-value-model">10. Primary Value Model</a></li>
+  <li><a href="#property-model">11. Property Model</a></li>
+  <li><a href="#method-model">12. Method Model</a></li>
+  <li><a href="#event-model">13. Event Model</a></li>
+  <li><a href="#part-model">14. Part Model</a></li>
+  <li><a href="#object-addressing">15. Object Addressing</a></li>
+  <li><a href="#mutability-and-persistence">16. Mutability and Persistence</a></li>
+  <li><a href="#design-time-vs-runtime">17. Design-Time vs Runtime</a></li>
+  <li><a href="#bounded-behavior-surfaces">18. Bounded Behavior Surfaces</a></li>
+  <li><a href="#developer-defined-widget-classes">19. Developer-Defined Widget Classes</a></li>
+  <li><a href="#extension-and-portability-rules">20. Extension and Portability Rules</a></li>
+  <li><a href="#conformance">21. Conformance</a></li>
+  <li><a href="#example-class-outline">22. Example Class Outline</a></li>
 </ul>
 
 <hr/>
@@ -36,30 +42,42 @@
 <h2 id="overview">1. Overview</h2>
 
 <p>
-A widget class contract defines the normative class-level law of a widget family in FROG.
-It specifies what a widget class is allowed to expose and how runtimes may interpret that class.
+A FROG widget class contract defines the normative class-level law of a widget family.
+It specifies the stable semantic surface that portable runtimes, IDEs, validators, and host realizations
+are expected to interpret consistently.
 </p>
 
 <p>
-A widget class contract exists above any one runtime implementation and above any one host toolkit.
-It is the stable class-level semantic surface that allows multiple runtimes to interpret the same widget class family.
+The class contract exists above any one runtime implementation, above any one UI toolkit, and above any one
+visual asset format.
+It is the published class-level source of truth for what a widget class is, what it may expose, and how that
+exposure is addressed.
+</p>
+
+<p>
+This document treats a widget class as an object surface with explicitly declared members.
+Those members include a possible primary value, named properties, named methods, named events,
+and optionally stable parts and subparts.
 </p>
 
 <h2 id="why-this-document-exists">2. Why This Document Exists</h2>
 
 <p>
-FROG needs a widget object system that is:
+FROG requires a front-panel object system that is:
 </p>
 
 <ul>
   <li>portable across runtimes,</li>
-  <li>extensible beyond a tiny fixed widget inventory,</li>
   <li>inspectable and auditable,</li>
-  <li>bounded by published rules rather than runtime-private conventions.</li>
+  <li>extensible beyond a tiny fixed widget inventory,</li>
+  <li>explicitly published rather than hidden inside runtime-private code,</li>
+  <li>usable by both natural-value interaction and object-style interaction.</li>
 </ul>
 
 <p>
-The widget class contract is the layer that prevents widget law from being hidden inside one runtime or one rendering toolkit.
+Without a class-level contract, widget law would drift into host-specific conventions,
+runtime-private helper structures, or visual-layer assumptions.
+That would make portability, conformance, and developer-defined widget classes unreliable.
 </p>
 
 <h2 id="scope">3. Scope</h2>
@@ -69,26 +87,76 @@ This document defines the normative class-level contract for:
 </p>
 
 <ul>
+  <li>widget class identity and category,</li>
+  <li>primary value posture,</li>
   <li>properties,</li>
   <li>methods,</li>
   <li>events,</li>
-  <li>parts,</li>
-  <li>primary value surfaces,</li>
-  <li>object addressing rules,</li>
-  <li>mutability and persistence boundaries.</li>
+  <li>parts and subparts,</li>
+  <li>object addressing,</li>
+  <li>mutability and persistence boundaries,</li>
+  <li>design-time versus runtime exposure,</li>
+  <li>bounded behavior declaration surfaces,</li>
+  <li>developer-defined widget class portability expectations.</li>
 </ul>
 
-<h2 id="ownership-boundary">4. Ownership Boundary</h2>
+<p>
+This document does not define canonical <code>.frog</code> program syntax, full <code>.wfrog</code> packaging structure,
+host rendering internals, or toolkit-private implementation details.
+</p>
+
+<h2 id="relation-with-other-specifications">4. Relation with Other Specifications</h2>
+
+<ul>
+  <li><strong><code>Expression/Front panel.md</code></strong> defines front-panel composition at program-source level.</li>
+  <li><strong><code>Expression/Widget.md</code></strong> defines widget instances as source-visible participants in a <code>.frog</code> program.</li>
+  <li><strong><code>Expression/Widget interaction.md</code></strong> defines how diagrams interact with widgets through natural-value and object-style access.</li>
+  <li><strong><code>Expression/Widget package (.wfrog).md</code></strong> defines machine-readable packaging of widget classes, front-panel packages, assets, and bounded behavior modules.</li>
+  <li><strong><code>Libraries/UI.md</code></strong> defines the standard UI library posture and cross-runtime expectations.</li>
+</ul>
+
+<p>
+This document sits at the class-law layer.
+It is the normative contract that packaging, source interaction, runtime interpretation, and host realization must respect.
+</p>
+
+<h2 id="ownership-boundary">5. Ownership Boundary</h2>
 
 <ul>
   <li><strong>This contract owns:</strong> class-level widget law.</li>
-  <li><strong><code>.wfrog</code> owns:</strong> machine-readable packaging of class and front-panel content.</li>
-  <li><strong><code>.frog</code> owns:</strong> canonical program source and explicit graph interaction.</li>
-  <li><strong>Runtime owns:</strong> interpretation of the published class law.</li>
-  <li><strong>Host owns:</strong> concrete realization.</li>
+  <li><strong><code>.wfrog</code> owns:</strong> machine-readable publication and packaging of class definitions, bounded behavior declarations, and front-panel realization resources.</li>
+  <li><strong><code>.frog</code> owns:</strong> canonical program meaning, widget participation, widget identity in program scope, and explicit diagram interaction surfaces.</li>
+  <li><strong>Runtime owns:</strong> interpretation of the published widget contract and execution of portable behavior surfaces.</li>
+  <li><strong>Host owns:</strong> concrete rendering, input collection, layout realization, and toolkit-private implementation details.</li>
+  <li><strong>SVG or other visual assets own:</strong> visual shape and scalable presentation resources only.</li>
 </ul>
 
-<h2 id="class-contract-purpose">5. Class Contract Purpose</h2>
+<p>
+A class contract MUST NOT be replaced by runtime-private conventions.
+A visual asset MUST NOT become the semantic source of truth for widget law.
+</p>
+
+<h2 id="design-goals">6. Design Goals</h2>
+
+<p>
+The FROG widget class model is intended to combine the useful strengths of object-oriented UI systems,
+component systems, and LabVIEW-style control/indicator intuition while remaining explicit and disciplined.
+</p>
+
+<p>
+The design goals are:
+</p>
+
+<ul>
+  <li>clear object surfaces,</li>
+  <li>stable names and stable addressing,</li>
+  <li>portable law across Python, Rust, and C/C++ runtimes,</li>
+  <li>support for developer-defined widget classes,</li>
+  <li>bounded behavior that remains inspectable,</li>
+  <li>clean separation between semantic truth and host realization.</li>
+</ul>
+
+<h2 id="class-contract-purpose">7. Class Contract Purpose</h2>
 
 <p>
 A widget class contract answers the following questions:
@@ -96,15 +164,18 @@ A widget class contract answers the following questions:
 
 <ul>
   <li>What is this class called?</li>
-  <li>What is its primary value surface, if any?</li>
+  <li>Which widget family or category does it belong to?</li>
+  <li>Does it expose a primary value surface?</li>
   <li>Which properties are legal?</li>
   <li>Which methods are legal?</li>
   <li>Which events are legal?</li>
-  <li>Which parts are stable and addressable?</li>
-  <li>Which members are readable, writable, persistent, or runtime-only?</li>
+  <li>Which parts or subparts are stable and addressable?</li>
+  <li>Which members are readable, writable, persistent, ephemeral, or runtime-only?</li>
+  <li>Which behavior is portable and declaratively published?</li>
+  <li>Which behavior is host-private and therefore non-portable?</li>
 </ul>
 
-<h2 id="required-class-surfaces">6. Required Class Surfaces</h2>
+<h2 id="required-class-surfaces">8. Required Class Surfaces</h2>
 
 <p>
 A widget class contract MUST define:
@@ -112,20 +183,58 @@ A widget class contract MUST define:
 
 <ul>
   <li>a stable <code>class_id</code>,</li>
-  <li>a category,</li>
-  <li>a primary value posture,</li>
-  <li>a property set,</li>
-  <li>a method set,</li>
-  <li>an event set,</li>
-  <li>a part hierarchy or part inventory,</li>
-  <li>conformance expectations.</li>
+  <li>a stable category,</li>
+  <li>a primary value posture, even if the class has no primary value,</li>
+  <li>a property inventory, which MAY be empty,</li>
+  <li>a method inventory, which MAY be empty,</li>
+  <li>an event inventory, which MAY be empty,</li>
+  <li>a part model, either as a hierarchy, a flat inventory, or an explicit statement that the class exposes no addressable parts,</li>
+  <li>mutability and persistence posture for exposed members,</li>
+  <li>conformance expectations for runtimes claiming support.</li>
 </ul>
 
-<h2 id="primary-value-model">7. Primary Value Model</h2>
+<p>
+A class contract SHOULD also define:
+</p>
+
+<ul>
+  <li>member documentation,</li>
+  <li>constraints and default values,</li>
+  <li>design-time versus runtime availability,</li>
+  <li>bounded portable behavior surfaces when the class requires more than passive member exposure.</li>
+</ul>
+
+<h2 id="class-identity-and-category">9. Class Identity and Category</h2>
+
+<p>
+Every widget class MUST have a stable <code>class_id</code>.
+That identifier is the portable identity of the class and MUST be globally stable within the relevant library or package domain.
+</p>
+
+<p>
+Every widget class MUST also declare a category.
+Typical categories include:
+</p>
+
+<ul>
+  <li><code>control</code>,</li>
+  <li><code>indicator</code>,</li>
+  <li><code>container</code>,</li>
+  <li><code>composite</code>,</li>
+  <li><code>decorative</code>,</li>
+  <li><code>hybrid</code>.</li>
+</ul>
+
+<p>
+The category does not replace the full contract.
+It provides a coarse semantic posture for tools, documentation, and library organization.
+</p>
+
+<h2 id="primary-value-model">10. Primary Value Model</h2>
 
 <p>
 A widget class MAY define a primary value surface.
-That value surface is the natural-value participation path used by <code>widget_value</code>.
+The primary value surface is the natural-value participation path used by <code>widget_value</code> and similar natural-value interaction forms.
 </p>
 
 <p>
@@ -133,76 +242,147 @@ If a class defines a primary value surface, the contract MUST state:
 </p>
 
 <ul>
-  <li>the value type,</li>
-  <li>read/write posture,</li>
-  <li>whether user interaction may change it,</li>
-  <li>whether runtime interaction may change it,</li>
-  <li>whether it is persistent or ephemeral.</li>
+  <li>its value type,</li>
+  <li>its access posture,</li>
+  <li>whether user interaction may modify it,</li>
+  <li>whether diagram interaction may modify it,</li>
+  <li>whether runtime realization may update it,</li>
+  <li>whether the surface is persistent or ephemeral,</li>
+  <li>whether the primary value is mirrored as a named property such as <code>value</code>.</li>
 </ul>
 
-<h2 id="property-model">8. Property Model</h2>
+<p>
+If a class has no primary value, the contract MUST say so explicitly.
+</p>
+
+<p>
+The primary value surface MUST NOT be redefined implicitly by one runtime.
+If a class uses a primary value, its semantics are part of portable class law.
+</p>
+
+<h2 id="property-model">11. Property Model</h2>
+
+<p>
+A property is a named object member exposed by the widget class contract.
+Properties are the standard portable mechanism for object-style state inspection and state modification.
+</p>
+
+<p>
+FROG does not require a separate normative <em>attribute</em> category at class-law level.
+When a member is a published named state surface, it is modeled as a property.
+This avoids ambiguity between “attribute” and “property” and keeps portable widget law explicit.
+</p>
 
 <p>
 Each property declaration SHOULD include:
 </p>
 
 <ul>
-  <li><code>name</code></li>
-  <li><code>type</code></li>
-  <li><code>access</code> — <code>read_only</code>, <code>write_only</code>, or <code>read_write</code></li>
-  <li><code>mutability</code></li>
-  <li><code>persistent</code></li>
-  <li><code>default</code></li>
-  <li><code>nullable</code></li>
-  <li><code>constraints</code></li>
-  <li><code>applies_to_part</code> when applicable</li>
+  <li><code>name</code>,</li>
+  <li><code>type</code>,</li>
+  <li><code>access</code> — <code>read_only</code>, <code>write_only</code>, or <code>read_write</code>,</li>
+  <li><code>mutability</code>,</li>
+  <li><code>persistent</code>,</li>
+  <li><code>default</code>, when applicable,</li>
+  <li><code>nullable</code>, when applicable,</li>
+  <li><code>constraints</code>, when applicable,</li>
+  <li><code>availability</code> — design-time, runtime, or shared,</li>
+  <li><code>applies_to_part</code> when the property is part-local rather than root-local.</li>
 </ul>
 
 <p>
-A property is legal only if published by the class contract or by an allowed extension model.
+A property is legal only if it is:
 </p>
 
-<h2 id="method-model">9. Method Model</h2>
+<ul>
+  <li>published by the class contract, or</li>
+  <li>introduced through an explicitly allowed extension model that remains inspectable and non-ambiguous.</li>
+</ul>
+
+<p>
+A runtime MUST NOT silently invent portable properties that are not declared by the contract.
+</p>
+
+<h2 id="method-model">12. Method Model</h2>
+
+<p>
+A method is a named action surface exposed by the widget class contract.
+Methods are used for explicit object-style invocation when state mutation or behavior triggering is more appropriately modeled as an action than as a property write.
+</p>
 
 <p>
 Each method declaration SHOULD include:
 </p>
 
 <ul>
-  <li><code>name</code></li>
-  <li>typed parameters</li>
-  <li>return type</li>
-  <li>availability boundary</li>
-  <li>declared side-effect posture</li>
+  <li><code>name</code>,</li>
+  <li>typed parameters,</li>
+  <li>return type,</li>
+  <li>availability boundary,</li>
+  <li>declared side-effect posture,</li>
+  <li>declared portability posture,</li>
+  <li>part scope when the method is part-local.</li>
+</ul>
+
+<p>
+Method contracts SHOULD make it clear whether a method:
+</p>
+
+<ul>
+  <li>updates widget state,</li>
+  <li>requests host behavior,</li>
+  <li>emits events,</li>
+  <li>is purely local to the widget object,</li>
+  <li>depends on host-private functionality.</li>
 </ul>
 
 <p>
 A runtime MUST NOT expose undeclared methods as portable class law.
+A host-specific method MAY exist, but it MUST be clearly marked as non-portable.
 </p>
 
-<h2 id="event-model">10. Event Model</h2>
+<h2 id="event-model">13. Event Model</h2>
+
+<p>
+An event is a named observable emission surface exposed by the widget class contract.
+Events allow widgets and their parts to publish runtime-observable occurrences without requiring host-private knowledge.
+</p>
 
 <p>
 Each event declaration SHOULD include:
 </p>
 
 <ul>
-  <li><code>name</code></li>
-  <li>payload type</li>
-  <li>origin surface</li>
-  <li>delivery posture</li>
+  <li><code>name</code>,</li>
+  <li>payload type or payload schema,</li>
+  <li>origin surface,</li>
+  <li>delivery posture,</li>
+  <li>part scope when the event is emitted by a declared part,</li>
+  <li>ordering expectations when relevant,</li>
+  <li>portability posture.</li>
 </ul>
 
 <p>
 Events MAY be emitted by the widget root or by a declared part.
-Event names and payload shapes form part of the portable contract.
+Event names and payload shapes form part of the portable class contract.
 </p>
 
-<h2 id="part-model">11. Part Model</h2>
+<p>
+The class contract does not require one universal event scheduling model for all runtimes,
+but it MUST define enough structure that runtimes do not disagree on event identity, payload shape,
+or basic source surface.
+</p>
+
+<h2 id="part-model">14. Part Model</h2>
 
 <p>
 A part is a stable addressable sub-surface of a widget object.
-Parts allow a widget to expose internal structure without collapsing into one opaque box.
+Parts allow a widget to expose internal structure without collapsing into one opaque box and without turning host implementation details into semantic truth.
+</p>
+
+<p>
+A widget class MAY expose no addressable parts.
+If it does expose parts, those parts MUST be explicitly declared.
 </p>
 
 <p>
@@ -210,51 +390,100 @@ A part declaration SHOULD include:
 </p>
 
 <ul>
-  <li><code>part_id</code></li>
-  <li><code>kind</code></li>
-  <li>optional parent part</li>
-  <li>optional local properties</li>
-  <li>optional local events</li>
+  <li><code>part_id</code>,</li>
+  <li><code>kind</code>,</li>
+  <li>optional parent part,</li>
+  <li>optional child parts,</li>
+  <li>optional local properties,</li>
+  <li>optional local methods,</li>
+  <li>optional local events,</li>
+  <li>optional addressing aliases when explicitly supported.</li>
 </ul>
 
-<h2 id="object-addressing">12. Object Addressing</h2>
+<p>
+Only declared parts are portable.
+Toolkit-private visual fragments are not portable parts unless the class contract declares them as such.
+</p>
+
+<h2 id="object-addressing">15. Object Addressing</h2>
 
 <p>
-FROG object-style widget access requires stable object addressing.
-The contract therefore supports addressing of:
+FROG object-style widget interaction requires stable object addressing.
+The class contract therefore supports contract-based addressing of:
 </p>
 
 <ul>
   <li>the widget root object,</li>
-  <li>named properties,</li>
-  <li>named methods,</li>
+  <li>named root properties,</li>
+  <li>named root methods,</li>
+  <li>named root events,</li>
   <li>named parts,</li>
-  <li>part-local properties where allowed.</li>
+  <li>part-local members where allowed by the contract.</li>
 </ul>
 
 <p>
-Portable addressing MUST be string-stable and contract-based.
-</p>
-
-<h2 id="mutability-and-persistence">13. Mutability and Persistence</h2>
-
-<p>
-The contract MUST distinguish:
+Portable addressing MUST be:
 </p>
 
 <ul>
-  <li>construction-only values,</li>
-  <li>design-time mutable values,</li>
-  <li>runtime mutable values,</li>
-  <li>persistent values,</li>
-  <li>ephemeral values.</li>
+  <li>string-stable,</li>
+  <li>contract-based,</li>
+  <li>independent of host-private object identities,</li>
+  <li>independent of toolkit-private node trees.</li>
 </ul>
 
 <p>
-This distinction is required so that runtimes and IDEs do not guess property law differently.
+Illustrative addressing forms include:
 </p>
 
-<h2 id="design-time-vs-runtime">14. Design-Time vs Runtime</h2>
+<ul>
+  <li><code>root</code></li>
+  <li><code>property:value</code></li>
+  <li><code>method:reset_to_default_style</code></li>
+  <li><code>part:value_text</code></li>
+  <li><code>part:value_text/property:foreground_color</code></li>
+</ul>
+
+<p>
+The exact textual addressing notation used by higher-level source or runtime APIs MAY vary,
+but the portable member identity MUST remain derivable from the class contract.
+</p>
+
+<h2 id="mutability-and-persistence">16. Mutability and Persistence</h2>
+
+<p>
+The class contract MUST distinguish:
+</p>
+
+<ul>
+  <li>construction-only members,</li>
+  <li>design-time mutable members,</li>
+  <li>runtime mutable members,</li>
+  <li>persistent members,</li>
+  <li>ephemeral members.</li>
+</ul>
+
+<p>
+This distinction is required so that runtimes, compilers, validators, and IDEs do not guess widget law differently.
+</p>
+
+<p>
+Mutability posture SHOULD be declared per member.
+When a class-level default mutability posture exists, member-level declarations MAY override it.
+</p>
+
+<p>
+Persistence posture SHOULD indicate whether a member:
+</p>
+
+<ul>
+  <li>belongs in source-owned persisted state,</li>
+  <li>belongs in package-owned defaults,</li>
+  <li>exists only during execution,</li>
+  <li>is computed on demand and never persisted.</li>
+</ul>
+
+<h2 id="design-time-vs-runtime">17. Design-Time vs Runtime</h2>
 
 <p>
 A widget class contract MAY distinguish:
@@ -267,49 +496,217 @@ A widget class contract MAY distinguish:
 </ul>
 
 <p>
-For example, a label text may be design-time and runtime mutable, while one geometry property may be
-design-time only.
-</p>
-
-<h2 id="conformance">15. Conformance</h2>
-
-<p>
-A runtime is conforming for a widget class only if it preserves the class contract for all portable members
-it claims to implement.
+This distinction is important because some members participate in authoring and layout,
+while others participate in live execution and user interaction.
 </p>
 
 <p>
-A host-specific extension is allowed only if:
+For example:
+</p>
+
+<ul>
+  <li>a label string may be design-time and runtime mutable,</li>
+  <li>a geometry property may be design-time mutable but runtime read-only,</li>
+  <li>a transient render-status property may be runtime-only and ephemeral.</li>
+</ul>
+
+<h2 id="bounded-behavior-surfaces">18. Bounded Behavior Surfaces</h2>
+
+<p>
+Some widget classes require more than passive member exposure.
+They may require behavior such as validation, normalization, derived state updates,
+value-to-presentation mapping, or event emission rules.
+</p>
+
+<p>
+Portable widget behavior MUST remain bounded and inspectable.
+For that reason, a widget class contract MAY declare behavior surfaces in the following categories:
+</p>
+
+<ul>
+  <li><strong>declarative behavior</strong> — state rules, derived bindings, constraints, mappings, or triggers expressed in a machine-readable portable form,</li>
+  <li><strong>bounded pure expressions</strong> — portable expression units without host side effects,</li>
+  <li><strong>host-private hooks</strong> — explicitly non-portable behavior entry points owned by a specific runtime or host.</li>
+</ul>
+
+<p>
+Host-private hooks MUST NOT redefine the portable class contract.
+They MAY realize or optimize host integration, but they do not become semantic truth for the widget class.
+</p>
+
+<h2 id="developer-defined-widget-classes">19. Developer-Defined Widget Classes</h2>
+
+<p>
+FROG is intended to support developer-defined widget classes.
+A developer-defined widget class is portable only if its class law is published in an inspectable form through the widget packaging model.
+</p>
+
+<p>
+A developer-defined class MUST therefore publish:
+</p>
+
+<ul>
+  <li>a stable <code>class_id</code>,</li>
+  <li>its category,</li>
+  <li>its primary value posture,</li>
+  <li>its property inventory,</li>
+  <li>its method inventory,</li>
+  <li>its event inventory,</li>
+  <li>its part model,</li>
+  <li>its bounded portable behavior surfaces, if any.</li>
+</ul>
+
+<p>
+A runtime may choose not to implement a given developer-defined class,
+but it MUST NOT reinterpret that class arbitrarily while claiming conformance.
+</p>
+
+<h2 id="extension-and-portability-rules">20. Extension and Portability Rules</h2>
+
+<p>
+A widget class MAY define extension points.
+Those extension points MUST be explicit and bounded.
+</p>
+
+<p>
+Portable extension is allowed only if:
+</p>
+
+<ul>
+  <li>the extension model is published,</li>
+  <li>the extension does not alter the identity of already published members,</li>
+  <li>the extension does not silently change primary value semantics,</li>
+  <li>the extension remains inspectable to tools and runtimes.</li>
+</ul>
+
+<p>
+Host-specific extension is allowed only if:
 </p>
 
 <ul>
   <li>it is clearly marked as non-portable,</li>
   <li>it does not redefine published class law,</li>
-  <li>it does not change primary value semantics.</li>
+  <li>it does not cause tools to misread the portable contract,</li>
+  <li>it does not force one runtime implementation to become the language definition.</li>
 </ul>
 
-<h2 id="example-class-outline">16. Example Class Outline</h2>
+<h2 id="conformance">21. Conformance</h2>
+
+<p>
+A runtime is conforming for a widget class only if it preserves the published widget class contract
+for all portable members and portable behaviors it claims to implement.
+</p>
+
+<p>
+Conformance therefore requires, at minimum:
+</p>
+
+<ul>
+  <li>stable interpretation of the class identity,</li>
+  <li>stable interpretation of the primary value surface, if any,</li>
+  <li>stable interpretation of declared properties, methods, events, and parts,</li>
+  <li>stable handling of mutability and persistence posture,</li>
+  <li>no silent invention of new portable class law,</li>
+  <li>clear marking of non-portable host extensions.</li>
+</ul>
+
+<p>
+Partial implementation is allowed.
+However, a runtime claiming partial implementation MUST identify which portable surfaces it implements and which it does not.
+</p>
+
+<h2 id="example-class-outline">22. Example Class Outline</h2>
 
 <pre><code>{
   "class_id": "frog.widgets.numeric_indicator",
   "category": "indicator",
   "primary_value": {
+    "present": true,
     "type": "float64",
-    "access": "read_write"
+    "access": "read_write",
+    "user_mutable": false,
+    "diagram_mutable": true,
+    "runtime_mutable": true,
+    "persistent": false,
+    "mirrored_property": "value"
   },
   "properties": [
-    { "name": "value", "type": "float64", "access": "read_write" },
-    { "name": "format", "type": "string", "access": "read_write" },
-    { "name": "foreground_color", "type": "frog.color.rgba8", "access": "read_write" }
+    {
+      "name": "value",
+      "type": "float64",
+      "access": "read_write",
+      "mutability": "runtime",
+      "persistent": false,
+      "availability": "shared"
+    },
+    {
+      "name": "format",
+      "type": "string",
+      "access": "read_write",
+      "mutability": "design_and_runtime",
+      "persistent": true,
+      "default": "%.3f",
+      "availability": "shared"
+    },
+    {
+      "name": "foreground_color",
+      "type": "frog.color.rgba8",
+      "access": "read_write",
+      "mutability": "design_and_runtime",
+      "persistent": true,
+      "availability": "shared"
+    }
   ],
   "methods": [
-    { "name": "reset_to_default_style", "parameters": [], "returns": { "type": "void" } }
+    {
+      "name": "reset_to_default_style",
+      "parameters": [],
+      "returns": { "type": "void" },
+      "availability": "runtime",
+      "side_effect_posture": "widget_local_state_update",
+      "portability": "portable"
+    }
   ],
   "events": [
-    { "name": "value_rendered", "payload": { "type": "string" } }
+    {
+      "name": "value_rendered",
+      "payload": { "type": "string" },
+      "origin_surface": "part:value_text",
+      "delivery_posture": "runtime_observable",
+      "portability": "portable"
+    }
   ],
   "parts": [
-    { "part_id": "root", "kind": "container" },
-    { "part_id": "value_text", "kind": "text" }
-  ]
+    {
+      "part_id": "root",
+      "kind": "container"
+    },
+    {
+      "part_id": "value_text",
+      "kind": "text",
+      "parent": "root",
+      "local_properties": [
+        {
+          "name": "foreground_color",
+          "type": "frog.color.rgba8",
+          "access": "read_write"
+        }
+      ]
+    }
+  ],
+  "behavior_surfaces": {
+    "declarative": [
+      {
+        "name": "formatted_text_projection",
+        "kind": "value_to_text_mapping"
+      }
+    ],
+    "bounded_pure_expressions": [],
+    "host_private_hooks": [
+      {
+        "name": "native_text_rasterization",
+        "portability": "non_portable"
+      }
+    ]
+  }
 }</code></pre>
