@@ -125,10 +125,6 @@ The button family uses the following common stable parts:
   <li><code>frame</code> — optional outer frame surface</li>
 </ul>
 
-<p>
-These parts are intentionally small in number and stable in purpose.
-</p>
-
 <hr/>
 
 <h2 id="behavior-expectations">5. Behavior Expectations</h2>
