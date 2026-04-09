@@ -529,6 +529,13 @@
                           "children": []
                         },
                         {
+                          "key": "libraries/realizations/default/examples/button-package-and-assets-example.md",
+                          "title": "Button package and assets example",
+                          "path": "/Libraries/Realizations/Default/Examples/Button%20package%20and%20assets%20example.md",
+                          "kind": "page",
+                          "children": []
+                        },
+                        {
                           "key": "libraries/realizations/default/examples/numeric-control-default-realization.wfrog.md",
                           "title": "Numeric control default realization.wfrog",
                           "path": "/Libraries/Realizations/Default/Examples/Numeric%20control%20default%20realization.wfrog.md",
@@ -2502,6 +2509,7 @@
     "/Libraries/Realizations/Default/Assets/Naming.md",
     "/Libraries/Realizations/Default/Assets/Readme.md",
     "/Libraries/Realizations/Default/Examples/Button%20default%20realization.wfrog.md",
+    "/Libraries/Realizations/Default/Examples/Button%20package%20and%20assets%20example.md",
     "/Libraries/Realizations/Default/Examples/Numeric%20control%20default%20realization.wfrog.md",
     "/Libraries/Realizations/Default/Readme.md",
     "/Libraries/Realizations/Readme.md",

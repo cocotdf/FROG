@@ -74,6 +74,7 @@
         - [Naming](/Libraries/Realizations/Default/Assets/Naming.md)
       - Examples
         - [Button default realization.wfrog](/Libraries/Realizations/Default/Examples/Button%20default%20realization.wfrog.md)
+        - [Button package and assets example](/Libraries/Realizations/Default/Examples/Button%20package%20and%20assets%20example.md)
         - [Numeric control default realization.wfrog](/Libraries/Realizations/Default/Examples/Numeric%20control%20default%20realization.wfrog.md)
   - [Widgets](/Libraries/Widgets/Readme.md)
     - [Boolean](/Libraries/Widgets/Boolean.md)
