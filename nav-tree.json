@@ -499,6 +499,21 @@
                       "path": "/Libraries/Realizations/Default/String.md",
                       "kind": "page",
                       "children": []
+                    },
+                    {
+                      "key": "libraries/realizations/default/examples/",
+                      "title": "Examples",
+                      "path": null,
+                      "kind": "category",
+                      "children": [
+                        {
+                          "key": "libraries/realizations/default/examples/button-default-realization.wfrog.md",
+                          "title": "Button default realization.wfrog",
+                          "path": "/Libraries/Realizations/Default/Examples/Button%20default%20realization.wfrog.md",
+                          "kind": "page",
+                          "children": []
+                        }
+                      ]
                     }
                   ]
                 }
@@ -2462,6 +2477,7 @@
     "/Libraries/Realizations/Default/Resource%20model.md",
     "/Libraries/Realizations/Default/State%20mapping.md",
     "/Libraries/Realizations/Default/String.md",
+    "/Libraries/Realizations/Default/Examples/Button%20default%20realization.wfrog.md",
     "/Libraries/Realizations/Default/Readme.md",
     "/Libraries/Realizations/Readme.md",
     "/Libraries/Widgets/Boolean.md",
