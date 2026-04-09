@@ -117,6 +117,11 @@ This document therefore gives <code>frog.ui</code> a narrow but explicit role:
   <li>allow several runtimes to recognize the same UI-interaction intent without turning one runtime implementation into the definition of the language.</li>
 </ul>
 
+<p>
+The goal is not to make <code>frog.ui</code> the owner of the whole widget architecture.
+The goal is to give the widget interaction corridor a standardized executable primitive surface that remains stable across authoring tools, validators, execution-facing representations, and runtimes.
+</p>
+
 <hr/>
 
 <h2 id="design-goals">3. Design Goals</h2>
@@ -127,6 +132,8 @@ This document therefore gives <code>frog.ui</code> a narrow but explicit role:
   <li><strong>Portability</strong> — provide primitive identities and primitive-local contracts that can be recognized across multiple conforming runtimes.</li>
   <li><strong>Recoverability</strong> — preserve the semantic distinction between natural <code>widget_value</code> participation and <code>widget_reference</code>-driven interaction.</li>
   <li><strong>Execution usefulness</strong> — support explicit property reads, property writes, method invocation, and event observation without forcing a complete asynchronous UI framework into the current library surface.</li>
+  <li><strong>Contract alignment</strong> — ensure that intrinsic primitives remain usable only within the member and event surfaces declared legal by widget class contracts.</li>
+  <li><strong>Token separation</strong> — preserve explicit separation between ordinary value flow, widget-reference participation, event payload flow, and UI sequencing flow.</li>
 </ul>
 
 <hr/>
@@ -181,6 +188,10 @@ runtime-private widget handle
 intrinsic frog.ui primitive identity
 </code></pre>
 
+<p>
+This positioning matters because the primitive library must remain intrinsic even when later layers enrich, specialize, or realize it differently.
+</p>
+
 <hr/>
 
 <h2 id="scope">5. Scope</h2>
@@ -227,6 +238,10 @@ This specification does not define:
   <li>one mandatory runtime UI object model,</li>
   <li>one mandatory host realization architecture.</li>
 </ul>
+
+<p>
+The library therefore standardizes executable primitive truth at the primitive level, not the full surrounding architecture of widget declaration, class legality, source composition, or runtime realization.
+</p>
 
 <hr/>
 
@@ -321,6 +336,10 @@ Accordingly:
   <li>namespace prefix similarity does not collapse primitive-library ownership and widget-class ownership into one concept.</li>
 </ul>
 
+<p>
+The <code>frog.ui</code> namespace is therefore about executable interaction vocabulary, not about widget taxonomy.
+</p>
+
 <hr/>
 
 <h2 id="standard-primitives">8. Standard Primitives</h2>
@@ -372,6 +391,11 @@ event payload observation
     !=
 natural widget_value participation
 </code></pre>
+
+<p>
+This primitive set is intentionally small.
+Its role is to close the standard interaction corridor, not to enumerate every possible future UI operation.
+</p>
 
 <hr/>
 
@@ -562,6 +586,11 @@ Primitive-local semantics:
   <li>the primitive remains distinct from both widget declaration identity and widget-reference participation identity.</li>
 </ul>
 
+<p>
+Method invocation remains a primitive-level UI operation.
+It does not redefine class law and does not redefine source-side widget declaration.
+</p>
+
 <hr/>
 
 <h2 id="froguievent_observe">12. <code>frog.ui.event_observe</code></h2>
@@ -696,6 +725,19 @@ widget reference ports
 event payload ports
     !=
 UI sequencing ports
+</code></pre>
+
+<p>
+Likewise:
+</p>
+
+<pre><code>property value
+    !=
+event payload
+    !=
+widget reference token
+    !=
+sequencing token
 </code></pre>
 
 <hr/>
