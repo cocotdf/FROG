@@ -445,6 +445,13 @@
                   "kind": "category",
                   "children": [
                     {
+                      "key": "libraries/realizations/default/boolean.md",
+                      "title": "Boolean",
+                      "path": "/Libraries/Realizations/Default/Boolean.md",
+                      "kind": "page",
+                      "children": []
+                    },
+                    {
                       "key": "libraries/realizations/default/button.md",
                       "title": "Button",
                       "path": "/Libraries/Realizations/Default/Button.md",
@@ -2412,6 +2419,7 @@
     "/Libraries/Signal.md",
     "/Libraries/Text.md",
     "/Libraries/UI.md",
+    "/Libraries/Realizations/Default/Boolean.md",
     "/Libraries/Realizations/Default/Button.md",
     "/Libraries/Realizations/Default/Numeric.md",
     "/Libraries/Realizations/Default/Readme.md",

@@ -62,6 +62,7 @@
   - [UI](/Libraries/UI.md)
   - [Realizations](/Libraries/Realizations/Readme.md)
     - [Default](/Libraries/Realizations/Default/Readme.md)
+      - [Boolean](/Libraries/Realizations/Default/Boolean.md)
       - [Button](/Libraries/Realizations/Default/Button.md)
       - [Numeric](/Libraries/Realizations/Default/Numeric.md)
   - [Widgets](/Libraries/Widgets/Readme.md)
