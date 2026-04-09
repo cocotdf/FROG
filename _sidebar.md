@@ -71,6 +71,7 @@
       - [State mapping](/Libraries/Realizations/Default/State%20mapping.md)
       - [String](/Libraries/Realizations/Default/String.md)
       - [Assets](/Libraries/Realizations/Default/Assets/Readme.md)
+        - [Naming](/Libraries/Realizations/Default/Assets/Naming.md)
       - Examples
         - [Button default realization.wfrog](/Libraries/Realizations/Default/Examples/Button%20default%20realization.wfrog.md)
         - [Numeric control default realization.wfrog](/Libraries/Realizations/Default/Examples/Numeric%20control%20default%20realization.wfrog.md)

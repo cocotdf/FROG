@@ -505,7 +505,15 @@
                       "title": "Assets",
                       "path": "/Libraries/Realizations/Default/Assets/Readme.md",
                       "kind": "category",
-                      "children": []
+                      "children": [
+                        {
+                          "key": "libraries/realizations/default/assets/naming.md",
+                          "title": "Naming",
+                          "path": "/Libraries/Realizations/Default/Assets/Naming.md",
+                          "kind": "page",
+                          "children": []
+                        }
+                      ]
                     },
                     {
                       "key": "libraries/realizations/default/examples/",
@@ -2491,6 +2499,7 @@
     "/Libraries/Realizations/Default/Resource%20model.md",
     "/Libraries/Realizations/Default/State%20mapping.md",
     "/Libraries/Realizations/Default/String.md",
+    "/Libraries/Realizations/Default/Assets/Naming.md",
     "/Libraries/Realizations/Default/Assets/Readme.md",
     "/Libraries/Realizations/Default/Examples/Button%20default%20realization.wfrog.md",
     "/Libraries/Realizations/Default/Examples/Numeric%20control%20default%20realization.wfrog.md",
