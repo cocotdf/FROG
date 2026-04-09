@@ -1,0 +1,226 @@
+{
+  "wfrog_version": "1",
+  "package_kind": "widget_realization_library",
+  "package": {
+    "id": "frog.realizations.default.button",
+    "name": "FROG Default Button Realization",
+    "namespace": "frog.realizations.default",
+    "publisher": "FROG",
+    "summary": "Default official realization package for frog.widgets.button"
+  },
+  "imports": [],
+  "exports": {
+    "realizations": [
+      "frog.realizations.default.button"
+    ],
+    "resources": [
+      "button.face.normal.svg",
+      "button.face.disabled.svg",
+      "button.face.focused.svg",
+      "button.face.pressed.svg",
+      "button.label.normal.svg",
+      "button.label.disabled.svg",
+      "button.frame.normal.svg",
+      "button.frame.focused.svg"
+    ]
+  },
+  "targets": [
+    {
+      "class_id": "frog.widgets.button"
+    }
+  ],
+  "realizations": [
+    {
+      "id": "frog.realizations.default.button",
+      "family": "default",
+      "target_class": "frog.widgets.button",
+      "parts": [
+        "root",
+        "face",
+        "label",
+        "frame"
+      ],
+      "states": [
+        "normal",
+        "disabled",
+        "focused",
+        "pressed"
+      ],
+      "part_bindings": [
+        {
+          "part": "face",
+          "binding_kind": "resource_layer",
+          "binding_target": "face"
+        },
+        {
+          "part": "label",
+          "binding_kind": "resource_layer",
+          "binding_target": "label"
+        },
+        {
+          "part": "frame",
+          "binding_kind": "resource_layer",
+          "binding_target": "frame"
+        }
+      ],
+      "state_maps": [
+        {
+          "target_part": "face",
+          "state": "normal",
+          "resource_refs": [
+            "button.face.normal.svg"
+          ]
+        },
+        {
+          "target_part": "face",
+          "state": "disabled",
+          "resource_refs": [
+            "button.face.disabled.svg"
+          ],
+          "fallback": "normal"
+        },
+        {
+          "target_part": "face",
+          "state": "focused",
+          "resource_refs": [
+            "button.face.focused.svg"
+          ],
+          "fallback": "normal"
+        },
+        {
+          "target_part": "face",
+          "state": "pressed",
+          "resource_refs": [
+            "button.face.pressed.svg"
+          ],
+          "fallback": "normal"
+        },
+        {
+          "target_part": "label",
+          "state": "normal",
+          "resource_refs": [
+            "button.label.normal.svg"
+          ]
+        },
+        {
+          "target_part": "label",
+          "state": "disabled",
+          "resource_refs": [
+            "button.label.disabled.svg"
+          ],
+          "fallback": "normal"
+        },
+        {
+          "target_part": "frame",
+          "state": "normal",
+          "resource_refs": [
+            "button.frame.normal.svg"
+          ]
+        },
+        {
+          "target_part": "frame",
+          "state": "focused",
+          "resource_refs": [
+            "button.frame.focused.svg"
+          ],
+          "fallback": "normal"
+        }
+      ],
+      "fallbacks": {
+        "disabled": "normal",
+        "focused": "normal",
+        "pressed": "normal"
+      },
+      "host_hints": {
+        "supports_host_focus_ring": true,
+        "supports_host_pressed_feedback": true,
+        "preferred_scaling": "uniform",
+        "preferred_min_hit_target": {
+          "width": 24,
+          "height": 24,
+          "unit": "panel_pixels"
+        }
+      }
+    }
+  ],
+  "resources": [
+    {
+      "id": "button.face.normal.svg",
+      "kind": "svg",
+      "path": "./assets/button/face/normal.svg",
+      "target_class": "frog.widgets.button",
+      "target_part": "face",
+      "target_state": "normal"
+    },
+    {
+      "id": "button.face.disabled.svg",
+      "kind": "svg",
+      "path": "./assets/button/face/disabled.svg",
+      "target_class": "frog.widgets.button",
+      "target_part": "face",
+      "target_state": "disabled"
+    },
+    {
+      "id": "button.face.focused.svg",
+      "kind": "svg",
+      "path": "./assets/button/face/focused.svg",
+      "target_class": "frog.widgets.button",
+      "target_part": "face",
+      "target_state": "focused"
+    },
+    {
+      "id": "button.face.pressed.svg",
+      "kind": "svg",
+      "path": "./assets/button/face/pressed.svg",
+      "target_class": "frog.widgets.button",
+      "target_part": "face",
+      "target_state": "pressed"
+    },
+    {
+      "id": "button.label.normal.svg",
+      "kind": "svg",
+      "path": "./assets/button/label/normal.svg",
+      "target_class": "frog.widgets.button",
+      "target_part": "label",
+      "target_state": "normal"
+    },
+    {
+      "id": "button.label.disabled.svg",
+      "kind": "svg",
+      "path": "./assets/button/label/disabled.svg",
+      "target_class": "frog.widgets.button",
+      "target_part": "label",
+      "target_state": "disabled"
+    },
+    {
+      "id": "button.frame.normal.svg",
+      "kind": "svg",
+      "path": "./assets/button/frame/normal.svg",
+      "target_class": "frog.widgets.button",
+      "target_part": "frame",
+      "target_state": "normal"
+    },
+    {
+      "id": "button.frame.focused.svg",
+      "kind": "svg",
+      "path": "./assets/button/frame/focused.svg",
+      "target_class": "frog.widgets.button",
+      "target_part": "frame",
+      "target_state": "focused"
+    },
+    {
+      "id": "button.face.layer_map",
+      "kind": "layer_map",
+      "path": "./assets/button/face/layer_map.json",
+      "target_class": "frog.widgets.button",
+      "target_part": "face"
+    },
+    {
+      "id": "button.face.anchor_map",
+      "kind": "anchor_map",
+      "path": "./assets/button/face/anchor_map.json",
+      "target_class": "frog.widgets.button",
+      "target_part": "face"
+    }
+  ]
+}
