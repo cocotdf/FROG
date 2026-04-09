@@ -1,0 +1,20 @@
+{
+  "map_kind": "anchor_map",
+  "target_class": "frog.widgets.button",
+  "target_part": "face",
+  "anchors": [
+    {
+      "anchor_id": "content_bounds",
+      "role": "content_region"
+    },
+    {
+      "anchor_id": "label_center",
+      "role": "label_alignment_center"
+    },
+    {
+      "anchor_id": "focus_outline_bounds",
+      "role": "focus_indicator_bounds",
+      "optional": true
+    }
+  ]
+}
