@@ -21,7 +21,7 @@
   <li><a href="#ownership-boundary">5. Ownership Boundary</a></li>
   <li><a href="#what-a-standard-widget-class-is">6. What a Standard Widget Class Is</a></li>
   <li><a href="#baseline-widget-families">7. Baseline Widget Families</a></li>
-  <li><a href="#class-definition-shape">8. Class Definition Shape</a></li>
+  <li><a href="#shared-baseline-conventions">8. Shared Baseline Conventions</a></li>
   <li><a href="#primitive-vs-composite-posture">9. Primitive vs Composite Posture</a></li>
   <li><a href="#relation-with-frog-source">10. Relation with <code>.frog</code> Source</a></li>
   <li><a href="#relation-with-wfrog-publication">11. Relation with <code>.wfrog</code> Publication</a></li>
@@ -51,7 +51,7 @@ It defines the first standard widget families that are sufficient to support a c
 </p>
 
 <p>
-The standard widget baseline does not replace the general widget architecture already defined elsewhere.
+The standard widget baseline does not replace the general widget architecture defined elsewhere.
 Instead, it instantiates that architecture through a first published set of reusable classes.
 </p>
 
@@ -157,10 +157,6 @@ This separation is intentional:
 frog.ui.*       -&gt; executable interaction primitives
 </code></pre>
 
-<p>
-The class and the primitive are related, but they are not the same thing and must not collapse into one layer.
-</p>
-
 <hr/>
 
 <h2 id="ownership-boundary">5. Ownership Boundary</h2>
@@ -232,7 +228,7 @@ The initial intrinsic standardized baseline is organized into the following fami
   <li><code>Boolean.md</code> — boolean control and boolean indicator</li>
   <li><code>String.md</code> — string control and string indicator</li>
   <li><code>Button.md</code> — push button</li>
-  <li><code>Chart.md</code> — minimal waveform chart or graph baseline</li>
+  <li><code>Chart.md</code> — minimal waveform chart baseline</li>
 </ul>
 
 <p>
@@ -246,39 +242,37 @@ These families intentionally form a small but credible front-panel core:
   <li>a first structured visual history widget.</li>
 </ul>
 
-<p>
-This baseline is sufficient for a first serious portable UI slice while remaining small enough to keep the standard clear and implementable.
-</p>
-
 <hr/>
 
-<h2 id="class-definition-shape">8. Class Definition Shape</h2>
+<h2 id="shared-baseline-conventions">8. Shared Baseline Conventions</h2>
 
 <p>
-Each family document in this directory SHOULD define its classes using a consistent structure.
+The baseline families in this directory follow a shared normalization posture.
 </p>
 
 <p>
-That structure SHOULD cover:
+At minimum:
 </p>
 
 <ul>
-  <li>class identity,</li>
-  <li>class category and compatible roles,</li>
-  <li>type compatibility rules,</li>
-  <li>primary value posture,</li>
-  <li>properties,</li>
-  <li>methods,</li>
-  <li>events,</li>
-  <li>parts,</li>
-  <li>minimal intrinsic behavior expectations,</li>
-  <li>minimal realization expectations,</li>
-  <li>diagram-interaction posture,</li>
-  <li>validation expectations.</li>
+  <li>standard class identifiers use the <code>frog.widgets.*</code> namespace,</li>
+  <li>value-carrying classes expose a primary value mirrored as property <code>value</code>,</li>
+  <li>label-bearing classes use property <code>label.text</code>,</li>
+  <li>visibility uses property <code>interaction.visible</code>,</li>
+  <li>interactive classes use property <code>interaction.enabled</code>,</li>
+  <li>the root part is named <code>root</code>,</li>
+  <li>the outer framing part, when present, is named <code>frame</code>,</li>
+  <li>controls typically emit <code>value_changed</code> for primary value mutation,</li>
+  <li>indicators typically emit <code>value_rendered</code> for visible refresh-oriented notification.</li>
 </ul>
 
 <p>
-This structure is intended to make standard widget classes inspectable and consistent without repeating the whole generic widget architecture in every file.
+This normalization keeps the baseline coherent while leaving room for richer families and richer realization-specific surfaces later.
+</p>
+
+<p>
+The baseline deliberately avoids pushing realization-heavy style surfaces into every class.
+Detailed skin, theme, or host-specific appearance posture belongs in realization publication rather than in the smallest intrinsic standard surface.
 </p>
 
 <hr/>
@@ -302,16 +296,6 @@ They are intended to serve as:
 <p>
 Composite widgets are expected to be published through the widget package corridor and to remain compatible with the standard primitive classes defined here.
 </p>
-
-<p>
-This means:
-</p>
-
-<ul>
-  <li>primitive baseline classes are small and durable,</li>
-  <li>composite growth happens on top of them,</li>
-  <li>the primitive baseline should not try to absorb all future composite richness from the start.</li>
-</ul>
 
 <hr/>
 
@@ -357,19 +341,6 @@ That means:
   <li>realization resources, skins, and realization mappings may be published through <code>.wfrog</code> artifacts associated with these classes.</li>
 </ul>
 
-<p>
-The important distinction is:
-</p>
-
-<pre><code>Libraries/Widgets/
-    defines the intrinsic standard classes
-
-.wfrog
-    publishes widget-oriented machine-readable artifacts
-    that may carry class publication, realization resources,
-    bounded behavior publication, or composite publication
-</code></pre>
-
 <hr/>
 
 <h2 id="relation-with-frogui-primitives">12. Relation with <code>frog.ui.*</code> Primitives</h2>
@@ -387,10 +358,6 @@ This means:
   <li><code>Libraries/Widgets/</code> defines which standard widget classes exist,</li>
   <li><code>Libraries/UI.md</code> defines how executable diagrams may read properties, write properties, invoke methods, and observe events on those classes when allowed.</li>
 </ul>
-
-<p>
-So the split is:
-</p>
 
 <pre><code>class law
     -&gt; what exists
