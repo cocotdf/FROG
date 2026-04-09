@@ -67,6 +67,7 @@
       - [Chart](/Libraries/Realizations/Default/Chart.md)
       - [Numeric](/Libraries/Realizations/Default/Numeric.md)
       - [Package](/Libraries/Realizations/Default/Package.md)
+      - [Resource model](/Libraries/Realizations/Default/Resource%20model.md)
       - [String](/Libraries/Realizations/Default/String.md)
   - [Widgets](/Libraries/Widgets/Readme.md)
     - [Boolean](/Libraries/Widgets/Boolean.md)
