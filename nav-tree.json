@@ -129,13 +129,6 @@
               "children": []
             },
             {
-              "key": "expression/widget-package.md",
-              "title": "Widget package",
-              "path": "/Expression/Widget%20package.md",
-              "kind": "page",
-              "children": []
-            },
-            {
               "key": "expression/widget-package--.wfrog-.md",
               "title": "Widget package (.wfrog)",
               "path": "/Expression/Widget%20package%20%28.wfrog%29.md",
@@ -2304,7 +2297,6 @@
     "/Expression/Widget.md",
     "/Expression/Widget%20behavior.md",
     "/Expression/Widget%20class%20contract.md",
-    "/Expression/Widget%20package.md",
     "/Expression/Widget%20package%20%28.wfrog%29.md",
     "/Expression/Widget%20realization.md",
     "/Expression/Readme.md",

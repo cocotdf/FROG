@@ -18,7 +18,6 @@
   - [Widget](/Expression/Widget.md)
   - [Widget behavior](/Expression/Widget%20behavior.md)
   - [Widget class contract](/Expression/Widget%20class%20contract.md)
-  - [Widget package](/Expression/Widget%20package.md)
   - [Widget package (.wfrog)](/Expression/Widget%20package%20%28.wfrog%29.md)
   - [Widget realization](/Expression/Widget%20realization.md)
 - [Examples](/Examples/Readme.md)
