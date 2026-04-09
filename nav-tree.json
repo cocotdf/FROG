@@ -439,6 +439,13 @@
               "kind": "category",
               "children": [
                 {
+                  "key": "libraries/widgets/boolean.md",
+                  "title": "Boolean",
+                  "path": "/Libraries/Widgets/Boolean.md",
+                  "kind": "page",
+                  "children": []
+                },
+                {
                   "key": "libraries/widgets/numeric.md",
                   "title": "Numeric",
                   "path": "/Libraries/Widgets/Numeric.md",
@@ -2354,6 +2361,7 @@
     "/Libraries/Signal.md",
     "/Libraries/Text.md",
     "/Libraries/UI.md",
+    "/Libraries/Widgets/Boolean.md",
     "/Libraries/Widgets/Numeric.md",
     "/Libraries/Widgets/Readme.md",
     "/Libraries/Readme.md",

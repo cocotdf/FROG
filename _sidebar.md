@@ -61,6 +61,7 @@
   - [Text](/Libraries/Text.md)
   - [UI](/Libraries/UI.md)
   - [Widgets](/Libraries/Widgets/Readme.md)
+    - [Boolean](/Libraries/Widgets/Boolean.md)
     - [Numeric](/Libraries/Widgets/Numeric.md)
 - [Profiles](/Profiles/Readme.md)
   - [Interop](/Profiles/Interop.md)
