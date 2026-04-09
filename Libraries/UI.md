@@ -85,6 +85,11 @@ general diagram graph structure, open execution-facing representations, lowering
 backend contracts, or runtime-private widget-handle architectures.
 </p>
 
+<p>
+Its role is therefore precise:
+publish the executable primitive surface of the widget interaction corridor without absorbing the rest of the widget architecture.
+</p>
+
 <hr/>
 
 <h2 id="why-this-document-exists">2. Why This Document Exists</h2>
@@ -122,6 +127,10 @@ The goal is not to make <code>frog.ui</code> the owner of the whole widget archi
 The goal is to give the widget interaction corridor a standardized executable primitive surface that remains stable across authoring tools, validators, execution-facing representations, and runtimes.
 </p>
 
+<p>
+This is the layer that prevents executable widget interaction from dissolving into runtime-specific helper APIs.
+</p>
+
 <hr/>
 
 <h2 id="design-goals">3. Design Goals</h2>
@@ -135,6 +144,11 @@ The goal is to give the widget interaction corridor a standardized executable pr
   <li><strong>Contract alignment</strong> — ensure that intrinsic primitives remain usable only within the member and event surfaces declared legal by widget class contracts.</li>
   <li><strong>Token separation</strong> — preserve explicit separation between ordinary value flow, widget-reference participation, event payload flow, and UI sequencing flow.</li>
 </ul>
+
+<p>
+The library is intentionally minimal but not vague.
+It aims for a narrow core that is strong enough to remain the stable executable interaction vocabulary of the widget system.
+</p>
 
 <hr/>
 
@@ -243,6 +257,11 @@ This specification does not define:
 The library therefore standardizes executable primitive truth at the primitive level, not the full surrounding architecture of widget declaration, class legality, source composition, or runtime realization.
 </p>
 
+<p>
+It also does not define the standardized primitive widget baseline itself.
+This document standardizes how execution targets widgets as objects, not which reusable widget classes exist in the baseline catalog.
+</p>
+
 <hr/>
 
 <h2 id="relation-with-other-specifications">6. Relation with Other Specifications</h2>
@@ -306,6 +325,11 @@ Libraries/UI.md
 intrinsic executable UI-interaction primitive contracts
 </code></pre>
 
+<p>
+For that reason, a complete interpretation of one UI interaction always depends on more than one document:
+source representation, class legality, primitive-local contract, and validated semantic meaning all remain distinct layers.
+</p>
+
 <hr/>
 
 <h2 id="namespace">7. Namespace</h2>
@@ -338,6 +362,12 @@ Accordingly:
 
 <p>
 The <code>frog.ui</code> namespace is therefore about executable interaction vocabulary, not about widget taxonomy.
+</p>
+
+<p>
+This distinction is critical for portability:
+the class defines what exists,
+the primitive defines how the executable graph accesses it.
 </p>
 
 <hr/>
@@ -395,6 +425,10 @@ natural widget_value participation
 <p>
 This primitive set is intentionally small.
 Its role is to close the standard interaction corridor, not to enumerate every possible future UI operation.
+</p>
+
+<p>
+Future UI primitives MAY be added only if they remain intrinsic, portable, and consistent with the separation between natural value flow, object-style interaction, event observation, and runtime-private realization.
 </p>
 
 <hr/>
@@ -457,6 +491,10 @@ Primitive-local semantics:
   <li>if <code>ui_out</code> is connected, it MUST become available only after the read has completed,</li>
   <li>the primitive remains an object-style UI-interaction primitive even when the addressed member is named <code>value</code>.</li>
 </ul>
+
+<p>
+A property read therefore remains property access even when the target surface is closely related to the widget’s natural primary value.
+</p>
 
 <hr/>
 
@@ -526,6 +564,10 @@ A presentation-property write such as <code>{ "member": "foreground_color" }</co
 It MUST NOT by itself redefine the executable meaning of the program.
 </p>
 
+<p>
+This primitive therefore targets legal object surfaces, not arbitrary realization internals.
+</p>
+
 <hr/>
 
 <h2 id="froguimethod_invoke">11. <code>frog.ui.method_invoke</code></h2>
@@ -591,6 +633,10 @@ Method invocation remains a primitive-level UI operation.
 It does not redefine class law and does not redefine source-side widget declaration.
 </p>
 
+<p>
+It is the intrinsic executable bridge to a published action surface, not a generic escape hatch into runtime-private behavior.
+</p>
+
 <hr/>
 
 <h2 id="froguievent_observe">12. <code>frog.ui.event_observe</code></h2>
@@ -653,6 +699,10 @@ Primitive-local semantics:
   <li>if <code>ui_out</code> is connected, it MUST become available only after the observation step has completed according to the active implementation behavior,</li>
   <li>the primitive remains an event-oriented UI-interaction primitive and does not redefine the event as a property or as the widget primary value.</li>
 </ul>
+
+<p>
+This primitive therefore preserves event identity as a first-class observable surface of the widget object model.
+</p>
 
 <hr/>
 
@@ -740,6 +790,10 @@ widget reference token
 sequencing token
 </code></pre>
 
+<p>
+This token separation is one of the main safeguards against collapsing the widget corridor back into ad hoc runtime conventions.
+</p>
+
 <hr/>
 
 <h2 id="validation-rules">14. Validation Rules</h2>
@@ -782,6 +836,11 @@ Invalid UI-interaction primitives MUST trigger validation errors.
 Source-level graph-shape constraints remain owned by <code>Expression/Widget interaction.md</code> and <code>Expression/Diagram.md</code>.
 Cross-cutting semantic acceptance remains owned by <code>Language/</code>.
 Execution-facing derivation, mapping, lowering, and backend-facing handoff remain owned by <code>IR/</code>.
+</p>
+
+<p>
+Primitive validation therefore checks intrinsic executable correctness at the primitive-contract level,
+while class legality, source structure, and downstream execution-facing mapping remain owned by their respective layers.
 </p>
 
 <hr/>
@@ -832,6 +891,10 @@ private runtime
 <p>
 The primitive stays the same intrinsic primitive across that corridor.
 Only the later representation and realization change.
+</p>
+
+<p>
+This makes <code>frog.ui.*</code> suitable for multi-runtime preservation without forcing one execution model or one host bridge as mandatory.
 </p>
 
 <hr/>
@@ -942,6 +1005,13 @@ It is not the same thing as natural <code>widget_value</code> participation.
 Likewise, observing <code>value_rendered</code> remains event-oriented interaction and is not the same thing as either property access or natural value participation.
 </p>
 
+<p>
+The example also illustrates the intended split clearly:
+the widget reference identifies the target object,
+the primitive identifies the interaction family,
+and the local descriptor identifies the addressed member or event.
+</p>
+
 <hr/>
 
 <h2 id="out-of-scope">17. Out of Scope</h2>
@@ -960,6 +1030,11 @@ Likewise, observing <code>value_rendered</code> remains event-oriented interacti
   <li>one mandatory backend-family UI contract model,</li>
   <li>one mandatory runtime-private widget-handle architecture.</li>
 </ul>
+
+<p>
+This document is intentionally narrower than the whole widget ecosystem.
+It standardizes only the intrinsic executable interaction vocabulary.
+</p>
 
 <hr/>
 
@@ -997,3 +1072,7 @@ In short:
   <li><strong><code>widget_reference</code></strong> is the object-style and event-oriented reference path,</li>
   <li><strong><code>frog.ui.*</code></strong> is the intrinsic executable interaction vocabulary that consumes those references.</li>
 </ul>
+
+<p>
+This library therefore closes the executable side of the widget interaction corridor while leaving widget instance ownership, class law, behavior doctrine, realization doctrine, and package publication in their proper architectural layers.
+</p>
