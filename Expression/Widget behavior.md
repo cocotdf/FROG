@@ -5,7 +5,7 @@
 <h1 align="center">FROG Widget Behavior</h1>
 
 <p align="center">
-  <strong>Behavior model for widget classes, declarative rules, controlled expressions, and optional realization hooks</strong><br/>
+  <strong>Normative behavior boundary for widget classes, bounded package-published reaction rules, and host-private realization support</strong><br/>
   <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -14,18 +14,23 @@
 <h2>Contents</h2>
 <ul>
   <li><a href="#overview">1. Overview</a></li>
-  <li><a href="#why-widget-behavior-needs-its-own-boundary">2. Why Widget Behavior Needs Its Own Boundary</a></li>
-  <li><a href="#behavior-design-goal">3. Behavior Design Goal</a></li>
-  <li><a href="#baseline-position">4. Baseline Position</a></li>
-  <li><a href="#behavior-levels">5. Behavior Levels</a></li>
-  <li><a href="#level-1-declarative">6. Level 1: Declarative</a></li>
-  <li><a href="#level-2-controlled-expressions">7. Level 2: Controlled Expressions</a></li>
-  <li><a href="#level-3-optional-hooks">8. Level 3: Optional Hooks</a></li>
-  <li><a href="#what-is-not-allowed">9. What Is Not Allowed</a></li>
-  <li><a href="#runtime-responsibility">10. Runtime Responsibility</a></li>
-  <li><a href="#conformance-boundary">11. Conformance Boundary</a></li>
-  <li><a href="#example">12. Example</a></li>
-  <li><a href="#summary">13. Summary</a></li>
+  <li><a href="#why-this-document-exists">2. Why This Document Exists</a></li>
+  <li><a href="#scope">3. Scope</a></li>
+  <li><a href="#what-widget-behavior-means-in-frog">4. What Widget Behavior Means in FROG</a></li>
+  <li><a href="#ownership-boundary">5. Ownership Boundary</a></li>
+  <li><a href="#behavior-levels">6. Behavior Levels</a></li>
+  <li><a href="#intrinsic-class-behavior">7. Intrinsic Class Behavior</a></li>
+  <li><a href="#declarative-behavior-rules">8. Declarative Behavior Rules</a></li>
+  <li><a href="#bounded-expressions">9. Bounded Expressions</a></li>
+  <li><a href="#host-private-implementation-support">10. Host-Private Implementation Support</a></li>
+  <li><a href="#event-emission-and-state-updates">11. Event Emission and State Updates</a></li>
+  <li><a href="#mutability-and-safety">12. Mutability and Safety</a></li>
+  <li><a href="#interaction-with-properties-methods-events-and-parts">13. Interaction with Properties, Methods, Events, and Parts</a></li>
+  <li><a href="#what-must-not-happen">14. What Must Not Happen</a></li>
+  <li><a href="#publication-through-wfrog">15. Publication Through <code>.wfrog</code></a></li>
+  <li><a href="#portability-across-runtimes">16. Portability Across Runtimes</a></li>
+  <li><a href="#status">17. Status</a></li>
+  <li><a href="#license">18. License</a></li>
 </ul>
 
 <hr/>
@@ -33,150 +38,83 @@
 <h2 id="overview">1. Overview</h2>
 
 <p>
-This document defines the behavior model of FROG widgets.
+This document defines the normative boundary for widget behavior in FROG.
 </p>
 
 <p>
-The goal is to allow widgets to be modular and expressive without turning widget behavior into opaque runtime-private code or hidden logic trapped inside visual assets.
-</p>
-
-<h2 id="why-widget-behavior-needs-its-own-boundary">2. Why Widget Behavior Needs Its Own Boundary</h2>
-
-<p>
-A widget class is more than a list of properties. Real widget systems often need:
+Widget behavior concerns how a widget reacts over time to:
 </p>
 
 <ul>
-  <li>defaulting rules,</li>
-  <li>constraint rules,</li>
-  <li>derived presentation rules,</li>
-  <li>state transitions,</li>
-  <li>standard event emission rules,</li>
-  <li>bounded reactions to host-side changes.</li>
+  <li>value updates,</li>
+  <li>property changes,</li>
+  <li>method invocation,</li>
+  <li>part-local interaction,</li>
+  <li>event emission conditions,</li>
+  <li>bounded internal state transitions.</li>
 </ul>
 
 <p>
-If those rules are not explicitly bounded, they tend to drift into:
+This document does not define the entire <code>.wfrog</code> package structure. That serialization format is owned by <code>Widget package (.wfrog).md</code>.
+</p>
+
+<p>
+Instead, this document defines what categories of behavior are allowed, how they are separated architecturally, and which behavior surfaces remain portable and reviewable.
+</p>
+
+<hr/>
+
+<h2 id="why-this-document-exists">2. Why This Document Exists</h2>
+
+<p>
+Without an explicit behavior boundary, widget systems tend to collapse into one of two failures:
 </p>
 
 <ul>
-  <li>host-private code,</li>
-  <li>runtime-private code,</li>
-  <li>SVG-embedded logic,</li>
-  <li>or undocumented assumptions.</li>
+  <li>all behavior becomes runtime-private and therefore non-portable,</li>
+  <li>all behavior becomes unrestricted package-defined arbitrary code and therefore non-auditable.</li>
 </ul>
 
-<h2 id="behavior-design-goal">3. Behavior Design Goal</h2>
+<p>
+FROG rejects both extremes.
+</p>
 
 <p>
-The design goal is to support:
+A FROG widget may have rich interaction and rich internal reaction, but the public behavior law of that widget must remain explicit and inspectable.
+</p>
+
+<hr/>
+
+<h2 id="scope">3. Scope</h2>
+
+<p>
+This document defines:
 </p>
 
 <ul>
-  <li>portable widget behavior where practical,</li>
-  <li>inspectable behavior definitions,</li>
-  <li>multi-runtime interpretability,</li>
-  <li>bounded extensibility,</li>
-  <li>clear portability degradation when optional behavior is unsupported.</li>
+  <li>the allowed categories of widget behavior in FROG,</li>
+  <li>the separation between intrinsic behavior, declarative behavior, bounded expressions, and host-private support,</li>
+  <li>the relationship between behavior and public object surfaces such as properties, methods, events, and parts,</li>
+  <li>the portability boundary across runtime families.</li>
 </ul>
 
-<h2 id="baseline-position">4. Baseline Position</h2>
-
 <p>
-FROG adopts the following baseline position:
+This document does not define:
 </p>
 
 <ul>
-  <li>widget behavior is not purely host-private,</li>
-  <li>widget behavior is not unrestricted executable code,</li>
-  <li>widget behavior is not hidden inside SVG,</li>
-  <li>widget behavior may include declarative rules,</li>
-  <li>widget behavior may include controlled expressions,</li>
-  <li>widget behavior may include optional hooks, but only under explicit portability boundaries.</li>
+  <li>the full widget package JSON structure,</li>
+  <li>the full widget class contract structure,</li>
+  <li>the full host realization resource model,</li>
+  <li>the implementation internals of a given runtime toolkit.</li>
 </ul>
 
-<h2 id="behavior-levels">5. Behavior Levels</h2>
+<hr/>
+
+<h2 id="what-widget-behavior-means-in-frog">4. What Widget Behavior Means in FROG</h2>
 
 <p>
-The baseline FROG widget behavior model has three levels:
-</p>
-
-<ul>
-  <li><strong>Level 1</strong> — declarative rules,</li>
-  <li><strong>Level 2</strong> — controlled expressions,</li>
-  <li><strong>Level 3</strong> — optional hooks.</li>
-</ul>
-
-<h2 id="level-1-declarative">6. Level 1: Declarative</h2>
-
-<p>
-Declarative behavior is the baseline portable behavior layer.
-</p>
-
-<p>
-Typical declarative behavior includes:
-</p>
-
-<ul>
-  <li>default values,</li>
-  <li>required properties,</li>
-  <li>value range constraints,</li>
-  <li>visibility flags,</li>
-  <li>member mutability declarations,</li>
-  <li>event declaration tables,</li>
-  <li>simple state mappings.</li>
-</ul>
-
-<p>
-Declarative behavior MUST be directly inspectable from the package contents and MUST NOT require arbitrary code execution.
-</p>
-
-<h2 id="level-2-controlled-expressions">7. Level 2: Controlled Expressions</h2>
-
-<p>
-Controlled expressions are allowed for bounded behavior that is too expressive for simple declarative fields but does not justify arbitrary plugin code.
-</p>
-
-<p>
-A controlled expression SHOULD be:
-</p>
-
-<ul>
-  <li>side-effect bounded,</li>
-  <li>deterministic,</li>
-  <li>evaluable by multiple runtimes,</li>
-  <li>limited to an allowed expression subset.</li>
-</ul>
-
-<p>
-Typical uses include:
-</p>
-
-<ul>
-  <li>derived visual states,</li>
-  <li>clamped values,</li>
-  <li>simple enable/disable logic,</li>
-  <li>simple event trigger conditions.</li>
-</ul>
-
-<p>
-Example:
-</p>
-
-<pre><code>{
-  "kind": "constraint",
-  "target": "value",
-  "expression": "clamp(value, min, max)"
-}</code></pre>
-
-<p>
-A runtime that claims support for controlled expressions MUST document which expression subset it supports for the relevant conformance profile.
-</p>
-
-<h2 id="level-3-optional-hooks">8. Level 3: Optional Hooks</h2>
-
-<p>
-Optional hooks are allowed for realization-side or host-side enrichment that cannot reasonably be standardized at the portable expression level.
+In FROG, widget behavior means the normative reaction rules associated with a widget class or composite widget class.
 </p>
 
 <p>
@@ -184,121 +122,394 @@ Examples include:
 </p>
 
 <ul>
-  <li>specialized host animations,</li>
-  <li>native accessibility integration helpers,</li>
-  <li>high-performance editing surfaces,</li>
-  <li>host-native composition optimizations.</li>
+  <li>coercing a numeric value into a valid range,</li>
+  <li>preventing interaction when <code>interaction.enabled</code> is false,</li>
+  <li>emitting <code>value_changed</code> after a committed value update,</li>
+  <li>routing a button click to an increment action,</li>
+  <li>mapping a changed object property onto part-facing appearance state.</li>
 </ul>
 
 <p>
-Hooks MUST be explicitly marked as optional and non-portable unless standardized by a future profile or package family.
-</p>
-
-<p>
-Hooks MUST NOT:
+Behavior therefore sits between:
 </p>
 
 <ul>
-  <li>silently redefine class law,</li>
-  <li>replace the declared normative member surface,</li>
-  <li>be required to understand basic object legality,</li>
-  <li>be treated as the only source of widget behavior truth.</li>
+  <li>public object law,</li>
+  <li>runtime realization,</li>
+  <li>diagram-facing interaction.</li>
 </ul>
 
-<h2 id="what-is-not-allowed">9. What Is Not Allowed</h2>
+<hr/>
+
+<h2 id="ownership-boundary">5. Ownership Boundary</h2>
 
 <p>
-The following behavior patterns are not valid as baseline FROG widget behavior:
+The following distinctions are normative:
+</p>
+
+<pre><code>widget class contract   -&gt; what public object surfaces exist
+widget behavior         -&gt; how those surfaces react and evolve
+widget realization      -&gt; how those surfaces are rendered or hosted
+runtime-private code    -&gt; how one runtime implements support details
+</code></pre>
+
+<p>
+This means:
 </p>
 
 <ul>
-  <li>arbitrary hidden code execution embedded in visual assets,</li>
-  <li>undocumented host-private behavior that changes public widget meaning,</li>
-  <li>undeclared properties, methods, or events that only exist in one runtime,</li>
-  <li>behavior rules that cannot be inspected without reading one implementation's source code.</li>
+  <li>behavior does not create undocumented public properties,</li>
+  <li>behavior does not override published class law,</li>
+  <li>behavior does not turn SVG into semantic truth,</li>
+  <li>runtime-private implementation support does not become the normative source of widget behavior law.</li>
 </ul>
 
-<h2 id="runtime-responsibility">10. Runtime Responsibility</h2>
+<hr/>
+
+<h2 id="behavior-levels">6. Behavior Levels</h2>
 
 <p>
-A runtime that interprets widget behavior is responsible for:
+FROG widget behavior is divided into four levels.
+</p>
+
+<h3>6.1 Intrinsic class behavior</h3>
+
+<p>
+This is the built-in reaction law that belongs to the widget class definition itself.
+</p>
+
+<h3>6.2 Declarative behavior rules</h3>
+
+<p>
+These are explicit published rules that describe reaction without unrestricted arbitrary code.
+</p>
+
+<h3>6.3 Bounded expressions</h3>
+
+<p>
+These are constrained expression-driven reactions used where declarative mapping alone is insufficient.
+</p>
+
+<h3>6.4 Host-private implementation support</h3>
+
+<p>
+These are runtime-specific internal details required to realize the published behavior on a host toolkit.
+</p>
+
+<p>
+Portable widget behavior must remain concentrated in the first three levels. The fourth level exists only to support realization.
+</p>
+
+<hr/>
+
+<h2 id="intrinsic-class-behavior">7. Intrinsic Class Behavior</h2>
+
+<p>
+Intrinsic class behavior is the behavior that a widget class always has by virtue of its published class law.
+</p>
+
+<p>
+Examples:
 </p>
 
 <ul>
-  <li>loading behavior definitions,</li>
-  <li>evaluating portable declarative and expression rules where supported,</li>
-  <li>keeping object state consistent with declared constraints,</li>
-  <li>degrading safely when unsupported optional hooks are encountered.</li>
+  <li>a numeric control may clamp or reject values outside its allowed range according to its value model,</li>
+  <li>a button may emit <code>pressed</code> and <code>released</code> when host interaction occurs,</li>
+  <li>a disabled widget may reject user-originated edit operations,</li>
+  <li>a chart may append samples using a published update method contract.</li>
 </ul>
 
 <p>
-A runtime is not allowed to treat its own private convenience code as the authoritative meaning of the widget.
+Intrinsic behavior belongs to the widget definition. It MUST be inspectable from package-published widget content. It MUST NOT exist only as undocumented runtime convention.
 </p>
 
-<h2 id="conformance-boundary">11. Conformance Boundary</h2>
+<hr/>
+
+<h2 id="declarative-behavior-rules">8. Declarative Behavior Rules</h2>
 
 <p>
-Conformance for widget behavior is layered.
+Declarative behavior rules are package-published reaction rules that remain explicit and reviewable.
+</p>
+
+<p>
+Examples:
 </p>
 
 <ul>
-  <li>Level 1 declarative behavior SHOULD be the broadest portability baseline.</li>
-  <li>Level 2 controlled expressions MAY be supported by conforming runtimes that claim that capability.</li>
-  <li>Level 3 optional hooks remain narrower and SHOULD degrade explicitly.</li>
+  <li>when <code>interaction.enabled</code> is false, suppress user-originated part actions,</li>
+  <li>when <code>value</code> changes, refresh <code>value_display</code>,</li>
+  <li>when <code>label.text</code> changes, refresh the <code>label</code> part,</li>
+  <li>when a button part is activated, invoke a published class method.</li>
 </ul>
 
 <p>
-This layered model allows extensibility without pretending that every enrichment is universally portable.
-</p>
-
-<h2 id="example">12. Example</h2>
-
-<pre><code>{
-  "behavior": {
-    "mode": "declarative_plus_expressions",
-    "rules": [
-      {
-        "kind": "constraint",
-        "target": "value",
-        "expression": "clamp(value, min, max)"
-      },
-      {
-        "kind": "derived_property",
-        "target": "alarm_visible",
-        "expression": "value > alarm_threshold"
-      },
-      {
-        "kind": "event_rule",
-        "event": "value_changed",
-        "when": "value != previous(value)"
-      }
-    ],
-    "optional_hooks": [
-      {
-        "id": "qt6.numeric_editor.animation",
-        "kind": "host_plugin",
-        "required": false
-      }
-    ]
-  }
-}</code></pre>
-
-<h2 id="summary">13. Summary</h2>
-
-<p>
-FROG widget behavior is neither frozen to a tiny fixed declarative subset nor opened to uncontrolled arbitrary code.
-</p>
-
-<p>
-Instead, it is layered:
+Declarative behavior rules SHOULD prefer:
 </p>
 
 <ul>
-  <li>declarative where possible,</li>
-  <li>expression-based where useful,</li>
-  <li>hook-based only where explicitly bounded.</li>
+  <li>stable source identifiers,</li>
+  <li>stable property and part references,</li>
+  <li>explicit event triggers,</li>
+  <li>bounded state consequences.</li>
 </ul>
 
 <p>
-This is the behavior model required for rich widgets that remain inspectable, portable, and multi-runtime credible.
+A declarative rule MUST remain understandable without reading one runtime implementation.
+</p>
+
+<hr/>
+
+<h2 id="bounded-expressions">9. Bounded Expressions</h2>
+
+<p>
+Some behaviors require more than simple declarative mappings.
+</p>
+
+<p>
+FROG therefore allows bounded expressions in widget behavior where necessary, but only under strict limits.
+</p>
+
+<p>
+Bounded expressions MAY be used for:
+</p>
+
+<ul>
+  <li>value normalization,</li>
+  <li>derived appearance state,</li>
+  <li>simple computed enablement or visibility,</li>
+  <li>simple event payload shaping,</li>
+  <li>composition-local routing logic.</li>
+</ul>
+
+<p>
+Bounded expressions MUST remain:
+</p>
+
+<ul>
+  <li>inspectable,</li>
+  <li>portable,</li>
+  <li>deterministic,</li>
+  <li>side-effect-bounded,</li>
+  <li>non-host-specific in their public meaning.</li>
+</ul>
+
+<p>
+Bounded expressions MUST NOT become a hidden general-purpose scripting loophole that redefines widget class law.
+</p>
+
+<hr/>
+
+<h2 id="host-private-implementation-support">10. Host-Private Implementation Support</h2>
+
+<p>
+A runtime may require private implementation support in order to realize a published widget behavior.
+</p>
+
+<p>
+Examples:
+</p>
+
+<ul>
+  <li>connecting host toolkit focus events to published <code>focus_gained</code> and <code>focus_lost</code>,</li>
+  <li>mapping platform-native input handling to published button events,</li>
+  <li>performing redraw scheduling,</li>
+  <li>managing accessibility bridge objects,</li>
+  <li>managing toolkit-private caches or retained rendering resources.</li>
+</ul>
+
+<p>
+These details are allowed and expected.
+</p>
+
+<p>
+However, host-private support MUST NOT:
+</p>
+
+<ul>
+  <li>invent undocumented portable public members,</li>
+  <li>silently change the legality of published members,</li>
+  <li>silently redefine event meaning,</li>
+  <li>silently redefine bounded behavior law.</li>
+</ul>
+
+<hr/>
+
+<h2 id="event-emission-and-state-updates">11. Event Emission and State Updates</h2>
+
+<p>
+Behavior may cause event emission and state updates, but only in ways consistent with published widget law.
+</p>
+
+<p>
+In particular:
+</p>
+
+<ul>
+  <li>an event MUST correspond to a published event identifier,</li>
+  <li>an emitted payload MUST remain compatible with the published event payload shape,</li>
+  <li>a state update MUST target a published writable surface or an explicitly internal surface,</li>
+  <li>behavior MUST NOT mutate read-only public properties through hidden side channels.</li>
+</ul>
+
+<p>
+The public event and mutation surfaces therefore remain bounded by the class contract, not by runtime convenience.
+</p>
+
+<hr/>
+
+<h2 id="mutability-and-safety">12. Mutability and Safety</h2>
+
+<p>
+Widget behavior is constrained by published mutability posture.
+</p>
+
+<p>
+If a property is:
+</p>
+
+<ul>
+  <li>design-time only, runtime behavior MUST NOT mutate it as a public runtime surface,</li>
+  <li>read-only, runtime behavior MUST NOT expose hidden public writes to it,</li>
+  <li>internal, the runtime MAY change it privately so long as this does not alter the published public contract.</li>
+</ul>
+
+<p>
+Behavior rules SHOULD preserve deterministic and reviewable object evolution.
+</p>
+
+<hr/>
+
+<h2 id="interaction-with-properties-methods-events-and-parts">13. Interaction with Properties, Methods, Events, and Parts</h2>
+
+<p>
+Widget behavior depends on the published object model and does not replace it.
+</p>
+
+<p>
+Accordingly:
+</p>
+
+<ul>
+  <li>properties define stable data-facing surfaces,</li>
+  <li>methods define stable operation surfaces,</li>
+  <li>events define stable observation surfaces,</li>
+  <li>parts define stable substructure surfaces,</li>
+  <li>behavior defines how these published surfaces react together.</li>
+</ul>
+
+<p>
+A behavior rule may therefore:
+</p>
+
+<ul>
+  <li>read a published property,</li>
+  <li>write a published writable property,</li>
+  <li>invoke a published internal or public method where allowed,</li>
+  <li>emit a published event,</li>
+  <li>target a published part.</li>
+</ul>
+
+<p>
+But behavior MUST NOT bypass the published object model by inventing hidden portable semantics.
+</p>
+
+<hr/>
+
+<h2 id="what-must-not-happen">14. What Must Not Happen</h2>
+
+<p>
+The following are prohibited as normative behavior doctrine:
+</p>
+
+<ul>
+  <li>placing the only true behavior law in runtime-private code,</li>
+  <li>placing behavior law only in SVG assets,</li>
+  <li>using unrestricted arbitrary package-defined host code as the primary behavioral publication surface,</li>
+  <li>using behavior declarations to create undocumented public properties, methods, events, or parts,</li>
+  <li>using one runtime's convenience API as the definition of portable widget law.</li>
+</ul>
+
+<hr/>
+
+<h2 id="publication-through-wfrog">15. Publication Through <code>.wfrog</code></h2>
+
+<p>
+Behavior surfaces are typically published through <code>.wfrog</code> packages.
+</p>
+
+<p>
+The package document owns the serialization structure of that publication.
+</p>
+
+<p>
+This document instead constrains what those package-published behavior surfaces are allowed to mean.
+</p>
+
+<p>
+In particular, a package may publish:
+</p>
+
+<ul>
+  <li>intrinsic class behavior declarations,</li>
+  <li>declarative rules,</li>
+  <li>bounded expressions,</li>
+  <li>behavior routing for composite widgets.</li>
+</ul>
+
+<p>
+A package MUST NOT claim unrestricted opaque behavior as normative portable widget law.
+</p>
+
+<hr/>
+
+<h2 id="portability-across-runtimes">16. Portability Across Runtimes</h2>
+
+<p>
+Portable FROG widget behavior must survive across Python, Rust, and C/C++ runtime families.
+</p>
+
+<p>
+This does not require identical host-internal code.
+</p>
+
+<p>
+It does require:
+</p>
+
+<ul>
+  <li>equivalent published public object surfaces,</li>
+  <li>equivalent public event meaning,</li>
+  <li>equivalent mutability posture,</li>
+  <li>equivalent bounded behavior meaning.</li>
+</ul>
+
+<p>
+Runtime-specific differences in toolkit, rendering backend, event loop integration, or accessibility bridge implementation are acceptable so long as they do not redefine the public behavior contract.
+</p>
+
+<hr/>
+
+<h2 id="status">17. Status</h2>
+
+<p>
+This document defines the normative doctrine of widget behavior in FROG.
+</p>
+
+<p>
+Its closure direction is:
+</p>
+
+<ul>
+  <li>explicit class-owned behavior,</li>
+  <li>bounded portable declarative reaction,</li>
+  <li>support for developer-defined composite widgets,</li>
+  <li>clear separation from host-private realization support.</li>
+</ul>
+
+<hr/>
+
+<h2 id="license">18. License</h2>
+
+<p>
+See the repository-level license information for the licensing terms governing this specification.
 </p>
