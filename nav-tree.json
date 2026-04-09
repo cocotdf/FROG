@@ -459,6 +459,13 @@
                       "children": []
                     },
                     {
+                      "key": "libraries/realizations/default/chart.md",
+                      "title": "Chart",
+                      "path": "/Libraries/Realizations/Default/Chart.md",
+                      "kind": "page",
+                      "children": []
+                    },
+                    {
                       "key": "libraries/realizations/default/numeric.md",
                       "title": "Numeric",
                       "path": "/Libraries/Realizations/Default/Numeric.md",
@@ -2428,6 +2435,7 @@
     "/Libraries/UI.md",
     "/Libraries/Realizations/Default/Boolean.md",
     "/Libraries/Realizations/Default/Button.md",
+    "/Libraries/Realizations/Default/Chart.md",
     "/Libraries/Realizations/Default/Numeric.md",
     "/Libraries/Realizations/Default/String.md",
     "/Libraries/Realizations/Default/Readme.md",
