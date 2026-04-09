@@ -5,7 +5,7 @@
 <h1 align="center">FROG Widget Realization</h1>
 
 <p align="center">
-  <strong>Normative architectural boundary for host-side widget realization, visual assets, and SVG integration</strong><br/>
+  <strong>Normative realization boundary for widget rendering, visual resources, part-to-visual mapping, and host-facing realization support</strong><br/>
   <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -14,20 +14,24 @@
 <h2>Contents</h2>
 <ul>
   <li><a href="#overview">1. Overview</a></li>
-  <li><a href="#scope">2. Scope</a></li>
-  <li><a href="#what-realization-means">3. What Realization Means</a></li>
-  <li><a href="#why-realization-is-not-widget-law">4. Why Realization Is Not Widget Law</a></li>
-  <li><a href="#host-ownership">5. Host Ownership</a></li>
-  <li><a href="#runtime-ownership">6. Runtime Ownership</a></li>
-  <li><a href="#svg-role">7. SVG Role</a></li>
-  <li><a href="#visual-binding-model">8. Visual Binding Model</a></li>
-  <li><a href="#parts-and-anchors">9. Parts and Anchors</a></li>
-  <li><a href="#states-and-layers">10. States and Layers</a></li>
-  <li><a href="#property-method-and-event-bindings">11. Property, Method, and Event Bindings</a></li>
-  <li><a href="#host-private-hints">12. Host-Private Hints</a></li>
-  <li><a href="#portability-boundary">13. Portability Boundary</a></li>
-  <li><a href="#example">14. Example</a></li>
-  <li><a href="#summary">15. Summary</a></li>
+  <li><a href="#why-this-document-exists">2. Why This Document Exists</a></li>
+  <li><a href="#scope">3. Scope</a></li>
+  <li><a href="#what-realization-means-in-frog">4. What Realization Means in FROG</a></li>
+  <li><a href="#ownership-boundary">5. Ownership Boundary</a></li>
+  <li><a href="#realization-layers">6. Realization Layers</a></li>
+  <li><a href="#abstract-appearance-layer">7. Abstract Appearance Layer</a></li>
+  <li><a href="#layout-and-sizing-layer">8. Layout and Sizing Layer</a></li>
+  <li><a href="#visual-resource-layer">9. Visual Resource Layer</a></li>
+  <li><a href="#part-to-visual-binding">10. Part-to-Visual Binding</a></li>
+  <li><a href="#svg-integration">11. SVG Integration</a></li>
+  <li><a href="#runtime-host-bridges">12. Runtime Host Bridges</a></li>
+  <li><a href="#interaction-with-behavior">13. Interaction with Behavior</a></li>
+  <li><a href="#interaction-with-widget-class-law">14. Interaction with Widget Class Law</a></li>
+  <li><a href="#what-realization-must-not-do">15. What Realization Must Not Do</a></li>
+  <li><a href="#publication-through-wfrog">16. Publication Through <code>.wfrog</code></a></li>
+  <li><a href="#portability-across-runtimes">17. Portability Across Runtimes</a></li>
+  <li><a href="#status">18. Status</a></li>
+  <li><a href="#license">19. License</a></li>
 </ul>
 
 <hr/>
@@ -35,244 +39,324 @@
 <h2 id="overview">1. Overview</h2>
 
 <p>
-This document defines the architectural role of widget realization in FROG.
+This document defines the normative realization boundary for FROG widgets.
 </p>
 
 <p>
-A widget class describes what a widget is. A realization describes how a host may realize that widget class visually and interactively.
+Realization concerns how a published widget class is rendered and hosted visually.
 </p>
 
 <p>
-Realization is therefore a host-facing layer that sits downstream from widget class law and upstream from concrete visual behavior on a live host.
-</p>
-
-<h2 id="scope">2. Scope</h2>
-
-<p>
-This document covers:
+This includes:
 </p>
 
 <ul>
-  <li>host-side realization boundaries,</li>
-  <li>visual asset usage,</li>
-  <li>SVG integration,</li>
+  <li>appearance tokens,</li>
+  <li>layout and sizing posture,</li>
+  <li>visual assets,</li>
   <li>part-to-visual mapping,</li>
-  <li>property/method/event realization bindings,</li>
-  <li>portability boundaries for realization packages.</li>
+  <li>host-side realization metadata.</li>
 </ul>
 
 <p>
-It does not redefine widget class legality and it does not replace the widget interaction model of the program.
-</p>
-
-<h2 id="what-realization-means">3. What Realization Means</h2>
-
-<p>
-Realization is the process by which a live host presents and operates a widget object using concrete visual and input surfaces.
+This document does not define the whole <code>.wfrog</code> package structure. That serialization format is owned by <code>Widget package (.wfrog).md</code>.
 </p>
 
 <p>
-That process may involve:
+Instead, this document defines what realization is allowed to do, what it is not allowed to do, and how it remains subordinate to published widget class law.
+</p>
+
+<hr/>
+
+<h2 id="why-this-document-exists">2. Why This Document Exists</h2>
+
+<p>
+Graphical widgets need rendering and host integration, but rendering is not the same thing as object law.
+</p>
+
+<p>
+Without a clear realization boundary, widget systems often drift into one of two failures:
 </p>
 
 <ul>
-  <li>native host controls,</li>
-  <li>retained-mode scene graphs,</li>
-  <li>custom draw surfaces,</li>
-  <li>SVG-backed rendering,</li>
-  <li>platform-specific focus models,</li>
-  <li>platform-specific event dispatch.</li>
+  <li>the visual asset becomes the hidden owner of widget meaning,</li>
+  <li>one runtime's private toolkit mapping becomes the true widget definition.</li>
 </ul>
 
 <p>
-FROG does not require all hosts to realize widgets identically at the implementation level. FROG does require that host realization not silently redefine the normative object surface of the widget.
+FROG rejects both failures.
 </p>
 
-<h2 id="why-realization-is-not-widget-law">4. Why Realization Is Not Widget Law</h2>
+<p>
+A widget may be rendered richly, skinned flexibly, and realized differently on different hosts, but its public object model must remain stable and inspectable independently of realization details.
+</p>
+
+<hr/>
+
+<h2 id="scope">3. Scope</h2>
 
 <p>
-The same widget class may be realized:
+This document defines:
 </p>
 
 <ul>
-  <li>by a Qt control,</li>
-  <li>by an HTML element,</li>
-  <li>by a custom SDL surface,</li>
-  <li>by an SVG template plus overlay logic,</li>
-  <li>or by another host-specific mechanism.</li>
+  <li>the realization boundary around widget classes,</li>
+  <li>the layering between abstract appearance, layout, visual resources, and host support,</li>
+  <li>how parts bind to visual assets,</li>
+  <li>how SVG participates in the realization corridor,</li>
+  <li>how realization stays subordinate to widget class law and widget behavior law.</li>
 </ul>
 
 <p>
-Those realizations may differ operationally, but they do not become separate language-level widget definitions unless the class law itself differs.
-</p>
-
-<p>
-This distinction is mandatory. If realization became widget law, portability would collapse into host-specific behavior.
-</p>
-
-<h2 id="host-ownership">5. Host Ownership</h2>
-
-<p>
-The host owns:
+This document does not define:
 </p>
 
 <ul>
-  <li>drawing and compositing,</li>
-  <li>focus management,</li>
-  <li>pointer and keyboard input handling,</li>
-  <li>redraw scheduling,</li>
-  <li>layout execution where delegated,</li>
-  <li>native visual affordances,</li>
-  <li>performance optimizations.</li>
+  <li>the full widget package serialization format,</li>
+  <li>the full class contract structure,</li>
+  <li>the full bounded behavior structure,</li>
+  <li>the private rendering internals of any one runtime family.</li>
 </ul>
 
+<hr/>
+
+<h2 id="what-realization-means-in-frog">4. What Realization Means in FROG</h2>
+
 <p>
-The host does not own the normative class-level meaning of widget properties, methods, events, and parts.
+In FROG, realization means the host-facing visual and interactive embodiment of a widget class.
 </p>
 
-<h2 id="runtime-ownership">6. Runtime Ownership</h2>
-
 <p>
-The runtime owns the interpretation bridge between class law, realization definitions, and live widget objects.
-</p>
-
-<p>
-The runtime is responsible for:
+Realization answers questions such as:
 </p>
 
 <ul>
-  <li>loading widget packages,</li>
-  <li>instantiating widget objects,</li>
-  <li>exposing legal members,</li>
-  <li>connecting value participation,</li>
-  <li>routing property reads and writes,</li>
-  <li>routing method invocation,</li>
-  <li>emitting events with normative identity and payload shape,</li>
-  <li>coordinating with the host realization layer.</li>
+  <li>how is the widget drawn,</li>
+  <li>how are its parts mapped to visual regions,</li>
+  <li>which visual assets are used,</li>
+  <li>how are appearance tokens resolved,</li>
+  <li>how does a host toolkit support focus, redraw, hit testing, and part-local interaction.</li>
 </ul>
 
-<h2 id="svg-role">7. SVG Role</h2>
-
 <p>
-SVG is a first-class visual asset format in FROG widget realization.
-</p>
-
-<p>
-SVG may be used as:
+Realization does not answer:
 </p>
 
 <ul>
-  <li>a face template,</li>
-  <li>a layered scalable visual resource,</li>
-  <li>an anchor-bearing asset,</li>
-  <li>a state-aware visual composition resource.</li>
+  <li>which public properties exist,</li>
+  <li>which public methods exist,</li>
+  <li>which public events exist,</li>
+  <li>which public parts exist,</li>
+  <li>what the primary value law of the widget is.</li>
 </ul>
 
+<hr/>
+
+<h2 id="ownership-boundary">5. Ownership Boundary</h2>
+
 <p>
-SVG is not:
+The following distinctions are normative:
+</p>
+
+<pre><code>widget class contract -&gt; public object law
+widget behavior       -&gt; portable reaction law
+widget realization    -&gt; visual and host-facing embodiment
+runtime-private code  -&gt; internal realization support details
+</code></pre>
+
+<p>
+Accordingly:
 </p>
 
 <ul>
-  <li>the authoritative source of widget semantics,</li>
-  <li>the authoritative source of widget member legality,</li>
-  <li>a hidden executable program,</li>
-  <li>the sole definition of events or methods.</li>
+  <li>realization MUST follow published class law,</li>
+  <li>realization MUST NOT invent undocumented public members,</li>
+  <li>realization MUST NOT replace bounded behavior law,</li>
+  <li>realization MUST NOT treat visual assets as semantic truth.</li>
 </ul>
 
-<h2 id="visual-binding-model">8. Visual Binding Model</h2>
+<hr/>
+
+<h2 id="realization-layers">6. Realization Layers</h2>
 
 <p>
-A realization package MAY bind widget properties and parts to visual elements.
+FROG realization is layered.
 </p>
 
 <p>
-Typical binding targets include:
+A well-formed realization posture distinguishes:
 </p>
 
 <ul>
-  <li>SVG attributes,</li>
-  <li>text nodes,</li>
-  <li>visibility states,</li>
-  <li>style classes,</li>
-  <li>native control configuration fields,</li>
-  <li>scene-graph node properties.</li>
+  <li>abstract appearance,</li>
+  <li>layout and sizing,</li>
+  <li>visual resources,</li>
+  <li>part-to-visual binding,</li>
+  <li>runtime-private host support.</li>
 </ul>
 
 <p>
-These bindings are realization mappings. They do not replace the widget object surface itself.
+This layered structure keeps semantic truth separate from the skin or toolkit.
 </p>
 
-<h2 id="parts-and-anchors">9. Parts and Anchors</h2>
+<hr/>
+
+<h2 id="abstract-appearance-layer">7. Abstract Appearance Layer</h2>
 
 <p>
-A class-level widget definition may expose parts. A realization package may map those parts to visual anchors.
-</p>
-
-<p>
-An anchor is a named visual attachment point or named visual node in the realization asset.
+The abstract appearance layer defines portable appearance-facing properties and tokens without committing to one host toolkit or one concrete visual resource.
 </p>
 
 <p>
-For example:
+Examples:
 </p>
 
 <ul>
-  <li>a <code>label</code> part may bind to <code>label_anchor</code>,</li>
-  <li>an <code>editor</code> part may bind to <code>editor_anchor</code>,</li>
-  <li>a <code>root</code> anchor may identify the top visual node.</li>
+  <li>text color,</li>
+  <li>background fill,</li>
+  <li>stroke color,</li>
+  <li>font family,</li>
+  <li>font size,</li>
+  <li>padding,</li>
+  <li>corner radius,</li>
+  <li>alignment.</li>
 </ul>
 
 <p>
-Part ownership remains class-side. Anchor ownership remains realization-side.
+These surfaces are part of the public or package-published object model where declared. They remain portable and inspectable.
 </p>
 
-<h2 id="states-and-layers">10. States and Layers</h2>
+<hr/>
+
+<h2 id="layout-and-sizing-layer">8. Layout and Sizing Layer</h2>
 
 <p>
-A realization package MAY define visual states and layer sets.
+The layout and sizing layer defines how the widget is spatially structured.
 </p>
 
 <p>
-Typical visual states include:
+Examples:
 </p>
 
 <ul>
-  <li>normal,</li>
-  <li>focused,</li>
-  <li>disabled,</li>
-  <li>pressed,</li>
-  <li>hovered,</li>
-  <li>alarm.</li>
+  <li>minimum size,</li>
+  <li>preferred size,</li>
+  <li>resizable dimensions,</li>
+  <li>label placement,</li>
+  <li>button placement,</li>
+  <li>internal spacing.</li>
 </ul>
 
 <p>
-Layer sets are host-facing visual composition tools. They do not themselves redefine event or property semantics.
+Layout posture may influence realization, but layout posture does not create or remove public object law.
 </p>
 
-<h2 id="property-method-and-event-bindings">11. Property, Method, and Event Bindings</h2>
+<hr/>
+
+<h2 id="visual-resource-layer">9. Visual Resource Layer</h2>
 
 <p>
-A realization package MAY define:
+The visual resource layer contains concrete assets used by realization.
+</p>
+
+<p>
+Examples:
 </p>
 
 <ul>
-  <li><strong>property bindings</strong> — map widget properties to visual or native host surfaces,</li>
-  <li><strong>method bindings</strong> — map widget methods to host actions,</li>
-  <li><strong>event bindings</strong> — map host signals to widget events.</li>
+  <li>SVG files,</li>
+  <li>icon fragments,</li>
+  <li>vector templates,</li>
+  <li>named layers,</li>
+  <li>anchor sets.</li>
 </ul>
 
 <p>
-These bindings must preserve normative widget identity.
+These resources support rendering.
 </p>
 
 <p>
-A host-native signal may be the origin of a standardized event, but the standardized event identity remains the FROG-owned event identity.
+They do not replace the widget class contract.
 </p>
 
-<h2 id="host-private-hints">12. Host-Private Hints</h2>
+<hr/>
+
+<h2 id="part-to-visual-binding">10. Part-to-Visual Binding</h2>
 
 <p>
-A realization package MAY contain bounded host-private hints.
+A widget realization may bind named widget parts to concrete visual regions or anchors.
+</p>
+
+<p>
+This is the preferred mechanism for connecting:
+</p>
+
+<ul>
+  <li>public or package-published parts,</li>
+  <li>part-facing appearance tokens,</li>
+  <li>part-local visual updates,</li>
+  <li>part-local interaction hit regions.</li>
+</ul>
+
+<p>
+For example, a numeric control may bind:
+</p>
+
+<ul>
+  <li><code>label</code> to a text layer or text anchor,</li>
+  <li><code>value_display</code> to a numeric text region,</li>
+  <li><code>increment_button</code> to an up-arrow hit region,</li>
+  <li><code>decrement_button</code> to a down-arrow hit region,</li>
+  <li><code>frame</code> to an outline layer.</li>
+</ul>
+
+<p>
+The existence and names of these parts come from widget class law, not from the visual asset.
+</p>
+
+<hr/>
+
+<h2 id="svg-integration">11. SVG Integration</h2>
+
+<p>
+SVG may be used as a realization resource in FROG.
+</p>
+
+<p>
+SVG MAY provide:
+</p>
+
+<ul>
+  <li>scalable skins,</li>
+  <li>decorative layers,</li>
+  <li>anchor regions,</li>
+  <li>template geometry,</li>
+  <li>part-binding hints.</li>
+</ul>
+
+<p>
+SVG MUST NOT own:
+</p>
+
+<ul>
+  <li>the primary value semantics of the widget,</li>
+  <li>the legality of properties,</li>
+  <li>the legality of methods,</li>
+  <li>the legality of events,</li>
+  <li>the legality of parts,</li>
+  <li>the bounded behavior law of the widget.</li>
+</ul>
+
+<p>
+SVG is therefore a realization asset, not a semantic widget definition language.
+</p>
+
+<hr/>
+
+<h2 id="runtime-host-bridges">12. Runtime Host Bridges</h2>
+
+<p>
+Different runtime families may realize the same widget class through different host bridges.
 </p>
 
 <p>
@@ -280,30 +364,65 @@ Examples include:
 </p>
 
 <ul>
-  <li>preferred native control classes,</li>
-  <li>preferred text rendering mode,</li>
-  <li>platform-specific composition hints,</li>
-  <li>optional acceleration hints.</li>
+  <li>a Python runtime using a Qt-based widget backend,</li>
+  <li>a Rust runtime using a retained-mode UI toolkit,</li>
+  <li>a C/C++ runtime using a native or embedded rendering backend.</li>
 </ul>
 
 <p>
-Host-private hints:
+These bridges may differ internally in:
 </p>
 
 <ul>
-  <li>MUST NOT redefine class law,</li>
-  <li>MUST NOT be treated as mandatory for class-level validity,</li>
-  <li>SHOULD degrade safely when unsupported.</li>
+  <li>event-loop integration,</li>
+  <li>focus handling,</li>
+  <li>redraw scheduling,</li>
+  <li>accessibility bridging,</li>
+  <li>rendering strategy.</li>
 </ul>
 
-<h2 id="portability-boundary">13. Portability Boundary</h2>
-
 <p>
-A realization package is portable only to the extent that the target runtime and host support the relevant realization features.
+Such variation is allowed.
 </p>
 
 <p>
-However, portability of class law is broader than portability of realization.
+What must remain stable is the published object surface and the portable meaning of the realized widget.
+</p>
+
+<hr/>
+
+<h2 id="interaction-with-behavior">13. Interaction with Behavior</h2>
+
+<p>
+Realization and behavior are related but distinct.
+</p>
+
+<p>
+Behavior may request:
+</p>
+
+<ul>
+  <li>a visual refresh,</li>
+  <li>a part-state update,</li>
+  <li>focus movement,</li>
+  <li>interaction suppression,</li>
+  <li>event emission after host interaction.</li>
+</ul>
+
+<p>
+Realization provides the host-side embodiment needed for these effects to occur visually and interactively.
+</p>
+
+<p>
+Realization does not define the portable behavior law by itself.
+</p>
+
+<hr/>
+
+<h2 id="interaction-with-widget-class-law">14. Interaction with Widget Class Law</h2>
+
+<p>
+Realization is downstream of widget class law.
 </p>
 
 <p>
@@ -311,92 +430,114 @@ This means:
 </p>
 
 <ul>
-  <li>class-level object legality should remain broadly portable,</li>
-  <li>visual realization may be narrower,</li>
-  <li>host-private realization hints are narrower still.</li>
+  <li>published properties may influence realization,</li>
+  <li>published parts may bind to visual anchors,</li>
+  <li>published events may be emitted in response to host interaction,</li>
+  <li>published methods may trigger realized state changes.</li>
 </ul>
 
 <p>
-A runtime may therefore support a class package without supporting every realization package for that class.
-</p>
-
-<h2 id="example">14. Example</h2>
-
-<pre><code>{
-  "wfrog_version": "0.1",
-  "kind": "widget_realization_package",
-  "package": {
-    "name": "frog.ui.theme.default",
-    "version": "0.1.0",
-    "namespace": "frog.ui.theme.default"
-  },
-  "targets": [
-    {
-      "class_id": "frog.ui.standard.numeric_control",
-      "host_family": "generic_svg_host",
-      "visual": {
-        "mode": "svg_template",
-        "svg_asset": "./assets/numeric_control.svg",
-        "anchors": {
-          "root": "root",
-          "label": "label_anchor",
-          "editor": "editor_anchor"
-        },
-        "state_layers": {
-          "normal": ["base", "label", "editor"],
-          "focused": ["base", "focus_ring", "label", "editor"]
-        }
-      },
-      "part_bindings": [
-        {
-          "part": "label",
-          "visual_node": "label_anchor",
-          "property_bindings": {
-            "text": "textContent",
-            "visible": "visibility"
-          }
-        }
-      ],
-      "property_bindings": {
-        "face_color": {
-          "binding_kind": "svg_attribute",
-          "target": "base_fill",
-          "attribute": "fill"
-        }
-      },
-      "method_bindings": {
-        "focus": {
-          "binding_kind": "host_action",
-          "action": "focus_editor"
-        }
-      },
-      "event_bindings": {
-        "value_changed": {
-          "binding_kind": "host_signal",
-          "signal": "editor_value_changed"
-        }
-      }
-    }
-  ]
-}</code></pre>
-
-<h2 id="summary">15. Summary</h2>
-
-<p>
-Widget realization is a mandatory architectural layer, but it is not the owner of widget law.
-</p>
-
-<p>
-It provides the bounded bridge between:
+But realization MUST NOT:
 </p>
 
 <ul>
-  <li>class-owned member surfaces,</li>
-  <li>runtime-owned interpretation,</li>
-  <li>host-owned rendering and interaction,</li>
-  <li>and visual assets such as SVG.</li>
+  <li>invent new portable public properties because a toolkit happens to support them,</li>
+  <li>rename public parts privately and thereby change source-level addressing meaning,</li>
+  <li>replace the published event surface with host-specific undocumented signals,</li>
+  <li>replace the primary value model with a visual-text-only convention.</li>
+</ul>
+
+<hr/>
+
+<h2 id="what-realization-must-not-do">15. What Realization Must Not Do</h2>
+
+<p>
+The following are prohibited as normative realization doctrine:
+</p>
+
+<ul>
+  <li>treating SVG as the owner of widget semantics,</li>
+  <li>treating one runtime toolkit mapping as the widget definition itself,</li>
+  <li>placing the only true part structure inside the rendering layer,</li>
+  <li>creating hidden portable public members from host convenience,</li>
+  <li>silently altering public mutability posture through realization-only conventions.</li>
+</ul>
+
+<hr/>
+
+<h2 id="publication-through-wfrog">16. Publication Through <code>.wfrog</code></h2>
+
+<p>
+Realization resources and realization metadata are typically published through <code>.wfrog</code> packages.
+</p>
+
+<p>
+The package specification owns how that material is serialized.
+</p>
+
+<p>
+This document instead constrains what realization publication is allowed to mean.
+</p>
+
+<p>
+Typical package-published realization content may include:
+</p>
+
+<ul>
+  <li>resource declarations,</li>
+  <li>appearance token maps,</li>
+  <li>layout hints,</li>
+  <li>part-to-resource bindings,</li>
+  <li>host realization profiles.</li>
+</ul>
+
+<hr/>
+
+<h2 id="portability-across-runtimes">17. Portability Across Runtimes</h2>
+
+<p>
+Portable realization in FROG does not mean pixel-identical rendering across all runtimes.
+</p>
+
+<p>
+It means:
+</p>
+
+<ul>
+  <li>equivalent public object surfaces,</li>
+  <li>equivalent part structure,</li>
+  <li>equivalent interaction meaning,</li>
+  <li>equivalent bounded behavior meaning,</li>
+  <li>reasonable preservation of appearance intent where the host supports it.</li>
 </ul>
 
 <p>
-That boundary is what allows FROG to support rich UI objects without collapsing the language into one runtime or one rendering stack.
+Different runtimes may therefore realize the same widget differently while still remaining conformant.
+</p>
+
+<hr/>
+
+<h2 id="status">18. Status</h2>
+
+<p>
+This document defines the normative realization boundary for FROG widgets.
+</p>
+
+<p>
+Its closure direction is:
+</p>
+
+<ul>
+  <li>explicit part-to-visual mapping,</li>
+  <li>portable appearance layers,</li>
+  <li>SVG as a resource rather than semantic truth,</li>
+  <li>multi-runtime realizability without semantic drift.</li>
+</ul>
+
+<hr/>
+
+<h2 id="license">19. License</h2>
+
+<p>
+See the repository-level license information for the licensing terms governing this specification.
 </p>
