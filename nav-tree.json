@@ -431,6 +431,13 @@
               "path": "/Libraries/UI.md",
               "kind": "page",
               "children": []
+            },
+            {
+              "key": "libraries/widgets/",
+              "title": "Widgets",
+              "path": "/Libraries/Widgets/Readme.md",
+              "kind": "category",
+              "children": []
             }
           ]
         },
@@ -2339,6 +2346,7 @@
     "/Libraries/Signal.md",
     "/Libraries/Text.md",
     "/Libraries/UI.md",
+    "/Libraries/Widgets/Readme.md",
     "/Libraries/Readme.md",
     "/Profiles/Interop.md",
     "/Profiles/Native%20CPU%20LLVM.md",

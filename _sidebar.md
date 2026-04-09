@@ -60,6 +60,7 @@
   - [Signal](/Libraries/Signal.md)
   - [Text](/Libraries/Text.md)
   - [UI](/Libraries/UI.md)
+  - [Widgets](/Libraries/Widgets/Readme.md)
 - [Profiles](/Profiles/Readme.md)
   - [Interop](/Profiles/Interop.md)
   - [Native CPU LLVM](/Profiles/Native%20CPU%20LLVM.md)
