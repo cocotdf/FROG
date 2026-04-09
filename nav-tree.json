@@ -487,6 +487,13 @@
                       "children": []
                     },
                     {
+                      "key": "libraries/realizations/default/state-mapping.md",
+                      "title": "State mapping",
+                      "path": "/Libraries/Realizations/Default/State%20mapping.md",
+                      "kind": "page",
+                      "children": []
+                    },
+                    {
                       "key": "libraries/realizations/default/string.md",
                       "title": "String",
                       "path": "/Libraries/Realizations/Default/String.md",
@@ -2453,6 +2460,7 @@
     "/Libraries/Realizations/Default/Numeric.md",
     "/Libraries/Realizations/Default/Package.md",
     "/Libraries/Realizations/Default/Resource%20model.md",
+    "/Libraries/Realizations/Default/State%20mapping.md",
     "/Libraries/Realizations/Default/String.md",
     "/Libraries/Realizations/Default/Readme.md",
     "/Libraries/Realizations/Readme.md",
