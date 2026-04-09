@@ -32,7 +32,8 @@
   <li><a href="#source-to-library-mapping">17. Source-to-Library Mapping</a></li>
   <li><a href="#examples">18. Examples</a></li>
   <li><a href="#out-of-scope">19. Out of Scope</a></li>
-  <li><a href="#summary">20. Summary</a></li>
+  <li><a href="#status">20. Status</a></li>
+  <li><a href="#license">21. License</a></li>
 </ul>
 
 <hr/>
@@ -70,8 +71,7 @@ The object-style path is the canonical representation of explicit member interac
 </ul>
 
 <p>
-The event-oriented path is the canonical representation of observing declared widget or widget-part events
-through an explicit source-visible primitive rather than through hidden runtime conventions.
+The event-oriented path is the canonical representation of observing declared widget or widget-part events through an explicit source-visible primitive rather than through hidden runtime conventions.
 </p>
 
 <p>
@@ -103,7 +103,7 @@ but those forms MUST remain distinct in source and semantics.
 <p>
 This document also preserves the separation between executable value participation,
 object-style member interaction, event observation, and source-owned instance metadata.
-A widget MAY expose non-semantic presentation members such as <code>foreground_color</code> or <code>visible</code>,
+A widget MAY expose non-semantic presentation members such as <code>style.text_color</code> or <code>interaction.visible</code>,
 and a widget instance MAY persist presentation-oriented package or asset references through source-owned metadata.
 Those members belong to object-style access or source-owned instance metadata, not to the natural typed value path.
 </p>
@@ -294,13 +294,12 @@ Examples of conceptual interaction:
 </p>
 
 <pre><code>ctrl_gain.value
-ctrl_gain.visible
-ctrl_gain.foreground_color
+ctrl_gain.interaction.visible
+ctrl_gain.style.text_color
 ctrl_gain.label.text
 ctrl_gain.focus()
-graph_1.x_scale.visible
-count_indicator.value_rendered
-count_indicator.value_text.value_rendered
+graph_1.axes.x.interaction.visible
+count_indicator.value_display.value_rendered
 </code></pre>
 
 <p>
@@ -407,7 +406,7 @@ The object-style path is the canonical path for:
   <li>property writes,</li>
   <li>method invocation,</li>
   <li>addressing named parts,</li>
-  <li>accessing presentation properties such as <code>foreground_color</code> or <code>visible</code>,</li>
+  <li>accessing presentation properties such as <code>style.text_color</code> or <code>interaction.visible</code>,</li>
   <li>accessing members that have no natural value-path representation.</li>
 </ul>
 
@@ -416,7 +415,7 @@ Conceptually:
 </p>
 
 <pre><code>widget_reference(ctrl_count)
-    -&gt; frog.ui.property_write { "member": "foreground_color" }
+    -&gt; frog.ui.property_write { "member": "style.text_color" }
 </code></pre>
 
 <h3>7.3 Primary Value through Object-Style Access</h3>
@@ -466,9 +465,9 @@ A widget class MAY expose presentation-oriented members such as:
 </p>
 
 <ul>
-  <li><code>foreground_color</code>,</li>
-  <li><code>background_color</code>,</li>
-  <li><code>visible</code>,</li>
+  <li><code>style.text_color</code>,</li>
+  <li><code>style.background_fill</code>,</li>
+  <li><code>interaction.visible</code>,</li>
   <li>other explicitly declared presentation-facing properties.</li>
 </ul>
 
@@ -482,7 +481,7 @@ In particular:
 </p>
 
 <ul>
-  <li><code>foreground_color</code> MAY be read or written through object-style property access when the class contract allows it,</li>
+  <li><code>style.text_color</code> MAY be read or written through object-style property access when the class contract allows it,</li>
   <li>a source-owned asset or template reference MAY exist without becoming an ordinary executable value-flow member.</li>
 </ul>
 
@@ -544,7 +543,7 @@ For events:
 
 <pre><code>{
   "widget": "count_indicator",
-  "part": "value_text",
+  "part": "value_display",
   "name": "value_rendered"
 }
 </code></pre>
@@ -587,7 +586,7 @@ Canonical event descriptors:
 </p>
 
 <pre><code>{ "name": "value_rendered" }
-{ "part": "value_text", "name": "value_rendered" }
+{ "part": "value_display", "name": "value_rendered" }
 </code></pre>
 
 <h3>8.3 Widget-Level Addressing</h3>
@@ -601,8 +600,8 @@ Examples:
 </p>
 
 <pre><code>{ "member": "value" }
-{ "member": "visible" }
-{ "member": "foreground_color" }
+{ "member": "interaction.visible" }
+{ "member": "style.text_color" }
 { "name": "focus" }
 { "name": "value_changed" }
 </code></pre>
@@ -618,9 +617,9 @@ Examples:
 </p>
 
 <pre><code>{ "part": "label", "member": "text" }
-{ "part": "label", "member": "visible" }
+{ "part": "label", "member": "interaction.visible" }
 { "part": "label", "name": "show" }
-{ "part": "value_text", "name": "value_rendered" }
+{ "part": "value_display", "name": "value_rendered" }
 </code></pre>
 
 <h3>8.5 Address Validity</h3>
@@ -709,7 +708,7 @@ A property read interaction represents a read of a property value from a widget 
   "kind": "primitive",
   "type": "frog.ui.property_read",
   "widget_member": {
-    "member": "visible"
+    "member": "interaction.visible"
   }
 }
 </code></pre>
@@ -735,7 +734,7 @@ However, when the intent is ordinary value flow, tools SHOULD prefer the natural
 <h3>10.5 Access to Presentation Properties</h3>
 
 <p>
-Reading a presentation property such as <code>{ "member": "foreground_color" }</code> is valid only when the widget class contract exposes that member as readable.
+Reading a presentation property such as <code>{ "member": "style.text_color" }</code> is valid only when the widget class contract exposes that member as readable.
 </p>
 
 <p>
@@ -791,7 +790,7 @@ For ordinary widget primary-value participation in dataflow, tools SHOULD prefer
 <h3>11.5 Access to Presentation Properties</h3>
 
 <p>
-Writing a presentation property such as <code>{ "member": "foreground_color" }</code> is valid only when the widget class contract exposes that member as writable.
+Writing a presentation property such as <code>{ "member": "style.text_color" }</code> is valid only when the widget class contract exposes that member as writable.
 </p>
 
 <p>
@@ -830,7 +829,7 @@ A method invoke interaction represents a method call on a widget or widget part.
   "kind": "primitive",
   "type": "frog.ui.method_invoke",
   "widget_method": {
-    "name": "reset_to_default_style"
+    "name": "reset_to_default"
   }
 }
 </code></pre>
@@ -905,11 +904,11 @@ Part-scoped event observation is represented by including <code>part</code> in t
 </p>
 
 <pre><code>{
-  "id": "observe_value_text_rendered",
+  "id": "observe_value_display_rendered",
   "kind": "primitive",
   "type": "frog.ui.event_observe",
   "widget_event": {
-    "part": "value_text",
+    "part": "value_display",
     "name": "value_rendered"
   }
 }
@@ -1024,7 +1023,7 @@ event payload
 </code></pre>
 
 <p>
-Accordingly, a diagram that writes <code>foreground_color</code> is not equivalent to a diagram that writes the widget primary value,
+Accordingly, a diagram that writes <code>style.text_color</code> is not equivalent to a diagram that writes the widget primary value,
 and a source-owned presentation reference is not by itself an executable value-flow edge.
 Likewise, an observed event payload is not automatically the widget primary value unless the event contract explicitly says so.
 </p>
@@ -1166,7 +1165,7 @@ The natural primary-value path remains represented by <code>widget_value</code>,
   "kind": "primitive",
   "type": "frog.ui.property_read",
   "widget_member": {
-    "member": "visible"
+    "member": "interaction.visible"
   }
 }
 </code></pre>
@@ -1191,7 +1190,7 @@ The natural primary-value path remains represented by <code>widget_value</code>,
   "kind": "primitive",
   "type": "frog.ui.method_invoke",
   "widget_method": {
-    "name": "reset_to_default_style"
+    "name": "reset_to_default"
   }
 }
 </code></pre>
@@ -1224,11 +1223,11 @@ The natural primary-value path remains represented by <code>widget_value</code>,
 <h3>18.6 Observe part event</h3>
 
 <pre><code>{
-  "id": "observe_value_text_rendered",
+  "id": "observe_value_display_rendered",
   "kind": "primitive",
   "type": "frog.ui.event_observe",
   "widget_event": {
-    "part": "value_text",
+    "part": "value_display",
     "name": "value_rendered"
   }
 }
@@ -1248,12 +1247,12 @@ This is the preferred representation for ordinary primary-value participation in
 
 <pre><code>widget_reference(ctrl_count)
     -&gt; frog.ui.property_write {
-         "member": "foreground_color"
+         "member": "style.text_color"
        }
 </code></pre>
 
 <p>
-This is valid only if the active widget class contract declares <code>foreground_color</code> as a writable property.
+This is valid only if the active widget class contract declares <code>style.text_color</code> as a writable property.
 </p>
 
 <h3>18.9 Event observation</h3>
@@ -1271,7 +1270,7 @@ This is valid only if the active widget class contract declares <code>value_rend
 <h3>18.10 Invalid collapse example</h3>
 
 <pre><code>widget_value(ctrl_count)
-    -&gt; interpreted as foreground_color
+    -&gt; interpreted as style.text_color
 </code></pre>
 
 <p>
@@ -1284,7 +1283,7 @@ The natural value path MUST NOT be reinterpreted as a presentation-property path
 <pre><code>{
   "id": "ctrl_count",
   "role": "control",
-  "class_ref": "frog.widgets.numeric_control",
+  "class_ref": "frog.ui.numeric_control",
   "value_type": "u16",
   "props": {
     "face_asset_ref": {
@@ -1321,39 +1320,31 @@ The following are intentionally out of scope for this document:
 
 <hr/>
 
-<h2 id="summary">20. Summary</h2>
+<h2 id="status">20. Status</h2>
 
 <p>
-This document defines the canonical source-level representation of natural-value, object-style, and event-oriented widget interaction in the FROG diagram.
+This document defines the canonical source-level widget interaction corridor for the current repository version.
 </p>
 
 <p>
-It standardizes:
+Version governance and the current applicable specification version are centralized in <code>Versioning/Readme.md</code>.
 </p>
 
-<ul>
-  <li>how <code>widget_value</code> and <code>widget_reference</code> remain distinct,</li>
-  <li>how a widget reference is consumed,</li>
-  <li>how a targeted property, method, or event is identified,</li>
-  <li>how property reads, property writes, method invocations, and event observation are represented in source,</li>
-  <li>how those interactions are validated structurally,</li>
-  <li>how semantic primary value flow remains distinct from presentation-oriented members, event payloads, and source-owned presentation references.</li>
-</ul>
-
 <p>
-It does not standardize:
+The closure direction for this document is:
 </p>
 
 <ul>
-  <li>widget instance composition,</li>
-  <li>widget class member legality,</li>
-  <li>primitive-local execution semantics,</li>
-  <li>general execution semantics of the language,</li>
-  <li>one mandatory UI realization architecture.</li>
+  <li>clear separation between natural value flow and object-style interaction,</li>
+  <li>explicit event observation,</li>
+  <li>stable addressing of widget properties, methods, events, and parts,</li>
+  <li>alignment with <code>.wfrog</code>-published widget class contracts.</li>
 </ul>
 
+<hr/>
+
+<h2 id="license">21. License</h2>
+
 <p>
-That separation allows FROG to support rich widget-object interaction while keeping instance model,
-class contract, diagram representation, primitive semantics, source-owned metadata, package content,
-and host realization explicitly distinct.
+See the repository-level license information for the licensing terms governing this specification.
 </p>
