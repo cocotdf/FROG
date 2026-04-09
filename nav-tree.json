@@ -437,7 +437,15 @@
               "title": "Widgets",
               "path": "/Libraries/Widgets/Readme.md",
               "kind": "category",
-              "children": []
+              "children": [
+                {
+                  "key": "libraries/widgets/numeric.md",
+                  "title": "Numeric",
+                  "path": "/Libraries/Widgets/Numeric.md",
+                  "kind": "page",
+                  "children": []
+                }
+              ]
             }
           ]
         },
@@ -2346,6 +2354,7 @@
     "/Libraries/Signal.md",
     "/Libraries/Text.md",
     "/Libraries/UI.md",
+    "/Libraries/Widgets/Numeric.md",
     "/Libraries/Widgets/Readme.md",
     "/Libraries/Readme.md",
     "/Profiles/Interop.md",
