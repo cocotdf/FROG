@@ -446,6 +446,13 @@
                   "children": []
                 },
                 {
+                  "key": "libraries/widgets/button.md",
+                  "title": "Button",
+                  "path": "/Libraries/Widgets/Button.md",
+                  "kind": "page",
+                  "children": []
+                },
+                {
                   "key": "libraries/widgets/numeric.md",
                   "title": "Numeric",
                   "path": "/Libraries/Widgets/Numeric.md",
@@ -2369,6 +2376,7 @@
     "/Libraries/Text.md",
     "/Libraries/UI.md",
     "/Libraries/Widgets/Boolean.md",
+    "/Libraries/Widgets/Button.md",
     "/Libraries/Widgets/Numeric.md",
     "/Libraries/Widgets/String.md",
     "/Libraries/Widgets/Readme.md",
