@@ -53,11 +53,6 @@ This document defines the following standardized widget classes:
   <li><code>frog.widgets.numeric_indicator</code></li>
 </ul>
 
-<p>
-These classes are scalar numeric widgets.
-They are not container widgets, not chart widgets, and not arbitrary formatted-text widgets.
-</p>
-
 <hr/>
 
 <h2 id="common-family-posture">3. Common Family Posture</h2>
@@ -68,16 +63,17 @@ The numeric widget family has the following common posture:
 
 <ul>
   <li>category: scalar numeric widget family</li>
-  <li>compatible roles: <code>control</code> or <code>indicator</code> according to class</li>
   <li>primary value: present</li>
-  <li>type compatibility: numeric scalar types only under the active type system</li>
   <li>public value-facing surface: yes</li>
   <li>object-style access surface: yes</li>
+  <li>primary value mirror property: <code>value</code></li>
+  <li>common label property: <code>label.text</code></li>
+  <li>common visibility property: <code>interaction.visible</code></li>
 </ul>
 
 <p>
 The standard numeric baseline is intended for scalar numeric values such as integers and floating-point values.
-Future profiles or future standardized families MAY extend this baseline, but this document stays limited to the portable intrinsic scalar case.
+The exact allowed numeric types remain governed by the active FROG type system and profile posture.
 </p>
 
 <hr/>
@@ -98,37 +94,28 @@ Future profiles or future standardized families MAY extend this baseline, but th
   <li>primary value: present</li>
   <li>natural value participation: yes</li>
   <li>user-mutable: yes</li>
-  <li>diagram-mutable: yes, when allowed by interaction and dataflow</li>
+  <li>diagram-mutable: yes</li>
   <li>mirrored property: <code>value</code></li>
 </ul>
 
-<p>
-The class supports scalar numeric value types only.
-The exact allowed type set is governed by the active FROG type system and profile posture.
-</p>
-
 <h3>4.3 Standard properties</h3>
 
-<p>
-The following standard properties form the intrinsic portable baseline:
-</p>
-
 <ul>
-  <li><code>value</code> — scalar numeric value, readable and writable</li>
-  <li><code>label.text</code> — label text, readable and writable</li>
-  <li><code>interaction.enabled</code> — interaction enablement, readable and writable</li>
-  <li><code>interaction.visible</code> — visibility posture, readable and writable</li>
-  <li><code>limits.minimum</code> — optional minimum numeric bound, readable and writable</li>
-  <li><code>limits.maximum</code> — optional maximum numeric bound, readable and writable</li>
-  <li><code>format.pattern</code> — optional display formatting hint, readable and writable</li>
+  <li><code>value</code> — readable and writable</li>
+  <li><code>label.text</code> — readable and writable</li>
+  <li><code>interaction.enabled</code> — readable and writable</li>
+  <li><code>interaction.visible</code> — readable and writable</li>
+  <li><code>limits.minimum</code> — optional readable and writable bound</li>
+  <li><code>limits.maximum</code> — optional readable and writable bound</li>
+  <li><code>format.pattern</code> — optional readable and writable display formatting hint</li>
 </ul>
 
 <h3>4.4 Standard methods</h3>
 
 <ul>
   <li><code>focus()</code></li>
-  <li><code>increment()</code> when the active realization supports increment interaction</li>
-  <li><code>decrement()</code> when the active realization supports decrement interaction</li>
+  <li><code>increment()</code> when the active realization exposes increment interaction</li>
+  <li><code>decrement()</code> when the active realization exposes decrement interaction</li>
   <li><code>reset_to_default()</code> when a default value exists</li>
 </ul>
 
@@ -150,7 +137,7 @@ The following standard properties form the intrinsic portable baseline:
   <li><code>value_display</code></li>
   <li><code>increment_button</code> when the active realization exposes it</li>
   <li><code>decrement_button</code> when the active realization exposes it</li>
-  <li><code>frame</code></li>
+  <li><code>frame</code> when present</li>
 </ul>
 
 <hr/>
@@ -178,10 +165,10 @@ The following standard properties form the intrinsic portable baseline:
 <h3>5.3 Standard properties</h3>
 
 <ul>
-  <li><code>value</code> — scalar numeric value, readable and writable for diagram and runtime surfaces where allowed</li>
-  <li><code>label.text</code> — label text, readable and writable</li>
-  <li><code>interaction.visible</code> — visibility posture, readable and writable</li>
-  <li><code>format.pattern</code> — optional display formatting hint, readable and writable</li>
+  <li><code>value</code> — readable and writable for diagram/runtime update surfaces where legal</li>
+  <li><code>label.text</code> — readable and writable</li>
+  <li><code>interaction.visible</code> — readable and writable</li>
+  <li><code>format.pattern</code> — optional readable and writable display formatting hint</li>
 </ul>
 
 <h3>5.4 Standard methods</h3>
@@ -205,7 +192,7 @@ The following standard properties form the intrinsic portable baseline:
   <li><code>root</code></li>
   <li><code>label</code></li>
   <li><code>value_display</code></li>
-  <li><code>frame</code></li>
+  <li><code>frame</code> when present</li>
 </ul>
 
 <hr/>
@@ -238,15 +225,10 @@ The intrinsic behavior baseline of the numeric family includes at least:
 <ul>
   <li>numeric value updates remain type-compatible with the declared numeric type,</li>
   <li>minimum and maximum bounds, when present, constrain accepted values,</li>
-  <li>control-side user editing may produce <code>value_changed</code> and <code>editing_committed</code> events,</li>
-  <li>indicator-side visual refresh may produce <code>value_rendered</code> events when the class contract exposes them,</li>
+  <li>control-side user editing may produce <code>value_changed</code> and <code>editing_committed</code>,</li>
+  <li>indicator-side visual refresh may produce <code>value_rendered</code> when the class contract exposes it,</li>
   <li>disabled numeric controls suppress user-originated editing.</li>
 </ul>
-
-<p>
-The exact bounded behavior doctrine remains governed by the widget behavior layer.
-This document defines the minimum expected portable family behavior.
-</p>
 
 <hr/>
 
