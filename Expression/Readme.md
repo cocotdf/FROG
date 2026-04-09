@@ -60,7 +60,7 @@ The purpose of this directory is to define:
   <li>the canonical top-level structure of a <code>.frog</code> file,</li>
   <li>the required and optional source sections of that file,</li>
   <li>the source-level representation of those sections,</li>
-  <li>the source-visible cross-cutting subsystems that appear in canonical source, including the type system, the widget instance model, the widget class contract model, the widget interaction model, and the source-facing representation of structures and local-memory constructs,</li>
+  <li>the source-visible cross-cutting subsystems that appear in canonical source, including the type system, the widget instance model, the widget class contract model, the widget interaction model, the widget-package boundary, and the source-facing representation of structures and local-memory constructs,</li>
   <li>the structural validity boundary that a canonical <code>.frog</code> source file MUST satisfy before later semantic validation and execution-facing derivation,</li>
   <li>the source-schema posture under which parts of canonical source shape may be made machine-checkable without collapsing source structure into semantic validation or implementation-private behavior.</li>
 </ul>
@@ -161,6 +161,7 @@ It includes:
   <li>cross-cutting source subsystems used by multiple sections,</li>
   <li>source-facing structure and state representation,</li>
   <li>the source-owned boundary for widget-oriented package references,</li>
+  <li>the source-facing boundary between widget instance shape, widget class contract shape, widget behavior doctrine, and widget realization doctrine,</li>
   <li>source-schema posture for machine-checkable canonical source shape.</li>
 </ul>
 
@@ -180,6 +181,10 @@ It does not define:
 
 <p>
 This directory also does not collapse widget class law, widget realization, or host rendering into the canonical <code>.frog</code> file. Those concerns may be referenced from source, but they remain distinct architectural layers.
+</p>
+
+<p>
+Likewise, this directory defines the format and source-owned boundary of <code>.wfrog</code> packages, but the standard primitive widget library published for ecosystem reuse belongs in <code>Libraries/</code>, not in <code>Expression/</code>.
 </p>
 
 <hr/>
@@ -266,17 +271,17 @@ The FROG Expression is defined through the following documents in this directory
 ├── Front panel.md
 │   -&gt; optional front-panel composition and user-facing interaction surface
 ├── Widget.md
-│   -&gt; widget instance model, widget identity, roles, class reference, value participation, and source-side asset references
+│   -&gt; widget instance model, widget identity, roles, class reference, value participation, and source-side package references
 ├── Widget class contract.md
-│   -&gt; class-level widget contract for members, parts, events, access legality, and object-surface exposure
+│   -&gt; class-level widget contract for values, properties, methods, events, parts, access legality, and object-surface exposure
 ├── Widget interaction.md
 │   -&gt; diagram-side widget interaction paths and execution-facing widget access model
-├── Widget package.md
-│   -&gt; architectural definition of the .wfrog widget-oriented artifact family
+├── Widget package (.wfrog).md
+│   -&gt; normative package format for .wfrog widget classes, composition, realization resources, and bounded behavior publication
 ├── Widget realization.md
-│   -&gt; host-facing realization boundary, visual assets, and SVG integration
+│   -&gt; host-facing realization boundary, visual resources, part-to-visual mapping, and SVG integration
 ├── Widget behavior.md
-│   -&gt; widget behavior model, declarative rules, controlled expressions, and optional hooks
+│   -&gt; normative behavior boundary for class-owned reaction, declarative rules, bounded expressions, and host-private support
 ├── Control structures.md
 │   -&gt; source-facing representation of canonical control structures
 ├── State and cycles.md
@@ -326,7 +331,7 @@ Other documents define cross-cutting source subsystems used throughout the sourc
 <ul>
   <li><code>Type.md</code> defines canonical value-type expressions and source-level type rules used throughout the source format.</li>
   <li><code>Widget.md</code> defines the widget instance model used inside <code>front_panel</code>.</li>
-  <li><code>Widget class contract.md</code> defines the class-level widget contract behind standardized widget-object surfaces, including part ownership, member legality, and access constraints.</li>
+  <li><code>Widget class contract.md</code> defines the class-level widget contract behind standardized widget-object surfaces, including part ownership, member legality, mutability, and access constraints.</li>
   <li><code>Widget interaction.md</code> defines how executable diagrams may interact with widgets through standardized diagram-level interaction mechanisms.</li>
   <li><code>Control structures.md</code> and <code>State and cycles.md</code> define source-facing representation rules that participate in later semantic interpretation but must appear explicitly in canonical source.</li>
 </ul>
@@ -338,9 +343,9 @@ The widget-oriented package documents define how canonical source relates to sou
 </p>
 
 <ul>
-  <li><code>Widget package.md</code> defines the <code>.wfrog</code> artifact family and its typed package kinds.</li>
-  <li><code>Widget realization.md</code> defines the host-facing realization boundary, including SVG integration.</li>
-  <li><code>Widget behavior.md</code> defines the behavior model used by widget classes and related package content.</li>
+  <li><code>Widget package (.wfrog).md</code> defines the <code>.wfrog</code> artifact family, its package structure, its package kinds, and the publishable format for widget classes, composition, realization resources, and bounded behavior surfaces.</li>
+  <li><code>Widget realization.md</code> defines the host-facing realization boundary, including part-to-visual mapping and SVG integration.</li>
+  <li><code>Widget behavior.md</code> defines the behavior doctrine used by widget classes and related package content, including intrinsic behavior, declarative rules, bounded expressions, and host-private support boundaries.</li>
 </ul>
 
 <p>
@@ -388,7 +393,7 @@ It may additionally describe:
 </ul>
 
 <p>
-When a front panel is present, the <code>.frog</code> file may also reference widget-oriented packages needed to interpret widget class law or host-facing realization. Even in those cases, the <code>.frog</code> file remains canonical program source, not a container for all widget package contents.
+When a front panel is present, the <code>.frog</code> file may also reference widget-oriented packages needed to interpret widget class law, widget bounded behavior, or host-facing realization. Even in those cases, the <code>.frog</code> file remains canonical program source, not a container for all widget package contents.
 </p>
 
 <p>
@@ -479,9 +484,13 @@ The broader source artifact family therefore includes:
 
 <ul>
   <li>the canonical program file <code>.frog</code>,</li>
-  <li>optional referenced <code>.wfrog</code> packages for widget classes, realization, or bundle content,</li>
-  <li>optional visual assets such as SVG where referenced by widget realization packages.</li>
+  <li>optional referenced <code>.wfrog</code> packages for widget classes, composite widget definitions, realization resources, behavior publication, or bundle content,</li>
+  <li>optional visual assets such as SVG where referenced by widget realization content.</li>
 </ul>
+
+<p>
+The future standardized primitive widget families that make up the reusable front-panel baseline are expected to be published through <code>Libraries/</code> using these artifact families, rather than being redefined inside this architectural directory.
+</p>
 
 <hr/>
 
@@ -667,7 +676,7 @@ The front panel defines widget containment and panel-side composition. It does n
 </p>
 
 <p>
-Detailed specifications: <code>Front panel.md</code>, <code>Widget.md</code>, <code>Widget class contract.md</code>, <code>Widget package.md</code>, <code>Widget realization.md</code>, <code>Widget behavior.md</code>
+Detailed specifications: <code>Front panel.md</code>, <code>Widget.md</code>, <code>Widget class contract.md</code>, <code>Widget package (.wfrog).md</code>, <code>Widget realization.md</code>, <code>Widget behavior.md</code>
 </p>
 
 <h3>12.6 Icon</h3>
@@ -804,7 +813,8 @@ This model governs diagram-level interaction with widgets through standardized m
   <li>object-style widget access through <code>widget_reference</code>,</li>
   <li>property read,</li>
   <li>property write,</li>
-  <li>method invocation.</li>
+  <li>method invocation,</li>
+  <li>event observation where supported by the interaction corridor.</li>
 </ul>
 
 <p>
@@ -818,7 +828,7 @@ The current source-level widget interaction model already uses standardized prim
 <h3>13.5 Widget Package Boundary</h3>
 
 <p>
-FROG v0.1 defines a source-owned widget package boundary described in <code>Widget package.md</code>, <code>Widget realization.md</code>, and <code>Widget behavior.md</code>.
+FROG v0.1 defines a source-owned widget package boundary described in <code>Widget package (.wfrog).md</code>, <code>Widget realization.md</code>, and <code>Widget behavior.md</code>.
 </p>
 
 <p>
@@ -834,8 +844,13 @@ In particular:
   <li><code>.wfrog</code> defines widget-oriented package artifacts,</li>
   <li>widget class law is not the same thing as widget realization,</li>
   <li>widget realization is not the same thing as host-private rendering logic,</li>
+  <li>widget behavior law is not the same thing as unrestricted arbitrary host code,</li>
   <li>SVG is a visual asset layer, not hidden executable truth.</li>
 </ul>
+
+<p>
+The standardized primitive widget families intended for ecosystem-wide reuse are expected to be published in <code>Libraries/</code> on top of this boundary, not inside this boundary document set itself.
+</p>
 
 <h3>13.6 Control-Structure and Local-Memory Source Dependencies</h3>
 
@@ -885,7 +900,7 @@ This boundary is intentional and normative.
   <li><code>.frog</code> owns canonical program source.</li>
   <li><code>.frog</code> owns program sections such as <code>metadata</code>, <code>interface</code>, <code>diagram</code>, and optional <code>front_panel</code>.</li>
   <li><code>.frog</code> owns widget instances used by the program when a front panel is present.</li>
-  <li><code>.wfrog</code> may own widget class package content, widget realization package content, or bundle content.</li>
+  <li><code>.wfrog</code> may own widget class package content, composite widget package content, widget realization package content, widget behavior publication content, or bundle content.</li>
   <li><code>.wfrog</code> does not replace the canonical program-owned role of <code>.frog</code>.</li>
 </ul>
 
@@ -896,6 +911,7 @@ The following distinctions MUST remain explicit:
 <pre><code>canonical program source      != widget-oriented package
 widget instance declaration   != widget class definition
 widget class law              != widget realization
+widget behavior law           != unrestricted host code
 widget semantics              != SVG visual asset
 runtime interpretation        != language ownership
 one runtime implementation    != FROG widget definition
@@ -1032,7 +1048,7 @@ Structural validity also does not by itself define cross-version policy. The rep
 </p>
 
 <p>
-Likewise, structural validity of source-owned package references does not by itself establish the full semantic validity of widget law, realization law, or runtime support claims.
+Likewise, structural validity of source-owned package references does not by itself establish the full semantic validity of widget law, realization law, widget behavior law, or runtime support claims.
 </p>
 
 <hr/>
@@ -1064,7 +1080,7 @@ Some source constructs are clearly execution-relevant, including:
   <li>structure boundaries,</li>
   <li>explicit local memory,</li>
   <li>widget interaction expressed in the diagram,</li>
-  <li>source-visible widget-package references that later guide widget-class and realization interpretation.</li>
+  <li>source-visible widget-package references that later guide widget-class, widget behavior, and realization interpretation.</li>
 </ul>
 
 <p>
@@ -1130,7 +1146,11 @@ Some parts of the source model are intentionally conservative in v0.1 so that:
 </ul>
 
 <p>
-The active closure direction for the widget architecture in this layer is to keep the canonical program source compact while making the source-owned boundary to widget-oriented <code>.wfrog</code> packages explicit, inspectable, and multi-runtime compatible.
+The active closure direction for the widget architecture in this layer is to keep the canonical program source compact while making the source-owned boundary to widget-oriented <code>.wfrog</code> packages explicit, inspectable, extensible, and multi-runtime compatible.
+</p>
+
+<p>
+The immediate downstream closure direction is to use that boundary to support a minimal standardized widget primitive baseline in <code>Libraries/</code>, from which richer front-panel ecosystems and developer-defined composite widgets can be built.
 </p>
 
 <hr/>
