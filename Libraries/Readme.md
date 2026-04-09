@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="../FROG logo.svg" alt="FROG logo" width="200" />
+  <img src="../FROG logo.svg" alt="FROG logo" width="140" />
 </p>
 
 <h1 align="center">🐸 FROG Libraries</h1>
@@ -68,6 +68,10 @@ The purpose of <code>Libraries/</code> is therefore intentionally narrow:
 it standardizes primitive families that are fundamental, portable, and intrinsic to the FROG language surface itself.
 </p>
 
+<p>
+For the widget corridor, this layer also becomes the normative home of the intrinsic executable interaction vocabulary, while widget instances, widget class law, widget behavior, widget realization, and widget-oriented packaging remain owned elsewhere.
+</p>
+
 <hr/>
 
 <h2 id="why-this-layer-exists">2. Why this Layer Exists</h2>
@@ -119,6 +123,11 @@ Without a dedicated library layer, primitive meaning would risk being scattered 
 This directory prevents that drift by giving intrinsic primitive vocabularies a clear normative home.
 </p>
 
+<p>
+That same discipline is now especially important for the widget corridor:
+the source-level widget interaction model cannot remain credible if the executable primitive surface is left to runtime-private convention.
+</p>
+
 <hr/>
 
 <h2 id="scope-of-this-directory">3. Scope of this Directory</h2>
@@ -164,6 +173,11 @@ This directory does <strong>not</strong> define:
 Those concerns are normatively owned elsewhere in the repository.
 </p>
 
+<p>
+This directory also does not own the standardized primitive widget catalog itself.
+The primitive UI interaction surface belongs in <code>Libraries/</code>, while the standardized primitive widget families themselves belong in their own normative library-facing widget specifications rather than being smuggled into the executable primitive corridor.
+</p>
+
 <hr/>
 
 <h2 id="architectural-position">4. Architectural Position</h2>
@@ -174,12 +188,12 @@ The position of <code>Libraries/</code> inside the repository architecture is in
 
 <pre><code>Repository architecture around Libraries/
 
-Expression/   -> canonical source form
-Language/     -> normative execution meaning
-Libraries/    -> intrinsic primitive vocabularies
-Profiles/     -> optional standardized capability families
-IR/           -> canonical execution-facing representation and downstream boundaries
-IDE/          -> authoring, palette, observability, debugging, inspection
+Expression/   -&gt; canonical source form
+Language/     -&gt; normative execution meaning
+Libraries/    -&gt; intrinsic primitive vocabularies
+Profiles/     -&gt; optional standardized capability families
+IR/           -&gt; canonical execution-facing representation and downstream boundaries
+IDE/          -&gt; authoring, palette, observability, debugging, inspection
 
 Libraries/ own intrinsic primitive definitions referenced by executable diagrams.
 Libraries/ do not own source structure, cross-cutting execution semantics,
@@ -204,6 +218,23 @@ This separation matters because the same primitive identity may be:
 This also explains why <code>Libraries/Connectivity.md</code> is retained only as a transition note:
 the authoritative normative home for <code>frog.connectivity.*</code> is now the Interop profile, not the intrinsic library core.
 </p>
+
+<p>
+For the widget corridor, the same rule applies:
+</p>
+
+<pre><code>Expression/
+    owns widget interaction source representation
+
+Libraries/
+    own frog.ui.* primitive-local contract
+
+Language/
+    owns validated semantic meaning
+
+IR/
+    owns execution-facing derivation and downstream transformation
+</code></pre>
 
 <hr/>
 
@@ -257,12 +288,19 @@ For <code>frog.ui.*</code>, this composition also depends on the widget-side sou
          +
 Expression/Widget interaction.md
          +
+Expression/Widget class contract.md
+         +
 Libraries/UI.md
          +
 Language/
          =
 validated executable meaning of UI interaction
 </code></pre>
+
+<p>
+This is exactly why the widget corridor must remain layered:
+no one document and no one runtime should be allowed to absorb the full meaning alone.
+</p>
 
 <hr/>
 
@@ -294,9 +332,13 @@ It is retained only for repository continuity, navigation stability, and explici
 In practice:
 </p>
 
-<pre><code>Libraries/Connectivity.md   -> transition note only
-Profiles/Interop.md         -> authoritative normative home
+<pre><code>Libraries/Connectivity.md   -&gt; transition note only
+Profiles/Interop.md         -&gt; authoritative normative home
 </code></pre>
+
+<p>
+As the widget corridor closes further, this directory is also expected to become the home of the standardized primitive widget baseline, but only in documents whose ownership clearly targets reusable intrinsic widget families rather than source serialization or runtime realization.
+</p>
 
 <hr/>
 
@@ -320,17 +362,22 @@ At the current repository stage, the intrinsic standardized primitive taxonomy i
 The taxonomy can also be read as a simple mental map:
 </p>
 
-<pre><code>frog.core.*         -> foundational execution building blocks
-frog.math.*         -> scalar numeric operations
-frog.collections.*  -> collection manipulation
-frog.text.*         -> text processing
-frog.io.*           -> file/path/resource/byte I/O
-frog.signal.*       -> signal-oriented operations
-frog.ui.*           -> object-style widget interaction in execution
+<pre><code>frog.core.*         -&gt; foundational execution building blocks
+frog.math.*         -&gt; scalar numeric operations
+frog.collections.*  -&gt; collection manipulation
+frog.text.*         -&gt; text processing
+frog.io.*           -&gt; file/path/resource/byte I/O
+frog.signal.*       -&gt; signal-oriented operations
+frog.ui.*           -&gt; object-style widget interaction in execution
 </code></pre>
 
 <p>
 Additional intrinsic library families MAY be standardized later, but they are not part of the intrinsic standardized surface unless a corresponding specification exists in this directory and is published as such.
+</p>
+
+<p>
+The taxonomy is therefore open to disciplined growth, but closed against architectural drift.
+Intrinsic libraries are added by explicit normative publication, not by convention or by implementation popularity.
 </p>
 
 <hr/>
@@ -402,6 +449,12 @@ Examples:
 This separation keeps the intrinsic language taxonomy durable, predictable, portable, and easier to implement consistently.
 </p>
 
+<p>
+The same rule should guide the next widget step:
+the standardized primitive widget baseline belongs in <code>Libraries/</code> only insofar as it is intrinsic, portable, and language-level.
+Anything environment-specific or host-dependent remains outside this core.
+</p>
+
 <hr/>
 
 <h2 id="naming-and-namespaces">9. Naming and Namespaces</h2>
@@ -455,6 +508,16 @@ does not automatically mean
 Normative ownership still matters.
 </code></pre>
 
+<p>
+This is especially important in the widget corridor, where:
+</p>
+
+<ul>
+  <li><code>frog.widgets.*</code> identifies widget classes,</li>
+  <li><code>frog.ui.*</code> identifies executable widget interaction primitives,</li>
+  <li>the two namespaces are related, but not interchangeable.</li>
+</ul>
+
 <hr/>
 
 <h2 id="library-boundaries">10. Library Boundaries</h2>
@@ -477,13 +540,13 @@ The intrinsic standardized library families in this directory are intentionally 
 Boundary sketch:
 </p>
 
-<pre><code>frog.core.*         -> foundational primitives only
-frog.math.*         -> math only
-frog.collections.*  -> collections only
-frog.text.*         -> text only
-frog.io.*           -> I/O only
-frog.signal.*       -> signal only
-frog.ui.*           -> executable UI interaction only
+<pre><code>frog.core.*         -&gt; foundational primitives only
+frog.math.*         -&gt; math only
+frog.collections.*  -&gt; collections only
+frog.text.*         -&gt; text only
+frog.io.*           -&gt; I/O only
+frog.signal.*       -&gt; signal only
+frog.ui.*           -&gt; executable UI interaction only
 </code></pre>
 
 <p>
@@ -506,16 +569,22 @@ The main anti-pattern to avoid is this:
 </p>
 
 <pre><code>Useful capability
-      ->
+      -&gt;
 "put it in Libraries/"
-      ->
+      -&gt;
 Libraries becomes a catch-all ecosystem bucket
-      ->
+      -&gt;
 intrinsic language surface loses clarity
 </code></pre>
 
 <p>
 This repository explicitly rejects that drift.
+</p>
+
+<p>
+The same warning applies to widget growth:
+the intrinsic library layer may standardize a primitive reusable widget baseline,
+but MUST NOT become a dump site for every host-specific front-panel feature or runtime convenience surface.
 </p>
 
 <hr/>
@@ -532,6 +601,7 @@ In particular:
   <li><code>Expression/Type.md</code> defines the ordinary type model used by primitive ports,</li>
   <li><code>Language/</code> defines cross-cutting execution semantics that remain distinct from library-local primitive behavior,</li>
   <li><code>Expression/Widget.md</code> and <code>Expression/Widget interaction.md</code> define the widget model and source-facing interaction model used by <code>frog.ui.*</code>,</li>
+  <li><code>Expression/Widget class contract.md</code> defines the class-side legality targeted by <code>frog.ui.*</code>,</li>
   <li><code>Profiles/</code> defines optional standardized capability families that are not part of the intrinsic library core,</li>
   <li><code>IDE/Palette.md</code> may organize discovery and presentation of primitives, but does not replace library specifications.</li>
 </ul>
@@ -637,7 +707,7 @@ This separation is essential because primitive identity must remain stable even 
 <h2 id="library-evolution">13. Library Evolution</h2>
 
 <p>
-FROG v0.1 begins with a compact but extensible intrinsic library taxonomy.
+FROG begins with a compact but extensible intrinsic library taxonomy.
 This is intentional.
 </p>
 
@@ -681,6 +751,10 @@ When a new intrinsic library family is introduced:
   <li>it SHOULD remain compatible with later execution-facing derivation, lowering, and backend-facing consumption without moving those downstream ownerships into <code>Libraries/</code>,</li>
   <li>it SHOULD be reflected in repository-level architecture and relevant IDE palette documentation where relevant.</li>
 </ul>
+
+<p>
+For the current widget closure campaign, the next coherent evolution of this directory is to publish a minimal standardized primitive widget baseline whose law remains explicit, whose interaction remains aligned with <code>frog.ui.*</code>, and whose realization remains subordinate rather than normative.
+</p>
 
 <hr/>
 
@@ -770,3 +844,15 @@ IR/
 Implementations/
     own private realization
 </code></pre>
+
+<p>
+For the widget corridor, this means:
+</p>
+
+<ul>
+  <li>widget instances remain source-owned in <code>.frog</code>,</li>
+  <li>widget class law remains explicit and inspectable,</li>
+  <li><code>.wfrog</code> remains the widget-oriented package publication family,</li>
+  <li><code>frog.ui.*</code> remains the intrinsic executable interaction vocabulary,</li>
+  <li>future primitive widget baseline publication can grow in <code>Libraries/</code> without collapsing source, behavior, realization, and runtime ownership into one layer.</li>
+</ul>
