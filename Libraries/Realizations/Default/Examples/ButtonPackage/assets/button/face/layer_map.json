@@ -1,0 +1,25 @@
+{
+  "map_kind": "layer_map",
+  "target_class": "frog.widgets.button",
+  "target_part": "face",
+  "layers": [
+    {
+      "layer_id": "background_fill",
+      "role": "background"
+    },
+    {
+      "layer_id": "face_stroke",
+      "role": "outline"
+    },
+    {
+      "layer_id": "focus_ring",
+      "role": "focus_indicator",
+      "optional": true
+    },
+    {
+      "layer_id": "pressed_overlay",
+      "role": "pressed_feedback",
+      "optional": true
+    }
+  ]
+}
