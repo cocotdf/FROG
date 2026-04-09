@@ -63,6 +63,7 @@
   - [Realizations](/Libraries/Realizations/Readme.md)
     - [Default](/Libraries/Realizations/Default/Readme.md)
       - [Button](/Libraries/Realizations/Default/Button.md)
+      - [Numeric](/Libraries/Realizations/Default/Numeric.md)
   - [Widgets](/Libraries/Widgets/Readme.md)
     - [Boolean](/Libraries/Widgets/Boolean.md)
     - [Button](/Libraries/Widgets/Button.md)

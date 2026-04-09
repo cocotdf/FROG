@@ -450,6 +450,13 @@
                       "path": "/Libraries/Realizations/Default/Button.md",
                       "kind": "page",
                       "children": []
+                    },
+                    {
+                      "key": "libraries/realizations/default/numeric.md",
+                      "title": "Numeric",
+                      "path": "/Libraries/Realizations/Default/Numeric.md",
+                      "kind": "page",
+                      "children": []
                     }
                   ]
                 }
@@ -2406,6 +2413,7 @@
     "/Libraries/Text.md",
     "/Libraries/UI.md",
     "/Libraries/Realizations/Default/Button.md",
+    "/Libraries/Realizations/Default/Numeric.md",
     "/Libraries/Realizations/Default/Readme.md",
     "/Libraries/Realizations/Readme.md",
     "/Libraries/Widgets/Boolean.md",
