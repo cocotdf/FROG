@@ -1,0 +1,85 @@
+{
+  "asset_family": "frog.realizations.default.button",
+  "target_class": "frog.widgets.button",
+  "parts": [
+    "face",
+    "label",
+    "frame"
+  ],
+  "states": {
+    "face": [
+      "normal",
+      "disabled",
+      "focused",
+      "pressed"
+    ],
+    "label": [
+      "normal",
+      "disabled"
+    ],
+    "frame": [
+      "normal",
+      "focused"
+    ]
+  },
+  "resources": [
+    {
+      "path": "./face/normal.svg",
+      "part": "face",
+      "state": "normal",
+      "kind": "svg"
+    },
+    {
+      "path": "./face/disabled.svg",
+      "part": "face",
+      "state": "disabled",
+      "kind": "svg"
+    },
+    {
+      "path": "./face/focused.svg",
+      "part": "face",
+      "state": "focused",
+      "kind": "svg"
+    },
+    {
+      "path": "./face/pressed.svg",
+      "part": "face",
+      "state": "pressed",
+      "kind": "svg"
+    },
+    {
+      "path": "./face/layer_map.json",
+      "part": "face",
+      "kind": "layer_map"
+    },
+    {
+      "path": "./face/anchor_map.json",
+      "part": "face",
+      "kind": "anchor_map"
+    },
+    {
+      "path": "./label/normal.svg",
+      "part": "label",
+      "state": "normal",
+      "kind": "svg"
+    },
+    {
+      "path": "./label/disabled.svg",
+      "part": "label",
+      "state": "disabled",
+      "kind": "svg"
+    },
+    {
+      "path": "./frame/normal.svg",
+      "part": "frame",
+      "state": "normal",
+      "kind": "svg"
+    },
+    {
+      "path": "./frame/focused.svg",
+      "part": "frame",
+      "state": "focused",
+      "kind": "svg"
+    }
+  ]
+}
