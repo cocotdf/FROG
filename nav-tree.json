@@ -443,7 +443,15 @@
                   "title": "Default",
                   "path": "/Libraries/Realizations/Default/Readme.md",
                   "kind": "category",
-                  "children": []
+                  "children": [
+                    {
+                      "key": "libraries/realizations/default/button.md",
+                      "title": "Button",
+                      "path": "/Libraries/Realizations/Default/Button.md",
+                      "kind": "page",
+                      "children": []
+                    }
+                  ]
                 }
               ]
             },
@@ -2397,6 +2405,7 @@
     "/Libraries/Signal.md",
     "/Libraries/Text.md",
     "/Libraries/UI.md",
+    "/Libraries/Realizations/Default/Button.md",
     "/Libraries/Realizations/Default/Readme.md",
     "/Libraries/Realizations/Readme.md",
     "/Libraries/Widgets/Boolean.md",
