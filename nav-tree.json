@@ -473,6 +473,13 @@
                       "children": []
                     },
                     {
+                      "key": "libraries/realizations/default/package.md",
+                      "title": "Package",
+                      "path": "/Libraries/Realizations/Default/Package.md",
+                      "kind": "page",
+                      "children": []
+                    },
+                    {
                       "key": "libraries/realizations/default/string.md",
                       "title": "String",
                       "path": "/Libraries/Realizations/Default/String.md",
@@ -2437,6 +2444,7 @@
     "/Libraries/Realizations/Default/Button.md",
     "/Libraries/Realizations/Default/Chart.md",
     "/Libraries/Realizations/Default/Numeric.md",
+    "/Libraries/Realizations/Default/Package.md",
     "/Libraries/Realizations/Default/String.md",
     "/Libraries/Realizations/Default/Readme.md",
     "/Libraries/Realizations/Readme.md",
