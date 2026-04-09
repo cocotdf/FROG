@@ -62,6 +62,11 @@ This document does not define the entire <code>.wfrog</code> package structure. 
 Instead, this document defines what categories of behavior are allowed, how they are separated architecturally, and which behavior surfaces remain portable and reviewable.
 </p>
 
+<p>
+Its purpose is not to make behavior disappear.
+Its purpose is to prevent behavior from becoming hidden, arbitrary, or runtime-defined by accident.
+</p>
+
 <hr/>
 
 <h2 id="why-this-document-exists">2. Why This Document Exists</h2>
@@ -82,6 +87,16 @@ FROG rejects both extremes.
 <p>
 A FROG widget may have rich interaction and rich internal reaction, but the public behavior law of that widget must remain explicit and inspectable.
 </p>
+
+<p>
+This document therefore exists to keep the behavior corridor disciplined:
+</p>
+
+<ul>
+  <li>rich enough for real widgets,</li>
+  <li>bounded enough for portability and auditability,</li>
+  <li>explicit enough that one runtime never becomes the hidden owner of widget behavior law.</li>
+</ul>
 
 <hr/>
 
@@ -108,6 +123,11 @@ This document does not define:
   <li>the full host realization resource model,</li>
   <li>the implementation internals of a given runtime toolkit.</li>
 </ul>
+
+<p>
+It also does not redefine widget class law.
+It defines how published widget law may react and evolve without escaping into undocumented runtime behavior or unrestricted host scripting.
+</p>
 
 <hr/>
 
@@ -139,6 +159,11 @@ Behavior therefore sits between:
   <li>diagram-facing interaction.</li>
 </ul>
 
+<p>
+It is neither just “visual refresh logic” nor a free-form scripting substrate.
+It is the published reaction doctrine that explains how legal widget surfaces evolve and interact over time.
+</p>
+
 <hr/>
 
 <h2 id="ownership-boundary">5. Ownership Boundary</h2>
@@ -163,6 +188,23 @@ This means:
   <li>behavior does not turn SVG into semantic truth,</li>
   <li>runtime-private implementation support does not become the normative source of widget behavior law.</li>
 </ul>
+
+<p>
+Likewise:
+</p>
+
+<pre><code>portable bounded behavior
+    !=
+arbitrary package-defined host code
+
+realization support
+    !=
+public behavior law
+
+one runtime implementation
+    !=
+the behavioral definition of the class
+</code></pre>
 
 <hr/>
 
@@ -200,6 +242,12 @@ These are runtime-specific internal details required to realize the published be
 Portable widget behavior must remain concentrated in the first three levels. The fourth level exists only to support realization.
 </p>
 
+<p>
+This hierarchy is fundamental:
+portable meaning must live above host-private support,
+not be reconstructed from it after the fact.
+</p>
+
 <hr/>
 
 <h2 id="intrinsic-class-behavior">7. Intrinsic Class Behavior</h2>
@@ -221,6 +269,11 @@ Examples:
 
 <p>
 Intrinsic behavior belongs to the widget definition. It MUST be inspectable from package-published widget content. It MUST NOT exist only as undocumented runtime convention.
+</p>
+
+<p>
+Intrinsic behavior is the strongest portable behavioral tier.
+If a runtime claims support for a class, it must preserve the intrinsic behavior surfaces that are part of the published class law.
 </p>
 
 <hr/>
@@ -255,6 +308,10 @@ Declarative behavior rules SHOULD prefer:
 
 <p>
 A declarative rule MUST remain understandable without reading one runtime implementation.
+</p>
+
+<p>
+Declarative rules are therefore the preferred publication surface whenever the intended reaction can be expressed without imperative host-specific logic.
 </p>
 
 <hr/>
@@ -297,6 +354,17 @@ Bounded expressions MUST remain:
 Bounded expressions MUST NOT become a hidden general-purpose scripting loophole that redefines widget class law.
 </p>
 
+<p>
+In particular, bounded expressions MUST NOT:
+</p>
+
+<ul>
+  <li>arbitrarily create new public members,</li>
+  <li>call host-private APIs as part of portable public meaning,</li>
+  <li>silently mutate forbidden public surfaces,</li>
+  <li>depend on one runtime’s internal object graph to preserve meaning.</li>
+</ul>
+
 <hr/>
 
 <h2 id="host-private-implementation-support">10. Host-Private Implementation Support</h2>
@@ -332,6 +400,11 @@ However, host-private support MUST NOT:
   <li>silently redefine bounded behavior law.</li>
 </ul>
 
+<p>
+Host-private support therefore exists to implement published behavior,
+not to become the hidden definition of that behavior.
+</p>
+
 <hr/>
 
 <h2 id="event-emission-and-state-updates">11. Event Emission and State Updates</h2>
@@ -355,6 +428,12 @@ In particular:
 The public event and mutation surfaces therefore remain bounded by the class contract, not by runtime convenience.
 </p>
 
+<p>
+If a class wants a mutation or event to be portable,
+that mutation or event must be published as such.
+Behavior law cannot smuggle new public semantics through hidden internal transitions.
+</p>
+
 <hr/>
 
 <h2 id="mutability-and-safety">12. Mutability and Safety</h2>
@@ -376,6 +455,18 @@ If a property is:
 <p>
 Behavior rules SHOULD preserve deterministic and reviewable object evolution.
 </p>
+
+<p>
+Behavior safety therefore depends on respecting:
+</p>
+
+<ul>
+  <li>member mutability posture,</li>
+  <li>member persistence posture,</li>
+  <li>declared event contracts,</li>
+  <li>declared part boundaries,</li>
+  <li>declared portable versus non-portable behavior tiers.</li>
+</ul>
 
 <hr/>
 
@@ -413,6 +504,12 @@ A behavior rule may therefore:
 But behavior MUST NOT bypass the published object model by inventing hidden portable semantics.
 </p>
 
+<p>
+This means that behavior is subordinate to object law:
+it coordinates published surfaces,
+but does not create a second invisible object model beside them.
+</p>
+
 <hr/>
 
 <h2 id="what-must-not-happen">14. What Must Not Happen</h2>
@@ -427,6 +524,17 @@ The following are prohibited as normative behavior doctrine:
   <li>using unrestricted arbitrary package-defined host code as the primary behavioral publication surface,</li>
   <li>using behavior declarations to create undocumented public properties, methods, events, or parts,</li>
   <li>using one runtime's convenience API as the definition of portable widget law.</li>
+</ul>
+
+<p>
+Likewise, the following are prohibited:
+</p>
+
+<ul>
+  <li>treating host-private callbacks as if they were portable published behavior law,</li>
+  <li>treating realization artifacts as if they owned public reaction semantics,</li>
+  <li>treating package-defined imperative escape hatches as the normal portable publication model,</li>
+  <li>making support for a widget class depend on undocumented behavior contracts.</li>
 </ul>
 
 <hr/>
@@ -460,6 +568,10 @@ In particular, a package may publish:
 A package MUST NOT claim unrestricted opaque behavior as normative portable widget law.
 </p>
 
+<p>
+Publication through <code>.wfrog</code> therefore enables portability only when the published behavior remains within the bounded and inspectable doctrine defined here.
+</p>
+
 <hr/>
 
 <h2 id="portability-across-runtimes">16. Portability Across Runtimes</h2>
@@ -487,6 +599,11 @@ It does require:
 Runtime-specific differences in toolkit, rendering backend, event loop integration, or accessibility bridge implementation are acceptable so long as they do not redefine the public behavior contract.
 </p>
 
+<p>
+Portability therefore means behavioral equivalence at the published contract level,
+not identical private implementation strategy.
+</p>
+
 <hr/>
 
 <h2 id="status">17. Status</h2>
@@ -505,6 +622,10 @@ Its closure direction is:
   <li>support for developer-defined composite widgets,</li>
   <li>clear separation from host-private realization support.</li>
 </ul>
+
+<p>
+Its role in the widget corridor is to keep behavior rich enough for real widgets while remaining portable, inspectable, and bounded.
+</p>
 
 <hr/>
 
