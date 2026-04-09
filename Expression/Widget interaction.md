@@ -139,6 +139,12 @@ This document therefore fixes a clean interaction corridor:
   <li><code>frog.ui.*</code> primitives for explicit reads, writes, invocations, and event observation.</li>
 </ul>
 
+<p>
+It exists so that a runtime may implement widget interaction,
+but may not silently redefine the interaction model.
+The interaction corridor must remain source-visible, inspectable, and portable across runtime families.
+</p>
+
 <hr/>
 
 <h2 id="scope">3. Scope</h2>
@@ -169,6 +175,11 @@ This document does not specify:
   <li>the general execution semantics of the diagram,</li>
   <li>one mandatory rendering engine or one mandatory realization stack.</li>
 </ul>
+
+<p>
+This document therefore sits between widget instance declaration and primitive execution semantics:
+it defines how interaction is expressed in canonical source, not the full meaning of every class member and not the full behavior of every primitive implementation.
+</p>
 
 <hr/>
 
@@ -353,6 +364,18 @@ event observation
     !=
 source-owned instance metadata
 </code></pre>
+
+<p>
+The interaction corridor therefore has two anchors and several explicit operations:
+</p>
+
+<ul>
+  <li><code>widget_value</code> anchors natural value participation,</li>
+  <li><code>widget_reference</code> anchors object-style and event-oriented interaction,</li>
+  <li>the primitive node identifies the interaction kind,</li>
+  <li>the local descriptor identifies the addressed surface,</li>
+  <li>the class contract decides whether the interaction is legal.</li>
+</ul>
 
 <hr/>
 
@@ -688,6 +711,11 @@ Each widget interaction node MUST satisfy all of the following source-facing con
 The full primitive signatures, including required and optional ports beyond the source-facing reference model, are owned elsewhere.
 </p>
 
+<p>
+This document standardizes which interaction families exist at source level and how they attach to widget references.
+It does not redefine the intrinsic primitive library as such.
+</p>
+
 <hr/>
 
 <h2 id="property-read">10. Property Read</h2>
@@ -864,6 +892,11 @@ Whether the targeted part exists, and whether the named method is invocable on t
 depends on the corresponding widget class contract.
 </p>
 
+<p>
+Method invocation remains object interaction, not value participation.
+Even when a method affects widget appearance or state, it does not become a substitute for <code>widget_value</code>.
+</p>
+
 <hr/>
 
 <h2 id="event-observe">13. Event Observe</h2>
@@ -935,6 +968,11 @@ An event payload is neither:
   <li>the widget primary value by default,</li>
   <li>a substitute for widget reference identity.</li>
 </ul>
+
+<p>
+Event observation therefore introduces an explicit observable occurrence into the diagram.
+It does not collapse the event into a property read and does not collapse the payload into the natural value path unless another explicit contract says so.
+</p>
 
 <hr/>
 
@@ -1077,6 +1115,12 @@ Source-owned instance metadata remains outside this executable interaction chain
   <li>another specification explicitly grants it executable interaction meaning.</li>
 </ul>
 
+<p>
+This keeps the diagram authoritative without forcing the front panel to absorb executable semantics.
+The front panel declares the widget.
+The diagram declares the interaction.
+</p>
+
 <hr/>
 
 <h2 id="validation-rules">16. Validation Rules</h2>
@@ -1127,6 +1171,11 @@ Validators SHOULD diagnose at least the following error classes:
   <li>treating presentation-oriented metadata as executable semantic state without an explicit enabling specification.</li>
 </ul>
 
+<p>
+These checks validate interaction form and interaction legality.
+They do not redefine the full execution semantics of the targeted primitives.
+</p>
+
 <hr/>
 
 <h2 id="source-to-library-mapping">17. Source-to-Library Mapping</h2>
@@ -1152,6 +1201,12 @@ This document standardizes the source-facing use of those primitives, not their 
 
 <p>
 The natural primary-value path remains represented by <code>widget_value</code>, not by those object-style or event-oriented interaction primitives.
+</p>
+
+<p>
+This mapping is deliberate:
+the interaction document defines the source contract of usage,
+while <code>Libraries/UI.md</code> defines the intrinsic primitive surface that realizes that contract.
 </p>
 
 <hr/>
@@ -1283,7 +1338,7 @@ The natural value path MUST NOT be reinterpreted as a presentation-property path
 <pre><code>{
   "id": "ctrl_count",
   "role": "control",
-  "class_ref": "frog.ui.numeric_control",
+  "class_ref": "frog.widgets.numeric_control",
   "value_type": "u16",
   "props": {
     "face_asset_ref": {
