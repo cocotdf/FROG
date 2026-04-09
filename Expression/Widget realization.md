@@ -66,6 +66,10 @@ This document does not define the whole <code>.wfrog</code> package structure. T
 Instead, this document defines what realization is allowed to do, what it is not allowed to do, and how it remains subordinate to published widget class law.
 </p>
 
+<p>
+Realization is therefore the visual and host-facing embodiment layer of a widget, not the semantic source of truth for what the widget is.
+</p>
+
 <hr/>
 
 <h2 id="why-this-document-exists">2. Why This Document Exists</h2>
@@ -90,6 +94,17 @@ FROG rejects both failures.
 <p>
 A widget may be rendered richly, skinned flexibly, and realized differently on different hosts, but its public object model must remain stable and inspectable independently of realization details.
 </p>
+
+<p>
+This document therefore exists to preserve a disciplined layering:
+</p>
+
+<ul>
+  <li>class law defines the public surface,</li>
+  <li>behavior defines reaction,</li>
+  <li>realization defines embodiment,</li>
+  <li>runtime-private support defines implementation convenience only.</li>
+</ul>
 
 <hr/>
 
@@ -117,6 +132,11 @@ This document does not define:
   <li>the full bounded behavior structure,</li>
   <li>the private rendering internals of any one runtime family.</li>
 </ul>
+
+<p>
+It also does not define the legal set of public properties, methods, events, or parts.
+It defines how those already-published surfaces may be visually and interactively embodied on a host.
+</p>
 
 <hr/>
 
@@ -150,6 +170,11 @@ Realization does not answer:
   <li>what the primary value law of the widget is.</li>
 </ul>
 
+<p>
+Realization is therefore about embodiment, mapping, and support.
+It is not about defining public semantic law.
+</p>
+
 <hr/>
 
 <h2 id="ownership-boundary">5. Ownership Boundary</h2>
@@ -175,6 +200,27 @@ Accordingly:
   <li>realization MUST NOT treat visual assets as semantic truth.</li>
 </ul>
 
+<p>
+Likewise:
+</p>
+
+<pre><code>published parts
+    !=
+toolkit-private visual fragments
+
+appearance tokens
+    !=
+full semantic object law
+
+host bridge
+    !=
+widget definition
+</code></pre>
+
+<p>
+This ownership boundary is what allows several runtimes to realize one widget class differently while still remaining aligned on the same published meaning.
+</p>
+
 <hr/>
 
 <h2 id="realization-layers">6. Realization Layers</h2>
@@ -197,6 +243,12 @@ A well-formed realization posture distinguishes:
 
 <p>
 This layered structure keeps semantic truth separate from the skin or toolkit.
+</p>
+
+<p>
+The layers are related but not interchangeable.
+A runtime may merge them internally for efficiency,
+but a published realization posture must not collapse them into one opaque implementation artifact.
 </p>
 
 <hr/>
@@ -226,6 +278,10 @@ Examples:
 These surfaces are part of the public or package-published object model where declared. They remain portable and inspectable.
 </p>
 
+<p>
+The abstract appearance layer exists so that runtimes can preserve appearance intent even when they do not share one concrete rendering implementation.
+</p>
+
 <hr/>
 
 <h2 id="layout-and-sizing-layer">8. Layout and Sizing Layer</h2>
@@ -249,6 +305,11 @@ Examples:
 
 <p>
 Layout posture may influence realization, but layout posture does not create or remove public object law.
+</p>
+
+<p>
+This layer may guide host windowing, part placement, scaling, and responsive adaptation,
+but it must remain subordinate to the already-published part structure and appearance surfaces.
 </p>
 
 <hr/>
@@ -277,6 +338,11 @@ These resources support rendering.
 
 <p>
 They do not replace the widget class contract.
+</p>
+
+<p>
+A visual resource may help a runtime render a widget faithfully.
+It does not publish new portable properties, methods, events, parts, or behavior.
 </p>
 
 <hr/>
@@ -314,6 +380,11 @@ For example, a numeric control may bind:
 The existence and names of these parts come from widget class law, not from the visual asset.
 </p>
 
+<p>
+Part-to-visual binding therefore maps published semantic parts onto realization regions.
+It does not authorize realization to invent the semantic part model retroactively.
+</p>
+
 <hr/>
 
 <h2 id="svg-integration">11. SVG Integration</h2>
@@ -349,6 +420,21 @@ SVG MUST NOT own:
 
 <p>
 SVG is therefore a realization asset, not a semantic widget definition language.
+</p>
+
+<p>
+A runtime MAY:
+</p>
+
+<ul>
+  <li>render an SVG-backed realization faithfully,</li>
+  <li>bind published parts to SVG anchors,</li>
+  <li>ignore unsupported SVG-specific detail,</li>
+  <li>substitute a compatible native realization.</li>
+</ul>
+
+<p>
+But it MUST preserve the published public widget surface independently of the SVG asset.
 </p>
 
 <hr/>
@@ -389,6 +475,11 @@ Such variation is allowed.
 What must remain stable is the published object surface and the portable meaning of the realized widget.
 </p>
 
+<p>
+Host bridges therefore provide transport from published widget law to host embodiment.
+They are implementation bridges, not semantic authorities.
+</p>
+
 <hr/>
 
 <h2 id="interaction-with-behavior">13. Interaction with Behavior</h2>
@@ -415,6 +506,12 @@ Realization provides the host-side embodiment needed for these effects to occur 
 
 <p>
 Realization does not define the portable behavior law by itself.
+</p>
+
+<p>
+A runtime may internally interleave behavior processing and realization updates,
+but the published behavioral meaning must remain derivable from behavior and class-law surfaces,
+not from realization artifacts alone.
 </p>
 
 <hr/>
@@ -447,6 +544,11 @@ But realization MUST NOT:
   <li>replace the primary value model with a visual-text-only convention.</li>
 </ul>
 
+<p>
+In short, realization may embody published law,
+but it may not revise published law.
+</p>
+
 <hr/>
 
 <h2 id="what-realization-must-not-do">15. What Realization Must Not Do</h2>
@@ -461,6 +563,17 @@ The following are prohibited as normative realization doctrine:
   <li>placing the only true part structure inside the rendering layer,</li>
   <li>creating hidden portable public members from host convenience,</li>
   <li>silently altering public mutability posture through realization-only conventions.</li>
+</ul>
+
+<p>
+The following are also prohibited:
+</p>
+
+<ul>
+  <li>deriving the public part model solely from one skin file,</li>
+  <li>using visual-layer aliases to silently replace published member identities,</li>
+  <li>treating host hit regions as if they published new portable parts automatically,</li>
+  <li>making conformance depend on one private rendering pipeline.</li>
 </ul>
 
 <hr/>
@@ -491,6 +604,11 @@ Typical package-published realization content may include:
   <li>host realization profiles.</li>
 </ul>
 
+<p>
+Publication through <code>.wfrog</code> is therefore the normal packaging corridor for realization-facing material,
+but that material remains subordinate to class law and behavior doctrine.
+</p>
+
 <hr/>
 
 <h2 id="portability-across-runtimes">17. Portability Across Runtimes</h2>
@@ -515,6 +633,11 @@ It means:
 Different runtimes may therefore realize the same widget differently while still remaining conformant.
 </p>
 
+<p>
+Portability therefore means semantic stability plus reasonable appearance fidelity,
+not identical private toolkit behavior or identical raster output.
+</p>
+
 <hr/>
 
 <h2 id="status">18. Status</h2>
@@ -533,6 +656,10 @@ Its closure direction is:
   <li>SVG as a resource rather than semantic truth,</li>
   <li>multi-runtime realizability without semantic drift.</li>
 </ul>
+
+<p>
+Its role in the widget corridor is to keep realization flexible and rich while preventing semantic ownership from leaking into skins, toolkit bridges, or runtime-private implementation details.
+</p>
 
 <hr/>
 
