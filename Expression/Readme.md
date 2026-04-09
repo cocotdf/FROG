@@ -144,6 +144,10 @@ Expression/ does not answer by itself:
 - full IDE authoring architecture
 </code></pre>
 
+<p>
+This layer exists precisely to keep canonical source explicit without forcing later semantic, runtime, or realization decisions to leak backward into the source format.
+</p>
+
 <hr/>
 
 <h2 id="scope-of-this-directory">3. Scope of this Directory</h2>
@@ -180,7 +184,7 @@ It does not define:
 </ul>
 
 <p>
-This directory also does not collapse widget class law, widget realization, or host rendering into the canonical <code>.frog</code> file. Those concerns may be referenced from source, but they remain distinct architectural layers.
+This directory also does not collapse widget class law, widget behavior law, widget realization, or host rendering into the canonical <code>.frog</code> file. Those concerns may be referenced from source, but they remain distinct architectural layers.
 </p>
 
 <p>
@@ -242,6 +246,10 @@ The following versioning distinction MUST also remain explicit:
   <li>the full repository-wide version-transition policy remains centralized in <code>Versioning/Readme.md</code>.</li>
 </ul>
 
+<p>
+This positioning is essential for widget closure: runtimes and hosts may interpret canonical source, but they must not silently become the definition of canonical source.
+</p>
+
 <hr/>
 
 <h2 id="specification-documents">5. Specification Documents</h2>
@@ -277,7 +285,7 @@ The FROG Expression is defined through the following documents in this directory
 ├── Widget interaction.md
 │   -&gt; diagram-side widget interaction paths and execution-facing widget access model
 ├── Widget package (.wfrog).md
-│   -&gt; normative package format for .wfrog widget classes, composition, realization resources, and bounded behavior publication
+│   -&gt; normative package format for .wfrog widget classes, composite publication, realization resources, and bounded behavior publication
 ├── Widget realization.md
 │   -&gt; host-facing realization boundary, visual resources, part-to-visual mapping, and SVG integration
 ├── Widget behavior.md
@@ -343,7 +351,7 @@ The widget-oriented package documents define how canonical source relates to sou
 </p>
 
 <ul>
-  <li><code>Widget package (.wfrog).md</code> defines the <code>.wfrog</code> artifact family, its package structure, its package kinds, and the publishable format for widget classes, composition, realization resources, and bounded behavior surfaces.</li>
+  <li><code>Widget package (.wfrog).md</code> defines the <code>.wfrog</code> artifact family, its package structure, its package kinds, and the publishable format for widget classes, composite widgets, realization resources, and bounded behavior surfaces.</li>
   <li><code>Widget realization.md</code> defines the host-facing realization boundary, including part-to-visual mapping and SVG integration.</li>
   <li><code>Widget behavior.md</code> defines the behavior doctrine used by widget classes and related package content, including intrinsic behavior, declarative rules, bounded expressions, and host-private support boundaries.</li>
 </ul>
@@ -444,6 +452,10 @@ The following source-artifact distinction MUST also remain explicit:
   <li>visual assets are not identical to widget class law,</li>
   <li>runtime-private convenience is not identical to language-owned object law.</li>
 </ul>
+
+<p>
+These distinctions are especially important in the widget corridor because source shape, class law, behavior law, realization resources, runtime interpretation, and host realization must remain inspectably separate.
+</p>
 
 <hr/>
 
@@ -664,7 +676,7 @@ Detailed specifications: <code>Diagram.md</code>, <code>Type.md</code>, <code>Wi
 <h3>12.5 Front Panel</h3>
 
 <p>
-Optional section defining the user interaction layer of the FROG through widget instances, layout, style, and related UI composition data.
+Optional section defining the user interaction layer of the FROG through widget instances, layout, and related UI composition data.
 </p>
 
 <p>
@@ -732,7 +744,7 @@ cache       -&gt; non-authoritative tooling cache
 <h3>13.1 Type System</h3>
 
 <p>
-FROG v0.1 defines a normative built-in type system described in <code>Type.md</code>.
+FROG defines a normative built-in type system described in <code>Type.md</code>.
 </p>
 
 <p>
@@ -755,7 +767,7 @@ The type system is cross-cutting. It is not represented as a dedicated required 
 <h3>13.2 Widget Instance Model</h3>
 
 <p>
-FROG v0.1 defines a normative widget instance model described in <code>Widget.md</code>.
+FROG defines a normative widget instance model described in <code>Widget.md</code>.
 </p>
 
 <p>
@@ -769,7 +781,7 @@ The widget instance model is cross-cutting. It governs widget instances containe
 <h3>13.3 Widget Class Contract Model</h3>
 
 <p>
-FROG v0.1 defines a normative class-level widget contract model described in <code>Widget class contract.md</code>.
+FROG defines a normative class-level widget contract model described in <code>Widget class contract.md</code>.
 </p>
 
 <p>
@@ -801,7 +813,7 @@ This class-level contract remains distinct from:
 <h3>13.4 Widget Interaction Model</h3>
 
 <p>
-FROG v0.1 defines a normative widget interaction model described in <code>Widget interaction.md</code>.
+FROG defines a normative widget interaction model described in <code>Widget interaction.md</code>.
 </p>
 
 <p>
@@ -828,7 +840,7 @@ The current source-level widget interaction model already uses standardized prim
 <h3>13.5 Widget Package Boundary</h3>
 
 <p>
-FROG v0.1 defines a source-owned widget package boundary described in <code>Widget package (.wfrog).md</code>, <code>Widget realization.md</code>, and <code>Widget behavior.md</code>.
+FROG defines a source-owned widget package boundary described in <code>Widget package (.wfrog).md</code>, <code>Widget realization.md</code>, and <code>Widget behavior.md</code>.
 </p>
 
 <p>
@@ -855,7 +867,7 @@ The standardized primitive widget families intended for ecosystem-wide reuse are
 <h3>13.6 Control-Structure and Local-Memory Source Dependencies</h3>
 
 <p>
-FROG v0.1 includes source-facing representation rules for structures, explicit local memory, and feedback-cycle formation inside this directory:
+FROG includes source-facing representation rules for structures, explicit local memory, and feedback-cycle formation inside this directory:
 </p>
 
 <ul>
@@ -1135,7 +1147,7 @@ This directory defines the canonical source layer of the published FROG specific
 </p>
 
 <p>
-Some parts of the source model are intentionally conservative in v0.1 so that:
+Some parts of the source model are intentionally conservative so that:
 </p>
 
 <ul>
