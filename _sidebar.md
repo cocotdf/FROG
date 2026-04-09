@@ -63,6 +63,7 @@
   - [Widgets](/Libraries/Widgets/Readme.md)
     - [Boolean](/Libraries/Widgets/Boolean.md)
     - [Button](/Libraries/Widgets/Button.md)
+    - [Chart](/Libraries/Widgets/Chart.md)
     - [Numeric](/Libraries/Widgets/Numeric.md)
     - [String](/Libraries/Widgets/String.md)
 - [Profiles](/Profiles/Readme.md)
