@@ -65,12 +65,14 @@ The string family has the following common posture:
   <li>value type: <code>string</code></li>
   <li>natural value participation: yes</li>
   <li>object-style access: yes</li>
+  <li>primary value mirror property: <code>value</code></li>
+  <li>common label property: <code>label.text</code></li>
+  <li>common visibility property: <code>interaction.visible</code></li>
 </ul>
 
 <p>
 This intrinsic baseline is single-value text oriented.
 It does not attempt to standardize a full rich-text, multi-line editor, code editor, or terminal-like widget surface.
-Those may be standardized later or introduced through other families or profiles.
 </p>
 
 <hr/>
