@@ -32,7 +32,7 @@
   <li><a href="#relation-with-the-diagram">17. Relation with the Diagram</a></li>
   <li><a href="#runtime-and-host-interpretation-boundary">18. Runtime and Host Interpretation Boundary</a></li>
   <li><a href="#validation-rules">19. Validation Rules</a></li>
-  <li><a href="#minimal-v01-posture">20. Minimal v0.1 Posture</a></li>
+  <li><a href="#minimal-posture">20. Minimal Posture</a></li>
   <li><a href="#example">21. Example</a></li>
   <li><a href="#summary">22. Summary</a></li>
 </ul>
@@ -60,11 +60,11 @@ The front panel may declare:
 
 <p>
 The front panel does not define executable graph semantics.
-The diagram remains the authoritative executable graph of the FROG.
+The diagram remains the authoritative executable graph of the FROG program.
 </p>
 
 <p>
-The front panel also does not define complete widget class law, runtime-private widget structures, or host rendering internals.
+The front panel also does not define complete widget class law, bounded widget behavior doctrine, runtime-private widget structures, or host rendering internals.
 Those concerns belong to distinct specification layers.
 </p>
 
@@ -80,17 +80,19 @@ FROG must preserve a clear architectural distinction between:
   <li>the canonical authored program source,</li>
   <li>the class-level law of widgets,</li>
   <li>the package format used to publish widget-oriented artifacts,</li>
+  <li>the bounded behavior doctrine that constrains widget-side behavior publication,</li>
   <li>the runtime interpretation of those artifacts,</li>
   <li>the host-side realization of the live front panel.</li>
 </ul>
 
 <p>
 Without that distinction, the front panel becomes overloaded.
-It starts to absorb class law, host realization details, and visual package internals that do not belong to canonical program source.
+It starts to absorb class law, behavior law, host realization details, and visual package internals that do not belong to canonical program source.
 </p>
 
 <p>
 This document therefore defines the front panel as a disciplined source-level composition layer rather than as a catch-all UI definition surface.
+Its role is to say which widgets participate in the panel, how they are composed, and which source-visible authored metadata is persisted, while leaving class law, executable interaction, package grammar, and realization internals to their proper homes.
 </p>
 
 <hr/>
@@ -118,6 +120,8 @@ This document does not standardize:
   <li>public interface meaning,</li>
   <li>diagram execution semantics,</li>
   <li>the full class-level legality of widget properties, methods, events, and parts,</li>
+  <li>the doctrine for bounded widget behavior publication,</li>
+  <li>the standardized primitive widget catalog,</li>
   <li>one mandatory host toolkit,</li>
   <li>pixel-identical rendering across hosts,</li>
   <li>runtime-private UI object structures.</li>
@@ -138,9 +142,13 @@ The required architectural distinction is:
 
 <pre><code>front_panel source composition
     !=
+widget instance law in full
+    !=
 widget class law
     !=
 widget-oriented package content
+    !=
+bounded widget behavior doctrine
     !=
 diagram executable interaction
     !=
@@ -152,6 +160,11 @@ host rendering strategy
 <p>
 This distinction is mandatory.
 If these layers are blurred, source ownership, legality, interpretation, and portability become difficult to reason about and difficult to validate.
+</p>
+
+<p>
+The front panel owns composition.
+It does not own the entire widget system.
 </p>
 
 <hr/>
@@ -177,12 +190,19 @@ If these layers are blurred, source ownership, legality, interpretation, and por
 <ul>
   <li>public interface meaning,</li>
   <li>diagram executable semantics,</li>
+  <li>complete widget instance law,</li>
   <li>complete widget class legality,</li>
   <li>object-style interaction primitive law,</li>
   <li>the full machine-readable definition of widget-oriented packages,</li>
+  <li>bounded behavior publication law,</li>
   <li>runtime-private live object structure,</li>
-  <li>host-private rendering internals.</li>
+  <li>host-private rendering internals,</li>
+  <li>the standard primitive widget catalog owned by <code>Libraries/</code>.</li>
 </ul>
+
+<p>
+Accordingly, the front panel may serialize widget instances and panel-owned authored intent, but it must not become a second widget-class document, a second package-format document, or a second executable-interaction document.
+</p>
 
 <hr/>
 
@@ -202,8 +222,13 @@ When present, the front panel appears as an optional top-level section of a <cod
 
 <p>
 The <code>front_panel</code> section is optional.
-When absent, the FROG is interpreted as having no serialized front-panel composition.
+When absent, the FROG program is interpreted as having no serialized front-panel composition.
 This does not affect the validity of the FROG as an executable program.
+</p>
+
+<p>
+The presence of <code>front_panel</code> does not make the front panel the owner of executable meaning.
+The diagram remains authoritative for execution.
 </p>
 
 <hr/>
@@ -223,12 +248,12 @@ The front panel is the canonical source-level declaration of:
 
 <p>
 The front panel is not the place where full widget class definitions are authored.
-It is also not the place where host realization internals are fully authored.
-Those concerns belong to widget class contracts and <code>.wfrog</code> packages.
+It is also not the place where bounded widget behavior is fully defined or where host realization internals are fully authored.
+Those concerns belong to widget class contracts, widget behavior doctrine, and <code>.wfrog</code> packages.
 </p>
 
 <p>
-Accordingly, a front panel is source-visible and canonical, but intentionally incomplete with respect to full realization law.
+Accordingly, a front panel is source-visible and canonical, but intentionally incomplete with respect to full class law, full behavior law, and full realization law.
 </p>
 
 <hr/>
@@ -259,6 +284,11 @@ Fields:
 All fields are optional.
 If present, they MUST follow the declared structure.
 Widget instance metadata belongs inside widget instances rather than in a separate hidden semantic layer.
+</p>
+
+<p>
+This object shape defines front-panel ownership only.
+It does not imply that every field inside every widget instance is defined by this document; widget-instance structure is defined normatively in <code>Widget.md</code>.
 </p>
 
 <hr/>
@@ -314,6 +344,11 @@ The front panel serializes widget instances as source objects.
 It does not redefine widget class semantics, member legality, member accessibility, or class-side part contracts.
 </p>
 
+<p>
+Likewise, the front panel does not define which primitive widget classes are standardized by the language profile.
+That catalog belongs to <code>Libraries/</code>.
+</p>
+
 <hr/>
 
 <h2 id="composition-and-nesting">10. Composition and Nesting</h2>
@@ -337,6 +372,10 @@ Rules:
 
 <p>
 A runtime or host MAY realize the same source composition using a different internal rendering structure, but that does not change source-owned containment.
+</p>
+
+<p>
+Composition and nesting therefore belong to canonical source, while legality of containment belongs to widget class law.
 </p>
 
 <hr/>
@@ -370,6 +409,10 @@ Canvas and layout intent:
 
 <p>
 Likewise, widget <code>layout</code> fields define source-owned placement intent, not executable graph behavior.
+</p>
+
+<p>
+A runtime or host MAY adapt authored layout intent to platform constraints, accessibility requirements, or rendering capabilities, but it MUST preserve the authored source meaning of composition and identity.
 </p>
 
 <hr/>
@@ -419,6 +462,10 @@ panel-owned layout intent
 widget-oriented package reference
 </code></pre>
 
+<p>
+This distinction is especially important for portable runtimes: a runtime may interpret the same authored metadata differently at realization level while remaining bound to the same canonical source meaning.
+</p>
+
 <hr/>
 
 <h2 id="relation-with-widget-class-law">13. Relation with Widget Class Law</h2>
@@ -435,8 +482,13 @@ Accordingly:
 <ul>
   <li>the front panel may persist only instance-side members allowed by the relevant class law,</li>
   <li>the front panel does not invent new properties, methods, events, or parts,</li>
-  <li>the front panel does not redefine addressing legality or mutability boundaries.</li>
+  <li>the front panel does not redefine addressing legality or mutability boundaries,</li>
+  <li>the front panel does not redefine the runtime-observable object surface of a class.</li>
 </ul>
+
+<p>
+This means that front-panel serialization is constrained by class law, but it is not itself the source of class law.
+</p>
 
 <hr/>
 
@@ -448,16 +500,20 @@ Those packages remain external widget-oriented artifacts rather than absorbed fr
 </p>
 
 <p>
-In v0.1, the preferred package kinds are:
+Typical kinds of content that may be published through <code>.wfrog</code> include:
 </p>
 
 <ul>
-  <li><code>widget_class_package</code> — machine-readable widget class content,</li>
-  <li><code>front_panel_package</code> — machine-readable panel realization content.</li>
+  <li>widget class publication,</li>
+  <li>composite widget publication,</li>
+  <li>bounded behavior publication,</li>
+  <li>realization-resource publication,</li>
+  <li>widget-oriented bundles.</li>
 </ul>
 
 <p>
 The front panel references these packages but does not absorb their ownership.
+It points to external content; it does not become the full serialization format of that content.
 </p>
 
 <hr/>
@@ -475,7 +531,7 @@ A front panel MAY reference widget-oriented packages through:
 </ul>
 
 <p>
-Such references are source-owned declarations pointing to artifacts that may define class content, front-panel package content, visual assets, or host realization metadata.
+Such references are source-owned declarations pointing to artifacts that may define class content, composite definitions, visual assets, bounded behavior publication, or host realization metadata.
 They are not themselves executable graph operations.
 </p>
 
@@ -495,6 +551,7 @@ Rules:
   <li>package references MUST remain source-visible and inspectable,</li>
   <li>package references MUST NOT by themselves redefine class identity,</li>
   <li>package references MUST NOT create hidden executable behavior,</li>
+  <li>package references MUST NOT collapse canonical <code>.frog</code> source into package-owned meaning,</li>
   <li>unsupported package families MAY be ignored or diagnosed by a runtime or host according to profile and capability claims.</li>
 </ul>
 
@@ -557,7 +614,7 @@ A host MAY:
 
 <p>
 The front panel does not define executable behavior.
-The diagram remains the authoritative executable graph of the FROG.
+The diagram remains the authoritative executable graph of the FROG program.
 </p>
 
 <p>
@@ -573,6 +630,12 @@ Canonical diagram interaction mechanisms include:
 
 <p>
 A source-owned package reference, a layout field, or a visual metadata field does not become executable interaction merely because it appears in source.
+</p>
+
+<p>
+Likewise, composition in the front panel does not replace causality in the diagram.
+The front panel says what is present and how it is arranged.
+The diagram says what executes and how values flow.
 </p>
 
 <hr/>
@@ -598,6 +661,10 @@ Accordingly:
 <p>
 One runtime implementation MUST NOT redefine the front-panel meaning of the language.
 One host toolkit MUST NOT become the definition of FROG panel semantics.
+</p>
+
+<p>
+This is precisely why authored front-panel composition must remain source-visible and inspectable rather than silently dissolved into runtime-private structures.
 </p>
 
 <hr/>
@@ -629,12 +696,16 @@ Validators SHOULD additionally diagnose:
   <li>attempts to use static SVG content as the normative owner of dynamic widget values or dynamic widget text.</li>
 </ul>
 
+<p>
+Detailed legality of widget members, parts, role/class compatibility, and object-surface access remains the responsibility of the corresponding widget class contract and interaction rules.
+</p>
+
 <hr/>
 
-<h2 id="minimal-v01-posture">20. Minimal v0.1 Posture</h2>
+<h2 id="minimal-posture">20. Minimal Posture</h2>
 
 <p>
-A minimal v0.1 front panel MAY contain:
+A minimal front panel posture MAY contain:
 </p>
 
 <ul>
@@ -656,6 +727,11 @@ For that posture:
   <li>runtime interpretation remains distinct from host realization,</li>
   <li>the diagram remains the sole owner of executable graph semantics.</li>
 </ul>
+
+<p>
+This posture is intentionally small.
+It proves the architectural boundary without forcing the front panel document to absorb the full future widget ecosystem.
+</p>
 
 <hr/>
 
@@ -730,5 +806,10 @@ It stabilizes:
 
 <p>
 It also makes explicit that visual assets such as SVG remain visual resources rather than hidden semantic truth.
-Dynamic widget values, dynamic widget text, object-style widget access, and executable UI behavior remain owned by the language, widget class, package, runtime, and host boundaries defined elsewhere in the specification corpus.
+Dynamic widget values, dynamic widget text, object-style widget access, executable UI behavior, and primitive widget catalog definition remain owned by the language, widget class, package, behavior, runtime, host, and library boundaries defined elsewhere in the specification corpus.
+</p>
+
+<p>
+The result is a front-panel model that is canonical, inspectable, portable, and disciplined:
+it owns composition without trying to own the whole widget system.
 </p>
