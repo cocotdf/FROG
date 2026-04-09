@@ -72,6 +72,7 @@
       - [String](/Libraries/Realizations/Default/String.md)
       - Examples
         - [Button default realization.wfrog](/Libraries/Realizations/Default/Examples/Button%20default%20realization.wfrog.md)
+        - [Numeric control default realization.wfrog](/Libraries/Realizations/Default/Examples/Numeric%20control%20default%20realization.wfrog.md)
   - [Widgets](/Libraries/Widgets/Readme.md)
     - [Boolean](/Libraries/Widgets/Boolean.md)
     - [Button](/Libraries/Widgets/Button.md)
