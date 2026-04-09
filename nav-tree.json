@@ -464,6 +464,13 @@
                       "path": "/Libraries/Realizations/Default/Numeric.md",
                       "kind": "page",
                       "children": []
+                    },
+                    {
+                      "key": "libraries/realizations/default/string.md",
+                      "title": "String",
+                      "path": "/Libraries/Realizations/Default/String.md",
+                      "kind": "page",
+                      "children": []
                     }
                   ]
                 }
@@ -2422,6 +2429,7 @@
     "/Libraries/Realizations/Default/Boolean.md",
     "/Libraries/Realizations/Default/Button.md",
     "/Libraries/Realizations/Default/Numeric.md",
+    "/Libraries/Realizations/Default/String.md",
     "/Libraries/Realizations/Default/Readme.md",
     "/Libraries/Realizations/Readme.md",
     "/Libraries/Widgets/Boolean.md",
