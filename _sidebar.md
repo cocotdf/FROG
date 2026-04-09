@@ -63,6 +63,7 @@
   - [Widgets](/Libraries/Widgets/Readme.md)
     - [Boolean](/Libraries/Widgets/Boolean.md)
     - [Numeric](/Libraries/Widgets/Numeric.md)
+    - [String](/Libraries/Widgets/String.md)
 - [Profiles](/Profiles/Readme.md)
   - [Interop](/Profiles/Interop.md)
   - [Native CPU LLVM](/Profiles/Native%20CPU%20LLVM.md)
