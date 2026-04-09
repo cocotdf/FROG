@@ -60,6 +60,7 @@
   - [Signal](/Libraries/Signal.md)
   - [Text](/Libraries/Text.md)
   - [UI](/Libraries/UI.md)
+  - [Realizations](/Libraries/Realizations/Readme.md)
   - [Widgets](/Libraries/Widgets/Readme.md)
     - [Boolean](/Libraries/Widgets/Boolean.md)
     - [Button](/Libraries/Widgets/Button.md)

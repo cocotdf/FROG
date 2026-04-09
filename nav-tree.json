@@ -433,6 +433,13 @@
               "children": []
             },
             {
+              "key": "libraries/realizations/",
+              "title": "Realizations",
+              "path": "/Libraries/Realizations/Readme.md",
+              "kind": "category",
+              "children": []
+            },
+            {
               "key": "libraries/widgets/",
               "title": "Widgets",
               "path": "/Libraries/Widgets/Readme.md",
@@ -2382,6 +2389,7 @@
     "/Libraries/Signal.md",
     "/Libraries/Text.md",
     "/Libraries/UI.md",
+    "/Libraries/Realizations/Readme.md",
     "/Libraries/Widgets/Boolean.md",
     "/Libraries/Widgets/Button.md",
     "/Libraries/Widgets/Chart.md",
