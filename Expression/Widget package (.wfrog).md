@@ -73,6 +73,10 @@ A <code>.wfrog</code> package is not a second canonical program source file. The
 The purpose of <code>.wfrog</code> is to make widget law, widget composition, widget realization resources, and related package-owned publication surfaces explicit, machine-readable, inspectable, portable, and reviewable without collapsing them into runtime-private code or into opaque visual assets.
 </p>
 
+<p>
+A <code>.wfrog</code> package therefore exists to publish widget-oriented content, not to replace program source, not to hide semantics inside a runtime, and not to turn realization assets into semantic truth.
+</p>
+
 <hr/>
 
 <h2 id="why-wfrog-exists">2. Why <code>.wfrog</code> Exists</h2>
@@ -113,6 +117,18 @@ That information must not live only in:
 The <code>.wfrog</code> format exists so that widget-oriented content can be published explicitly and consumed consistently across multiple runtimes and toolchains.
 </p>
 
+<p>
+It is the publication corridor that allows:
+</p>
+
+<ul>
+  <li>primitive widget classes to be published once and reused,</li>
+  <li>composite widget classes to be built without runtime-private reinvention,</li>
+  <li>bounded behavior to remain inspectable,</li>
+  <li>realization resources to remain subordinate to semantics,</li>
+  <li>developers to define new widgets without making one runtime the hidden definition of the class.</li>
+</ul>
+
 <hr/>
 
 <h2 id="scope">3. Scope</h2>
@@ -146,6 +162,11 @@ This document does not define:
   <li>the semantics of unrelated primitive families outside the widget corridor.</li>
 </ul>
 
+<p>
+This document also does not redefine widget instance syntax, diagram-side interaction primitives, or class-law ownership.
+It defines the package-owned publication format through which those surfaces may be published and reused.
+</p>
+
 <hr/>
 
 <h2 id="ownership-boundary">4. Ownership Boundary</h2>
@@ -176,10 +197,27 @@ The following distinctions MUST remain explicit:
 </p>
 
 <pre><code>widget instance declaration      != widget class definition
-widget class law                != host-private helper code
-widget realization resource     != runtime-private rendering code
-visual asset                    != semantic truth
-package-owned behavior surface  != unrestricted arbitrary host code
+widget class law                 != host-private helper code
+widget realization resource      != runtime-private rendering code
+visual asset                     != semantic truth
+package-owned behavior surface   != unrestricted arbitrary host code
+</code></pre>
+
+<p>
+Likewise:
+</p>
+
+<pre><code>.wfrog publication
+    !=
+runtime implementation
+
+package-owned class law
+    !=
+one host toolkit mapping
+
+bounded behavior publication
+    !=
+arbitrary package-defined host execution
 </code></pre>
 
 <hr/>
@@ -213,6 +251,10 @@ The format therefore favors:
   <li>composition over one closed hardcoded widget list.</li>
 </ul>
 
+<p>
+It is intentionally a publication format, not a private authoring cache and not a runtime-private intermediate convenience format.
+</p>
+
 <hr/>
 
 <h2 id="package-kinds">6. Package Kinds</h2>
@@ -226,10 +268,10 @@ The following kinds are defined:
 </p>
 
 <ul>
-  <li><code>widget_library</code> - publishes one or more widget classes, typically primitive or reusable classes,</li>
-  <li><code>widget_bundle</code> - aggregates multiple imported widget libraries and related assets for convenient distribution,</li>
-  <li><code>widget_realization_library</code> - publishes reusable realization resources and realization-side mappings,</li>
-  <li><code>widget_composite_library</code> - publishes composite widget classes built from primitive or imported widget classes.</li>
+  <li><code>widget_library</code> — publishes one or more widget classes, typically primitive or reusable classes,</li>
+  <li><code>widget_bundle</code> — aggregates multiple imported widget libraries and related assets for convenient distribution,</li>
+  <li><code>widget_realization_library</code> — publishes reusable realization resources and realization-side mappings,</li>
+  <li><code>widget_composite_library</code> — publishes composite widget classes built from primitive or imported widget classes.</li>
 </ul>
 
 <p>
@@ -244,6 +286,11 @@ A package kind does not change the ownership boundary:
   <li>none of these package kinds replaces <code>.frog</code> as canonical program source,</li>
   <li>none of these package kinds turns one runtime implementation into normative widget law.</li>
 </ul>
+
+<p>
+A package kind therefore helps tools and users understand the intended posture of the package,
+but does not alter the portable publication rules of the widget corridor.
+</p>
 
 <hr/>
 
@@ -284,6 +331,11 @@ Depending on package kind, the package MAY additionally contain:
 The package remains intentionally explicit. Widget-oriented meaning should not depend on hidden code generation or on private asset-resolution conventions.
 </p>
 
+<p>
+Top-level sections SHOULD remain stable and diff-friendly.
+A package should be inspectable by reading its JSON, not only by executing one implementation.
+</p>
+
 <hr/>
 
 <h2 id="metadata-and-identity">8. Metadata and Identity</h2>
@@ -312,6 +364,18 @@ It SHOULD contain fields such as:
 Package identity MUST be stable enough that widget references from canonical <code>.frog</code> source remain reviewable and deterministic.
 </p>
 
+<p>
+Package identity must support:
+</p>
+
+<ul>
+  <li>stable publication,</li>
+  <li>stable import references,</li>
+  <li>stable export references,</li>
+  <li>clear human inspection,</li>
+  <li>tooling diagnostics and conformance reporting.</li>
+</ul>
+
 <hr/>
 
 <h2 id="imports-and-dependencies">9. Imports and Dependencies</h2>
@@ -339,6 +403,10 @@ Imports SHOULD remain explicit.
 A package MUST NOT depend on undocumented runtime-private imports in order to define the legality of properties, methods, parts, or events.
 </p>
 
+<p>
+Dependencies that affect public class law, public composite structure, bounded behavior publication, or realization-resource interpretation SHOULD be represented in a way that remains inspectable and deterministic.
+</p>
+
 <hr/>
 
 <h2 id="exports">10. Exports</h2>
@@ -362,6 +430,11 @@ Typical exported symbol categories include:
 
 <p>
 Only exported classes are intended for stable external reference from <code>.frog</code> source or from other packages.
+</p>
+
+<p>
+Exported symbols therefore define the stable public publication surface of the package.
+Non-exported internal helpers MAY exist, but they MUST NOT be mistaken for public portable contract surfaces.
 </p>
 
 <hr/>
@@ -399,11 +472,11 @@ Conceptually:
 </p>
 
 <pre><code>{
-  "class_id": "frog.ui.numeric_control",
+  "class_id": "frog.widgets.numeric_control",
   "display_name": "Numeric Control",
   "class_kind": "primitive",
   "widget_role": "control",
-  "inherits": "frog.ui.scalar_widget",
+  "inherits": "frog.widgets.scalar_widget",
   "value_model": { ... },
   "properties": [ ... ],
   "methods": [ ... ],
@@ -415,6 +488,11 @@ Conceptually:
   "realization_refs": [ ... ]
 }
 </code></pre>
+
+<p>
+The published class definition is therefore the inspectable package-side carrier of class law.
+It may reference other package content, but it must not dissolve into runtime-private interpretation.
+</p>
 
 <hr/>
 
@@ -452,6 +530,17 @@ Examples:
 <p>
 The primary value model is part of widget class law. It is not merely a visual text field.
 </p>
+
+<p>
+The value model SHOULD also indicate whether:
+</p>
+
+<ul>
+  <li>the primary value is mirrored as a property such as <code>value</code>,</li>
+  <li>the primary value may be mutated by user interaction,</li>
+  <li>the primary value may be mutated by diagram interaction,</li>
+  <li>the primary value participates in bounded derived projections such as text or visual state mappings.</li>
+</ul>
 
 <hr/>
 
@@ -509,6 +598,11 @@ Property law MUST be package-published and inspectable.
 A runtime MUST NOT silently create portable public properties that are absent from the published class contract.
 </p>
 
+<p>
+The property model is the package-published extension of class law.
+It is not a permission for runtime-specific undisclosed mutable fields to become public portable surfaces.
+</p>
+
 <hr/>
 
 <h2 id="method-model">14. Method Model</h2>
@@ -550,6 +644,18 @@ Examples:
 <p>
 Methods are part of object law. They are not arbitrary host callbacks.
 </p>
+
+<p>
+The method model SHOULD make clear whether a method is:
+</p>
+
+<ul>
+  <li>portable,</li>
+  <li>profile-gated,</li>
+  <li>host-gated,</li>
+  <li>purely local to widget behavior,</li>
+  <li>dependent on non-portable realization support.</li>
+</ul>
 
 <hr/>
 
@@ -594,6 +700,11 @@ Examples:
 
 <p>
 The event model is inspired by modern event-target style object systems. Events remain named, inspectable, typed, and explicit.
+</p>
+
+<p>
+Event publication MUST NOT collapse into undocumented toolkit signals.
+If an event is part of the portable public class surface, it must be published as such.
 </p>
 
 <hr/>
@@ -648,6 +759,11 @@ Examples for a numeric control:
   <li><code>background</code>.</li>
 </ul>
 
+<p>
+Portable parts are published parts.
+Toolkit-private fragments are not portable parts unless the package declares them as such.
+</p>
+
 <hr/>
 
 <h2 id="appearance-model">17. Appearance Model</h2>
@@ -687,6 +803,11 @@ The appearance model MUST NOT collapse widget meaning into one host toolkit skin
 
 <p>
 The appearance model MUST NOT treat SVG as semantic truth.
+</p>
+
+<p>
+Appearance publication therefore describes portable appearance-facing surfaces and defaults,
+not the full private rendering strategy of a runtime or host.
 </p>
 
 <hr/>
@@ -731,6 +852,20 @@ A <code>.wfrog</code> package MUST NOT require unrestricted arbitrary host code 
 Behavior publication remains bounded and reviewable.
 </p>
 
+<p>
+The package SHOULD make explicit which behavior surfaces are:
+</p>
+
+<ul>
+  <li>portable and normative,</li>
+  <li>portable but optional,</li>
+  <li>host-private and non-portable.</li>
+</ul>
+
+<p>
+This is the core rule that allows richer widget publication without turning `.wfrog` into a carrier of arbitrary runtime-defined imperative code.
+</p>
+
 <hr/>
 
 <h2 id="diagram-contract">19. Diagram Contract</h2>
@@ -755,6 +890,11 @@ This diagram contract SHOULD specify:
 
 <p>
 This package-published diagram contract supports portable lowering into later execution-facing representations.
+</p>
+
+<p>
+It does not replace the interaction model defined elsewhere.
+It publishes what the class permits that interaction model to target.
 </p>
 
 <hr/>
@@ -814,6 +954,11 @@ A composite widget class SHOULD specify:
 Composite widget classes are the preferred FROG mechanism for developer-defined higher-level front-panel objects.
 </p>
 
+<p>
+A composite class remains portable only if its public class law is published explicitly.
+A runtime must not be forced to infer the public contract of the composite only from hidden internal composition.
+</p>
+
 <hr/>
 
 <h2 id="realization-resources">21. Realization Resources</h2>
@@ -841,6 +986,13 @@ Realization resources are package-published support artifacts for rendering and 
 
 <p>
 They MUST remain subordinate to widget class law.
+</p>
+
+<p>
+Realization resources may help runtimes render or bind a widget consistently,
+but they do not redefine what the class means.
+They support realization.
+They do not own semantics.
 </p>
 
 <hr/>
@@ -879,6 +1031,10 @@ SVG MUST NOT be treated as the owner of:
 SVG is a realization aid, not a semantic object model.
 </p>
 
+<p>
+A runtime MAY faithfully realize SVG-backed assets, substitute a compatible native rendering, or ignore unsupported SVG-specific details, provided that the published class law and published public surfaces remain preserved.
+</p>
+
 <hr/>
 
 <h2 id="bindings-and-host-bridges">23. Bindings and Host Bridges</h2>
@@ -905,6 +1061,11 @@ These bindings remain non-authoritative with respect to public widget law.
 
 <p>
 A runtime MAY ignore a non-portable convenience hint if doing so preserves the normative public object surface.
+</p>
+
+<p>
+Bindings and host bridges therefore exist to support realization and deployment convenience.
+They MUST NOT silently mutate the published portable contract of a widget class.
 </p>
 
 <hr/>
@@ -935,6 +1096,16 @@ However:
   <li>the <code>.wfrog</code> file does not replace the program's diagram or source structure.</li>
 </ul>
 
+<p>
+The relationship is therefore explicit and layered:
+</p>
+
+<ul>
+  <li><code>.frog</code> declares widget participation in one program,</li>
+  <li><code>.wfrog</code> publishes reusable widget-oriented law, composition, behavior, and realization resources,</li>
+  <li>runtimes interpret both without collapsing their ownership boundaries.</li>
+</ul>
+
 <hr/>
 
 <h2 id="minimal-json-outline">25. Minimal JSON Outline</h2>
@@ -947,19 +1118,19 @@ A minimal illustrative outline of a class-publishing <code>.wfrog</code> package
   "wfrog_version": "0.1",
   "package_kind": "widget_library",
   "package": {
-    "id": "frog.ui.core",
-    "name": "FROG UI Core",
-    "namespace": "frog.ui"
+    "id": "frog.widgets.core",
+    "name": "FROG Widget Core",
+    "namespace": "frog.widgets"
   },
   "imports": [],
   "exports": {
     "classes": [
-      "frog.ui.numeric_control"
+      "frog.widgets.numeric_control"
     ]
   },
   "widget_classes": [
     {
-      "class_id": "frog.ui.numeric_control",
+      "class_id": "frog.widgets.numeric_control",
       "display_name": "Numeric Control",
       "class_kind": "primitive",
       "widget_role": "control",
@@ -1014,6 +1185,11 @@ A minimal illustrative outline of a class-publishing <code>.wfrog</code> package
 This outline is illustrative. The normative meaning of each section is owned by this document and by the related widget companion documents.
 </p>
 
+<p>
+It shows the intended posture clearly:
+a package publishes explicit widget-oriented law and related resources in a machine-readable form that remains inspectable without reliance on one runtime implementation.
+</p>
+
 <hr/>
 
 <h2 id="structural-validity">26. Structural Validity</h2>
@@ -1034,6 +1210,11 @@ A <code>.wfrog</code> package is structurally valid only if:
 
 <p>
 Structural validity of a <code>.wfrog</code> package does not, by itself, guarantee that every runtime can realize the package fully. Runtime support claims remain separate from source/package validity.
+</p>
+
+<p>
+Likewise, structural validity does not by itself guarantee conformance for every exported class.
+Conformance depends on whether a runtime preserves the published portable contract surfaces it claims to support.
 </p>
 
 <hr/>
@@ -1060,6 +1241,18 @@ Tools SHOULD preserve:
 Portable widget packages SHOULD avoid depending on one host toolkit's private assumptions wherever that would change the public object surface.
 </p>
 
+<p>
+A portable package should therefore maximize:
+</p>
+
+<ul>
+  <li>explicit public law,</li>
+  <li>explicit public exports,</li>
+  <li>bounded behavior publication,</li>
+  <li>subordinate realization resources,</li>
+  <li>clear marking of host-private conveniences.</li>
+</ul>
+
 <hr/>
 
 <h2 id="status">28. Status</h2>
@@ -1079,6 +1272,11 @@ The closure direction for this package family is:
   <li>portable bounded behavior,</li>
   <li>multi-runtime realization compatibility.</li>
 </ul>
+
+<p>
+Its role in the repository is to keep widget publication explicit and layered,
+so that richer front-panel ecosystems can grow without transferring semantic ownership to runtimes or to visual assets.
+</p>
 
 <hr/>
 
