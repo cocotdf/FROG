@@ -66,13 +66,14 @@ The boolean family has the following common posture:
   <li>value type: <code>bool</code></li>
   <li>public value-facing surface: yes</li>
   <li>object-style access surface: yes</li>
-  <li>compatible roles: according to class identity</li>
+  <li>primary value mirror property: <code>value</code></li>
+  <li>common label property: <code>label.text</code></li>
+  <li>common visibility property: <code>interaction.visible</code></li>
 </ul>
 
 <p>
 The boolean family is not a tri-state baseline in the intrinsic core.
 It is a true/false baseline.
-Future profile-owned or extended classes MAY add richer logical-state surfaces, but this document remains limited to the portable intrinsic boolean case.
 </p>
 
 <hr/>
@@ -105,8 +106,6 @@ Future profile-owned or extended classes MAY add richer logical-state surfaces, 
   <li><code>label.text</code></li>
   <li><code>interaction.enabled</code></li>
   <li><code>interaction.visible</code></li>
-  <li><code>style.on_color</code> when supported by the standard family realization posture</li>
-  <li><code>style.off_color</code> when supported by the standard family realization posture</li>
 </ul>
 
 <h3>4.4 Standard methods</h3>
@@ -166,8 +165,6 @@ Future profile-owned or extended classes MAY add richer logical-state surfaces, 
   <li><code>value</code></li>
   <li><code>label.text</code></li>
   <li><code>interaction.visible</code></li>
-  <li><code>style.on_color</code> when supported</li>
-  <li><code>style.off_color</code> when supported</li>
 </ul>
 
 <h3>5.4 Standard methods</h3>
@@ -202,10 +199,10 @@ The boolean family uses the following common stable parts:
 </p>
 
 <ul>
-  <li><code>root</code> — owning widget root</li>
-  <li><code>label</code> — optional label surface</li>
-  <li><code>state_face</code> — visual state surface representing true/false posture</li>
-  <li><code>frame</code> — optional framing surface</li>
+  <li><code>root</code></li>
+  <li><code>label</code></li>
+  <li><code>state_face</code></li>
+  <li><code>frame</code></li>
 </ul>
 
 <hr/>
