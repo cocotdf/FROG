@@ -18,10 +18,13 @@
       "button.face.disabled.svg",
       "button.face.focused.svg",
       "button.face.pressed.svg",
-      "button.label.normal.svg",
-      "button.label.disabled.svg",
       "button.frame.normal.svg",
-      "button.frame.focused.svg"
+      "button.frame.focused.svg",
+      "button.face.layer_map",
+      "button.label.anchor_map"
+    ],
+    "anchors": [
+      "button.label.center"
     ]
   },
   "targets": [
@@ -48,16 +51,21 @@
       ],
       "part_bindings": [
         {
+          "target_class": "frog.widgets.button",
           "part": "face",
           "binding_kind": "resource_layer",
           "binding_target": "face"
         },
         {
+          "target_class": "frog.widgets.button",
           "part": "label",
-          "binding_kind": "resource_layer",
-          "binding_target": "label"
+          "binding_kind": "anchor",
+          "binding_target": "button.label.center",
+          "placement_role": "text_anchor",
+          "fallback": "host_centered_text_region"
         },
         {
+          "target_class": "frog.widgets.button",
           "part": "frame",
           "binding_kind": "resource_layer",
           "binding_target": "frame"
@@ -65,6 +73,7 @@
       ],
       "state_maps": [
         {
+          "target_class": "frog.widgets.button",
           "target_part": "face",
           "state": "normal",
           "resource_refs": [
@@ -72,6 +81,7 @@
           ]
         },
         {
+          "target_class": "frog.widgets.button",
           "target_part": "face",
           "state": "disabled",
           "resource_refs": [
@@ -80,6 +90,7 @@
           "fallback": "normal"
         },
         {
+          "target_class": "frog.widgets.button",
           "target_part": "face",
           "state": "focused",
           "resource_refs": [
@@ -88,6 +99,7 @@
           "fallback": "normal"
         },
         {
+          "target_class": "frog.widgets.button",
           "target_part": "face",
           "state": "pressed",
           "resource_refs": [
@@ -96,21 +108,7 @@
           "fallback": "normal"
         },
         {
-          "target_part": "label",
-          "state": "normal",
-          "resource_refs": [
-            "button.label.normal.svg"
-          ]
-        },
-        {
-          "target_part": "label",
-          "state": "disabled",
-          "resource_refs": [
-            "button.label.disabled.svg"
-          ],
-          "fallback": "normal"
-        },
-        {
+          "target_class": "frog.widgets.button",
           "target_part": "frame",
           "state": "normal",
           "resource_refs": [
@@ -118,6 +116,7 @@
           ]
         },
         {
+          "target_class": "frog.widgets.button",
           "target_part": "frame",
           "state": "focused",
           "resource_refs": [
@@ -177,22 +176,6 @@
       "target_state": "pressed"
     },
     {
-      "id": "button.label.normal.svg",
-      "kind": "svg",
-      "path": "./assets/button/label/normal.svg",
-      "target_class": "frog.widgets.button",
-      "target_part": "label",
-      "target_state": "normal"
-    },
-    {
-      "id": "button.label.disabled.svg",
-      "kind": "svg",
-      "path": "./assets/button/label/disabled.svg",
-      "target_class": "frog.widgets.button",
-      "target_part": "label",
-      "target_state": "disabled"
-    },
-    {
       "id": "button.frame.normal.svg",
       "kind": "svg",
       "path": "./assets/button/frame/normal.svg",
@@ -216,11 +199,29 @@
       "target_part": "face"
     },
     {
-      "id": "button.face.anchor_map",
+      "id": "button.label.anchor_map",
       "kind": "anchor_map",
-      "path": "./assets/button/face/anchor_map.json",
+      "path": "./assets/button/anchors/label.json",
       "target_class": "frog.widgets.button",
-      "target_part": "face"
+      "target_part": "label",
+      "role": "text_anchor"
+    }
+  ],
+  "anchors": [
+    {
+      "id": "button.label.center",
+      "target_class": "frog.widgets.button",
+      "target_part": "label",
+      "source_resource": "button.label.anchor_map",
+      "anchor_kind": "text_anchor",
+      "horizontal_alignment": "center",
+      "vertical_alignment": "center",
+      "padding": {
+        "left": 10,
+        "right": 10,
+        "top": 6,
+        "bottom": 6
+      }
     }
   ]
 }
