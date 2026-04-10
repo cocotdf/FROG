@@ -41,8 +41,18 @@ The default string realization is intended to provide one clean, inspectable, po
 <p>
 This realization is realization-side only.
 It does not redefine string class law, does not invent new public members, and does not replace the semantic ownership of string value, string label text, or string editing semantics.
-Its job is to embody already-published string widget surfaces through stable visual states, stable part mappings, and realization-side placement or rendering metadata where needed.
+Its job is to embody already-published string widget surfaces through stable visual states, stable structural bindings, and realization-side placement or rendering metadata where needed.
 </p>
+
+<p>
+The preferred architectural split is:
+</p>
+
+<ul>
+  <li><code>state_maps</code> for state-sensitive visual embodiment,</li>
+  <li><code>part_bindings</code> for stable structural correspondence,</li>
+  <li>anchors or text regions for dynamic public surfaces rendered by the host.</li>
+</ul>
 
 <hr/>
 
@@ -65,6 +75,11 @@ This realization assumes the standardized string posture in which:
   <li>the realization remains downstream from that class contract.</li>
 </ul>
 
+<p>
+The realization therefore owns embodiment and placement posture for string widgets.
+It does not become the semantic owner of the string value or the label content.
+</p>
+
 <hr/>
 
 <h2 id="realized-parts">3. Realized Parts</h2>
@@ -78,8 +93,19 @@ This realization assumes the standardized string posture in which:
 
 <p>
 The realization may internally use additional layers, clipping regions, caret surfaces, selection overlays, scroll regions, or host-native text editor structures.
-Those remain realization-private support structures unless they are published elsewhere as part of an explicit realization package or a future higher-level string contract.
+Those remain realization-private support structures unless they are explicitly published as realization resources or placement surfaces.
 </p>
+
+<p>
+The default posture is:
+</p>
+
+<ul>
+  <li><code>root</code> — overall layout, clipping, and outer realization region when needed,</li>
+  <li><code>label</code> — dynamic text-bearing public part rendered through a realization-side placement surface,</li>
+  <li><code>text_display</code> — dynamic text display or editing surface,</li>
+  <li><code>frame</code> — optional border or focus-emphasis surface.</li>
+</ul>
 
 <hr/>
 
@@ -94,6 +120,10 @@ The default string family defines at least:
   <li><code>disabled</code></li>
   <li><code>focused</code></li>
 </ul>
+
+<p>
+The host MAY also support richer transient posture such as hovered chrome, selection emphasis, or scroll affordances, but such additions are not required in the minimal default realization posture.
+</p>
 
 <p>
 These are realization-side visual states.
@@ -126,6 +156,16 @@ A typical minimal mapping posture is:
 </ul>
 
 <p>
+The preferred machine-readable split is:
+</p>
+
+<ul>
+  <li><code>text_display</code> published primarily through a <code>part_binding</code> to a text region, anchor, or equivalent dynamic text surface,</li>
+  <li><code>label</code> published primarily through a <code>part_binding</code> to an anchor, text region, or equivalent placement surface,</li>
+  <li><code>frame</code>, when present, published through <code>part_bindings</code> plus optional <code>state_maps</code>.</li>
+</ul>
+
+<p>
 The default family SHOULD keep this mapping explicit enough that a machine-readable package can distinguish:
 </p>
 
@@ -134,6 +174,11 @@ The default family SHOULD keep this mapping explicit enough that a machine-reada
   <li>structural part bindings,</li>
   <li>dynamic host-rendered or host-updated text surfaces.</li>
 </ul>
+
+<p>
+This distinction is important because <code>text_display</code> is not merely decorative.
+It is the realized surface through which the current semantic string value becomes visible and, for controls, may become editable.
+</p>
 
 <hr/>
 
@@ -171,7 +216,39 @@ The <code>label</code> part is therefore expected to be realized as a dynamic te
 A host interpreting this realization should render or inject the current semantic string label into the realized label region at runtime.
 </p>
 
-<h3>6.3 Control versus indicator posture</h3>
+<h3>6.3 Placement posture</h3>
+
+<p>
+The default family SHOULD publish explicit placement surfaces for both <code>label</code> and <code>text_display</code> whenever host-rendered text content is used.
+Those placement surfaces may take the form of:
+</p>
+
+<ul>
+  <li>a named <code>text_anchor</code>,</li>
+  <li>a published anchor entry backed by an <code>anchor_map</code> resource,</li>
+  <li>a published <code>text_region</code> entry backed by a <code>text_region_map</code> resource,</li>
+  <li>a host-native region under explicit binding posture,</li>
+  <li>an equivalent explicitly published placement binding.</li>
+</ul>
+
+<p>
+This placement metadata may define:
+</p>
+
+<ul>
+  <li>alignment box or region bounds,</li>
+  <li>horizontal and vertical alignment,</li>
+  <li>padding or inset region,</li>
+  <li>clipping posture,</li>
+  <li>multiline posture, wrapping posture, or scroll interaction region when the realization chooses to expose them.</li>
+</ul>
+
+<p>
+Those realization-side structures do not change the public meaning of <code>value</code> or <code>label.text</code>.
+They only specify where the host should visually place, render, or edit the text.
+</p>
+
+<h3>6.4 Control versus indicator posture</h3>
 
 <p>
 The default realization may embody string controls and string indicators differently internally.
@@ -188,11 +265,20 @@ Those internal differences are acceptable provided that:
   <li>the difference between editable and non-editable posture remains compatible with the standardized class contract.</li>
 </ul>
 
-<h3>6.4 Asset limitation rule</h3>
+<p>
+Caret position, text selection, insertion mode, scrolling, and similar host editing details remain host-side editing posture unless explicitly standardized elsewhere.
+They do not become new public widget semantics merely because a given runtime exposes them visually.
+</p>
+
+<h3>6.5 Asset limitation rule</h3>
 
 <p>
 A string resource file MAY include placeholder text, decorative guides, preview content, or design-time scaffolding.
 However, a conforming realization family must not require that those asset-baked strings become the only path by which live string value or live semantic label text is shown.
+</p>
+
+<p>
+Likewise, state-sensitive styling of rendered text must remain distinguishable from semantic ownership of the string value itself.
 </p>
 
 <hr/>
@@ -208,17 +294,25 @@ A typical resource posture may follow:
     normal
     disabled
     focused
+  frame/
+    normal
+    focused
   anchors/
     label
-    text_display
+  text_regions/
+    value
 
 string_indicator/
   text_display/
     normal
     focused
+  frame/
+    normal
+    focused
   anchors/
     label
-    text_display
+  text_regions/
+    value
 </code></pre>
 
 <p>
@@ -228,16 +322,27 @@ An equivalent package-oriented posture may publish resources such as:
 <ul>
   <li><code>string_control.text_display.normal.svg</code></li>
   <li><code>string_control.text_display.focused.svg</code></li>
-  <li><code>string_control.label.anchor.json</code></li>
-  <li><code>string_control.text_display.region.json</code> or another explicit placement artifact</li>
+  <li><code>string_control.label.anchor_map</code> backed by <code>./assets/string_control/anchors/label.json</code></li>
+  <li><code>string_control.value.text_region_map</code> backed by <code>./assets/string_control/text_regions/value.json</code></li>
   <li><code>string_indicator.text_display.normal.svg</code></li>
-  <li><code>string_indicator.label.anchor.json</code></li>
+  <li><code>string_indicator.label.anchor_map</code> backed by <code>./assets/string_indicator/anchors/label.json</code></li>
+  <li><code>string_indicator.value.text_region_map</code> backed by <code>./assets/string_indicator/text_regions/value.json</code></li>
 </ul>
 
 <p>
 Resources MAY be SVG-backed, host-native, toolkit-driven, or mixed.
 The default family standardizes the part posture, state posture, and realization-side binding posture, not one mandatory text editor implementation or one mandatory file format.
 </p>
+
+<p>
+In particular:
+</p>
+
+<ul>
+  <li><code>frame</code> is a natural candidate for state-sensitive visual resources,</li>
+  <li><code>label</code> is naturally a placement-bound dynamic text surface,</li>
+  <li><code>text_display</code> is naturally a placement-bound dynamic string surface, even when decorative visual resources also exist around it.</li>
+</ul>
 
 <hr/>
 
@@ -262,6 +367,16 @@ A host SHOULD also preserve the distinction between:
   <li>the semantic string value owned by the class,</li>
   <li>the string label text owned by <code>label.text</code>,</li>
   <li>the realization-side embodiment of label, text display, and frame.</li>
+</ul>
+
+<p>
+For controls, the host should also preserve the difference between:
+</p>
+
+<ul>
+  <li>display posture,</li>
+  <li>editing posture,</li>
+  <li>indicator-style read-only posture.</li>
 </ul>
 
 <p>
@@ -293,8 +408,17 @@ If dedicated label or text-display placement resources are unavailable, a host M
 </ul>
 
 <p>
+If focused or disabled frame-specific resources are unavailable, a host MAY fall back to host-native focus or disabled posture provided that the distinction remains visible.
+</p>
+
+<p>
 Any fallback MUST preserve the published string class law and the meaning of the public parts when those parts are exposed.
 Fallback must not turn asset-baked strings or asset-baked label text into semantic truth.
+</p>
+
+<p>
+Fallback must remain inspectable at the realization-publication layer.
+It must not become a purely runtime-private convention.
 </p>
 
 <hr/>
@@ -317,7 +441,7 @@ It realizes:
 
 <p>
 Its resources may provide skins, layers, regions, and anchors.
-Its package publication may provide state maps and bindings.
+Its package publication may provide <code>state_maps</code> and <code>part_bindings</code>.
 Its host implementation may approximate the visuals when needed.
 But the realization never becomes the semantic owner of string value, string label text, or string class meaning.
 </p>
