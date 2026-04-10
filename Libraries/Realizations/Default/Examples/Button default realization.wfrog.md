@@ -38,9 +38,10 @@ It is intentionally simple, but already complete enough to demonstrate:
   <li>target-class declaration,</li>
   <li>realization declaration,</li>
   <li>state inventory,</li>
-  <li>part bindings,</li>
+  <li>structural part bindings,</li>
   <li>resource publication,</li>
   <li>state-to-resource mapping,</li>
+  <li>anchor publication for dynamic text placement,</li>
   <li>fallback posture.</li>
 </ul>
 
@@ -56,6 +57,17 @@ It is a concrete publication example built on top of the realization-package pos
 <p>
 Its purpose is to show how the default official realization family may publish one standard widget embodiment in a machine-readable way without collapsing class law, realization publication, resources, and runtime implementation into the same layer.
 </p>
+
+<p>
+In particular, this example preserves the architectural split between:
+</p>
+
+<ul>
+  <li>the semantic button label owned by the widget class through <code>label.text</code>,</li>
+  <li>the realization-side placement surface used to display that text,</li>
+  <li>the state-sensitive visual resources used for the button face,</li>
+  <li>the runtime-side responsibility for rendering live text into the published placement surface.</li>
+</ul>
 
 <hr/>
 
@@ -81,8 +93,10 @@ Its purpose is to show how the default official realization family may publish o
       "button.face.disabled.svg",
       "button.face.focused.svg",
       "button.face.pressed.svg",
-      "button.label.normal.svg",
-      "button.label.disabled.svg"
+      "button.label.anchor_map"
+    ],
+    "anchors": [
+      "button.label.center"
     ]
   },
   "targets": [
@@ -109,16 +123,21 @@ Its purpose is to show how the default official realization family may publish o
       ],
       "part_bindings": [
         {
+          "target_class": "frog.widgets.button",
           "part": "face",
           "binding_kind": "resource_layer",
           "binding_target": "face"
         },
         {
+          "target_class": "frog.widgets.button",
           "part": "label",
-          "binding_kind": "resource_layer",
-          "binding_target": "label"
+          "binding_kind": "anchor",
+          "binding_target": "button.label.center",
+          "placement_role": "text_anchor",
+          "fallback": "host_centered_text_region"
         },
         {
+          "target_class": "frog.widgets.button",
           "part": "frame",
           "binding_kind": "resource_layer",
           "binding_target": "frame"
@@ -126,6 +145,7 @@ Its purpose is to show how the default official realization family may publish o
       ],
       "state_maps": [
         {
+          "target_class": "frog.widgets.button",
           "target_part": "face",
           "state": "normal",
           "resource_refs": [
@@ -133,6 +153,7 @@ Its purpose is to show how the default official realization family may publish o
           ]
         },
         {
+          "target_class": "frog.widgets.button",
           "target_part": "face",
           "state": "disabled",
           "resource_refs": [
@@ -141,6 +162,7 @@ Its purpose is to show how the default official realization family may publish o
           "fallback": "normal"
         },
         {
+          "target_class": "frog.widgets.button",
           "target_part": "face",
           "state": "focused",
           "resource_refs": [
@@ -149,25 +171,11 @@ Its purpose is to show how the default official realization family may publish o
           "fallback": "normal"
         },
         {
+          "target_class": "frog.widgets.button",
           "target_part": "face",
           "state": "pressed",
           "resource_refs": [
             "button.face.pressed.svg"
-          ],
-          "fallback": "normal"
-        },
-        {
-          "target_part": "label",
-          "state": "normal",
-          "resource_refs": [
-            "button.label.normal.svg"
-          ]
-        },
-        {
-          "target_part": "label",
-          "state": "disabled",
-          "resource_refs": [
-            "button.label.disabled.svg"
           ],
           "fallback": "normal"
         }
@@ -218,20 +226,29 @@ Its purpose is to show how the default official realization family may publish o
       "target_state": "pressed"
     },
     {
-      "id": "button.label.normal.svg",
-      "kind": "svg",
-      "path": "./assets/button/label/normal.svg",
+      "id": "button.label.anchor_map",
+      "kind": "anchor_map",
+      "path": "./assets/button/anchors/label.json",
       "target_class": "frog.widgets.button",
       "target_part": "label",
-      "target_state": "normal"
-    },
+      "role": "text_anchor"
+    }
+  ],
+  "anchors": [
     {
-      "id": "button.label.disabled.svg",
-      "kind": "svg",
-      "path": "./assets/button/label/disabled.svg",
+      "id": "button.label.center",
       "target_class": "frog.widgets.button",
       "target_part": "label",
-      "target_state": "disabled"
+      "source_resource": "button.label.anchor_map",
+      "anchor_kind": "text_anchor",
+      "horizontal_alignment": "center",
+      "vertical_alignment": "center",
+      "padding": {
+        "left": 10,
+        "right": 10,
+        "top": 6,
+        "bottom": 6
+      }
     }
   ]
 }</code></pre>
@@ -248,7 +265,7 @@ This example shows a clean four-layer split:
   <li>the widget class already exists in <code>Libraries/Widgets/Button.md</code>,</li>
   <li>the default realization family already exists in <code>Libraries/Realizations/Default/Button.md</code>,</li>
   <li>this package publishes a machine-readable realization of that family,</li>
-  <li>the SVG files remain realization resources rather than semantic truth.</li>
+  <li>the assets remain realization resources rather than semantic truth.</li>
 </ul>
 
 <p>
@@ -256,20 +273,33 @@ The example also shows that:
 </p>
 
 <ul>
-  <li><code>face</code> is the main state-driven visual part,</li>
-  <li><code>label</code> has its own resource posture,</li>
+  <li><code>face</code> is the main state-driven visual part and therefore uses state maps,</li>
+  <li><code>label</code> is not published as baked final text inside state-specific SVG assets,</li>
+  <li><code>label</code> is structurally bound to a published anchor so that the runtime can render live <code>label.text</code>,</li>
   <li><code>pressed</code> and <code>focused</code> may fall back to <code>normal</code>,</li>
   <li>host hints remain hints rather than semantic law.</li>
 </ul>
+
+<p>
+This distinction is important because the standard button class defines <code>label.text</code> as a portable semantic surface.
+The realization may define where that text is placed, clipped, aligned, or decorated, but it does not become the semantic owner of the label content itself.
+</p>
 
 <hr/>
 
 <h2 id="summary">5. Summary</h2>
 
 <p>
-This example provides a complete first machine-readable publication model for the default realization of <code>frog.widgets.button</code>.
+This example provides a complete first machine-readable publication model for the default realization of <code>frog.widgets.button</code> using:
 </p>
 
+<ul>
+  <li>state-sensitive visual resources for <code>face</code>,</li>
+  <li>a published anchor map for <code>label</code>,</li>
+  <li>explicit structural bindings,</li>
+  <li>inspectable fallback posture.</li>
+</ul>
+
 <p>
-It is suitable as a reference pattern for other widget realization packages in the same family.
+It is suitable as a reference pattern for other widget realization packages in the same family, especially when a realization must preserve the distinction between public semantic text and realization-side visual placement.
 </p>
