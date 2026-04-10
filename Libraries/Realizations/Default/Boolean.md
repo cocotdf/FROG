@@ -19,10 +19,11 @@
   <li><a href="#realized-parts">3. Realized Parts</a></li>
   <li><a href="#standard-visual-states">4. Standard Visual States</a></li>
   <li><a href="#part-state-mapping">5. Part-State Mapping</a></li>
-  <li><a href="#resource-posture">6. Resource Posture</a></li>
-  <li><a href="#host-expectations">7. Host Expectations</a></li>
-  <li><a href="#fallback-posture">8. Fallback Posture</a></li>
-  <li><a href="#summary">9. Summary</a></li>
+  <li><a href="#dynamic-surface-posture">6. Dynamic Surface Posture</a></li>
+  <li><a href="#resource-posture">7. Resource Posture</a></li>
+  <li><a href="#host-expectations">8. Host Expectations</a></li>
+  <li><a href="#fallback-posture">9. Fallback Posture</a></li>
+  <li><a href="#summary">10. Summary</a></li>
 </ul>
 
 <hr/>
@@ -31,6 +32,16 @@
 
 <p>
 This document defines the default official realization posture for the standardized boolean widget family.
+</p>
+
+<p>
+The default boolean realization is intended to provide one clean, inspectable, portable embodiment of the intrinsic boolean baseline without turning one host toolkit or one runtime-specific control library into the semantic definition of boolean widgets.
+</p>
+
+<p>
+This realization is realization-side only.
+It does not redefine boolean class law, does not invent new public members, and does not replace the semantic ownership of boolean value, boolean label text, or boolean interaction semantics.
+Its job is to embody already-published boolean widget surfaces through stable visual states, stable part mappings, and realization-side placement or rendering metadata where needed.
 </p>
 
 <hr/>
@@ -42,6 +53,18 @@ This document defines the default official realization posture for the standardi
   <li><code>frog.widgets.boolean_indicator</code></li>
 </ul>
 
+<p>
+This realization assumes the standardized boolean posture in which:
+</p>
+
+<ul>
+  <li>boolean widgets expose a primary value through <code>value</code>,</li>
+  <li>boolean widgets may expose semantic label text through <code>label.text</code>,</li>
+  <li>boolean controls may expose interaction such as <code>toggle()</code>, <code>set_true()</code>, or <code>set_false()</code> according to the published class contract,</li>
+  <li>the published public parts remain stable across realizations,</li>
+  <li>the realization remains downstream from that class contract.</li>
+</ul>
+
 <hr/>
 
 <h2 id="realized-parts">3. Realized Parts</h2>
@@ -50,8 +73,13 @@ This document defines the default official realization posture for the standardi
   <li><code>root</code></li>
   <li><code>label</code></li>
   <li><code>state_face</code></li>
-  <li><code>frame</code></li>
+  <li><code>frame</code> when present</li>
 </ul>
+
+<p>
+The realization may internally use additional layers, glow regions, check marks, selection indicators, focus rings, icon overlays, or host-native toggle structures.
+Those remain realization-private support structures unless they are published elsewhere as part of an explicit realization package or a future higher-level boolean contract.
+</p>
 
 <hr/>
 
@@ -79,6 +107,16 @@ For boolean controls, the family MAY also define:
   <li><code>pressed_true</code></li>
 </ul>
 
+<p>
+These are realization-side composed visual states.
+They combine a realization posture such as <code>normal</code>, <code>disabled</code>, <code>focused</code>, or <code>pressed</code> with the public boolean value posture <code>true</code> or <code>false</code>.
+</p>
+
+<p>
+This composed-state vocabulary belongs to the realization family.
+It does not replace the public class meaning of the boolean <code>value</code> surface itself.
+</p>
+
 <hr/>
 
 <h2 id="part-state-mapping">5. Part-State Mapping</h2>
@@ -89,13 +127,95 @@ The default family expects:
 
 <ul>
   <li><code>state_face</code> to distinguish true and false posture clearly,</li>
-  <li><code>label</code> to remain readable across states,</li>
-  <li><code>frame</code> to support focused posture where applicable.</li>
+  <li><code>state_face</code> to distinguish enabled and disabled posture clearly,</li>
+  <li><code>label</code> to remain readable across supported states,</li>
+  <li><code>frame</code>, when present, to support focused posture where applicable.</li>
+</ul>
+
+<p>
+A typical minimal mapping posture is:
+</p>
+
+<ul>
+  <li><code>root</code> — global layout, clipping, and outer realization region,</li>
+  <li><code>label</code> — dynamic text-bearing label surface,</li>
+  <li><code>state_face</code> — main boolean state embodiment surface,</li>
+  <li><code>frame</code> — optional border or focus-emphasis surface.</li>
+</ul>
+
+<p>
+The default family SHOULD keep this mapping explicit enough that a machine-readable package can distinguish:
+</p>
+
+<ul>
+  <li>state-sensitive visual resources,</li>
+  <li>structural part bindings,</li>
+  <li>dynamic host-rendered or host-updated boolean surfaces.</li>
 </ul>
 
 <hr/>
 
-<h2 id="resource-posture">6. Resource Posture</h2>
+<h2 id="dynamic-surface-posture">6. Dynamic Surface Posture</h2>
+
+<h3>6.1 State-face posture</h3>
+
+<p>
+The <code>state_face</code> part is the main dynamic realization surface of the boolean family.
+It is expected to reflect the public boolean value and, where applicable, additional realization-side interaction posture such as focus or press feedback.
+</p>
+
+<p>
+A host interpreting this realization is expected to embody the current boolean value visibly through <code>state_face</code> rather than through runtime-private semantics hidden from inspection.
+</p>
+
+<p>
+The realization owns how the boolean state is visually embodied.
+It does not become the semantic owner of the boolean value itself.
+</p>
+
+<h3>6.2 Label posture</h3>
+
+<p>
+The semantic boolean label text is not owned by this realization.
+It is owned by the standardized class surface through <code>label.text</code>.
+</p>
+
+<p>
+The role of the default realization is to define where and how that semantic label is visually embodied, not to become the source of truth for the label text itself.
+</p>
+
+<p>
+The <code>label</code> part is therefore expected to be realized as a dynamic text-bearing surface.
+A host interpreting this realization should render or inject the current semantic boolean label into the realized label region at runtime.
+</p>
+
+<h3>6.3 Control versus indicator posture</h3>
+
+<p>
+The default realization may embody boolean controls and boolean indicators differently internally.
+For example, a control may use a host-native checkbox, switch, or toggle button, while an indicator may use a simpler retained display surface.
+</p>
+
+<p>
+Those internal differences are acceptable provided that:
+</p>
+
+<ul>
+  <li>the published class identity remains preserved,</li>
+  <li>the public parts remain interpretable,</li>
+  <li>the difference between interactive and non-interactive posture remains compatible with the standardized class contract.</li>
+</ul>
+
+<h3>6.4 Asset limitation rule</h3>
+
+<p>
+A boolean resource file MAY include placeholder marks, decorative indicators, preview labels, or design-time scaffolding.
+However, a conforming realization family must not require that those asset-baked elements become the only path by which live boolean value or live semantic label text is shown.
+</p>
+
+<hr/>
+
+<h2 id="resource-posture">7. Resource Posture</h2>
 
 <p>
 A typical resource posture may follow:
@@ -111,6 +231,8 @@ A typical resource posture may follow:
     focused_true
     pressed_false
     pressed_true
+  anchors/
+    label
 
 boolean_indicator/
   state_face/
@@ -118,11 +240,32 @@ boolean_indicator/
     normal_true
     disabled_false
     disabled_true
+  anchors/
+    label
 </code></pre>
+
+<p>
+An equivalent package-oriented posture may publish resources such as:
+</p>
+
+<ul>
+  <li><code>boolean_control.state_face.normal_false.svg</code></li>
+  <li><code>boolean_control.state_face.normal_true.svg</code></li>
+  <li><code>boolean_control.state_face.pressed_true.svg</code></li>
+  <li><code>boolean_control.state_face.focused_false.svg</code></li>
+  <li><code>boolean_control.label.anchor.json</code></li>
+  <li><code>boolean_indicator.state_face.normal_true.svg</code></li>
+  <li><code>boolean_indicator.label.anchor.json</code></li>
+</ul>
+
+<p>
+Resources MAY be SVG-backed, host-native, toolkit-driven, or mixed.
+The default family standardizes the part posture, state posture, and realization-side binding posture, not one mandatory checkbox, switch, or toggle implementation and not one mandatory file format.
+</p>
 
 <hr/>
 
-<h2 id="host-expectations">7. Host Expectations</h2>
+<h2 id="host-expectations">8. Host Expectations</h2>
 
 <p>
 A host interpreting this realization SHOULD provide:
@@ -132,21 +275,74 @@ A host interpreting this realization SHOULD provide:
   <li>clear visible distinction between true and false,</li>
   <li>clear visible distinction between enabled and disabled,</li>
   <li>reasonable focus indication for controls,</li>
-  <li>reasonable activation feedback for controls.</li>
+  <li>reasonable activation feedback for controls,</li>
+  <li>dynamic rendering of visible boolean label text.</li>
+</ul>
+
+<p>
+A host SHOULD also preserve the distinction between:
+</p>
+
+<ul>
+  <li>the semantic boolean value owned by the class,</li>
+  <li>the boolean label text owned by <code>label.text</code>,</li>
+  <li>the realization-side embodiment of <code>state_face</code>, <code>label</code>, and <code>frame</code>.</li>
+</ul>
+
+<p>
+A host MAY approximate the realization when exact resources are unavailable, but it should preserve:
+</p>
+
+<ul>
+  <li>the interactive-versus-indicator distinction,</li>
+  <li>the stable meaning of the published public parts,</li>
+  <li>the separation between semantic boolean data and realization resources.</li>
 </ul>
 
 <hr/>
 
-<h2 id="fallback-posture">8. Fallback Posture</h2>
+<h2 id="fallback-posture">9. Fallback Posture</h2>
 
 <p>
 If state-specific resources are unavailable, a runtime MAY use host-native boolean widgets or generic state rendering, provided the true/false and enabled/disabled distinctions remain preserved.
 </p>
 
+<p>
+If dedicated label placement resources are unavailable, a host MAY fall back to:
+</p>
+
+<ul>
+  <li>a host-native text region,</li>
+  <li>a generic compatible label placement rule,</li>
+  <li>another documented compatible placement surface.</li>
+</ul>
+
+<p>
+Any fallback MUST preserve the published boolean class law and the meaning of the public parts when those parts are exposed.
+Fallback must not turn asset-baked boolean marks or asset-baked label text into semantic truth.
+</p>
+
 <hr/>
 
-<h2 id="summary">9. Summary</h2>
+<h2 id="summary">10. Summary</h2>
 
 <p>
 The default boolean realization defines one official state-structured embodiment for boolean controls and boolean indicators, centered on the public <code>state_face</code> part.
+</p>
+
+<p>
+It realizes:
+</p>
+
+<ul>
+  <li><code>state_face</code> as the main dynamic boolean state embodiment surface,</li>
+  <li><code>label</code> as a dynamically rendered text-bearing surface,</li>
+  <li><code>frame</code> as an optional supporting outer surface.</li>
+</ul>
+
+<p>
+Its resources may provide skins, layers, regions, and anchors.
+Its package publication may provide state maps and bindings.
+Its host implementation may approximate the visuals when needed.
+But the realization never becomes the semantic owner of boolean value, boolean label text, or boolean class meaning.
 </p>
