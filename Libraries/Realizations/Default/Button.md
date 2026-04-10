@@ -41,8 +41,18 @@ Its role is to provide a clean, state-structured embodiment of the standard butt
 <p>
 The default realization is realization-side only.
 It does not redefine widget class law, does not invent new public members, and does not replace the semantic ownership of the button label text.
-Its job is to embody already-published widget surfaces through stable visual states, stable part mappings, and explicit realization-side placement metadata.
+Its job is to embody already-published widget surfaces through stable visual states, stable structural bindings, and explicit realization-side placement metadata.
 </p>
+
+<p>
+The preferred architectural split is:
+</p>
+
+<ul>
+  <li><code>state_maps</code> for state-sensitive visual embodiment,</li>
+  <li><code>part_bindings</code> for stable structural correspondence,</li>
+  <li>placement resources for dynamic public parts rendered by the host.</li>
+</ul>
 
 <hr/>
 
@@ -63,6 +73,11 @@ This realization assumes the standardized button posture in which:
   <li>the realization remains downstream from that class contract.</li>
 </ul>
 
+<p>
+This realization therefore publishes embodiment and placement posture for the button.
+It does not become the semantic owner of the label content.
+</p>
+
 <hr/>
 
 <h2 id="realized-parts">3. Realized Parts</h2>
@@ -79,9 +94,19 @@ The default button realization targets the following public parts:
 </ul>
 
 <p>
-The realization may internally use additional layers, anchors, or host-native regions, but those remain realization-private support structures.
-They do not become new public widget parts unless published elsewhere as part of widget class law.
+The realization may internally use additional layers, anchors, clipping regions, or host-native regions, but those remain realization-private support structures unless they are explicitly published as realization resources or placement surfaces.
 </p>
+
+<p>
+The default posture is:
+</p>
+
+<ul>
+  <li><code>root</code> — overall host layout region when needed,</li>
+  <li><code>face</code> — main actionable visual body of the button,</li>
+  <li><code>label</code> — dynamic text-bearing public part rendered through a realization-side placement surface,</li>
+  <li><code>frame</code> — optional contour or emphasis layer when the realization family publishes it separately.</li>
+</ul>
 
 <hr/>
 
@@ -133,14 +158,28 @@ A typical minimal mapping posture is:
 </ul>
 
 <p>
-The default family SHOULD keep the mapping explicit enough that a machine-readable package can bind:
+The preferred machine-readable split is:
+</p>
+
+<ul>
+  <li><code>face</code> published through <code>part_bindings</code> plus <code>state_maps</code>,</li>
+  <li><code>frame</code>, when present, published through <code>part_bindings</code> plus optional <code>state_maps</code>,</li>
+  <li><code>label</code> published primarily through a <code>part_binding</code> to an anchor, text region, or equivalent placement surface.</li>
+</ul>
+
+<p>
+This means that the default family SHOULD keep the mapping explicit enough that a machine-readable package can bind:
 </p>
 
 <ul>
   <li>a part to a resource layer,</li>
   <li>a part to a state-scoped resource,</li>
-  <li>a part to a visual anchor or host-native region.</li>
+  <li>a part to a visual anchor, text region, or host-native region.</li>
 </ul>
+
+<p>
+The label may still vary stylistically across states, but that does not change its primary publication posture as a dynamic public text-bearing part.
+</p>
 
 <hr/>
 
@@ -161,7 +200,7 @@ The role of the default realization is to define where and how that semantic tex
 
 <p>
 The <code>label</code> part is realized as a dynamic text-bearing surface.
-A host interpreting this realization is expected to render or inject the current semantic label text into the realized label region at runtime.
+A host interpreting this realization is expected to render or inject the current semantic label text into the realized label surface at runtime.
 </p>
 
 <p>
@@ -184,8 +223,9 @@ That placement surface may take the form of:
 
 <ul>
   <li>a named <code>text_anchor</code>,</li>
-  <li>an anchor map entry,</li>
-  <li>a host-native text region,</li>
+  <li>a published anchor entry backed by an <code>anchor_map</code> resource,</li>
+  <li>a published <code>text_region</code> entry backed by a <code>text_region_map</code> resource,</li>
+  <li>a host-native text region under explicit binding posture,</li>
   <li>an equivalent explicitly published placement binding.</li>
 </ul>
 
@@ -227,12 +267,16 @@ Placeholder text, decorative outlines, or preview text may appear in design reso
 <h3>6.5 State interaction with text</h3>
 
 <p>
-The default realization MAY vary text appearance across states such as <code>normal</code> and <code>disabled</code>, for example through color, opacity, contrast, or host-native emphasis changes.
+The default realization MAY vary text appearance across states such as <code>normal</code> and <code>disabled</code>, for example through color, opacity, contrast, emphasis, or host-native styling changes.
 </p>
 
 <p>
 However, the default realization does not define intrinsic state-dependent semantic text switching.
 It does not introduce <code>label.text_on</code> or <code>label.text_off</code>, and it does not infer alternate text semantics from face-state assets alone.
+</p>
+
+<p>
+More generally, state-sensitive styling of the rendered label must remain distinguishable from semantic text ownership.
 </p>
 
 <hr/>
@@ -251,9 +295,7 @@ A typical resource posture may follow:
     pressed
   frame/
     normal
-    disabled
     focused
-    pressed
   anchors/
     label
 </code></pre>
@@ -268,7 +310,8 @@ An equivalent package-oriented posture may publish resources such as:
   <li><code>button.face.focused.svg</code></li>
   <li><code>button.face.pressed.svg</code></li>
   <li><code>button.frame.normal.svg</code> when the family uses a separate frame layer</li>
-  <li><code>button.label.anchor.json</code> or another explicit anchor-map artifact</li>
+  <li><code>button.frame.focused.svg</code> when a focused frame variant exists</li>
+  <li><code>button.label.anchor_map</code> backed by <code>./assets/button/anchors/label.json</code></li>
 </ul>
 
 <p>
@@ -277,7 +320,7 @@ The default family standardizes the state posture, part posture, and realization
 </p>
 
 <p>
-In particular, the label part SHOULD preferably bind to a placement surface such as an anchor or text region rather than to a resource that hardcodes the final user-facing text content.
+In particular, the <code>label</code> part SHOULD preferably bind to a placement surface such as an anchor or text region rather than to a resource that hardcodes the final user-facing text content.
 </p>
 
 <hr/>
@@ -307,6 +350,16 @@ A host MAY approximate the realization when exact resources are unavailable, but
   <li>the separation between semantic text and decorative assets.</li>
 </ul>
 
+<p>
+The host may use:
+</p>
+
+<ul>
+  <li>published <code>state_maps</code> to choose visual embodiment resources,</li>
+  <li>published <code>part_bindings</code> to locate realized parts structurally,</li>
+  <li>published anchors or text regions to render live text into the correct surface.</li>
+</ul>
+
 <hr/>
 
 <h2 id="fallback-posture">9. Fallback Posture</h2>
@@ -316,14 +369,14 @@ If a specialized resource is unavailable:
 </p>
 
 <ul>
-  <li><code>pressed</code> MAY fall back to a host-native pressed embodiment,</li>
+  <li><code>pressed</code> MAY fall back to a host-native pressed embodiment or to <code>normal</code>,</li>
   <li><code>focused</code> MAY fall back to a host-native focus ring or equivalent indicator,</li>
   <li><code>disabled</code> MUST remain visually distinguishable from <code>normal</code>,</li>
-  <li><code>label</code> MUST remain dynamically renderable even when a dedicated anchor asset is unavailable.</li>
+  <li><code>label</code> MUST remain dynamically renderable even when a dedicated anchor or text-region resource is unavailable.</li>
 </ul>
 
 <p>
-If no explicit label anchor is available, the host MAY fall back to a reasonable centered text region or another stable host-native placement rule, provided that:
+If no explicit label placement surface is available, the host MAY fall back to a reasonable centered text region or another stable host-native placement rule, provided that:
 </p>
 
 <ul>
@@ -331,6 +384,11 @@ If no explicit label anchor is available, the host MAY fall back to a reasonable
   <li>the face remains clearly actionable,</li>
   <li>the fallback does not turn asset-baked text into semantic truth.</li>
 </ul>
+
+<p>
+Fallback must remain inspectable at the realization-publication layer.
+It must not become a purely runtime-private convention.
+</p>
 
 <hr/>
 
@@ -351,8 +409,8 @@ It realizes:
 </ul>
 
 <p>
-Its resources may provide geometry, skins, and anchors.
-Its package publication may provide state maps and part bindings.
+Its resources may provide geometry, skins, and placement metadata.
+Its package publication may provide <code>state_maps</code> and <code>part_bindings</code>.
 Its host implementation may approximate the visuals when needed.
 But the realization never becomes the semantic owner of the button label text.
 </p>
