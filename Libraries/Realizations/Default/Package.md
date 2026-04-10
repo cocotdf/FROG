@@ -25,10 +25,11 @@
   <li><a href="#resource-manifests">9. Resource Manifests</a></li>
   <li><a href="#state-maps">10. State Maps</a></li>
   <li><a href="#part-bindings">11. Part Bindings</a></li>
-  <li><a href="#host-hints">12. Host Hints</a></li>
-  <li><a href="#minimal-json-outline">13. Minimal JSON Outline</a></li>
-  <li><a href="#validation-posture">14. Validation Posture</a></li>
-  <li><a href="#summary">15. Summary</a></li>
+  <li><a href="#anchor-and-text-region-publication">12. Anchor and Text-Region Publication</a></li>
+  <li><a href="#host-hints">13. Host Hints</a></li>
+  <li><a href="#minimal-json-outline">14. Minimal JSON Outline</a></li>
+  <li><a href="#validation-posture">15. Validation Posture</a></li>
+  <li><a href="#summary">16. Summary</a></li>
 </ul>
 
 <hr/>
@@ -53,6 +54,7 @@ The default family package publishes realization-side information such as:
   <li>which visual states are supported,</li>
   <li>which resources are available,</li>
   <li>how parts and states map to those resources,</li>
+  <li>which anchors, regions, or equivalent placement surfaces are published,</li>
   <li>which host-facing hints are associated with the family.</li>
 </ul>
 
@@ -72,7 +74,8 @@ Without this layer:
   <li>the official realization family would remain purely descriptive,</li>
   <li>state-specific resources would be hard to validate consistently,</li>
   <li>runtime families would lack a stable machine-readable realization target,</li>
-  <li>assets would drift toward ad hoc organization.</li>
+  <li>assets would drift toward ad hoc organization,</li>
+  <li>dynamic text-bearing parts would be at risk of collapsing into asset-only conventions.</li>
 </ul>
 
 <hr/>
@@ -106,9 +109,13 @@ Therefore:
 <ul>
   <li>the package MUST NOT redefine widget class law,</li>
   <li>the package MUST NOT create undocumented public widget members,</li>
-  <li>the package MAY publish state maps, part bindings, and resource references,</li>
+  <li>the package MAY publish state maps, part bindings, anchor bindings, and resource references,</li>
   <li>the runtime MAY interpret or approximate the package while preserving class meaning.</li>
 </ul>
+
+<p>
+In particular, the package MAY publish where a public text-bearing part is visually placed, but it MUST NOT become the semantic owner of the text shown by that part.
+</p>
 
 <hr/>
 
@@ -126,6 +133,7 @@ That package kind is appropriate because the package publishes:
   <li>reusable realization resources,</li>
   <li>reusable state mappings,</li>
   <li>reusable part bindings,</li>
+  <li>reusable anchor and placement metadata,</li>
   <li>reusable host-facing realization metadata.</li>
 </ul>
 
@@ -158,6 +166,20 @@ The package MAY also contain:
   <li><code>diagnostics</code>,</li>
   <li><code>examples</code>,</li>
   <li><code>fallbacks</code>.</li>
+</ul>
+
+<p>
+Implementations MAY choose a more structured internal encoding, but the publication posture should still make the following inspectable:
+</p>
+
+<ul>
+  <li>target classes,</li>
+  <li>realization identities,</li>
+  <li>state sets,</li>
+  <li>part sets,</li>
+  <li>resource inventories,</li>
+  <li>part-to-resource bindings,</li>
+  <li>part-to-anchor or part-to-region bindings when relevant.</li>
 </ul>
 
 <hr/>
@@ -206,6 +228,11 @@ Typical targets include:
   <li><code>frog.widgets.waveform_chart</code></li>
 </ul>
 
+<p>
+These declarations identify realization targets.
+They do not redefine the corresponding standardized classes.
+</p>
+
 <hr/>
 
 <h2 id="realization-records">8. Realization Records</h2>
@@ -241,6 +268,17 @@ Conceptually:
 }
 </code></pre>
 
+<p>
+A realization record MAY also identify:
+</p>
+
+<ul>
+  <li>placement surfaces,</li>
+  <li>state-specific resource groups,</li>
+  <li>optional host-native substitution posture,</li>
+  <li>scaling or density hints.</li>
+</ul>
+
 <hr/>
 
 <h2 id="resource-manifests">9. Resource Manifests</h2>
@@ -270,7 +308,13 @@ Typical resource kinds include:
   <li><code>vector_template</code></li>
   <li><code>layer_map</code></li>
   <li><code>anchor_map</code></li>
+  <li><code>text_region_map</code></li>
 </ul>
+
+<p>
+A resource manifest entry identifies available realization resources.
+It does not, by itself, declare how a host should interpret public widget semantics.
+</p>
 
 <hr/>
 
@@ -300,6 +344,12 @@ Examples:
   <li><code>boolean_control.state_face.normal_true</code></li>
 </ul>
 
+<p>
+State maps are realization-side publication artifacts.
+They define which realization resources correspond to named visual states.
+They do not define new semantic widget states beyond those already justified by the realization family.
+</p>
+
 <hr/>
 
 <h2 id="part-bindings">11. Part Bindings</h2>
@@ -324,9 +374,99 @@ Part bindings remain downstream from widget class law.
 They must reference already-published parts.
 </p>
 
+<p>
+For state-sensitive parts, a binding MAY also be scoped by state.
+For example, a button <code>face</code> binding may vary between <code>normal</code> and <code>pressed</code>.
+</p>
+
+<p>
+For dynamic text-bearing parts, a part binding SHOULD preferably target an anchor or text region rather than a resource that hardcodes the final user-visible text content.
+</p>
+
 <hr/>
 
-<h2 id="host-hints">12. Host Hints</h2>
+<h2 id="anchor-and-text-region-publication">12. Anchor and Text-Region Publication</h2>
+
+<p>
+The default realization package SHOULD make anchor or text-region publication explicit whenever a public part is dynamically rendered by the host rather than fully baked into a single visual asset.
+</p>
+
+<p>
+This is especially important for parts such as:
+</p>
+
+<ul>
+  <li><code>button.label</code>,</li>
+  <li>numeric text display regions,</li>
+  <li>string text display regions,</li>
+  <li>chart plot or axis label regions when those are realization-published.</li>
+</ul>
+
+<h3>12.1 Publication purpose</h3>
+
+<p>
+Anchor and text-region publication exists to make realization-side placement inspectable.
+It defines where the host should place or render a dynamic part.
+It does not redefine the semantic owner of the data shown there.
+</p>
+
+<h3>12.2 Typical anchor entry</h3>
+
+<p>
+A typical anchor-oriented publication may identify:
+</p>
+
+<ul>
+  <li>the anchor identifier,</li>
+  <li>the target part,</li>
+  <li>the placement kind,</li>
+  <li>the target resource or layer when applicable,</li>
+  <li>alignment posture,</li>
+  <li>padding or inset metadata,</li>
+  <li>clipping posture when needed.</li>
+</ul>
+
+<p>
+Conceptually:
+</p>
+
+<pre><code>{
+  "id": "button.label.center",
+  "part": "label",
+  "kind": "text_anchor",
+  "resource_ref": "button.label.anchor.json",
+  "horizontal_alignment": "center",
+  "vertical_alignment": "middle",
+  "padding": { "left": 8, "right": 8, "top": 4, "bottom": 4 }
+}
+</code></pre>
+
+<h3>12.3 Button-specific posture</h3>
+
+<p>
+For <code>frog.widgets.button</code>, the package SHOULD make it possible to express the following distinction cleanly:
+</p>
+
+<ul>
+  <li><code>face</code> binds to state-sensitive visual resources,</li>
+  <li><code>label</code> binds to a text anchor, text region, or equivalent placement surface,</li>
+  <li>the host dynamically renders the current semantic <code>label.text</code> into that surface.</li>
+</ul>
+
+<p>
+That publication posture helps preserve the architectural separation between:
+</p>
+
+<ul>
+  <li>class-owned semantic label text,</li>
+  <li>widget-visible style properties when supported,</li>
+  <li>realization-owned placement metadata,</li>
+  <li>asset-owned decorative visual content.</li>
+</ul>
+
+<hr/>
+
+<h2 id="host-hints">13. Host Hints</h2>
 
 <p>
 The package MAY define host-facing hints.
@@ -350,7 +490,7 @@ Such hints remain non-authoritative with respect to public widget law.
 
 <hr/>
 
-<h2 id="minimal-json-outline">13. Minimal JSON Outline</h2>
+<h2 id="minimal-json-outline">14. Minimal JSON Outline</h2>
 
 <pre><code>{
   "wfrog_version": "1",
@@ -392,24 +532,100 @@ Such hints remain non-authoritative with respect to public widget law.
       "bindings": [
         {
           "part": "face",
+          "state": "normal",
+          "resource_ref": "button.face.normal.svg"
+        },
+        {
+          "part": "face",
+          "state": "disabled",
+          "resource_ref": "button.face.disabled.svg"
+        },
+        {
+          "part": "face",
+          "state": "focused",
+          "resource_ref": "button.face.focused.svg"
+        },
+        {
+          "part": "face",
           "state": "pressed",
           "resource_ref": "button.face.pressed.svg"
+        },
+        {
+          "part": "label",
+          "binding_kind": "text_anchor",
+          "anchor_ref": "button.label.center"
         }
-      ]
+      ],
+      "fallbacks": {
+        "focused": "host_native_focus_ring",
+        "pressed": "host_native_pressed_posture",
+        "label": "host_centered_text_region"
+      }
     }
   ],
   "resources": [
     {
+      "id": "button.face.normal.svg",
+      "kind": "svg",
+      "path": "./assets/button/face/normal.svg",
+      "target_class": "frog.widgets.button",
+      "target_part": "face",
+      "target_state": "normal"
+    },
+    {
+      "id": "button.face.disabled.svg",
+      "kind": "svg",
+      "path": "./assets/button/face/disabled.svg",
+      "target_class": "frog.widgets.button",
+      "target_part": "face",
+      "target_state": "disabled"
+    },
+    {
+      "id": "button.face.focused.svg",
+      "kind": "svg",
+      "path": "./assets/button/face/focused.svg",
+      "target_class": "frog.widgets.button",
+      "target_part": "face",
+      "target_state": "focused"
+    },
+    {
       "id": "button.face.pressed.svg",
       "kind": "svg",
-      "path": "./assets/button/face/pressed.svg"
+      "path": "./assets/button/face/pressed.svg",
+      "target_class": "frog.widgets.button",
+      "target_part": "face",
+      "target_state": "pressed"
+    },
+    {
+      "id": "button.label.anchor.json",
+      "kind": "anchor_map",
+      "path": "./assets/button/anchors/label.json",
+      "target_class": "frog.widgets.button",
+      "target_part": "label"
+    }
+  ],
+  "anchors": [
+    {
+      "id": "button.label.center",
+      "target_class": "frog.widgets.button",
+      "target_part": "label",
+      "kind": "text_anchor",
+      "resource_ref": "button.label.anchor.json",
+      "horizontal_alignment": "center",
+      "vertical_alignment": "middle",
+      "padding": {
+        "left": 8,
+        "right": 8,
+        "top": 4,
+        "bottom": 4
+      }
     }
   ]
 }</code></pre>
 
 <hr/>
 
-<h2 id="validation-posture">14. Validation Posture</h2>
+<h2 id="validation-posture">15. Validation Posture</h2>
 
 <p>
 Validators SHOULD diagnose at least:
@@ -421,17 +637,27 @@ Validators SHOULD diagnose at least:
   <li>state mappings to undeclared realization states,</li>
   <li>resource references that do not resolve,</li>
   <li>attempts to use the package to redefine public class law,</li>
-  <li>ambiguous duplicate bindings for the same class, part, and state without explicit precedence rules.</li>
+  <li>ambiguous duplicate bindings for the same class, part, and state without explicit precedence rules,</li>
+  <li>anchor or text-region bindings that reference undeclared parts,</li>
+  <li>resource entries that imply asset-baked semantic text as the only realization path for a dynamic public text-bearing part.</li>
 </ul>
+
+<p>
+Validators MAY also diagnose realization records that omit an inspectable placement path for dynamic text-bearing parts when the corresponding realization family claims to support them.
+</p>
 
 <hr/>
 
-<h2 id="summary">15. Summary</h2>
+<h2 id="summary">16. Summary</h2>
 
 <p>
 The default realization package is the machine-readable publication surface for the official <code>Default</code> realization family.
 </p>
 
 <p>
-It publishes target classes, realization records, state maps, part bindings, and resources while remaining subordinate to published widget class law.
+It publishes target classes, realization records, state maps, part bindings, anchors, and resources while remaining subordinate to published widget class law.
+</p>
+
+<p>
+Its main purpose is to make the official realization family inspectable and portable without collapsing widget semantics into assets or into one runtime-specific implementation.
 </p>
