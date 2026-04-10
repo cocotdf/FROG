@@ -23,7 +23,7 @@
   <li><a href="#current-standard-family">7. Current Standard Family</a></li>
   <li><a href="#relationship-with-widgets">8. Relationship with Standard Widget Classes</a></li>
   <li><a href="#relationship-with-wfrog-and-assets">9. Relationship with <code>.wfrog</code> and Assets</a></li>
-  <li><a href="#state-and-resource-mapping">10. State and Resource Mapping</a></li>
+  <li><a href="#state-binding-and-placement-posture">10. State, Binding, and Placement Posture</a></li>
   <li><a href="#portability">11. Portability</a></li>
   <li><a href="#status">12. Status</a></li>
   <li><a href="#summary">13. Summary</a></li>
@@ -34,7 +34,7 @@
 <h2 id="overview">1. Overview</h2>
 
 <p>
-This directory defines the first official realization families for the intrinsic standardized widget classes of FROG.
+This directory defines the official realization families for the intrinsic standardized widget classes of FROG.
 </p>
 
 <p>
@@ -47,9 +47,9 @@ It is the official publication surface for:
 </p>
 
 <ul>
-  <li>state-oriented visual posture,</li>
-  <li>part-to-visual mapping,</li>
-  <li>layout posture inside a class realization,</li>
+  <li>state-sensitive visual embodiment,</li>
+  <li>part-to-realization correspondence,</li>
+  <li>placement posture for dynamically rendered public parts,</li>
   <li>recommended resource organization,</li>
   <li>host-facing realization expectations.</li>
 </ul>
@@ -59,7 +59,7 @@ It is the official publication surface for:
 <h2 id="why-this-directory-exists">2. Why this Directory Exists</h2>
 
 <p>
-Once standard widget classes exist, the next architectural need is to define how an official realization family may embody them without collapsing semantics into skins or into one runtime-private toolkit mapping.
+Once standard widget classes exist, the next architectural need is to define how an official realization family may embody them without collapsing semantics into skins, SVG files, or one runtime-private toolkit mapping.
 </p>
 
 <p>
@@ -70,7 +70,8 @@ Without a realization layer:
   <li>the standard widget baseline remains too abstract for serious front-panel publication,</li>
   <li>each runtime is tempted to invent its own de facto visual standard,</li>
   <li>SVG and host assets drift toward semantic ownership,</li>
-  <li>state-specific skins become ad hoc rather than structured.</li>
+  <li>state-specific skins become ad hoc rather than structured,</li>
+  <li>dynamic text-bearing parts risk being treated as asset-only content instead of realization-bound surfaces.</li>
 </ul>
 
 <p>
@@ -87,10 +88,11 @@ This directory defines:
 
 <ul>
   <li>official realization families for standard widgets,</li>
-  <li>their state posture,</li>
-  <li>their part-to-visual posture,</li>
+  <li>their realization-side state posture,</li>
+  <li>their part-to-realization posture,</li>
   <li>their resource-organization posture,</li>
-  <li>their host-facing realization expectations.</li>
+  <li>their host-facing realization expectations,</li>
+  <li>their fallback posture when resources or host features are unavailable.</li>
 </ul>
 
 <p>
@@ -126,7 +128,8 @@ This means:
 
 <ul>
   <li>class identity is upstream from realization,</li>
-  <li>realization is upstream from host-private rendering details,</li>
+  <li>realization is upstream from machine-readable realization publication,</li>
+  <li>machine-readable realization publication is upstream from host-private rendering details,</li>
   <li>runtime-private implementation remains downstream from published realization posture.</li>
 </ul>
 
@@ -139,11 +142,11 @@ The following ownership boundary is normative:
 </p>
 
 <ul>
-  <li><strong><code>Libraries/Widgets/</code></strong> owns which standard classes exist.</li>
+  <li><strong><code>Libraries/Widgets/</code></strong> owns which standard classes exist and what their public surfaces mean.</li>
   <li><strong><code>Libraries/Realizations/</code></strong> owns official realization-family posture for those classes.</li>
   <li><strong><code>Expression/Widget realization.md</code></strong> owns the generic realization doctrine.</li>
   <li><strong><code>Expression/Widget package (.wfrog).md</code></strong> owns the widget-oriented publication format.</li>
-  <li><strong>SVG and other visual assets</strong> remain resources, not semantic truth.</li>
+  <li><strong>SVG and other visual assets</strong> remain realization resources, not semantic truth.</li>
 </ul>
 
 <p>
@@ -153,7 +156,7 @@ Therefore:
 <ul>
   <li>a realization family MUST NOT invent public widget semantics,</li>
   <li>a realization family MUST NOT redefine class identity,</li>
-  <li>a realization family MAY define visual states, state-to-resource mappings, and part bindings,</li>
+  <li>a realization family MAY define visual states, state-to-resource mappings, part bindings, anchors, and placement surfaces,</li>
   <li>a runtime MAY realize the same family differently internally while preserving its published posture.</li>
 </ul>
 
@@ -173,10 +176,20 @@ A realization family SHOULD define:
   <li>family identity,</li>
   <li>target widget classes,</li>
   <li>state inventory,</li>
-  <li>part-to-visual mapping posture,</li>
+  <li>part-to-realization mapping posture,</li>
   <li>resource naming posture,</li>
   <li>host-facing realization expectations,</li>
   <li>fallback posture when a resource or host feature is unavailable.</li>
+</ul>
+
+<p>
+A realization family MAY also define:
+</p>
+
+<ul>
+  <li>structural bindings between public parts and realization-side surfaces,</li>
+  <li>anchor or text-region publication for host-rendered dynamic parts,</li>
+  <li>state-sensitive resource families for specific parts.</li>
 </ul>
 
 <p>
@@ -207,6 +220,10 @@ This family exists to provide:
   <li>a concrete realization posture that runtimes may interpret faithfully or approximate compatibly.</li>
 </ul>
 
+<p>
+The <code>Default</code> family also serves as the first end-to-end example of how realization-side states, structural part bindings, and dynamic placement surfaces can be published without redefining widget semantics.
+</p>
+
 <hr/>
 
 <h2 id="relationship-with-widgets">8. Relationship with Standard Widget Classes</h2>
@@ -220,10 +237,15 @@ This means:
 </p>
 
 <ul>
-  <li>the widget class defines which parts and states matter semantically,</li>
-  <li>the realization family defines how those parts and states are embodied visually,</li>
+  <li>the widget class defines which public parts and public surfaces exist,</li>
+  <li>the realization family defines how those parts and surfaces are embodied visually,</li>
   <li>the runtime interprets the resulting realization posture without becoming its semantic owner.</li>
 </ul>
+
+<p>
+The realization family may publish how a label is placed, clipped, styled by default, or mapped to a visual surface.
+It does not become the semantic owner of the label text or of other dynamic widget data.
+</p>
 
 <hr/>
 
@@ -242,7 +264,8 @@ Machine-readable publication may later be carried through:
   <li>resource manifests,</li>
   <li>SVG and other visual assets,</li>
   <li>part-binding maps,</li>
-  <li>state-to-resource maps.</li>
+  <li>state maps,</li>
+  <li>anchor maps or text-region maps.</li>
 </ul>
 
 <p>
@@ -260,9 +283,15 @@ visual asset
 runtime-private rendering implementation
 </code></pre>
 
+<p>
+This separation is especially important for dynamic text-bearing parts.
+A visual asset may provide decoration, background, or anchor geometry,
+but it must not become the only semantic owner of live user-facing text.
+</p>
+
 <hr/>
 
-<h2 id="state-and-resource-mapping">10. State and Resource Mapping</h2>
+<h2 id="state-binding-and-placement-posture">10. State, Binding, and Placement Posture</h2>
 
 <p>
 A realization family MAY define:
@@ -271,14 +300,36 @@ A realization family MAY define:
 <ul>
   <li>widget-level states such as <code>normal</code>, <code>disabled</code>, <code>focused</code>, or <code>pressed</code>,</li>
   <li>part-level states such as <code>increment_button.pressed</code>,</li>
-  <li>resource maps that assign state-specific assets to widget parts,</li>
-  <li>fallback rules when a specialized state resource is unavailable.</li>
+  <li>resource maps that assign state-sensitive assets to widget parts,</li>
+  <li>structural bindings that associate public parts with realization surfaces,</li>
+  <li>anchors, text regions, or equivalent placement surfaces for dynamically rendered public parts,</li>
+  <li>fallback rules when a specialized resource or placement surface is unavailable.</li>
 </ul>
 
 <p>
-This layer is the correct place for multiple SVG skins or state-specific SVG fragments.
+This directory is therefore the correct place for:
+</p>
+
+<ul>
+  <li>multiple SVG skins or state-specific SVG fragments,</li>
+  <li>part-level visual mappings,</li>
+  <li>anchor publication for dynamic labels,</li>
+  <li>inspectable fallback posture.</li>
+</ul>
+
+<p>
 It is not the correct place to redefine widget law.
 </p>
+
+<p>
+A useful rule of thumb is:
+</p>
+
+<ul>
+  <li><strong>state maps</strong> answer which resource embodies a part in a given realization state,</li>
+  <li><strong>part bindings</strong> answer where a public part lives in the realization structure,</li>
+  <li><strong>anchors or text regions</strong> answer where a host should place dynamically rendered content.</li>
+</ul>
 
 <hr/>
 
@@ -290,14 +341,19 @@ A standard realization family is portable if:
 
 <ul>
   <li>its target class law remains preserved,</li>
-  <li>its parts remain recognizable,</li>
-  <li>its published state posture remains preserved,</li>
+  <li>its public parts remain recognizable,</li>
+  <li>its published realization-state posture remains preserved,</li>
+  <li>its structural bindings remain interpretable,</li>
   <li>its host-specific substitutions do not change the public interaction meaning.</li>
 </ul>
 
 <p>
 Pixel-identical rendering is not required.
 Semantic and realization-structure compatibility is required.
+</p>
+
+<p>
+This portability requirement is what allows one official realization family to be interpreted across Python, Rust, and C/C++ runtime families without turning one implementation into the real definition of the UI system.
 </p>
 
 <hr/>
@@ -314,8 +370,9 @@ Its closure direction is:
 
 <ul>
   <li>explicit official realization families,</li>
-  <li>clean separation between class law and skin resources,</li>
-  <li>state-structured resource publication,</li>
+  <li>clean separation between class law and realization resources,</li>
+  <li>state-structured and binding-structured publication,</li>
+  <li>inspectable dynamic-placement posture for dynamic public parts,</li>
   <li>multi-runtime realizability without semantic drift.</li>
 </ul>
 
@@ -334,6 +391,12 @@ In short:
 <ul>
   <li><code>Libraries/Widgets/</code> defines what the widget is,</li>
   <li><code>Libraries/Realizations/</code> defines how an official standard family embodies it,</li>
-  <li>assets and <code>.wfrog</code> publication may later materialize that family,</li>
+  <li><code>.wfrog</code> packages and assets may later materialize that family machine-readably,</li>
   <li>runtimes interpret the family without becoming the owner of its meaning.</li>
 </ul>
+
+<p>
+The central architectural rule is simple:
+realization may define embodiment, mapping, placement, and fallback,
+but semantic widget meaning remains upstream from realization and cannot be delegated to assets or to one runtime implementation.
+</p>
