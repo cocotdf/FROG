@@ -26,7 +26,7 @@
   <li><a href="#relation-with-frog-source">10. Relation with <code>.frog</code> Source</a></li>
   <li><a href="#relation-with-wfrog-publication">11. Relation with <code>.wfrog</code> Publication</a></li>
   <li><a href="#relation-with-frogui-primitives">12. Relation with <code>frog.ui.*</code> Primitives</a></li>
-  <li><a href="#realization-and-skins">13. Realization and Skins</a></li>
+  <li><a href="#relation-with-realization-families">13. Relation with Realization Families</a></li>
   <li><a href="#portability-across-runtimes">14. Portability Across Runtimes</a></li>
   <li><a href="#conformance-posture">15. Conformance Posture</a></li>
   <li><a href="#status">16. Status</a></li>
@@ -133,29 +133,26 @@ This directory publishes standard reusable widget classes inside those already-e
 The standardized widget baseline occupies the following architectural position:
 </p>
 
-<pre><code>Expression/   -&gt; widget source model and widget architecture
-Libraries/    -&gt; intrinsic standardized widget classes and intrinsic UI primitives
-Profiles/     -&gt; optional capability families beyond the intrinsic baseline
-IR/           -&gt; execution-facing representation and downstream transformation
-Implementations/ -&gt; runtime families and host realization
+<pre><code>Expression/        -&gt; widget source model and widget architecture
+Libraries/Widgets/ -&gt; intrinsic standardized widget classes
+Libraries/UI.md    -&gt; intrinsic executable UI interaction primitives
+Libraries/Realizations/ -&gt; official realization families for standardized classes
+.wfrog publication -&gt; machine-readable publication of widget and realization artifacts
+Implementations/   -&gt; runtime families and host realization
 </code></pre>
-
-<p>
-Within <code>Libraries/</code>, the split is:
-</p>
-
-<ul>
-  <li><code>Libraries/UI.md</code> defines the executable primitive interaction vocabulary <code>frog.ui.*</code>,</li>
-  <li><code>Libraries/Widgets/</code> defines the reusable standardized widget classes that may be instantiated by programs and targeted by the interaction corridor.</li>
-</ul>
 
 <p>
 This separation is intentional:
 </p>
 
-<pre><code>frog.widgets.*  -&gt; class identities
+<pre><code>frog.widgets.*  -&gt; class identities and public class surfaces
 frog.ui.*       -&gt; executable interaction primitives
+realization     -&gt; official embodiment posture for published classes
 </code></pre>
+
+<p>
+The standardized widget layer is therefore upstream from realization families and upstream from runtime-private embodiment details.
+</p>
 
 <hr/>
 
@@ -169,10 +166,11 @@ The following ownership boundary is normative:
   <li><strong><code>Expression/Widget.md</code></strong> owns widget instances in canonical source.</li>
   <li><strong><code>Expression/Widget class contract.md</code></strong> owns the general class-law model.</li>
   <li><strong><code>Expression/Widget behavior.md</code></strong> owns the bounded behavior doctrine.</li>
-  <li><strong><code>Expression/Widget realization.md</code></strong> owns the realization doctrine.</li>
+  <li><strong><code>Expression/Widget realization.md</code></strong> owns the generic realization doctrine.</li>
   <li><strong><code>Expression/Widget package (.wfrog).md</code></strong> owns widget-oriented package publication format.</li>
   <li><strong><code>Libraries/UI.md</code></strong> owns executable widget interaction primitives.</li>
   <li><strong><code>Libraries/Widgets/</code></strong> owns the intrinsic standardized baseline widget classes themselves.</li>
+  <li><strong><code>Libraries/Realizations/</code></strong> owns official realization-family posture for those classes.</li>
 </ul>
 
 <p>
@@ -181,9 +179,11 @@ Therefore:
 
 <ul>
   <li>this directory defines <em>which</em> standard classes exist,</li>
+  <li>this directory defines the portable public surface of those classes,</li>
   <li>it does not redefine the generic widget architecture,</li>
   <li>it does not replace <code>.wfrog</code> as the widget-oriented publication family,</li>
-  <li>it does not make one runtime the owner of the class law.</li>
+  <li>it does not make one runtime the owner of the class law,</li>
+  <li>it does not delegate public class meaning to realization assets.</li>
 </ul>
 
 <hr/>
@@ -213,6 +213,11 @@ A standard class defines, at minimum:
 <p>
 A standard class is therefore more than an abstract name and more than a visual control template.
 It is a published portable object surface that runtimes may implement and programs may rely on.
+</p>
+
+<p>
+That public surface may include semantic label-bearing or value-bearing members such as <code>label.text</code> or <code>value</code> when the class requires them.
+However, the existence of such members does not mean that realization-side placement, styling defaults, or decorative assets become part of the intrinsic class law unless explicitly published here.
 </p>
 
 <hr/>
@@ -271,8 +276,8 @@ This normalization keeps the baseline coherent while leaving room for richer fam
 </p>
 
 <p>
-The baseline deliberately avoids pushing realization-heavy style surfaces into every class.
-Detailed skin, theme, or host-specific appearance posture belongs in realization publication rather than in the smallest intrinsic standard surface.
+The baseline deliberately avoids pushing realization-heavy appearance structure into every class.
+Portable semantic surfaces may still be standardized when they belong to public class meaning, but realization-specific anchors, regions, skin layers, and most visual-theme machinery belong downstream in realization publication.
 </p>
 
 <hr/>
@@ -295,6 +300,10 @@ They are intended to serve as:
 
 <p>
 Composite widgets are expected to be published through the widget package corridor and to remain compatible with the standard primitive classes defined here.
+</p>
+
+<p>
+This means the primitive baseline should remain small, clear, and stable rather than absorbing every higher-level interaction pattern into the intrinsic core.
 </p>
 
 <hr/>
@@ -322,6 +331,11 @@ This directory does not define the instance serialization itself.
 It defines the published classes that such instances may target.
 </p>
 
+<p>
+Canonical source owns the instance.
+This directory owns the standardized class being instantiated.
+</p>
+
 <hr/>
 
 <h2 id="relation-with-wfrog-publication">11. Relation with <code>.wfrog</code> Publication</h2>
@@ -338,8 +352,23 @@ That means:
 <ul>
   <li>this directory defines the normative class baseline,</li>
   <li><code>.wfrog</code> provides the machine-readable widget-oriented publication family,</li>
-  <li>realization resources, skins, and realization mappings may be published through <code>.wfrog</code> artifacts associated with these classes.</li>
+  <li>realization resources, realization mappings, bounded composite publication, and related artifacts may be published through <code>.wfrog</code> artifacts associated with these classes.</li>
 </ul>
+
+<p>
+The governing distinction remains:
+</p>
+
+<pre><code>published class law
+    !=
+widget-oriented package publication
+    !=
+realization-family publication
+    !=
+visual asset
+    !=
+runtime-private implementation
+</code></pre>
 
 <hr/>
 
@@ -355,7 +384,7 @@ This means:
 </p>
 
 <ul>
-  <li><code>Libraries/Widgets/</code> defines which standard widget classes exist,</li>
+  <li><code>Libraries/Widgets/</code> defines which standard widget classes exist and what public surfaces they expose,</li>
   <li><code>Libraries/UI.md</code> defines how executable diagrams may read properties, write properties, invoke methods, and observe events on those classes when allowed.</li>
 </ul>
 
@@ -368,7 +397,7 @@ frog.ui.*
 
 <hr/>
 
-<h2 id="realization-and-skins">13. Realization and Skins</h2>
+<h2 id="relation-with-realization-families">13. Relation with Realization Families</h2>
 
 <p>
 The classes defined here are not identical to one skin and are not identical to one realization resource family.
@@ -380,13 +409,14 @@ A standard widget class may later be accompanied by:
 
 <ul>
   <li>one or more official realization families,</li>
-  <li>one or more SVG-backed skins,</li>
-  <li>part-to-visual mappings,</li>
-  <li>state-to-resource mappings for host realization.</li>
+  <li>one or more machine-readable realization packages,</li>
+  <li>state-sensitive resource maps,</li>
+  <li>structural part bindings,</li>
+  <li>anchor or text-region publication for dynamic public parts.</li>
 </ul>
 
 <p>
-Those realization assets remain subordinate to the class law.
+Those realization layers remain subordinate to the class law.
 </p>
 
 <p>
@@ -394,13 +424,14 @@ For example:
 </p>
 
 <ul>
-  <li>a button may have normal, pressed, disabled, and focused visual states,</li>
-  <li>a numeric control may have separate visual states for increment and decrement subparts,</li>
-  <li>a chart may have alternative visual themes or host rendering strategies.</li>
+  <li>a button may expose semantic label text through <code>label.text</code>,</li>
+  <li>the corresponding realization family may publish where that label is placed,</li>
+  <li>an associated asset may provide geometry, decoration, or anchor support,</li>
+  <li>a runtime may render the final result through its own host toolkit.</li>
 </ul>
 
 <p>
-But the existence of those visual states does not mean that the skin owns the semantics of the class.
+But the existence of those realization layers does not mean that the realization owns the semantics of the class.
 The class remains primary.
 The realization remains subordinate.
 </p>
@@ -434,6 +465,10 @@ Portability does require:
   <li>stable behavior meaning,</li>
   <li>stable diagram-interaction meaning.</li>
 </ul>
+
+<p>
+Where a class exposes semantic text-bearing or value-bearing public surfaces, portability also requires that runtimes preserve their public meaning even if the visual embodiment differs.
+</p>
 
 <hr/>
 
@@ -475,6 +510,7 @@ Its closure direction is:
   <li>a small but credible standard widget core,</li>
   <li>clear reusable class publication,</li>
   <li>clean alignment with <code>frog.ui.*</code> interaction primitives,</li>
+  <li>clean downstream alignment with official realization families,</li>
   <li>future growth through composite widgets and realization publication without architectural drift.</li>
 </ul>
 
@@ -496,8 +532,9 @@ In short:
 
 <ul>
   <li><code>Expression/</code> defines how widgets exist in the language architecture,</li>
-  <li><code>Libraries/Widgets/</code> defines which standard widget classes exist in the intrinsic baseline,</li>
+  <li><code>Libraries/Widgets/</code> defines which standard widget classes exist in the intrinsic baseline and what their public surfaces mean,</li>
   <li><code>Libraries/UI.md</code> defines how execution interacts with those classes,</li>
-  <li><code>.wfrog</code> defines how widget-oriented artifacts can be published and packaged,</li>
+  <li><code>Libraries/Realizations/</code> defines how official realization families embody them,</li>
+  <li><code>.wfrog</code> defines how widget-oriented and realization-oriented artifacts can be published and packaged,</li>
   <li>runtimes interpret these layers without becoming the owner of their meaning.</li>
 </ul>
