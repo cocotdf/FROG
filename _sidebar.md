@@ -72,7 +72,7 @@
       - [String](/Libraries/Realizations/Default/String.md)
       - [Assets](/Libraries/Realizations/Default/Assets/Readme.md)
         - [Naming](/Libraries/Realizations/Default/Assets/Naming.md)
-      - Examples
+      - [Examples](/Libraries/Realizations/Default/Examples/Readme.md)
         - [Button default realization.wfrog](/Libraries/Realizations/Default/Examples/Button%20default%20realization.wfrog.md)
         - [Button package and assets example](/Libraries/Realizations/Default/Examples/Button%20package%20and%20assets%20example.md)
         - [Numeric control default realization.wfrog](/Libraries/Realizations/Default/Examples/Numeric%20control%20default%20realization.wfrog.md)

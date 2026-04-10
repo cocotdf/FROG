@@ -518,7 +518,7 @@
                     {
                       "key": "libraries/realizations/default/examples/",
                       "title": "Examples",
-                      "path": null,
+                      "path": "/Libraries/Realizations/Default/Examples/Readme.md",
                       "kind": "category",
                       "children": [
                         {
@@ -2511,6 +2511,7 @@
     "/Libraries/Realizations/Default/Examples/Button%20default%20realization.wfrog.md",
     "/Libraries/Realizations/Default/Examples/Button%20package%20and%20assets%20example.md",
     "/Libraries/Realizations/Default/Examples/Numeric%20control%20default%20realization.wfrog.md",
+    "/Libraries/Realizations/Default/Examples/Readme.md",
     "/Libraries/Realizations/Default/Readme.md",
     "/Libraries/Realizations/Readme.md",
     "/Libraries/Widgets/Boolean.md",
