@@ -41,8 +41,18 @@ The default numeric realization is intended to provide one clean, inspectable, p
 <p>
 This realization is realization-side only.
 It does not redefine numeric class law, does not invent new public members, and does not replace the semantic ownership of numeric value, numeric label text, or numeric editing semantics.
-Its job is to embody already-published numeric widget surfaces through stable visual states, stable part mappings, and realization-side placement or rendering metadata where needed.
+Its job is to embody already-published numeric widget surfaces through stable visual states, stable structural bindings, and realization-side placement or rendering metadata where needed.
 </p>
+
+<p>
+The preferred architectural split is:
+</p>
+
+<ul>
+  <li><code>state_maps</code> for state-sensitive visual embodiment,</li>
+  <li><code>part_bindings</code> for stable structural correspondence,</li>
+  <li>anchors or text regions for dynamic public surfaces rendered by the host.</li>
+</ul>
 
 <hr/>
 
@@ -65,6 +75,11 @@ This realization assumes the standardized numeric posture in which:
   <li>the realization remains downstream from that class contract.</li>
 </ul>
 
+<p>
+The realization therefore owns embodiment and placement posture for numeric widgets.
+It does not become the semantic owner of the numeric value or the label content.
+</p>
+
 <hr/>
 
 <h2 id="realized-parts">3. Realized Parts</h2>
@@ -84,8 +99,21 @@ The default numeric realization targets the following parts:
 
 <p>
 The realization may internally use additional layers, clipping regions, caret surfaces, editing guides, or host-native editor structures.
-Those remain realization-private support structures unless they are published elsewhere as part of an explicit realization package or a future higher-level numeric contract.
+Those remain realization-private support structures unless they are explicitly published as realization resources or placement surfaces.
 </p>
+
+<p>
+The default posture is:
+</p>
+
+<ul>
+  <li><code>root</code> — overall layout, clipping, and outer realization region when needed,</li>
+  <li><code>label</code> — dynamic text-bearing public part rendered through a realization-side placement surface,</li>
+  <li><code>value_display</code> — dynamic numeric display or editing surface,</li>
+  <li><code>increment_button</code> — optional state-sensitive step-up interaction surface,</li>
+  <li><code>decrement_button</code> — optional state-sensitive step-down interaction surface,</li>
+  <li><code>frame</code> — optional border or focus-emphasis surface.</li>
+</ul>
 
 <hr/>
 
@@ -109,6 +137,10 @@ For increment and decrement button parts, the default family additionally define
   <li><code>normal</code></li>
   <li><code>pressed</code></li>
 </ul>
+
+<p>
+The host MAY also support richer transient posture such as hovered editing chrome or caret emphasis, but such additions are not required in the minimal default realization posture.
+</p>
 
 <p>
 These are realization-side visual states.
@@ -145,6 +177,17 @@ A typical minimal mapping posture is:
 </ul>
 
 <p>
+The preferred machine-readable split is:
+</p>
+
+<ul>
+  <li><code>value_display</code> published primarily through a <code>part_binding</code> to a text region, anchor, or equivalent dynamic display surface,</li>
+  <li><code>label</code> published primarily through a <code>part_binding</code> to an anchor, text region, or equivalent placement surface,</li>
+  <li><code>increment_button</code> and <code>decrement_button</code>, when exposed, published through <code>part_bindings</code> plus <code>state_maps</code>,</li>
+  <li><code>frame</code>, when present, published through <code>part_bindings</code> plus optional <code>state_maps</code>.</li>
+</ul>
+
+<p>
 The default family SHOULD keep this mapping explicit enough that a machine-readable package can distinguish:
 </p>
 
@@ -153,6 +196,11 @@ The default family SHOULD keep this mapping explicit enough that a machine-reada
   <li>structural part bindings,</li>
   <li>dynamic host-rendered or host-updated numeric surfaces.</li>
 </ul>
+
+<p>
+This distinction is important because <code>value_display</code> is not merely decorative.
+It is the realized surface through which the current semantic numeric value becomes visible and, for controls, may become editable.
+</p>
 
 <hr/>
 
@@ -190,7 +238,39 @@ The <code>label</code> part is therefore expected to be realized as a dynamic te
 A host interpreting this realization should render or inject the current semantic numeric label into the realized label region at runtime.
 </p>
 
-<h3>6.3 Step-button posture</h3>
+<h3>6.3 Placement posture</h3>
+
+<p>
+The default family SHOULD publish explicit placement surfaces for both <code>label</code> and <code>value_display</code> whenever host-rendered numeric content is used.
+Those placement surfaces may take the form of:
+</p>
+
+<ul>
+  <li>a named <code>text_anchor</code>,</li>
+  <li>a published anchor entry backed by an <code>anchor_map</code> resource,</li>
+  <li>a published <code>text_region</code> entry backed by a <code>text_region_map</code> resource,</li>
+  <li>a host-native region under explicit binding posture,</li>
+  <li>an equivalent explicitly published placement binding.</li>
+</ul>
+
+<p>
+This placement metadata may define:
+</p>
+
+<ul>
+  <li>alignment box or region bounds,</li>
+  <li>horizontal and vertical alignment,</li>
+  <li>padding or inset region,</li>
+  <li>clipping posture,</li>
+  <li>numeric-text alignment or right-justification posture when the realization chooses to expose it.</li>
+</ul>
+
+<p>
+Those realization-side structures do not change the public meaning of <code>value</code> or <code>label.text</code>.
+They only specify where the host should visually place or edit the rendered content.
+</p>
+
+<h3>6.4 Step-button posture</h3>
 
 <p>
 The <code>increment_button</code> and <code>decrement_button</code> parts are standard only when the active realization exposes step-style interaction.
@@ -213,11 +293,15 @@ The realization may choose whether those parts are visibly separate.
 However, when they are published as exposed parts, their meaning must remain inspectable and compatible with the standardized control contract.
 </p>
 
-<h3>6.4 Asset limitation rule</h3>
+<h3>6.5 Asset limitation rule</h3>
 
 <p>
 A numeric resource file MAY include placeholder digits, decorative guides, preview values, or design-time scaffolding.
 However, a conforming realization family must not require that those asset-baked values become the only path by which live numeric value or live semantic label text is shown.
+</p>
+
+<p>
+Likewise, state-sensitive styling of rendered numeric text must remain distinguishable from semantic ownership of the numeric value itself.
 </p>
 
 <hr/>
@@ -239,17 +323,25 @@ A typical resource posture may follow:
   decrement_button/
     normal
     pressed
+  frame/
+    normal
+    focused
   anchors/
     label
-    value_display
+  text_regions/
+    value
 
 numeric_indicator/
   value_display/
     normal
     focused
+  frame/
+    normal
+    focused
   anchors/
     label
-    value_display
+  text_regions/
+    value
 </code></pre>
 
 <p>
@@ -261,15 +353,27 @@ An equivalent package-oriented posture may publish resources such as:
   <li><code>numeric_control.value_display.focused.svg</code></li>
   <li><code>numeric_control.increment_button.pressed.svg</code></li>
   <li><code>numeric_control.decrement_button.pressed.svg</code></li>
-  <li><code>numeric_control.label.anchor.json</code></li>
-  <li><code>numeric_control.value_display.region.json</code> or another explicit placement artifact</li>
+  <li><code>numeric_control.label.anchor_map</code> backed by <code>./assets/numeric_control/anchors/label.json</code></li>
+  <li><code>numeric_control.value.text_region_map</code> backed by <code>./assets/numeric_control/text_regions/value.json</code></li>
   <li><code>numeric_indicator.value_display.normal.svg</code></li>
+  <li><code>numeric_indicator.label.anchor_map</code> backed by <code>./assets/numeric_indicator/anchors/label.json</code></li>
+  <li><code>numeric_indicator.value.text_region_map</code> backed by <code>./assets/numeric_indicator/text_regions/value.json</code></li>
 </ul>
 
 <p>
 Resources MAY be SVG-backed, host-native, toolkit-driven, or mixed.
 The default family standardizes the part posture, state posture, and realization-side binding posture, not one mandatory editor implementation or one mandatory file format.
 </p>
+
+<p>
+In particular:
+</p>
+
+<ul>
+  <li><code>increment_button</code>, <code>decrement_button</code>, and <code>frame</code> are natural candidates for state-sensitive visual resources,</li>
+  <li><code>label</code> is naturally a placement-bound dynamic text surface,</li>
+  <li><code>value_display</code> is naturally a placement-bound dynamic numeric surface, even when decorative visual resources also exist around it.</li>
+</ul>
 
 <hr/>
 
@@ -295,6 +399,16 @@ A host SHOULD also preserve the distinction between:
   <li>the semantic numeric value owned by the class,</li>
   <li>the numeric label text owned by <code>label.text</code>,</li>
   <li>the realization-side embodiment of label, value display, step buttons, and frame.</li>
+</ul>
+
+<p>
+For controls, the host should also preserve the difference between:
+</p>
+
+<ul>
+  <li>display posture,</li>
+  <li>editing posture,</li>
+  <li>step-style interaction posture when exposed.</li>
 </ul>
 
 <p>
@@ -332,8 +446,17 @@ If dedicated label or value-display placement resources are unavailable, a host 
 </ul>
 
 <p>
+If focused or disabled frame-specific resources are unavailable, a host MAY fall back to host-native focus or disabled posture provided that the distinction remains visible.
+</p>
+
+<p>
 Any fallback MUST preserve the published numeric class law and the meaning of the public parts when those parts are exposed.
 Fallback must not turn asset-baked digits or asset-baked label text into semantic truth.
+</p>
+
+<p>
+Fallback must remain inspectable at the realization-publication layer.
+It must not become a purely runtime-private convention.
 </p>
 
 <hr/>
@@ -357,7 +480,7 @@ It realizes:
 
 <p>
 Its resources may provide skins, layers, regions, and anchors.
-Its package publication may provide state maps and bindings.
+Its package publication may provide <code>state_maps</code> and <code>part_bindings</code>.
 Its host implementation may approximate the visuals when needed.
 But the realization never becomes the semantic owner of numeric value, numeric label text, or numeric class meaning.
 </p>
