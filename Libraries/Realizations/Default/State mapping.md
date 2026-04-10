@@ -50,6 +50,15 @@ The state-and-binding layer is the machine-readable realization layer that ties:
 Its role is to make realization correspondence explicit without redefining widget class law.
 </p>
 
+<p>
+The central distinction of this document is simple:
+</p>
+
+<ul>
+  <li><strong>state maps</strong> describe state-sensitive visual embodiment,</li>
+  <li><strong>part bindings</strong> describe stable structural correspondence between a public part and a realization-side surface.</li>
+</ul>
+
 <hr/>
 
 <h2 id="why-state-mapping-is-explicit">2. Why State Mapping Is Explicit</h2>
@@ -100,9 +109,15 @@ State maps are most natural for surfaces such as:
 
 <ul>
   <li>a button face in <code>normal</code>, <code>focused</code>, or <code>pressed</code>,</li>
+  <li>a button frame in <code>focused</code> or <code>disabled</code>,</li>
   <li>a boolean face in state-qualified variants,</li>
   <li>a numeric increment button in <code>pressed</code>.</li>
 </ul>
+
+<p>
+State maps are generally <strong>not</strong> the preferred primary publication mechanism for dynamic public text-bearing parts whose live content is rendered by the host.
+In those cases, the preferred primary mechanism is a structural binding to an anchor, text region, or equivalent placement surface.
+</p>
 
 <hr/>
 
@@ -113,11 +128,11 @@ A state map record SHOULD contain:
 </p>
 
 <ul>
-  <li><code>target_class</code></li>
-  <li><code>target_part</code> when applicable</li>
-  <li><code>state</code></li>
-  <li><code>resource_refs</code></li>
-  <li><code>fallback</code> when applicable</li>
+  <li><code>target_class</code>,</li>
+  <li><code>target_part</code> when applicable,</li>
+  <li><code>state</code>,</li>
+  <li><code>resource_refs</code>,</li>
+  <li><code>fallback</code> when applicable.</li>
 </ul>
 
 <p>
@@ -144,6 +159,11 @@ Conceptually:
   "fallback": "normal"
 }</code></pre>
 
+<p>
+A state map should identify realization-side embodiment.
+It should not be used to smuggle new public widget semantics into a resource-selection table.
+</p>
+
 <hr/>
 
 <h2 id="part-binding-shape">5. Part Binding Shape</h2>
@@ -157,10 +177,10 @@ A part binding record SHOULD contain:
 </p>
 
 <ul>
-  <li><code>target_class</code></li>
-  <li><code>part</code></li>
-  <li><code>binding_kind</code></li>
-  <li><code>binding_target</code></li>
+  <li><code>target_class</code>,</li>
+  <li><code>part</code>,</li>
+  <li><code>binding_kind</code>,</li>
+  <li><code>binding_target</code>.</li>
 </ul>
 
 <p>
@@ -168,7 +188,6 @@ A part binding record MAY also contain:
 </p>
 
 <ul>
-  <li><code>state</code> when a part binding itself varies by state,</li>
   <li><code>fallback</code> when the binding target can degrade gracefully,</li>
   <li><code>placement_role</code> when the target is a text anchor, clipping region, or equivalent placement surface.</li>
 </ul>
@@ -178,10 +197,10 @@ Typical binding kinds include:
 </p>
 
 <ul>
-  <li><code>resource_layer</code></li>
-  <li><code>anchor</code></li>
-  <li><code>text_region</code></li>
-  <li><code>host_region</code></li>
+  <li><code>resource_layer</code>,</li>
+  <li><code>anchor</code>,</li>
+  <li><code>text_region</code>,</li>
+  <li><code>host_region</code>.</li>
 </ul>
 
 <p>
@@ -190,6 +209,11 @@ A part binding answers the question:
 
 <p>
 <em>Where does this public part live, visually or structurally, within the realization?</em>
+</p>
+
+<p>
+Part bindings should remain stable unless the realization explicitly publishes multiple structural postures under inspectable precedence rules.
+The default family therefore prefers keeping state variation in <code>state_maps</code> and keeping structural correspondence in <code>part_bindings</code>.
 </p>
 
 <hr/>
@@ -215,6 +239,7 @@ For example, in the default button posture:
 
 <ul>
   <li><code>face</code> is naturally modeled through state maps such as <code>normal</code>, <code>disabled</code>, <code>focused</code>, and <code>pressed</code>,</li>
+  <li><code>frame</code> may also be modeled through state maps when the realization family publishes frame variants,</li>
   <li><code>label</code> is naturally modeled through a structural binding to a text anchor, text region, or equivalent host-rendered placement surface.</li>
 </ul>
 
@@ -231,6 +256,11 @@ Therefore:
   <li>part bindings SHOULD be used for stable structural correspondence,</li>
   <li>dynamic text-bearing parts SHOULD preferably bind to anchors, text regions, or host regions rather than being modeled only through state-scoped SVG files.</li>
 </ul>
+
+<p>
+This rule applies more broadly than buttons.
+It also matters for numeric displays, string value regions, chart titles, axis labels, and other future dynamic public surfaces.
+</p>
 
 <hr/>
 
@@ -261,6 +291,16 @@ Part-level maps are generally preferable when:
   <li>the package intends to keep anchor or text-region publication inspectable.</li>
 </ul>
 
+<p>
+For dynamic text-bearing parts, a part-level structural binding is usually more informative than a widget-level state map because it preserves the distinction between:
+</p>
+
+<ul>
+  <li>the public semantic surface,</li>
+  <li>the realization placement surface,</li>
+  <li>the visual resources that may still vary elsewhere in the widget.</li>
+</ul>
+
 <hr/>
 
 <h2 id="fallback-rules">8. Fallback Rules</h2>
@@ -279,8 +319,8 @@ Examples:
 
 <ul>
   <li><code>pressed</code> may fall back to <code>normal</code>,</li>
-  <li><code>focused</code> may fall back to host-native focus posture,</li>
-  <li><code>disabled_true</code> may fall back to a host-native disabled boolean rendering preserving the true state distinction.</li>
+  <li><code>focused</code> may fall back to <code>normal</code> or to a documented host-native focus posture,</li>
+  <li><code>disabled_true</code> may fall back to a host-native disabled boolean rendering preserving the true-state distinction.</li>
 </ul>
 
 <p>
@@ -302,6 +342,15 @@ Examples:
 Fallback must remain inspectable.
 It must not silently collapse public part meaning into runtime-private heuristics.
 </p>
+
+<p>
+The preferred pattern is:
+</p>
+
+<ul>
+  <li><code>state_maps</code> publish visual-state fallback,</li>
+  <li><code>part_bindings</code> publish structural or placement fallback.</li>
+</ul>
 
 <hr/>
 
@@ -345,6 +394,15 @@ It must not silently collapse public part meaning into runtime-private heuristic
       "fallback": "normal"
     },
     {
+      "target_class": "frog.widgets.button",
+      "target_part": "frame",
+      "state": "focused",
+      "resource_refs": [
+        "button.frame.focused.svg"
+      ],
+      "fallback": "normal"
+    },
+    {
       "target_class": "frog.widgets.numeric_control",
       "target_part": "increment_button",
       "state": "pressed",
@@ -366,13 +424,22 @@ It must not silently collapse public part meaning into runtime-private heuristic
       "part": "label",
       "binding_kind": "anchor",
       "binding_target": "button.label.center",
+      "placement_role": "text_anchor",
       "fallback": "host_centered_text_region"
+    },
+    {
+      "target_class": "frog.widgets.button",
+      "part": "frame",
+      "binding_kind": "resource_layer",
+      "binding_target": "frame"
     },
     {
       "target_class": "frog.widgets.numeric_control",
       "part": "value_display",
-      "binding_kind": "host_region",
-      "binding_target": "value_display"
+      "binding_kind": "text_region",
+      "binding_target": "numeric_control.value.center",
+      "placement_role": "text_region",
+      "fallback": "host_value_region"
     }
   ]
 }</code></pre>
@@ -383,6 +450,7 @@ In this example:
 
 <ul>
   <li>the button <code>face</code> is realized through state-sensitive resources,</li>
+  <li>the button <code>frame</code> may expose additional state-sensitive embodiment,</li>
   <li>the button <code>label</code> is realized through a structural binding to a published placement surface,</li>
   <li>the package remains explicit about fallback posture for both state-sensitive embodiment and dynamic placement.</li>
 </ul>
@@ -412,7 +480,8 @@ Validators MAY also diagnose:
 <ul>
   <li>needlessly coarse widget-level mappings when a stable part-level posture is already published,</li>
   <li>overlapping bindings for the same class and part without explicit precedence,</li>
-  <li>state maps that attempt to encode public widget semantics instead of realization-side embodiment.</li>
+  <li>state maps that attempt to encode public widget semantics instead of realization-side embodiment,</li>
+  <li>examples in which a dynamic public text-bearing part is simultaneously treated as anchor-bound and as the semantic owner of state-scoped SVG label resources without an explicit dual-layer realization contract.</li>
 </ul>
 
 <hr/>
@@ -431,6 +500,17 @@ It is the correct layer for:
   <li>part/state/resource correspondence,</li>
   <li>structural part bindings,</li>
   <li>fallback rules for state-sensitive embodiment and dynamic placement.</li>
+</ul>
+
+<p>
+Its preferred architecture is:
+</p>
+
+<ul>
+  <li><code>state_maps</code> for state-sensitive visual embodiment,</li>
+  <li><code>part_bindings</code> for stable structural correspondence,</li>
+  <li>placement surfaces for dynamic public parts rendered by the host,</li>
+  <li>clear separation between realization-side embodiment and widget-class meaning.</li>
 </ul>
 
 <p>
