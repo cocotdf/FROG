@@ -16,16 +16,17 @@
 <ul>
   <li><a href="#overview">1. Overview</a></li>
   <li><a href="#resource-purpose">2. Resource Purpose</a></li>
-  <li><a href="#resource-kinds">3. Resource Kinds</a></li>
-  <li><a href="#resource-identifiers">4. Resource Identifiers</a></li>
-  <li><a href="#resource-record-shape">5. Resource Record Shape</a></li>
-  <li><a href="#path-posture">6. Path Posture</a></li>
-  <li><a href="#class-and-part-scoping">7. Class and Part Scoping</a></li>
-  <li><a href="#state-scoping">8. State Scoping</a></li>
-  <li><a href="#anchor-and-text-region-resources">9. Anchor and Text-Region Resources</a></li>
-  <li><a href="#resource-examples">10. Resource Examples</a></li>
-  <li><a href="#validation-posture">11. Validation Posture</a></li>
-  <li><a href="#summary">12. Summary</a></li>
+  <li><a href="#relationship-with-realization-records">3. Relationship with Realization Records</a></li>
+  <li><a href="#resource-kinds">4. Resource Kinds</a></li>
+  <li><a href="#resource-identifiers">5. Resource Identifiers</a></li>
+  <li><a href="#resource-record-shape">6. Resource Record Shape</a></li>
+  <li><a href="#path-posture">7. Path Posture</a></li>
+  <li><a href="#class-part-and-region-scoping">8. Class, Part, and Region Scoping</a></li>
+  <li><a href="#state-scoping">9. State Scoping</a></li>
+  <li><a href="#anchor-and-text-region-resources">10. Anchor and Text-Region Resources</a></li>
+  <li><a href="#resource-examples">11. Resource Examples</a></li>
+  <li><a href="#validation-posture">12. Validation Posture</a></li>
+  <li><a href="#summary">13. Summary</a></li>
 </ul>
 
 <hr/>
@@ -37,11 +38,17 @@ This document defines the resource model used by the official <code>Default</cod
 </p>
 
 <p>
-The resource model provides the machine-readable posture for realization resources such as SVG assets, anchor maps, text-region maps, layer maps, and related support artifacts used by state-specific and part-specific realization records.
+The resource model provides the machine-readable posture for realization resources such as SVG assets, anchor maps, text-region maps, layer maps, and related support artifacts used by realization records.
 </p>
 
 <p>
-The purpose of this document is to define what realization resources are, how they are identified, how they are scoped, and how they remain subordinate to the realization and class layers above them.
+Its purpose is to define what realization resources are, how they are identified, how they are scoped, and how they remain subordinate to the realization and class layers above them.
+</p>
+
+<p>
+The central architectural principle is simple:
+resources support embodiment, placement, composition, and styling,
+but they do not become the semantic owner of public widget meaning.
 </p>
 
 <hr/>
@@ -62,6 +69,7 @@ A resource does not own:
   <li>public method legality,</li>
   <li>public event legality,</li>
   <li>public part legality,</li>
+  <li>bounded behavior law,</li>
   <li>semantic ownership of dynamic user-facing widget data.</li>
 </ul>
 
@@ -85,7 +93,39 @@ They do not become semantic truth.
 
 <hr/>
 
-<h2 id="resource-kinds">3. Resource Kinds</h2>
+<h2 id="relationship-with-realization-records">3. Relationship with Realization Records</h2>
+
+<p>
+The resource model is subordinate to realization records.
+</p>
+
+<p>
+In the default family, the preferred publication split is:
+</p>
+
+<ul>
+  <li><code>part_bindings</code> define stable structural correspondence between widget parts and realization surfaces,</li>
+  <li><code>state_maps</code> define state-sensitive visual embodiment,</li>
+  <li><code>resources</code> define the concrete machine-readable inventory of available realization artifacts,</li>
+  <li><code>anchors</code> and <code>text_regions</code> define inspectable placement surfaces when dynamic host rendering is required.</li>
+</ul>
+
+<p>
+Accordingly, a resource record does not by itself decide how a part is realized.
+That decision emerges from the combination of:
+</p>
+
+<ul>
+  <li>the realization record,</li>
+  <li>the relevant <code>part_bindings</code>,</li>
+  <li>the relevant <code>state_maps</code>,</li>
+  <li>the resource inventory,</li>
+  <li>the published anchors or text regions when applicable.</li>
+</ul>
+
+<hr/>
+
+<h2 id="resource-kinds">4. Resource Kinds</h2>
 
 <p>
 The default family MAY use the following resource kinds:
@@ -114,13 +154,18 @@ A rough interpretation posture is:
   <li><code>vector_template</code> — parameterizable vector realization resource when the family supports template-driven generation,</li>
   <li><code>anchor_map</code> — named anchors or placement points used to bind public parts to realization surfaces,</li>
   <li><code>text_region_map</code> — named text-bearing regions used for host-rendered dynamic text placement,</li>
-  <li><code>layer_map</code> — named layer correspondence between public parts and resource-visible sublayers,</li>
+  <li><code>layer_map</code> — named layer correspondence or composition metadata for visual resources,</li>
   <li><code>style_token_map</code> — realization-side token mapping for style defaults or theme buckets.</li>
 </ul>
 
+<p>
+These resource kinds describe realization support.
+They do not authorize a resource file to invent new public widget semantics.
+</p>
+
 <hr/>
 
-<h2 id="resource-identifiers">4. Resource Identifiers</h2>
+<h2 id="resource-identifiers">5. Resource Identifiers</h2>
 
 <p>
 A resource SHOULD have a stable identifier.
@@ -130,7 +175,7 @@ A resource SHOULD have a stable identifier.
 A recommended identifier posture is:
 </p>
 
-<pre><code>&lt;surface&gt;.&lt;part-or-region&gt;.&lt;state-when-applicable&gt;.&lt;kind&gt;</code></pre>
+<pre><code>&lt;widget-surface&gt;.&lt;part-or-region&gt;.&lt;state-when-applicable&gt;.&lt;kind&gt;</code></pre>
 
 <p>
 Examples:
@@ -138,6 +183,7 @@ Examples:
 
 <ul>
   <li><code>button.face.pressed.svg</code></li>
+  <li><code>button.frame.focused.svg</code></li>
   <li><code>button.label.anchor_map</code></li>
   <li><code>button.label.text_region_map</code></li>
   <li><code>numeric_control.increment_button.pressed.svg</code></li>
@@ -149,21 +195,25 @@ The identifier should remain stable even if the physical file path changes.
 This helps preserve durable package references and stable realization bindings.
 </p>
 
+<p>
+Resource identifiers SHOULD align naturally with the published asset naming posture, but they do not need to mirror the filesystem path character-for-character.
+</p>
+
 <hr/>
 
-<h2 id="resource-record-shape">5. Resource Record Shape</h2>
+<h2 id="resource-record-shape">6. Resource Record Shape</h2>
 
 <p>
 A resource record SHOULD contain:
 </p>
 
 <ul>
-  <li><code>id</code></li>
-  <li><code>kind</code></li>
-  <li><code>path</code></li>
-  <li><code>target_class</code> when applicable</li>
-  <li><code>target_part</code> when applicable</li>
-  <li><code>target_state</code> when applicable</li>
+  <li><code>id</code>,</li>
+  <li><code>kind</code>,</li>
+  <li><code>path</code>,</li>
+  <li><code>target_class</code> when applicable,</li>
+  <li><code>target_part</code> when applicable,</li>
+  <li><code>target_state</code> when applicable.</li>
 </ul>
 
 <p>
@@ -174,7 +224,7 @@ A resource record MAY also contain:
   <li><code>target_region</code> when the resource is region-oriented rather than part-oriented,</li>
   <li><code>target_layer</code> when the resource is layer-oriented,</li>
   <li><code>format</code> when further format disambiguation is useful,</li>
-  <li><code>role</code> when the resource has a specialized realization-side purpose such as <code>text_anchor</code> or <code>fallback_region</code>.</li>
+  <li><code>role</code> when the resource has a specialized realization-side purpose such as <code>text_anchor</code>, <code>text_region</code>, or <code>fallback_region</code>.</li>
 </ul>
 
 <p>
@@ -203,9 +253,14 @@ Another example:
   "role": "text_anchor"
 }</code></pre>
 
+<p>
+A resource record should remain descriptive of the resource itself.
+It should not duplicate the full meaning of the realization record that consumes it.
+</p>
+
 <hr/>
 
-<h2 id="path-posture">6. Path Posture</h2>
+<h2 id="path-posture">7. Path Posture</h2>
 
 <p>
 Paths SHOULD remain explicit and relative to the publishing package root where practical.
@@ -222,6 +277,7 @@ Likewise, the package SHOULD NOT depend on path naming alone to determine whethe
 <ul>
   <li>state-sensitive,</li>
   <li>part-sensitive,</li>
+  <li>region-sensitive,</li>
   <li>anchor-oriented,</li>
   <li>text-region-oriented,</li>
   <li>shared across multiple realizations.</li>
@@ -231,23 +287,28 @@ Likewise, the package SHOULD NOT depend on path naming alone to determine whethe
 Those relationships should remain inspectable through the resource record and the referencing realization structures.
 </p>
 
+<p>
+Filesystem clarity is strongly preferred, but filesystem layout is not the sole carrier of realization meaning.
+</p>
+
 <hr/>
 
-<h2 id="class-and-part-scoping">7. Class and Part Scoping</h2>
+<h2 id="class-part-and-region-scoping">8. Class, Part, and Region Scoping</h2>
 
 <p>
-Resources SHOULD be scoped to the narrowest meaningful surface:
+Resources SHOULD be scoped to the narrowest meaningful realization surface:
 </p>
 
 <ul>
   <li>widget-level resource when the whole widget surface is state-specific,</li>
-  <li>part-level resource when a specific public part is state-specific,</li>
-  <li>region-level resource when a public part is realized through a named placement region,</li>
+  <li>part-level resource when a specific realized part is state-specific,</li>
+  <li>region-level resource when a public or realized surface is expressed through a named placement region,</li>
   <li>family-level shared resource only when multiple realizations intentionally reuse it.</li>
 </ul>
 
 <p>
-Part-oriented scoping is generally preferred when the realization family exposes stable public parts and binds those parts independently.
+Part-oriented scoping is generally preferred when the realization family exposes stable parts and binds those parts independently.
+Region-oriented scoping is generally preferred when a part is consumed through a placement surface rather than a distinct visual layer.
 </p>
 
 <p>
@@ -256,13 +317,18 @@ For example:
 
 <ul>
   <li>a button <code>face</code> pressed asset is naturally part-scoped,</li>
-  <li>a button <code>label</code> placement map is naturally part-scoped or region-scoped,</li>
+  <li>a button <code>label</code> anchor map is naturally part-scoped, because it binds the <code>label</code> part through a placement surface,</li>
+  <li>a string indicator value region may be region-scoped when the realization publishes a distinct value region,</li>
   <li>a shared focus-ring style token map may be family-scoped.</li>
 </ul>
 
+<p>
+This distinction is important because a placement resource may target a semantic public surface without becoming the semantic owner of that surface.
+</p>
+
 <hr/>
 
-<h2 id="state-scoping">8. State Scoping</h2>
+<h2 id="state-scoping">9. State Scoping</h2>
 
 <p>
 State scoping SHOULD be explicit in the resource record or in the state map that references the resource.
@@ -278,6 +344,7 @@ State scoping is most natural for resources such as:
 
 <ul>
   <li>button face assets,</li>
+  <li>button frame variants,</li>
   <li>boolean state-face assets,</li>
   <li>focused or disabled frame variants,</li>
   <li>pressed increment or decrement button assets.</li>
@@ -294,14 +361,18 @@ State scoping is usually less important for:
 </ul>
 
 <p>
-However, the model MAY still permit state-sensitive anchor or region resources when a realization family intentionally changes text placement or clipping posture across states.
+However, the model MAY still permit state-sensitive anchor or region resources when a realization intentionally changes text placement, clipping, or layout posture across states.
+</p>
+
+<p>
+When that happens, the preferred posture remains explicit publication through the realization record rather than hidden filename conventions alone.
 </p>
 
 <hr/>
 
-<h2 id="anchor-and-text-region-resources">9. Anchor and Text-Region Resources</h2>
+<h2 id="anchor-and-text-region-resources">10. Anchor and Text-Region Resources</h2>
 
-<h3>9.1 Purpose</h3>
+<h3>10.1 Purpose</h3>
 
 <p>
 Anchor and text-region resources exist to make realization-side placement explicit and inspectable when a host dynamically renders a public part rather than consuming a single asset that already contains its final user-visible content.
@@ -318,7 +389,7 @@ This is especially important for dynamic text-bearing parts such as:
   <li>other standardized parts whose final visible content is supplied at runtime.</li>
 </ul>
 
-<h3>9.2 Anchor maps</h3>
+<h3>10.2 Anchor maps</h3>
 
 <p>
 An <code>anchor_map</code> resource SHOULD allow a realization family to publish named anchors or placement surfaces that a host can target.
@@ -337,7 +408,11 @@ Typical anchor-oriented metadata may include:
   <li>clipping posture when needed.</li>
 </ul>
 
-<h3>9.3 Text-region maps</h3>
+<p>
+Anchor maps are generally appropriate when the realization wants to publish a point, boxed anchor, or alignment-focused placement surface.
+</p>
+
+<h3>10.3 Text-region maps</h3>
 
 <p>
 A <code>text_region_map</code> resource SHOULD allow a realization family to publish named text-bearing regions with enough metadata for a host to render text consistently.
@@ -356,7 +431,32 @@ Typical text-region metadata may include:
   <li>padding or inset metadata.</li>
 </ul>
 
-<h3>9.4 Button-specific posture</h3>
+<p>
+Text-region maps are generally appropriate when the realization wants to publish a bounded text surface rather than a point-like or anchor-like placement target.
+</p>
+
+<h3>10.4 Relationship with bindings</h3>
+
+<p>
+Anchor and text-region resources are usually consumed through realization-side <code>part_bindings</code>.
+</p>
+
+<p>
+Typical posture:
+</p>
+
+<ul>
+  <li>the resource record publishes the underlying placement-support file,</li>
+  <li>an <code>anchors</code> or <code>text_regions</code> entry publishes an inspectable placement surface identifier,</li>
+  <li>the realization record binds the target part to that placement surface,</li>
+  <li>the host renders live content into that surface.</li>
+</ul>
+
+<p>
+This keeps the placement resource, the placement surface, and the part binding distinct and inspectable.
+</p>
+
+<h3>10.5 Button-specific posture</h3>
 
 <p>
 For <code>frog.widgets.button</code>, the preferred default posture is:
@@ -378,7 +478,7 @@ That distinction helps preserve the architectural split between:
   <li>decorative geometry owned by visual assets.</li>
 </ul>
 
-<h3>9.5 Asset limitation rule</h3>
+<h3>10.6 Asset limitation rule</h3>
 
 <p>
 A resource file MAY contain placeholder text, decorative preview text, or design-time guide content.
@@ -387,7 +487,7 @@ However, a conforming realization family must not require that asset-baked text 
 
 <hr/>
 
-<h2 id="resource-examples">10. Resource Examples</h2>
+<h2 id="resource-examples">11. Resource Examples</h2>
 
 <pre><code>{
   "resources": [
@@ -408,6 +508,14 @@ However, a conforming realization family must not require that asset-baked text 
       "target_state": "pressed"
     },
     {
+      "id": "button.frame.focused.svg",
+      "kind": "svg",
+      "path": "./assets/button/frame/focused.svg",
+      "target_class": "frog.widgets.button",
+      "target_part": "frame",
+      "target_state": "focused"
+    },
+    {
       "id": "button.label.anchor_map",
       "kind": "anchor_map",
       "path": "./assets/button/anchors/label.json",
@@ -426,16 +534,17 @@ However, a conforming realization family must not require that asset-baked text 
     {
       "id": "string_indicator.value.text_region_map",
       "kind": "text_region_map",
-      "path": "./assets/string_indicator/regions/value.json",
+      "path": "./assets/string_indicator/text_regions/value.json",
       "target_class": "frog.widgets.string_indicator",
-      "target_part": "value_region"
+      "target_region": "value",
+      "role": "text_region"
     }
   ]
 }</code></pre>
 
 <hr/>
 
-<h2 id="validation-posture">11. Validation Posture</h2>
+<h2 id="validation-posture">12. Validation Posture</h2>
 
 <p>
 Validators SHOULD diagnose at least:
@@ -458,12 +567,13 @@ Validators MAY also diagnose:
 
 <ul>
   <li>needlessly coarse widget-level scoping when a stable part-level or region-level scope is available,</li>
-  <li>ambiguous overlap between multiple anchor or text-region resources targeting the same part without explicit precedence posture.</li>
+  <li>ambiguous overlap between multiple anchor or text-region resources targeting the same part without explicit precedence posture,</li>
+  <li>resource records whose scoping does not match the published asset naming posture closely enough to remain inspectable.</li>
 </ul>
 
 <hr/>
 
-<h2 id="summary">12. Summary</h2>
+<h2 id="summary">13. Summary</h2>
 
 <p>
 The default realization resource model defines how official realization resources are identified, scoped, and published.
@@ -474,7 +584,12 @@ It covers visual assets, anchors, text regions, layer maps, and related support 
 </p>
 
 <p>
-Its main architectural rule is simple:
-resources support embodiment, placement, and styling,
-but they do not become the semantic owner of public widget meaning or dynamic user-facing widget text.
+Its preferred architecture is:
 </p>
+
+<ul>
+  <li>visual resources for visual embodiment,</li>
+  <li>state maps for state-sensitive realization posture,</li>
+  <li>placement resources for dynamic public surfaces rendered by the host,</li>
+  <li>clear separation between resource inventory, part bindings, and semantic widget meaning.</li>
+</ul>
