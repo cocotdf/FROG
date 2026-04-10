@@ -19,7 +19,7 @@
   <li><a href="#scope">3. Scope</a></li>
   <li><a href="#asset-tree-principles">4. Asset Tree Principles</a></li>
   <li><a href="#top-level-organization">5. Top-Level Organization</a></li>
-  <li><a href="#widget-level-vs-part-level-assets">6. Widget-Level vs Part-Level Assets</a></li>
+  <li><a href="#part-directories-and-placement-directories">6. Part Directories and Placement Directories</a></li>
   <li><a href="#state-organization">7. State Organization</a></li>
   <li><a href="#supported-asset-kinds">8. Supported Asset Kinds</a></li>
   <li><a href="#recommended-tree-shape">9. Recommended Tree Shape</a></li>
@@ -47,11 +47,15 @@ The asset tree is the correct place for:
 
 <ul>
   <li>state-specific SVG resources,</li>
-  <li>part-specific SVG resources,</li>
-  <li>optional anchor maps,</li>
+  <li>part-specific visual resources,</li>
+  <li>placement-support resources such as anchors or text regions,</li>
   <li>optional layer maps,</li>
   <li>optional style-token maps.</li>
 </ul>
+
+<p>
+The asset tree is <strong>not</strong> the correct place to redefine widget-class meaning, public properties, public methods, events, or bounded behavior law.
+</p>
 
 <hr/>
 
@@ -69,6 +73,7 @@ Without a normalized asset tree:
   <li>different realizations use incompatible folder shapes,</li>
   <li>part names drift from class-law names,</li>
   <li>state resources become ambiguous,</li>
+  <li>placement surfaces become hidden conventions instead of published resources,</li>
   <li>runtime loaders end up depending on private filename guesses,</li>
   <li>machine-readable publication becomes harder to validate.</li>
 </ul>
@@ -88,9 +93,10 @@ This document defines:
 <ul>
   <li>the official asset-tree organization of the <code>Default</code> realization family,</li>
   <li>how widget-class assets are grouped,</li>
-  <li>how part-specific assets are grouped,</li>
+  <li>how part-specific visual assets are grouped,</li>
+  <li>how placement-support resources are grouped,</li>
   <li>how state-specific assets are grouped,</li>
-  <li>which auxiliary asset-support files may appear.</li>
+  <li>which auxiliary support files may appear.</li>
 </ul>
 
 <p>
@@ -115,10 +121,11 @@ The asset tree for the default family follows the following principles:
 
 <ul>
   <li><strong>Class-first organization</strong> — assets are grouped first by target widget class.</li>
-  <li><strong>Part-explicit organization</strong> — assets for public parts are grouped under their published part names.</li>
-  <li><strong>State-explicit organization</strong> — state-specific assets are grouped under explicit state names.</li>
+  <li><strong>Role-explicit organization</strong> — visual parts, placement resources, and auxiliary support files are not silently mixed together.</li>
+  <li><strong>State-explicit organization</strong> — state-sensitive visual assets are grouped under explicit state names.</li>
   <li><strong>No semantic guessing</strong> — runtime loaders SHOULD NOT need to infer widget law from the asset tree.</li>
   <li><strong>Machine-readable friendliness</strong> — paths should align naturally with realization package resource records.</li>
+  <li><strong>No semantic capture by SVG</strong> — dynamic public text and similar dynamic public surfaces must not become asset-owned semantics merely because SVG files exist nearby.</li>
 </ul>
 
 <hr/>
@@ -150,48 +157,59 @@ The folder names SHOULD correspond to the terminal class identifier rather than 
 
 <hr/>
 
-<h2 id="widget-level-vs-part-level-assets">6. Widget-Level vs Part-Level Assets</h2>
+<h2 id="part-directories-and-placement-directories">6. Part Directories and Placement Directories</h2>
 
 <p>
-The default family distinguishes two main asset scopes:
+The default family distinguishes at least three different asset scopes:
 </p>
 
 <ul>
-  <li><strong>widget-level assets</strong> — assets for whole-widget visual posture,</li>
-  <li><strong>part-level assets</strong> — assets for one published public part.</li>
+  <li><strong>part visual directories</strong> — for state-sensitive or otherwise visual resources of realized parts,</li>
+  <li><strong>placement directories</strong> — for anchors, text regions, clipping regions, or equivalent placement-support resources,</li>
+  <li><strong>widget-level support files</strong> — for manifests, layer maps, or equivalent auxiliary records.</li>
 </ul>
 
 <p>
-The default family prefers part-level organization whenever a public part is explicitly realized.
+This distinction is important because not every public part should automatically map to a dedicated SVG subtree.
+Some public parts are primarily dynamic semantic surfaces and therefore need a placement resource rather than a baked final visual asset subtree.
 </p>
 
 <p>
-Recommended posture:
+For example, the standard button realization may publish:
 </p>
 
 <pre><code>assets/
   button/
     face/
-    label/
     frame/
+    anchors/
 </code></pre>
 
 <p>
-Widget-level assets MAY still exist when:
+In this posture:
 </p>
 
 <ul>
-  <li>the realization changes as one indivisible surface,</li>
-  <li>the target class has a very small public part model,</li>
-  <li>a fallback whole-widget embodiment is needed.</li>
+  <li><code>face/</code> contains state-sensitive visual resources,</li>
+  <li><code>frame/</code> contains optional visual framing resources when the realization family exposes them,</li>
+  <li><code>anchors/</code> contains placement resources such as <code>label.json</code> for live text placement.</li>
 </ul>
+
+<p>
+The default button posture therefore does <strong>not</strong> require a <code>label/</code> SVG directory when the semantic button label is rendered dynamically through a published anchor or text-region resource.
+</p>
+
+<p>
+A part directory such as <code>label/</code> MAY still exist in another widget family or another realization when the published contract truly requires a distinct visual resource layer for that part.
+However, such a directory must not be used to smuggle semantic ownership of dynamic public text into the asset layer.
+</p>
 
 <hr/>
 
 <h2 id="state-organization">7. State Organization</h2>
 
 <p>
-Within a part directory, resources SHOULD be grouped by explicit state.
+Within a visual part directory, resources SHOULD be grouped by explicit state.
 </p>
 
 <p>
@@ -220,6 +238,11 @@ For families that encode value posture in the state itself, the state name MAY b
       disabled_true.svg
 </code></pre>
 
+<p>
+Placement-support directories do not need to mirror the state structure unless the realization explicitly publishes state-sensitive placement resources.
+In the common case, one placement resource is sufficient and the state-specific visual posture remains owned by the corresponding visual part directories.
+</p>
+
 <hr/>
 
 <h2 id="supported-asset-kinds">8. Supported Asset Kinds</h2>
@@ -229,8 +252,8 @@ The default family asset tree MAY contain the following file kinds:
 </p>
 
 <ul>
-  <li><code>.svg</code> — primary scalable visual resources</li>
-  <li><code>.json</code> — auxiliary maps such as anchors, layers, or style tokens</li>
+  <li><code>.svg</code> — primary scalable visual resources,</li>
+  <li><code>.json</code> — auxiliary maps such as anchors, text regions, layers, or style tokens.</li>
 </ul>
 
 <p>
@@ -239,8 +262,19 @@ Recommended auxiliary support files include:
 
 <ul>
   <li><code>anchor_map.json</code></li>
+  <li><code>text_region_map.json</code></li>
   <li><code>layer_map.json</code></li>
   <li><code>style_token_map.json</code></li>
+</ul>
+
+<p>
+Realization packages MAY also choose more specific filenames when this improves clarity at the asset level, such as:
+</p>
+
+<ul>
+  <li><code>anchors/label.json</code>,</li>
+  <li><code>anchors/value_display.json</code>,</li>
+  <li><code>anchors/title.json</code>.</li>
 </ul>
 
 <p>
@@ -258,18 +292,21 @@ The recommended official asset-tree shape is:
 
 <pre><code>assets/
   button/
+    asset_manifest.json
     face/
       normal.svg
       disabled.svg
       focused.svg
       pressed.svg
-      anchor_map.json
       layer_map.json
-    label/
+    frame/
       normal.svg
-      disabled.svg
+      focused.svg
+    anchors/
+      label.json
 
   numeric_control/
+    asset_manifest.json
     value_display/
       normal.svg
       disabled.svg
@@ -283,21 +320,35 @@ The recommended official asset-tree shape is:
     frame/
       normal.svg
       focused.svg
+    anchors/
+      label.json
+      value.json
 
   boolean_control/
+    asset_manifest.json
     state_face/
       normal_false.svg
       normal_true.svg
       disabled_false.svg
       disabled_true.svg
+    anchors/
+      label.json
 
   string_control/
+    asset_manifest.json
     text_display/
       normal.svg
       disabled.svg
       focused.svg
+    frame/
+      normal.svg
+      focused.svg
+    anchors/
+      label.json
+      text_value.json
 
   waveform_chart/
+    asset_manifest.json
     plot_area/
       normal.svg
       focused.svg
@@ -308,7 +359,21 @@ The recommended official asset-tree shape is:
     frame/
       normal.svg
       focused.svg
+    anchors/
+      title.json
+      x_axis_label.json
+      y_axis_label.json
 </code></pre>
+
+<p>
+This shape is illustrative but normative in posture:
+</p>
+
+<ul>
+  <li>visual state-bearing parts are published as visual resource directories,</li>
+  <li>dynamic text-bearing or equivalent dynamic public surfaces are preferably published through placement-support resources,</li>
+  <li>auxiliary support files remain explicit and inspectable.</li>
+</ul>
 
 <hr/>
 
@@ -320,10 +385,22 @@ Example resource paths:
 
 <ul>
   <li><code>./assets/button/face/pressed.svg</code></li>
+  <li><code>./assets/button/anchors/label.json</code></li>
   <li><code>./assets/numeric_control/increment_button/pressed.svg</code></li>
   <li><code>./assets/boolean_control/state_face/normal_true.svg</code></li>
   <li><code>./assets/string_control/text_display/focused.svg</code></li>
   <li><code>./assets/waveform_chart/plot_area/normal.svg</code></li>
+</ul>
+
+<p>
+Example placement-support paths:
+</p>
+
+<ul>
+  <li><code>./assets/button/anchors/label.json</code></li>
+  <li><code>./assets/numeric_control/anchors/value.json</code></li>
+  <li><code>./assets/string_control/anchors/text_value.json</code></li>
+  <li><code>./assets/waveform_chart/anchors/title.json</code></li>
 </ul>
 
 <hr/>
@@ -338,6 +415,10 @@ When a state-specific resource is missing, runtimes MAY apply published fallback
 However, the asset tree itself SHOULD remain complete enough that default-family realizations do not rely primarily on hidden fallback heuristics.
 </p>
 
+<p>
+Likewise, when a preferred placement-support resource is unavailable, runtimes MAY apply the published fallback posture of the realization package, but that fallback must remain inspectable at the publication layer rather than becoming a private loader convention.
+</p>
+
 <hr/>
 
 <h2 id="validation-posture">12. Validation Posture</h2>
@@ -348,9 +429,10 @@ Validators SHOULD diagnose at least:
 
 <ul>
   <li>asset paths that do not match declared realization resources,</li>
-  <li>directories named with non-published part identifiers,</li>
+  <li>directories named with non-published part identifiers or non-published placement roles,</li>
   <li>state resource filenames that do not correspond to declared realization states,</li>
-  <li>auxiliary map files attached to unknown parts.</li>
+  <li>placement-support files attached to unknown parts,</li>
+  <li>visual directories that appear to claim ownership of dynamic public text without a matching realization contract.</li>
 </ul>
 
 <hr/>
@@ -363,10 +445,10 @@ The default-family asset tree is organized by:
 
 <ul>
   <li>widget class,</li>
-  <li>then public part,</li>
-  <li>then explicit state.</li>
+  <li>then realization role,</li>
+  <li>then explicit state where applicable.</li>
 </ul>
 
 <p>
-This keeps resources inspectable, stable, and aligned with machine-readable realization publication.
+This keeps resources inspectable, stable, and aligned with machine-readable realization publication while preserving the distinction between semantic public surfaces, placement resources, and visual assets.
 </p>
