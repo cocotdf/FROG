@@ -41,8 +41,14 @@ Its primary role is to expose an explicit interaction surface that may trigger m
 </p>
 
 <p>
-The standard button is therefore defined here as a stable public object surface with stable parts, stable interaction expectations, and a portable text-facing label surface.
+The standard button is therefore defined here as a stable public object surface with stable properties, methods, events, parts, and interaction expectations.
 It is not defined here as a boolean-like stateful toggle widget.
+</p>
+
+<p>
+This class must be read together with the FROG front-panel object model:
+the button is an intrinsic standard widget class with a minimal but real object surface.
+It is not a passive decorative control and it is not a runtime-private host button masquerading as a standard class.
 </p>
 
 <hr/>
@@ -65,7 +71,7 @@ This document defines the following standardized widget class:
 
 <ul>
   <li><strong>class_id:</strong> <code>frog.widgets.button</code></li>
-  <li><strong>category:</strong> <code>control</code></li>
+  <li><strong>category:</strong> <code>command_widget</code></li>
   <li><strong>compatible role:</strong> <code>control</code></li>
 </ul>
 
@@ -77,22 +83,38 @@ The intrinsic button baseline does not define a standard persistent primary valu
 
 <p>
 Instead, the standard button is primarily event- and method-oriented.
-It may expose transient interaction state through properties, but it is not standardized here as a value-carrying scalar control.
+It may expose transient interaction state through readable properties when the class surface allows it, but it is not standardized here as a value-carrying scalar control.
 </p>
+
+<p>
+Accordingly:
+</p>
+
+<ul>
+  <li>the intrinsic button baseline does not require natural <code>widget_value</code> participation,</li>
+  <li>the standard button is primarily targeted through <code>widget_reference</code>,</li>
+  <li>its portable baseline is centered on object-style interaction and event observation.</li>
+</ul>
 
 <h3>3.3 Standard properties</h3>
 
 <ul>
   <li><code>label.text</code> — user-authored semantic label text shown by the button</li>
+  <li><code>interaction.enabled</code></li>
+  <li><code>interaction.visible</code></li>
+  <li><code>interaction.pressed</code> — readable transient interaction posture when exposed by the active class surface</li>
   <li><code>style.text_color</code> when exposed by the class or active profile</li>
   <li><code>style.font_family</code> when exposed by the class or active profile</li>
   <li><code>style.font_size</code> when exposed by the class or active profile</li>
   <li><code>style.font_weight</code> when exposed by the class or active profile</li>
   <li><code>style.text_alignment</code> when exposed by the class or active profile</li>
-  <li><code>interaction.enabled</code></li>
-  <li><code>interaction.visible</code></li>
-  <li><code>interaction.pressed</code> — readable runtime interaction state when exposed</li>
 </ul>
+
+<p>
+The intrinsic baseline keeps this property surface intentionally small.
+These properties define legal public object surfaces.
+They do not expose realization-private anchors, text regions, asset layers, or toolkit-private handles as if they were public button members.
+</p>
 
 <h3>3.4 Standard methods</h3>
 
@@ -100,7 +122,13 @@ It may expose transient interaction state through properties, but it is not stan
   <li><code>focus()</code></li>
   <li><code>press()</code> when allowed by the active interaction posture</li>
   <li><code>release()</code> when allowed by the active interaction posture</li>
+  <li><code>activate()</code> when the active profile or standardized class surface exposes an explicit activation method</li>
 </ul>
+
+<p>
+The baseline method surface is intentionally minimal.
+It exists to guarantee that the button remains a real object with a small action surface rather than a visual-only command glyph.
+</p>
 
 <h3>3.5 Standard events</h3>
 
@@ -112,6 +140,11 @@ It may expose transient interaction state through properties, but it is not stan
   <li><code>focus_lost</code></li>
 </ul>
 
+<p>
+These events define the minimum observable interaction posture of the intrinsic standard button.
+They do not imply a richer toggle or multistate command model.
+</p>
+
 <h3>3.6 Standard parts</h3>
 
 <ul>
@@ -120,6 +153,11 @@ It may expose transient interaction state through properties, but it is not stan
   <li><code>label</code></li>
   <li><code>frame</code> when present</li>
 </ul>
+
+<p>
+These parts are stable public realization targets.
+They do not force one host toolkit structure or one asset decomposition.
+</p>
 
 <hr/>
 
@@ -218,6 +256,16 @@ The <code>label</code> part is especially important because it preserves the dis
   <li>decorative or placeholder visual text content that may appear in assets.</li>
 </ul>
 
+<p>
+The <code>face</code> part is likewise important because it preserves the distinction between:
+</p>
+
+<ul>
+  <li>public command identity owned by the button class,</li>
+  <li>visual pressed or focused posture owned by realization,</li>
+  <li>runtime-private toolkit internals used to embody that posture.</li>
+</ul>
+
 <hr/>
 
 <h2 id="behavior-expectations">6. Behavior Expectations</h2>
@@ -237,6 +285,11 @@ The intrinsic behavior baseline of the button includes at least:
 <p>
 The intrinsic button baseline does not require public state-dependent label switching.
 If such switching exists in an extended class or composite posture, it must be published explicitly by that higher-level contract rather than inferred from realization assets.
+</p>
+
+<p>
+Likewise, <code>interaction.pressed</code>, when exposed, is a transient interaction property.
+It must not be reinterpreted as a standard persistent value surface of the intrinsic button baseline.
 </p>
 
 <hr/>
@@ -270,6 +323,7 @@ In particular:
   <li>realization MAY define where button text is drawn,</li>
   <li>realization MAY define visual style defaults or fallbacks,</li>
   <li>realization MAY define decorative or skinned text containers,</li>
+  <li>realization MAY define anchors, text regions, layer maps, or equivalent placement-support structures,</li>
   <li>realization MUST NOT redefine the public owner of the label text,</li>
   <li>realization MUST NOT make hardcoded asset text the only semantic label source.</li>
 </ul>
@@ -294,6 +348,17 @@ The intrinsic button baseline is primarily event-oriented and command-oriented.
 It is not standardized here as a natural value-path widget.
 </p>
 
+<p>
+Accordingly:
+</p>
+
+<ul>
+  <li>the button is normally addressed through <code>widget_reference</code>,</li>
+  <li><code>label.text</code>, <code>interaction.visible</code>, and similar members may be accessed through <code>frog.ui.property_read</code> and <code>frog.ui.property_write</code> when legal,</li>
+  <li><code>focus()</code>, <code>press()</code>, <code>release()</code>, or <code>activate()</code> may be accessed through <code>frog.ui.method_invoke</code> when legal,</li>
+  <li><code>pressed</code>, <code>released</code>, and <code>clicked</code> may be observed through <code>frog.ui.event_observe</code>.</li>
+</ul>
+
 <hr/>
 
 <h2 id="validation-expectations">9. Validation Expectations</h2>
@@ -308,7 +373,8 @@ Validators SHOULD diagnose at least:
   <li>use of role/class combinations incompatible with <code>frog.widgets.button</code>,</li>
   <li>attempts to interpret transient pressed state as canonical persistent source-owned state by default,</li>
   <li>attempts to treat realization-private text placement or SVG-baked text as the public semantic owner of the button label,</li>
-  <li>attempts to use <code>label.text_on</code> or <code>label.text_off</code> as if they were intrinsic baseline members of <code>frog.widgets.button</code>.</li>
+  <li>attempts to use <code>label.text_on</code> or <code>label.text_off</code> as if they were intrinsic baseline members of <code>frog.widgets.button</code>,</li>
+  <li>attempts to address realization-only anchors, text regions, or asset layers through <code>frog.ui.*</code> as if they were public button members by default.</li>
 </ul>
 
 <hr/>
@@ -324,7 +390,7 @@ The standardized button defines the intrinsic command-oriented action widget of 
 </ul>
 
 <p>
-It is primarily an event- and method-oriented control surface with stable parts, stable interaction states, and portable executable observation through the widget interaction corridor.
+It is primarily an event- and method-oriented control surface with stable properties, methods, events, parts, and portable executable observation through the widget interaction corridor.
 </p>
 
 <p>
