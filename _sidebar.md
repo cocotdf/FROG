@@ -16,6 +16,7 @@
   - [Type](/Expression/Type.md)
   - [Widget interaction](/Expression/Widget%20interaction.md)
   - [Widget](/Expression/Widget.md)
+  - [Front-panel object model](/Expression/Front-panel%20object%20model.md)
   - [Widget behavior](/Expression/Widget%20behavior.md)
   - [Widget class contract](/Expression/Widget%20class%20contract.md)
   - [Widget package (.wfrog)](/Expression/Widget%20package%20%28.wfrog%29.md)
