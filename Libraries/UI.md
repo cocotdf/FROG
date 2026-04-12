@@ -22,16 +22,17 @@
   <li><a href="#relation-with-other-specifications">6. Relation with Other Specifications</a></li>
   <li><a href="#namespace">7. Namespace</a></li>
   <li><a href="#standard-primitives">8. Standard Primitives</a></li>
-  <li><a href="#froguiproperty_read">9. <code>frog.ui.property_read</code></a></li>
-  <li><a href="#froguiproperty_write">10. <code>frog.ui.property_write</code></a></li>
-  <li><a href="#froguimethod_invoke">11. <code>frog.ui.method_invoke</code></a></li>
-  <li><a href="#froguievent_observe">12. <code>frog.ui.event_observe</code></a></li>
-  <li><a href="#typing-and-sequencing">13. Typing and Sequencing</a></li>
-  <li><a href="#validation-rules">14. Validation Rules</a></li>
-  <li><a href="#execution-facing-posture">15. Execution-Facing Posture</a></li>
-  <li><a href="#examples">16. Examples</a></li>
-  <li><a href="#out-of-scope">17. Out of Scope</a></li>
-  <li><a href="#summary">18. Summary</a></li>
+  <li><a href="#member-method-and-event-addressing">9. Member, Method, and Event Addressing</a></li>
+  <li><a href="#froguiproperty_read">10. <code>frog.ui.property_read</code></a></li>
+  <li><a href="#froguiproperty_write">11. <code>frog.ui.property_write</code></a></li>
+  <li><a href="#froguimethod_invoke">12. <code>frog.ui.method_invoke</code></a></li>
+  <li><a href="#froguievent_observe">13. <code>frog.ui.event_observe</code></a></li>
+  <li><a href="#typing-and-sequencing">14. Typing and Sequencing</a></li>
+  <li><a href="#validation-rules">15. Validation Rules</a></li>
+  <li><a href="#execution-facing-posture">16. Execution-Facing Posture</a></li>
+  <li><a href="#examples">17. Examples</a></li>
+  <li><a href="#out-of-scope">18. Out of Scope</a></li>
+  <li><a href="#summary">19. Summary</a></li>
 </ul>
 
 <hr/>
@@ -43,11 +44,8 @@ This document defines the intrinsic <code>frog.ui</code> primitive library.
 </p>
 
 <p>
-The <code>frog.ui</code> library standardizes the executable primitive vocabulary used for object-style
-and event-oriented widget interaction in diagrams.
-These primitives operate on widget objects exposed through <code>widget_reference</code> participation
-and provide a stable, implementation-independent interaction surface for property access,
-method invocation, and event observation.
+The <code>frog.ui</code> library standardizes the executable primitive vocabulary used for object-style and event-oriented widget interaction in diagrams.
+These primitives operate on widget objects exposed through <code>widget_reference</code> participation and provide a stable, implementation-independent interaction surface for property access, method invocation, and event observation.
 </p>
 
 <p>
@@ -80,9 +78,7 @@ frog.ui.*
 
 <p>
 This document defines the intrinsic primitive catalog for that interaction layer.
-It does not define the widget class catalog, front-panel serialization, widget realization packages,
-general diagram graph structure, open execution-facing representations, lowering families,
-backend contracts, or runtime-private widget-handle architectures.
+It does not define the widget class catalog, front-panel serialization, widget realization packages, general diagram graph structure, open execution-facing representations, lowering families, backend contracts, or runtime-private widget-handle architectures.
 </p>
 
 <p>
@@ -272,6 +268,7 @@ This document is used together with the rest of the FROG specification.
 
 <ul>
   <li><code>Libraries/Readme.md</code> defines the role of <code>Libraries/</code> as the intrinsic primitive-library layer.</li>
+  <li><code>Libraries/Widgets/Readme.md</code> defines the intrinsic standardized widget baseline and the published public surfaces of standard widget classes.</li>
   <li><code>Expression/Diagram.md</code> defines how primitive nodes appear in executable diagrams and how general node and edge structure is represented.</li>
   <li><code>Expression/Type.md</code> defines ordinary FROG type expressions and compatibility rules.</li>
   <li><code>Expression/Widget.md</code> defines source-level widget instances.</li>
@@ -291,7 +288,7 @@ Ownership remains intentionally split:
   <li><code>Libraries/UI.md</code> owns primitive identities and primitive-local contracts,</li>
   <li><code>Expression/Widget interaction.md</code> owns the source-facing interaction model,</li>
   <li><code>Expression/Diagram.md</code> owns the general graph representation model,</li>
-  <li><code>Expression/Widget class contract.md</code> owns widget property, method, and event availability,</li>
+  <li><code>Expression/Widget class contract.md</code> and <code>Libraries/Widgets/</code> own widget property, method, event, and part legality for the active class,</li>
   <li><code>Language/</code> owns the cross-cutting semantic distinction between UI participation roles and UI interaction operations,</li>
   <li><code>IR/</code> owns execution-facing derivation, mapping, lowering, and backend-facing handoff boundaries.</li>
 </ul>
@@ -356,7 +353,7 @@ Accordingly:
 
 <ul>
   <li><code>frog.ui.property_read</code>, <code>frog.ui.property_write</code>, <code>frog.ui.method_invoke</code>, and <code>frog.ui.event_observe</code> are intrinsic primitive identifiers,</li>
-  <li><code>frog.widgets.numeric_control</code> and similar identifiers are widget-class identifiers,</li>
+  <li><code>frog.widgets.numeric_control</code>, <code>frog.widgets.string_control</code>, <code>frog.widgets.button</code>, and <code>frog.widgets.waveform_chart</code> are widget-class identifiers,</li>
   <li>namespace prefix similarity does not collapse primitive-library ownership and widget-class ownership into one concept.</li>
 </ul>
 
@@ -433,7 +430,67 @@ Future UI primitives MAY be added only if they remain intrinsic, portable, and c
 
 <hr/>
 
-<h2 id="froguiproperty_read">9. <code>frog.ui.property_read</code></h2>
+<h2 id="member-method-and-event-addressing">9. Member, Method, and Event Addressing</h2>
+
+<p>
+The primitive library assumes that the addressed surface already exists legally in the active widget class law.
+</p>
+
+<p>
+That means:
+</p>
+
+<ul>
+  <li><code>frog.ui.property_read</code> and <code>frog.ui.property_write</code> address legal public members,</li>
+  <li><code>frog.ui.method_invoke</code> addresses legal public methods,</li>
+  <li><code>frog.ui.event_observe</code> addresses legal public events.</li>
+</ul>
+
+<p>
+Addressing may target:
+</p>
+
+<ul>
+  <li>a root-level member such as <code>value</code>,</li>
+  <li>a nested member path such as <code>label.text</code>,</li>
+  <li>a nested chart surface such as <code>history.capacity</code> or <code>axes.x.visible</code>,</li>
+  <li>a part-scoped member when the active class law exposes one.</li>
+</ul>
+
+<p>
+The primitive metadata may therefore identify either:
+</p>
+
+<ul>
+  <li>a root member directly,</li>
+  <li>a part plus member,</li>
+  <li>or another standardized addressing form consistent with the active class law.</li>
+</ul>
+
+<p>
+What this library must preserve is the principle:
+</p>
+
+<pre><code>legal widget surface
+    -&gt; defined by class law
+
+primitive metadata
+    -&gt; identifies which legal surface is being accessed
+
+primitive execution
+    -&gt; performs the access
+
+realization surface
+    -&gt; does not become a legal class member unless published as such
+</code></pre>
+
+<p>
+Accordingly, anchors, text regions, frame layers, plot layers, axis layers, and similar realization-side structures MUST NOT be addressed through <code>frog.ui.*</code> as if they were standard class properties or methods unless the class law explicitly publishes them as legal public surfaces.
+</p>
+
+<hr/>
+
+<h2 id="froguiproperty_read">10. <code>frog.ui.property_read</code></h2>
 
 <p>
 Primitive identifier:
@@ -451,7 +508,8 @@ Required primitive-local metadata:
 
 <pre><code>{
   "widget_member": {
-    "member": "visible"
+    "part": "label",
+    "member": "text"
   }
 }</code></pre>
 
@@ -496,9 +554,20 @@ Primitive-local semantics:
 A property read therefore remains property access even when the target surface is closely related to the widget’s natural primary value.
 </p>
 
+<p>
+Typical valid examples include:
+</p>
+
+<ul>
+  <li>reading <code>label.text</code> from a button, numeric widget, string widget, boolean widget, or chart,</li>
+  <li>reading <code>value</code> from a numeric control or string indicator as object-style access,</li>
+  <li>reading <code>history.capacity</code> from a waveform chart when that surface is exposed,</li>
+  <li>reading <code>axes.x.visible</code> from a waveform chart when that surface is exposed.</li>
+</ul>
+
 <hr/>
 
-<h2 id="froguiproperty_write">10. <code>frog.ui.property_write</code></h2>
+<h2 id="froguiproperty_write">11. <code>frog.ui.property_write</code></h2>
 
 <p>
 Primitive identifier:
@@ -560,7 +629,7 @@ Primitive-local semantics:
 </ul>
 
 <p>
-A presentation-property write such as <code>{ "member": "foreground_color" }</code> MAY affect host-visible appearance.
+A presentation-property write such as a legal visibility or label-text write MAY affect host-visible appearance.
 It MUST NOT by itself redefine the executable meaning of the program.
 </p>
 
@@ -568,9 +637,20 @@ It MUST NOT by itself redefine the executable meaning of the program.
 This primitive therefore targets legal object surfaces, not arbitrary realization internals.
 </p>
 
+<p>
+Typical valid examples include:
+</p>
+
+<ul>
+  <li>writing <code>label.text</code> on a button or numeric control,</li>
+  <li>writing <code>value</code> on a writable control through object-style access,</li>
+  <li>writing <code>axes.y.visible</code> on a waveform chart when the class exposes that surface,</li>
+  <li>writing <code>history.capacity</code> when the class exposes a writable history-capacity member.</li>
+</ul>
+
 <hr/>
 
-<h2 id="froguimethod_invoke">11. <code>frog.ui.method_invoke</code></h2>
+<h2 id="froguimethod_invoke">12. <code>frog.ui.method_invoke</code></h2>
 
 <p>
 Primitive identifier:
@@ -588,7 +668,7 @@ Required primitive-local metadata:
 
 <pre><code>{
   "widget_method": {
-    "name": "reset_to_default_style"
+    "name": "focus"
   }
 }</code></pre>
 
@@ -637,9 +717,20 @@ It does not redefine class law and does not redefine source-side widget declarat
 It is the intrinsic executable bridge to a published action surface, not a generic escape hatch into runtime-private behavior.
 </p>
 
+<p>
+Typical valid examples include:
+</p>
+
+<ul>
+  <li><code>focus()</code> when the active class exposes it,</li>
+  <li><code>increment()</code> or <code>decrement()</code> on numeric controls when the class exposes them,</li>
+  <li><code>toggle()</code>, <code>set_true()</code>, or <code>set_false()</code> on boolean controls when legal,</li>
+  <li><code>append_sample(sample)</code>, <code>append_samples(samples)</code>, <code>clear_history()</code>, or <code>autoscale_all()</code> on a waveform chart when those methods are exposed.</li>
+</ul>
+
 <hr/>
 
-<h2 id="froguievent_observe">12. <code>frog.ui.event_observe</code></h2>
+<h2 id="froguievent_observe">13. <code>frog.ui.event_observe</code></h2>
 
 <p>
 Primitive identifier:
@@ -704,11 +795,22 @@ Primitive-local semantics:
 This primitive therefore preserves event identity as a first-class observable surface of the widget object model.
 </p>
 
+<p>
+Typical valid examples include:
+</p>
+
+<ul>
+  <li>observing <code>value_changed</code> on a control that publishes it,</li>
+  <li>observing <code>value_rendered</code> on an indicator or chart that publishes it,</li>
+  <li>observing <code>focus_gained</code> or <code>focus_lost</code> when the active class publishes them,</li>
+  <li>observing <code>history_cleared</code> on a chart when that event is published.</li>
+</ul>
+
 <hr/>
 
-<h2 id="typing-and-sequencing">13. Typing and Sequencing</h2>
+<h2 id="typing-and-sequencing">14. Typing and Sequencing</h2>
 
-<h3>13.1 Widget-reference typing</h3>
+<h3>14.1 Widget-reference typing</h3>
 
 <p>
 The required input port <code>ref</code> carries an opaque widget-reference token.
@@ -716,28 +818,28 @@ This token is interaction-oriented and diagram-internal.
 It is not standardized here as a general-purpose first-class value type for arbitrary storage, transport, comparison, or computation.
 </p>
 
-<h3>13.2 Property typing</h3>
+<h3>14.2 Property typing</h3>
 
 <p>
 Property-read and property-write primitives MUST use the declared property type of the addressed widget member.
 Compatibility checks and implicit coercions MUST follow the ordinary FROG type rules.
 </p>
 
-<h3>13.3 Method typing</h3>
+<h3>14.3 Method typing</h3>
 
 <p>
 Method-invoke primitives MUST use the declared method signature of the addressed widget member.
 Argument and result ports MUST follow the canonical method signature defined by the active widget class law.
 </p>
 
-<h3>13.4 Event typing</h3>
+<h3>14.4 Event typing</h3>
 
 <p>
 Event-observe primitives MUST use the declared event payload type of the addressed widget event.
 If the event declares no payload, the <code>payload</code> port MAY be omitted.
 </p>
 
-<h3>13.5 UI sequencing ports</h3>
+<h3>14.5 UI sequencing ports</h3>
 
 <p>
 The optional ports <code>ui_in</code> and <code>ui_out</code> define explicit ordering between UI interactions.
@@ -756,11 +858,10 @@ The sequencing token carried by <code>ui_in</code> and <code>ui_out</code> is op
 Its runtime representation is implementation-defined, but its ordering meaning between standardized UI-interaction primitives is defined by this specification.
 </p>
 
-<h3>13.6 Boundary rule</h3>
+<h3>14.6 Boundary rule</h3>
 
 <p>
-The presence of sequencing ports does not convert these primitives into a general callback model,
-full asynchronous orchestration model, or general message-bus model.
+The presence of sequencing ports does not convert these primitives into a general callback model, full asynchronous orchestration model, or general message-bus model.
 They remain explicit widget interaction primitives with optional ordering support.
 </p>
 
@@ -796,7 +897,7 @@ This token separation is one of the main safeguards against collapsing the widge
 
 <hr/>
 
-<h2 id="validation-rules">14. Validation Rules</h2>
+<h2 id="validation-rules">15. Validation Rules</h2>
 
 <p>
 Implementations MUST enforce at least the following primitive-level rules:
@@ -825,7 +926,8 @@ Additionally:
   <li>the distinction between object-style interaction, event observation, and natural <code>widget_value</code> participation MUST remain semantically recoverable,</li>
   <li>use of a property named <code>value</code> through <code>frog.ui.property_read</code> or <code>frog.ui.property_write</code> MUST NOT be silently normalized into <code>widget_value</code> participation,</li>
   <li>natural <code>widget_value</code> participation MUST NOT be silently reclassified as property-based access to member <code>value</code>,</li>
-  <li>event payload observation MUST NOT be silently normalized into property access or natural primary-value participation.</li>
+  <li>event payload observation MUST NOT be silently normalized into property access or natural primary-value participation,</li>
+  <li>realization-side anchors, text regions, resource layers, frame layers, plot surfaces, or host-native embodiment helpers MUST NOT be addressed as public class members unless the class law explicitly publishes them as legal public surfaces.</li>
 </ul>
 
 <p>
@@ -839,13 +941,12 @@ Execution-facing derivation, mapping, lowering, and backend-facing handoff remai
 </p>
 
 <p>
-Primitive validation therefore checks intrinsic executable correctness at the primitive-contract level,
-while class legality, source structure, and downstream execution-facing mapping remain owned by their respective layers.
+Primitive validation therefore checks intrinsic executable correctness at the primitive-contract level, while class legality, source structure, and downstream execution-facing mapping remain owned by their respective layers.
 </p>
 
 <hr/>
 
-<h2 id="execution-facing-posture">15. Execution-Facing Posture</h2>
+<h2 id="execution-facing-posture">16. Execution-Facing Posture</h2>
 
 <p>
 This document defines intrinsic primitive-local truth, not one execution-facing representation.
@@ -899,12 +1000,12 @@ This makes <code>frog.ui.*</code> suitable for multi-runtime preservation withou
 
 <hr/>
 
-<h2 id="examples">16. Examples</h2>
+<h2 id="examples">17. Examples</h2>
 
-<h3>16.1 Property read</h3>
+<h3>17.1 Property read — button label</h3>
 
 <pre><code>{
-  "id": "read_label_text",
+  "id": "read_button_label_text",
   "kind": "primitive",
   "type": "frog.ui.property_read",
   "widget_member": {
@@ -913,29 +1014,52 @@ This makes <code>frog.ui.*</code> suitable for multi-runtime preservation withou
   }
 }</code></pre>
 
-<h3>16.2 Property write</h3>
+<h3>17.2 Property write — numeric label</h3>
 
 <pre><code>{
-  "id": "write_visible",
+  "id": "write_numeric_label_text",
   "kind": "primitive",
   "type": "frog.ui.property_write",
   "widget_member": {
-    "member": "visible"
+    "part": "label",
+    "member": "text"
   }
 }</code></pre>
 
-<h3>16.3 Method invoke</h3>
+<h3>17.3 Method invoke — numeric control increment</h3>
 
 <pre><code>{
-  "id": "invoke_focus",
+  "id": "invoke_increment",
   "kind": "primitive",
   "type": "frog.ui.method_invoke",
   "widget_method": {
-    "name": "focus"
+    "name": "increment"
   }
 }</code></pre>
 
-<h3>16.4 Event observe</h3>
+<h3>17.4 Method invoke — chart history clear</h3>
+
+<pre><code>{
+  "id": "invoke_clear_history",
+  "kind": "primitive",
+  "type": "frog.ui.method_invoke",
+  "widget_method": {
+    "name": "clear_history"
+  }
+}</code></pre>
+
+<h3>17.5 Property read — chart axis visibility</h3>
+
+<pre><code>{
+  "id": "read_chart_x_axis_visible",
+  "kind": "primitive",
+  "type": "frog.ui.property_read",
+  "widget_member": {
+    "member": "axes.x.visible"
+  }
+}</code></pre>
+
+<h3>17.6 Event observe — rendered value</h3>
 
 <pre><code>{
   "id": "observe_rendered",
@@ -946,7 +1070,7 @@ This makes <code>frog.ui.*</code> suitable for multi-runtime preservation withou
   }
 }</code></pre>
 
-<h3>16.5 Example diagram fragment</h3>
+<h3>17.7 Example diagram fragment</h3>
 
 <pre><code>{
   "nodes": [
@@ -964,11 +1088,12 @@ This makes <code>frog.ui.*</code> suitable for multi-runtime preservation withou
       }
     },
     {
-      "id": "write_visible",
+      "id": "write_gain_label",
       "kind": "primitive",
       "type": "frog.ui.property_write",
       "widget_member": {
-        "member": "visible"
+        "part": "label",
+        "member": "text"
       }
     },
     {
@@ -989,7 +1114,7 @@ This makes <code>frog.ui.*</code> suitable for multi-runtime preservation withou
     {
       "id": "e2",
       "from": { "node": "ctrl_gain_ref", "port": "ref" },
-      "to":   { "node": "write_visible", "port": "ref" }
+      "to":   { "node": "write_gain_label", "port": "ref" }
     },
     {
       "id": "e3",
@@ -1009,12 +1134,12 @@ Likewise, observing <code>value_rendered</code> remains event-oriented interacti
 The example also illustrates the intended split clearly:
 the widget reference identifies the target object,
 the primitive identifies the interaction family,
-and the local descriptor identifies the addressed member or event.
+and the local descriptor identifies the addressed member, method, or event.
 </p>
 
 <hr/>
 
-<h2 id="out-of-scope">17. Out of Scope</h2>
+<h2 id="out-of-scope">18. Out of Scope</h2>
 
 <ul>
   <li>a full standardized widget catalog,</li>
@@ -1038,7 +1163,7 @@ It standardizes only the intrinsic executable interaction vocabulary.
 
 <hr/>
 
-<h2 id="summary">18. Summary</h2>
+<h2 id="summary">19. Summary</h2>
 
 <p>
 The <code>frog.ui</code> library defines the intrinsic executable UI-interaction primitives of FROG:
