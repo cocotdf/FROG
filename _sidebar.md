@@ -99,6 +99,7 @@
     - [Path](/Libraries/Widgets/Path.md)
     - [String](/Libraries/Widgets/String.md)
     - [Table](/Libraries/Widgets/Table.md)
+    - [Tree](/Libraries/Widgets/Tree.md)
 - [Profiles](/Profiles/Readme.md)
   - [Interop](/Profiles/Interop.md)
   - [Native CPU LLVM](/Profiles/Native%20CPU%20LLVM.md)
