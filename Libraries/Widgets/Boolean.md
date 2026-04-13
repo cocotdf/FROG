@@ -40,6 +40,27 @@ The boolean family provides the standard widget surfaces used for logical true/f
 These classes are intentionally simple, portable, and sufficient for the minimal reusable front-panel baseline.
 </p>
 
+<p>
+The standard boolean family is therefore defined here as a real object surface with:
+</p>
+
+<ul>
+  <li>a primary boolean value posture,</li>
+  <li>a minimal but real property surface,</li>
+  <li>a minimal but real method surface,</li>
+  <li>a minimal but real event surface,</li>
+  <li>a stable public part model for realization targeting.</li>
+</ul>
+
+<p>
+This keeps the intrinsic baseline close in spirit to mature graphical systems such as LabVIEW while remaining smaller and more portable.
+</p>
+
+<p>
+The intrinsic boolean baseline is strictly true/false.
+It does not standardize a tri-state boolean model in the intrinsic core.
+</p>
+
 <hr/>
 
 <h2 id="classes-defined-here">2. Classes Defined Here</h2>
@@ -62,6 +83,7 @@ The boolean family has the following common posture:
 </p>
 
 <ul>
+  <li>family: scalar boolean widget family</li>
   <li>primary value: present</li>
   <li>value type: <code>bool</code></li>
   <li>public value-facing surface: yes</li>
@@ -72,8 +94,19 @@ The boolean family has the following common posture:
 </ul>
 
 <p>
-The boolean family is not a tri-state baseline in the intrinsic core.
-It is a true/false baseline.
+The boolean family also follows an important architectural rule:
+</p>
+
+<ul>
+  <li><code>value</code> is class-owned semantic boolean data,</li>
+  <li><code>label.text</code> is class-owned semantic label text,</li>
+  <li><code>state_face</code> is a stable public dynamic part,</li>
+  <li>the visual embodiment of true, false, focus, or press posture belongs downstream to realization.</li>
+</ul>
+
+<p>
+This means the intrinsic core standardizes one boolean family, not one fixed visual embodiment.
+Checkbox-like, switch-like, LED-like, and similar host embodiments are realization strategies unless promoted later into separate explicit widget classes.
 </p>
 
 <hr/>
@@ -84,7 +117,7 @@ It is a true/false baseline.
 
 <ul>
   <li><strong>class_id:</strong> <code>frog.widgets.boolean_control</code></li>
-  <li><strong>category:</strong> <code>control</code></li>
+  <li><strong>family:</strong> <code>boolean_widget</code></li>
   <li><strong>compatible role:</strong> <code>control</code></li>
 </ul>
 
@@ -102,11 +135,16 @@ It is a true/false baseline.
 <h3>4.3 Standard properties</h3>
 
 <ul>
-  <li><code>value</code></li>
-  <li><code>label.text</code></li>
-  <li><code>interaction.enabled</code></li>
-  <li><code>interaction.visible</code></li>
+  <li><code>value</code> — readable and writable</li>
+  <li><code>label.text</code> — readable and writable</li>
+  <li><code>interaction.enabled</code> — readable and writable</li>
+  <li><code>interaction.visible</code> — readable and writable</li>
 </ul>
+
+<p>
+These properties define the minimum public object surface of the intrinsic boolean control.
+They do not expose realization-private anchors, state maps, skin layers, glow helpers, or toolkit-private interaction internals as if they were public class members.
+</p>
 
 <h3>4.4 Standard methods</h3>
 
@@ -117,15 +155,25 @@ It is a true/false baseline.
   <li><code>set_false()</code></li>
 </ul>
 
+<p>
+The baseline method surface is intentionally small.
+It exists to guarantee that the boolean control remains a real object with a minimal action surface rather than a bare true/false glyph.
+</p>
+
 <h3>4.5 Standard events</h3>
 
 <ul>
   <li><code>value_changed</code></li>
-  <li><code>pressed</code> when supported by the active realization posture</li>
-  <li><code>released</code> when supported by the active realization posture</li>
+  <li><code>pressed</code> when supported by the active class posture</li>
+  <li><code>released</code> when supported by the active class posture</li>
   <li><code>focus_gained</code></li>
   <li><code>focus_lost</code></li>
 </ul>
+
+<p>
+The <code>pressed</code> and <code>released</code> events are interaction events.
+They do not redefine the semantic boolean value itself.
+</p>
 
 <h3>4.6 Standard parts</h3>
 
@@ -136,6 +184,12 @@ It is a true/false baseline.
   <li><code>frame</code> when present</li>
 </ul>
 
+<p>
+The <code>state_face</code> part is the public dynamic boolean embodiment surface.
+Its semantic meaning belongs to the class through <code>value</code>.
+Its visual placement and embodiment belong to realization.
+</p>
+
 <hr/>
 
 <h2 id="frogwidgetsboolean_indicator">5. <code>frog.widgets.boolean_indicator</code></h2>
@@ -144,7 +198,7 @@ It is a true/false baseline.
 
 <ul>
   <li><strong>class_id:</strong> <code>frog.widgets.boolean_indicator</code></li>
-  <li><strong>category:</strong> <code>indicator</code></li>
+  <li><strong>family:</strong> <code>boolean_widget</code></li>
   <li><strong>compatible role:</strong> <code>indicator</code></li>
 </ul>
 
@@ -162,15 +216,21 @@ It is a true/false baseline.
 <h3>5.3 Standard properties</h3>
 
 <ul>
-  <li><code>value</code></li>
-  <li><code>label.text</code></li>
-  <li><code>interaction.visible</code></li>
+  <li><code>value</code> — readable and writable for diagram/runtime update surfaces where legal</li>
+  <li><code>label.text</code> — readable and writable</li>
+  <li><code>interaction.visible</code> — readable and writable</li>
 </ul>
+
+<p>
+The indicator remains a real object even though it is display-oriented.
+Its public surface is intentionally smaller than that of the control.
+</p>
 
 <h3>5.4 Standard methods</h3>
 
 <ul>
   <li><code>focus()</code> when supported by the host</li>
+  <li><code>reset_to_default()</code> when a default boolean value exists and the active class posture exposes it</li>
 </ul>
 
 <h3>5.5 Standard events</h3>
@@ -190,6 +250,11 @@ It is a true/false baseline.
   <li><code>frame</code> when present</li>
 </ul>
 
+<p>
+The indicator <code>state_face</code> part remains a public dynamic display surface.
+It is not merely a decorative skin region.
+</p>
+
 <hr/>
 
 <h2 id="common-parts">6. Common Parts</h2>
@@ -202,7 +267,16 @@ The boolean family uses the following common stable parts:
   <li><code>root</code></li>
   <li><code>label</code></li>
   <li><code>state_face</code></li>
-  <li><code>frame</code></li>
+  <li><code>frame</code> when present</li>
+</ul>
+
+<p>
+This distinction is important:
+</p>
+
+<ul>
+  <li><code>state_face</code> is a public part of the class model,</li>
+  <li>state-specific assets, anchors, layer maps, glow helpers, and visual state composition used to embody it belong to realization unless explicitly promoted to class law.</li>
 </ul>
 
 <hr/>
@@ -220,6 +294,22 @@ The intrinsic behavior baseline of the boolean family includes at least:
   <li>indicator realizations may emit <code>value_rendered</code> when their visible state is refreshed,</li>
   <li>the visual state surface follows the current boolean value posture.</li>
 </ul>
+
+<p>
+The family also preserves the distinction between:
+</p>
+
+<ul>
+  <li>semantic boolean value owned by <code>value</code>,</li>
+  <li>semantic label text owned by <code>label.text</code>,</li>
+  <li>dynamic public state surface exposed through <code>state_face</code>,</li>
+  <li>downstream visual embodiment owned by realization.</li>
+</ul>
+
+<p>
+Pressed posture, focus posture, and host activation feedback remain interaction and realization concerns unless explicitly promoted to additional public class surfaces.
+They do not automatically redefine the boolean value itself.
+</p>
 
 <hr/>
 
@@ -240,6 +330,17 @@ A conforming realization of the boolean family SHOULD provide:
 The realization MAY be checkbox-like, switch-like, LED-like, or another host-compatible boolean embodiment, provided that the published public class surface remains preserved.
 </p>
 
+<p>
+In particular:
+</p>
+
+<ul>
+  <li>realization MAY define composed visual states such as normal_true or pressed_false,</li>
+  <li>realization MAY define decorative frames, state assets, skins, or focus layers,</li>
+  <li>realization MUST NOT redefine the semantic owner of <code>value</code> or <code>label.text</code>,</li>
+  <li>realization MUST NOT make baked check marks, host-private LED state, or decorative assets the only semantic source of visible boolean meaning.</li>
+</ul>
+
 <hr/>
 
 <h2 id="diagram-interaction-posture">9. Diagram Interaction Posture</h2>
@@ -255,6 +356,26 @@ The boolean family supports:
   <li>event observation where legal.</li>
 </ul>
 
+<p>
+When the program intent is ordinary boolean dataflow, the natural value path SHOULD be preferred.
+Object-style access remains available for richer widget interaction.
+</p>
+
+<p>
+Typical legal object-style surfaces include:
+</p>
+
+<ul>
+  <li><code>value</code></li>
+  <li><code>label.text</code></li>
+  <li><code>interaction.enabled</code></li>
+  <li><code>interaction.visible</code></li>
+</ul>
+
+<p>
+Realization-only anchors, state maps, resource layers, focus helpers, and asset helpers remain outside the public boolean class surface unless explicitly standardized elsewhere.
+</p>
+
 <hr/>
 
 <h2 id="validation-expectations">10. Validation Expectations</h2>
@@ -267,7 +388,8 @@ Validators SHOULD diagnose at least:
   <li>non-boolean <code>value_type</code> on boolean widgets,</li>
   <li>role/class mismatches,</li>
   <li>attempts to write user-edit surfaces on indicator-only classes where forbidden,</li>
-  <li>unknown boolean family members or parts.</li>
+  <li>unknown boolean family members or parts,</li>
+  <li>attempts to treat realization-only state composition or placement surfaces as public class members by default.</li>
 </ul>
 
 <hr/>
@@ -285,4 +407,5 @@ The boolean widget family defines the intrinsic standardized true/false widget b
 
 <p>
 These classes provide the standard portable boolean interaction and display surfaces of the minimal widget core.
+They expose a real minimal object surface with properties, methods, events, and parts while keeping realization ownership and runtime-private embodiment clearly separated from class meaning.
 </p>
