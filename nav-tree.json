@@ -473,6 +473,13 @@
                       "children": []
                     },
                     {
+                      "key": "libraries/realizations/default/cluster.md",
+                      "title": "Cluster",
+                      "path": "/Libraries/Realizations/Default/Cluster.md",
+                      "kind": "page",
+                      "children": []
+                    },
+                    {
                       "key": "libraries/realizations/default/enum.md",
                       "title": "Enum",
                       "path": "/Libraries/Realizations/Default/Enum.md",
@@ -2551,6 +2558,7 @@
     "/Libraries/Realizations/Default/Boolean.md",
     "/Libraries/Realizations/Default/Button.md",
     "/Libraries/Realizations/Default/Chart.md",
+    "/Libraries/Realizations/Default/Cluster.md",
     "/Libraries/Realizations/Default/Enum.md",
     "/Libraries/Realizations/Default/Numeric.md",
     "/Libraries/Realizations/Default/Package.md",
