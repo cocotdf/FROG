@@ -494,6 +494,13 @@
                       "children": []
                     },
                     {
+                      "key": "libraries/realizations/default/frame.md",
+                      "title": "Frame",
+                      "path": "/Libraries/Realizations/Default/Frame.md",
+                      "kind": "page",
+                      "children": []
+                    },
+                    {
                       "key": "libraries/realizations/default/label.md",
                       "title": "Label",
                       "path": "/Libraries/Realizations/Default/Label.md",
@@ -2589,6 +2596,7 @@
     "/Libraries/Realizations/Default/Chart.md",
     "/Libraries/Realizations/Default/Cluster.md",
     "/Libraries/Realizations/Default/Enum.md",
+    "/Libraries/Realizations/Default/Frame.md",
     "/Libraries/Realizations/Default/Label.md",
     "/Libraries/Realizations/Default/Numeric.md",
     "/Libraries/Realizations/Default/Package.md",
