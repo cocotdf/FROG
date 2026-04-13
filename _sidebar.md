@@ -92,6 +92,7 @@
     - [Enum](/Libraries/Widgets/Enum.md)
     - [Frame](/Libraries/Widgets/Frame.md)
     - [Label](/Libraries/Widgets/Label.md)
+    - [Listbox](/Libraries/Widgets/Listbox.md)
     - [Numeric](/Libraries/Widgets/Numeric.md)
     - [Path](/Libraries/Widgets/Path.md)
     - [String](/Libraries/Widgets/String.md)
