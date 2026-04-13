@@ -494,6 +494,13 @@
                       "children": []
                     },
                     {
+                      "key": "libraries/realizations/default/path.md",
+                      "title": "Path",
+                      "path": "/Libraries/Realizations/Default/Path.md",
+                      "kind": "page",
+                      "children": []
+                    },
+                    {
                       "key": "libraries/realizations/default/resource-model.md",
                       "title": "Resource model",
                       "path": "/Libraries/Realizations/Default/Resource%20model.md",
@@ -2547,6 +2554,7 @@
     "/Libraries/Realizations/Default/Enum.md",
     "/Libraries/Realizations/Default/Numeric.md",
     "/Libraries/Realizations/Default/Package.md",
+    "/Libraries/Realizations/Default/Path.md",
     "/Libraries/Realizations/Default/Resource%20model.md",
     "/Libraries/Realizations/Default/State%20mapping.md",
     "/Libraries/Realizations/Default/String.md",

@@ -69,6 +69,7 @@
       - [Enum](/Libraries/Realizations/Default/Enum.md)
       - [Numeric](/Libraries/Realizations/Default/Numeric.md)
       - [Package](/Libraries/Realizations/Default/Package.md)
+      - [Path](/Libraries/Realizations/Default/Path.md)
       - [Resource model](/Libraries/Realizations/Default/Resource%20model.md)
       - [State mapping](/Libraries/Realizations/Default/State%20mapping.md)
       - [String](/Libraries/Realizations/Default/String.md)
