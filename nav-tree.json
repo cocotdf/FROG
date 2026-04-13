@@ -632,6 +632,13 @@
                   "children": []
                 },
                 {
+                  "key": "libraries/widgets/frame.md",
+                  "title": "Frame",
+                  "path": "/Libraries/Widgets/Frame.md",
+                  "kind": "page",
+                  "children": []
+                },
+                {
                   "key": "libraries/widgets/label.md",
                   "title": "Label",
                   "path": "/Libraries/Widgets/Label.md",
@@ -2595,6 +2602,7 @@
     "/Libraries/Widgets/Chart.md",
     "/Libraries/Widgets/Cluster.md",
     "/Libraries/Widgets/Enum.md",
+    "/Libraries/Widgets/Frame.md",
     "/Libraries/Widgets/Label.md",
     "/Libraries/Widgets/Numeric.md",
     "/Libraries/Widgets/Path.md",

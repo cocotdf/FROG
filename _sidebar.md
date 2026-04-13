@@ -88,6 +88,7 @@
     - [Chart](/Libraries/Widgets/Chart.md)
     - [Cluster](/Libraries/Widgets/Cluster.md)
     - [Enum](/Libraries/Widgets/Enum.md)
+    - [Frame](/Libraries/Widgets/Frame.md)
     - [Label](/Libraries/Widgets/Label.md)
     - [Numeric](/Libraries/Widgets/Numeric.md)
     - [Path](/Libraries/Widgets/Path.md)
