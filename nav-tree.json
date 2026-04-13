@@ -583,6 +583,13 @@
                   "children": []
                 },
                 {
+                  "key": "libraries/widgets/enum.md",
+                  "title": "Enum",
+                  "path": "/Libraries/Widgets/Enum.md",
+                  "kind": "page",
+                  "children": []
+                },
+                {
                   "key": "libraries/widgets/numeric.md",
                   "title": "Numeric",
                   "path": "/Libraries/Widgets/Numeric.md",
@@ -2525,6 +2532,7 @@
     "/Libraries/Widgets/Boolean.md",
     "/Libraries/Widgets/Button.md",
     "/Libraries/Widgets/Chart.md",
+    "/Libraries/Widgets/Enum.md",
     "/Libraries/Widgets/Numeric.md",
     "/Libraries/Widgets/String.md",
     "/Libraries/Widgets/Readme.md",
