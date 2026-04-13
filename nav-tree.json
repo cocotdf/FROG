@@ -473,6 +473,13 @@
                       "children": []
                     },
                     {
+                      "key": "libraries/realizations/default/enum.md",
+                      "title": "Enum",
+                      "path": "/Libraries/Realizations/Default/Enum.md",
+                      "kind": "page",
+                      "children": []
+                    },
+                    {
                       "key": "libraries/realizations/default/numeric.md",
                       "title": "Numeric",
                       "path": "/Libraries/Realizations/Default/Numeric.md",
@@ -2537,6 +2544,7 @@
     "/Libraries/Realizations/Default/Boolean.md",
     "/Libraries/Realizations/Default/Button.md",
     "/Libraries/Realizations/Default/Chart.md",
+    "/Libraries/Realizations/Default/Enum.md",
     "/Libraries/Realizations/Default/Numeric.md",
     "/Libraries/Realizations/Default/Package.md",
     "/Libraries/Realizations/Default/Resource%20model.md",

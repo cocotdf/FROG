@@ -66,6 +66,7 @@
       - [Boolean](/Libraries/Realizations/Default/Boolean.md)
       - [Button](/Libraries/Realizations/Default/Button.md)
       - [Chart](/Libraries/Realizations/Default/Chart.md)
+      - [Enum](/Libraries/Realizations/Default/Enum.md)
       - [Numeric](/Libraries/Realizations/Default/Numeric.md)
       - [Package](/Libraries/Realizations/Default/Package.md)
       - [Resource model](/Libraries/Realizations/Default/Resource%20model.md)
