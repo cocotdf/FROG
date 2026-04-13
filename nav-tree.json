@@ -693,6 +693,13 @@
                   "path": "/Libraries/Widgets/String.md",
                   "kind": "page",
                   "children": []
+                },
+                {
+                  "key": "libraries/widgets/table.md",
+                  "title": "Table",
+                  "path": "/Libraries/Widgets/Table.md",
+                  "kind": "page",
+                  "children": []
                 }
               ]
             }
@@ -2639,6 +2646,7 @@
     "/Libraries/Widgets/Numeric.md",
     "/Libraries/Widgets/Path.md",
     "/Libraries/Widgets/String.md",
+    "/Libraries/Widgets/Table.md",
     "/Libraries/Widgets/Readme.md",
     "/Libraries/Readme.md",
     "/Profiles/Interop.md",
