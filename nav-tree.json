@@ -597,6 +597,13 @@
                   "children": []
                 },
                 {
+                  "key": "libraries/widgets/path.md",
+                  "title": "Path",
+                  "path": "/Libraries/Widgets/Path.md",
+                  "kind": "page",
+                  "children": []
+                },
+                {
                   "key": "libraries/widgets/string.md",
                   "title": "String",
                   "path": "/Libraries/Widgets/String.md",
@@ -2534,6 +2541,7 @@
     "/Libraries/Widgets/Chart.md",
     "/Libraries/Widgets/Enum.md",
     "/Libraries/Widgets/Numeric.md",
+    "/Libraries/Widgets/Path.md",
     "/Libraries/Widgets/String.md",
     "/Libraries/Widgets/Readme.md",
     "/Libraries/Readme.md",

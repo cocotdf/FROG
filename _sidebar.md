@@ -83,6 +83,7 @@
     - [Chart](/Libraries/Widgets/Chart.md)
     - [Enum](/Libraries/Widgets/Enum.md)
     - [Numeric](/Libraries/Widgets/Numeric.md)
+    - [Path](/Libraries/Widgets/Path.md)
     - [String](/Libraries/Widgets/String.md)
 - [Profiles](/Profiles/Readme.md)
   - [Interop](/Profiles/Interop.md)
