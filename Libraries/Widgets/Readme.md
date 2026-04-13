@@ -263,7 +263,7 @@ At minimum, this means:
 
 <ul>
   <li>a meaningful public property surface,</li>
-  <li>a meaningful public method surface when the class is interactive or stateful,</li>
+  <li>a meaningful public method surface when the class is interactive, stateful, or structurally significant,</li>
   <li>a meaningful public event surface when the class produces observable interaction or visible update,</li>
   <li>a stable public part model for realization targeting.</li>
 </ul>
@@ -337,10 +337,33 @@ The recommended intrinsic baseline v1 consists of:
 </ul>
 
 <p>
-Support widgets such as label and frame may be standardized as intrinsic baseline objects only if they also follow a disciplined minimal object contract rather than remaining vague decorative placeholders.
+This v1 core is the smallest serious portable widget set that still supports:
 </p>
 
-<h3>9.2 Near-core standardized candidates</h3>
+<ul>
+  <li>scalar editable values,</li>
+  <li>scalar displayed values,</li>
+  <li>command-oriented interaction,</li>
+  <li>a first bounded history-oriented visualization surface.</li>
+</ul>
+
+<h3>9.2 Standardized support widgets outside intrinsic baseline v1</h3>
+
+<p>
+The following support widgets may be standardized and fully documented without being treated as part of the intrinsic baseline v1 core:
+</p>
+
+<ul>
+  <li><code>frog.widgets.label</code></li>
+  <li><code>frog.widgets.frame</code></li>
+</ul>
+
+<p>
+This posture is intentional.
+It allows support widgets to exist as real standardized classes with disciplined public contracts while keeping the intrinsic v1 core small and centered on the most essential reusable value, command, and chart surfaces.
+</p>
+
+<h3>9.3 Near-core standardized candidates</h3>
 
 <p>
 The following classes are strong near-core candidates, but do not need to enter the intrinsic baseline before the core above is fully stabilized:
@@ -353,7 +376,7 @@ The following classes are strong near-core candidates, but do not need to enter 
   <li>array</li>
 </ul>
 
-<h3>9.3 Deferred standardization</h3>
+<h3>9.4 Deferred standardization</h3>
 
 <p>
 The following families should generally be deferred until after the intrinsic v1 core is stabilized:
@@ -376,6 +399,11 @@ This phased posture is not a rejection of those classes.
 It is a discipline rule intended to keep the intrinsic baseline coherent.
 </p>
 
+<p>
+In particular, a class such as <code>switch</code> should not be introduced merely because one realization family supports a switch-like visual embodiment.
+A distinct class should only be standardized when it contributes distinct public semantics rather than only a different visible embodiment.
+</p>
+
 <hr/>
 
 <h2 id="shared-baseline-conventions">10. Shared Baseline Conventions</h2>
@@ -391,7 +419,7 @@ At minimum:
 <ul>
   <li>standard class identifiers use the <code>frog.widgets.*</code> namespace,</li>
   <li>value-carrying classes expose a primary value mirrored as property <code>value</code>,</li>
-  <li>label-bearing classes use property <code>label.text</code>,</li>
+  <li>label-bearing classes use property <code>label.text</code> where label-bearing posture is part of public class meaning,</li>
   <li>visibility uses property <code>interaction.visible</code>,</li>
   <li>interactive classes use property <code>interaction.enabled</code> where applicable,</li>
   <li>the root part is named <code>root</code>,</li>
@@ -434,7 +462,7 @@ This means the primitive baseline should remain small, clear, and stable rather 
 
 <hr/>
 
-<h2 id="relation-with-frog-source">12. Relation with <code>.frog</code> Source</a></h2>
+<h2 id="relation-with-frog-source">12. Relation with <code>.frog</code> Source</h2>
 
 <p>
 Canonical <code>.frog</code> source instantiates widgets through widget instances in <code>front_panel</code>.
@@ -464,7 +492,7 @@ This directory owns the standardized class being instantiated.
 
 <hr/>
 
-<h2 id="relation-with-wfrog-publication">13. Relation with <code>.wfrog</code> Publication</a></h2>
+<h2 id="relation-with-wfrog-publication">13. Relation with <code>.wfrog</code> Publication</h2>
 
 <p>
 The classes defined in this directory are intrinsic standardized classes.
@@ -537,7 +565,7 @@ Likewise, if a class exposes members such as <code>label.text</code>, axis prope
 
 <hr/>
 
-<h2 id="relation-with-realization-families">15. Relation with Realization Families</a></h2>
+<h2 id="relation-with-realization-families">15. Relation with Realization Families</h2>
 
 <p>
 The classes defined here are not identical to one skin and are not identical to one realization resource family.
@@ -577,6 +605,12 @@ For example:
 But the existence of those realization layers does not mean that the realization owns the semantics of the class.
 The class remains primary.
 The realization remains subordinate.
+</p>
+
+<p>
+A realization family may also publish several compatible embodiment variants for the same class.
+That does not, by itself, create several classes.
+A distinct standardized class should only appear when a distinct public contract is explicitly published.
 </p>
 
 <hr/>
@@ -669,6 +703,7 @@ The immediate closure direction is:
 
 <ul>
   <li>stabilize the intrinsic v1 widget core,</li>
+  <li>stabilize the status of standardized support widgets relative to that core,</li>
   <li>avoid premature expansion into heavier structured and graphing families,</li>
   <li>preserve the minimum object-surface rule across all intrinsic baseline widgets,</li>
   <li>add near-core classes only after the intrinsic core is fully coherent.</li>
@@ -697,3 +732,15 @@ In short:
   <li><code>Libraries/Realizations/</code> defines how official realization families embody them,</li>
   <li><code>.wfrog</code> artifacts publish machine-readable widget and realization artifacts without collapsing those ownership layers.</li>
 </ul>
+
+<p>
+The next most coherent file to handle after this rewrite is:
+</p>
+
+<ul>
+  <li><code>Libraries/Widgets/Listbox.md</code></li>
+</ul>
+
+<p>
+That file is the next good candidate because the boolean switch question is now architecturally contained as a realization matter, while listbox remains the next meaningful deferred selection-family class to evaluate on its own merits.
+</p>
