@@ -562,6 +562,13 @@
               "kind": "category",
               "children": [
                 {
+                  "key": "libraries/widgets/array.md",
+                  "title": "Array",
+                  "path": "/Libraries/Widgets/Array.md",
+                  "kind": "page",
+                  "children": []
+                },
+                {
                   "key": "libraries/widgets/boolean.md",
                   "title": "Boolean",
                   "path": "/Libraries/Widgets/Boolean.md",
@@ -2543,6 +2550,7 @@
     "/Libraries/Realizations/Default/Examples/Readme.md",
     "/Libraries/Realizations/Default/Readme.md",
     "/Libraries/Realizations/Readme.md",
+    "/Libraries/Widgets/Array.md",
     "/Libraries/Widgets/Boolean.md",
     "/Libraries/Widgets/Button.md",
     "/Libraries/Widgets/Chart.md",
