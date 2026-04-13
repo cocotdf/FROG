@@ -81,6 +81,7 @@
     - [Boolean](/Libraries/Widgets/Boolean.md)
     - [Button](/Libraries/Widgets/Button.md)
     - [Chart](/Libraries/Widgets/Chart.md)
+    - [Cluster](/Libraries/Widgets/Cluster.md)
     - [Enum](/Libraries/Widgets/Enum.md)
     - [Numeric](/Libraries/Widgets/Numeric.md)
     - [Path](/Libraries/Widgets/Path.md)

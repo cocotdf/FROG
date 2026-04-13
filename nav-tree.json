@@ -583,6 +583,13 @@
                   "children": []
                 },
                 {
+                  "key": "libraries/widgets/cluster.md",
+                  "title": "Cluster",
+                  "path": "/Libraries/Widgets/Cluster.md",
+                  "kind": "page",
+                  "children": []
+                },
+                {
                   "key": "libraries/widgets/enum.md",
                   "title": "Enum",
                   "path": "/Libraries/Widgets/Enum.md",
@@ -2539,6 +2546,7 @@
     "/Libraries/Widgets/Boolean.md",
     "/Libraries/Widgets/Button.md",
     "/Libraries/Widgets/Chart.md",
+    "/Libraries/Widgets/Cluster.md",
     "/Libraries/Widgets/Enum.md",
     "/Libraries/Widgets/Numeric.md",
     "/Libraries/Widgets/Path.md",
