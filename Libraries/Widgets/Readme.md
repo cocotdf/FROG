@@ -20,17 +20,19 @@
   <li><a href="#architectural-position">4. Architectural Position</a></li>
   <li><a href="#ownership-boundary">5. Ownership Boundary</a></li>
   <li><a href="#what-a-standard-widget-class-is">6. What a Standard Widget Class Is</a></li>
-  <li><a href="#baseline-widget-families">7. Baseline Widget Families</a></li>
-  <li><a href="#shared-baseline-conventions">8. Shared Baseline Conventions</a></li>
-  <li><a href="#primitive-vs-composite-posture">9. Primitive vs Composite Posture</a></li>
-  <li><a href="#relation-with-frog-source">10. Relation with <code>.frog</code> Source</a></li>
-  <li><a href="#relation-with-wfrog-publication">11. Relation with <code>.wfrog</code> Publication</a></li>
-  <li><a href="#relation-with-frogui-primitives">12. Relation with <code>frog.ui.*</code> Primitives</a></li>
-  <li><a href="#relation-with-realization-families">13. Relation with Realization Families</a></li>
-  <li><a href="#portability-across-runtimes">14. Portability Across Runtimes</a></li>
-  <li><a href="#conformance-posture">15. Conformance Posture</a></li>
-  <li><a href="#status">16. Status</a></li>
-  <li><a href="#summary">17. Summary</a></li>
+  <li><a href="#minimum-object-surface-rule">7. Minimum Object-Surface Rule</a></li>
+  <li><a href="#baseline-widget-families">8. Baseline Widget Families</a></li>
+  <li><a href="#baseline-standardization-phases">9. Baseline Standardization Phases</a></li>
+  <li><a href="#shared-baseline-conventions">10. Shared Baseline Conventions</a></li>
+  <li><a href="#primitive-vs-composite-posture">11. Primitive vs Composite Posture</a></li>
+  <li><a href="#relation-with-frog-source">12. Relation with <code>.frog</code> Source</a></li>
+  <li><a href="#relation-with-wfrog-publication">13. Relation with <code>.wfrog</code> Publication</a></li>
+  <li><a href="#relation-with-frogui-primitives">14. Relation with <code>frog.ui.*</code> Primitives</a></li>
+  <li><a href="#relation-with-realization-families">15. Relation with Realization Families</a></li>
+  <li><a href="#portability-across-runtimes">16. Portability Across Runtimes</a></li>
+  <li><a href="#conformance-posture">17. Conformance Posture</a></li>
+  <li><a href="#status">18. Status</a></li>
+  <li><a href="#summary">19. Summary</a></li>
 </ul>
 
 <hr/>
@@ -244,7 +246,41 @@ Downstream realization publication owns:
 
 <hr/>
 
-<h2 id="baseline-widget-families">7. Baseline Widget Families</h2>
+<h2 id="minimum-object-surface-rule">7. Minimum Object-Surface Rule</h2>
+
+<p>
+The intrinsic widget baseline follows a strict minimum object-surface rule.
+</p>
+
+<p>
+A standard widget in the intrinsic baseline must not collapse into a passive value plus a runtime-private visual shell.
+Instead, each intrinsic baseline widget is expected to expose a minimal but real public object surface.
+</p>
+
+<p>
+At minimum, this means:
+</p>
+
+<ul>
+  <li>a meaningful public property surface,</li>
+  <li>a meaningful public method surface when the class is interactive or stateful,</li>
+  <li>a meaningful public event surface when the class produces observable interaction or visible update,</li>
+  <li>a stable public part model for realization targeting.</li>
+</ul>
+
+<p>
+This rule is intentionally close in spirit to mature graphical object systems such as LabVIEW:
+the intrinsic baseline remains small, but standard widgets still have a real minimum of property-node, method-node, and event-observation usefulness.
+</p>
+
+<p>
+At the same time, this rule does not justify overloading the intrinsic core with every possible surface.
+The baseline remains minimal, disciplined, and portable.
+</p>
+
+<hr/>
+
+<h2 id="baseline-widget-families">8. Baseline Widget Families</h2>
 
 <p>
 The initial intrinsic standardized baseline is organized into the following families:
@@ -276,7 +312,73 @@ the intrinsic core standardizes one minimal waveform-chart-style baseline rather
 
 <hr/>
 
-<h2 id="shared-baseline-conventions">8. Shared Baseline Conventions</h2>
+<h2 id="baseline-standardization-phases">9. Baseline Standardization Phases</h2>
+
+<p>
+The intrinsic widget baseline should remain intentionally phased.
+This helps preserve a credible v1 core while keeping the path open for later expansion.
+</p>
+
+<h3>9.1 Intrinsic baseline v1</h3>
+
+<p>
+The recommended intrinsic baseline v1 consists of:
+</p>
+
+<ul>
+  <li><code>frog.widgets.numeric_control</code></li>
+  <li><code>frog.widgets.numeric_indicator</code></li>
+  <li><code>frog.widgets.boolean_control</code></li>
+  <li><code>frog.widgets.boolean_indicator</code></li>
+  <li><code>frog.widgets.string_control</code></li>
+  <li><code>frog.widgets.string_indicator</code></li>
+  <li><code>frog.widgets.button</code></li>
+  <li><code>frog.widgets.waveform_chart</code></li>
+</ul>
+
+<p>
+Support widgets such as label and frame may be standardized as intrinsic baseline objects only if they also follow a disciplined minimal object contract rather than remaining vague decorative placeholders.
+</p>
+
+<h3>9.2 Near-core standardized candidates</h3>
+
+<p>
+The following classes are strong near-core candidates, but do not need to enter the intrinsic baseline before the core above is fully stabilized:
+</p>
+
+<ul>
+  <li>enum</li>
+  <li>path</li>
+  <li>cluster</li>
+  <li>array</li>
+</ul>
+
+<h3>9.3 Deferred standardization</h3>
+
+<p>
+The following families should generally be deferred until after the intrinsic v1 core is stabilized:
+</p>
+
+<ul>
+  <li>listbox</li>
+  <li>switch</li>
+  <li>table</li>
+  <li>tree</li>
+  <li>tab</li>
+  <li>waveform graph</li>
+  <li>XY graph</li>
+  <li>intensity graph</li>
+  <li>picture-rich or canvas-like widget families</li>
+</ul>
+
+<p>
+This phased posture is not a rejection of those classes.
+It is a discipline rule intended to keep the intrinsic baseline coherent.
+</p>
+
+<hr/>
+
+<h2 id="shared-baseline-conventions">10. Shared Baseline Conventions</h2>
 
 <p>
 The baseline families in this directory follow a shared normalization posture.
@@ -309,7 +411,7 @@ Portable semantic surfaces may still be standardized when they belong to public 
 
 <hr/>
 
-<h2 id="primitive-vs-composite-posture">9. Primitive vs Composite Posture</h2>
+<h2 id="primitive-vs-composite-posture">11. Primitive vs Composite Posture</h2>
 
 <p>
 The classes defined in this directory are the initial standardized primitive baseline.
@@ -332,7 +434,7 @@ This means the primitive baseline should remain small, clear, and stable rather 
 
 <hr/>
 
-<h2 id="relation-with-frog-source">10. Relation with <code>.frog</code> Source</h2>
+<h2 id="relation-with-frog-source">12. Relation with <code>.frog</code> Source</a></h2>
 
 <p>
 Canonical <code>.frog</code> source instantiates widgets through widget instances in <code>front_panel</code>.
@@ -362,7 +464,7 @@ This directory owns the standardized class being instantiated.
 
 <hr/>
 
-<h2 id="relation-with-wfrog-publication">11. Relation with <code>.wfrog</code> Publication</h2>
+<h2 id="relation-with-wfrog-publication">13. Relation with <code>.wfrog</code> Publication</a></h2>
 
 <p>
 The classes defined in this directory are intrinsic standardized classes.
@@ -396,7 +498,7 @@ runtime-private implementation
 
 <hr/>
 
-<h2 id="relation-with-frogui-primitives">12. Relation with <code>frog.ui.*</code> Primitives</h2>
+<h2 id="relation-with-frogui-primitives">14. Relation with <code>frog.ui.*</code> Primitives</h2>
 
 <p>
 The executable object-style interaction surface for widgets is defined by <code>frog.ui.*</code> primitives.
@@ -435,7 +537,7 @@ Likewise, if a class exposes members such as <code>label.text</code>, axis prope
 
 <hr/>
 
-<h2 id="relation-with-realization-families">13. Relation with Realization Families</h2>
+<h2 id="relation-with-realization-families">15. Relation with Realization Families</a></h2>
 
 <p>
 The classes defined here are not identical to one skin and are not identical to one realization resource family.
@@ -479,7 +581,7 @@ The realization remains subordinate.
 
 <hr/>
 
-<h2 id="portability-across-runtimes">14. Portability Across Runtimes</h2>
+<h2 id="portability-across-runtimes">16. Portability Across Runtimes</h2>
 
 <p>
 The standard classes defined here are intended to be portable across runtime families such as Python, Rust, and C/C++ implementations.
@@ -513,7 +615,7 @@ Where a class exposes semantic text-bearing or value-bearing public surfaces, po
 
 <hr/>
 
-<h2 id="conformance-posture">15. Conformance Posture</h2>
+<h2 id="conformance-posture">17. Conformance Posture</h2>
 
 <p>
 A runtime claiming support for one of the standard classes defined here MUST preserve the published portable class surface of that class for the surfaces it claims to implement.
@@ -543,7 +645,7 @@ They do not redefine its class meaning.
 
 <hr/>
 
-<h2 id="status">16. Status</h2>
+<h2 id="status">18. Status</h2>
 
 <p>
 This directory defines the first intrinsic standardized widget baseline of FROG.
@@ -561,9 +663,20 @@ Its closure direction is:
   <li>future growth through composite widgets and realization publication without architectural drift.</li>
 </ul>
 
+<p>
+The immediate closure direction is:
+</p>
+
+<ul>
+  <li>stabilize the intrinsic v1 widget core,</li>
+  <li>avoid premature expansion into heavier structured and graphing families,</li>
+  <li>preserve the minimum object-surface rule across all intrinsic baseline widgets,</li>
+  <li>add near-core classes only after the intrinsic core is fully coherent.</li>
+</ul>
+
 <hr/>
 
-<h2 id="summary">17. Summary</h2>
+<h2 id="summary">19. Summary</h2>
 
 <p>
 This directory publishes the first intrinsic standardized widget classes of FROG.
