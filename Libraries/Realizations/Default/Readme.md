@@ -19,12 +19,13 @@
   <li><a href="#target-classes">3. Target Classes</a></li>
   <li><a href="#family-goals">4. Family Goals</a></li>
   <li><a href="#shared-architectural-posture">5. Shared Architectural Posture</a></li>
-  <li><a href="#shared-state-posture">6. Shared State Posture</a></li>
-  <li><a href="#shared-resource-and-binding-posture">7. Shared Resource and Binding Posture</a></li>
-  <li><a href="#shared-fallback-posture">8. Shared Fallback Posture</a></li>
-  <li><a href="#shared-host-expectations">9. Shared Host Expectations</a></li>
-  <li><a href="#documents-in-this-family">10. Documents in this Family</a></li>
-  <li><a href="#summary">11. Summary</a></li>
+  <li><a href="#realization-variant-posture">6. Realization Variant Posture</a></li>
+  <li><a href="#shared-state-posture">7. Shared State Posture</a></li>
+  <li><a href="#shared-resource-and-binding-posture">8. Shared Resource and Binding Posture</a></li>
+  <li><a href="#shared-fallback-posture">9. Shared Fallback Posture</a></li>
+  <li><a href="#shared-host-expectations">10. Shared Host Expectations</a></li>
+  <li><a href="#documents-in-this-family">11. Documents in this Family</a></li>
+  <li><a href="#summary">12. Summary</a></li>
 </ul>
 
 <hr/>
@@ -183,7 +184,63 @@ More generally, the same architectural distinction matters for numeric value sur
 
 <hr/>
 
-<h2 id="shared-state-posture">6. Shared State Posture</h2>
+<h2 id="realization-variant-posture">6. Realization Variant Posture</h2>
+
+<p>
+The default family standardizes one realization corridor per published class family, but it does not require one single visible shape for each class.
+</p>
+
+<p>
+Accordingly, a conforming default realization MAY publish more than one compatible embodiment posture for the same standardized class, provided that:
+</p>
+
+<ul>
+  <li>the public class meaning remains unchanged,</li>
+  <li>the published public parts remain interpretable,</li>
+  <li>the realization contract remains inspectable,</li>
+  <li>no implicit class split is introduced by realization choice alone.</li>
+</ul>
+
+<p>
+This rule is especially important when several mature host traditions use visibly different but semantically equivalent embodiments for the same widget family.
+</p>
+
+<p>
+For example, in the boolean corridor:
+</p>
+
+<ul>
+  <li>checkbox-like embodiment,</li>
+  <li>switch-like embodiment,</li>
+  <li>toggle-like embodiment,</li>
+  <li>LED-like embodiment</li>
+</ul>
+
+<p>
+may all remain realization variants of the same standardized boolean classes, as long as they preserve the published boolean class contract.
+</p>
+
+<p>
+The same general rule may later apply to other families when a visible difference is only an embodiment choice rather than a true semantic difference.
+</p>
+
+<p>
+This distinction is normative:
+</p>
+
+<ul>
+  <li>realization variants MAY differ in geometry, motion, emphasis, decorative layering, or host-native control style,</li>
+  <li>realization variants MUST NOT silently introduce new public semantics, new mandatory public members, or a new implicit standard class.</li>
+</ul>
+
+<p>
+A future specification may still introduce a distinct widget class if a later design demonstrates a genuinely distinct public contract.
+Until then, embodiment diversity remains a realization concern rather than a class-law concern.
+</p>
+
+<hr/>
+
+<h2 id="shared-state-posture">7. Shared State Posture</h2>
 
 <p>
 Across the default realization family, widgets and parts MAY use a shared standard state vocabulary such as:
@@ -214,7 +271,7 @@ Where state-sensitive embodiment exists, it should remain inspectable through pu
 
 <hr/>
 
-<h2 id="shared-resource-and-binding-posture">7. Shared Resource and Binding Posture</h2>
+<h2 id="shared-resource-and-binding-posture">8. Shared Resource and Binding Posture</h2>
 
 <p>
 The default family assumes that realization resources MAY be organized by:
@@ -280,9 +337,13 @@ A public part such as a button <code>label</code> should preferably bind to an a
 Likewise, the existence of a visual asset near a dynamic public surface must not be interpreted as semantic ownership of that surface by the asset layer.
 </p>
 
+<p>
+When multiple compatible embodiment variants exist for the same class, their resource inventories may differ, but the published part meaning and the family-level publication rules must remain stable.
+</p>
+
 <hr/>
 
-<h2 id="shared-fallback-posture">8. Shared Fallback Posture</h2>
+<h2 id="shared-fallback-posture">9. Shared Fallback Posture</h2>
 
 <p>
 If a specialized state resource is unavailable, a conforming realization MAY fall back to:
@@ -318,9 +379,19 @@ The family-level expectation is:
   <li>structural or placement fallback should remain visible in <code>part_bindings</code> or equivalent placement publication.</li>
 </ul>
 
+<p>
+If one embodiment variant cannot be realized exactly, a host MAY fall back to another compatible embodiment variant of the same class, provided that:
+</p>
+
+<ul>
+  <li>no class-level semantic drift occurs,</li>
+  <li>the published part meaning remains preserved,</li>
+  <li>the fallback does not imply a new implicit class contract.</li>
+</ul>
+
 <hr/>
 
-<h2 id="shared-host-expectations">9. Shared Host Expectations</h2>
+<h2 id="shared-host-expectations">10. Shared Host Expectations</h2>
 
 <p>
 A host interpreting the default family SHOULD preserve at least:
@@ -349,9 +420,14 @@ A host MAY approximate the family when exact resources are unavailable, but it s
 In particular, hosts should remain able to consume the same published realization contract across Python, Rust, and C/C++ runtime families without one host implementation becoming the only place where the real realization logic can be understood.
 </p>
 
+<p>
+Hosts MAY choose among compatible family-supported embodiment variants when the relevant per-widget realization posture allows it.
+That choice remains valid only if published class meaning and realization inspectability remain preserved.
+</p>
+
 <hr/>
 
-<h2 id="documents-in-this-family">10. Documents in this Family</h2>
+<h2 id="documents-in-this-family">11. Documents in this Family</h2>
 
 <ul>
   <li><code>Readme.md</code> — family-level posture for the official <code>Default</code> realization family</li>
@@ -370,7 +446,7 @@ In particular, hosts should remain able to consume the same published realizatio
 
 <hr/>
 
-<h2 id="summary">11. Summary</h2>
+<h2 id="summary">12. Summary</h2>
 
 <p>
 The <code>Default</code> family is the first official realization family for the intrinsic standardized widget baseline.
@@ -399,3 +475,7 @@ Its preferred family-wide architecture is:
   <li>resource and asset publication for concrete embodiment support,</li>
   <li>portable runtime interpretation without semantic ownership drift.</li>
 </ul>
+
+<p>
+Within that architecture, compatible visible embodiment variants may coexist inside the same realization family as long as they remain realization choices rather than hidden class splits.
+</p>
