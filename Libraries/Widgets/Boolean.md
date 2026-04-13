@@ -17,14 +17,15 @@
   <li><a href="#overview">1. Overview</a></li>
   <li><a href="#classes-defined-here">2. Classes Defined Here</a></li>
   <li><a href="#common-family-posture">3. Common Family Posture</a></li>
-  <li><a href="#frogwidgetsboolean_control">4. <code>frog.widgets.boolean_control</code></a></li>
-  <li><a href="#frogwidgetsboolean_indicator">5. <code>frog.widgets.boolean_indicator</code></a></li>
-  <li><a href="#common-parts">6. Common Parts</a></li>
-  <li><a href="#common-behavior-expectations">7. Common Behavior Expectations</a></li>
-  <li><a href="#common-realization-expectations">8. Common Realization Expectations</a></li>
-  <li><a href="#diagram-interaction-posture">9. Diagram Interaction Posture</a></li>
-  <li><a href="#validation-expectations">10. Validation Expectations</a></li>
-  <li><a href="#summary">11. Summary</a></li>
+  <li><a href="#realization-variant-posture">4. Realization Variant Posture</a></li>
+  <li><a href="#frogwidgetsboolean_control">5. <code>frog.widgets.boolean_control</code></a></li>
+  <li><a href="#frogwidgetsboolean_indicator">6. <code>frog.widgets.boolean_indicator</code></a></li>
+  <li><a href="#common-parts">7. Common Parts</a></li>
+  <li><a href="#common-behavior-expectations">8. Common Behavior Expectations</a></li>
+  <li><a href="#common-realization-expectations">9. Common Realization Expectations</a></li>
+  <li><a href="#diagram-interaction-posture">10. Diagram Interaction Posture</a></li>
+  <li><a href="#validation-expectations">11. Validation Expectations</a></li>
+  <li><a href="#summary">12. Summary</a></li>
 </ul>
 
 <hr/>
@@ -106,14 +107,38 @@ The boolean family also follows an important architectural rule:
 
 <p>
 This means the intrinsic core standardizes one boolean family, not one fixed visual embodiment.
-Checkbox-like, switch-like, LED-like, and similar host embodiments are realization strategies unless promoted later into separate explicit widget classes.
+Checkbox-like, switch-like, LED-like, and similar host embodiments are realization strategies unless promoted later into separate explicit widget classes with distinct public semantics.
 </p>
 
 <hr/>
 
-<h2 id="frogwidgetsboolean_control">4. <code>frog.widgets.boolean_control</code></h2>
+<h2 id="realization-variant-posture">4. Realization Variant Posture</h2>
 
-<h3>4.1 Class identity</h3>
+<p>
+The intrinsic boolean baseline does not split checkbox-like and switch-like embodiments into separate standard classes.
+Such differences belong to realization unless a later standardized class introduces a genuinely distinct public contract.
+</p>
+
+<p>
+Accordingly:
+</p>
+
+<ul>
+  <li>a switch-like embodiment is, by default, a realization variant of <code>frog.widgets.boolean_control</code>,</li>
+  <li>a checkbox-like embodiment is, by default, a realization variant of <code>frog.widgets.boolean_control</code>,</li>
+  <li>a LED-like embodiment is, by default, a realization variant of <code>frog.widgets.boolean_indicator</code> or <code>frog.widgets.boolean_control</code> depending on interaction posture.</li>
+</ul>
+
+<p>
+A future class such as a switch-specific standardized widget should only be introduced if it contributes more than visual style.
+That would require distinct public semantics, distinct stable members, distinct methods or events, or another class-level contract difference that cannot be reduced to realization choice alone.
+</p>
+
+<hr/>
+
+<h2 id="frogwidgetsboolean_control">5. <code>frog.widgets.boolean_control</code></h2>
+
+<h3>5.1 Class identity</h3>
 
 <ul>
   <li><strong>class_id:</strong> <code>frog.widgets.boolean_control</code></li>
@@ -121,7 +146,7 @@ Checkbox-like, switch-like, LED-like, and similar host embodiments are realizati
   <li><strong>compatible role:</strong> <code>control</code></li>
 </ul>
 
-<h3>4.2 Primary value posture</h3>
+<h3>5.2 Primary value posture</h3>
 
 <ul>
   <li>primary value: present</li>
@@ -132,7 +157,7 @@ Checkbox-like, switch-like, LED-like, and similar host embodiments are realizati
   <li>mirrored property: <code>value</code></li>
 </ul>
 
-<h3>4.3 Standard properties</h3>
+<h3>5.3 Standard properties</h3>
 
 <ul>
   <li><code>value</code> — readable and writable</li>
@@ -146,7 +171,7 @@ These properties define the minimum public object surface of the intrinsic boole
 They do not expose realization-private anchors, state maps, skin layers, glow helpers, or toolkit-private interaction internals as if they were public class members.
 </p>
 
-<h3>4.4 Standard methods</h3>
+<h3>5.4 Standard methods</h3>
 
 <ul>
   <li><code>focus()</code></li>
@@ -160,7 +185,7 @@ The baseline method surface is intentionally small.
 It exists to guarantee that the boolean control remains a real object with a minimal action surface rather than a bare true/false glyph.
 </p>
 
-<h3>4.5 Standard events</h3>
+<h3>5.5 Standard events</h3>
 
 <ul>
   <li><code>value_changed</code></li>
@@ -175,7 +200,7 @@ The <code>pressed</code> and <code>released</code> events are interaction events
 They do not redefine the semantic boolean value itself.
 </p>
 
-<h3>4.6 Standard parts</h3>
+<h3>5.6 Standard parts</h3>
 
 <ul>
   <li><code>root</code></li>
@@ -192,9 +217,9 @@ Its visual placement and embodiment belong to realization.
 
 <hr/>
 
-<h2 id="frogwidgetsboolean_indicator">5. <code>frog.widgets.boolean_indicator</code></h2>
+<h2 id="frogwidgetsboolean_indicator">6. <code>frog.widgets.boolean_indicator</code></h2>
 
-<h3>5.1 Class identity</h3>
+<h3>6.1 Class identity</h3>
 
 <ul>
   <li><strong>class_id:</strong> <code>frog.widgets.boolean_indicator</code></li>
@@ -202,7 +227,7 @@ Its visual placement and embodiment belong to realization.
   <li><strong>compatible role:</strong> <code>indicator</code></li>
 </ul>
 
-<h3>5.2 Primary value posture</h3>
+<h3>6.2 Primary value posture</h3>
 
 <ul>
   <li>primary value: present</li>
@@ -213,7 +238,7 @@ Its visual placement and embodiment belong to realization.
   <li>mirrored property: <code>value</code></li>
 </ul>
 
-<h3>5.3 Standard properties</h3>
+<h3>6.3 Standard properties</h3>
 
 <ul>
   <li><code>value</code> — readable and writable for diagram/runtime update surfaces where legal</li>
@@ -226,14 +251,14 @@ The indicator remains a real object even though it is display-oriented.
 Its public surface is intentionally smaller than that of the control.
 </p>
 
-<h3>5.4 Standard methods</h3>
+<h3>6.4 Standard methods</h3>
 
 <ul>
   <li><code>focus()</code> when supported by the host</li>
   <li><code>reset_to_default()</code> when a default boolean value exists and the active class posture exposes it</li>
 </ul>
 
-<h3>5.5 Standard events</h3>
+<h3>6.5 Standard events</h3>
 
 <ul>
   <li><code>value_rendered</code></li>
@@ -241,7 +266,7 @@ Its public surface is intentionally smaller than that of the control.
   <li><code>focus_lost</code></li>
 </ul>
 
-<h3>5.6 Standard parts</h3>
+<h3>6.6 Standard parts</h3>
 
 <ul>
   <li><code>root</code></li>
@@ -257,7 +282,7 @@ It is not merely a decorative skin region.
 
 <hr/>
 
-<h2 id="common-parts">6. Common Parts</h2>
+<h2 id="common-parts">7. Common Parts</h2>
 
 <p>
 The boolean family uses the following common stable parts:
@@ -281,7 +306,7 @@ This distinction is important:
 
 <hr/>
 
-<h2 id="common-behavior-expectations">7. Common Behavior Expectations</h2>
+<h2 id="common-behavior-expectations">8. Common Behavior Expectations</h2>
 
 <p>
 The intrinsic behavior baseline of the boolean family includes at least:
@@ -313,7 +338,7 @@ They do not automatically redefine the boolean value itself.
 
 <hr/>
 
-<h2 id="common-realization-expectations">8. Common Realization Expectations</h2>
+<h2 id="common-realization-expectations">9. Common Realization Expectations</h2>
 
 <p>
 A conforming realization of the boolean family SHOULD provide:
@@ -335,15 +360,20 @@ In particular:
 </p>
 
 <ul>
-  <li>realization MAY define composed visual states such as normal_true or pressed_false,</li>
+  <li>realization MAY define composed visual states such as <code>normal_true</code> or <code>pressed_false</code>,</li>
   <li>realization MAY define decorative frames, state assets, skins, or focus layers,</li>
   <li>realization MUST NOT redefine the semantic owner of <code>value</code> or <code>label.text</code>,</li>
   <li>realization MUST NOT make baked check marks, host-private LED state, or decorative assets the only semantic source of visible boolean meaning.</li>
 </ul>
 
+<p>
+Switch-like realization is explicitly allowed here as a realization strategy of <code>frog.widgets.boolean_control</code>.
+That realization choice does not by itself create a new standard class.
+</p>
+
 <hr/>
 
-<h2 id="diagram-interaction-posture">9. Diagram Interaction Posture</h2>
+<h2 id="diagram-interaction-posture">10. Diagram Interaction Posture</h2>
 
 <p>
 The boolean family supports:
@@ -378,7 +408,7 @@ Realization-only anchors, state maps, resource layers, focus helpers, and asset 
 
 <hr/>
 
-<h2 id="validation-expectations">10. Validation Expectations</h2>
+<h2 id="validation-expectations">11. Validation Expectations</h2>
 
 <p>
 Validators SHOULD diagnose at least:
@@ -389,12 +419,13 @@ Validators SHOULD diagnose at least:
   <li>role/class mismatches,</li>
   <li>attempts to write user-edit surfaces on indicator-only classes where forbidden,</li>
   <li>unknown boolean family members or parts,</li>
-  <li>attempts to treat realization-only state composition or placement surfaces as public class members by default.</li>
+  <li>attempts to treat realization-only state composition or placement surfaces as public class members by default,</li>
+  <li>attempts to treat a switch-like embodiment as a distinct intrinsic class without an explicitly published class contract.</li>
 </ul>
 
 <hr/>
 
-<h2 id="summary">11. Summary</h2>
+<h2 id="summary">12. Summary</h2>
 
 <p>
 The boolean widget family defines the intrinsic standardized true/false widget baseline of FROG:
@@ -408,4 +439,8 @@ The boolean widget family defines the intrinsic standardized true/false widget b
 <p>
 These classes provide the standard portable boolean interaction and display surfaces of the minimal widget core.
 They expose a real minimal object surface with properties, methods, events, and parts while keeping realization ownership and runtime-private embodiment clearly separated from class meaning.
+</p>
+
+<p>
+In this baseline, switch-like, checkbox-like, and LED-like embodiments remain realization variants unless a future specification publishes a distinct class with genuinely distinct public semantics.
 </p>
