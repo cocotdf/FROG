@@ -53,6 +53,12 @@ The standard numeric family is therefore defined here as a real object surface w
   <li>a stable public part model for realization targeting.</li>
 </ul>
 
+<p>
+This family must also be read together with the shared widget styling and realization-selection posture of FROG.
+Numeric widgets are intrinsic standard classes with portable public surfaces.
+They are not runtime-private editor shells hidden behind a standard name.
+</p>
+
 <hr/>
 
 <h2 id="classes-defined-here">2. Classes Defined Here</h2>
@@ -100,6 +106,11 @@ The family also follows an important architectural rule:
   <li>the visual embodiment of the displayed or edited numeric surface belongs downstream to realization.</li>
 </ul>
 
+<p>
+The family is therefore not defined by one host widget shape.
+Box-like editors, spinbox-like editors, compact readouts, and host-native field variants remain realization choices unless a later specification publishes a genuinely distinct numeric class contract.
+</p>
+
 <hr/>
 
 <h2 id="common-styling-and-skin-customization">4. Common Styling and Skin Customization</h2>
@@ -145,8 +156,21 @@ When exposed, the preferred portable style surfaces include:
 </ul>
 
 <p>
-Family-specific style surfaces MAY later add numeric-specific controls such as value alignment or emphasis posture, but the intrinsic baseline keeps the portable style surface intentionally small.
+Family-specific style surfaces MAY later add numeric-specific controls such as value alignment, sign emphasis, or display density posture, but the intrinsic baseline keeps the portable style surface intentionally small.
 </p>
+
+<p>
+These public surfaces influence how the existing numeric class is embodied.
+They MUST NOT silently redefine:
+</p>
+
+<ul>
+  <li>the meaning of <code>value</code>,</li>
+  <li>the meaning of <code>label.text</code>,</li>
+  <li>the editable-versus-indicator distinction,</li>
+  <li>the public numeric part model,</li>
+  <li>the public numeric method or event inventory.</li>
+</ul>
 
 <hr/>
 
@@ -188,7 +212,7 @@ Family-specific style surfaces MAY later add numeric-specific controls such as v
 
 <p>
 These properties define the minimum public object surface of the intrinsic numeric control.
-They do not expose realization-private anchors, text regions, layer maps, caret internals, or toolkit-private editor handles as if they were public numeric members.
+They do not expose realization-private anchors, text regions, layer maps, caret internals, selection internals, or toolkit-private editor handles as if they were public numeric members.
 </p>
 
 <h3>5.4 Standard methods</h3>
@@ -199,6 +223,11 @@ They do not expose realization-private anchors, text regions, layer maps, caret 
   <li><code>decrement()</code> when the active realization exposes decrement interaction</li>
   <li><code>reset_to_default()</code> when a default value exists</li>
 </ul>
+
+<p>
+The baseline method surface is intentionally small.
+It exists so that the numeric control remains a real object with a usable action surface rather than only a passive text field façade.
+</p>
 
 <h3>5.5 Standard events</h3>
 
@@ -220,6 +249,11 @@ They do not expose realization-private anchors, text regions, layer maps, caret 
   <li><code>decrement_button</code> when the active realization exposes it</li>
   <li><code>frame</code> when present</li>
 </ul>
+
+<p>
+These parts are stable public realization targets.
+They do not force one host toolkit structure or one skin decomposition.
+</p>
 
 <hr/>
 
@@ -256,6 +290,11 @@ They do not expose realization-private anchors, text regions, layer maps, caret 
   <li><code>realization.skin_id</code> when realization selection is publicly exposed</li>
 </ul>
 
+<p>
+The indicator remains a real object even though it is display-oriented.
+Its public surface is intentionally smaller than that of the numeric control.
+</p>
+
 <h3>6.4 Standard methods</h3>
 
 <ul>
@@ -279,6 +318,11 @@ They do not expose realization-private anchors, text regions, layer maps, caret 
   <li><code>value_display</code></li>
   <li><code>frame</code> when present</li>
 </ul>
+
+<p>
+The <code>value_display</code> part remains a public dynamic display surface.
+It is not merely a decorative skin region.
+</p>
 
 <hr/>
 
@@ -336,6 +380,11 @@ The family also preserves the distinction between:
   <li>downstream visual embodiment owned by realization.</li>
 </ul>
 
+<p>
+Realization-side styling, skinning, and embodiment selection may change visible chrome, typography defaults, framing, and step-button posture.
+They do not change the semantic owner of numeric data.
+</p>
+
 <hr/>
 
 <h2 id="common-realization-expectations">9. Common Realization Expectations</h2>
@@ -353,7 +402,7 @@ A conforming realization of the numeric family SHOULD provide:
 </ul>
 
 <p>
-The realization MAY be SVG-backed, host-native, or toolkit-driven.
+The realization MAY be SVG-backed, host-native, toolkit-driven, template-driven, or mixed.
 It MUST NOT change the published class meaning.
 </p>
 
@@ -406,6 +455,10 @@ Typical legal object-style surfaces include:
   <li>realization-selection members when publicly exposed</li>
 </ul>
 
+<p>
+Realization-only anchors, text regions, asset layers, editor internals, and skin-private support structures remain outside the public numeric class surface unless explicitly standardized elsewhere.
+</p>
+
 <hr/>
 
 <h2 id="validation-expectations">11. Validation Expectations</h2>
@@ -421,7 +474,7 @@ Validators SHOULD diagnose at least:
   <li>access to unknown numeric family members,</li>
   <li>attempts to write control-only or indicator-only surfaces where forbidden,</li>
   <li>inconsistent bound declarations such as minimum greater than maximum,</li>
-  <li>attempts to address realization-only anchors, text regions, or editing internals through <code>frog.ui.*</code> as if they were public members,</li>
+  <li>attempts to address realization-only anchors, text regions, editing internals, or skin-private support layers through <code>frog.ui.*</code> as if they were public members,</li>
   <li>attempts to use styling or skin-selection surfaces to imply a distinct numeric class contract without explicit class publication.</li>
 </ul>
 
