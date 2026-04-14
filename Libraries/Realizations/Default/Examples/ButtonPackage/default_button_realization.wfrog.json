@@ -128,7 +128,8 @@
       "fallbacks": {
         "disabled": "normal",
         "focused": "normal",
-        "pressed": "normal"
+        "pressed": "normal",
+        "label": "host_centered_text_region"
       },
       "host_hints": {
         "supports_host_focus_ring": true,
