@@ -52,6 +52,12 @@ The standard string family is therefore defined here as a real object surface wi
   <li>a stable public part model for realization targeting.</li>
 </ul>
 
+<p>
+This family must also be read together with the shared widget styling and realization-selection posture of FROG.
+String widgets are intrinsic standard classes with portable public surfaces.
+They are not runtime-private text-editor shells hidden behind a standard name.
+</p>
+
 <hr/>
 
 <h2 id="classes-defined-here">2. Classes Defined Here</h2>
@@ -85,7 +91,7 @@ The string family has the following common posture:
 
 <p>
 This intrinsic baseline is single-value text oriented.
-It does not attempt to standardize a full rich-text, multi-line code editor, terminal-like widget, or document-layout widget surface.
+It does not attempt to standardize a full rich-text editor, code editor, terminal-like widget, document-layout widget, or full text-processing surface in the intrinsic core.
 </p>
 
 <p>
@@ -98,6 +104,11 @@ The family also follows an important architectural rule:
   <li><code>text_display</code> is a stable public dynamic part,</li>
   <li>the visual embodiment of the displayed or edited text belongs downstream to realization.</li>
 </ul>
+
+<p>
+The family is therefore not defined by one host widget shape.
+Single-line editors, multi-line editors, compact viewers, and scrollable text views remain realization choices unless a later specification publishes a genuinely distinct string class contract.
+</p>
 
 <hr/>
 
@@ -143,6 +154,23 @@ When exposed, the preferred portable style surfaces include:
   <li><code>realization.skin_id</code></li>
 </ul>
 
+<p>
+Family-specific style surfaces MAY later add string-specific controls such as placeholder styling, wrapping posture, or text emphasis posture, but the intrinsic baseline keeps the portable style surface intentionally small.
+</p>
+
+<p>
+These public surfaces influence how the existing string class is embodied.
+They MUST NOT silently redefine:
+</p>
+
+<ul>
+  <li>the meaning of <code>value</code>,</li>
+  <li>the meaning of <code>label.text</code>,</li>
+  <li>the editable-versus-indicator distinction,</li>
+  <li>the public string part model,</li>
+  <li>the public string method or event inventory.</li>
+</ul>
+
 <hr/>
 
 <h2 id="frogwidgetsstring_control">5. <code>frog.widgets.string_control</code></h2>
@@ -169,10 +197,10 @@ When exposed, the preferred portable style surfaces include:
 <h3>5.3 Standard properties</h3>
 
 <ul>
-  <li><code>value</code></li>
-  <li><code>label.text</code></li>
-  <li><code>interaction.enabled</code></li>
-  <li><code>interaction.visible</code></li>
+  <li><code>value</code> — readable and writable</li>
+  <li><code>label.text</code> — readable and writable</li>
+  <li><code>interaction.enabled</code> — readable and writable</li>
+  <li><code>interaction.visible</code> — readable and writable</li>
   <li><code>placeholder.text</code> when supported by the realization and exposed by the class posture</li>
   <li><code>format.max_length</code> when supported by the class posture</li>
   <li>portable <code>style.*</code> surfaces when exposed by the class or active profile</li>
@@ -181,6 +209,11 @@ When exposed, the preferred portable style surfaces include:
   <li><code>realization.skin_id</code> when realization selection is publicly exposed</li>
 </ul>
 
+<p>
+These properties define the minimum public object surface of the intrinsic string control.
+They do not expose realization-private anchors, text regions, caret internals, selection internals, wrapping internals, scroll internals, or toolkit-private editor handles as if they were public string members.
+</p>
+
 <h3>5.4 Standard methods</h3>
 
 <ul>
@@ -188,6 +221,11 @@ When exposed, the preferred portable style surfaces include:
   <li><code>clear()</code></li>
   <li><code>reset_to_default()</code> when a default exists</li>
 </ul>
+
+<p>
+The baseline method surface is intentionally small.
+It exists so that the string control remains a real object with a usable action surface rather than only a passive host text field façade.
+</p>
 
 <h3>5.5 Standard events</h3>
 
@@ -205,12 +243,17 @@ When exposed, the preferred portable style surfaces include:
   <li><code>root</code></li>
   <li><code>label</code></li>
   <li><code>text_display</code></li>
-  <li><code>frame</code></li>
+  <li><code>frame</code> when present</li>
 </ul>
+
+<p>
+These parts are stable public realization targets.
+They do not force one host toolkit structure or one skin decomposition.
+</p>
 
 <hr/>
 
-<h2 id="frogwidgetsstring_indicator">6. <code>frog.widgets.string_indicator</code></a></h2>
+<h2 id="frogwidgetsstring_indicator">6. <code>frog.widgets.string_indicator</code></h2>
 
 <h3>6.1 Class identity</h3>
 
@@ -234,14 +277,19 @@ When exposed, the preferred portable style surfaces include:
 <h3>6.3 Standard properties</h3>
 
 <ul>
-  <li><code>value</code></li>
-  <li><code>label.text</code></li>
-  <li><code>interaction.visible</code></li>
+  <li><code>value</code> — readable and writable for diagram/runtime update surfaces where legal</li>
+  <li><code>label.text</code> — readable and writable</li>
+  <li><code>interaction.visible</code> — readable and writable</li>
   <li>portable <code>style.*</code> surfaces when exposed by the class or active profile</li>
   <li><code>realization.family</code> when realization selection is publicly exposed</li>
   <li><code>realization.variant</code> when realization selection is publicly exposed</li>
   <li><code>realization.skin_id</code> when realization selection is publicly exposed</li>
 </ul>
+
+<p>
+The indicator remains a real object even though it is display-oriented.
+Its public surface is intentionally smaller than that of the string control.
+</p>
 
 <h3>6.4 Standard methods</h3>
 
@@ -264,8 +312,13 @@ When exposed, the preferred portable style surfaces include:
   <li><code>root</code></li>
   <li><code>label</code></li>
   <li><code>text_display</code></li>
-  <li><code>frame</code></li>
+  <li><code>frame</code> when present</li>
 </ul>
+
+<p>
+The <code>text_display</code> part remains a public dynamic display surface.
+It is not merely a decorative skin region.
+</p>
 
 <hr/>
 
@@ -279,7 +332,7 @@ The string family uses the following common stable parts:
   <li><code>root</code></li>
   <li><code>label</code></li>
   <li><code>text_display</code></li>
-  <li><code>frame</code></li>
+  <li><code>frame</code> when present</li>
 </ul>
 
 <p>
@@ -319,6 +372,11 @@ The family also preserves the distinction between:
   <li>downstream visual embodiment owned by realization.</li>
 </ul>
 
+<p>
+Realization-side styling, skinning, and embodiment selection may change visible chrome, framing, typography defaults, placeholder posture, and scroll or wrapping posture.
+They do not change the semantic owner of string data.
+</p>
+
 <hr/>
 
 <h2 id="common-realization-expectations">9. Common Realization Expectations</h2>
@@ -333,6 +391,11 @@ A conforming realization of the string family SHOULD provide:
   <li>visual distinction between control and indicator postures,</li>
   <li>part-to-visual mapping for the published parts.</li>
 </ul>
+
+<p>
+The realization MAY be SVG-backed, host-native, toolkit-driven, template-driven, or mixed.
+It MUST NOT change the published class meaning.
+</p>
 
 <p>
 In particular:
@@ -362,6 +425,11 @@ The string family supports:
 </ul>
 
 <p>
+When the program intent is ordinary text dataflow, the natural value path SHOULD be preferred.
+Object-style access remains available for richer widget interaction.
+</p>
+
+<p>
 Typical legal object-style surfaces include:
 </p>
 
@@ -376,6 +444,10 @@ Typical legal object-style surfaces include:
   <li>realization-selection members when publicly exposed</li>
 </ul>
 
+<p>
+Realization-only anchors, text regions, asset layers, caret internals, selection internals, wrapping internals, scroll internals, and skin-private support structures remain outside the public string class surface unless explicitly standardized elsewhere.
+</p>
+
 <hr/>
 
 <h2 id="validation-expectations">11. Validation Expectations</h2>
@@ -389,7 +461,7 @@ Validators SHOULD diagnose at least:
   <li>role/class mismatches,</li>
   <li>attempts to use unsupported members,</li>
   <li>attempts to treat placeholder presentation as the actual primary value,</li>
-  <li>attempts to address realization-only anchors, text regions, selection internals, or caret internals through <code>frog.ui.*</code> as if they were public members,</li>
+  <li>attempts to address realization-only anchors, text regions, selection internals, caret internals, wrapping internals, or scroll internals through <code>frog.ui.*</code> as if they were public members,</li>
   <li>attempts to use styling or skin-selection surfaces to imply a distinct string class contract without explicit class publication.</li>
 </ul>
 
