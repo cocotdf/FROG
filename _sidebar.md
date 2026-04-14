@@ -99,6 +99,7 @@
     - [Numeric](/Libraries/Widgets/Numeric.md)
     - [Path](/Libraries/Widgets/Path.md)
     - [String](/Libraries/Widgets/String.md)
+    - [Tab](/Libraries/Widgets/Tab.md)
     - [Table](/Libraries/Widgets/Table.md)
     - [Tree](/Libraries/Widgets/Tree.md)
 - [Profiles](/Profiles/Readme.md)

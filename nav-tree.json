@@ -709,6 +709,13 @@
                   "children": []
                 },
                 {
+                  "key": "libraries/widgets/tab.md",
+                  "title": "Tab",
+                  "path": "/Libraries/Widgets/Tab.md",
+                  "kind": "page",
+                  "children": []
+                },
+                {
                   "key": "libraries/widgets/table.md",
                   "title": "Table",
                   "path": "/Libraries/Widgets/Table.md",
@@ -2669,6 +2676,7 @@
     "/Libraries/Widgets/Numeric.md",
     "/Libraries/Widgets/Path.md",
     "/Libraries/Widgets/String.md",
+    "/Libraries/Widgets/Tab.md",
     "/Libraries/Widgets/Table.md",
     "/Libraries/Widgets/Tree.md",
     "/Libraries/Widgets/Readme.md",
