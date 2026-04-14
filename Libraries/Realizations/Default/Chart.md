@@ -16,14 +16,15 @@
 <ul>
   <li><a href="#overview">1. Overview</a></li>
   <li><a href="#target-class">2. Target Class</a></li>
-  <li><a href="#realized-parts">3. Realized Parts</a></li>
-  <li><a href="#standard-visual-states">4. Standard Visual States</a></li>
-  <li><a href="#part-state-mapping">5. Part-State Mapping</a></li>
-  <li><a href="#dynamic-surface-posture">6. Dynamic Surface Posture</a></li>
-  <li><a href="#resource-posture">7. Resource Posture</a></li>
-  <li><a href="#host-expectations">8. Host Expectations</a></li>
-  <li><a href="#fallback-posture">9. Fallback Posture</a></li>
-  <li><a href="#summary">10. Summary</a></li>
+  <li><a href="#realization-variant-posture">3. Realization Variant Posture</a></li>
+  <li><a href="#realized-parts">4. Realized Parts</a></li>
+  <li><a href="#standard-visual-states">5. Standard Visual States</a></li>
+  <li><a href="#part-state-mapping">6. Part-State Mapping</a></li>
+  <li><a href="#dynamic-surface-posture">7. Dynamic Surface Posture</a></li>
+  <li><a href="#resource-posture">8. Resource Posture</a></li>
+  <li><a href="#host-expectations">9. Host Expectations</a></li>
+  <li><a href="#fallback-posture">10. Fallback Posture</a></li>
+  <li><a href="#summary">11. Summary</a></li>
 </ul>
 
 <hr/>
@@ -36,17 +37,17 @@ This document defines the default official realization posture for <code>frog.wi
 
 <p>
 The default chart realization is intended to be minimal but credible.
-It provides a standard visual embodiment of the published chart parts without prematurely standardizing a complete plotting framework.
+It provides a standard visual embodiment of the published chart parts without prematurely standardizing a complete plotting framework or silently collapsing several graph families into one visual tradition.
 </p>
 
 <p>
 This realization is realization-side only.
 It does not redefine chart class law, does not invent new public chart members, and does not replace the semantic ownership of chart value, chart label text, axis visibility posture, or bounded visible history posture.
-Its job is to embody already-published chart surfaces through stable visual states, stable structural bindings, and realization-side placement or rendering metadata where needed.
+Its role is to embody already-published chart surfaces through stable visual states, stable structural bindings, and realization-side placement or rendering metadata where needed.
 </p>
 
 <p>
-The preferred architectural split is:
+The preferred realization-publication split is:
 </p>
 
 <ul>
@@ -77,12 +78,52 @@ This realization assumes the standardized chart posture in which:
 
 <p>
 The realization therefore owns embodiment and placement posture for the chart.
-It does not become the semantic owner of the chart value, label content, or axis meaning.
+It does not become the semantic owner of the chart value, label content, axis meaning, or visible-history semantics.
 </p>
 
 <hr/>
 
-<h2 id="realized-parts">3. Realized Parts</h2>
+<h2 id="realization-variant-posture">3. Realization Variant Posture</h2>
+
+<p>
+The default chart family standardizes one waveform-chart realization corridor, not one mandatory visible plotting style.
+</p>
+
+<p>
+Accordingly, a conforming realization MAY choose a chart embodiment posture such as:
+</p>
+
+<ul>
+  <li>retained-line-plot-like embodiment,</li>
+  <li>host-native chart-widget embodiment,</li>
+  <li>grid-heavy or grid-light chart chrome,</li>
+  <li>compact embedded chart embodiment,</li>
+  <li>another host-compatible waveform-chart embodiment.</li>
+</ul>
+
+<p>
+Those remain realization variants of the same published chart class.
+A different plotting style, axis chrome, grid density, or host-native plotting surface does not by itself define a new intrinsic widget class.
+</p>
+
+<p>
+This distinction is normative:
+</p>
+
+<ul>
+  <li>the class layer owns chart value semantics, public members, methods, events, and parts,</li>
+  <li>the realization layer owns how those published surfaces are visually embodied,</li>
+  <li>a realization-variant identifier is not a class identifier,</li>
+  <li>a runtime MUST NOT treat a different chart chrome or plotting style as if it were a distinct standard class unless a separate class contract is explicitly published elsewhere.</li>
+</ul>
+
+<p>
+For that reason, differences such as grid style, axis chrome, trace emphasis, or compact embedding belong here as realization strategy, not as implicit class-level semantic drift.
+</p>
+
+<hr/>
+
+<h2 id="realized-parts">4. Realized Parts</h2>
 
 <ul>
   <li><code>root</code></li>
@@ -95,7 +136,7 @@ It does not become the semantic owner of the chart value, label content, or axis
 </ul>
 
 <p>
-The realization may internally use additional layers, guides, clipping regions, grid surfaces, plot traces, axis label regions, or host-native plotting structures.
+The realization may internally use additional layers, guides, clipping regions, grid surfaces, trace layers, axis tick layers, axis label regions, or host-native plotting structures.
 Those remain realization-private support structures unless they are explicitly published as realization resources or placement surfaces.
 </p>
 
@@ -113,9 +154,15 @@ The default posture is:
   <li><code>frame</code> — optional border or focus-emphasis surface.</li>
 </ul>
 
+<p>
+A host-native chart realization MAY internally decompose the visible embodiment into renderer-specific trace layers, tick layers, viewport layers, or axis groups.
+Those remain realization-private unless explicitly published through a later realization-specific extension layer.
+The stable public chart part model remains centered on <code>plot_area</code>, axes-related parts, <code>label</code>, and optional <code>frame</code>.
+</p>
+
 <hr/>
 
-<h2 id="standard-visual-states">4. Standard Visual States</h2>
+<h2 id="standard-visual-states">5. Standard Visual States</h2>
 
 <p>
 The default chart realization defines at least:
@@ -136,9 +183,13 @@ They do not create new persistent chart-owned source state by themselves.
 The default family does not require a pressed-like posture for the chart baseline because the standardized chart is not a command-style control in the intrinsic baseline.
 </p>
 
+<p>
+A chart embodiment variant may use different grid emphasis, axis contrast, or focus chrome for these states, but it still remains bound to the same published chart state vocabulary unless an extended realization family explicitly publishes more specialized realization-only states.
+</p>
+
 <hr/>
 
-<h2 id="part-state-mapping">5. Part-State Mapping</h2>
+<h2 id="part-state-mapping">6. Part-State Mapping</h2>
 
 <p>
 The default family expects:
@@ -187,11 +238,21 @@ The default family SHOULD keep this mapping explicit enough that a machine-reada
   <li>dynamic host-rendered or host-updated chart surfaces.</li>
 </ul>
 
+<p>
+This distinction is important because <code>plot_area</code> is not merely decorative.
+It is the realized surface through which the current semantic chart value and bounded visible history become visible.
+</p>
+
+<p>
+In a host-native or compact chart realization, any internal sub-embodiment such as trace renderer, grid renderer, or viewport clipping helper remains subordinate to the published <code>plot_area</code> binding posture.
+It does not create new public parts by implication alone.
+</p>
+
 <hr/>
 
-<h2 id="dynamic-surface-posture">6. Dynamic Surface Posture</h2>
+<h2 id="dynamic-surface-posture">7. Dynamic Surface Posture</h2>
 
-<h3>6.1 Plot surface posture</h3>
+<h3>7.1 Plot surface posture</h3>
 
 <p>
 The <code>plot_area</code> part is not just a static decorative asset surface.
@@ -214,7 +275,7 @@ The realization owns how plotted history is visually embodied.
 It does not become the semantic owner of the chart value itself.
 </p>
 
-<h3>6.2 Axis posture</h3>
+<h3>7.2 Axis posture</h3>
 
 <p>
 The chart class owns the public existence of axis visibility surfaces such as <code>axes.x.visible</code> and <code>axes.y.visible</code>, and may also expose axis label and range posture when that class surface is active.
@@ -237,7 +298,7 @@ However, the intrinsic default posture does not require a full standardized axis
 It only requires that published axis surfaces remain inspectable and compatible with the class contract above them.
 </p>
 
-<h3>6.3 Label posture</h3>
+<h3>7.3 Label posture</h3>
 
 <p>
 The semantic chart label text is not owned by this realization.
@@ -253,7 +314,7 @@ The <code>label</code> part is therefore expected to be realized as a dynamic te
 A host interpreting this realization should render or inject the current semantic chart label into the realized label region at runtime.
 </p>
 
-<h3>6.4 Placement posture</h3>
+<h3>7.4 Placement posture</h3>
 
 <p>
 The default family SHOULD publish explicit placement surfaces for <code>label</code> and MAY publish explicit placement surfaces for axis labels when those surfaces are exposed by the chart posture.
@@ -285,7 +346,40 @@ Those realization-side structures do not change the public meaning of <code>labe
 They only specify where the host should visually place the corresponding text-bearing surfaces.
 </p>
 
-<h3>6.5 Asset limitation rule</h3>
+<h3>7.5 Plot-style posture as realization choice</h3>
+
+<p>
+A chart plotting style such as grid-light, grid-heavy, compact embedded, or host-native chart chrome remains an embodiment choice within the default waveform-chart family.
+Such a realization may use:
+</p>
+
+<ul>
+  <li>different grid density,</li>
+  <li>different axis chrome,</li>
+  <li>different trace emphasis,</li>
+  <li>compact or expanded frame posture,</li>
+  <li>host-native plotting affordance conventions.</li>
+</ul>
+
+<p>
+However, those embodiment choices remain realization-owned.
+They do not, by themselves, introduce:
+</p>
+
+<ul>
+  <li>a distinct intrinsic widget class,</li>
+  <li>new public chart semantics,</li>
+  <li>new mandatory public properties,</li>
+  <li>new mandatory public methods,</li>
+  <li>new mandatory public events.</li>
+</ul>
+
+<p>
+If a future specification standardizes a distinct graph family with genuinely different public behavior, that class would need its own explicit class law.
+Until then, plotting-style differences remain realization variants of <code>frog.widgets.waveform_chart</code>.
+</p>
+
+<h3>7.6 Asset limitation rule</h3>
 
 <p>
 A chart resource file MAY include decorative guides, placeholder text, preview traces, or design-time visual scaffolding.
@@ -298,7 +392,7 @@ Likewise, decorative axis marks, preview ticks, or placeholder traces must remai
 
 <hr/>
 
-<h2 id="resource-posture">7. Resource Posture</h2>
+<h2 id="resource-posture">8. Resource Posture</h2>
 
 <p>
 A typical resource posture may follow:
@@ -340,7 +434,7 @@ An equivalent package-oriented posture may publish resources such as:
 
 <p>
 Resources MAY be SVG-backed, host-native, toolkit-driven, or mixed.
-The default family standardizes the part posture, state posture, and realization-side binding posture, not one mandatory plotting engine or one mandatory file format.
+The default family standardizes the part posture, state posture, and realization-side binding posture, not one mandatory plotting engine and not one mandatory file format.
 </p>
 
 <p>
@@ -354,9 +448,13 @@ In particular:
   <li><code>frame</code>, when present, is a natural candidate for optional state-sensitive supporting resources.</li>
 </ul>
 
+<p>
+A grid-heavy, compact, or host-native embodiment may still publish its resources under the same chart realization corridor, as long as the published part meaning and state vocabulary remain preserved.
+</p>
+
 <hr/>
 
-<h2 id="host-expectations">8. Host Expectations</h2>
+<h2 id="host-expectations">9. Host Expectations</h2>
 
 <p>
 A host interpreting this realization SHOULD provide:
@@ -400,9 +498,14 @@ A host may use:
   <li>published anchors or text regions to render live text into the correct chart-associated surfaces.</li>
 </ul>
 
+<p>
+A host MAY choose a grid-light, grid-heavy, compact, or other compatible chart embodiment strategy.
+That choice is acceptable only if the public chart class meaning remains unchanged and the realization contract remains inspectable.
+</p>
+
 <hr/>
 
-<h2 id="fallback-posture">9. Fallback Posture</h2>
+<h2 id="fallback-posture">10. Fallback Posture</h2>
 
 <p>
 If specialized plot resources are unavailable, a runtime MAY use:
@@ -429,14 +532,20 @@ If focused or disabled frame-specific resources are unavailable, a host MAY fall
 </p>
 
 <p>
-Fallback is acceptable only if:
+If one chart embodiment variant cannot be realized exactly, a host MAY fall back to another compatible chart embodiment such as grid-light, compact, or host-native posture, provided that:
 </p>
 
 <ul>
+  <li>the published chart class meaning remains unchanged,</li>
   <li>the plot remains visibly chart-like,</li>
   <li>published public parts remain interpretable,</li>
-  <li>asset omission does not turn asset-baked data or asset-baked label text into semantic truth.</li>
+  <li>the fallback does not imply a new class-level contract.</li>
 </ul>
+
+<p>
+Any fallback MUST preserve the published chart class law and the meaning of the public parts when those parts are exposed.
+Fallback must not turn asset-baked data or asset-baked label text into semantic truth.
+</p>
 
 <p>
 Fallback must remain inspectable at the realization-publication layer.
@@ -445,7 +554,7 @@ It must not become a purely runtime-private convention.
 
 <hr/>
 
-<h2 id="summary">10. Summary</h2>
+<h2 id="summary">11. Summary</h2>
 
 <p>
 The default waveform chart realization defines one official minimal embodiment of <code>frog.widgets.waveform_chart</code> centered on plot, axis, label, and frame parts.
@@ -467,4 +576,8 @@ Its resources may provide geometry, skins, layers, and placement metadata.
 Its package publication may provide <code>state_maps</code> and <code>part_bindings</code>.
 Its host implementation may approximate the visuals when needed.
 But the realization never becomes the semantic owner of chart value, chart label text, axis meaning, or chart class meaning.
+</p>
+
+<p>
+In this realization family, grid-light, grid-heavy, compact, host-native, and similar visible embodiments remain realization variants unless a future specification publishes a distinct class with genuinely distinct public semantics.
 </p>
