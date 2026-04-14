@@ -23,14 +23,15 @@
   <li><a href="#target-class-declarations">7. Target Class Declarations</a></li>
   <li><a href="#realization-records">8. Realization Records</a></li>
   <li><a href="#realization-variant-publication">9. Realization-Variant Publication</a></li>
-  <li><a href="#resource-manifests">10. Resource Manifests</a></li>
-  <li><a href="#state-maps">11. State Maps</a></li>
-  <li><a href="#part-bindings">12. Part Bindings</a></li>
-  <li><a href="#anchor-and-text-region-publication">13. Anchor and Text-Region Publication</a></li>
-  <li><a href="#host-hints">14. Host Hints</a></li>
-  <li><a href="#minimal-json-outline">15. Minimal JSON Outline</a></li>
-  <li><a href="#validation-posture">16. Validation Posture</a></li>
-  <li><a href="#summary">17. Summary</a></li>
+  <li><a href="#skin-and-style-publication">10. Skin and Style Publication</a></li>
+  <li><a href="#resource-manifests">11. Resource Manifests</a></li>
+  <li><a href="#state-maps">12. State Maps</a></li>
+  <li><a href="#part-bindings">13. Part Bindings</a></li>
+  <li><a href="#anchor-and-text-region-publication">14. Anchor and Text-Region Publication</a></li>
+  <li><a href="#host-hints">15. Host Hints</a></li>
+  <li><a href="#minimal-json-outline">16. Minimal JSON Outline</a></li>
+  <li><a href="#validation-posture">17. Validation Posture</a></li>
+  <li><a href="#summary">18. Summary</a></li>
 </ul>
 
 <hr/>
@@ -53,6 +54,7 @@ The default-family package publishes realization-side information such as:
   <li>which widget classes are targeted,</li>
   <li>which realization records exist,</li>
   <li>which realization variants are available when the family allows them,</li>
+  <li>which skin or style-selection surfaces are supported when the family allows them,</li>
   <li>which parts are realized,</li>
   <li>which visual states are supported,</li>
   <li>which resources are available,</li>
@@ -80,7 +82,8 @@ Without this layer:
   <li>runtime families would lack a stable machine-readable realization target,</li>
   <li>assets would drift toward ad hoc organization,</li>
   <li>dynamic text-bearing parts would be at risk of collapsing into asset-only conventions,</li>
-  <li>compatible visible embodiment variants would drift into undocumented runtime-only choices.</li>
+  <li>compatible visible embodiment variants would drift into undocumented runtime-only choices,</li>
+  <li>bounded skin and style selection would drift into host-private conventions instead of inspectable publication.</li>
 </ul>
 
 <p>
@@ -118,7 +121,7 @@ Therefore:
 <ul>
   <li>the package MUST NOT redefine widget class law,</li>
   <li>the package MUST NOT create undocumented public widget members,</li>
-  <li>the package MAY publish realization variants, state maps, part bindings, anchor bindings, text-region bindings, and resource references,</li>
+  <li>the package MAY publish realization variants, skin-selection posture, style-token posture, state maps, part bindings, anchor bindings, text-region bindings, and resource references,</li>
   <li>the runtime MAY interpret or approximate the package while preserving class meaning.</li>
 </ul>
 
@@ -128,6 +131,11 @@ In particular, the package MAY publish where a public text-bearing part is visua
 
 <p>
 Likewise, the package MAY publish several compatible realization variants for the same standardized class, but it MUST NOT imply that each variant is a new widget class unless a distinct class contract is explicitly published elsewhere.
+</p>
+
+<p>
+The same rule applies to skins and style support:
+published skin selection or published style-token selection remains realization-owned unless a class document explicitly promotes a corresponding surface into public class law.
 </p>
 
 <hr/>
@@ -146,6 +154,7 @@ That package kind is appropriate because the package publishes:
   <li>reusable realization resources,</li>
   <li>reusable realization records,</li>
   <li>reusable realization variants,</li>
+  <li>reusable skin or style-token selection posture,</li>
   <li>reusable state mappings,</li>
   <li>reusable part bindings,</li>
   <li>reusable anchor and placement metadata,</li>
@@ -179,6 +188,8 @@ The package MAY also contain:
   <li><code>anchors</code>,</li>
   <li><code>text_regions</code>,</li>
   <li><code>host_hints</code>,</li>
+  <li><code>style_tokens</code>,</li>
+  <li><code>skins</code>,</li>
   <li><code>diagnostics</code>,</li>
   <li><code>examples</code>,</li>
   <li><code>fallbacks</code>.</li>
@@ -192,6 +203,7 @@ Implementations MAY choose a more structured internal encoding, but the publicat
   <li>target classes,</li>
   <li>realization identities,</li>
   <li>realization variants when applicable,</li>
+  <li>skin or style-token selections when applicable,</li>
   <li>state sets,</li>
   <li>part sets,</li>
   <li>resource inventories,</li>
@@ -298,6 +310,7 @@ A realization record MAY also identify:
 
 <ul>
   <li>variant publication,</li>
+  <li>skin publication,</li>
   <li>placement surfaces,</li>
   <li>state-specific resource groups,</li>
   <li>optional host-native substitution posture,</li>
@@ -392,7 +405,73 @@ may all remain package-published realization variants of one published standardi
 
 <hr/>
 
-<h2 id="resource-manifests">10. Resource Manifests</h2>
+<h2 id="skin-and-style-publication">10. Skin and Style Publication</h2>
+
+<p>
+When the default family allows compatible skin selection or bounded style-token selection, the package SHOULD publish those mechanisms explicitly rather than leaving them to runtime-private conventions.
+</p>
+
+<p>
+Skin selection remains realization-owned.
+It is not a class identifier.
+It is not a semantic override of widget law.
+</p>
+
+<p>
+A skin record SHOULD identify at least:
+</p>
+
+<ul>
+  <li>a stable skin identifier,</li>
+  <li>the parent realization or realization variant it applies to,</li>
+  <li>the target class,</li>
+  <li>the resource groups, token maps, or host hints it overrides or specializes,</li>
+  <li>the fallback posture when the requested skin is unavailable.</li>
+</ul>
+
+<p>
+Conceptually:
+</p>
+
+<pre><code>{
+  "id": "frog.realizations.default.button.skin.flat_blue",
+  "parent_realization": "frog.realizations.default.button",
+  "target_class": "frog.widgets.button",
+  "skin_id": "flat_blue"
+}</code></pre>
+
+<p>
+A skin MAY specialize:
+</p>
+
+<ul>
+  <li>resource references,</li>
+  <li>style-token maps,</li>
+  <li>default color tokens,</li>
+  <li>default border and emphasis tokens,</li>
+  <li>typography defaults when the realization publishes them,</li>
+  <li>host hints for compatible substitution.</li>
+</ul>
+
+<p>
+A skin MUST NOT by itself introduce:
+</p>
+
+<ul>
+  <li>a new widget class identifier,</li>
+  <li>new mandatory public widget members,</li>
+  <li>new public semantics for existing parts,</li>
+  <li>a hidden class split encoded as a visual-resource choice.</li>
+</ul>
+
+<p>
+Likewise, style-token publication remains realization support.
+It may help a host interpret public <code>style.*</code> surfaces or package-level defaults, but it does not by itself redefine the public meaning of those surfaces.
+</p>
+
+<hr/>
+
+<h2 id="resource-manifests">11. Resource Manifests</h2>
 
 <p>
 The package SHOULD publish explicit resource manifests.
@@ -408,7 +487,8 @@ Each resource manifest entry SHOULD identify:
   <li>the path,</li>
   <li>the target widget class or part when applicable,</li>
   <li>the target state when applicable,</li>
-  <li>the target realization variant when applicable.</li>
+  <li>the target realization variant when applicable,</li>
+  <li>the target skin when applicable.</li>
 </ul>
 
 <p>
@@ -421,6 +501,7 @@ Typical resource kinds include:
   <li><code>layer_map</code></li>
   <li><code>anchor_map</code></li>
   <li><code>text_region_map</code></li>
+  <li><code>style_token_map</code></li>
 </ul>
 
 <p>
@@ -430,7 +511,7 @@ It does not, by itself, declare how a host should interpret public widget semant
 
 <hr/>
 
-<h2 id="state-maps">11. State Maps</h2>
+<h2 id="state-maps">12. State Maps</h2>
 
 <p>
 The package SHOULD define explicit state maps rather than relying on filename conventions alone.
@@ -494,7 +575,7 @@ It does not create a new class contract.
 
 <hr/>
 
-<h2 id="part-bindings">12. Part Bindings</h2>
+<h2 id="part-bindings">13. Part Bindings</h2>
 
 <p>
 The package SHOULD define explicit part bindings.
@@ -545,7 +626,7 @@ That specialization changes embodiment posture, not public part meaning.
 
 <hr/>
 
-<h2 id="anchor-and-text-region-publication">13. Anchor and Text-Region Publication</h2>
+<h2 id="anchor-and-text-region-publication">14. Anchor and Text-Region Publication</h2>
 
 <p>
 The default realization package SHOULD make anchor or text-region publication explicit whenever a public part is dynamically rendered by the host rather than fully baked into a single visual asset.
@@ -562,7 +643,7 @@ This is especially important for parts such as:
   <li>chart plot or axis label regions when those are realization-published.</li>
 </ul>
 
-<h3>13.1 Publication purpose</h3>
+<h3>14.1 Publication purpose</h3>
 
 <p>
 Anchor and text-region publication exists to make realization-side placement inspectable.
@@ -570,7 +651,7 @@ It defines where the host should place or render a dynamic part.
 It does not redefine the semantic owner of the data shown there.
 </p>
 
-<h3>13.2 Typical anchor entry</h3>
+<h3>14.2 Typical anchor entry</h3>
 
 <p>
 A typical anchor-oriented publication may identify:
@@ -607,7 +688,7 @@ Conceptually:
   }
 }</code></pre>
 
-<h3>13.3 Button-specific posture</h3>
+<h3>14.3 Button-specific posture</h3>
 
 <p>
 For <code>frog.widgets.button</code>, the package SHOULD make it possible to express the following distinction cleanly:
@@ -632,7 +713,7 @@ That publication posture helps preserve the architectural separation between:
 
 <hr/>
 
-<h2 id="host-hints">14. Host Hints</h2>
+<h2 id="host-hints">15. Host Hints</h2>
 
 <p>
 The package MAY define host-facing hints.
@@ -648,7 +729,8 @@ Typical host hints include:
   <li>preferred density buckets,</li>
   <li>optional accessibility hints,</li>
   <li>preferred host-native substitution posture,</li>
-  <li>preferred realization variant when several compatible variants exist.</li>
+  <li>preferred realization variant when several compatible variants exist,</li>
+  <li>preferred skin fallback when the requested skin is unavailable.</li>
 </ul>
 
 <p>
@@ -657,7 +739,7 @@ Such hints remain non-authoritative with respect to public widget law.
 
 <hr/>
 
-<h2 id="minimal-json-outline">15. Minimal JSON Outline</h2>
+<h2 id="minimal-json-outline">16. Minimal JSON Outline</h2>
 
 <pre><code>{
   "wfrog_version": "1",
@@ -701,6 +783,12 @@ Such hints remain non-authoritative with respect to public widget law.
         {
           "id": "frog.realizations.default.button.standard",
           "variant": "standard"
+        }
+      ],
+      "skins": [
+        {
+          "id": "frog.realizations.default.button.skin.default",
+          "skin_id": "default"
         }
       ],
       "part_bindings": [
@@ -759,7 +847,8 @@ Such hints remain non-authoritative with respect to public widget law.
       "fallbacks": {
         "focused": "host_native_focus_ring",
         "pressed": "host_native_pressed_posture",
-        "label": "host_centered_text_region"
+        "label": "host_centered_text_region",
+        "skin": "default"
       }
     }
   ],
@@ -803,6 +892,13 @@ Such hints remain non-authoritative with respect to public widget law.
       "target_class": "frog.widgets.button",
       "target_part": "label",
       "role": "text_anchor"
+    },
+    {
+      "id": "button.default.style_token_map",
+      "kind": "style_token_map",
+      "path": "./assets/button/tokens/default.json",
+      "target_class": "frog.widgets.button",
+      "role": "style_tokens"
     }
   ],
   "anchors": [
@@ -820,7 +916,7 @@ Such hints remain non-authoritative with respect to public widget law.
 
 <hr/>
 
-<h2 id="validation-posture">16. Validation Posture</h2>
+<h2 id="validation-posture">17. Validation Posture</h2>
 
 <p>
 Validators SHOULD diagnose at least:
@@ -829,6 +925,7 @@ Validators SHOULD diagnose at least:
 <ul>
   <li>realization records that target undeclared widget classes,</li>
   <li>variant records that imply a new class split without a corresponding published class contract,</li>
+  <li>skin records that imply semantic divergence instead of realization-side customization,</li>
   <li>part bindings that reference non-published parts,</li>
   <li>state maps that reference undeclared states,</li>
   <li>resource records whose paths do not correspond to published assets,</li>
@@ -845,12 +942,13 @@ Validation SHOULD also check internal coherence between:
   <li>the asset tree,</li>
   <li>the state-mapping posture,</li>
   <li>the published part model,</li>
-  <li>the declared realization variants and the resources they specialize.</li>
+  <li>the declared realization variants and the resources they specialize,</li>
+  <li>the declared skins or style-token maps and the resources they specialize.</li>
 </ul>
 
 <hr/>
 
-<h2 id="summary">17. Summary</h2>
+<h2 id="summary">18. Summary</h2>
 
 <p>
 The default realization package exists to make the official realization family machine-readable without collapsing widget law into resources or runtime code.
@@ -863,6 +961,7 @@ Its preferred publication posture is:
 <ul>
   <li>explicit realization records,</li>
   <li>explicit realization-variant records when embodiment choices are published,</li>
+  <li>explicit skin or style-token publication when customization choices are published,</li>
   <li>explicit resource manifests,</li>
   <li>explicit state maps for state-sensitive visual embodiment,</li>
   <li>explicit part bindings for stable structural correspondence,</li>
