@@ -19,12 +19,13 @@
   <li><a href="#state-map-purpose">3. State Map Purpose</a></li>
   <li><a href="#state-map-shape">4. State Map Shape</a></li>
   <li><a href="#part-binding-shape">5. Part Binding Shape</a></li>
-  <li><a href="#state-maps-versus-structural-bindings">6. State Maps versus Structural Bindings</a></li>
-  <li><a href="#widget-level-vs-part-level-maps">7. Widget-Level vs Part-Level Maps</a></li>
-  <li><a href="#fallback-rules">8. Fallback Rules</a></li>
-  <li><a href="#examples">9. Examples</a></li>
-  <li><a href="#validation-posture">10. Validation Posture</a></li>
-  <li><a href="#summary">11. Summary</a></li>
+  <li><a href="#realization-variant-interaction">6. Realization-Variant Interaction</a></li>
+  <li><a href="#state-maps-versus-structural-bindings">7. State Maps versus Structural Bindings</a></li>
+  <li><a href="#widget-level-vs-part-level-maps">8. Widget-Level vs Part-Level Maps</a></li>
+  <li><a href="#fallback-rules">9. Fallback Rules</a></li>
+  <li><a href="#examples">10. Examples</a></li>
+  <li><a href="#validation-posture">11. Validation Posture</a></li>
+  <li><a href="#summary">12. Summary</a></li>
 </ul>
 
 <hr/>
@@ -59,6 +60,10 @@ The central distinction of this document is simple:
   <li><strong>part bindings</strong> describe stable structural correspondence between a public part and a realization-side surface.</li>
 </ul>
 
+<p>
+This layer also provides the correct place to express inspectable fallback posture and, when the realization family allows them, compatible realization-variant specializations without turning embodiment choice into hidden class-law drift.
+</p>
+
 <hr/>
 
 <h2 id="why-state-mapping-is-explicit">2. Why State Mapping Is Explicit</h2>
@@ -72,7 +77,8 @@ State mapping is made explicit so that:
   <li>assets do not become the only source of realization structure,</li>
   <li>validation can detect missing or ambiguous bindings,</li>
   <li>fallback posture can be inspected rather than hidden in runtime code,</li>
-  <li>dynamic parts such as text-bearing parts do not get incorrectly modeled as if they were only static state assets.</li>
+  <li>dynamic parts such as text-bearing parts do not get incorrectly modeled as if they were only static state assets,</li>
+  <li>compatible realization variants do not become undocumented runtime-only forks.</li>
 </ul>
 
 <p>
@@ -90,6 +96,7 @@ A state map associates:
 <ul>
   <li>a target widget class,</li>
   <li>optionally a target widget part,</li>
+  <li>optionally a target realization variant,</li>
   <li>a supported realization state,</li>
   <li>one or more resource references,</li>
   <li>optional fallback posture.</li>
@@ -140,6 +147,7 @@ A state map record MAY also contain:
 </p>
 
 <ul>
+  <li><code>target_variant</code> when the map is specific to one published realization variant,</li>
   <li><code>priority</code> when multiple compatible maps exist under explicit precedence rules,</li>
   <li><code>conditions</code> when the realization family publishes additional bounded selection posture,</li>
   <li><code>host_substitution</code> when a host-native fallback is explicitly declared.</li>
@@ -157,6 +165,21 @@ Conceptually:
     "button.face.pressed.svg"
   ],
   "fallback": "normal"
+}</code></pre>
+
+<p>
+A variant-specific example:
+</p>
+
+<pre><code>{
+  "target_class": "frog.widgets.boolean_control",
+  "target_part": "state_face",
+  "target_variant": "switch_like",
+  "state": "normal_true",
+  "resource_refs": [
+    "boolean_control.state_face.switch_like.normal_true.svg"
+  ],
+  "fallback": "normal_true"
 }</code></pre>
 
 <p>
@@ -188,6 +211,7 @@ A part binding record MAY also contain:
 </p>
 
 <ul>
+  <li><code>target_variant</code> when the binding is specific to one published realization variant,</li>
   <li><code>fallback</code> when the binding target can degrade gracefully,</li>
   <li><code>placement_role</code> when the target is a text anchor, clipping region, or equivalent placement surface.</li>
 </ul>
@@ -218,7 +242,58 @@ The default family therefore prefers keeping state variation in <code>state_maps
 
 <hr/>
 
-<h2 id="state-maps-versus-structural-bindings">6. State Maps versus Structural Bindings</h2>
+<h2 id="realization-variant-interaction">6. Realization-Variant Interaction</h2>
+
+<p>
+The default family may allow several compatible realization variants for the same standardized class.
+When that happens, state maps and part bindings must make the specialization explicit rather than leaving it implicit in runtime code.
+</p>
+
+<p>
+The preferred rule is:
+</p>
+
+<ul>
+  <li>shared embodiment posture stays at the parent realization level,</li>
+  <li>variant-specific embodiment posture is marked explicitly through <code>target_variant</code> or an equivalent inspectable structure.</li>
+</ul>
+
+<p>
+This means:
+</p>
+
+<ul>
+  <li>a boolean checkbox-like embodiment and a boolean switch-like embodiment may remain two realization variants of the same boolean class,</li>
+  <li>a compact chart embodiment and a standard chart embodiment may remain two realization variants of the same chart class,</li>
+  <li>the existence of such variants does not by itself create new widget classes.</li>
+</ul>
+
+<p>
+A variant-specific state map or part binding MAY specialize:
+</p>
+
+<ul>
+  <li>resource selection,</li>
+  <li>placement posture,</li>
+  <li>supporting frame posture,</li>
+  <li>host-facing fallback preference.</li>
+</ul>
+
+<p>
+A variant-specific state map or part binding MUST NOT by itself introduce:
+</p>
+
+<ul>
+  <li>new mandatory public properties,</li>
+  <li>new mandatory public methods,</li>
+  <li>new mandatory public events,</li>
+  <li>a new implicit part model,</li>
+  <li>a hidden class split.</li>
+</ul>
+
+<hr/>
+
+<h2 id="state-maps-versus-structural-bindings">7. State Maps versus Structural Bindings</h2>
 
 <p>
 The default family distinguishes clearly between state maps and structural bindings.
@@ -262,9 +337,14 @@ This rule applies more broadly than buttons.
 It also matters for numeric displays, string value regions, chart titles, axis labels, and other future dynamic public surfaces.
 </p>
 
+<p>
+The same rule also applies to compatible realization variants:
+a variant may change how a part is embodied or where it is placed, but it should still preserve the distinction between state-sensitive embodiment and stable structural correspondence.
+</p>
+
 <hr/>
 
-<h2 id="widget-level-vs-part-level-maps">7. Widget-Level vs Part-Level Maps</h2>
+<h2 id="widget-level-vs-part-level-maps">8. Widget-Level vs Part-Level Maps</h2>
 
 <p>
 The default family prefers part-level maps when a public part is explicitly realized.
@@ -301,9 +381,13 @@ For dynamic text-bearing parts, a part-level structural binding is usually more 
   <li>the visual resources that may still vary elsewhere in the widget.</li>
 </ul>
 
+<p>
+For variant-aware publication, part-level mapping is also generally preferable because it allows one variant to specialize one part without forcing the whole widget to appear as a different class-like object.
+</p>
+
 <hr/>
 
-<h2 id="fallback-rules">8. Fallback Rules</h2>
+<h2 id="fallback-rules">9. Fallback Rules</h2>
 
 <p>
 A state map MAY define an explicit fallback.
@@ -352,9 +436,29 @@ The preferred pattern is:
   <li><code>part_bindings</code> publish structural or placement fallback.</li>
 </ul>
 
+<p>
+When realization variants exist, fallback MAY also move:
+</p>
+
+<ul>
+  <li>from one specialized state to another less specialized state within the same variant,</li>
+  <li>from one specialized placement posture to a host-native compatible placement posture,</li>
+  <li>from one embodiment variant to another compatible embodiment variant of the same published class.</li>
+</ul>
+
+<p>
+That last case is acceptable only if:
+</p>
+
+<ul>
+  <li>the public class meaning remains unchanged,</li>
+  <li>the published part meaning remains preserved,</li>
+  <li>the fallback remains inspectable in realization publication rather than hidden in runtime-private code.</li>
+</ul>
+
 <hr/>
 
-<h2 id="examples">9. Examples</h2>
+<h2 id="examples">10. Examples</h2>
 
 <pre><code>{
   "state_maps": [
@@ -410,6 +514,16 @@ The preferred pattern is:
         "numeric_control.increment_button.pressed.svg"
       ],
       "fallback": "normal"
+    },
+    {
+      "target_class": "frog.widgets.boolean_control",
+      "target_part": "state_face",
+      "target_variant": "switch_like",
+      "state": "normal_true",
+      "resource_refs": [
+        "boolean_control.state_face.switch_like.normal_true.svg"
+      ],
+      "fallback": "normal_true"
     }
   ],
   "part_bindings": [
@@ -440,6 +554,15 @@ The preferred pattern is:
       "binding_target": "numeric_control.value.center",
       "placement_role": "text_region",
       "fallback": "host_value_region"
+    },
+    {
+      "target_class": "frog.widgets.boolean_control",
+      "part": "label",
+      "target_variant": "switch_like",
+      "binding_kind": "anchor",
+      "binding_target": "boolean_control.switch_like.label.center",
+      "placement_role": "text_anchor",
+      "fallback": "host_centered_text_region"
     }
   ]
 }</code></pre>
@@ -452,22 +575,24 @@ In this example:
   <li>the button <code>face</code> is realized through state-sensitive resources,</li>
   <li>the button <code>frame</code> may expose additional state-sensitive embodiment,</li>
   <li>the button <code>label</code> is realized through a structural binding to a published placement surface,</li>
+  <li>the numeric <code>value_display</code> is realized through a structural binding to a published text region,</li>
+  <li>the boolean <code>switch_like</code> embodiment remains a realization variant of the same boolean class rather than a new class,</li>
   <li>the package remains explicit about fallback posture for both state-sensitive embodiment and dynamic placement.</li>
 </ul>
 
 <hr/>
 
-<h2 id="validation-posture">10. Validation Posture</h2>
+<h2 id="validation-posture">11. Validation Posture</h2>
 
 <p>
 Validators SHOULD diagnose at least:
 </p>
 
 <ul>
-  <li>state maps referencing undeclared classes, parts, or states,</li>
+  <li>state maps referencing undeclared classes, parts, states, or variants,</li>
   <li>missing resource references,</li>
   <li>ambiguous duplicate state bindings without explicit precedence,</li>
-  <li>fallback chains that resolve to unknown states or undocumented host substitutions,</li>
+  <li>fallback chains that resolve to unknown states, unknown variants, or undocumented host substitutions,</li>
   <li>part bindings that target undeclared public parts,</li>
   <li>part bindings whose binding kinds are unknown or incompatible with the referenced binding target,</li>
   <li>dynamic public text-bearing parts modeled only as asset-baked state resources when the realization family claims explicit anchor or text-region support.</li>
@@ -481,12 +606,13 @@ Validators MAY also diagnose:
   <li>needlessly coarse widget-level mappings when a stable part-level posture is already published,</li>
   <li>overlapping bindings for the same class and part without explicit precedence,</li>
   <li>state maps that attempt to encode public widget semantics instead of realization-side embodiment,</li>
-  <li>examples in which a dynamic public text-bearing part is simultaneously treated as anchor-bound and as the semantic owner of state-scoped SVG label resources without an explicit dual-layer realization contract.</li>
+  <li>examples in which a dynamic public text-bearing part is simultaneously treated as anchor-bound and as the semantic owner of state-scoped SVG label resources without an explicit dual-layer realization contract,</li>
+  <li>variant-specific state maps or bindings that appear to introduce a hidden new class split.</li>
 </ul>
 
 <hr/>
 
-<h2 id="summary">11. Summary</h2>
+<h2 id="summary">12. Summary</h2>
 
 <p>
 The default realization state-and-binding model makes realization correspondence explicit.
@@ -499,7 +625,8 @@ It is the correct layer for:
 <ul>
   <li>part/state/resource correspondence,</li>
   <li>structural part bindings,</li>
-  <li>fallback rules for state-sensitive embodiment and dynamic placement.</li>
+  <li>fallback rules for state-sensitive embodiment and dynamic placement,</li>
+  <li>inspectable specialization of compatible realization variants.</li>
 </ul>
 
 <p>
@@ -510,6 +637,7 @@ Its preferred architecture is:
   <li><code>state_maps</code> for state-sensitive visual embodiment,</li>
   <li><code>part_bindings</code> for stable structural correspondence,</li>
   <li>placement surfaces for dynamic public parts rendered by the host,</li>
+  <li>variant-aware specialization when embodiment choice is published,</li>
   <li>clear separation between realization-side embodiment and widget-class meaning.</li>
 </ul>
 
