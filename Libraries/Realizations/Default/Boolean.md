@@ -37,7 +37,7 @@ This document defines the default official realization posture for the standardi
 </p>
 
 <p>
-The default boolean realization provides one clean, inspectable, portable embodiment of the intrinsic boolean baseline without turning one host toolkit, one control library, or one runtime-specific implementation into the semantic definition of boolean widgets.
+The default boolean realization provides one clean, inspectable, portable embodiment of the intrinsic boolean baseline without turning one host toolkit, one control library, one skin bundle, or one runtime-specific implementation into the semantic definition of boolean widgets.
 </p>
 
 <p>
@@ -75,7 +75,7 @@ This realization assumes the standardized boolean posture in which:
   <li>boolean widgets may expose semantic label text through <code>label.text</code>,</li>
   <li>boolean controls may expose interaction such as <code>toggle()</code>, <code>set_true()</code>, or <code>set_false()</code> according to the published class contract,</li>
   <li>the published public parts remain stable across realizations,</li>
-  <li>portable style-facing and realization-selection surfaces may be exposed by class law or active profile,</li>
+  <li>portable style-facing and realization-selection surfaces may be exposed by class law or the active profile,</li>
   <li>the realization remains downstream from that class contract.</li>
 </ul>
 
@@ -146,6 +146,10 @@ Typical public surfaces that may influence realization include:
   <li><code>style.border_color</code>,</li>
   <li><code>style.text_color</code>,</li>
   <li><code>style.opacity</code>,</li>
+  <li><code>style.font_family</code>,</li>
+  <li><code>style.font_size</code>,</li>
+  <li><code>style.font_weight</code>,</li>
+  <li><code>style.text_alignment</code>,</li>
   <li><code>realization.family</code>,</li>
   <li><code>realization.variant</code>,</li>
   <li><code>realization.skin_id</code>.</li>
@@ -164,11 +168,11 @@ The preferred interpretation posture is:
   <li>public <code>style.*</code> properties influence inspectable realization-side styling parameters,</li>
   <li><code>realization.variant</code> selects among compatible published embodiment variants such as checkbox-like or switch-like posture,</li>
   <li><code>realization.skin_id</code> selects among compatible published skin bundles or resource groups,</li>
-  <li>SVG resources, host-native resources, and style-token resources remain realization assets rather than semantic truth.</li>
+  <li>SVG resources, host-native resources, template-driven resources, and style-token resources remain realization assets rather than semantic truth.</li>
 </ul>
 
 <p>
-A skin MAY therefore change colors, borders, emphasis, decoration, motion style, thumb geometry, check mark style, or other visual embodiment details.
+A skin MAY therefore change colors, borders, emphasis, decoration, glow posture, motion style, thumb geometry, check mark style, icon treatment, or other visual embodiment details.
 It MUST NOT silently redefine:
 </p>
 
@@ -178,6 +182,11 @@ It MUST NOT silently redefine:
   <li>the public boolean part model,</li>
   <li>the public boolean method or event inventory.</li>
 </ul>
+
+<p>
+A styling surface or skin-selection surface therefore remains realization-facing customization input.
+It is not a substitute for class law and it is not a hidden semantic extension mechanism.
+</p>
 
 <hr/>
 
