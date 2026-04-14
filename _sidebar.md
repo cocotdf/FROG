@@ -102,6 +102,7 @@
     - [Path](/Libraries/Widgets/Path.md)
     - [Picture](/Libraries/Widgets/Picture.md)
     - [String](/Libraries/Widgets/String.md)
+    - [Styling](/Libraries/Widgets/Styling.md)
     - [Tab](/Libraries/Widgets/Tab.md)
     - [Table](/Libraries/Widgets/Table.md)
     - [Tree](/Libraries/Widgets/Tree.md)

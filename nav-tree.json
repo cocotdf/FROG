@@ -730,6 +730,13 @@
                   "children": []
                 },
                 {
+                  "key": "libraries/widgets/styling.md",
+                  "title": "Styling",
+                  "path": "/Libraries/Widgets/Styling.md",
+                  "kind": "page",
+                  "children": []
+                },
+                {
                   "key": "libraries/widgets/tab.md",
                   "title": "Tab",
                   "path": "/Libraries/Widgets/Tab.md",
@@ -2700,6 +2707,7 @@
     "/Libraries/Widgets/Path.md",
     "/Libraries/Widgets/Picture.md",
     "/Libraries/Widgets/String.md",
+    "/Libraries/Widgets/Styling.md",
     "/Libraries/Widgets/Tab.md",
     "/Libraries/Widgets/Table.md",
     "/Libraries/Widgets/Tree.md",
