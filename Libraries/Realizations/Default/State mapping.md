@@ -19,7 +19,7 @@
   <li><a href="#state-map-purpose">3. State Map Purpose</a></li>
   <li><a href="#state-map-shape">4. State Map Shape</a></li>
   <li><a href="#part-binding-shape">5. Part Binding Shape</a></li>
-  <li><a href="#realization-variant-interaction">6. Realization-Variant Interaction</a></li>
+  <li><a href="#realization-variant-and-skin-interaction">6. Realization-Variant and Skin Interaction</a></li>
   <li><a href="#state-maps-versus-structural-bindings">7. State Maps versus Structural Bindings</a></li>
   <li><a href="#widget-level-vs-part-level-maps">8. Widget-Level vs Part-Level Maps</a></li>
   <li><a href="#fallback-rules">9. Fallback Rules</a></li>
@@ -44,7 +44,7 @@ The state-and-binding layer is the machine-readable realization layer that ties:
   <li>public widget parts,</li>
   <li>published realization states,</li>
   <li>published realization resources,</li>
-  <li>published anchors, text regions, or equivalent realization surfaces when needed.</li>
+  <li>published anchors, text regions, style-token surfaces, or equivalent realization structures when needed.</li>
 </ul>
 
 <p>
@@ -61,7 +61,7 @@ The central distinction of this document is simple:
 </ul>
 
 <p>
-This layer also provides the correct place to express inspectable fallback posture and, when the realization family allows them, compatible realization-variant specializations without turning embodiment choice into hidden class-law drift.
+This layer also provides the correct place to express inspectable fallback posture and, when the realization family allows them, compatible realization-variant and compatible skin specializations without turning embodiment choice into hidden class-law drift.
 </p>
 
 <hr/>
@@ -78,7 +78,8 @@ State mapping is made explicit so that:
   <li>validation can detect missing or ambiguous bindings,</li>
   <li>fallback posture can be inspected rather than hidden in runtime code,</li>
   <li>dynamic parts such as text-bearing parts do not get incorrectly modeled as if they were only static state assets,</li>
-  <li>compatible realization variants do not become undocumented runtime-only forks.</li>
+  <li>compatible realization variants do not become undocumented runtime-only forks,</li>
+  <li>compatible skins do not become undocumented runtime-only theme substitutions.</li>
 </ul>
 
 <p>
@@ -97,6 +98,7 @@ A state map associates:
   <li>a target widget class,</li>
   <li>optionally a target widget part,</li>
   <li>optionally a target realization variant,</li>
+  <li>optionally a target skin,</li>
   <li>a supported realization state,</li>
   <li>one or more resource references,</li>
   <li>optional fallback posture.</li>
@@ -126,6 +128,11 @@ State maps are generally <strong>not</strong> the preferred primary publication 
 In those cases, the preferred primary mechanism is a structural binding to an anchor, text region, or equivalent placement surface.
 </p>
 
+<p>
+State maps are also not the preferred primary mechanism for public style semantics.
+When skin or styling support exists, state maps should select embodiment resources, while token publication and bounded host styling posture remain separate realization concerns.
+</p>
+
 <hr/>
 
 <h2 id="state-map-shape">4. State Map Shape</h2>
@@ -148,6 +155,7 @@ A state map record MAY also contain:
 
 <ul>
   <li><code>target_variant</code> when the map is specific to one published realization variant,</li>
+  <li><code>target_skin</code> when the map is specific to one compatible published skin,</li>
   <li><code>priority</code> when multiple compatible maps exist under explicit precedence rules,</li>
   <li><code>conditions</code> when the realization family publishes additional bounded selection posture,</li>
   <li><code>host_substitution</code> when a host-native fallback is explicitly declared.</li>
@@ -183,6 +191,22 @@ A variant-specific example:
 }</code></pre>
 
 <p>
+A skin-specific example:
+</p>
+
+<pre><code>{
+  "target_class": "frog.widgets.button",
+  "target_part": "face",
+  "target_variant": "raised",
+  "target_skin": "blue",
+  "state": "normal",
+  "resource_refs": [
+    "button.face.raised.blue.normal.svg"
+  ],
+  "fallback": "normal"
+}</code></pre>
+
+<p>
 A state map should identify realization-side embodiment.
 It should not be used to smuggle new public widget semantics into a resource-selection table.
 </p>
@@ -212,8 +236,9 @@ A part binding record MAY also contain:
 
 <ul>
   <li><code>target_variant</code> when the binding is specific to one published realization variant,</li>
+  <li><code>target_skin</code> when the binding is specific to one compatible published skin,</li>
   <li><code>fallback</code> when the binding target can degrade gracefully,</li>
-  <li><code>placement_role</code> when the target is a text anchor, clipping region, or equivalent placement surface.</li>
+  <li><code>placement_role</code> when the target is a text anchor, clipping region, tokenized placement surface, or equivalent realization surface.</li>
 </ul>
 
 <p>
@@ -240,12 +265,18 @@ Part bindings should remain stable unless the realization explicitly publishes m
 The default family therefore prefers keeping state variation in <code>state_maps</code> and keeping structural correspondence in <code>part_bindings</code>.
 </p>
 
+<p>
+When styling support exists, a part binding may remain unchanged while state maps, token maps, or skin-scoped resources vary around it.
+That is generally preferable to treating every style change as a new structural binding.
+</p>
+
 <hr/>
 
-<h2 id="realization-variant-interaction">6. Realization-Variant Interaction</h2>
+<h2 id="realization-variant-and-skin-interaction">6. Realization-Variant and Skin Interaction</h2>
 
 <p>
 The default family may allow several compatible realization variants for the same standardized class.
+It may also allow several compatible skins within one realization corridor.
 When that happens, state maps and part bindings must make the specialization explicit rather than leaving it implicit in runtime code.
 </p>
 
@@ -255,7 +286,8 @@ The preferred rule is:
 
 <ul>
   <li>shared embodiment posture stays at the parent realization level,</li>
-  <li>variant-specific embodiment posture is marked explicitly through <code>target_variant</code> or an equivalent inspectable structure.</li>
+  <li>variant-specific embodiment posture is marked explicitly through <code>target_variant</code> or an equivalent inspectable structure,</li>
+  <li>skin-specific embodiment posture is marked explicitly through <code>target_skin</code> or an equivalent inspectable structure.</li>
 </ul>
 
 <p>
@@ -265,22 +297,24 @@ This means:
 <ul>
   <li>a boolean checkbox-like embodiment and a boolean switch-like embodiment may remain two realization variants of the same boolean class,</li>
   <li>a compact chart embodiment and a standard chart embodiment may remain two realization variants of the same chart class,</li>
-  <li>the existence of such variants does not by itself create new widget classes.</li>
+  <li>a blue button skin and a dark button skin may remain two compatible skins of the same button realization corridor,</li>
+  <li>the existence of such variants or skins does not by itself create new widget classes.</li>
 </ul>
 
 <p>
-A variant-specific state map or part binding MAY specialize:
+A variant-specific or skin-specific state map or part binding MAY specialize:
 </p>
 
 <ul>
   <li>resource selection,</li>
   <li>placement posture,</li>
   <li>supporting frame posture,</li>
+  <li>tokenized styling posture,</li>
   <li>host-facing fallback preference.</li>
 </ul>
 
 <p>
-A variant-specific state map or part binding MUST NOT by itself introduce:
+A variant-specific or skin-specific state map or part binding MUST NOT by itself introduce:
 </p>
 
 <ul>
@@ -290,6 +324,11 @@ A variant-specific state map or part binding MUST NOT by itself introduce:
   <li>a new implicit part model,</li>
   <li>a hidden class split.</li>
 </ul>
+
+<p>
+A compatible skin is therefore a realization specialization, not a class contract.
+A compatible variant is also a realization specialization, not a class contract.
+</p>
 
 <hr/>
 
@@ -319,7 +358,7 @@ For example, in the default button posture:
 </ul>
 
 <p>
-The label may still vary stylistically across states, but its primary publication posture remains that of a dynamically rendered part bound to a placement surface rather than a semantic text string baked into a visual asset.
+The label may still vary stylistically across states, variants, or skins, but its primary publication posture remains that of a dynamically rendered part bound to a placement surface rather than a semantic text string baked into a visual asset.
 </p>
 
 <p>
@@ -338,8 +377,8 @@ It also matters for numeric displays, string value regions, chart titles, axis l
 </p>
 
 <p>
-The same rule also applies to compatible realization variants:
-a variant may change how a part is embodied or where it is placed, but it should still preserve the distinction between state-sensitive embodiment and stable structural correspondence.
+The same rule also applies to compatible realization variants and compatible skins:
+a variant or skin may change how a part is embodied or where it is placed, but it should still preserve the distinction between state-sensitive embodiment and stable structural correspondence.
 </p>
 
 <hr/>
@@ -382,7 +421,7 @@ For dynamic text-bearing parts, a part-level structural binding is usually more 
 </ul>
 
 <p>
-For variant-aware publication, part-level mapping is also generally preferable because it allows one variant to specialize one part without forcing the whole widget to appear as a different class-like object.
+For variant-aware or skin-aware publication, part-level mapping is also generally preferable because it allows one variant or one skin to specialize one part without forcing the whole widget to appear as a different class-like object.
 </p>
 
 <hr/>
@@ -447,7 +486,17 @@ When realization variants exist, fallback MAY also move:
 </ul>
 
 <p>
-That last case is acceptable only if:
+When compatible skins exist, fallback MAY also move:
+</p>
+
+<ul>
+  <li>from one skin-specific resource group to the default skin of the same variant,</li>
+  <li>from one skin-specific token set to the base token set of the same realization corridor,</li>
+  <li>from one skin-specific placement refinement to the parent placement posture of the same class and variant.</li>
+</ul>
+
+<p>
+Those cases are acceptable only if:
 </p>
 
 <ul>
@@ -524,6 +573,17 @@ That last case is acceptable only if:
         "boolean_control.state_face.switch_like.normal_true.svg"
       ],
       "fallback": "normal_true"
+    },
+    {
+      "target_class": "frog.widgets.button",
+      "target_part": "face",
+      "target_variant": "raised",
+      "target_skin": "blue",
+      "state": "normal",
+      "resource_refs": [
+        "button.face.raised.blue.normal.svg"
+      ],
+      "fallback": "normal"
     }
   ],
   "part_bindings": [
@@ -563,6 +623,16 @@ That last case is acceptable only if:
       "binding_target": "boolean_control.switch_like.label.center",
       "placement_role": "text_anchor",
       "fallback": "host_centered_text_region"
+    },
+    {
+      "target_class": "frog.widgets.button",
+      "part": "label",
+      "target_variant": "raised",
+      "target_skin": "blue",
+      "binding_kind": "anchor",
+      "binding_target": "button.raised.blue.label.center",
+      "placement_role": "text_anchor",
+      "fallback": "button.label.center"
     }
   ]
 }</code></pre>
@@ -577,6 +647,7 @@ In this example:
   <li>the button <code>label</code> is realized through a structural binding to a published placement surface,</li>
   <li>the numeric <code>value_display</code> is realized through a structural binding to a published text region,</li>
   <li>the boolean <code>switch_like</code> embodiment remains a realization variant of the same boolean class rather than a new class,</li>
+  <li>the button <code>raised</code>/<code>blue</code> specialization remains a compatible skin specialization rather than a new class,</li>
   <li>the package remains explicit about fallback posture for both state-sensitive embodiment and dynamic placement.</li>
 </ul>
 
@@ -589,10 +660,10 @@ Validators SHOULD diagnose at least:
 </p>
 
 <ul>
-  <li>state maps referencing undeclared classes, parts, states, or variants,</li>
+  <li>state maps referencing undeclared classes, parts, states, variants, or skins,</li>
   <li>missing resource references,</li>
   <li>ambiguous duplicate state bindings without explicit precedence,</li>
-  <li>fallback chains that resolve to unknown states, unknown variants, or undocumented host substitutions,</li>
+  <li>fallback chains that resolve to unknown states, unknown variants, unknown skins, or undocumented host substitutions,</li>
   <li>part bindings that target undeclared public parts,</li>
   <li>part bindings whose binding kinds are unknown or incompatible with the referenced binding target,</li>
   <li>dynamic public text-bearing parts modeled only as asset-baked state resources when the realization family claims explicit anchor or text-region support.</li>
@@ -607,7 +678,8 @@ Validators MAY also diagnose:
   <li>overlapping bindings for the same class and part without explicit precedence,</li>
   <li>state maps that attempt to encode public widget semantics instead of realization-side embodiment,</li>
   <li>examples in which a dynamic public text-bearing part is simultaneously treated as anchor-bound and as the semantic owner of state-scoped SVG label resources without an explicit dual-layer realization contract,</li>
-  <li>variant-specific state maps or bindings that appear to introduce a hidden new class split.</li>
+  <li>variant-specific state maps or bindings that appear to introduce a hidden new class split,</li>
+  <li>skin-specific state maps or bindings that appear to introduce hidden semantic divergence instead of bounded styling specialization.</li>
 </ul>
 
 <hr/>
@@ -626,7 +698,8 @@ It is the correct layer for:
   <li>part/state/resource correspondence,</li>
   <li>structural part bindings,</li>
   <li>fallback rules for state-sensitive embodiment and dynamic placement,</li>
-  <li>inspectable specialization of compatible realization variants.</li>
+  <li>inspectable specialization of compatible realization variants,</li>
+  <li>inspectable specialization of compatible skins inside one realization corridor.</li>
 </ul>
 
 <p>
@@ -637,7 +710,7 @@ Its preferred architecture is:
   <li><code>state_maps</code> for state-sensitive visual embodiment,</li>
   <li><code>part_bindings</code> for stable structural correspondence,</li>
   <li>placement surfaces for dynamic public parts rendered by the host,</li>
-  <li>variant-aware specialization when embodiment choice is published,</li>
+  <li>variant-aware and skin-aware specialization when embodiment choice is published,</li>
   <li>clear separation between realization-side embodiment and widget-class meaning.</li>
 </ul>
 
