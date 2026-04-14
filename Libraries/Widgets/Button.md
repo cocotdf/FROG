@@ -43,13 +43,13 @@ Its primary role is to expose an explicit interaction surface that may trigger m
 
 <p>
 The standard button is therefore defined here as a stable public object surface with stable properties, methods, events, parts, and interaction expectations.
-It is not defined here as a boolean-like stateful toggle widget.
+It is not defined here as a boolean-like stateful toggle widget, and it is not defined here as a runtime-private host button masquerading as a standard class.
 </p>
 
 <p>
-This class must be read together with the shared FROG widget styling posture.
+This class must be read together with the shared FROG widget styling posture and with the downstream realization corridor.
 The button is an intrinsic standard widget class with a minimal but real object surface.
-It is not a passive decorative control, and it is not a runtime-private host button masquerading as a standard class.
+It is not a passive decorative control.
 </p>
 
 <hr/>
@@ -83,7 +83,7 @@ The intrinsic button baseline does not define a standard persistent primary valu
 </p>
 
 <p>
-Instead, the standard button is primarily event- and method-oriented.
+Instead, the standard button is primarily event-oriented and method-oriented.
 It may expose transient interaction state through readable properties when the class surface allows it, but it is not standardized here as a value-carrying scalar control.
 </p>
 
@@ -272,6 +272,13 @@ The realization still owns:
   <li>frame resources,</li>
   <li>layer composition.</li>
 </ul>
+
+<p>
+A compatible skin may therefore change the visible embodiment substantially while remaining subordinate to the same button class law.
+That distinction is fundamental:
+class-owned meaning remains stable,
+realization-owned embodiment remains replaceable.
+</p>
 
 <hr/>
 
