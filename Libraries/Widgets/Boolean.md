@@ -17,7 +17,7 @@
   <li><a href="#overview">1. Overview</a></li>
   <li><a href="#classes-defined-here">2. Classes Defined Here</a></li>
   <li><a href="#common-family-posture">3. Common Family Posture</a></li>
-  <li><a href="#realization-variant-posture">4. Realization Variant Posture</a></li>
+  <li><a href="#common-styling-and-skin-customization">4. Common Styling and Skin Customization</a></li>
   <li><a href="#frogwidgetsboolean_control">5. <code>frog.widgets.boolean_control</code></a></li>
   <li><a href="#frogwidgetsboolean_indicator">6. <code>frog.widgets.boolean_indicator</code></a></li>
   <li><a href="#common-parts">7. Common Parts</a></li>
@@ -107,31 +107,55 @@ The boolean family also follows an important architectural rule:
 
 <p>
 This means the intrinsic core standardizes one boolean family, not one fixed visual embodiment.
-Checkbox-like, switch-like, LED-like, and similar host embodiments are realization strategies unless promoted later into separate explicit widget classes with distinct public semantics.
+Checkbox-like, switch-like, LED-like, and similar host embodiments are realization strategies unless promoted later into separate explicit widget classes.
 </p>
 
 <hr/>
 
-<h2 id="realization-variant-posture">4. Realization Variant Posture</h2>
+<h2 id="common-styling-and-skin-customization">4. Common Styling and Skin Customization</h2>
 
 <p>
-The intrinsic boolean baseline does not split checkbox-like and switch-like embodiments into separate standard classes.
-Such differences belong to realization unless a later standardized class introduces a genuinely distinct public contract.
+The boolean family is visually customizable.
+However, visual customization remains subordinate to boolean class meaning.
 </p>
 
 <p>
-Accordingly:
+Accordingly, boolean widgets may expose:
 </p>
 
 <ul>
-  <li>a switch-like embodiment is, by default, a realization variant of <code>frog.widgets.boolean_control</code>,</li>
-  <li>a checkbox-like embodiment is, by default, a realization variant of <code>frog.widgets.boolean_control</code>,</li>
-  <li>a LED-like embodiment is, by default, a realization variant of <code>frog.widgets.boolean_indicator</code> or <code>frog.widgets.boolean_control</code> depending on interaction posture.</li>
+  <li>portable widget-visible style properties,</li>
+  <li>selection of a compatible realization family or variant,</li>
+  <li>selection of a compatible skin identity,</li>
+  <li>bounded realization-side resource overrides when the active publication corridor allows them.</li>
 </ul>
 
 <p>
-A future class such as a switch-specific standardized widget should only be introduced if it contributes more than visual style.
-That would require distinct public semantics, distinct stable members, distinct methods or events, or another class-level contract difference that cannot be reduced to realization choice alone.
+These surfaces do not create a new widget class.
+A switch-like or checkbox-like boolean embodiment remains <code>frog.widgets.boolean_control</code> or <code>frog.widgets.boolean_indicator</code> unless a distinct class contract is explicitly published elsewhere.
+</p>
+
+<p>
+When exposed, the preferred portable style surfaces include:
+</p>
+
+<ul>
+  <li><code>style.foreground_color</code></li>
+  <li><code>style.background_color</code></li>
+  <li><code>style.border_color</code></li>
+  <li><code>style.opacity</code></li>
+  <li><code>style.text_color</code></li>
+  <li><code>style.font_family</code></li>
+  <li><code>style.font_size</code></li>
+  <li><code>style.font_weight</code></li>
+  <li><code>style.text_alignment</code></li>
+  <li><code>realization.family</code></li>
+  <li><code>realization.variant</code></li>
+  <li><code>realization.skin_id</code></li>
+</ul>
+
+<p>
+Family-specific boolean style surfaces such as true/false emphasis colors may be added later only if they remain clearly portable and do not collapse realization semantics into the class layer.
 </p>
 
 <hr/>
@@ -164,6 +188,10 @@ That would require distinct public semantics, distinct stable members, distinct 
   <li><code>label.text</code> — readable and writable</li>
   <li><code>interaction.enabled</code> — readable and writable</li>
   <li><code>interaction.visible</code> — readable and writable</li>
+  <li>portable <code>style.*</code> surfaces when exposed by the class or active profile</li>
+  <li><code>realization.family</code> when realization selection is publicly exposed</li>
+  <li><code>realization.variant</code> when realization selection is publicly exposed</li>
+  <li><code>realization.skin_id</code> when realization selection is publicly exposed</li>
 </ul>
 
 <p>
@@ -244,12 +272,11 @@ Its visual placement and embodiment belong to realization.
   <li><code>value</code> — readable and writable for diagram/runtime update surfaces where legal</li>
   <li><code>label.text</code> — readable and writable</li>
   <li><code>interaction.visible</code> — readable and writable</li>
+  <li>portable <code>style.*</code> surfaces when exposed by the class or active profile</li>
+  <li><code>realization.family</code> when realization selection is publicly exposed</li>
+  <li><code>realization.variant</code> when realization selection is publicly exposed</li>
+  <li><code>realization.skin_id</code> when realization selection is publicly exposed</li>
 </ul>
-
-<p>
-The indicator remains a real object even though it is display-oriented.
-Its public surface is intentionally smaller than that of the control.
-</p>
 
 <h3>6.4 Standard methods</h3>
 
@@ -274,11 +301,6 @@ Its public surface is intentionally smaller than that of the control.
   <li><code>state_face</code></li>
   <li><code>frame</code> when present</li>
 </ul>
-
-<p>
-The indicator <code>state_face</code> part remains a public dynamic display surface.
-It is not merely a decorative skin region.
-</p>
 
 <hr/>
 
@@ -362,14 +384,10 @@ In particular:
 <ul>
   <li>realization MAY define composed visual states such as <code>normal_true</code> or <code>pressed_false</code>,</li>
   <li>realization MAY define decorative frames, state assets, skins, or focus layers,</li>
+  <li>realization MAY expose compatible family, variant, or skin identities,</li>
   <li>realization MUST NOT redefine the semantic owner of <code>value</code> or <code>label.text</code>,</li>
   <li>realization MUST NOT make baked check marks, host-private LED state, or decorative assets the only semantic source of visible boolean meaning.</li>
 </ul>
-
-<p>
-Switch-like realization is explicitly allowed here as a realization strategy of <code>frog.widgets.boolean_control</code>.
-That realization choice does not by itself create a new standard class.
-</p>
 
 <hr/>
 
@@ -400,6 +418,8 @@ Typical legal object-style surfaces include:
   <li><code>label.text</code></li>
   <li><code>interaction.enabled</code></li>
   <li><code>interaction.visible</code></li>
+  <li>portable <code>style.*</code> properties when publicly exposed</li>
+  <li>realization-selection members when publicly exposed</li>
 </ul>
 
 <p>
@@ -420,7 +440,7 @@ Validators SHOULD diagnose at least:
   <li>attempts to write user-edit surfaces on indicator-only classes where forbidden,</li>
   <li>unknown boolean family members or parts,</li>
   <li>attempts to treat realization-only state composition or placement surfaces as public class members by default,</li>
-  <li>attempts to treat a switch-like embodiment as a distinct intrinsic class without an explicitly published class contract.</li>
+  <li>attempts to use styling or skin-selection surfaces to imply a distinct boolean class contract without explicit class publication.</li>
 </ul>
 
 <hr/>
@@ -439,8 +459,4 @@ The boolean widget family defines the intrinsic standardized true/false widget b
 <p>
 These classes provide the standard portable boolean interaction and display surfaces of the minimal widget core.
 They expose a real minimal object surface with properties, methods, events, and parts while keeping realization ownership and runtime-private embodiment clearly separated from class meaning.
-</p>
-
-<p>
-In this baseline, switch-like, checkbox-like, and LED-like embodiments remain realization variants unless a future specification publishes a distinct class with genuinely distinct public semantics.
 </p>
