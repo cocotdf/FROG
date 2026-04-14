@@ -17,14 +17,15 @@
   <li><a href="#overview">1. Overview</a></li>
   <li><a href="#classes-defined-here">2. Classes Defined Here</a></li>
   <li><a href="#common-family-posture">3. Common Family Posture</a></li>
-  <li><a href="#frogwidgetsnumeric_control">4. <code>frog.widgets.numeric_control</code></a></li>
-  <li><a href="#frogwidgetsnumeric_indicator">5. <code>frog.widgets.numeric_indicator</code></a></li>
-  <li><a href="#common-parts">6. Common Parts</a></li>
-  <li><a href="#common-behavior-expectations">7. Common Behavior Expectations</a></li>
-  <li><a href="#common-realization-expectations">8. Common Realization Expectations</a></li>
-  <li><a href="#diagram-interaction-posture">9. Diagram Interaction Posture</a></li>
-  <li><a href="#validation-expectations">10. Validation Expectations</a></li>
-  <li><a href="#summary">11. Summary</a></li>
+  <li><a href="#common-styling-and-skin-customization">4. Common Styling and Skin Customization</a></li>
+  <li><a href="#frogwidgetsnumeric_control">5. <code>frog.widgets.numeric_control</code></a></li>
+  <li><a href="#frogwidgetsnumeric_indicator">6. <code>frog.widgets.numeric_indicator</code></a></li>
+  <li><a href="#common-parts">7. Common Parts</a></li>
+  <li><a href="#common-behavior-expectations">8. Common Behavior Expectations</a></li>
+  <li><a href="#common-realization-expectations">9. Common Realization Expectations</a></li>
+  <li><a href="#diagram-interaction-posture">10. Diagram Interaction Posture</a></li>
+  <li><a href="#validation-expectations">11. Validation Expectations</a></li>
+  <li><a href="#summary">12. Summary</a></li>
 </ul>
 
 <hr/>
@@ -51,10 +52,6 @@ The standard numeric family is therefore defined here as a real object surface w
   <li>a minimal but real event surface,</li>
   <li>a stable public part model for realization targeting.</li>
 </ul>
-
-<p>
-This keeps the intrinsic baseline close in spirit to mature graphical systems such as LabVIEW while remaining smaller and more portable.
-</p>
 
 <hr/>
 
@@ -93,29 +90,77 @@ The exact allowed numeric types remain governed by the active FROG type system a
 </p>
 
 <p>
-The numeric family also follows an important architectural rule:
+The family also follows an important architectural rule:
 </p>
 
 <ul>
-  <li><code>value</code> is class-owned semantic data,</li>
-  <li><code>label.text</code> is class-owned semantic text,</li>
-  <li><code>value_display</code> is a stable public part,</li>
-  <li>placement, rendering, and decorative embodiment of that part belong downstream to realization.</li>
+  <li><code>value</code> is class-owned semantic numeric data,</li>
+  <li><code>label.text</code> is class-owned semantic label text,</li>
+  <li><code>value_display</code> is a stable public dynamic part,</li>
+  <li>the visual embodiment of the displayed or edited numeric surface belongs downstream to realization.</li>
 </ul>
 
 <hr/>
 
-<h2 id="frogwidgetsnumeric_control">4. <code>frog.widgets.numeric_control</code></h2>
+<h2 id="common-styling-and-skin-customization">4. Common Styling and Skin Customization</h2>
 
-<h3>4.1 Class identity</h3>
+<p>
+The numeric family is visually customizable.
+However, visual customization remains subordinate to numeric class meaning.
+</p>
+
+<p>
+Accordingly, numeric widgets may expose:
+</p>
+
+<ul>
+  <li>portable widget-visible style properties,</li>
+  <li>selection of a compatible realization family or variant,</li>
+  <li>selection of a compatible skin identity,</li>
+  <li>bounded realization-side resource overrides when the active publication corridor allows them.</li>
+</ul>
+
+<p>
+These surfaces do not create a new widget class.
+A skinned numeric widget remains <code>frog.widgets.numeric_control</code> or <code>frog.widgets.numeric_indicator</code>.
+</p>
+
+<p>
+When exposed, the preferred portable style surfaces include:
+</p>
+
+<ul>
+  <li><code>style.foreground_color</code></li>
+  <li><code>style.background_color</code></li>
+  <li><code>style.border_color</code></li>
+  <li><code>style.opacity</code></li>
+  <li><code>style.text_color</code></li>
+  <li><code>style.font_family</code></li>
+  <li><code>style.font_size</code></li>
+  <li><code>style.font_weight</code></li>
+  <li><code>style.text_alignment</code></li>
+  <li><code>realization.family</code></li>
+  <li><code>realization.variant</code></li>
+  <li><code>realization.skin_id</code></li>
+</ul>
+
+<p>
+Family-specific style surfaces MAY later add numeric-specific controls such as value alignment or emphasis posture, but the intrinsic baseline keeps the portable style surface intentionally small.
+</p>
+
+<hr/>
+
+<h2 id="frogwidgetsnumeric_control">5. <code>frog.widgets.numeric_control</code></h2>
+
+<h3>5.1 Class identity</h3>
 
 <ul>
   <li><strong>class_id:</strong> <code>frog.widgets.numeric_control</code></li>
-  <li><strong>family:</strong> <code>numeric_widget</code></li>
+  <li><strong>category:</strong> <code>control</code></li>
   <li><strong>compatible role:</strong> <code>control</code></li>
 </ul>
 
-<h3>4.2 Primary value posture</h3>
+<h3>5.2 Primary value posture</h3>
 
 <ul>
   <li>primary value: present</li>
@@ -125,7 +170,7 @@ The numeric family also follows an important architectural rule:
   <li>mirrored property: <code>value</code></li>
 </ul>
 
-<h3>4.3 Standard properties</h3>
+<h3>5.3 Standard properties</h3>
 
 <ul>
   <li><code>value</code> — readable and writable</li>
@@ -135,106 +180,32 @@ The numeric family also follows an important architectural rule:
   <li><code>limits.minimum</code> — optional readable and writable bound</li>
   <li><code>limits.maximum</code> — optional readable and writable bound</li>
   <li><code>format.pattern</code> — optional readable and writable display formatting hint</li>
+  <li>portable <code>style.*</code> surfaces when exposed by the class or active profile</li>
+  <li><code>realization.family</code> when realization selection is publicly exposed</li>
+  <li><code>realization.variant</code> when realization selection is publicly exposed</li>
+  <li><code>realization.skin_id</code> when realization selection is publicly exposed</li>
 </ul>
 
 <p>
 These properties define the minimum public object surface of the intrinsic numeric control.
-They do not expose realization-private anchors, text regions, skin layers, or toolkit-private editing machinery as if they were public class members.
-</p>
-
-<h3>4.4 Standard methods</h3>
-
-<ul>
-  <li><code>focus()</code></li>
-  <li><code>increment()</code> when the active class posture exposes step-style increment interaction</li>
-  <li><code>decrement()</code> when the active class posture exposes step-style decrement interaction</li>
-  <li><code>reset_to_default()</code> when a default value exists</li>
-</ul>
-
-<p>
-The baseline method surface is intentionally small.
-It exists to guarantee that the numeric control remains a real object with a minimal action surface rather than a bare scalar input field.
-</p>
-
-<h3>4.5 Standard events</h3>
-
-<ul>
-  <li><code>value_changed</code></li>
-  <li><code>editing_started</code></li>
-  <li><code>editing_committed</code></li>
-  <li><code>focus_gained</code></li>
-  <li><code>focus_lost</code></li>
-</ul>
-
-<h3>4.6 Standard parts</h3>
-
-<ul>
-  <li><code>root</code></li>
-  <li><code>label</code></li>
-  <li><code>value_display</code></li>
-  <li><code>increment_button</code> when the active realization exposes it</li>
-  <li><code>decrement_button</code> when the active realization exposes it</li>
-  <li><code>frame</code> when present</li>
-</ul>
-
-<p>
-The <code>value_display</code> part is a public dynamic display or editing surface.
-Its semantic numeric meaning belongs to the class through <code>value</code>.
-Its visual placement and embodiment belong to realization.
-</p>
-
-<hr/>
-
-<h2 id="frogwidgetsnumeric_indicator">5. <code>frog.widgets.numeric_indicator</code></a></h2>
-
-<h3>5.1 Class identity</h3>
-
-<ul>
-  <li><strong>class_id:</strong> <code>frog.widgets.numeric_indicator</code></li>
-  <li><strong>family:</strong> <code>numeric_widget</code></li>
-  <li><strong>compatible role:</strong> <code>indicator</code></li>
-</ul>
-
-<h3>5.2 Primary value posture</h3>
-
-<ul>
-  <li>primary value: present</li>
-  <li>natural value participation: yes</li>
-  <li>user-mutable: no in the standard portable posture</li>
-  <li>diagram-mutable: yes</li>
-  <li>mirrored property: <code>value</code></li>
-</ul>
-
-<h3>5.3 Standard properties</h3>
-
-<ul>
-  <li><code>value</code> — readable and writable for diagram/runtime update surfaces where legal</li>
-  <li><code>label.text</code> — readable and writable</li>
-  <li><code>interaction.visible</code> — readable and writable</li>
-  <li><code>format.pattern</code> — optional readable and writable display formatting hint</li>
-</ul>
-
-<p>
-The indicator remains a real object even though it is display-oriented.
-Its public surface is intentionally smaller than that of the control.
+They do not expose realization-private anchors, text regions, layer maps, caret internals, or toolkit-private editor handles as if they were public numeric members.
 </p>
 
 <h3>5.4 Standard methods</h3>
 
 <ul>
-  <li><code>focus()</code> when supported by the host</li>
-  <li><code>reset_to_default()</code> when a default value exists and the active class posture exposes it</li>
+  <li><code>focus()</code></li>
+  <li><code>increment()</code> when the active realization exposes increment interaction</li>
+  <li><code>decrement()</code> when the active realization exposes decrement interaction</li>
+  <li><code>reset_to_default()</code> when a default value exists</li>
 </ul>
-
-<p>
-The intrinsic indicator baseline keeps its method surface modest.
-It should not be overloaded with style-reset or toolkit-facing methods that belong more naturally to realization or runtime policy.
-</p>
 
 <h3>5.5 Standard events</h3>
 
 <ul>
-  <li><code>value_rendered</code></li>
+  <li><code>value_changed</code></li>
+  <li><code>editing_started</code></li>
+  <li><code>editing_committed</code></li>
   <li><code>focus_gained</code></li>
   <li><code>focus_lost</code></li>
 </ul>
@@ -245,17 +216,73 @@ It should not be overloaded with style-reset or toolkit-facing methods that belo
   <li><code>root</code></li>
   <li><code>label</code></li>
   <li><code>value_display</code></li>
+  <li><code>increment_button</code> when the active realization exposes it</li>
+  <li><code>decrement_button</code> when the active realization exposes it</li>
   <li><code>frame</code> when present</li>
 </ul>
 
-<p>
-The indicator <code>value_display</code> part remains a public dynamic display surface.
-It is not merely a decorative skin region.
-</p>
+<hr/>
+
+<h2 id="frogwidgetsnumeric_indicator">6. <code>frog.widgets.numeric_indicator</code></h2>
+
+<h3>6.1 Class identity</h3>
+
+<ul>
+  <li><strong>class_id:</strong> <code>frog.widgets.numeric_indicator</code></li>
+  <li><strong>category:</strong> <code>indicator</code></li>
+  <li><strong>compatible role:</strong> <code>indicator</code></li>
+</ul>
+
+<h3>6.2 Primary value posture</h3>
+
+<ul>
+  <li>primary value: present</li>
+  <li>natural value participation: yes</li>
+  <li>user-mutable: no in the standard portable posture</li>
+  <li>diagram-mutable: yes</li>
+  <li>mirrored property: <code>value</code></li>
+</ul>
+
+<h3>6.3 Standard properties</h3>
+
+<ul>
+  <li><code>value</code> — readable and writable for diagram/runtime update surfaces where legal</li>
+  <li><code>label.text</code> — readable and writable</li>
+  <li><code>interaction.visible</code> — readable and writable</li>
+  <li><code>format.pattern</code> — optional readable and writable display formatting hint</li>
+  <li>portable <code>style.*</code> surfaces when exposed by the class or active profile</li>
+  <li><code>realization.family</code> when realization selection is publicly exposed</li>
+  <li><code>realization.variant</code> when realization selection is publicly exposed</li>
+  <li><code>realization.skin_id</code> when realization selection is publicly exposed</li>
+</ul>
+
+<h3>6.4 Standard methods</h3>
+
+<ul>
+  <li><code>focus()</code> when supported by the host</li>
+  <li><code>reset_to_default_style()</code> when a style default exists</li>
+</ul>
+
+<h3>6.5 Standard events</h3>
+
+<ul>
+  <li><code>value_rendered</code></li>
+  <li><code>focus_gained</code></li>
+  <li><code>focus_lost</code></li>
+</ul>
+
+<h3>6.6 Standard parts</h3>
+
+<ul>
+  <li><code>root</code></li>
+  <li><code>label</code></li>
+  <li><code>value_display</code></li>
+  <li><code>frame</code> when present</li>
+</ul>
 
 <hr/>
 
-<h2 id="common-parts">6. Common Parts</h2>
+<h2 id="common-parts">7. Common Parts</h2>
 
 <p>
 The numeric family uses the following common stable part model:
@@ -273,17 +300,18 @@ The increment and decrement button parts are standard for realizations that expo
 </p>
 
 <p>
-This distinction is important:
+The <code>value_display</code> part is especially important because it preserves the distinction between:
 </p>
 
 <ul>
-  <li><code>value_display</code> is a public part of the class model,</li>
-  <li>anchors, text regions, clipping boxes, and skin layers used to embody it belong to realization unless explicitly promoted to class law.</li>
+  <li>semantic numeric value owned by <code>value</code>,</li>
+  <li>portable style preferences that affect visual presentation,</li>
+  <li>placement and editing embodiment owned by realization.</li>
 </ul>
 
 <hr/>
 
-<h2 id="common-behavior-expectations">7. Common Behavior Expectations</h2>
+<h2 id="common-behavior-expectations">8. Common Behavior Expectations</h2>
 
 <p>
 The intrinsic behavior baseline of the numeric family includes at least:
@@ -310,7 +338,7 @@ The family also preserves the distinction between:
 
 <hr/>
 
-<h2 id="common-realization-expectations">8. Common Realization Expectations</h2>
+<h2 id="common-realization-expectations">9. Common Realization Expectations</h2>
 
 <p>
 A conforming realization of the numeric family SHOULD provide:
@@ -334,15 +362,17 @@ In particular:
 </p>
 
 <ul>
-  <li>realization MAY define anchors or text regions for numeric text placement,</li>
-  <li>realization MAY define decorative frames, skins, or step-button assets,</li>
-  <li>realization MUST NOT redefine the semantic owner of <code>value</code> or <code>label.text</code>,</li>
-  <li>realization MUST NOT make placeholder digits or baked asset text the only semantic source of visible numeric content.</li>
+  <li>realization MAY define where numeric text is rendered,</li>
+  <li>realization MAY define frame and button skins,</li>
+  <li>realization MAY define anchors, text regions, and state-sensitive resources,</li>
+  <li>realization MAY expose compatible family, variant, or skin identities,</li>
+  <li>realization MUST NOT redefine the public owner of <code>value</code> or <code>label.text</code>,</li>
+  <li>realization MUST NOT make asset-baked digits the only semantic source of visible numeric meaning.</li>
 </ul>
 
 <hr/>
 
-<h2 id="diagram-interaction-posture">9. Diagram Interaction Posture</h2>
+<h2 id="diagram-interaction-posture">10. Diagram Interaction Posture</h2>
 
 <p>
 The numeric family supports:
@@ -372,15 +402,13 @@ Typical legal object-style surfaces include:
   <li><code>limits.minimum</code></li>
   <li><code>limits.maximum</code></li>
   <li><code>format.pattern</code></li>
+  <li>portable <code>style.*</code> properties when publicly exposed</li>
+  <li>realization-selection members when publicly exposed</li>
 </ul>
-
-<p>
-Realization-only anchors, text regions, resource layers, and asset helpers remain outside the public numeric class surface unless explicitly standardized elsewhere.
-</p>
 
 <hr/>
 
-<h2 id="validation-expectations">10. Validation Expectations</h2>
+<h2 id="validation-expectations">11. Validation Expectations</h2>
 
 <p>
 Validators SHOULD diagnose at least:
@@ -393,12 +421,13 @@ Validators SHOULD diagnose at least:
   <li>access to unknown numeric family members,</li>
   <li>attempts to write control-only or indicator-only surfaces where forbidden,</li>
   <li>inconsistent bound declarations such as minimum greater than maximum,</li>
-  <li>attempts to treat realization-only placement surfaces as public numeric class members by default.</li>
+  <li>attempts to address realization-only anchors, text regions, or editing internals through <code>frog.ui.*</code> as if they were public members,</li>
+  <li>attempts to use styling or skin-selection surfaces to imply a distinct numeric class contract without explicit class publication.</li>
 </ul>
 
 <hr/>
 
-<h2 id="summary">11. Summary</h2>
+<h2 id="summary">12. Summary</h2>
 
 <p>
 The numeric widget family defines the intrinsic standardized scalar numeric baseline of FROG:
@@ -410,6 +439,9 @@ The numeric widget family defines the intrinsic standardized scalar numeric base
 </ul>
 
 <p>
-These classes provide the first standard numeric value-carrying widget surfaces for portable front panels.
+These classes provide the first standard numeric value-carrying widget surfaces for portable front panels and are intended to serve as part of the minimal reusable widget core of the language.
+</p>
+
+<p>
 They expose a real minimal object surface with properties, methods, events, and parts while keeping realization ownership and runtime-private embodiment clearly separated from class meaning.
 </p>
