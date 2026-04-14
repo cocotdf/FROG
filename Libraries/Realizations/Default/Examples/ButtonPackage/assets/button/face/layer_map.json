@@ -12,13 +12,8 @@
       "role": "outline"
     },
     {
-      "layer_id": "focus_ring",
-      "role": "focus_indicator",
-      "optional": true
-    },
-    {
-      "layer_id": "pressed_overlay",
-      "role": "pressed_feedback",
+      "layer_id": "content_clip",
+      "role": "content_clip",
       "optional": true
     }
   ]
