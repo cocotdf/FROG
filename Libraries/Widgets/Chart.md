@@ -62,6 +62,12 @@ The intrinsic chart baseline therefore standardizes a minimal plotted-history in
 It does not attempt to standardize a full legend, cursor, annotation, multi-trace, or analysis surface in the intrinsic core.
 </p>
 
+<p>
+This class must also be read together with the shared widget styling and realization-selection posture of FROG.
+The chart is an intrinsic standard widget class with a real portable object surface.
+It is not a runtime-private plotting widget masquerading as a standard class.
+</p>
+
 <hr/>
 
 <h2 id="class-defined-here">2. Class Defined Here</h2>
