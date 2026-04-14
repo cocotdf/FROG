@@ -16,14 +16,15 @@
 <ul>
   <li><a href="#overview">1. Overview</a></li>
   <li><a href="#target-classes">2. Target Classes</a></li>
-  <li><a href="#realized-parts">3. Realized Parts</a></li>
-  <li><a href="#standard-visual-states">4. Standard Visual States</a></li>
-  <li><a href="#part-state-mapping">5. Part-State Mapping</a></li>
-  <li><a href="#dynamic-surface-posture">6. Dynamic Surface Posture</a></li>
-  <li><a href="#resource-posture">7. Resource Posture</a></li>
-  <li><a href="#host-expectations">8. Host Expectations</a></li>
-  <li><a href="#fallback-posture">9. Fallback Posture</a></li>
-  <li><a href="#summary">10. Summary</a></li>
+  <li><a href="#realization-variant-posture">3. Realization Variant Posture</a></li>
+  <li><a href="#realized-parts">4. Realized Parts</a></li>
+  <li><a href="#standard-visual-states">5. Standard Visual States</a></li>
+  <li><a href="#part-state-mapping">6. Part-State Mapping</a></li>
+  <li><a href="#dynamic-surface-posture">7. Dynamic Surface Posture</a></li>
+  <li><a href="#resource-posture">8. Resource Posture</a></li>
+  <li><a href="#host-expectations">9. Host Expectations</a></li>
+  <li><a href="#fallback-posture">10. Fallback Posture</a></li>
+  <li><a href="#summary">11. Summary</a></li>
 </ul>
 
 <hr/>
@@ -35,17 +36,17 @@ This document defines the default official realization posture for the standardi
 </p>
 
 <p>
-The default string realization is intended to provide one clean, inspectable, portable embodiment of the intrinsic string baseline without turning one host toolkit or one runtime-specific text editor into the semantic definition of string widgets.
+The default string realization provides one clean, inspectable, portable embodiment of the intrinsic string baseline without turning one host toolkit, one text-editor style, or one runtime-specific implementation into the semantic definition of string widgets.
 </p>
 
 <p>
 This realization is realization-side only.
 It does not redefine string class law, does not invent new public members, and does not replace the semantic ownership of string value, string label text, or string editing semantics.
-Its job is to embody already-published string widget surfaces through stable visual states, stable structural bindings, and realization-side placement or rendering metadata where needed.
+Its role is to embody already-published string widget surfaces through stable visual states, stable structural bindings, and realization-side placement or rendering metadata where needed.
 </p>
 
 <p>
-The preferred architectural split is:
+The preferred realization-publication split is:
 </p>
 
 <ul>
@@ -77,12 +78,52 @@ This realization assumes the standardized string posture in which:
 
 <p>
 The realization therefore owns embodiment and placement posture for string widgets.
-It does not become the semantic owner of the string value or the label content.
+It does not become the semantic owner of the string value or of the label content.
 </p>
 
 <hr/>
 
-<h2 id="realized-parts">3. Realized Parts</h2>
+<h2 id="realization-variant-posture">3. Realization Variant Posture</h2>
+
+<p>
+The default string family standardizes one string realization corridor, not one mandatory visible shape.
+</p>
+
+<p>
+Accordingly, a conforming realization MAY choose a string embodiment posture such as:
+</p>
+
+<ul>
+  <li>single-line text-field-like editor,</li>
+  <li>multi-line text-area-like editor,</li>
+  <li>compact read-only string display,</li>
+  <li>scrollable text-view-like surface,</li>
+  <li>another host-compatible string embodiment.</li>
+</ul>
+
+<p>
+Those remain realization variants of the same published string classes.
+A multi-line or scrollable visible embodiment does not by itself define a new intrinsic widget class.
+</p>
+
+<p>
+This distinction is normative:
+</p>
+
+<ul>
+  <li>the class layer owns string value semantics, public members, methods, events, and parts,</li>
+  <li>the realization layer owns how those published surfaces are visually embodied,</li>
+  <li>a realization-variant identifier is not a class identifier,</li>
+  <li>a runtime MUST NOT treat a text-area-like, multi-line, or scrollable embodiment as if it were a distinct standard class unless a separate class contract is explicitly published elsewhere.</li>
+</ul>
+
+<p>
+For that reason, differences such as single-line posture, multi-line chrome, scroll affordance, or compact display posture belong here as realization strategy, not as implicit class-level semantic drift.
+</p>
+
+<hr/>
+
+<h2 id="realized-parts">4. Realized Parts</h2>
 
 <ul>
   <li><code>root</code></li>
@@ -92,7 +133,7 @@ It does not become the semantic owner of the string value or the label content.
 </ul>
 
 <p>
-The realization may internally use additional layers, clipping regions, caret surfaces, selection overlays, scroll regions, or host-native text editor structures.
+The realization may internally use additional layers, clipping regions, caret surfaces, selection overlays, scroll regions, placeholder layers, or host-native text editor structures.
 Those remain realization-private support structures unless they are explicitly published as realization resources or placement surfaces.
 </p>
 
@@ -107,9 +148,15 @@ The default posture is:
   <li><code>frame</code> — optional border or focus-emphasis surface.</li>
 </ul>
 
+<p>
+A multi-line or scrollable realization MAY internally decompose the visible embodiment into editor field, inner viewport, scrollbar affordances, placeholder layer, and other toolkit-native structures.
+Those remain realization-private unless explicitly published through a later realization-specific extension layer.
+The stable public string part model remains centered on <code>text_display</code>, <code>label</code>, and optional <code>frame</code>.
+</p>
+
 <hr/>
 
-<h2 id="standard-visual-states">4. Standard Visual States</h2>
+<h2 id="standard-visual-states">5. Standard Visual States</h2>
 
 <p>
 The default string family defines at least:
@@ -122,7 +169,7 @@ The default string family defines at least:
 </ul>
 
 <p>
-The host MAY also support richer transient posture such as hovered chrome, selection emphasis, or scroll affordances, but such additions are not required in the minimal default realization posture.
+The host MAY also support richer transient posture such as hovered chrome, selection emphasis, placeholder emphasis, or scroll affordances, but such additions are not required in the minimal default realization posture.
 </p>
 
 <p>
@@ -130,9 +177,13 @@ These are realization-side visual states.
 They do not redefine the semantic meaning of string value, string editing legality, or string class identity.
 </p>
 
+<p>
+A single-line, multi-line, compact, or scrollable embodiment may use different geometry, spacing, clipping, or emphasis for these states, but it still remains bound to the same published string state vocabulary unless an extended realization family explicitly publishes more specialized realization-only states.
+</p>
+
 <hr/>
 
-<h2 id="part-state-mapping">5. Part-State Mapping</h2>
+<h2 id="part-state-mapping">6. Part-State Mapping</h2>
 
 <p>
 The default family expects:
@@ -180,11 +231,16 @@ This distinction is important because <code>text_display</code> is not merely de
 It is the realized surface through which the current semantic string value becomes visible and, for controls, may become editable.
 </p>
 
+<p>
+In a multi-line or scrollable realization, any internal sub-embodiment such as inner viewport, placeholder layer, or scroll chrome remains subordinate to the published <code>text_display</code> binding posture.
+It does not create new public parts by implication alone.
+</p>
+
 <hr/>
 
-<h2 id="dynamic-surface-posture">6. Dynamic Surface Posture</h2>
+<h2 id="dynamic-surface-posture">7. Dynamic Surface Posture</h2>
 
-<h3>6.1 Text display posture</h3>
+<h3>7.1 Text display posture</h3>
 
 <p>
 The <code>text_display</code> part is not just a static decorative asset surface.
@@ -200,7 +256,7 @@ The realization owns how the text display is visually embodied.
 It does not become the semantic owner of the string value itself.
 </p>
 
-<h3>6.2 Label posture</h3>
+<h3>7.2 Label posture</h3>
 
 <p>
 The semantic string label text is not owned by this realization.
@@ -216,7 +272,7 @@ The <code>label</code> part is therefore expected to be realized as a dynamic te
 A host interpreting this realization should render or inject the current semantic string label into the realized label region at runtime.
 </p>
 
-<h3>6.3 Placement posture</h3>
+<h3>7.3 Placement posture</h3>
 
 <p>
 The default family SHOULD publish explicit placement surfaces for both <code>label</code> and <code>text_display</code> whenever host-rendered text content is used.
@@ -248,7 +304,7 @@ Those realization-side structures do not change the public meaning of <code>valu
 They only specify where the host should visually place, render, or edit the text.
 </p>
 
-<h3>6.4 Control versus indicator posture</h3>
+<h3>7.4 Control versus indicator posture</h3>
 
 <p>
 The default realization may embody string controls and string indicators differently internally.
@@ -270,7 +326,40 @@ Caret position, text selection, insertion mode, scrolling, and similar host edit
 They do not become new public widget semantics merely because a given runtime exposes them visually.
 </p>
 
-<h3>6.5 Asset limitation rule</h3>
+<h3>7.5 Editor-style posture as realization choice</h3>
+
+<p>
+A string editor style such as single-line field, multi-line area, scrollable viewer, or compact readout remains an embodiment choice within the default string family.
+Such a realization may use:
+</p>
+
+<ul>
+  <li>single-line editor chrome,</li>
+  <li>multi-line clipping regions,</li>
+  <li>scrollable inner viewport,</li>
+  <li>placeholder or hint presentation,</li>
+  <li>host-native text-field affordance conventions.</li>
+</ul>
+
+<p>
+However, those embodiment choices remain realization-owned.
+They do not, by themselves, introduce:
+</p>
+
+<ul>
+  <li>a distinct intrinsic widget class,</li>
+  <li>new public string semantics,</li>
+  <li>new mandatory public properties,</li>
+  <li>new mandatory public methods,</li>
+  <li>new mandatory public events.</li>
+</ul>
+
+<p>
+If a future specification standardizes a text-widget class with genuinely different public behavior, that class would need its own explicit class law.
+Until then, editor-style differences remain realization variants of <code>frog.widgets.string_control</code> or <code>frog.widgets.string_indicator</code>.
+</p>
+
+<h3>7.6 Asset limitation rule</h3>
 
 <p>
 A string resource file MAY include placeholder text, decorative guides, preview content, or design-time scaffolding.
@@ -283,7 +372,7 @@ Likewise, state-sensitive styling of rendered text must remain distinguishable f
 
 <hr/>
 
-<h2 id="resource-posture">7. Resource Posture</h2>
+<h2 id="resource-posture">8. Resource Posture</h2>
 
 <p>
 A typical resource posture may follow:
@@ -331,7 +420,7 @@ An equivalent package-oriented posture may publish resources such as:
 
 <p>
 Resources MAY be SVG-backed, host-native, toolkit-driven, or mixed.
-The default family standardizes the part posture, state posture, and realization-side binding posture, not one mandatory text editor implementation or one mandatory file format.
+The default family standardizes the part posture, state posture, and realization-side binding posture, not one mandatory text-editor implementation and not one mandatory file format.
 </p>
 
 <p>
@@ -344,9 +433,13 @@ In particular:
   <li><code>text_display</code> is naturally a placement-bound dynamic string surface, even when decorative visual resources also exist around it.</li>
 </ul>
 
+<p>
+A single-line, multi-line, scrollable, or host-native embodiment may still publish its resources under the same string realization corridor, as long as the published part meaning and state vocabulary remain preserved.
+</p>
+
 <hr/>
 
-<h2 id="host-expectations">8. Host Expectations</h2>
+<h2 id="host-expectations">9. Host Expectations</h2>
 
 <p>
 A host interpreting this realization SHOULD provide:
@@ -389,9 +482,14 @@ A host MAY approximate the realization when exact resources are unavailable, but
   <li>the separation between semantic string data and realization resources.</li>
 </ul>
 
+<p>
+A host MAY choose a single-line, multi-line, scrollable, compact, or other compatible string embodiment strategy.
+That choice is acceptable only if the public string class meaning remains unchanged and the realization contract remains inspectable.
+</p>
+
 <hr/>
 
-<h2 id="fallback-posture">9. Fallback Posture</h2>
+<h2 id="fallback-posture">10. Fallback Posture</h2>
 
 <p>
 If specialized text-display resources are unavailable, a runtime MAY use host-native text entry or text display surfaces provided the published part structure and interaction meaning remain preserved.
@@ -412,6 +510,17 @@ If focused or disabled frame-specific resources are unavailable, a host MAY fall
 </p>
 
 <p>
+If one string embodiment variant cannot be realized exactly, a host MAY fall back to another compatible string embodiment such as single-line, multi-line, scrollable, or compact posture, provided that:
+</p>
+
+<ul>
+  <li>the published string class meaning remains unchanged,</li>
+  <li>the readable text display remains clear,</li>
+  <li>the editable-versus-indicator distinction remains preserved,</li>
+  <li>the fallback does not imply a new class-level contract.</li>
+</ul>
+
+<p>
 Any fallback MUST preserve the published string class law and the meaning of the public parts when those parts are exposed.
 Fallback must not turn asset-baked strings or asset-baked label text into semantic truth.
 </p>
@@ -423,7 +532,7 @@ It must not become a purely runtime-private convention.
 
 <hr/>
 
-<h2 id="summary">10. Summary</h2>
+<h2 id="summary">11. Summary</h2>
 
 <p>
 The default string realization defines one official embodiment for string controls and string indicators centered on the public <code>text_display</code> part.
@@ -444,4 +553,8 @@ Its resources may provide skins, layers, regions, and anchors.
 Its package publication may provide <code>state_maps</code> and <code>part_bindings</code>.
 Its host implementation may approximate the visuals when needed.
 But the realization never becomes the semantic owner of string value, string label text, or string class meaning.
+</p>
+
+<p>
+In this realization family, single-line, multi-line, scrollable, compact, and similar visible embodiments remain realization variants unless a future specification publishes a distinct class with genuinely distinct public semantics.
 </p>
