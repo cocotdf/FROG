@@ -22,14 +22,15 @@
   <li><a href="#package-identity">6. Package Identity</a></li>
   <li><a href="#target-class-declarations">7. Target Class Declarations</a></li>
   <li><a href="#realization-records">8. Realization Records</a></li>
-  <li><a href="#resource-manifests">9. Resource Manifests</a></li>
-  <li><a href="#state-maps">10. State Maps</a></li>
-  <li><a href="#part-bindings">11. Part Bindings</a></li>
-  <li><a href="#anchor-and-text-region-publication">12. Anchor and Text-Region Publication</a></li>
-  <li><a href="#host-hints">13. Host Hints</a></li>
-  <li><a href="#minimal-json-outline">14. Minimal JSON Outline</a></li>
-  <li><a href="#validation-posture">15. Validation Posture</a></li>
-  <li><a href="#summary">16. Summary</a></li>
+  <li><a href="#realization-variant-publication">9. Realization-Variant Publication</a></li>
+  <li><a href="#resource-manifests">10. Resource Manifests</a></li>
+  <li><a href="#state-maps">11. State Maps</a></li>
+  <li><a href="#part-bindings">12. Part Bindings</a></li>
+  <li><a href="#anchor-and-text-region-publication">13. Anchor and Text-Region Publication</a></li>
+  <li><a href="#host-hints">14. Host Hints</a></li>
+  <li><a href="#minimal-json-outline">15. Minimal JSON Outline</a></li>
+  <li><a href="#validation-posture">16. Validation Posture</a></li>
+  <li><a href="#summary">17. Summary</a></li>
 </ul>
 
 <hr/>
@@ -50,6 +51,8 @@ The default-family package publishes realization-side information such as:
 
 <ul>
   <li>which widget classes are targeted,</li>
+  <li>which realization records exist,</li>
+  <li>which realization variants are available when the family allows them,</li>
   <li>which parts are realized,</li>
   <li>which visual states are supported,</li>
   <li>which resources are available,</li>
@@ -76,7 +79,8 @@ Without this layer:
   <li>state-specific resources would be harder to validate consistently,</li>
   <li>runtime families would lack a stable machine-readable realization target,</li>
   <li>assets would drift toward ad hoc organization,</li>
-  <li>dynamic text-bearing parts would be at risk of collapsing into asset-only conventions.</li>
+  <li>dynamic text-bearing parts would be at risk of collapsing into asset-only conventions,</li>
+  <li>compatible visible embodiment variants would drift into undocumented runtime-only choices.</li>
 </ul>
 
 <p>
@@ -114,12 +118,16 @@ Therefore:
 <ul>
   <li>the package MUST NOT redefine widget class law,</li>
   <li>the package MUST NOT create undocumented public widget members,</li>
-  <li>the package MAY publish state maps, part bindings, anchor bindings, text-region bindings, and resource references,</li>
+  <li>the package MAY publish realization variants, state maps, part bindings, anchor bindings, text-region bindings, and resource references,</li>
   <li>the runtime MAY interpret or approximate the package while preserving class meaning.</li>
 </ul>
 
 <p>
 In particular, the package MAY publish where a public text-bearing part is visually placed, but it MUST NOT become the semantic owner of the text shown by that part.
+</p>
+
+<p>
+Likewise, the package MAY publish several compatible realization variants for the same standardized class, but it MUST NOT imply that each variant is a new widget class unless a distinct class contract is explicitly published elsewhere.
 </p>
 
 <hr/>
@@ -136,6 +144,8 @@ That package kind is appropriate because the package publishes:
 
 <ul>
   <li>reusable realization resources,</li>
+  <li>reusable realization records,</li>
+  <li>reusable realization variants,</li>
   <li>reusable state mappings,</li>
   <li>reusable part bindings,</li>
   <li>reusable anchor and placement metadata,</li>
@@ -181,6 +191,7 @@ Implementations MAY choose a more structured internal encoding, but the publicat
 <ul>
   <li>target classes,</li>
   <li>realization identities,</li>
+  <li>realization variants when applicable,</li>
   <li>state sets,</li>
   <li>part sets,</li>
   <li>resource inventories,</li>
@@ -249,7 +260,7 @@ They do not redefine the corresponding standardized classes.
 <h2 id="realization-records">8. Realization Records</h2>
 
 <p>
-Each target class SHOULD have a realization record.
+Each target class SHOULD have at least one realization record.
 </p>
 
 <p>
@@ -286,6 +297,7 @@ A realization record MAY also identify:
 </p>
 
 <ul>
+  <li>variant publication,</li>
   <li>placement surfaces,</li>
   <li>state-specific resource groups,</li>
   <li>optional host-native substitution posture,</li>
@@ -303,7 +315,84 @@ The preferred publication split is:
 
 <hr/>
 
-<h2 id="resource-manifests">9. Resource Manifests</h2>
+<h2 id="realization-variant-publication">9. Realization-Variant Publication</h2>
+
+<p>
+When the default family allows several compatible embodiment variants for the same standardized class, the package SHOULD publish those variants explicitly rather than leaving them as runtime-private choices.
+</p>
+
+<p>
+A realization variant remains subordinate to the realization record of its target class.
+It is not a class identifier.
+It is not a separate widget contract.
+</p>
+
+<p>
+A variant record SHOULD identify at least:
+</p>
+
+<ul>
+  <li>a stable variant identifier,</li>
+  <li>the parent realization identifier,</li>
+  <li>the target class,</li>
+  <li>the variant name,</li>
+  <li>the resources, bindings, or state maps overridden or specialized by that variant,</li>
+  <li>its fallback posture when the variant cannot be realized exactly.</li>
+</ul>
+
+<p>
+Conceptually:
+</p>
+
+<pre><code>{
+  "id": "frog.realizations.default.boolean_control.switch_like",
+  "parent_realization": "frog.realizations.default.boolean_control",
+  "target_class": "frog.widgets.boolean_control",
+  "variant": "switch_like"
+}</code></pre>
+
+<p>
+A variant MAY specialize:
+</p>
+
+<ul>
+  <li>resource references,</li>
+  <li>visual-state resource groups,</li>
+  <li>host hints,</li>
+  <li>placement metadata,</li>
+  <li>fallback preference.</li>
+</ul>
+
+<p>
+A variant MUST NOT by itself introduce:
+</p>
+
+<ul>
+  <li>a new widget class identifier,</li>
+  <li>new mandatory public widget properties,</li>
+  <li>new mandatory public widget methods,</li>
+  <li>new mandatory public widget events,</li>
+  <li>an implicit class split hidden inside realization packaging.</li>
+</ul>
+
+<p>
+This means, for example:
+</p>
+
+<ul>
+  <li>a checkbox-like boolean variant,</li>
+  <li>a switch-like boolean variant,</li>
+  <li>a spinbox-like numeric variant,</li>
+  <li>a compact chart variant</li>
+</ul>
+
+<p>
+may all remain package-published realization variants of one published standardized class, provided that the public class meaning remains unchanged.
+</p>
+
+<hr/>
+
+<h2 id="resource-manifests">10. Resource Manifests</h2>
 
 <p>
 The package SHOULD publish explicit resource manifests.
@@ -318,7 +407,8 @@ Each resource manifest entry SHOULD identify:
   <li>the resource kind,</li>
   <li>the path,</li>
   <li>the target widget class or part when applicable,</li>
-  <li>the target state when applicable.</li>
+  <li>the target state when applicable,</li>
+  <li>the target realization variant when applicable.</li>
 </ul>
 
 <p>
@@ -340,7 +430,7 @@ It does not, by itself, declare how a host should interpret public widget semant
 
 <hr/>
 
-<h2 id="state-maps">10. State Maps</h2>
+<h2 id="state-maps">11. State Maps</h2>
 
 <p>
 The package SHOULD define explicit state maps rather than relying on filename conventions alone.
@@ -388,9 +478,23 @@ Dynamic text-bearing parts SHOULD preferably avoid using state maps as their pri
 In that case, the preferred publication mechanism is a structural binding to an anchor, text region, or equivalent placement surface.
 </p>
 
+<p>
+When several compatible realization variants exist, state maps MAY either:
+</p>
+
+<ul>
+  <li>belong to the parent realization and be shared by all variants,</li>
+  <li>or be specialized per variant when the embodiment actually changes.</li>
+</ul>
+
+<p>
+That specialization remains realization-owned.
+It does not create a new class contract.
+</p>
+
 <hr/>
 
-<h2 id="part-bindings">11. Part Bindings</h2>
+<h2 id="part-bindings">12. Part Bindings</h2>
 
 <p>
 The package SHOULD define explicit part bindings.
@@ -434,9 +538,14 @@ Conceptually:
   "fallback": "host_centered_text_region"
 }</code></pre>
 
+<p>
+When several realization variants exist, a part binding MAY either remain shared at the parent realization level or be specialized at the variant level.
+That specialization changes embodiment posture, not public part meaning.
+</p>
+
 <hr/>
 
-<h2 id="anchor-and-text-region-publication">12. Anchor and Text-Region Publication</h2>
+<h2 id="anchor-and-text-region-publication">13. Anchor and Text-Region Publication</h2>
 
 <p>
 The default realization package SHOULD make anchor or text-region publication explicit whenever a public part is dynamically rendered by the host rather than fully baked into a single visual asset.
@@ -453,7 +562,7 @@ This is especially important for parts such as:
   <li>chart plot or axis label regions when those are realization-published.</li>
 </ul>
 
-<h3>12.1 Publication purpose</h3>
+<h3>13.1 Publication purpose</h3>
 
 <p>
 Anchor and text-region publication exists to make realization-side placement inspectable.
@@ -461,7 +570,7 @@ It defines where the host should place or render a dynamic part.
 It does not redefine the semantic owner of the data shown there.
 </p>
 
-<h3>12.2 Typical anchor entry</h3>
+<h3>13.2 Typical anchor entry</h3>
 
 <p>
 A typical anchor-oriented publication may identify:
@@ -498,7 +607,7 @@ Conceptually:
   }
 }</code></pre>
 
-<h3>12.3 Button-specific posture</h3>
+<h3>13.3 Button-specific posture</h3>
 
 <p>
 For <code>frog.widgets.button</code>, the package SHOULD make it possible to express the following distinction cleanly:
@@ -523,7 +632,7 @@ That publication posture helps preserve the architectural separation between:
 
 <hr/>
 
-<h2 id="host-hints">13. Host Hints</h2>
+<h2 id="host-hints">14. Host Hints</h2>
 
 <p>
 The package MAY define host-facing hints.
@@ -538,7 +647,8 @@ Typical host hints include:
   <li>preferred scaling posture,</li>
   <li>preferred density buckets,</li>
   <li>optional accessibility hints,</li>
-  <li>preferred host-native substitution posture.</li>
+  <li>preferred host-native substitution posture,</li>
+  <li>preferred realization variant when several compatible variants exist.</li>
 </ul>
 
 <p>
@@ -547,7 +657,7 @@ Such hints remain non-authoritative with respect to public widget law.
 
 <hr/>
 
-<h2 id="minimal-json-outline">14. Minimal JSON Outline</h2>
+<h2 id="minimal-json-outline">15. Minimal JSON Outline</h2>
 
 <pre><code>{
   "wfrog_version": "1",
@@ -586,6 +696,12 @@ Such hints remain non-authoritative with respect to public widget law.
         "face",
         "label",
         "frame"
+      ],
+      "variants": [
+        {
+          "id": "frog.realizations.default.button.standard",
+          "variant": "standard"
+        }
       ],
       "part_bindings": [
         {
@@ -704,7 +820,7 @@ Such hints remain non-authoritative with respect to public widget law.
 
 <hr/>
 
-<h2 id="validation-posture">15. Validation Posture</h2>
+<h2 id="validation-posture">16. Validation Posture</h2>
 
 <p>
 Validators SHOULD diagnose at least:
@@ -712,6 +828,7 @@ Validators SHOULD diagnose at least:
 
 <ul>
   <li>realization records that target undeclared widget classes,</li>
+  <li>variant records that imply a new class split without a corresponding published class contract,</li>
   <li>part bindings that reference non-published parts,</li>
   <li>state maps that reference undeclared states,</li>
   <li>resource records whose paths do not correspond to published assets,</li>
@@ -727,12 +844,13 @@ Validation SHOULD also check internal coherence between:
   <li>the package JSON,</li>
   <li>the asset tree,</li>
   <li>the state-mapping posture,</li>
-  <li>the published part model.</li>
+  <li>the published part model,</li>
+  <li>the declared realization variants and the resources they specialize.</li>
 </ul>
 
 <hr/>
 
-<h2 id="summary">16. Summary</h2>
+<h2 id="summary">17. Summary</h2>
 
 <p>
 The default realization package exists to make the official realization family machine-readable without collapsing widget law into resources or runtime code.
@@ -744,6 +862,7 @@ Its preferred publication posture is:
 
 <ul>
   <li>explicit realization records,</li>
+  <li>explicit realization-variant records when embodiment choices are published,</li>
   <li>explicit resource manifests,</li>
   <li>explicit state maps for state-sensitive visual embodiment,</li>
   <li>explicit part bindings for stable structural correspondence,</li>
