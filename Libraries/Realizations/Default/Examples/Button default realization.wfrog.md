@@ -52,6 +52,11 @@ This example is not presented as the only possible encoding shape of all future 
 It is presented as the first coherent reference pattern for the default family.
 </p>
 
+<p>
+It is also intentionally conservative.
+It demonstrates the shared button realization corridor first, before adding variant-specific or skin-specific specialization layers.
+</p>
+
 <hr/>
 
 <h2 id="purpose-of-this-example">2. Purpose of this Example</h2>
@@ -68,6 +73,10 @@ Its purpose is to show how the default official realization family may publish o
 <p>
 It also serves a narrower purpose:
 to prove that the default button corridor can already be published in a way that keeps dynamic public text portable and inspectable.
+</p>
+
+<p>
+Because the button is the clearest first proof case for dynamic semantic text versus realization-owned placement, it is the correct place to establish the publication pattern that later numeric, string, boolean, and chart examples should follow.
 </p>
 
 <hr/>
@@ -103,6 +112,12 @@ This means the example is designed to prove three things simultaneously:
   <li><code>part_bindings</code> are the preferred mechanism for stable structural correspondence,</li>
   <li>anchors are the preferred mechanism for dynamic host-rendered button text placement.</li>
 </ul>
+
+<p>
+The example is also family-generic rather than variant-specific.
+It does not attempt to prove a specialized flat, raised, rounded, or skin-specific button posture yet.
+That later specialization remains possible, but it should be layered on top of the base publication pattern shown here rather than replacing it.
+</p>
 
 <hr/>
 
@@ -330,6 +345,17 @@ In other words:
   <li>future examples may extend the same corridor with explicit frame resources or frame-specific state maps.</li>
 </ul>
 
+<p>
+The example also intentionally does not publish a dedicated <code>variants</code> array or a dedicated <code>skin_id</code> specialization layer.
+That omission is deliberate:
+</p>
+
+<ul>
+  <li>the current goal is to prove the shared default button publication corridor first,</li>
+  <li>variant-aware and skin-aware specialization can be layered later without changing the architectural rule already demonstrated here,</li>
+  <li>the base example therefore stays small enough to remain the canonical first proof case.</li>
+</ul>
+
 <hr/>
 
 <h2 id="why-this-example-matters">6. Why This Example Matters</h2>
@@ -362,6 +388,11 @@ This example avoids both failures by making the following inspectable at publica
 <p>
 That is why this example is the first normative proof case for the default realization example corridor.
 It is small, but it already demonstrates the central architectural rule that later widget families must preserve.
+</p>
+
+<p>
+It also establishes the correct extension direction:
+future variant-specific or skin-specific button examples must specialize this base corridor rather than replacing it with a different implicit architecture.
 </p>
 
 <hr/>
