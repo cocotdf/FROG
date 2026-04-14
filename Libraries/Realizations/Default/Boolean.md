@@ -36,17 +36,17 @@ This document defines the default official realization posture for the standardi
 </p>
 
 <p>
-The default boolean realization is intended to provide one clean, inspectable, portable embodiment of the intrinsic boolean baseline without turning one host toolkit or one runtime-specific control library into the semantic definition of boolean widgets.
+The default boolean realization provides one clean, inspectable, portable embodiment of the intrinsic boolean baseline without turning one host toolkit, one control library, or one runtime-specific implementation into the semantic definition of boolean widgets.
 </p>
 
 <p>
 This realization is realization-side only.
 It does not redefine boolean class law, does not invent new public members, and does not replace the semantic ownership of boolean value, boolean label text, or boolean interaction semantics.
-Its job is to embody already-published boolean widget surfaces through stable visual states, stable structural bindings, and realization-side placement or rendering metadata where needed.
+Its role is to embody already-published boolean widget surfaces through stable visual states, stable structural bindings, and realization-side placement or rendering metadata where needed.
 </p>
 
 <p>
-The preferred architectural split is:
+The preferred realization-publication split is:
 </p>
 
 <ul>
@@ -78,7 +78,7 @@ This realization assumes the standardized boolean posture in which:
 
 <p>
 The realization therefore owns embodiment and placement posture for boolean widgets.
-It does not become the semantic owner of the boolean value or the label content.
+It does not become the semantic owner of the boolean value or of the label content.
 </p>
 
 <hr/>
@@ -113,11 +113,12 @@ This distinction is normative:
 <ul>
   <li>the class layer owns boolean value semantics, public members, methods, events, and parts,</li>
   <li>the realization layer owns how those published surfaces are visually embodied,</li>
-  <li>a runtime MUST NOT treat a switch-like embodiment as if it were a distinct standard class unless a separate class contract is explicitly published elsewhere.</li>
+  <li>a realization-variant identifier is not a class identifier,</li>
+  <li>a runtime MUST NOT treat a switch-like or checkbox-like embodiment as if it were a distinct standard class unless a separate class contract is explicitly published elsewhere.</li>
 </ul>
 
 <p>
-For that reason, switch-like posture belongs here as realization strategy, not as implicit class-level semantic drift.
+For that reason, switch-like posture belongs here as a realization strategy, not as implicit class-level semantic drift.
 </p>
 
 <hr/>
