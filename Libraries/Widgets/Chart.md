@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="../../../FROG logo.svg" alt="FROG logo" width="140" />
+  <img src="../../FROG logo.svg" alt="FROG logo" width="140" />
 </p>
 
 <h1 align="center">FROG Standard Chart Widget</h1>
@@ -18,18 +18,19 @@
   <li><a href="#class-defined-here">2. Class Defined Here</a></li>
   <li><a href="#strategic-scope-of-the-intrinsic-chart-baseline">3. Strategic Scope of the Intrinsic Chart Baseline</a></li>
   <li><a href="#frogwidgetswaveform_chart">4. <code>frog.widgets.waveform_chart</code></a></li>
-  <li><a href="#value-and-history-posture">5. Value and History Posture</a></li>
-  <li><a href="#public-object-surfaces">6. Public Object Surfaces</a></li>
-  <li><a href="#standard-properties">7. Standard Properties</a></li>
-  <li><a href="#standard-methods">8. Standard Methods</a></li>
-  <li><a href="#standard-events">9. Standard Events</a></li>
-  <li><a href="#standard-parts">10. Standard Parts</a></li>
-  <li><a href="#behavior-expectations">11. Behavior Expectations</a></li>
-  <li><a href="#realization-expectations">12. Realization Expectations</a></li>
-  <li><a href="#diagram-interaction-posture">13. Diagram Interaction Posture</a></li>
-  <li><a href="#non-goals-of-the-intrinsic-chart-baseline">14. Non-Goals of the Intrinsic Chart Baseline</a></li>
-  <li><a href="#validation-expectations">15. Validation Expectations</a></li>
-  <li><a href="#summary">16. Summary</a></li>
+  <li><a href="#common-styling-and-skin-customization">5. Common Styling and Skin Customization</a></li>
+  <li><a href="#value-and-history-posture">6. Value and History Posture</a></li>
+  <li><a href="#public-object-surfaces">7. Public Object Surfaces</a></li>
+  <li><a href="#standard-properties">8. Standard Properties</a></li>
+  <li><a href="#standard-methods">9. Standard Methods</a></li>
+  <li><a href="#standard-events">10. Standard Events</a></li>
+  <li><a href="#standard-parts">11. Standard Parts</a></li>
+  <li><a href="#behavior-expectations">12. Behavior Expectations</a></li>
+  <li><a href="#realization-expectations">13. Realization Expectations</a></li>
+  <li><a href="#diagram-interaction-posture">14. Diagram Interaction Posture</a></li>
+  <li><a href="#non-goals-of-the-intrinsic-chart-baseline">15. Non-Goals of the Intrinsic Chart Baseline</a></li>
+  <li><a href="#validation-expectations">16. Validation Expectations</a></li>
+  <li><a href="#summary">17. Summary</a></li>
 </ul>
 
 <hr/>
@@ -159,9 +160,67 @@ For the intrinsic baseline, the minimum required portable posture is:
 
 <hr/>
 
-<h2 id="value-and-history-posture">5. Value and History Posture</h2>
+<h2 id="common-styling-and-skin-customization">5. Common Styling and Skin Customization</h2>
 
-<h3>5.1 Value posture</h3>
+<p>
+The intrinsic waveform chart baseline is visually customizable.
+However, visual customization remains subordinate to chart class meaning.
+</p>
+
+<p>
+Accordingly, the chart may expose:
+</p>
+
+<ul>
+  <li>portable widget-visible style properties,</li>
+  <li>selection of a compatible realization family or variant,</li>
+  <li>selection of a compatible skin identity,</li>
+  <li>bounded realization-side resource overrides when allowed by the active publication corridor.</li>
+</ul>
+
+<p>
+These customization surfaces do not create a new widget class.
+A skinned chart remains <code>frog.widgets.waveform_chart</code> unless a distinct class contract is explicitly published elsewhere.
+</p>
+
+<p>
+When exposed, the preferred portable style surface is intentionally conservative.
+It may include:
+</p>
+
+<ul>
+  <li><code>style.foreground_color</code></li>
+  <li><code>style.background_color</code></li>
+  <li><code>style.border_color</code></li>
+  <li><code>style.opacity</code></li>
+  <li><code>style.text_color</code> when the chart exposes visible text-bearing surfaces</li>
+  <li><code>realization.family</code></li>
+  <li><code>realization.variant</code></li>
+  <li><code>realization.skin_id</code></li>
+</ul>
+
+<p>
+Richer chart-specific portable styling such as plot colors, grid colors, tick colors, cursor surfaces, legend surfaces, or multi-plot token systems may be standardized later.
+They are intentionally not required in the intrinsic baseline.
+</p>
+
+<p>
+The chart class may therefore expose portable visual preferences, but realization still owns:
+</p>
+
+<ul>
+  <li>plot geometry and drawing posture,</li>
+  <li>axis geometry and placement,</li>
+  <li>label placement,</li>
+  <li>resource-layer composition,</li>
+  <li>the concrete SVG or host-native assets used to embody the chart.</li>
+</ul>
+
+<hr/>
+
+<h2 id="value-and-history-posture">6. Value and History Posture</h2>
+
+<h3>6.1 Value posture</h3>
 
 <p>
 The intrinsic chart baseline is a value-carrying indicator, but not a general-purpose graph object model.
@@ -186,7 +245,7 @@ Those richer surfaces may be introduced later through higher-level standardized 
 They are not part of <code>frog.widgets.waveform_chart</code> itself.
 </p>
 
-<h3>5.2 History posture</h3>
+<h3>6.2 History posture</h3>
 
 <p>
 The intrinsic chart baseline may operate in a visible-history posture.
@@ -205,7 +264,7 @@ It requires only that bounded history behavior, when exposed, remain portable en
   <li><code>clear_history()</code> clears retained visible history when the chart retains it.</li>
 </ul>
 
-<h3>5.3 Axis posture</h3>
+<h3>6.3 Axis posture</h3>
 
 <p>
 The intrinsic baseline exposes only a minimal portable axis posture through:
@@ -226,7 +285,7 @@ The intrinsic baseline exposes only a minimal portable axis posture through:
 This means the intrinsic baseline recognizes that axis visibility and a small axis control surface matter to portable chart embodiment, but it still does not standardize a full axis formatting model, legend model, cursor model, or interactive plotting framework in this document.
 </p>
 
-<h3>5.4 Label posture</h3>
+<h3>6.4 Label posture</h3>
 
 <p>
 The chart exposes <code>label.text</code> as a semantic label-bearing public surface.
@@ -236,7 +295,7 @@ Its visual placement, clipping, or styling defaults belong downstream in realiza
 
 <hr/>
 
-<h2 id="public-object-surfaces">6. Public Object Surfaces</h2>
+<h2 id="public-object-surfaces">7. Public Object Surfaces</h2>
 
 <p>
 The intrinsic waveform chart baseline is intended to expose a real object surface suitable for property-style access and method-style interaction where legal.
@@ -261,7 +320,7 @@ This gives the chart a credible property-node and method-node posture without pr
 
 <hr/>
 
-<h2 id="standard-properties">7. Standard Properties</h2>
+<h2 id="standard-properties">8. Standard Properties</h2>
 
 <p>
 The intrinsic waveform chart baseline exposes the following standard properties.
@@ -269,22 +328,26 @@ Some of them are always part of the minimal baseline.
 Others are part of the standardized object surface when the corresponding chart posture is active.
 </p>
 
-<h3>7.1 Root-level properties</h3>
+<h3>8.1 Root-level properties</h3>
 
 <ul>
   <li><code>value</code></li>
   <li><code>label.text</code></li>
   <li><code>interaction.visible</code></li>
+  <li>portable <code>style.*</code> surfaces when exposed by the class or active profile</li>
+  <li><code>realization.family</code> when realization selection is publicly exposed</li>
+  <li><code>realization.variant</code> when realization selection is publicly exposed</li>
+  <li><code>realization.skin_id</code> when realization selection is publicly exposed</li>
 </ul>
 
-<h3>7.2 History properties</h3>
+<h3>8.2 History properties</h3>
 
 <ul>
   <li><code>history.capacity</code> when the chart maintains bounded visible history</li>
   <li><code>history.length</code> when the active chart posture exposes retained-history length inspection</li>
 </ul>
 
-<h3>7.3 Axis properties</h3>
+<h3>8.3 Axis properties</h3>
 
 <ul>
   <li><code>axes.x.visible</code></li>
@@ -304,7 +367,7 @@ It does not standardize here a full tick, format, cursor, legend, or plot-style 
 
 <hr/>
 
-<h2 id="standard-methods">8. Standard Methods</h2>
+<h2 id="standard-methods">9. Standard Methods</h2>
 
 <p>
 The intrinsic waveform chart baseline exposes the following standard methods:
@@ -318,6 +381,7 @@ The intrinsic waveform chart baseline exposes the following standard methods:
   <li><code>autoscale_y()</code> when Y-axis auto-scaling posture is exposed</li>
   <li><code>autoscale_all()</code> when both axes participate in explicit auto-scaling posture</li>
   <li><code>focus()</code> when supported by the host</li>
+  <li><code>reset_to_default_style()</code> when a style default exists</li>
 </ul>
 
 <p>
@@ -327,7 +391,7 @@ The intrinsic baseline does not standardize here a full chart-editing, plot-mana
 
 <hr/>
 
-<h2 id="standard-events">9. Standard Events</h2>
+<h2 id="standard-events">10. Standard Events</h2>
 
 <p>
 The intrinsic waveform chart baseline may expose the following standard events:
@@ -347,7 +411,7 @@ The intrinsic baseline does not standardize here a rich event system for cursors
 
 <hr/>
 
-<h2 id="standard-parts">10. Standard Parts</h2>
+<h2 id="standard-parts">11. Standard Parts</h2>
 
 <p>
 The chart family uses the following stable public parts:
@@ -375,7 +439,7 @@ It does not mean that every host must realize them pixel-identically or through 
 
 <hr/>
 
-<h2 id="behavior-expectations">11. Behavior Expectations</h2>
+<h2 id="behavior-expectations">12. Behavior Expectations</h2>
 
 <p>
 The intrinsic behavior baseline of the waveform chart includes at least:
@@ -402,7 +466,7 @@ The chart is indicator-oriented in the standardized baseline, even though a host
 
 <hr/>
 
-<h2 id="realization-expectations">12. Realization Expectations</h2>
+<h2 id="realization-expectations">13. Realization Expectations</h2>
 
 <p>
 A conforming realization of the waveform chart SHOULD provide:
@@ -437,12 +501,13 @@ In particular:
 <ul>
   <li>the chart class owns the semantic presence of <code>value</code>, <code>label.text</code>, axis visibility posture, and the published public parts,</li>
   <li>the realization family owns how <code>plot_area</code>, axes, label, and frame are visually embodied,</li>
+  <li>the realization family may define compatible family, variant, or skin identities,</li>
   <li>assets and host widgets remain realization resources rather than semantic truth.</li>
 </ul>
 
 <hr/>
 
-<h2 id="diagram-interaction-posture">13. Diagram Interaction Posture</h2>
+<h2 id="diagram-interaction-posture">14. Diagram Interaction Posture</h2>
 
 <p>
 The waveform chart supports:
@@ -457,7 +522,7 @@ The waveform chart supports:
 
 <p>
 The natural value path remains the preferred representation for ordinary chart-data feeding in the intrinsic baseline.
-Object-style members such as <code>history.capacity</code>, axis visibility members, or axis-range members may be accessed where the active class posture exposes them, but the intrinsic baseline does not require that ordinary chart feeding abandon the natural value path.
+Object-style members such as <code>history.capacity</code>, axis visibility members, axis-range members, or portable realization-selection members may be accessed where the active class posture exposes them, but the intrinsic baseline does not require that ordinary chart feeding abandon the natural value path.
 </p>
 
 <p>
@@ -466,7 +531,7 @@ This gives the chart a property-node and method-node posture similar in spirit t
 
 <hr/>
 
-<h2 id="non-goals-of-the-intrinsic-chart-baseline">14. Non-Goals of the Intrinsic Chart Baseline</h2>
+<h2 id="non-goals-of-the-intrinsic-chart-baseline">15. Non-Goals of the Intrinsic Chart Baseline</h2>
 
 <p>
 The following are intentionally outside the scope of <code>frog.widgets.waveform_chart</code> in the intrinsic baseline:
@@ -490,7 +555,7 @@ They are not part of the minimal intrinsic chart baseline defined here.
 
 <hr/>
 
-<h2 id="validation-expectations">15. Validation Expectations</h2>
+<h2 id="validation-expectations">16. Validation Expectations</h2>
 
 <p>
 Validators SHOULD diagnose at least:
@@ -501,7 +566,8 @@ Validators SHOULD diagnose at least:
   <li>attempts to use unsupported chart members or parts,</li>
   <li>chart value types that are incompatible with the active chart baseline posture,</li>
   <li>attempts to treat the minimal intrinsic chart as a full unrestricted plotting system without an explicit higher-level class or profile,</li>
-  <li>attempts to treat realization-private chart surfaces as if they were intrinsic public class members by default.</li>
+  <li>attempts to treat realization-private chart surfaces as if they were intrinsic public class members by default,</li>
+  <li>attempts to use styling or skin-selection surfaces to imply a distinct chart class contract without explicit class publication.</li>
 </ul>
 
 <p>
@@ -515,7 +581,7 @@ Validators MAY also diagnose:
 
 <hr/>
 
-<h2 id="summary">16. Summary</h2>
+<h2 id="summary">17. Summary</h2>
 
 <p>
 The waveform chart defines the first richer indicator-oriented display widget of the intrinsic FROG baseline:
@@ -536,6 +602,7 @@ It standardizes:
 <ul>
   <li>a portable value-bearing indicator posture,</li>
   <li>a small but credible property and method surface,</li>
+  <li>portable styling and realization-selection surfaces when exposed,</li>
   <li>stable public parts,</li>
   <li>minimal history and axis posture,</li>
   <li>clear separation between class meaning and downstream realization.</li>
