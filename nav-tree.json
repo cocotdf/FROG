@@ -536,6 +536,13 @@
                       "children": []
                     },
                     {
+                      "key": "libraries/realizations/default/picture.md",
+                      "title": "Picture",
+                      "path": "/Libraries/Realizations/Default/Picture.md",
+                      "kind": "page",
+                      "children": []
+                    },
+                    {
                       "key": "libraries/realizations/default/resource-model.md",
                       "title": "Resource model",
                       "path": "/Libraries/Realizations/Default/Resource%20model.md",
@@ -2665,6 +2672,7 @@
     "/Libraries/Realizations/Default/Numeric.md",
     "/Libraries/Realizations/Default/Package.md",
     "/Libraries/Realizations/Default/Path.md",
+    "/Libraries/Realizations/Default/Picture.md",
     "/Libraries/Realizations/Default/Resource%20model.md",
     "/Libraries/Realizations/Default/State%20mapping.md",
     "/Libraries/Realizations/Default/String.md",
