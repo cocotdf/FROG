@@ -21,7 +21,7 @@
   <li><a href="#resource-identifiers">5. Resource Identifiers</a></li>
   <li><a href="#resource-record-shape">6. Resource Record Shape</a></li>
   <li><a href="#path-posture">7. Path Posture</a></li>
-  <li><a href="#class-part-and-region-scoping">8. Class, Part, and Region Scoping</a></li>
+  <li><a href="#class-part-region-and-variant-scoping">8. Class, Part, Region, and Variant Scoping</a></li>
   <li><a href="#state-scoping">9. State Scoping</a></li>
   <li><a href="#anchor-and-text-region-resources">10. Anchor and Text-Region Resources</a></li>
   <li><a href="#resource-examples">11. Resource Examples</a></li>
@@ -38,7 +38,7 @@ This document defines the resource model used by the official <code>Default</cod
 </p>
 
 <p>
-The resource model provides the machine-readable posture for realization resources such as SVG assets, anchor maps, text-region maps, layer maps, and related support artifacts used by realization records.
+The resource model provides the machine-readable posture for realization resources such as SVG assets, anchor maps, text-region maps, layer maps, and related support artifacts used by realization records and realization variants.
 </p>
 
 <p>
@@ -123,6 +123,11 @@ That decision emerges from the combination of:
   <li>the published anchors or text regions when applicable.</li>
 </ul>
 
+<p>
+When the default family publishes several compatible realization variants for the same standardized class, the resource model remains subordinate to that structure as well.
+A resource may be shared across several variants or scoped to one variant, but the resource itself still does not define a new widget class.
+</p>
+
 <hr/>
 
 <h2 id="resource-kinds">4. Resource Kinds</h2>
@@ -191,6 +196,30 @@ Examples:
 </ul>
 
 <p>
+When several realization variants exist for the same standardized class, the preferred posture is:
+</p>
+
+<ul>
+  <li>keep the same resource identifier when the resource is genuinely shared across variants,</li>
+  <li>add an explicit variant discriminator only when the resource is variant-specific.</li>
+</ul>
+
+<p>
+Conceptually:
+</p>
+
+<pre><code>&lt;widget-surface&gt;.&lt;part-or-region&gt;.&lt;variant-when-applicable&gt;.&lt;state-when-applicable&gt;.&lt;kind&gt;</code></pre>
+
+<p>
+Examples:
+</p>
+
+<ul>
+  <li><code>boolean_control.state_face.switch_like.normal_true.svg</code></li>
+  <li><code>waveform_chart.plot_area.compact.normal.svg</code></li>
+</ul>
+
+<p>
 The identifier should remain stable even if the physical file path changes.
 This helps preserve durable package references and stable realization bindings.
 </p>
@@ -223,6 +252,7 @@ A resource record MAY also contain:
 <ul>
   <li><code>target_region</code> when the resource is region-oriented rather than part-oriented,</li>
   <li><code>target_layer</code> when the resource is layer-oriented,</li>
+  <li><code>target_variant</code> when the resource is specific to one published realization variant,</li>
   <li><code>format</code> when further format disambiguation is useful,</li>
   <li><code>role</code> when the resource has a specialized realization-side purpose such as <code>text_anchor</code>, <code>text_region</code>, or <code>fallback_region</code>.</li>
 </ul>
@@ -254,6 +284,20 @@ Another example:
 }</code></pre>
 
 <p>
+A variant-specific example:
+</p>
+
+<pre><code>{
+  "id": "boolean_control.state_face.switch_like.normal_true.svg",
+  "kind": "svg",
+  "path": "./assets/boolean_control/switch_like/state_face/normal_true.svg",
+  "target_class": "frog.widgets.boolean_control",
+  "target_part": "state_face",
+  "target_variant": "switch_like",
+  "target_state": "normal_true"
+}</code></pre>
+
+<p>
 A resource record should remain descriptive of the resource itself.
 It should not duplicate the full meaning of the realization record that consumes it.
 </p>
@@ -280,6 +324,7 @@ Likewise, the package SHOULD NOT depend on path naming alone to determine whethe
   <li>region-sensitive,</li>
   <li>anchor-oriented,</li>
   <li>text-region-oriented,</li>
+  <li>variant-specific,</li>
   <li>shared across multiple realizations.</li>
 </ul>
 
@@ -293,7 +338,7 @@ Filesystem clarity is strongly preferred, but filesystem layout is not the sole 
 
 <hr/>
 
-<h2 id="class-part-and-region-scoping">8. Class, Part, and Region Scoping</h2>
+<h2 id="class-part-region-and-variant-scoping">8. Class, Part, Region, and Variant Scoping</h2>
 
 <p>
 Resources SHOULD be scoped to the narrowest meaningful realization surface:
@@ -303,12 +348,14 @@ Resources SHOULD be scoped to the narrowest meaningful realization surface:
   <li>widget-level resource when the whole widget surface is state-specific,</li>
   <li>part-level resource when a specific realized part is state-specific,</li>
   <li>region-level resource when a public or realized surface is expressed through a named placement region,</li>
+  <li>variant-level resource when a resource exists only for one compatible realization variant,</li>
   <li>family-level shared resource only when multiple realizations intentionally reuse it.</li>
 </ul>
 
 <p>
 Part-oriented scoping is generally preferred when the realization family exposes stable parts and binds those parts independently.
 Region-oriented scoping is generally preferred when a part is consumed through a placement surface rather than a distinct visual layer.
+Variant-oriented scoping is generally preferred when a resource differs only because of a published embodiment choice rather than because of a new class contract.
 </p>
 
 <p>
@@ -319,11 +366,13 @@ For example:
   <li>a button <code>face</code> pressed asset is naturally part-scoped,</li>
   <li>a button <code>label</code> anchor map is naturally part-scoped, because it binds the <code>label</code> part through a placement surface,</li>
   <li>a string indicator value region may be region-scoped when the realization publishes a distinct value region,</li>
+  <li>a switch-like boolean face asset may be variant-scoped,</li>
   <li>a shared focus-ring style token map may be family-scoped.</li>
 </ul>
 
 <p>
 This distinction is important because a placement resource may target a semantic public surface without becoming the semantic owner of that surface.
+A variant-specific resource may also specialize embodiment without becoming evidence of a separate widget class.
 </p>
 
 <hr/>
@@ -366,6 +415,22 @@ However, the model MAY still permit state-sensitive anchor or region resources w
 
 <p>
 When that happens, the preferred posture remains explicit publication through the realization record rather than hidden filename conventions alone.
+</p>
+
+<p>
+When several compatible realization variants exist, state scoping and variant scoping remain independent dimensions.
+A resource may be:
+</p>
+
+<ul>
+  <li>shared across all variants for one state,</li>
+  <li>variant-specific for one state,</li>
+  <li>state-insensitive but variant-specific,</li>
+  <li>shared across both state and variant dimensions.</li>
+</ul>
+
+<p>
+That distinction should remain explicit in resource records and in the realization structures that consume them.
 </p>
 
 <hr/>
@@ -456,7 +521,29 @@ Typical posture:
 This keeps the placement resource, the placement surface, and the part binding distinct and inspectable.
 </p>
 
-<h3>10.5 Button-specific posture</h3>
+<h3>10.5 Variant relationship</h3>
+
+<p>
+Anchor and text-region resources MAY also be variant-specific when one compatible embodiment choice changes placement posture.
+</p>
+
+<p>
+For example:
+</p>
+
+<ul>
+  <li>a checkbox-like boolean embodiment may place the label on the right of the state face,</li>
+  <li>a switch-like boolean embodiment may center the label differently or publish a different inset,</li>
+  <li>a compact chart variant may move the chart label closer to the frame,</li>
+  <li>a multi-line string-control variant may publish a larger text region than a compact single-line variant.</li>
+</ul>
+
+<p>
+Such differences remain realization-owned placement choices.
+They do not create new public widget semantics by themselves.
+</p>
+
+<h3>10.6 Button-specific posture</h3>
 
 <p>
 For <code>frog.widgets.button</code>, the preferred default posture is:
@@ -478,7 +565,7 @@ That distinction helps preserve the architectural split between:
   <li>decorative geometry owned by visual assets.</li>
 </ul>
 
-<h3>10.6 Asset limitation rule</h3>
+<h3>10.7 Asset limitation rule</h3>
 
 <p>
 A resource file MAY contain placeholder text, decorative preview text, or design-time guide content.
@@ -538,6 +625,15 @@ However, a conforming realization family must not require that asset-baked text 
       "target_class": "frog.widgets.string_indicator",
       "target_region": "value",
       "role": "text_region"
+    },
+    {
+      "id": "boolean_control.state_face.switch_like.normal_true.svg",
+      "kind": "svg",
+      "path": "./assets/boolean_control/switch_like/state_face/normal_true.svg",
+      "target_class": "frog.widgets.boolean_control",
+      "target_part": "state_face",
+      "target_variant": "switch_like",
+      "target_state": "normal_true"
     }
   ]
 }</code></pre>
@@ -556,6 +652,7 @@ Validators SHOULD diagnose at least:
   <li>missing resource paths,</li>
   <li>target part names not declared by the target class or not justified by the relevant realization publication,</li>
   <li>target states not declared by the associated realization record,</li>
+  <li>target variants not declared by the associated realization record,</li>
   <li>anchor or text-region resources that are referenced but not published,</li>
   <li>resources whose declared role contradicts their declared kind,</li>
   <li>resource usage that implies asset-baked semantic text as the only embodiment path for a dynamic public text-bearing part.</li>
@@ -568,7 +665,8 @@ Validators MAY also diagnose:
 <ul>
   <li>needlessly coarse widget-level scoping when a stable part-level or region-level scope is available,</li>
   <li>ambiguous overlap between multiple anchor or text-region resources targeting the same part without explicit precedence posture,</li>
-  <li>resource records whose scoping does not match the published asset naming posture closely enough to remain inspectable.</li>
+  <li>resource records whose scoping does not match the published asset naming posture closely enough to remain inspectable,</li>
+  <li>variant-specific resources that appear to smuggle a new implicit class split into realization packaging.</li>
 </ul>
 
 <hr/>
@@ -591,5 +689,6 @@ Its preferred architecture is:
   <li>visual resources for visual embodiment,</li>
   <li>state maps for state-sensitive realization posture,</li>
   <li>placement resources for dynamic public surfaces rendered by the host,</li>
+  <li>variant-aware scoping when compatible embodiment choices are published,</li>
   <li>clear separation between resource inventory, part bindings, and semantic widget meaning.</li>
 </ul>
