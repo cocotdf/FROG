@@ -16,10 +16,12 @@
 <ul>
   <li><a href="#overview">1. Overview</a></li>
   <li><a href="#purpose">2. Purpose</a></li>
-  <li><a href="#simulated-tree">3. Simulated Tree</a></li>
-  <li><a href="#files-included">4. Files Included</a></li>
-  <li><a href="#reading-notes">5. Reading Notes</a></li>
-  <li><a href="#summary">6. Summary</a></li>
+  <li><a href="#what-this-example-demonstrates">3. What This Example Demonstrates</a></li>
+  <li><a href="#simulated-tree">4. Simulated Tree</a></li>
+  <li><a href="#files-included">5. Files Included</a></li>
+  <li><a href="#publication-alignment">6. Publication Alignment</a></li>
+  <li><a href="#reading-notes">7. Reading Notes</a></li>
+  <li><a href="#summary">8. Summary</a></li>
 </ul>
 
 <hr/>
@@ -44,6 +46,11 @@ It combines:
 
 <p>
 The example is intentionally small, but it is structured to preserve the doctrinal split between widget semantic law, realization publication, asset resources, and runtime rendering responsibility.
+</p>
+
+<p>
+This file is therefore the concrete asset-facing companion to the machine-readable example package.
+It shows how the package-level publication corridor may be materialized on disk without introducing semantic drift.
 </p>
 
 <hr/>
@@ -74,9 +81,41 @@ In particular, this example preserves the distinction between:
   <li>the runtime-side responsibility for drawing live text into the published placement surface.</li>
 </ul>
 
+<p>
+This distinction is the main reason the example package and the asset tree must be shown together.
+The package explains the realization contract.
+The asset tree shows how that contract is concretely supported.
+</p>
+
 <hr/>
 
-<h2 id="simulated-tree">3. Simulated Tree</h2>
+<h2 id="what-this-example-demonstrates">3. What This Example Demonstrates</h2>
+
+<p>
+This example is intended to prove at least the following:
+</p>
+
+<ul>
+  <li>the asset tree can remain aligned with the machine-readable realization package,</li>
+  <li>the state-sensitive button face can be published through explicit state resources,</li>
+  <li>the semantic button label can remain class-owned while still receiving realization-defined placement support,</li>
+  <li>optional structural layers such as <code>frame</code> can be published without becoming new widget semantics,</li>
+  <li>a runtime can consume the same publication corridor without relying on undocumented filename heuristics or runtime-private layout rules.</li>
+</ul>
+
+<p>
+The example also demonstrates the preferred split between:
+</p>
+
+<ul>
+  <li><code>state_maps</code> for visual state embodiment,</li>
+  <li><code>part_bindings</code> for stable structural correspondence,</li>
+  <li>anchor publication for dynamic host-rendered label placement.</li>
+</ul>
+
+<hr/>
+
+<h2 id="simulated-tree">4. Simulated Tree</h2>
 
 <pre><code>Libraries/Realizations/Default/Examples/ButtonPackage/
 ├── default_button_realization.wfrog.json
@@ -101,15 +140,28 @@ This tree intentionally does <strong>not</strong> publish state-specific SVG ass
 The button label remains a dynamic public surface, so the realization publishes a placement surface for that label rather than baking final text ownership into SVG files.
 </p>
 
+<p>
+This tree is also intentionally conservative:
+</p>
+
+<ul>
+  <li><code>face/</code> carries the main state-sensitive visual embodiment,</li>
+  <li><code>anchors/</code> carries dynamic placement support for host-rendered semantic text,</li>
+  <li><code>frame/</code> illustrates an optional supporting visual layer,</li>
+  <li>no private runtime-only folders are treated as if they were part of the published realization contract.</li>
+</ul>
+
 <hr/>
 
-<h2 id="files-included">4. Files Included</h2>
+<h2 id="files-included">5. Files Included</h2>
 
 <ul>
   <li><code>default_button_realization.wfrog.json</code></li>
   <li><code>asset_manifest.json</code></li>
   <li><code>layer_map.json</code></li>
   <li><code>label.json</code> under <code>anchors/</code></li>
+  <li><code>normal.svg</code>, <code>disabled.svg</code>, <code>focused.svg</code>, and <code>pressed.svg</code> under <code>face/</code></li>
+  <li><code>normal.svg</code> and <code>focused.svg</code> under <code>frame/</code></li>
 </ul>
 
 <p>
@@ -125,12 +177,45 @@ The expected role of each file is as follows:
   <li><code>default_button_realization.wfrog.json</code> publishes the machine-readable realization package, including target class, parts, bindings, state maps, and fallbacks,</li>
   <li><code>asset_manifest.json</code> provides a compact inventory of the resources shipped with this example package,</li>
   <li><code>layer_map.json</code> describes how visual face layers are composed or interpreted when the runtime loads face resources,</li>
-  <li><code>anchors/label.json</code> publishes the placement surface used by the runtime to render live <code>label.text</code>.</li>
+  <li><code>anchors/label.json</code> publishes the placement surface used by the runtime to render live <code>label.text</code>,</li>
+  <li><code>face/*.svg</code> publishes state-specific visual embodiment for the button face,</li>
+  <li><code>frame/*.svg</code> publishes an optional supporting visual layer for outer emphasis or focus posture.</li>
 </ul>
 
 <hr/>
 
-<h2 id="reading-notes">5. Reading Notes</h2>
+<h2 id="publication-alignment">6. Publication Alignment</h2>
+
+<p>
+The important alignment rule of this example is:
+</p>
+
+<ul>
+  <li>the package JSON identifies the realization record and its <code>state_maps</code>,</li>
+  <li>the resource inventory identifies the concrete resource files,</li>
+  <li>the asset tree places those files in a normalized directory structure,</li>
+  <li>the runtime consumes the published placement and state information rather than inventing its own hidden contract.</li>
+</ul>
+
+<p>
+For the button corridor specifically, the expected alignment is:
+</p>
+
+<ul>
+  <li><code>face</code> resources align with state-sensitive visual publication such as <code>normal</code>, <code>disabled</code>, <code>focused</code>, and <code>pressed</code>,</li>
+  <li><code>frame</code> resources align with optional supporting visual publication when the family exposes it,</li>
+  <li><code>anchors/label.json</code> aligns with the published placement surface used for dynamic label rendering,</li>
+  <li>the package-level <code>part_bindings</code> align the public parts with those realization-side surfaces.</li>
+</ul>
+
+<p>
+This means the tree is not merely decorative.
+It is part of the inspectable realization-publication corridor.
+</p>
+
+<hr/>
+
+<h2 id="reading-notes">7. Reading Notes</h2>
 
 <p>
 This example is intentionally conservative:
@@ -169,9 +254,19 @@ The optional <code>frame/</code> subtree is shown here to illustrate that a real
 Whether a given runtime chooses to materialize <code>frame</code> as a distinct host layer or flatten it into a composed drawing pipeline remains an implementation matter, provided that the published realization contract is respected.
 </p>
 
+<p>
+This example also demonstrates a useful discipline rule for future widget families:
+</p>
+
+<ul>
+  <li>when a public surface is fundamentally dynamic and host-rendered, prefer publishing a placement resource,</li>
+  <li>when a public surface is fundamentally a state-sensitive visual embodiment, prefer publishing explicit state resources,</li>
+  <li>do not let the asset tree blur that difference.</li>
+</ul>
+
 <hr/>
 
-<h2 id="summary">6. Summary</h2>
+<h2 id="summary">8. Summary</h2>
 
 <p>
 This example provides a complete first publication block for a standard widget realization package in the default family.
@@ -190,4 +285,16 @@ It demonstrates a coherent asset-publication posture in which:
 
 <p>
 It is designed to serve as the reference pattern for the next families such as numeric, boolean, string, and chart, especially when those widgets also expose dynamic public text or other dynamic public surfaces that must remain portable across runtimes.
+</p>
+
+<p>
+The next most coherent file to handle after this one is:
+</p>
+
+<ul>
+  <li><code>Libraries/Realizations/Default/Examples/ButtonPackage/default_button_realization.wfrog.json</code></li>
+</ul>
+
+<p>
+That file is the natural next step because the prose corridor is now coherent and the next closure point is the concrete machine-readable artifact that the simulated tree claims to publish.
 </p>
