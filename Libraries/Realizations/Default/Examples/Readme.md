@@ -22,10 +22,11 @@
   <li><a href="#required-example-layers">6. Required Example Layers</a></li>
   <li><a href="#example-directory-posture">7. Example Directory Posture</a></li>
   <li><a href="#button-example-posture">8. Button Example Posture</a></li>
-  <li><a href="#portability-posture">9. Portability Posture</a></li>
-  <li><a href="#validation-posture">10. Validation Posture</a></li>
-  <li><a href="#anti-patterns">11. Anti-Patterns</a></li>
-  <li><a href="#summary">12. Summary</a></li>
+  <li><a href="#variant-aware-example-posture">9. Variant-Aware Example Posture</a></li>
+  <li><a href="#portability-posture">10. Portability Posture</a></li>
+  <li><a href="#validation-posture">11. Validation Posture</a></li>
+  <li><a href="#anti-patterns">12. Anti-Patterns</a></li>
+  <li><a href="#summary">13. Summary</a></li>
 </ul>
 
 <hr/>
@@ -33,7 +34,7 @@
 <h2 id="overview">1. Overview</h2>
 
 <p>
-This directory defines the normative example-corridor posture for the official <code>Default</code> realization family.
+This directory defines the normative example-corridor posture for the official <code>Default</code> widget realization family.
 </p>
 
 <p>
@@ -51,6 +52,11 @@ It is part of the inspectable publication corridor that links:
   <li>concrete asset-tree organization,</li>
   <li>portable runtime interpretation.</li>
 </ul>
+
+<p>
+Examples in this directory therefore serve as publication evidence.
+They show how doctrinal rules, machine-readable records, and concrete resources align in a form that future runtimes and future contributors can inspect directly.
+</p>
 
 <hr/>
 
@@ -70,7 +76,7 @@ Without a normalized example corridor:
   <li>asset trees become private conventions instead of inspectable publication artifacts,</li>
   <li>dynamic public text may accidentally collapse into SVG ownership,</li>
   <li>runtime implementations begin to define the real behavior of the system by convention,</li>
-  <li>future contributors cannot tell whether a pattern is normative, optional, or accidental.</li>
+  <li>future contributors cannot tell whether a pattern is normative, optional, variant-specific, or accidental.</li>
 </ul>
 
 <p>
@@ -89,7 +95,8 @@ This document defines:
   <li>the role of examples in the <code>Default</code> realization family,</li>
   <li>the minimum publication layers that a realization example should show,</li>
   <li>how example prose, machine-readable JSON, and asset trees should align,</li>
-  <li>the portability posture expected from example material.</li>
+  <li>the portability posture expected from example material,</li>
+  <li>how compatible realization variants should be documented when they exist.</li>
 </ul>
 
 <p>
@@ -124,6 +131,17 @@ A published example in this directory SHOULD prove at least the following:
 </ul>
 
 <p>
+When a realization family supports compatible embodiment variants, the example SHOULD also make clear:
+</p>
+
+<ul>
+  <li>whether the example is family-generic or variant-specific,</li>
+  <li>which parts and states remain shared across variants,</li>
+  <li>which resources or bindings are specialized by variant,</li>
+  <li>that the variant does not silently introduce a new widget class.</li>
+</ul>
+
+<p>
 An example that does not make these boundaries legible is incomplete even if its JSON is syntactically valid.
 </p>
 
@@ -153,6 +171,16 @@ Examples in this directory must align with those documents.
 They must not silently introduce a second architecture.
 </p>
 
+<p>
+More specifically:
+</p>
+
+<ul>
+  <li>examples MUST NOT assign semantic ownership of dynamic public text to asset files when the doctrinal posture assigns that ownership to class law,</li>
+  <li>examples MUST NOT collapse <code>state_maps</code> and <code>part_bindings</code> into one undocumented mechanism,</li>
+  <li>examples MUST NOT use runtime-specific shortcuts as if they were the normative publication corridor.</li>
+</ul>
+
 <hr/>
 
 <h2 id="required-example-layers">6. Required Example Layers</h2>
@@ -172,6 +200,17 @@ A coherent realization example SHOULD include, either directly or through clearl
 For small examples, these layers may be split across multiple files in the same example corridor.
 The important point is that the files reinforce one another rather than contradicting one another.
 </p>
+
+<p>
+The preferred minimum publication stack is therefore:
+</p>
+
+<ul>
+  <li><strong>example prose</strong> — explains what the example demonstrates and what architectural rule it is meant to prove,</li>
+  <li><strong>machine-readable package</strong> — publishes realization records, resources, state maps, and part bindings,</li>
+  <li><strong>asset subtree</strong> — shows how concrete realization resources are organized, named, and scoped,</li>
+  <li><strong>placement-support artifacts</strong> — shows how anchors or text regions are used when a host renders dynamic public surfaces.</li>
+</ul>
 
 <hr/>
 
@@ -202,6 +241,11 @@ In this posture:
   <li>the three layers remain inspectable as one coherent publication unit.</li>
 </ul>
 
+<p>
+A larger family example corridor MAY later contain several subdirectories, one per standardized widget family or one per realization target.
+That expansion remains acceptable only if the architectural split stays visible and the example names remain stable and inspectable.
+</p>
+
 <hr/>
 
 <h2 id="button-example-posture">8. Button Example Posture</h2>
@@ -218,7 +262,7 @@ For the standard default button example:
 <ul>
   <li><code>face</code> is a state-sensitive visual part and therefore uses state-mapped visual resources,</li>
   <li><code>frame</code> may be published as an optional visual layer when the realization family exposes it,</li>
-  <li><code>label</code> is a dynamic semantic public surface and is therefore preferably published through a placement-support resource such as <code>anchors/label.json</code> rather than through baked final label SVG files,</li>
+  <li><code>label</code> is a dynamic semantic public surface and is therefore preferably published through a placement-support resource such as <code>anchors/label.json</code> or a text-region resource rather than through baked final label SVG files,</li>
   <li>the runtime renders live <code>label.text</code> into the published placement surface.</li>
 </ul>
 
@@ -226,9 +270,68 @@ For the standard default button example:
 This is the key example posture that prevents dynamic public text from being redefined by asset ownership.
 </p>
 
+<p>
+The button example should therefore remain the first reference pattern reused across the rest of the family:
+</p>
+
+<ul>
+  <li>visual state is shown through <code>state_maps</code>,</li>
+  <li>stable structural correspondence is shown through <code>part_bindings</code>,</li>
+  <li>dynamic text is shown through placement publication rather than asset-owned semantic text.</li>
+</ul>
+
 <hr/>
 
-<h2 id="portability-posture">9. Portability Posture</h2>
+<h2 id="variant-aware-example-posture">9. Variant-Aware Example Posture</h2>
+
+<p>
+When the default family allows several compatible realization variants for the same standardized class, the example corridor SHOULD make that variant posture explicit.
+</p>
+
+<p>
+The preferred rule is:
+</p>
+
+<ul>
+  <li>a family-generic example proves the shared realization contract of the class,</li>
+  <li>a variant-specific example proves how one compatible embodiment specializes that contract without changing class meaning.</li>
+</ul>
+
+<p>
+For example, a boolean corridor may later contain:
+</p>
+
+<ul>
+  <li>a family-generic boolean example proving the common boolean realization contract,</li>
+  <li>a checkbox-like example proving one compatible embodiment,</li>
+  <li>a switch-like example proving another compatible embodiment.</li>
+</ul>
+
+<p>
+In such cases, the example must make clear:
+</p>
+
+<ul>
+  <li>which state vocabulary remains shared,</li>
+  <li>which parts remain shared,</li>
+  <li>which bindings or resources are variant-specific,</li>
+  <li>that the example remains inside one class contract unless another class is explicitly published elsewhere.</li>
+</ul>
+
+<p>
+A variant-specific example must not silently imply:
+</p>
+
+<ul>
+  <li>a new intrinsic class,</li>
+  <li>a new mandatory public part model,</li>
+  <li>a new mandatory public method or event surface,</li>
+  <li>a runtime-private interpretation rule that only one implementation understands.</li>
+</ul>
+
+<hr/>
+
+<h2 id="portability-posture">10. Portability Posture</h2>
 
 <p>
 Examples in this directory must remain portable across runtime families.
@@ -258,9 +361,20 @@ Accordingly, examples SHOULD publish:
   <li>clear separation between semantic public surfaces and visual assets.</li>
 </ul>
 
+<p>
+When variant-specific examples exist, portability also requires that different runtimes can recognize:
+</p>
+
+<ul>
+  <li>the same base class contract,</li>
+  <li>the same realization-family rules,</li>
+  <li>the same variant identifier or equivalent specialization marker,</li>
+  <li>the same fallback posture when one variant cannot be realized exactly.</li>
+</ul>
+
 <hr/>
 
-<h2 id="validation-posture">10. Validation Posture</h2>
+<h2 id="validation-posture">11. Validation Posture</h2>
 
 <p>
 Reviewers and validators SHOULD be able to check at least the following from the example corridor:
@@ -274,9 +388,20 @@ Reviewers and validators SHOULD be able to check at least the following from the
   <li>fallback posture remains explicit rather than hidden in one runtime loader.</li>
 </ul>
 
+<p>
+When variant-specific examples exist, validators SHOULD also be able to check:
+</p>
+
+<ul>
+  <li>the example identifies its variant posture explicitly,</li>
+  <li>shared class semantics are not rewritten at the variant layer,</li>
+  <li>variant-specific resources and bindings remain inspectable,</li>
+  <li>the example does not silently create a new class split by embodiment alone.</li>
+</ul>
+
 <hr/>
 
-<h2 id="anti-patterns">11. Anti-Patterns</h2>
+<h2 id="anti-patterns">12. Anti-Patterns</h2>
 
 <p>
 The following example-corridor anti-patterns SHOULD be avoided:
@@ -287,12 +412,14 @@ The following example-corridor anti-patterns SHOULD be avoided:
   <li>an example asset tree that reintroduces runtime-private assumptions not present in the published realization,</li>
   <li>publishing prose that says a public text surface is dynamic while the example assets still imply that final text is owned by state-specific SVG files,</li>
   <li>treating examples as disposable illustrations rather than as inspectable publication guidance,</li>
-  <li>letting one runtime sample implementation become the only place where the actual realization logic can be understood.</li>
+  <li>letting one runtime sample implementation become the only place where the actual realization logic can be understood,</li>
+  <li>publishing a variant-specific embodiment as if it were automatically a distinct widget class,</li>
+  <li>using example naming that hides whether the example is family-generic or variant-specific.</li>
 </ul>
 
 <hr/>
 
-<h2 id="summary">12. Summary</h2>
+<h2 id="summary">13. Summary</h2>
 
 <p>
 The <code>Examples/</code> corridor of the default realization family exists to keep the publication chain explicit from doctrine to machine-readable package to concrete assets.
@@ -308,3 +435,26 @@ A correct example in this directory:
   <li>aligns with the concrete asset-tree posture,</li>
   <li>helps future runtimes implement the realization portably without becoming the owner of widget semantics.</li>
 </ul>
+
+<p>
+Its preferred posture is:
+</p>
+
+<ul>
+  <li>family-level doctrine above,</li>
+  <li>machine-readable realization publication in the middle,</li>
+  <li>concrete assets below,</li>
+  <li>examples proving the whole chain coherently.</li>
+</ul>
+
+<p>
+The next most coherent file to handle after this one is:
+</p>
+
+<ul>
+  <li><code>Libraries/Realizations/Default/Examples/Button default realization.wfrog.md</code></li>
+</ul>
+
+<p>
+That file is the natural next step because this <code>Readme.md</code> now defines the example-corridor rules, and the button example is the first normative proof case for the full doctrine-to-package-to-assets chain.
+</p>
