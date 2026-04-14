@@ -17,14 +17,15 @@
   <li><a href="#overview">1. Overview</a></li>
   <li><a href="#target-classes">2. Target Classes</a></li>
   <li><a href="#realization-variant-posture">3. Realization Variant Posture</a></li>
-  <li><a href="#realized-parts">4. Realized Parts</a></li>
-  <li><a href="#standard-visual-states">5. Standard Visual States</a></li>
-  <li><a href="#part-state-mapping">6. Part-State Mapping</a></li>
-  <li><a href="#dynamic-surface-posture">7. Dynamic Surface Posture</a></li>
-  <li><a href="#resource-posture">8. Resource Posture</a></li>
-  <li><a href="#host-expectations">9. Host Expectations</a></li>
-  <li><a href="#fallback-posture">10. Fallback Posture</a></li>
-  <li><a href="#summary">11. Summary</a></li>
+  <li><a href="#styling-and-skin-posture">4. Styling and Skin Posture</a></li>
+  <li><a href="#realized-parts">5. Realized Parts</a></li>
+  <li><a href="#standard-visual-states">6. Standard Visual States</a></li>
+  <li><a href="#part-state-mapping">7. Part-State Mapping</a></li>
+  <li><a href="#dynamic-surface-posture">8. Dynamic Surface Posture</a></li>
+  <li><a href="#resource-posture">9. Resource Posture</a></li>
+  <li><a href="#host-expectations">10. Host Expectations</a></li>
+  <li><a href="#fallback-posture">11. Fallback Posture</a></li>
+  <li><a href="#summary">12. Summary</a></li>
 </ul>
 
 <hr/>
@@ -36,13 +37,13 @@ This document defines the default official realization posture for the standardi
 </p>
 
 <p>
-The default numeric realization provides one clean, inspectable, portable embodiment of the intrinsic numeric baseline without turning one host toolkit, one numeric editor style, or one runtime-specific implementation into the semantic definition of numeric widgets.
+The default numeric realization provides one clean, inspectable, portable embodiment of the intrinsic numeric baseline without turning one host toolkit, one numeric editor style, one skin bundle, or one runtime-specific implementation into the semantic definition of numeric widgets.
 </p>
 
 <p>
 This realization is realization-side only.
 It does not redefine numeric class law, does not invent new public members, and does not replace the semantic ownership of numeric value, numeric label text, or numeric editing semantics.
-Its role is to embody already-published numeric widget surfaces through stable visual states, stable structural bindings, and realization-side placement or rendering metadata where needed.
+Its role is to embody already-published numeric widget surfaces through stable visual states, stable structural bindings, explicit realization-side placement or rendering metadata, and bounded realization-side styling or skinning posture where supported.
 </p>
 
 <p>
@@ -52,7 +53,8 @@ The preferred realization-publication split is:
 <ul>
   <li><code>state_maps</code> for state-sensitive visual embodiment,</li>
   <li><code>part_bindings</code> for stable structural correspondence,</li>
-  <li>anchors or text regions for dynamic public surfaces rendered by the host.</li>
+  <li>anchors or text regions for dynamic public surfaces rendered by the host,</li>
+  <li>resource and style-token publication for inspectable styling and skin support.</li>
 </ul>
 
 <hr/>
@@ -72,6 +74,7 @@ This realization assumes the standardized numeric posture in which:
   <li>numeric widgets expose a primary value through <code>value</code>,</li>
   <li>numeric widgets may expose semantic label text through <code>label.text</code>,</li>
   <li>numeric controls may expose <code>increment()</code> and <code>decrement()</code> interaction according to the published class contract,</li>
+  <li>portable style-facing and realization-selection surfaces may be exposed by class law or the active profile,</li>
   <li>the published public parts remain stable across realizations,</li>
   <li>the realization remains downstream from that class contract.</li>
 </ul>
@@ -118,12 +121,72 @@ This distinction is normative:
 </ul>
 
 <p>
-For that reason, differences such as visible step buttons, compact editor chrome, or right-aligned value display belong here as realization strategy, not as implicit class-level semantic drift.
+For that reason, differences such as visible step buttons, compact editor chrome, right-aligned value display, or raised readout framing belong here as realization strategy, not as implicit class-level semantic drift.
 </p>
 
 <hr/>
 
-<h2 id="realized-parts">4. Realized Parts</h2>
+<h2 id="styling-and-skin-posture">4. Styling and Skin Posture</h2>
+
+<p>
+The default numeric realization is customizable, but customization remains subordinate to class meaning and realization-family publication rules.
+</p>
+
+<p>
+When the relevant class or active profile exposes public styling or realization-selection surfaces, the default realization SHOULD interpret them through inspectable realization-side mechanisms rather than through runtime-private conventions.
+</p>
+
+<p>
+Typical public surfaces that may influence realization include:
+</p>
+
+<ul>
+  <li><code>style.foreground_color</code>,</li>
+  <li><code>style.background_color</code>,</li>
+  <li><code>style.border_color</code>,</li>
+  <li><code>style.text_color</code>,</li>
+  <li><code>style.opacity</code>,</li>
+  <li><code>style.font_family</code>,</li>
+  <li><code>style.font_size</code>,</li>
+  <li><code>style.font_weight</code>,</li>
+  <li><code>style.text_alignment</code>,</li>
+  <li><code>realization.family</code>,</li>
+  <li><code>realization.variant</code>,</li>
+  <li><code>realization.skin_id</code>.</li>
+</ul>
+
+<p>
+These surfaces do not create a new numeric class.
+They influence how the existing numeric class is embodied within the allowed realization corridor.
+</p>
+
+<p>
+The preferred interpretation posture is:
+</p>
+
+<ul>
+  <li>public <code>style.*</code> properties influence inspectable realization-side styling parameters,</li>
+  <li><code>realization.variant</code> selects among compatible published embodiment variants,</li>
+  <li><code>realization.skin_id</code> selects among compatible published skin bundles or resource groups,</li>
+  <li>SVG resources, host-native resources, and style-token resources remain realization assets rather than semantic truth.</li>
+</ul>
+
+<p>
+A skin MAY therefore change colors, borders, corner style, value-field chrome, step-button appearance, typography defaults, decorative containers, or focus emphasis.
+It MUST NOT silently redefine:
+</p>
+
+<ul>
+  <li>the meaning of <code>value</code>,</li>
+  <li>the meaning of <code>label.text</code>,</li>
+  <li>the editable-versus-indicator distinction,</li>
+  <li>the public numeric part model,</li>
+  <li>the public numeric method or event inventory.</li>
+</ul>
+
+<hr/>
+
+<h2 id="realized-parts">5. Realized Parts</h2>
 
 <p>
 The default numeric realization targets the following parts:
@@ -139,7 +202,7 @@ The default numeric realization targets the following parts:
 </ul>
 
 <p>
-The realization may internally use additional layers, clipping regions, caret surfaces, selection surfaces, editing guides, cursor helpers, or host-native editor structures.
+The realization may internally use additional layers, clipping regions, caret surfaces, selection surfaces, editing guides, cursor helpers, separators, style-token layers, or host-native editor structures.
 Those remain realization-private support structures unless they are explicitly published as realization resources or placement surfaces.
 </p>
 
@@ -164,7 +227,7 @@ The stable public numeric part model remains centered on <code>value_display</co
 
 <hr/>
 
-<h2 id="standard-visual-states">5. Standard Visual States</h2>
+<h2 id="standard-visual-states">6. Standard Visual States</h2>
 
 <p>
 The default numeric family defines at least:
@@ -200,7 +263,7 @@ A spinbox-like or compact-display embodiment may use different geometry, spacing
 
 <hr/>
 
-<h2 id="part-state-mapping">6. Part-State Mapping</h2>
+<h2 id="part-state-mapping">7. Part-State Mapping</h2>
 
 <p>
 The default family expects:
@@ -235,7 +298,8 @@ The preferred machine-readable split is:
   <li><code>value_display</code> published primarily through a <code>part_binding</code> to a text region, anchor, or equivalent dynamic display surface,</li>
   <li><code>label</code> published primarily through a <code>part_binding</code> to an anchor, text region, or equivalent placement surface,</li>
   <li><code>increment_button</code> and <code>decrement_button</code>, when exposed, published through <code>part_bindings</code> plus <code>state_maps</code>,</li>
-  <li><code>frame</code>, when present, published through <code>part_bindings</code> plus optional <code>state_maps</code>.</li>
+  <li><code>frame</code>, when present, published through <code>part_bindings</code> plus optional <code>state_maps</code>,</li>
+  <li>styling and skin differences published through resource inventories, style-token resources, variant identifiers, or compatible resource groups.</li>
 </ul>
 
 <p>
@@ -260,9 +324,9 @@ It does not create new public parts by implication alone.
 
 <hr/>
 
-<h2 id="dynamic-surface-posture">7. Dynamic Surface Posture</h2>
+<h2 id="dynamic-surface-posture">8. Dynamic Surface Posture</h2>
 
-<h3>7.1 Value display posture</h3>
+<h3>8.1 Value display posture</h3>
 
 <p>
 The <code>value_display</code> part is not just a static decorative asset surface.
@@ -278,7 +342,7 @@ The realization owns how the value display is visually embodied.
 It does not become the semantic owner of the numeric value itself.
 </p>
 
-<h3>7.2 Label posture</h3>
+<h3>8.2 Label posture</h3>
 
 <p>
 The semantic numeric label text is not owned by this realization.
@@ -294,7 +358,7 @@ The <code>label</code> part is therefore expected to be realized as a dynamic te
 A host interpreting this realization should render or inject the current semantic numeric label into the realized label region at runtime.
 </p>
 
-<h3>7.3 Placement posture</h3>
+<h3>8.3 Placement posture</h3>
 
 <p>
 The default family SHOULD publish explicit placement surfaces for both <code>label</code> and <code>value_display</code> whenever host-rendered numeric content is used.
@@ -326,7 +390,7 @@ Those realization-side structures do not change the public meaning of <code>valu
 They only specify where the host should visually place or edit the rendered content.
 </p>
 
-<h3>7.4 Step-button posture</h3>
+<h3>8.4 Step-button posture</h3>
 
 <p>
 The <code>increment_button</code> and <code>decrement_button</code> parts are standard only when the active realization exposes step-style interaction.
@@ -349,7 +413,7 @@ The realization may choose whether those parts are visibly separate.
 However, when they are published as exposed parts, their meaning must remain inspectable and compatible with the standardized control contract.
 </p>
 
-<h3>7.5 Editor-style posture as realization choice</h3>
+<h3>8.5 Editor-style posture as realization choice</h3>
 
 <p>
 A numeric editor style such as box-like editor, spinbox-like editor, or compact readout remains an embodiment choice within the default numeric family.
@@ -382,7 +446,7 @@ If a future specification standardizes a numerically distinct class with genuine
 Until then, editor-style differences remain realization variants of <code>frog.widgets.numeric_control</code> or <code>frog.widgets.numeric_indicator</code>.
 </p>
 
-<h3>7.6 Asset limitation rule</h3>
+<h3>8.6 Asset limitation rule</h3>
 
 <p>
 A numeric resource file MAY include placeholder digits, decorative guides, preview values, or design-time scaffolding.
@@ -395,42 +459,58 @@ Likewise, state-sensitive styling of rendered numeric text must remain distingui
 
 <hr/>
 
-<h2 id="resource-posture">8. Resource Posture</h2>
+<h2 id="resource-posture">9. Resource Posture</h2>
 
 <p>
 A typical resource posture may follow:
 </p>
 
 <pre><code>numeric_control/
-  value_display/
-    normal
-    disabled
-    focused
-  increment_button/
-    normal
-    pressed
-  decrement_button/
-    normal
-    pressed
-  frame/
-    normal
-    focused
-  anchors/
-    label
-  text_regions/
-    value
+  variants/
+    spinbox/
+      value_display/
+        normal
+        disabled
+        focused
+      increment_button/
+        normal
+        pressed
+      decrement_button/
+        normal
+        pressed
+      frame/
+        normal
+        focused
+      anchors/
+        label
+      text_regions/
+        value
+    compact/
+      value_display/
+        normal
+        disabled
+        focused
+      frame/
+        normal
+        focused
+      anchors/
+        label
+      text_regions/
+        value
 
 numeric_indicator/
-  value_display/
-    normal
-    focused
-  frame/
-    normal
-    focused
-  anchors/
-    label
-  text_regions/
-    value
+  variants/
+    standard/
+      value_display/
+        normal
+        focused
+      frame/
+        normal
+        focused
+      anchors/
+        label
+      text_regions/
+        value
 </code></pre>
 
 <p>
@@ -465,12 +545,12 @@ In particular:
 </ul>
 
 <p>
-A spinbox-like, compact, or host-native embodiment may still publish its resources under the same numeric realization corridor, as long as the published part meaning and state vocabulary remain preserved.
+A spinbox-like, compact, skinned, or host-native embodiment may still publish its resources under the same numeric realization corridor, as long as the published part meaning and state vocabulary remain preserved.
 </p>
 
 <hr/>
 
-<h2 id="host-expectations">9. Host Expectations</h2>
+<h2 id="host-expectations">10. Host Expectations</h2>
 
 <p>
 A host interpreting this realization SHOULD provide:
@@ -515,13 +595,13 @@ A host MAY approximate the realization when exact resources are unavailable, but
 </ul>
 
 <p>
-A host MAY choose a box-like, spinbox-like, compact, or other compatible numeric embodiment strategy.
+A host MAY choose a box-like, spinbox-like, compact, skinned, or other compatible numeric embodiment strategy.
 That choice is acceptable only if the public numeric class meaning remains unchanged and the realization contract remains inspectable.
 </p>
 
 <hr/>
 
-<h2 id="fallback-posture">10. Fallback Posture</h2>
+<h2 id="fallback-posture">11. Fallback Posture</h2>
 
 <p>
 If step-button-specific resources are unavailable, a runtime MAY:
@@ -559,6 +639,16 @@ If one numeric embodiment variant cannot be realized exactly, a host MAY fall ba
 </ul>
 
 <p>
+If a requested skin, variant, or style-token resource is unavailable, a host MAY fall back to:
+</p>
+
+<ul>
+  <li>the default skin of the selected realization corridor,</li>
+  <li>another compatible published numeric variant,</li>
+  <li>a host-native compatible numeric embodiment preserving the published state vocabulary and part meaning.</li>
+</ul>
+
+<p>
 Any fallback MUST preserve the published numeric class law and the meaning of the public parts when those parts are exposed.
 Fallback must not turn asset-baked digits or asset-baked label text into semantic truth.
 </p>
@@ -570,7 +660,7 @@ It must not become a purely runtime-private convention.
 
 <hr/>
 
-<h2 id="summary">11. Summary</h2>
+<h2 id="summary">12. Summary</h2>
 
 <p>
 The default numeric realization defines one official embodiment of the numeric widget family, including optional stateful increment and decrement part realization.
@@ -584,12 +674,13 @@ It realizes:
   <li><code>value_display</code> as the main dynamic numeric display or editing surface,</li>
   <li><code>label</code> as a dynamically rendered text-bearing surface,</li>
   <li><code>increment_button</code> and <code>decrement_button</code> as optional step-style interaction surfaces,</li>
-  <li><code>frame</code> as an optional supporting outer surface.</li>
+  <li><code>frame</code> as an optional supporting outer surface,</li>
+  <li>bounded styling and skin selection as realization-side customization posture rather than class-level semantic drift.</li>
 </ul>
 
 <p>
-Its resources may provide skins, layers, regions, and anchors.
-Its package publication may provide <code>state_maps</code> and <code>part_bindings</code>.
+Its resources may provide skins, layers, regions, anchors, style-token support, and compatible embodiment variants.
+Its package publication may provide <code>state_maps</code>, <code>part_bindings</code>, variant identifiers, and inspectable fallback posture.
 Its host implementation may approximate the visuals when needed.
 But the realization never becomes the semantic owner of numeric value, numeric label text, or numeric class meaning.
 </p>
