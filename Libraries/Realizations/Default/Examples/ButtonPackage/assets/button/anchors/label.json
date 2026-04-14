@@ -1,0 +1,30 @@
+{
+  "map_kind": "anchor_map",
+  "target_class": "frog.widgets.button",
+  "target_part": "label",
+  "anchors": [
+    {
+      "id": "button.label.center",
+      "anchor_kind": "text_anchor",
+      "reference_box": {
+        "x": 0,
+        "y": 0,
+        "width": 1,
+        "height": 1,
+        "unit": "normalized_face_box"
+      },
+      "horizontal_alignment": "center",
+      "vertical_alignment": "center",
+      "padding": {
+        "left": 10,
+        "right": 10,
+        "top": 6,
+        "bottom": 6,
+        "unit": "panel_pixels"
+      },
+      "clipping": {
+        "mode": "clip_to_reference_box"
+      }
+    }
+  ]
+}
