@@ -37,13 +37,13 @@ This document defines the default official realization posture for <code>frog.wi
 </p>
 
 <p>
-Its role is to provide a clean, state-structured embodiment of the standard button without making the visual assets the owner of button semantics.
+Its role is to provide a clean, state-structured embodiment of the standard button without making the visual assets, skin resources, or host-native control chrome the owner of button semantics.
 </p>
 
 <p>
 The default realization is realization-side only.
 It does not redefine widget class law, does not invent new public members, and does not replace the semantic ownership of the button label text.
-Its job is to embody already-published widget surfaces through stable visual states, stable structural bindings, explicit realization-side placement metadata, and bounded realization-side styling or skinning posture.
+Its role is to embody already-published widget surfaces through stable visual states, stable structural bindings, explicit realization-side placement metadata, and bounded realization-side styling or skinning posture.
 </p>
 
 <p>
@@ -73,7 +73,7 @@ This realization assumes the standardized button posture in which:
   <li>the button is command-oriented,</li>
   <li>the button exposes a stable <code>label</code> part,</li>
   <li>the semantic user-authored label text is owned by <code>label.text</code>,</li>
-  <li>portable style-facing and realization-selection surfaces may be exposed by class law or active profile,</li>
+  <li>portable style-facing and realization-selection surfaces may be exposed by class law or the active profile,</li>
   <li>the realization remains downstream from that class contract.</li>
 </ul>
 
@@ -117,6 +117,10 @@ This distinction is normative:
   <li>a realization-variant identifier is not a class identifier,</li>
   <li>a runtime MUST NOT treat one button embodiment variant as if it were a distinct standard class unless a separate class contract is explicitly published elsewhere.</li>
 </ul>
+
+<p>
+For that reason, differences such as flatness, corner geometry, bevel posture, host-native chrome, or decorative emphasis belong here as realization strategy, not as implicit class-level semantic drift.
+</p>
 
 <hr/>
 
@@ -166,7 +170,7 @@ The preferred interpretation posture is:
 </ul>
 
 <p>
-A skin MAY therefore change colors, borders, corner style, highlight posture, typography defaults, decorative containers, or other visual embodiment details.
+A skin MAY therefore change colors, borders, corner style, highlight posture, typography defaults, decorative containers, shadow posture, or other visual embodiment details.
 It MUST NOT silently redefine:
 </p>
 
@@ -229,6 +233,10 @@ The host MAY also support <code>hovered</code>, but it is not required in the mi
 <p>
 These states are realization-side visual states.
 They do not redefine the semantic contract of the button and they do not create persistent button-owned source state by themselves.
+</p>
+
+<p>
+A flat, raised, rounded, or host-native embodiment may use different geometry, chrome, or emphasis for these states, but it still remains bound to the same published button state vocabulary unless an extended realization family explicitly publishes more specialized realization-only states.
 </p>
 
 <hr/>
