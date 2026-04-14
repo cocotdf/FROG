@@ -23,16 +23,17 @@
   <li><a href="#minimum-object-surface-rule">7. Minimum Object-Surface Rule</a></li>
   <li><a href="#baseline-widget-families">8. Baseline Widget Families</a></li>
   <li><a href="#baseline-standardization-phases">9. Baseline Standardization Phases</a></li>
-  <li><a href="#shared-baseline-conventions">10. Shared Baseline Conventions</a></li>
-  <li><a href="#primitive-vs-composite-posture">11. Primitive vs Composite Posture</a></li>
-  <li><a href="#relation-with-frog-source">12. Relation with <code>.frog</code> Source</a></li>
-  <li><a href="#relation-with-wfrog-publication">13. Relation with <code>.wfrog</code> Publication</a></li>
-  <li><a href="#relation-with-frogui-primitives">14. Relation with <code>frog.ui.*</code> Primitives</a></li>
-  <li><a href="#relation-with-realization-families">15. Relation with Realization Families</a></li>
-  <li><a href="#portability-across-runtimes">16. Portability Across Runtimes</a></li>
-  <li><a href="#conformance-posture">17. Conformance Posture</a></li>
-  <li><a href="#status">18. Status</a></li>
-  <li><a href="#summary">19. Summary</a></li>
+  <li><a href="#class-versus-realization-rule">10. Class versus Realization Rule</a></li>
+  <li><a href="#shared-baseline-conventions">11. Shared Baseline Conventions</a></li>
+  <li><a href="#primitive-vs-composite-posture">12. Primitive vs Composite Posture</a></li>
+  <li><a href="#relation-with-frog-source">13. Relation with <code>.frog</code> Source</a></li>
+  <li><a href="#relation-with-wfrog-publication">14. Relation with <code>.wfrog</code> Publication</a></li>
+  <li><a href="#relation-with-frogui-primitives">15. Relation with <code>frog.ui.*</code> Primitives</a></li>
+  <li><a href="#relation-with-realization-families">16. Relation with Realization Families</a></li>
+  <li><a href="#portability-across-runtimes">17. Portability Across Runtimes</a></li>
+  <li><a href="#conformance-posture">18. Conformance Posture</a></li>
+  <li><a href="#status">19. Status</a></li>
+  <li><a href="#summary">20. Summary</a></li>
 </ul>
 
 <hr/>
@@ -99,8 +100,8 @@ This directory defines:
 </p>
 
 <ul>
-  <li>the first intrinsic standardized widget classes of FROG,</li>
-  <li>their class identity and category,</li>
+  <li>the intrinsic standardized widget classes of FROG that are published in repository-visible form,</li>
+  <li>their class identity and role posture,</li>
   <li>their primary value posture where applicable,</li>
   <li>their standard properties, methods, events, and parts,</li>
   <li>their minimal intrinsic behavior expectations,</li>
@@ -202,7 +203,7 @@ A standard class defines, at minimum:
 
 <ul>
   <li>a stable <code>class_id</code>,</li>
-  <li>a category and role posture,</li>
+  <li>a role posture,</li>
   <li>a primary value posture where applicable,</li>
   <li>a stable public property inventory,</li>
   <li>a stable public method inventory,</li>
@@ -218,7 +219,7 @@ It is a published portable object surface that runtimes may implement and progra
 </p>
 
 <p>
-That public surface may include semantic label-bearing or value-bearing members such as <code>label.text</code>, <code>value</code>, <code>value_display</code>, <code>text_display</code>, or chart-related public surfaces when the class requires them.
+That public surface may include semantic label-bearing or value-bearing members such as <code>label.text</code>, <code>value</code>, <code>value_display</code>, <code>text_display</code>, <code>plot_area</code>, or other public surfaces when the class requires them.
 However, the existence of such members does not mean that realization-side placement, styling defaults, anchors, text regions, or decorative assets become part of the intrinsic class law unless explicitly published here.
 </p>
 
@@ -283,7 +284,11 @@ The baseline remains minimal, disciplined, and portable.
 <h2 id="baseline-widget-families">8. Baseline Widget Families</h2>
 
 <p>
-The initial intrinsic standardized baseline is organized into the following families:
+The intrinsic standardized widget space is organized around a small core plus additional standardized families outside that core.
+</p>
+
+<p>
+The current core families are:
 </p>
 
 <ul>
@@ -370,28 +375,28 @@ The following classes are strong near-core candidates, but do not need to enter 
 </p>
 
 <ul>
-  <li>enum</li>
-  <li>path</li>
-  <li>cluster</li>
-  <li>array</li>
+  <li><code>frog.widgets.enum_control</code> and <code>frog.widgets.enum_indicator</code></li>
+  <li><code>frog.widgets.path_control</code> and <code>frog.widgets.path_indicator</code></li>
+  <li><code>frog.widgets.cluster</code></li>
+  <li><code>frog.widgets.array</code></li>
 </ul>
 
 <h3>9.4 Deferred standardization</h3>
 
 <p>
-The following families should generally be deferred until after the intrinsic v1 core is stabilized:
+The following families should generally remain outside the intrinsic baseline v1 core even if they are standardized later in repository-visible form:
 </p>
 
 <ul>
   <li>listbox</li>
-  <li>switch</li>
   <li>table</li>
   <li>tree</li>
   <li>tab</li>
+  <li>picture</li>
   <li>waveform graph</li>
   <li>XY graph</li>
   <li>intensity graph</li>
-  <li>picture-rich or canvas-like widget families</li>
+  <li>canvas-like widget families</li>
 </ul>
 
 <p>
@@ -406,7 +411,54 @@ A distinct class should only be standardized when it contributes distinct public
 
 <hr/>
 
-<h2 id="shared-baseline-conventions">10. Shared Baseline Conventions</h2>
+<h2 id="class-versus-realization-rule">10. Class versus Realization Rule</h2>
+
+<p>
+A distinct visible embodiment does not, by itself, justify a distinct standardized class.
+</p>
+
+<p>
+The preferred architecture is:
+</p>
+
+<ul>
+  <li>small semantic class core,</li>
+  <li>multiple compatible realization families or realization variants,</li>
+  <li>new standardized classes only when the public contract actually diverges.</li>
+</ul>
+
+<p>
+This rule is especially important for boolean-like and command-like surfaces.
+For example:
+</p>
+
+<ul>
+  <li>a checkbox-like boolean embodiment,</li>
+  <li>a switch-like boolean embodiment,</li>
+  <li>an LED-like boolean embodiment,</li>
+  <li>a toggle-pill-like boolean embodiment</li>
+</ul>
+
+<p>
+do not automatically require four distinct classes.
+If they share the same public semantics, they should remain realization variants of the same standardized boolean class.
+</p>
+
+<p>
+A new class is justified only when the public contract changes in a meaningful way, such as:
+</p>
+
+<ul>
+  <li>different public properties,</li>
+  <li>different public methods,</li>
+  <li>different public events,</li>
+  <li>different public parts,</li>
+  <li>different standardized behavior meaning.</li>
+</ul>
+
+<hr/>
+
+<h2 id="shared-baseline-conventions">11. Shared Baseline Conventions</h2>
 
 <p>
 The baseline families in this directory follow a shared normalization posture.
@@ -439,7 +491,7 @@ Portable semantic surfaces may still be standardized when they belong to public 
 
 <hr/>
 
-<h2 id="primitive-vs-composite-posture">11. Primitive vs Composite Posture</h2>
+<h2 id="primitive-vs-composite-posture">12. Primitive vs Composite Posture</h2>
 
 <p>
 The classes defined in this directory are the initial standardized primitive baseline.
@@ -462,7 +514,7 @@ This means the primitive baseline should remain small, clear, and stable rather 
 
 <hr/>
 
-<h2 id="relation-with-frog-source">12. Relation with <code>.frog</code> Source</h2>
+<h2 id="relation-with-frog-source">13. Relation with <code>.frog</code> Source</h2>
 
 <p>
 Canonical <code>.frog</code> source instantiates widgets through widget instances in <code>front_panel</code>.
@@ -492,7 +544,7 @@ This directory owns the standardized class being instantiated.
 
 <hr/>
 
-<h2 id="relation-with-wfrog-publication">13. Relation with <code>.wfrog</code> Publication</h2>
+<h2 id="relation-with-wfrog-publication">14. Relation with <code>.wfrog</code> Publication</h2>
 
 <p>
 The classes defined in this directory are intrinsic standardized classes.
@@ -526,7 +578,7 @@ runtime-private implementation
 
 <hr/>
 
-<h2 id="relation-with-frogui-primitives">14. Relation with <code>frog.ui.*</code> Primitives</h2>
+<h2 id="relation-with-frogui-primitives">15. Relation with <code>frog.ui.*</code> Primitives</h2>
 
 <p>
 The executable object-style interaction surface for widgets is defined by <code>frog.ui.*</code> primitives.
@@ -565,7 +617,7 @@ Likewise, if a class exposes members such as <code>label.text</code>, axis prope
 
 <hr/>
 
-<h2 id="relation-with-realization-families">15. Relation with Realization Families</h2>
+<h2 id="relation-with-realization-families">16. Relation with Realization Families</h2>
 
 <p>
 The classes defined here are not identical to one skin and are not identical to one realization resource family.
@@ -615,7 +667,7 @@ A distinct standardized class should only appear when a distinct public contract
 
 <hr/>
 
-<h2 id="portability-across-runtimes">16. Portability Across Runtimes</h2>
+<h2 id="portability-across-runtimes">17. Portability Across Runtimes</h2>
 
 <p>
 The standard classes defined here are intended to be portable across runtime families such as Python, Rust, and C/C++ implementations.
@@ -649,7 +701,7 @@ Where a class exposes semantic text-bearing or value-bearing public surfaces, po
 
 <hr/>
 
-<h2 id="conformance-posture">17. Conformance Posture</h2>
+<h2 id="conformance-posture">18. Conformance Posture</h2>
 
 <p>
 A runtime claiming support for one of the standard classes defined here MUST preserve the published portable class surface of that class for the surfaces it claims to implement.
@@ -679,7 +731,7 @@ They do not redefine its class meaning.
 
 <hr/>
 
-<h2 id="status">18. Status</h2>
+<h2 id="status">19. Status</h2>
 
 <p>
 This directory defines the first intrinsic standardized widget baseline of FROG.
@@ -704,14 +756,15 @@ The immediate closure direction is:
 <ul>
   <li>stabilize the intrinsic v1 widget core,</li>
   <li>stabilize the status of standardized support widgets relative to that core,</li>
-  <li>avoid premature expansion into heavier structured and graphing families,</li>
+  <li>stabilize the doctrine that distinct visible embodiments do not automatically create distinct classes,</li>
+  <li>avoid premature expansion of the intrinsic core,</li>
   <li>preserve the minimum object-surface rule across all intrinsic baseline widgets,</li>
   <li>add near-core classes only after the intrinsic core is fully coherent.</li>
 </ul>
 
 <hr/>
 
-<h2 id="summary">19. Summary</h2>
+<h2 id="summary">20. Summary</h2>
 
 <p>
 This directory publishes the first intrinsic standardized widget classes of FROG.
@@ -738,9 +791,10 @@ The next most coherent file to handle after this rewrite is:
 </p>
 
 <ul>
-  <li><code>Libraries/Widgets/Listbox.md</code></li>
+  <li><code>Libraries/Realizations/Default/Readme.md</code></li>
 </ul>
 
 <p>
-That file is the next good candidate because the boolean switch question is now architecturally contained as a realization matter, while listbox remains the next meaningful deferred selection-family class to evaluate on its own merits.
+That file is the next strongest consolidation point because it should explicitly mirror the same doctrine:
+small semantic class core, realization-side embodiment variants, and no accidental creation of new classes from purely visible differences.
 </p>
