@@ -53,6 +53,10 @@ This file is therefore the concrete asset-facing companion to the machine-readab
 It shows how the package-level publication corridor may be materialized on disk without introducing semantic drift.
 </p>
 
+<p>
+It also serves as the first concrete proof that the button realization corridor can be published in a form that is both human-readable and machine-readable while remaining compatible with later runtime implementations in different host environments.
+</p>
+
 <hr/>
 
 <h2 id="purpose">2. Purpose</h2>
@@ -87,6 +91,12 @@ The package explains the realization contract.
 The asset tree shows how that contract is concretely supported.
 </p>
 
+<p>
+The example is intentionally family-generic rather than variant-specific.
+It proves the shared default button publication corridor first.
+Later examples may specialize that corridor for compatible realization variants or skin bundles, but they should not replace the architectural split demonstrated here.
+</p>
+
 <hr/>
 
 <h2 id="what-this-example-demonstrates">3. What This Example Demonstrates</h2>
@@ -111,6 +121,16 @@ The example also demonstrates the preferred split between:
   <li><code>state_maps</code> for visual state embodiment,</li>
   <li><code>part_bindings</code> for stable structural correspondence,</li>
   <li>anchor publication for dynamic host-rendered label placement.</li>
+</ul>
+
+<p>
+More concretely, this example is meant to show that:
+</p>
+
+<ul>
+  <li>the asset tree is not merely decorative documentation,</li>
+  <li>resource placement on disk remains part of the inspectable publication corridor,</li>
+  <li>the runtime should consume published realization structure rather than inventing its own hidden realization contract.</li>
 </ul>
 
 <hr/>
@@ -151,6 +171,11 @@ This tree is also intentionally conservative:
   <li>no private runtime-only folders are treated as if they were part of the published realization contract.</li>
 </ul>
 
+<p>
+The tree also shows an important discipline rule for future realization families:
+variant-specific or skin-specific material should only be introduced when it is published explicitly as such, not smuggled into the asset structure as an undocumented runtime convention.
+</p>
+
 <hr/>
 
 <h2 id="files-included">5. Files Included</h2>
@@ -182,6 +207,22 @@ The expected role of each file is as follows:
   <li><code>frame/*.svg</code> publishes an optional supporting visual layer for outer emphasis or focus posture.</li>
 </ul>
 
+<p>
+In a fuller publication corridor, the same pattern may later be extended with:
+</p>
+
+<ul>
+  <li>variant-specific subtrees,</li>
+  <li>skin-specific resource groups,</li>
+  <li>style-token support artifacts,</li>
+  <li>additional frame or density resources.</li>
+</ul>
+
+<p>
+However, none of those extensions are required for this first proof case.
+The example deliberately remains small enough to keep the core architectural split legible.
+</p>
+
 <hr/>
 
 <h2 id="publication-alignment">6. Publication Alignment</h2>
@@ -212,6 +253,16 @@ For the button corridor specifically, the expected alignment is:
 This means the tree is not merely decorative.
 It is part of the inspectable realization-publication corridor.
 </p>
+
+<p>
+The alignment rule also implies the reverse:
+</p>
+
+<ul>
+  <li>the asset tree must not imply semantics that the package does not publish,</li>
+  <li>the package must not reference resources that the tree does not actually make available,</li>
+  <li>the runtime must not rely on silent assumptions that neither the package nor the tree expose explicitly.</li>
+</ul>
 
 <hr/>
 
@@ -262,6 +313,17 @@ This example also demonstrates a useful discipline rule for future widget famili
   <li>when a public surface is fundamentally dynamic and host-rendered, prefer publishing a placement resource,</li>
   <li>when a public surface is fundamentally a state-sensitive visual embodiment, prefer publishing explicit state resources,</li>
   <li>do not let the asset tree blur that difference.</li>
+</ul>
+
+<p>
+The same discipline will matter later for:
+</p>
+
+<ul>
+  <li>numeric <code>value_display</code> surfaces,</li>
+  <li>string <code>text_display</code> surfaces,</li>
+  <li>boolean <code>label</code> surfaces,</li>
+  <li>chart labels and other dynamic chart-associated text-bearing surfaces.</li>
 </ul>
 
 <hr/>
