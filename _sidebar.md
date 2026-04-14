@@ -99,6 +99,7 @@
     - [Listbox](/Libraries/Widgets/Listbox.md)
     - [Numeric](/Libraries/Widgets/Numeric.md)
     - [Path](/Libraries/Widgets/Path.md)
+    - [Picture](/Libraries/Widgets/Picture.md)
     - [String](/Libraries/Widgets/String.md)
     - [Tab](/Libraries/Widgets/Tab.md)
     - [Table](/Libraries/Widgets/Table.md)

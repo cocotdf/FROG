@@ -709,6 +709,13 @@
                   "children": []
                 },
                 {
+                  "key": "libraries/widgets/picture.md",
+                  "title": "Picture",
+                  "path": "/Libraries/Widgets/Picture.md",
+                  "kind": "page",
+                  "children": []
+                },
+                {
                   "key": "libraries/widgets/string.md",
                   "title": "String",
                   "path": "/Libraries/Widgets/String.md",
@@ -2683,6 +2690,7 @@
     "/Libraries/Widgets/Listbox.md",
     "/Libraries/Widgets/Numeric.md",
     "/Libraries/Widgets/Path.md",
+    "/Libraries/Widgets/Picture.md",
     "/Libraries/Widgets/String.md",
     "/Libraries/Widgets/Tab.md",
     "/Libraries/Widgets/Table.md",
