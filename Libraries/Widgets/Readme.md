@@ -58,6 +58,12 @@ The standard widget baseline does not replace the general widget architecture de
 Instead, it instantiates that architecture through a first published set of reusable classes with explicit public object surfaces.
 </p>
 
+<p>
+The baseline also assumes that standardized widgets may be styled, skinned, and realized through compatible realization families without turning those realization choices into hidden class splits.
+The intrinsic class layer remains semantic and portable.
+Realization remains downstream and embodiment-oriented.
+</p>
+
 <hr/>
 
 <h2 id="why-this-directory-exists">2. Why this Directory Exists</h2>
@@ -220,8 +226,20 @@ It is a published portable object surface that runtimes may implement and progra
 
 <p>
 That public surface may include semantic label-bearing or value-bearing members such as <code>label.text</code>, <code>value</code>, <code>value_display</code>, <code>text_display</code>, <code>plot_area</code>, or other public surfaces when the class requires them.
-However, the existence of such members does not mean that realization-side placement, styling defaults, anchors, text regions, or decorative assets become part of the intrinsic class law unless explicitly published here.
+However, the existence of such members does not mean that realization-side placement, styling defaults, anchors, text regions, skin resources, or decorative assets become part of the intrinsic class law unless explicitly published here.
 </p>
+
+<p>
+A standard class may also expose bounded public styling or realization-selection surfaces when those surfaces are intended to be portable and inspectable.
+Typical examples include:
+</p>
+
+<ul>
+  <li>portable <code>style.*</code> properties,</li>
+  <li><code>realization.family</code>,</li>
+  <li><code>realization.variant</code>,</li>
+  <li><code>realization.skin_id</code>.</li>
+</ul>
 
 <p>
 The standard widget class therefore owns:
@@ -242,7 +260,8 @@ Downstream realization publication owns:
   <li>where dynamic public surfaces are placed,</li>
   <li>how visual states are embodied,</li>
   <li>which anchors, text regions, or resource layers are used,</li>
-  <li>which assets or host-native layers provide the embodiment.</li>
+  <li>which assets or host-native layers provide the embodiment,</li>
+  <li>how compatible variants and skins are selected and applied.</li>
 </ul>
 
 <hr/>
@@ -456,6 +475,12 @@ A new class is justified only when the public contract changes in a meaningful w
   <li>different standardized behavior meaning.</li>
 </ul>
 
+<p>
+The same rule also applies to skinning and styling.
+A different skin, a different compatible SVG set, a different host-native chrome, or a different compatible realization variant does not automatically create a new class.
+A widget remains the same standardized class as long as its public contract remains unchanged.
+</p>
+
 <hr/>
 
 <h2 id="shared-baseline-conventions">11. Shared Baseline Conventions</h2>
@@ -476,6 +501,8 @@ At minimum:
   <li>interactive classes use property <code>interaction.enabled</code> where applicable,</li>
   <li>the root part is named <code>root</code>,</li>
   <li>the outer framing part, when present, is named <code>frame</code>,</li>
+  <li>portable styling surfaces, when exposed, use the <code>style.*</code> namespace,</li>
+  <li>portable realization-selection surfaces, when exposed, use the <code>realization.*</code> namespace,</li>
   <li>controls typically emit <code>value_changed</code> for primary value mutation,</li>
   <li>indicators typically emit <code>value_rendered</code> for visible refresh-oriented notification.</li>
 </ul>
@@ -612,7 +639,7 @@ A class may expose <code>value</code> as a legal public property, while the exec
 </ul>
 
 <p>
-Likewise, if a class exposes members such as <code>label.text</code>, axis properties, history members, or methods such as <code>append_sample(sample)</code> or <code>clear_history()</code>, this directory owns their legality and meaning, while <code>frog.ui.*</code> owns the executable primitive vocabulary used to access them.
+Likewise, if a class exposes members such as <code>label.text</code>, axis properties, history members, portable <code>style.*</code> surfaces, portable <code>realization.*</code> members, or methods such as <code>append_sample(sample)</code> or <code>clear_history()</code>, this directory owns their legality and meaning, while <code>frog.ui.*</code> owns the executable primitive vocabulary used to access them.
 </p>
 
 <hr/>
@@ -632,7 +659,8 @@ A standard widget class may later be accompanied by:
   <li>one or more machine-readable realization packages,</li>
   <li>state-sensitive resource maps,</li>
   <li>structural part bindings,</li>
-  <li>anchor or text-region publication for dynamic public parts.</li>
+  <li>anchor or text-region publication for dynamic public parts,</li>
+  <li>compatible realization variants and compatible skin identities.</li>
 </ul>
 
 <p>
@@ -699,6 +727,10 @@ Portability does require:
 Where a class exposes semantic text-bearing or value-bearing public surfaces, portability also requires that runtimes preserve their public meaning even if the visual embodiment differs.
 </p>
 
+<p>
+Where a class exposes portable styling or realization-selection surfaces, portability also requires that runtimes treat those surfaces as bounded public configuration surfaces rather than as permission to redefine class semantics.
+</p>
+
 <hr/>
 
 <h2 id="conformance-posture">18. Conformance Posture</h2>
@@ -729,6 +761,10 @@ Those structures may embody, place, or render the surface.
 They do not redefine its class meaning.
 </p>
 
+<p>
+Likewise, a runtime MUST NOT use styling, skinning, or variant selection as a hidden mechanism for silently introducing a different class contract while still claiming conformance to the original published class.
+</p>
+
 <hr/>
 
 <h2 id="status">19. Status</h2>
@@ -757,6 +793,7 @@ The immediate closure direction is:
   <li>stabilize the intrinsic v1 widget core,</li>
   <li>stabilize the status of standardized support widgets relative to that core,</li>
   <li>stabilize the doctrine that distinct visible embodiments do not automatically create distinct classes,</li>
+  <li>stabilize the doctrine that bounded styling and skinning remain realization-oriented unless explicitly promoted into class law,</li>
   <li>avoid premature expansion of the intrinsic core,</li>
   <li>preserve the minimum object-surface rule across all intrinsic baseline widgets,</li>
   <li>add near-core classes only after the intrinsic core is fully coherent.</li>
@@ -787,14 +824,24 @@ In short:
 </ul>
 
 <p>
+The intrinsic baseline is intentionally semantic-first:
+</p>
+
+<ul>
+  <li>class law defines public meaning,</li>
+  <li>realization defines embodiment,</li>
+  <li>skins and variants remain compatible realization choices unless public class law explicitly diverges.</li>
+</ul>
+
+<p>
 The next most coherent file to handle after this rewrite is:
 </p>
 
 <ul>
-  <li><code>Libraries/Realizations/Default/Readme.md</code></li>
+  <li><code>Libraries/Realizations/Default/Package.md</code></li>
 </ul>
 
 <p>
-That file is the next strongest consolidation point because it should explicitly mirror the same doctrine:
-small semantic class core, realization-side embodiment variants, and no accidental creation of new classes from purely visible differences.
+That file is the next strongest consolidation point because it should now mirror the same doctrine in machine-readable publication form:
+portable class-owned semantics, explicit realization-owned embodiment, explicit variant and skin selection posture, and no semantic drift hidden inside resource selection.
 </p>
