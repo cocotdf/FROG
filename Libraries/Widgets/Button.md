@@ -47,7 +47,7 @@ It is not defined here as a boolean-like stateful toggle widget.
 </p>
 
 <p>
-This class must be read together with the FROG front-panel object model and the shared widget styling posture.
+This class must be read together with the shared FROG widget styling posture.
 The button is an intrinsic standard widget class with a minimal but real object surface.
 It is not a passive decorative control, and it is not a runtime-private host button masquerading as a standard class.
 </p>
@@ -224,9 +224,9 @@ When exposed, the button may also support realization-selection surfaces such as
 </p>
 
 <ul>
-  <li><code>realization.family</code>,</li>
-  <li><code>realization.variant</code>,</li>
-  <li><code>realization.skin_id</code>.</li>
+  <li><code>realization.family</code></li>
+  <li><code>realization.variant</code></li>
+  <li><code>realization.skin_id</code></li>
 </ul>
 
 <p>
@@ -239,11 +239,6 @@ They do not redefine:
   <li>the ownership of <code>label.text</code>,</li>
   <li>the public method and event surfaces of the button.</li>
 </ul>
-
-<p>
-For example, a flatter button skin, a beveled button skin, or another compatible SVG-backed button face remain realization choices.
-They do not introduce a new standard class.
-</p>
 
 <h3>4.4 Resource-override posture</h3>
 
@@ -276,15 +271,6 @@ The realization still owns:
   <li>state-specific face resources,</li>
   <li>frame resources,</li>
   <li>layer composition.</li>
-</ul>
-
-<p>
-The intended split is:
-</p>
-
-<ul>
-  <li><strong>class-owned and widget-visible</strong> — portable style preferences,</li>
-  <li><strong>realization-owned</strong> — concrete embodiment, placement, SVG resources, and skin internals.</li>
 </ul>
 
 <hr/>
@@ -384,16 +370,6 @@ The <code>label</code> part is especially important because it preserves the dis
   <li>decorative or placeholder visual text content that may appear in assets.</li>
 </ul>
 
-<p>
-The <code>face</code> part is likewise important because it preserves the distinction between:
-</p>
-
-<ul>
-  <li>public command identity owned by the button class,</li>
-  <li>visual pressed or focused posture owned by realization,</li>
-  <li>runtime-private toolkit internals used to embody that posture.</li>
-</ul>
-
 <hr/>
 
 <h2 id="behavior-expectations">7. Behavior Expectations</h2>
@@ -413,11 +389,6 @@ The intrinsic behavior baseline of the button includes at least:
 <p>
 The intrinsic button baseline does not require public state-dependent label switching.
 If such switching exists in an extended class or composite posture, it must be published explicitly by that higher-level contract rather than inferred from realization assets.
-</p>
-
-<p>
-Likewise, <code>interaction.pressed</code>, when exposed, is a transient interaction property.
-It must not be reinterpreted as a standard persistent value surface of the intrinsic button baseline.
 </p>
 
 <hr/>
@@ -482,8 +453,8 @@ Accordingly:
 
 <ul>
   <li>the button is normally addressed through <code>widget_reference</code>,</li>
-  <li><code>label.text</code>, <code>interaction.visible</code>, <code>style.text_color</code>, <code>style.background_color</code>, and similar members may be accessed through <code>frog.ui.property_read</code> and <code>frog.ui.property_write</code> when legal,</li>
-  <li><code>realization.family</code>, <code>realization.variant</code>, and <code>realization.skin_id</code> may be accessed through <code>frog.ui.property_read</code> and <code>frog.ui.property_write</code> only when the active class surface or profile exposes them as public styling surfaces,</li>
+  <li><code>label.text</code>, <code>interaction.visible</code>, and portable style members may be accessed through <code>frog.ui.property_read</code> and <code>frog.ui.property_write</code> when legal,</li>
+  <li>realization-selection members may be accessed through <code>frog.ui.property_read</code> and <code>frog.ui.property_write</code> only when the active class surface or profile exposes them publicly,</li>
   <li><code>focus()</code>, <code>press()</code>, <code>release()</code>, or <code>activate()</code> may be accessed through <code>frog.ui.method_invoke</code> when legal,</li>
   <li><code>pressed</code>, <code>released</code>, and <code>clicked</code> may be observed through <code>frog.ui.event_observe</code>.</li>
 </ul>
@@ -504,8 +475,7 @@ Validators SHOULD diagnose at least:
   <li>attempts to treat realization-private text placement or SVG-baked text as the public semantic owner of the button label,</li>
   <li>attempts to use <code>label.text_on</code> or <code>label.text_off</code> as if they were intrinsic baseline members of <code>frog.widgets.button</code>,</li>
   <li>attempts to address realization-only anchors, text regions, or asset layers through <code>frog.ui.*</code> as if they were public button members by default,</li>
-  <li>attempts to use styling or skin-selection surfaces to imply a distinct class contract without explicit class publication,</li>
-  <li>attempts to use resource substitution as if it were automatically a legal public property surface.</li>
+  <li>attempts to use styling or skin-selection surfaces to imply a distinct class contract without explicit class publication.</li>
 </ul>
 
 <hr/>
