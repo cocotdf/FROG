@@ -168,7 +168,7 @@ The preferred interpretation posture is:
   <li>public <code>style.*</code> properties influence inspectable realization-side styling parameters,</li>
   <li><code>realization.variant</code> selects among compatible published embodiment variants,</li>
   <li><code>realization.skin_id</code> selects among compatible published skin bundles or resource groups,</li>
-  <li>SVG resources, host-native resources, and style-token resources remain realization assets rather than semantic truth.</li>
+  <li>SVG resources, host-native resources, template-driven resources, and style-token resources remain realization assets rather than semantic truth.</li>
 </ul>
 
 <p>
@@ -183,6 +183,11 @@ It MUST NOT silently redefine:
   <li>the public numeric part model,</li>
   <li>the public numeric method or event inventory.</li>
 </ul>
+
+<p>
+A style or skin selection therefore remains realization-facing customization input.
+It is not a substitute for class law and it is not a hidden semantic extension mechanism.
+</p>
 
 <hr/>
 
@@ -309,7 +314,8 @@ The default family SHOULD keep this mapping explicit enough that a machine-reada
 <ul>
   <li>state-sensitive visual resources,</li>
   <li>structural part bindings,</li>
-  <li>dynamic host-rendered or host-updated numeric surfaces.</li>
+  <li>dynamic host-rendered or host-updated numeric surfaces,</li>
+  <li>bounded styling or skin-selection posture.</li>
 </ul>
 
 <p>
@@ -446,7 +452,31 @@ If a future specification standardizes a numerically distinct class with genuine
 Until then, editor-style differences remain realization variants of <code>frog.widgets.numeric_control</code> or <code>frog.widgets.numeric_indicator</code>.
 </p>
 
-<h3>8.6 Asset limitation rule</h3>
+<h3>8.6 Styling and skin application posture</h3>
+
+<p>
+A numeric realization MAY apply portable style surfaces or skin selection in several ways, including:
+</p>
+
+<ul>
+  <li>substituting one compatible visual resource group for another,</li>
+  <li>injecting style-token values into a vector template or rendering layer,</li>
+  <li>mapping public color or typography surfaces to host-native toolkit styling parameters,</li>
+  <li>switching among compatible realization variants under the same class contract.</li>
+</ul>
+
+<p>
+Such realization-side adaptation remains valid only if:
+</p>
+
+<ul>
+  <li>the published numeric state vocabulary remains preserved,</li>
+  <li>the public part meaning remains preserved,</li>
+  <li>the chosen embodiment remains inspectable through realization publication,</li>
+  <li>styling or skinning does not silently become a new public semantic contract.</li>
+</ul>
+
+<h3>8.7 Asset limitation rule</h3>
 
 <p>
 A numeric resource file MAY include placeholder digits, decorative guides, preview values, or design-time scaffolding.
@@ -530,7 +560,7 @@ An equivalent package-oriented posture may publish resources such as:
 </ul>
 
 <p>
-Resources MAY be SVG-backed, host-native, toolkit-driven, or mixed.
+Resources MAY be SVG-backed, host-native, toolkit-driven, template-driven, or mixed.
 The default family standardizes the part posture, state posture, and realization-side binding posture, not one mandatory editor implementation and not one mandatory file format.
 </p>
 
@@ -541,7 +571,8 @@ In particular:
 <ul>
   <li><code>increment_button</code>, <code>decrement_button</code>, and <code>frame</code> are natural candidates for state-sensitive visual resources,</li>
   <li><code>label</code> is naturally a placement-bound dynamic text surface,</li>
-  <li><code>value_display</code> is naturally a placement-bound dynamic numeric surface, even when decorative visual resources also exist around it.</li>
+  <li><code>value_display</code> is naturally a placement-bound dynamic numeric surface, even when decorative visual resources also exist around it,</li>
+  <li>variant-specific or skin-specific resource groups MAY coexist as long as the published part meaning and state vocabulary remain preserved.</li>
 </ul>
 
 <p>
@@ -597,6 +628,10 @@ A host MAY approximate the realization when exact resources are unavailable, but
 <p>
 A host MAY choose a box-like, spinbox-like, compact, skinned, or other compatible numeric embodiment strategy.
 That choice is acceptable only if the public numeric class meaning remains unchanged and the realization contract remains inspectable.
+</p>
+
+<p>
+When public styling or skin-selection surfaces are exposed, the host SHOULD apply them through the published realization contract rather than through hidden runtime-specific conventions.
 </p>
 
 <hr/>
