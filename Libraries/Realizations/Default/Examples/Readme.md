@@ -22,7 +22,7 @@
   <li><a href="#required-example-layers">6. Required Example Layers</a></li>
   <li><a href="#example-directory-posture">7. Example Directory Posture</a></li>
   <li><a href="#button-example-posture">8. Button Example Posture</a></li>
-  <li><a href="#variant-aware-example-posture">9. Variant-Aware Example Posture</a></li>
+  <li><a href="#variant-aware-and-skin-aware-example-posture">9. Variant-Aware and Skin-Aware Example Posture</a></li>
   <li><a href="#portability-posture">10. Portability Posture</a></li>
   <li><a href="#validation-posture">11. Validation Posture</a></li>
   <li><a href="#anti-patterns">12. Anti-Patterns</a></li>
@@ -58,6 +58,10 @@ Examples in this directory therefore serve as publication evidence.
 They show how doctrinal rules, machine-readable records, and concrete resources align in a form that future runtimes and future contributors can inspect directly.
 </p>
 
+<p>
+This corridor is especially important for the current normalization direction of the default family because the family now needs to show not only shared realization doctrine, but also bounded specialization through compatible realization variants and compatible skins without allowing those embodiment choices to drift into hidden class splits.
+</p>
+
 <hr/>
 
 <h2 id="why-this-directory-exists">2. Why this Directory Exists</h2>
@@ -76,11 +80,16 @@ Without a normalized example corridor:
   <li>asset trees become private conventions instead of inspectable publication artifacts,</li>
   <li>dynamic public text may accidentally collapse into SVG ownership,</li>
   <li>runtime implementations begin to define the real behavior of the system by convention,</li>
-  <li>future contributors cannot tell whether a pattern is normative, optional, variant-specific, or accidental.</li>
+  <li>future contributors cannot tell whether a pattern is normative, optional, variant-specific, skin-specific, or accidental.</li>
 </ul>
 
 <p>
 This directory exists to prevent that drift.
+</p>
+
+<p>
+It also exists to ensure that compatible embodiment choice remains explicit.
+If the family supports a checkbox-like and a switch-like boolean embodiment, or several skins of the same button corridor, the example layer must make that specialization legible without pretending that each visual specialization is a distinct widget class.
 </p>
 
 <hr/>
@@ -96,7 +105,8 @@ This document defines:
   <li>the minimum publication layers that a realization example should show,</li>
   <li>how example prose, machine-readable JSON, and asset trees should align,</li>
   <li>the portability posture expected from example material,</li>
-  <li>how compatible realization variants should be documented when they exist.</li>
+  <li>how compatible realization variants should be documented when they exist,</li>
+  <li>how compatible skin specializations should be documented when they exist.</li>
 </ul>
 
 <p>
@@ -142,6 +152,17 @@ When a realization family supports compatible embodiment variants, the example S
 </ul>
 
 <p>
+When a realization family supports compatible skins, the example SHOULD also make clear:
+</p>
+
+<ul>
+  <li>whether the example is skin-generic or skin-specific,</li>
+  <li>which embodiment surfaces remain structurally shared across skins,</li>
+  <li>which resources, token maps, or state maps are specialized by skin,</li>
+  <li>that the skin does not silently introduce a new class contract.</li>
+</ul>
+
+<p>
 An example that does not make these boundaries legible is incomplete even if its JSON is syntactically valid.
 </p>
 
@@ -178,7 +199,9 @@ More specifically:
 <ul>
   <li>examples MUST NOT assign semantic ownership of dynamic public text to asset files when the doctrinal posture assigns that ownership to class law,</li>
   <li>examples MUST NOT collapse <code>state_maps</code> and <code>part_bindings</code> into one undocumented mechanism,</li>
-  <li>examples MUST NOT use runtime-specific shortcuts as if they were the normative publication corridor.</li>
+  <li>examples MUST NOT use runtime-specific shortcuts as if they were the normative publication corridor,</li>
+  <li>examples MUST NOT turn variant choice into an implicit class split,</li>
+  <li>examples MUST NOT turn skin choice into an implicit semantic split.</li>
 </ul>
 
 <hr/>
@@ -207,9 +230,17 @@ The preferred minimum publication stack is therefore:
 
 <ul>
   <li><strong>example prose</strong> — explains what the example demonstrates and what architectural rule it is meant to prove,</li>
-  <li><strong>machine-readable package</strong> — publishes realization records, resources, state maps, and part bindings,</li>
+  <li><strong>machine-readable package</strong> — publishes realization records, resources, state maps, part bindings, and variant or skin specializations when relevant,</li>
   <li><strong>asset subtree</strong> — shows how concrete realization resources are organized, named, and scoped,</li>
   <li><strong>placement-support artifacts</strong> — shows how anchors or text regions are used when a host renders dynamic public surfaces.</li>
+</ul>
+
+<p>
+When skin-aware examples exist, the preferred publication stack MAY also include:
+</p>
+
+<ul>
+  <li><strong>style-token artifacts</strong> — shows how bounded style-token specialization is published without changing class meaning.</li>
 </ul>
 
 <hr/>
@@ -246,6 +277,10 @@ A larger family example corridor MAY later contain several subdirectories, one p
 That expansion remains acceptable only if the architectural split stays visible and the example names remain stable and inspectable.
 </p>
 
+<p>
+When compatible variants or skins are published, the directory posture SHOULD also make the specialization readable from filenames and subtree structure rather than hiding it only in runtime code.
+</p>
+
 <hr/>
 
 <h2 id="button-example-posture">8. Button Example Posture</h2>
@@ -280,9 +315,13 @@ The button example should therefore remain the first reference pattern reused ac
   <li>dynamic text is shown through placement publication rather than asset-owned semantic text.</li>
 </ul>
 
+<p>
+Because button realization is also the cleanest first place to show bounded skinning, it is a natural candidate for the first example corridor that later demonstrates one compatible variant and one compatible skin without changing the button class contract.
+</p>
+
 <hr/>
 
-<h2 id="variant-aware-example-posture">9. Variant-Aware Example Posture</h2>
+<h2 id="variant-aware-and-skin-aware-example-posture">9. Variant-Aware and Skin-Aware Example Posture</h2>
 
 <p>
 When the default family allows several compatible realization variants for the same standardized class, the example corridor SHOULD make that variant posture explicit.
@@ -329,6 +368,30 @@ A variant-specific example must not silently imply:
   <li>a runtime-private interpretation rule that only one implementation understands.</li>
 </ul>
 
+<p>
+When the default family allows several compatible skins for the same realization corridor, the example corridor SHOULD make that skin posture explicit as well.
+</p>
+
+<p>
+The preferred rule is:
+</p>
+
+<ul>
+  <li>a skin-generic example proves the shared realization contract and the shared structural mapping,</li>
+  <li>a skin-specific example proves how one compatible skin specializes resources or style-token posture without changing widget semantics.</li>
+</ul>
+
+<p>
+A skin-specific example should therefore make clear:
+</p>
+
+<ul>
+  <li>which structural bindings remain shared,</li>
+  <li>which resource groups are specialized by skin,</li>
+  <li>which token maps or color defaults are specialized by skin,</li>
+  <li>that the skin remains a realization-side customization rather than a class split.</li>
+</ul>
+
 <hr/>
 
 <h2 id="portability-posture">10. Portability Posture</h2>
@@ -372,6 +435,17 @@ When variant-specific examples exist, portability also requires that different r
   <li>the same fallback posture when one variant cannot be realized exactly.</li>
 </ul>
 
+<p>
+When skin-specific examples exist, portability also requires that different runtimes can recognize:
+</p>
+
+<ul>
+  <li>the same base class contract,</li>
+  <li>the same shared part model and state vocabulary,</li>
+  <li>the same skin identifier or equivalent specialization marker,</li>
+  <li>the same bounded fallback posture when one skin-specific resource group is unavailable.</li>
+</ul>
+
 <hr/>
 
 <h2 id="validation-posture">11. Validation Posture</h2>
@@ -399,6 +473,17 @@ When variant-specific examples exist, validators SHOULD also be able to check:
   <li>the example does not silently create a new class split by embodiment alone.</li>
 </ul>
 
+<p>
+When skin-specific examples exist, validators SHOULD also be able to check:
+</p>
+
+<ul>
+  <li>the example identifies its skin posture explicitly,</li>
+  <li>skin-specialized resources remain bounded to realization publication,</li>
+  <li>the example does not silently transfer semantic ownership into style assets or token maps,</li>
+  <li>the example does not silently create a semantic split by visual customization alone.</li>
+</ul>
+
 <hr/>
 
 <h2 id="anti-patterns">12. Anti-Patterns</h2>
@@ -414,7 +499,8 @@ The following example-corridor anti-patterns SHOULD be avoided:
   <li>treating examples as disposable illustrations rather than as inspectable publication guidance,</li>
   <li>letting one runtime sample implementation become the only place where the actual realization logic can be understood,</li>
   <li>publishing a variant-specific embodiment as if it were automatically a distinct widget class,</li>
-  <li>using example naming that hides whether the example is family-generic or variant-specific.</li>
+  <li>publishing a skin-specific specialization as if it were automatically a distinct class contract,</li>
+  <li>using example naming that hides whether the example is family-generic, variant-specific, or skin-specific.</li>
 </ul>
 
 <hr/>
@@ -448,6 +534,11 @@ Its preferred posture is:
 </ul>
 
 <p>
+This corridor must now also be able to prove a second rule clearly:
+compatible realization variants and compatible skins are realization-side specialization mechanisms, not automatic class splits.
+</p>
+
+<p>
 The next most coherent file to handle after this one is:
 </p>
 
@@ -456,5 +547,5 @@ The next most coherent file to handle after this one is:
 </ul>
 
 <p>
-That file is the natural next step because this <code>Readme.md</code> now defines the example-corridor rules, and the button example is the first normative proof case for the full doctrine-to-package-to-assets chain.
+That file is the natural next step because this <code>Readme.md</code> now defines the example-corridor rules, and the button example is the first normative proof case for the full doctrine-to-package-to-assets chain, including the first clean opportunity to show bounded variant and skin posture in a concrete publication example.
 </p>
