@@ -13,10 +13,6 @@
       "focused",
       "pressed"
     ],
-    "label": [
-      "normal",
-      "disabled"
-    ],
     "frame": [
       "normal",
       "focused"
@@ -24,62 +20,59 @@
   },
   "resources": [
     {
+      "id": "button.face.normal.svg",
       "path": "./face/normal.svg",
       "part": "face",
       "state": "normal",
       "kind": "svg"
     },
     {
+      "id": "button.face.disabled.svg",
       "path": "./face/disabled.svg",
       "part": "face",
       "state": "disabled",
       "kind": "svg"
     },
     {
+      "id": "button.face.focused.svg",
       "path": "./face/focused.svg",
       "part": "face",
       "state": "focused",
       "kind": "svg"
     },
     {
+      "id": "button.face.pressed.svg",
       "path": "./face/pressed.svg",
       "part": "face",
       "state": "pressed",
       "kind": "svg"
     },
     {
+      "id": "button.face.layer_map",
       "path": "./face/layer_map.json",
       "part": "face",
       "kind": "layer_map"
     },
     {
-      "path": "./face/anchor_map.json",
-      "part": "face",
-      "kind": "anchor_map"
-    },
-    {
-      "path": "./label/normal.svg",
-      "part": "label",
-      "state": "normal",
-      "kind": "svg"
-    },
-    {
-      "path": "./label/disabled.svg",
-      "part": "label",
-      "state": "disabled",
-      "kind": "svg"
-    },
-    {
+      "id": "button.frame.normal.svg",
       "path": "./frame/normal.svg",
       "part": "frame",
       "state": "normal",
       "kind": "svg"
     },
     {
+      "id": "button.frame.focused.svg",
       "path": "./frame/focused.svg",
       "part": "frame",
       "state": "focused",
       "kind": "svg"
+    },
+    {
+      "id": "button.label.anchor_map",
+      "path": "./anchors/label.json",
+      "part": "label",
+      "kind": "anchor_map",
+      "role": "text_anchor"
     }
   ]
 }
