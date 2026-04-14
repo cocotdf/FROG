@@ -38,7 +38,7 @@ This document defines the intrinsic standardized baseline for boolean widgets in
 
 <p>
 The boolean family provides the standard widget surfaces used for logical true/false interaction and true/false display.
-These classes are intentionally simple, portable, and sufficient for the minimal reusable front-panel baseline.
+These classes are intentionally small, portable, inspectable, and sufficient for the minimal reusable front-panel baseline.
 </p>
 
 <p>
@@ -60,6 +60,12 @@ This keeps the intrinsic baseline close in spirit to mature graphical systems su
 <p>
 The intrinsic boolean baseline is strictly true/false.
 It does not standardize a tri-state boolean model in the intrinsic core.
+</p>
+
+<p>
+This family must also be read together with the shared widget styling and realization-selection posture of FROG.
+Boolean widgets are intrinsic standard classes with portable public surfaces.
+They are not runtime-private host controls hidden behind a standard class name.
 </p>
 
 <hr/>
@@ -110,6 +116,11 @@ This means the intrinsic core standardizes one boolean family, not one fixed vis
 Checkbox-like, switch-like, LED-like, and similar host embodiments are realization strategies unless promoted later into separate explicit widget classes.
 </p>
 
+<p>
+The family is therefore not defined by one visible shape.
+Checkbox-like, switch-like, toggle-like, and LED-like posture remain realization choices unless a later specification publishes a genuinely distinct boolean class contract.
+</p>
+
 <hr/>
 
 <h2 id="common-styling-and-skin-customization">4. Common Styling and Skin Customization</h2>
@@ -155,8 +166,21 @@ When exposed, the preferred portable style surfaces include:
 </ul>
 
 <p>
-Family-specific boolean style surfaces such as true/false emphasis colors may be added later only if they remain clearly portable and do not collapse realization semantics into the class layer.
+Family-specific boolean style surfaces such as true-state emphasis color, false-state emphasis color, or state-face visual emphasis may be added later only if they remain clearly portable and do not collapse realization semantics into the class layer.
 </p>
+
+<p>
+These public surfaces influence how the existing boolean class is embodied.
+They MUST NOT silently redefine:
+</p>
+
+<ul>
+  <li>the meaning of <code>value</code>,</li>
+  <li>the meaning of <code>label.text</code>,</li>
+  <li>the control-versus-indicator distinction,</li>
+  <li>the public boolean part model,</li>
+  <li>the public boolean method or event inventory.</li>
+</ul>
 
 <hr/>
 
@@ -196,7 +220,7 @@ Family-specific boolean style surfaces such as true/false emphasis colors may be
 
 <p>
 These properties define the minimum public object surface of the intrinsic boolean control.
-They do not expose realization-private anchors, state maps, skin layers, glow helpers, or toolkit-private interaction internals as if they were public class members.
+They do not expose realization-private anchors, state maps, skin layers, glow helpers, thumb internals, track internals, or toolkit-private interaction internals as if they were public class members.
 </p>
 
 <h3>5.4 Standard methods</h3>
@@ -278,6 +302,11 @@ Its visual placement and embodiment belong to realization.
   <li><code>realization.skin_id</code> when realization selection is publicly exposed</li>
 </ul>
 
+<p>
+The indicator remains a real object even though it is display-oriented.
+Its public surface is intentionally smaller than that of the boolean control.
+</p>
+
 <h3>6.4 Standard methods</h3>
 
 <ul>
@@ -302,6 +331,11 @@ Its visual placement and embodiment belong to realization.
   <li><code>frame</code> when present</li>
 </ul>
 
+<p>
+The <code>state_face</code> part remains a public dynamic display surface.
+It is not merely a decorative skin region.
+</p>
+
 <hr/>
 
 <h2 id="common-parts">7. Common Parts</h2>
@@ -323,7 +357,7 @@ This distinction is important:
 
 <ul>
   <li><code>state_face</code> is a public part of the class model,</li>
-  <li>state-specific assets, anchors, layer maps, glow helpers, and visual state composition used to embody it belong to realization unless explicitly promoted to class law.</li>
+  <li>state-specific assets, anchors, layer maps, glow helpers, tracks, thumbs, and visual state composition used to embody it belong to realization unless explicitly promoted to class law.</li>
 </ul>
 
 <hr/>
@@ -354,7 +388,7 @@ The family also preserves the distinction between:
 </ul>
 
 <p>
-Pressed posture, focus posture, and host activation feedback remain interaction and realization concerns unless explicitly promoted to additional public class surfaces.
+Pressed posture, focus posture, host activation feedback, and realization-side styling or skinning remain interaction and realization concerns unless explicitly promoted to additional public class surfaces.
 They do not automatically redefine the boolean value itself.
 </p>
 
@@ -378,12 +412,17 @@ The realization MAY be checkbox-like, switch-like, LED-like, or another host-com
 </p>
 
 <p>
+The realization MAY be SVG-backed, host-native, toolkit-driven, template-driven, or mixed.
+It MUST NOT change the published class meaning.
+</p>
+
+<p>
 In particular:
 </p>
 
 <ul>
   <li>realization MAY define composed visual states such as <code>normal_true</code> or <code>pressed_false</code>,</li>
-  <li>realization MAY define decorative frames, state assets, skins, or focus layers,</li>
+  <li>realization MAY define decorative frames, state assets, skins, focus layers, tracks, or thumbs,</li>
   <li>realization MAY expose compatible family, variant, or skin identities,</li>
   <li>realization MUST NOT redefine the semantic owner of <code>value</code> or <code>label.text</code>,</li>
   <li>realization MUST NOT make baked check marks, host-private LED state, or decorative assets the only semantic source of visible boolean meaning.</li>
@@ -423,7 +462,7 @@ Typical legal object-style surfaces include:
 </ul>
 
 <p>
-Realization-only anchors, state maps, resource layers, focus helpers, and asset helpers remain outside the public boolean class surface unless explicitly standardized elsewhere.
+Realization-only anchors, state maps, resource layers, focus helpers, glow helpers, track internals, thumb internals, and asset helpers remain outside the public boolean class surface unless explicitly standardized elsewhere.
 </p>
 
 <hr/>
