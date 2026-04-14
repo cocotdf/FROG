@@ -557,6 +557,13 @@
                       "children": []
                     },
                     {
+                      "key": "libraries/realizations/default/tab.md",
+                      "title": "Tab",
+                      "path": "/Libraries/Realizations/Default/Tab.md",
+                      "kind": "page",
+                      "children": []
+                    },
+                    {
                       "key": "libraries/realizations/default/table.md",
                       "title": "Table",
                       "path": "/Libraries/Realizations/Default/Table.md",
@@ -2654,6 +2661,7 @@
     "/Libraries/Realizations/Default/Resource%20model.md",
     "/Libraries/Realizations/Default/State%20mapping.md",
     "/Libraries/Realizations/Default/String.md",
+    "/Libraries/Realizations/Default/Tab.md",
     "/Libraries/Realizations/Default/Table.md",
     "/Libraries/Realizations/Default/Tree.md",
     "/Libraries/Realizations/Default/Assets/Naming.md",
