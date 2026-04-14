@@ -16,14 +16,16 @@
 <ul>
   <li><a href="#overview">1. Overview</a></li>
   <li><a href="#target-class">2. Target Class</a></li>
-  <li><a href="#realized-parts">3. Realized Parts</a></li>
-  <li><a href="#standard-visual-states">4. Standard Visual States</a></li>
-  <li><a href="#part-state-mapping">5. Part-State Mapping</a></li>
-  <li><a href="#text-realization-posture">6. Text Realization Posture</a></li>
-  <li><a href="#resource-posture">7. Resource Posture</a></li>
-  <li><a href="#host-expectations">8. Host Expectations</a></li>
-  <li><a href="#fallback-posture">9. Fallback Posture</a></li>
-  <li><a href="#summary">10. Summary</a></li>
+  <li><a href="#realization-variant-posture">3. Realization Variant Posture</a></li>
+  <li><a href="#styling-and-skin-posture">4. Styling and Skin Posture</a></li>
+  <li><a href="#realized-parts">5. Realized Parts</a></li>
+  <li><a href="#standard-visual-states">6. Standard Visual States</a></li>
+  <li><a href="#part-state-mapping">7. Part-State Mapping</a></li>
+  <li><a href="#text-realization-posture">8. Text Realization Posture</a></li>
+  <li><a href="#resource-posture">9. Resource Posture</a></li>
+  <li><a href="#host-expectations">10. Host Expectations</a></li>
+  <li><a href="#fallback-posture">11. Fallback Posture</a></li>
+  <li><a href="#summary">12. Summary</a></li>
 </ul>
 
 <hr/>
@@ -41,7 +43,7 @@ Its role is to provide a clean, state-structured embodiment of the standard butt
 <p>
 The default realization is realization-side only.
 It does not redefine widget class law, does not invent new public members, and does not replace the semantic ownership of the button label text.
-Its job is to embody already-published widget surfaces through stable visual states, stable structural bindings, and explicit realization-side placement metadata.
+Its job is to embody already-published widget surfaces through stable visual states, stable structural bindings, explicit realization-side placement metadata, and bounded realization-side styling or skinning posture.
 </p>
 
 <p>
@@ -51,7 +53,8 @@ The preferred architectural split is:
 <ul>
   <li><code>state_maps</code> for state-sensitive visual embodiment,</li>
   <li><code>part_bindings</code> for stable structural correspondence,</li>
-  <li>placement resources for dynamic public parts rendered by the host.</li>
+  <li>placement resources for dynamic public parts rendered by the host,</li>
+  <li>resource and style-token publication for inspectable styling and skin support.</li>
 </ul>
 
 <hr/>
@@ -70,6 +73,7 @@ This realization assumes the standardized button posture in which:
   <li>the button is command-oriented,</li>
   <li>the button exposes a stable <code>label</code> part,</li>
   <li>the semantic user-authored label text is owned by <code>label.text</code>,</li>
+  <li>portable style-facing and realization-selection surfaces may be exposed by class law or active profile,</li>
   <li>the realization remains downstream from that class contract.</li>
 </ul>
 
@@ -80,7 +84,102 @@ It does not become the semantic owner of the label content.
 
 <hr/>
 
-<h2 id="realized-parts">3. Realized Parts</h2>
+<h2 id="realization-variant-posture">3. Realization Variant Posture</h2>
+
+<p>
+The default button realization standardizes one button realization corridor, not one mandatory visible shape.
+</p>
+
+<p>
+Accordingly, a conforming realization MAY choose a button embodiment posture such as:
+</p>
+
+<ul>
+  <li>flat command button,</li>
+  <li>raised command button,</li>
+  <li>rounded command button,</li>
+  <li>host-native button chrome,</li>
+  <li>another host-compatible command-button embodiment.</li>
+</ul>
+
+<p>
+Those remain realization variants of the same published button class.
+A rounded or host-native visible embodiment does not by itself define a new intrinsic widget class.
+</p>
+
+<p>
+This distinction is normative:
+</p>
+
+<ul>
+  <li>the class layer owns command semantics, public members, methods, events, and parts,</li>
+  <li>the realization layer owns how those published surfaces are visually embodied,</li>
+  <li>a realization-variant identifier is not a class identifier,</li>
+  <li>a runtime MUST NOT treat one button embodiment variant as if it were a distinct standard class unless a separate class contract is explicitly published elsewhere.</li>
+</ul>
+
+<hr/>
+
+<h2 id="styling-and-skin-posture">4. Styling and Skin Posture</h2>
+
+<p>
+The default button realization is customizable, but customization remains subordinate to class meaning and realization-family publication rules.
+</p>
+
+<p>
+When the relevant class or active profile exposes public styling or realization-selection surfaces, the default realization SHOULD interpret them through inspectable realization-side mechanisms rather than through runtime-private conventions.
+</p>
+
+<p>
+Typical public surfaces that may influence realization include:
+</p>
+
+<ul>
+  <li><code>style.foreground_color</code>,</li>
+  <li><code>style.background_color</code>,</li>
+  <li><code>style.border_color</code>,</li>
+  <li><code>style.text_color</code>,</li>
+  <li><code>style.opacity</code>,</li>
+  <li><code>style.font_family</code>,</li>
+  <li><code>style.font_size</code>,</li>
+  <li><code>style.font_weight</code>,</li>
+  <li><code>style.text_alignment</code>,</li>
+  <li><code>realization.family</code>,</li>
+  <li><code>realization.variant</code>,</li>
+  <li><code>realization.skin_id</code>.</li>
+</ul>
+
+<p>
+These surfaces do not create a new button class.
+They influence how the existing button class is embodied within the allowed realization corridor.
+</p>
+
+<p>
+The preferred interpretation posture is:
+</p>
+
+<ul>
+  <li>public <code>style.*</code> properties influence inspectable realization-side styling parameters,</li>
+  <li><code>realization.variant</code> selects among compatible published embodiment variants,</li>
+  <li><code>realization.skin_id</code> selects among compatible published skin bundles or resource groups,</li>
+  <li>SVG resources, host-native resources, and style-token resources remain realization assets rather than semantic truth.</li>
+</ul>
+
+<p>
+A skin MAY therefore change colors, borders, corner style, highlight posture, typography defaults, decorative containers, or other visual embodiment details.
+It MUST NOT silently redefine:
+</p>
+
+<ul>
+  <li>the meaning of <code>label.text</code>,</li>
+  <li>the command-oriented meaning of the button,</li>
+  <li>the public button part model,</li>
+  <li>the public button method or event inventory.</li>
+</ul>
+
+<hr/>
+
+<h2 id="realized-parts">5. Realized Parts</h2>
 
 <p>
 The default button realization targets the following public parts:
@@ -94,7 +193,7 @@ The default button realization targets the following public parts:
 </ul>
 
 <p>
-The realization may internally use additional layers, anchors, clipping regions, or host-native regions, but those remain realization-private support structures unless they are explicitly published as realization resources or placement surfaces.
+The realization may internally use additional layers, anchors, clipping regions, decorative containers, style-token layers, or host-native regions, but those remain realization-private support structures unless they are explicitly published as realization resources or placement surfaces.
 </p>
 
 <p>
@@ -110,7 +209,7 @@ The default posture is:
 
 <hr/>
 
-<h2 id="standard-visual-states">4. Standard Visual States</h2>
+<h2 id="standard-visual-states">6. Standard Visual States</h2>
 
 <p>
 The default button realization defines the following standard visual states:
@@ -134,7 +233,7 @@ They do not redefine the semantic contract of the button and they do not create 
 
 <hr/>
 
-<h2 id="part-state-mapping">5. Part-State Mapping</h2>
+<h2 id="part-state-mapping">7. Part-State Mapping</h2>
 
 <p>
 The default family expects at least:
@@ -164,7 +263,8 @@ The preferred machine-readable split is:
 <ul>
   <li><code>face</code> published through <code>part_bindings</code> plus <code>state_maps</code>,</li>
   <li><code>frame</code>, when present, published through <code>part_bindings</code> plus optional <code>state_maps</code>,</li>
-  <li><code>label</code> published primarily through a <code>part_binding</code> to an anchor, text region, or equivalent placement surface.</li>
+  <li><code>label</code> published primarily through a <code>part_binding</code> to an anchor, text region, or equivalent placement surface,</li>
+  <li>styling and skin differences published through resource inventories, style-token resources, variant identifiers, or compatible resource groups.</li>
 </ul>
 
 <p>
@@ -174,7 +274,8 @@ This means that the default family SHOULD keep the mapping explicit enough that 
 <ul>
   <li>a part to a resource layer,</li>
   <li>a part to a state-scoped resource,</li>
-  <li>a part to a visual anchor, text region, or host-native region.</li>
+  <li>a part to a visual anchor, text region, or host-native region,</li>
+  <li>a compatible styling or skin selection to an inspectable realization resource group.</li>
 </ul>
 
 <p>
@@ -183,9 +284,9 @@ The label may still vary stylistically across states, but that does not change i
 
 <hr/>
 
-<h2 id="text-realization-posture">6. Text Realization Posture</h2>
+<h2 id="text-realization-posture">8. Text Realization Posture</h2>
 
-<h3>6.1 Semantic ownership versus realization ownership</h3>
+<h3>8.1 Semantic ownership versus realization ownership</h3>
 
 <p>
 The semantic button label text is not owned by this realization.
@@ -196,7 +297,7 @@ It is owned by the standardized class surface through <code>label.text</code>.
 The role of the default realization is to define where and how that semantic text is visually embodied, not to become the source of truth for the text itself.
 </p>
 
-<h3>6.2 Label embodiment</h3>
+<h3>8.2 Label embodiment</h3>
 
 <p>
 The <code>label</code> part is realized as a dynamic text-bearing surface.
@@ -214,7 +315,7 @@ The default realization therefore assumes a separation between:
   <li>decorative visual content owned by the asset layer.</li>
 </ul>
 
-<h3>6.3 Text anchors and placement metadata</h3>
+<h3>8.3 Text anchors and placement metadata</h3>
 
 <p>
 The default family SHOULD publish an explicit placement surface for <code>label</code>.
@@ -246,7 +347,7 @@ Those realization-side structures do not change the public meaning of <code>labe
 They only specify where the host should visually place the text.
 </p>
 
-<h3>6.4 SVG posture</h3>
+<h3>8.4 SVG posture</h3>
 
 <p>
 SVG-backed resources MAY provide:
@@ -264,7 +365,7 @@ However, the SVG resource must not be the sole owner of the live user-visible bu
 Placeholder text, decorative outlines, or preview text may appear in design resources, but a conforming host must remain able to render the actual semantic label dynamically.
 </p>
 
-<h3>6.5 State interaction with text</h3>
+<h3>8.5 State interaction with text</h3>
 
 <p>
 The default realization MAY vary text appearance across states such as <code>normal</code> and <code>disabled</code>, for example through color, opacity, contrast, emphasis, or host-native styling changes.
@@ -281,23 +382,36 @@ More generally, state-sensitive styling of the rendered label must remain distin
 
 <hr/>
 
-<h2 id="resource-posture">7. Resource Posture</h2>
+<h2 id="resource-posture">9. Resource Posture</h2>
 
 <p>
 A typical resource posture may follow:
 </p>
 
 <pre><code>button/
-  face/
-    normal
-    disabled
-    focused
-    pressed
-  frame/
-    normal
-    focused
-  anchors/
-    label
+  variants/
+    flat/
+      face/
+        normal
+        disabled
+        focused
+        pressed
+      frame/
+        normal
+        focused
+      anchors/
+        label
+    raised/
+      face/
+        normal
+        disabled
+        focused
+        pressed
+      frame/
+        normal
+        focused
+      anchors/
+        label
 </code></pre>
 
 <p>
@@ -315,7 +429,7 @@ An equivalent package-oriented posture may publish resources such as:
 </ul>
 
 <p>
-Resources MAY be SVG-backed, host-native, or toolkit-driven.
+Resources MAY be SVG-backed, host-native, template-driven, or toolkit-driven.
 The default family standardizes the state posture, part posture, and realization-side binding posture, not one mandatory file format.
 </p>
 
@@ -323,9 +437,13 @@ The default family standardizes the state posture, part posture, and realization
 In particular, the <code>label</code> part SHOULD preferably bind to a placement surface such as an anchor or text region rather than to a resource that hardcodes the final user-facing text content.
 </p>
 
+<p>
+Variant-specific and skin-specific resource groups MAY coexist within the same button realization corridor, provided that the published button part meaning and state vocabulary remain preserved.
+</p>
+
 <hr/>
 
-<h2 id="host-expectations">8. Host Expectations</h2>
+<h2 id="host-expectations">10. Host Expectations</h2>
 
 <p>
 A host interpreting this realization SHOULD provide:
@@ -357,12 +475,13 @@ The host may use:
 <ul>
   <li>published <code>state_maps</code> to choose visual embodiment resources,</li>
   <li>published <code>part_bindings</code> to locate realized parts structurally,</li>
-  <li>published anchors or text regions to render live text into the correct surface.</li>
+  <li>published anchors or text regions to render live text into the correct surface,</li>
+  <li>published variant, skin, or style-token posture to select a compatible visual embodiment without semantic drift.</li>
 </ul>
 
 <hr/>
 
-<h2 id="fallback-posture">9. Fallback Posture</h2>
+<h2 id="fallback-posture">11. Fallback Posture</h2>
 
 <p>
 If a specialized resource is unavailable:
@@ -386,13 +505,23 @@ If no explicit label placement surface is available, the host MAY fall back to a
 </ul>
 
 <p>
+If a requested skin, variant, or style-token resource is unavailable, a host MAY fall back to:
+</p>
+
+<ul>
+  <li>the default skin of the selected realization corridor,</li>
+  <li>another compatible published button variant,</li>
+  <li>a host-native compatible command-button embodiment preserving the published state vocabulary and part meaning.</li>
+</ul>
+
+<p>
 Fallback must remain inspectable at the realization-publication layer.
 It must not become a purely runtime-private convention.
 </p>
 
 <hr/>
 
-<h2 id="summary">10. Summary</h2>
+<h2 id="summary">12. Summary</h2>
 
 <p>
 The default button realization defines one official state-structured embodiment of <code>frog.widgets.button</code> with stable parts and stable visual states.
@@ -405,12 +534,13 @@ It realizes:
 <ul>
   <li><code>face</code> as the main actionable visual body,</li>
   <li><code>label</code> as a dynamically rendered text-bearing surface,</li>
-  <li><code>frame</code> as an optional supporting outer surface.</li>
+  <li><code>frame</code> as an optional supporting outer surface,</li>
+  <li>bounded styling and skin selection as realization-side customization posture rather than class-level semantic drift.</li>
 </ul>
 
 <p>
-Its resources may provide geometry, skins, and placement metadata.
-Its package publication may provide <code>state_maps</code> and <code>part_bindings</code>.
+Its resources may provide geometry, skins, placement metadata, style-token support, and compatible embodiment variants.
+Its package publication may provide <code>state_maps</code>, <code>part_bindings</code>, variant identifiers, and inspectable fallback posture.
 Its host implementation may approximate the visuals when needed.
 But the realization never becomes the semantic owner of the button label text.
 </p>
