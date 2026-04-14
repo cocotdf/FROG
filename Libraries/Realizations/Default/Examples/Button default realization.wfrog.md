@@ -16,9 +16,11 @@
 <ul>
   <li><a href="#overview">1. Overview</a></li>
   <li><a href="#purpose-of-this-example">2. Purpose of this Example</a></li>
-  <li><a href="#example-json">3. Example JSON</a></li>
-  <li><a href="#reading-notes">4. Reading Notes</a></li>
-  <li><a href="#summary">5. Summary</a></li>
+  <li><a href="#architectural-focus">3. Architectural Focus</a></li>
+  <li><a href="#example-json">4. Example JSON</a></li>
+  <li><a href="#reading-notes">5. Reading Notes</a></li>
+  <li><a href="#why-this-example-matters">6. Why This Example Matters</a></li>
+  <li><a href="#summary">7. Summary</a></li>
 </ul>
 
 <hr/>
@@ -30,7 +32,7 @@ This document provides an illustrative machine-readable <code>.wfrog</code> publ
 </p>
 
 <p>
-It is intentionally simple, but already complete enough to demonstrate:
+It is intentionally small, but already complete enough to demonstrate:
 </p>
 
 <ul>
@@ -44,6 +46,11 @@ It is intentionally simple, but already complete enough to demonstrate:
   <li>anchor publication for dynamic text placement,</li>
   <li>fallback posture.</li>
 </ul>
+
+<p>
+This example is not presented as the only possible encoding shape of all future realization packages.
+It is presented as the first coherent reference pattern for the default family.
+</p>
 
 <hr/>
 
@@ -59,7 +66,16 @@ Its purpose is to show how the default official realization family may publish o
 </p>
 
 <p>
-In particular, this example preserves the architectural split between:
+It also serves a narrower purpose:
+to prove that the default button corridor can already be published in a way that keeps dynamic public text portable and inspectable.
+</p>
+
+<hr/>
+
+<h2 id="architectural-focus">3. Architectural Focus</h2>
+
+<p>
+This example preserves the architectural split between:
 </p>
 
 <ul>
@@ -69,9 +85,28 @@ In particular, this example preserves the architectural split between:
   <li>the runtime-side responsibility for rendering live text into the published placement surface.</li>
 </ul>
 
+<p>
+That split is the most important rule demonstrated by this example.
+</p>
+
+<p>
+The button <code>face</code> is treated as a state-sensitive visual surface.
+The button <code>label</code> is treated as a dynamic semantic public part whose placement is realization-owned but whose content remains class-owned.
+</p>
+
+<p>
+This means the example is designed to prove three things simultaneously:
+</p>
+
+<ul>
+  <li><code>state_maps</code> are the preferred mechanism for state-sensitive visual embodiment,</li>
+  <li><code>part_bindings</code> are the preferred mechanism for stable structural correspondence,</li>
+  <li>anchors are the preferred mechanism for dynamic host-rendered button text placement.</li>
+</ul>
+
 <hr/>
 
-<h2 id="example-json">3. Example JSON</h2>
+<h2 id="example-json">4. Example JSON</h2>
 
 <pre><code>{
   "wfrog_version": "1",
@@ -255,7 +290,7 @@ In particular, this example preserves the architectural split between:
 
 <hr/>
 
-<h2 id="reading-notes">4. Reading Notes</h2>
+<h2 id="reading-notes">5. Reading Notes</h2>
 
 <p>
 This example shows a clean four-layer split:
@@ -273,7 +308,7 @@ The example also shows that:
 </p>
 
 <ul>
-  <li><code>face</code> is the main state-driven visual part and therefore uses state maps,</li>
+  <li><code>face</code> is the main state-driven visual part and therefore uses <code>state_maps</code>,</li>
   <li><code>label</code> is not published as baked final text inside state-specific SVG assets,</li>
   <li><code>label</code> is structurally bound to a published anchor so that the runtime can render live <code>label.text</code>,</li>
   <li><code>pressed</code> and <code>focused</code> may fall back to <code>normal</code>,</li>
@@ -281,13 +316,57 @@ The example also shows that:
 </ul>
 
 <p>
+The example intentionally keeps <code>frame</code> in the published part model even though no dedicated frame-specific resource is listed here.
+That is acceptable because the example is focused on the minimum button publication corridor rather than on demonstrating every optional visual layer at once.
+</p>
+
+<p>
+In other words:
+</p>
+
+<ul>
+  <li>the published part model may be broader than the minimal demonstrated resource set,</li>
+  <li>the example still remains coherent because the main demonstrated split concerns <code>face</code> and <code>label</code>,</li>
+  <li>future examples may extend the same corridor with explicit frame resources or frame-specific state maps.</li>
+</ul>
+
+<hr/>
+
+<h2 id="why-this-example-matters">6. Why This Example Matters</h2>
+
+<p>
 This distinction is important because the standard button class defines <code>label.text</code> as a portable semantic surface.
 The realization may define where that text is placed, clipped, aligned, or decorated, but it does not become the semantic owner of the label content itself.
 </p>
 
+<p>
+Without this split, a runtime could easily drift into one of two broken postures:
+</p>
+
+<ul>
+  <li>treating SVG files as the hidden owner of visible button text,</li>
+  <li>treating runtime-private placement rules as the only real realization contract.</li>
+</ul>
+
+<p>
+This example avoids both failures by making the following inspectable at publication time:
+</p>
+
+<ul>
+  <li>the state-sensitive visual resources for the button face,</li>
+  <li>the structural binding of the semantic label part,</li>
+  <li>the explicit anchor used for host-rendered label placement,</li>
+  <li>the fallback posture used when specialized resources or placement surfaces are unavailable.</li>
+</ul>
+
+<p>
+That is why this example is the first normative proof case for the default realization example corridor.
+It is small, but it already demonstrates the central architectural rule that later widget families must preserve.
+</p>
+
 <hr/>
 
-<h2 id="summary">5. Summary</h2>
+<h2 id="summary">7. Summary</h2>
 
 <p>
 This example provides a complete first machine-readable publication model for the default realization of <code>frog.widgets.button</code> using:
@@ -302,4 +381,16 @@ This example provides a complete first machine-readable publication model for th
 
 <p>
 It is suitable as a reference pattern for other widget realization packages in the same family, especially when a realization must preserve the distinction between public semantic text and realization-side visual placement.
+</p>
+
+<p>
+The next most coherent file to handle after this one is:
+</p>
+
+<ul>
+  <li><code>Libraries/Realizations/Default/Examples/Button package and assets example.md</code></li>
+</ul>
+
+<p>
+That file should now close the concrete side of the same proof corridor by aligning the example prose above with a simulated asset tree, concrete resource organization, and placement-support files.
 </p>
