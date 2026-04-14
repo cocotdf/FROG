@@ -17,14 +17,15 @@
   <li><a href="#overview">1. Overview</a></li>
   <li><a href="#target-classes">2. Target Classes</a></li>
   <li><a href="#realization-variant-posture">3. Realization Variant Posture</a></li>
-  <li><a href="#realized-parts">4. Realized Parts</a></li>
-  <li><a href="#standard-visual-states">5. Standard Visual States</a></li>
-  <li><a href="#part-state-mapping">6. Part-State Mapping</a></li>
-  <li><a href="#dynamic-surface-posture">7. Dynamic Surface Posture</a></li>
-  <li><a href="#resource-posture">8. Resource Posture</a></li>
-  <li><a href="#host-expectations">9. Host Expectations</a></li>
-  <li><a href="#fallback-posture">10. Fallback Posture</a></li>
-  <li><a href="#summary">11. Summary</a></li>
+  <li><a href="#styling-and-skin-posture">4. Styling and Skin Posture</a></li>
+  <li><a href="#realized-parts">5. Realized Parts</a></li>
+  <li><a href="#standard-visual-states">6. Standard Visual States</a></li>
+  <li><a href="#part-state-mapping">7. Part-State Mapping</a></li>
+  <li><a href="#dynamic-surface-posture">8. Dynamic Surface Posture</a></li>
+  <li><a href="#resource-posture">9. Resource Posture</a></li>
+  <li><a href="#host-expectations">10. Host Expectations</a></li>
+  <li><a href="#fallback-posture">11. Fallback Posture</a></li>
+  <li><a href="#summary">12. Summary</a></li>
 </ul>
 
 <hr/>
@@ -42,7 +43,7 @@ The default boolean realization provides one clean, inspectable, portable embodi
 <p>
 This realization is realization-side only.
 It does not redefine boolean class law, does not invent new public members, and does not replace the semantic ownership of boolean value, boolean label text, or boolean interaction semantics.
-Its role is to embody already-published boolean widget surfaces through stable visual states, stable structural bindings, and realization-side placement or rendering metadata where needed.
+Its role is to embody already-published boolean widget surfaces through stable visual states, stable structural bindings, realization-side placement or rendering metadata, and bounded realization-side styling or skinning posture where needed.
 </p>
 
 <p>
@@ -52,7 +53,8 @@ The preferred realization-publication split is:
 <ul>
   <li><code>state_maps</code> for state-sensitive visual embodiment,</li>
   <li><code>part_bindings</code> for stable structural correspondence,</li>
-  <li>anchors or text regions for dynamic public surfaces rendered by the host.</li>
+  <li>anchors or text regions for dynamic public surfaces rendered by the host,</li>
+  <li>resource and style-token publication for inspectable skin and styling support.</li>
 </ul>
 
 <hr/>
@@ -73,12 +75,13 @@ This realization assumes the standardized boolean posture in which:
   <li>boolean widgets may expose semantic label text through <code>label.text</code>,</li>
   <li>boolean controls may expose interaction such as <code>toggle()</code>, <code>set_true()</code>, or <code>set_false()</code> according to the published class contract,</li>
   <li>the published public parts remain stable across realizations,</li>
+  <li>portable style-facing and realization-selection surfaces may be exposed by class law or active profile,</li>
   <li>the realization remains downstream from that class contract.</li>
 </ul>
 
 <p>
 The realization therefore owns embodiment and placement posture for boolean widgets.
-It does not become the semantic owner of the boolean value or of the label content.
+It does not become the semantic owner of the boolean value, of the label content, or of the class-visible meaning of styling surfaces.
 </p>
 
 <hr/>
@@ -123,7 +126,62 @@ For that reason, switch-like posture belongs here as a realization strategy, not
 
 <hr/>
 
-<h2 id="realized-parts">4. Realized Parts</h2>
+<h2 id="styling-and-skin-posture">4. Styling and Skin Posture</h2>
+
+<p>
+The default boolean realization is customizable, but customization remains subordinate to class meaning and realization-family publication rules.
+</p>
+
+<p>
+When the relevant class or active profile exposes public styling or realization-selection surfaces, the default realization SHOULD interpret them through inspectable realization-side mechanisms rather than through runtime-private conventions.
+</p>
+
+<p>
+Typical public surfaces that may influence realization include:
+</p>
+
+<ul>
+  <li><code>style.foreground_color</code>,</li>
+  <li><code>style.background_color</code>,</li>
+  <li><code>style.border_color</code>,</li>
+  <li><code>style.text_color</code>,</li>
+  <li><code>style.opacity</code>,</li>
+  <li><code>realization.family</code>,</li>
+  <li><code>realization.variant</code>,</li>
+  <li><code>realization.skin_id</code>.</li>
+</ul>
+
+<p>
+These surfaces do not create a new boolean class.
+They influence how the existing boolean class is embodied within the allowed realization corridor.
+</p>
+
+<p>
+The preferred interpretation posture is:
+</p>
+
+<ul>
+  <li>public <code>style.*</code> properties influence inspectable realization-side styling parameters,</li>
+  <li><code>realization.variant</code> selects among compatible published embodiment variants such as checkbox-like or switch-like posture,</li>
+  <li><code>realization.skin_id</code> selects among compatible published skin bundles or resource groups,</li>
+  <li>SVG resources, host-native resources, and style-token resources remain realization assets rather than semantic truth.</li>
+</ul>
+
+<p>
+A skin MAY therefore change colors, borders, emphasis, decoration, motion style, thumb geometry, check mark style, or other visual embodiment details.
+It MUST NOT silently redefine:
+</p>
+
+<ul>
+  <li>the meaning of <code>value</code>,</li>
+  <li>the meaning of <code>label.text</code>,</li>
+  <li>the public boolean part model,</li>
+  <li>the public boolean method or event inventory.</li>
+</ul>
+
+<hr/>
+
+<h2 id="realized-parts">5. Realized Parts</h2>
 
 <ul>
   <li><code>root</code></li>
@@ -133,7 +191,7 @@ For that reason, switch-like posture belongs here as a realization strategy, not
 </ul>
 
 <p>
-The realization may internally use additional layers, glow regions, check marks, selection indicators, focus rings, icon overlays, slider thumbs, tracks, or host-native toggle structures.
+The realization may internally use additional layers, glow regions, check marks, selection indicators, focus rings, icon overlays, slider thumbs, tracks, style-token layers, or host-native toggle structures.
 Those remain realization-private support structures unless they are explicitly published as realization resources or placement surfaces.
 </p>
 
@@ -156,7 +214,7 @@ The stable public boolean part model remains centered on <code>state_face</code>
 
 <hr/>
 
-<h2 id="standard-visual-states">5. Standard Visual States</h2>
+<h2 id="standard-visual-states">6. Standard Visual States</h2>
 
 <p>
 The default boolean family defines at least:
@@ -196,7 +254,7 @@ A switch-like embodiment may use different geometry, motion, or emphasis for the
 
 <hr/>
 
-<h2 id="part-state-mapping">6. Part-State Mapping</h2>
+<h2 id="part-state-mapping">7. Part-State Mapping</h2>
 
 <p>
 The default family expects:
@@ -227,7 +285,8 @@ The preferred machine-readable split is:
 <ul>
   <li><code>state_face</code> published through <code>part_bindings</code> plus composed-value <code>state_maps</code>,</li>
   <li><code>label</code> published primarily through a <code>part_binding</code> to an anchor, text region, or equivalent placement surface,</li>
-  <li><code>frame</code>, when present, published through <code>part_bindings</code> plus optional <code>state_maps</code>.</li>
+  <li><code>frame</code>, when present, published through <code>part_bindings</code> plus optional <code>state_maps</code>,</li>
+  <li>styling and skin differences published through resource inventories, style-token resources, variant identifiers, or compatible resource groups.</li>
 </ul>
 
 <p>
@@ -237,7 +296,8 @@ The default family SHOULD keep this mapping explicit enough that a machine-reada
 <ul>
   <li>state-sensitive visual resources,</li>
   <li>structural part bindings,</li>
-  <li>dynamic host-rendered or host-updated boolean surfaces.</li>
+  <li>dynamic host-rendered or host-updated boolean surfaces,</li>
+  <li>bounded styling or skin-selection posture.</li>
 </ul>
 
 <p>
@@ -251,9 +311,9 @@ It does not create new public parts by implication alone.
 
 <hr/>
 
-<h2 id="dynamic-surface-posture">7. Dynamic Surface Posture</h2>
+<h2 id="dynamic-surface-posture">8. Dynamic Surface Posture</h2>
 
-<h3>7.1 State-face posture</h3>
+<h3>8.1 State-face posture</h3>
 
 <p>
 The <code>state_face</code> part is the main dynamic realization surface of the boolean family.
@@ -269,7 +329,7 @@ The realization owns how the boolean state is visually embodied.
 It does not become the semantic owner of the boolean value itself.
 </p>
 
-<h3>7.2 Label posture</h3>
+<h3>8.2 Label posture</h3>
 
 <p>
 The semantic boolean label text is not owned by this realization.
@@ -285,7 +345,7 @@ The <code>label</code> part is therefore expected to be realized as a dynamic te
 A host interpreting this realization should render or inject the current semantic boolean label into the realized label region at runtime.
 </p>
 
-<h3>7.3 Placement posture</h3>
+<h3>8.3 Placement posture</h3>
 
 <p>
 The default family SHOULD publish an explicit placement surface for <code>label</code> whenever host-rendered text is used.
@@ -317,7 +377,7 @@ Those realization-side structures do not change the public meaning of <code>labe
 They only specify where the host should visually place the text.
 </p>
 
-<h3>7.4 Control versus indicator posture</h3>
+<h3>8.4 Control versus indicator posture</h3>
 
 <p>
 The default realization may embody boolean controls and boolean indicators differently internally.
@@ -338,7 +398,7 @@ Those internal differences are acceptable provided that:
 A runtime may internally flatten or decompose the visible boolean embodiment into toolkit-native layers, but the published realization contract should still make the meaning of <code>state_face</code>, <code>label</code>, and optional <code>frame</code> inspectable.
 </p>
 
-<h3>7.5 Switch-like posture as realization choice</h3>
+<h3>8.5 Switch-like posture as realization choice</h3>
 
 <p>
 A switch-like realization is an allowed embodiment choice within the default boolean family.
@@ -371,7 +431,31 @@ If a future specification standardizes a switch-specific class, that class would
 Until then, switch-like posture remains a realization variant of <code>frog.widgets.boolean_control</code>.
 </p>
 
-<h3>7.6 Asset limitation rule</h3>
+<h3>8.6 Styling and skin application posture</h3>
+
+<p>
+A boolean realization MAY apply portable style surfaces or skin selection in several ways, including:
+</p>
+
+<ul>
+  <li>substituting one compatible state-sensitive SVG resource group for another,</li>
+  <li>injecting style-token values into a vector template or rendering layer,</li>
+  <li>mapping public color surfaces to host-native toolkit styling parameters,</li>
+  <li>switching among compatible realization variants under the same class contract.</li>
+</ul>
+
+<p>
+Such realization-side adaptation remains valid only if:
+</p>
+
+<ul>
+  <li>the published boolean state vocabulary remains preserved,</li>
+  <li>the public part meaning remains preserved,</li>
+  <li>the chosen embodiment remains inspectable through realization publication,</li>
+  <li>styling or skinning does not silently become a new public semantic contract.</li>
+</ul>
+
+<h3>8.7 Asset limitation rule</h3>
 
 <p>
 A boolean resource file MAY include placeholder marks, decorative indicators, preview labels, or design-time scaffolding.
@@ -384,45 +468,66 @@ Likewise, composed visual states such as <code>pressed_true</code> or <code>focu
 
 <hr/>
 
-<h2 id="resource-posture">8. Resource Posture</h2>
+<h2 id="resource-posture">9. Resource Posture</h2>
 
 <p>
 A typical resource posture may follow:
 </p>
 
 <pre><code>boolean_control/
-  state_face/
-    normal_false
-    normal_true
-    disabled_false
-    disabled_true
-    focused_false
-    focused_true
-    pressed_false
-    pressed_true
-  frame/
-    normal_false
-    normal_true
-    focused_false
-    focused_true
-  anchors/
-    label
+  variants/
+    checkbox/
+      state_face/
+        normal_false
+        normal_true
+        disabled_false
+        disabled_true
+        focused_false
+        focused_true
+        pressed_false
+        pressed_true
+      frame/
+        normal_false
+        normal_true
+        focused_false
+        focused_true
+      anchors/
+        label
+    switch/
+      state_face/
+        normal_false
+        normal_true
+        disabled_false
+        disabled_true
+        focused_false
+        focused_true
+        pressed_false
+        pressed_true
+      frame/
+        normal_false
+        normal_true
+        focused_false
+        focused_true
+      anchors/
+        label
 
 boolean_indicator/
-  state_face/
-    normal_false
-    normal_true
-    disabled_false
-    disabled_true
-  frame/
-    normal_false
-    normal_true
-  anchors/
-    label
+  variants/
+    led/
+      state_face/
+        normal_false
+        normal_true
+        disabled_false
+        disabled_true
+      frame/
+        normal_false
+        normal_true
+      anchors/
+        label
 </code></pre>
 
 <p>
-An equivalent package-oriented posture may publish resources such as:
+A simpler package-oriented posture may publish resources such as:
 </p>
 
 <ul>
@@ -436,7 +541,7 @@ An equivalent package-oriented posture may publish resources such as:
 </ul>
 
 <p>
-Resources MAY be SVG-backed, host-native, toolkit-driven, or mixed.
+Resources MAY be SVG-backed, host-native, toolkit-driven, template-driven, or mixed.
 The default family standardizes the part posture, state posture, and realization-side binding posture, not one mandatory checkbox, switch, or toggle implementation and not one mandatory file format.
 </p>
 
@@ -447,7 +552,8 @@ In particular:
 <ul>
   <li><code>state_face</code> is the natural candidate for composed value-sensitive visual resources,</li>
   <li><code>label</code> is naturally a placement-bound dynamic text surface,</li>
-  <li><code>frame</code>, when present, is a natural candidate for optional state-sensitive supporting resources.</li>
+  <li><code>frame</code>, when present, is a natural candidate for optional state-sensitive supporting resources,</li>
+  <li>variant-specific or skin-specific resource groups MAY coexist as long as the published part meaning and state vocabulary remain preserved.</li>
 </ul>
 
 <p>
@@ -456,7 +562,7 @@ A switch-like embodiment may still publish its resources under the same boolean 
 
 <hr/>
 
-<h2 id="host-expectations">9. Host Expectations</h2>
+<h2 id="host-expectations">10. Host Expectations</h2>
 
 <p>
 A host interpreting this realization SHOULD provide:
@@ -495,9 +601,13 @@ A host MAY choose a checkbox-like or switch-like embodiment strategy.
 That choice is acceptable only if the public boolean class meaning remains unchanged and the realization contract remains inspectable.
 </p>
 
+<p>
+When public styling or skin-selection surfaces are exposed, the host SHOULD apply them through the published realization contract rather than through hidden runtime-specific conventions.
+</p>
+
 <hr/>
 
-<h2 id="fallback-posture">10. Fallback Posture</h2>
+<h2 id="fallback-posture">11. Fallback Posture</h2>
 
 <p>
 If state-specific resources are unavailable, a runtime MAY use host-native boolean widgets or generic state rendering, provided the true/false and enabled/disabled distinctions remain preserved.
@@ -528,6 +638,16 @@ If a switch-like embodiment cannot be realized exactly, a host MAY fall back to 
 </ul>
 
 <p>
+If a requested skin, variant, or style-token resource is unavailable, a host MAY fall back to:
+</p>
+
+<ul>
+  <li>the default skin of the selected realization corridor,</li>
+  <li>another compatible published variant of the same class,</li>
+  <li>a host-native compatible boolean embodiment preserving the published state vocabulary and part meaning.</li>
+</ul>
+
+<p>
 Any fallback MUST preserve the published boolean class law and the meaning of the public parts when those parts are exposed.
 Fallback must not turn asset-baked boolean marks or asset-baked label text into semantic truth.
 </p>
@@ -539,7 +659,7 @@ It must not become a purely runtime-private convention.
 
 <hr/>
 
-<h2 id="summary">11. Summary</h2>
+<h2 id="summary">12. Summary</h2>
 
 <p>
 The default boolean realization defines one official state-structured embodiment for boolean controls and boolean indicators, centered on the public <code>state_face</code> part.
@@ -552,12 +672,13 @@ It realizes:
 <ul>
   <li><code>state_face</code> as the main dynamic boolean state embodiment surface,</li>
   <li><code>label</code> as a dynamically rendered text-bearing surface,</li>
-  <li><code>frame</code> as an optional supporting outer surface.</li>
+  <li><code>frame</code> as an optional supporting outer surface,</li>
+  <li>bounded styling and skin selection as realization-side customization posture rather than class-level semantic drift.</li>
 </ul>
 
 <p>
-Its resources may provide skins, layers, regions, and anchors.
-Its package publication may provide <code>state_maps</code> and <code>part_bindings</code>.
+Its resources may provide skins, layers, regions, anchors, templates, and style-token support.
+Its package publication may provide <code>state_maps</code>, <code>part_bindings</code>, variant identifiers, and inspectable fallback posture.
 Its host implementation may approximate the visuals when needed.
 But the realization never becomes the semantic owner of boolean value, boolean label text, or boolean class meaning.
 </p>
