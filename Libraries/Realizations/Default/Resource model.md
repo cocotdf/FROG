@@ -21,12 +21,13 @@
   <li><a href="#resource-identifiers">5. Resource Identifiers</a></li>
   <li><a href="#resource-record-shape">6. Resource Record Shape</a></li>
   <li><a href="#path-posture">7. Path Posture</a></li>
-  <li><a href="#class-part-region-and-variant-scoping">8. Class, Part, Region, and Variant Scoping</a></li>
+  <li><a href="#class-part-region-variant-and-skin-scoping">8. Class, Part, Region, Variant, and Skin Scoping</a></li>
   <li><a href="#state-scoping">9. State Scoping</a></li>
   <li><a href="#anchor-and-text-region-resources">10. Anchor and Text-Region Resources</a></li>
-  <li><a href="#resource-examples">11. Resource Examples</a></li>
-  <li><a href="#validation-posture">12. Validation Posture</a></li>
-  <li><a href="#summary">13. Summary</a></li>
+  <li><a href="#style-token-and-template-resources">11. Style-Token and Template Resources</a></li>
+  <li><a href="#resource-examples">12. Resource Examples</a></li>
+  <li><a href="#validation-posture">13. Validation Posture</a></li>
+  <li><a href="#summary">14. Summary</a></li>
 </ul>
 
 <hr/>
@@ -38,7 +39,7 @@ This document defines the resource model used by the official <code>Default</cod
 </p>
 
 <p>
-The resource model provides the machine-readable posture for realization resources such as SVG assets, anchor maps, text-region maps, layer maps, and related support artifacts used by realization records and realization variants.
+The resource model provides the machine-readable posture for realization resources such as SVG assets, anchor maps, text-region maps, layer maps, style-token maps, vector templates, and related support artifacts used by realization records, realization variants, and compatible skin publication.
 </p>
 
 <p>
@@ -82,7 +83,7 @@ A realization resource may help define:
   <li>which layer structure is available,</li>
   <li>which anchor or placement surfaces are available,</li>
   <li>which state-specific asset variants are available,</li>
-  <li>which styling tokens or host-facing realization hints are available.</li>
+  <li>which styling tokens, compatible skins, or host-facing realization hints are available.</li>
 </ul>
 
 <p>
@@ -107,7 +108,8 @@ In the default family, the preferred publication split is:
   <li><code>part_bindings</code> define stable structural correspondence between widget parts and realization surfaces,</li>
   <li><code>state_maps</code> define state-sensitive visual embodiment,</li>
   <li><code>resources</code> define the concrete machine-readable inventory of available realization artifacts,</li>
-  <li><code>anchors</code> and <code>text_regions</code> define inspectable placement surfaces when dynamic host rendering is required.</li>
+  <li><code>anchors</code> and <code>text_regions</code> define inspectable placement surfaces when dynamic host rendering is required,</li>
+  <li><code>style_tokens</code> and compatible skin publication define bounded styling or theme-facing realization support when the family publishes it.</li>
 </ul>
 
 <p>
@@ -120,12 +122,18 @@ That decision emerges from the combination of:
   <li>the relevant <code>part_bindings</code>,</li>
   <li>the relevant <code>state_maps</code>,</li>
   <li>the resource inventory,</li>
-  <li>the published anchors or text regions when applicable.</li>
+  <li>the published anchors or text regions when applicable,</li>
+  <li>the published style-token or template posture when applicable.</li>
 </ul>
 
 <p>
 When the default family publishes several compatible realization variants for the same standardized class, the resource model remains subordinate to that structure as well.
 A resource may be shared across several variants or scoped to one variant, but the resource itself still does not define a new widget class.
+</p>
+
+<p>
+The same rule applies to compatible skins.
+A skin-scoped resource may specialize embodiment for one realization corridor, but it still does not define a new widget class and it still does not redefine public widget semantics.
 </p>
 
 <hr/>
@@ -156,11 +164,11 @@ A rough interpretation posture is:
 
 <ul>
   <li><code>svg</code> — visual geometry, skin, decorative content, and state-specific embodiment,</li>
-  <li><code>vector_template</code> — parameterizable vector realization resource when the family supports template-driven generation,</li>
+  <li><code>vector_template</code> — parameterizable vector realization resource when the family supports template-driven generation or token injection,</li>
   <li><code>anchor_map</code> — named anchors or placement points used to bind public parts to realization surfaces,</li>
   <li><code>text_region_map</code> — named text-bearing regions used for host-rendered dynamic text placement,</li>
   <li><code>layer_map</code> — named layer correspondence or composition metadata for visual resources,</li>
-  <li><code>style_token_map</code> — realization-side token mapping for style defaults or theme buckets.</li>
+  <li><code>style_token_map</code> — realization-side token mapping for style defaults, theme buckets, or skin-level visual parameters.</li>
 </ul>
 
 <p>
@@ -220,6 +228,31 @@ Examples:
 </ul>
 
 <p>
+When compatible skins exist inside one realization corridor, the preferred posture is:
+</p>
+
+<ul>
+  <li>keep the same resource identifier when the resource is shared across skins,</li>
+  <li>add an explicit skin discriminator only when the resource is skin-specific.</li>
+</ul>
+
+<p>
+Conceptually:
+</p>
+
+<pre><code>&lt;widget-surface&gt;.&lt;part-or-region&gt;.&lt;variant-when-applicable&gt;.&lt;skin-when-applicable&gt;.&lt;state-when-applicable&gt;.&lt;kind&gt;</code></pre>
+
+<p>
+Examples:
+</p>
+
+<ul>
+  <li><code>button.face.raised.blue.normal.svg</code></li>
+  <li><code>numeric_control.value_display.spinbox.dark.focused.svg</code></li>
+  <li><code>button.default.style_token_map</code></li>
+</ul>
+
+<p>
 The identifier should remain stable even if the physical file path changes.
 This helps preserve durable package references and stable realization bindings.
 </p>
@@ -253,8 +286,9 @@ A resource record MAY also contain:
   <li><code>target_region</code> when the resource is region-oriented rather than part-oriented,</li>
   <li><code>target_layer</code> when the resource is layer-oriented,</li>
   <li><code>target_variant</code> when the resource is specific to one published realization variant,</li>
+  <li><code>target_skin</code> when the resource is specific to one compatible published skin,</li>
   <li><code>format</code> when further format disambiguation is useful,</li>
-  <li><code>role</code> when the resource has a specialized realization-side purpose such as <code>text_anchor</code>, <code>text_region</code>, or <code>fallback_region</code>.</li>
+  <li><code>role</code> when the resource has a specialized realization-side purpose such as <code>text_anchor</code>, <code>text_region</code>, <code>style_tokens</code>, or <code>fallback_region</code>.</li>
 </ul>
 
 <p>
@@ -298,6 +332,33 @@ A variant-specific example:
 }</code></pre>
 
 <p>
+A skin-scoped example:
+</p>
+
+<pre><code>{
+  "id": "button.face.raised.blue.normal.svg",
+  "kind": "svg",
+  "path": "./assets/button/raised/blue/face/normal.svg",
+  "target_class": "frog.widgets.button",
+  "target_part": "face",
+  "target_variant": "raised",
+  "target_skin": "blue",
+  "target_state": "normal"
+}</code></pre>
+
+<p>
+A style-token example:
+</p>
+
+<pre><code>{
+  "id": "button.default.style_token_map",
+  "kind": "style_token_map",
+  "path": "./assets/button/tokens/default.json",
+  "target_class": "frog.widgets.button",
+  "role": "style_tokens"
+}</code></pre>
+
+<p>
 A resource record should remain descriptive of the resource itself.
 It should not duplicate the full meaning of the realization record that consumes it.
 </p>
@@ -325,6 +386,7 @@ Likewise, the package SHOULD NOT depend on path naming alone to determine whethe
   <li>anchor-oriented,</li>
   <li>text-region-oriented,</li>
   <li>variant-specific,</li>
+  <li>skin-specific,</li>
   <li>shared across multiple realizations.</li>
 </ul>
 
@@ -338,7 +400,7 @@ Filesystem clarity is strongly preferred, but filesystem layout is not the sole 
 
 <hr/>
 
-<h2 id="class-part-region-and-variant-scoping">8. Class, Part, Region, and Variant Scoping</h2>
+<h2 id="class-part-region-variant-and-skin-scoping">8. Class, Part, Region, Variant, and Skin Scoping</h2>
 
 <p>
 Resources SHOULD be scoped to the narrowest meaningful realization surface:
@@ -349,6 +411,7 @@ Resources SHOULD be scoped to the narrowest meaningful realization surface:
   <li>part-level resource when a specific realized part is state-specific,</li>
   <li>region-level resource when a public or realized surface is expressed through a named placement region,</li>
   <li>variant-level resource when a resource exists only for one compatible realization variant,</li>
+  <li>skin-level resource when a resource exists only for one compatible published skin,</li>
   <li>family-level shared resource only when multiple realizations intentionally reuse it.</li>
 </ul>
 
@@ -356,6 +419,7 @@ Resources SHOULD be scoped to the narrowest meaningful realization surface:
 Part-oriented scoping is generally preferred when the realization family exposes stable parts and binds those parts independently.
 Region-oriented scoping is generally preferred when a part is consumed through a placement surface rather than a distinct visual layer.
 Variant-oriented scoping is generally preferred when a resource differs only because of a published embodiment choice rather than because of a new class contract.
+Skin-oriented scoping is generally preferred when a resource differs only because of bounded style or theme selection inside the same realization corridor.
 </p>
 
 <p>
@@ -367,12 +431,14 @@ For example:
   <li>a button <code>label</code> anchor map is naturally part-scoped, because it binds the <code>label</code> part through a placement surface,</li>
   <li>a string indicator value region may be region-scoped when the realization publishes a distinct value region,</li>
   <li>a switch-like boolean face asset may be variant-scoped,</li>
+  <li>a blue raised button face asset may be skin-scoped within a published button corridor,</li>
   <li>a shared focus-ring style token map may be family-scoped.</li>
 </ul>
 
 <p>
 This distinction is important because a placement resource may target a semantic public surface without becoming the semantic owner of that surface.
 A variant-specific resource may also specialize embodiment without becoming evidence of a separate widget class.
+A skin-specific resource may specialize styling without becoming evidence of new class semantics.
 </p>
 
 <hr/>
@@ -406,7 +472,7 @@ State scoping is usually less important for:
 <ul>
   <li>anchor maps,</li>
   <li>text-region maps,</li>
-  <li>style token maps that apply across multiple states.</li>
+  <li>style-token maps that apply across multiple states.</li>
 </ul>
 
 <p>
@@ -430,7 +496,19 @@ A resource may be:
 </ul>
 
 <p>
-That distinction should remain explicit in resource records and in the realization structures that consume them.
+The same applies to skin scoping.
+A resource may be:
+</p>
+
+<ul>
+  <li>shared across all skins for one state,</li>
+  <li>skin-specific for one state,</li>
+  <li>state-insensitive but skin-specific,</li>
+  <li>shared across state, variant, and skin dimensions.</li>
+</ul>
+
+<p>
+Those distinctions should remain explicit in resource records and in the realization structures that consume them.
 </p>
 
 <hr/>
@@ -574,7 +652,86 @@ However, a conforming realization family must not require that asset-baked text 
 
 <hr/>
 
-<h2 id="resource-examples">11. Resource Examples</h2>
+<h2 id="style-token-and-template-resources">11. Style-Token and Template Resources</h2>
+
+<h3>11.1 Purpose</h3>
+
+<p>
+Style-token and template resources exist to make bounded realization-side styling inspectable when the default family supports skin selection, theme buckets, or parameterized vector embodiment.
+</p>
+
+<p>
+They are especially useful when:
+</p>
+
+<ul>
+  <li>several compatible skins reuse the same geometry but differ in colors or emphasis,</li>
+  <li>a host wants to map public <code>style.*</code> surfaces onto realization-side token names,</li>
+  <li>a vector resource is parameterized rather than duplicated for every skin or variant.</li>
+</ul>
+
+<h3>11.2 Style-token maps</h3>
+
+<p>
+A <code>style_token_map</code> resource SHOULD allow a realization family to publish stable token identifiers and default values or token roles for one realization corridor.
+</p>
+
+<p>
+Typical token-oriented metadata may include:
+</p>
+
+<ul>
+  <li>token identifier,</li>
+  <li>token role,</li>
+  <li>default value,</li>
+  <li>optional variant scope,</li>
+  <li>optional skin scope,</li>
+  <li>optional host substitution hint.</li>
+</ul>
+
+<p>
+A style-token map remains realization-owned.
+It does not redefine the public semantics of a corresponding class property.
+</p>
+
+<h3>11.3 Vector templates</h3>
+
+<p>
+A <code>vector_template</code> resource SHOULD allow a realization family to publish parameterizable vector geometry whose final appearance depends on published tokens, realization defaults, or bounded host rendering inputs.
+</p>
+
+<p>
+This is useful when:
+</p>
+
+<ul>
+  <li>the same geometry is reused across multiple states,</li>
+  <li>the same geometry is reused across several skins,</li>
+  <li>the family wants to reduce redundant per-state asset duplication while remaining inspectable.</li>
+</ul>
+
+<h3>11.4 Ownership rule</h3>
+
+<p>
+Style-token maps and vector templates may support styling, skinning, or bounded host adaptation.
+They do not by themselves create:
+</p>
+
+<ul>
+  <li>new widget classes,</li>
+  <li>new public widget properties,</li>
+  <li>new public widget methods,</li>
+  <li>new public widget events,</li>
+  <li>new public part meaning.</li>
+</ul>
+
+<p>
+They remain realization resources that help embody already-published class surfaces.
+</p>
+
+<hr/>
+
+<h2 id="resource-examples">12. Resource Examples</h2>
 
 <pre><code>{
   "resources": [
@@ -634,13 +791,30 @@ However, a conforming realization family must not require that asset-baked text 
       "target_part": "state_face",
       "target_variant": "switch_like",
       "target_state": "normal_true"
+    },
+    {
+      "id": "button.default.style_token_map",
+      "kind": "style_token_map",
+      "path": "./assets/button/tokens/default.json",
+      "target_class": "frog.widgets.button",
+      "role": "style_tokens"
+    },
+    {
+      "id": "button.face.raised.blue.normal.svg",
+      "kind": "svg",
+      "path": "./assets/button/raised/blue/face/normal.svg",
+      "target_class": "frog.widgets.button",
+      "target_part": "face",
+      "target_variant": "raised",
+      "target_skin": "blue",
+      "target_state": "normal"
     }
   ]
 }</code></pre>
 
 <hr/>
 
-<h2 id="validation-posture">12. Validation Posture</h2>
+<h2 id="validation-posture">13. Validation Posture</h2>
 
 <p>
 Validators SHOULD diagnose at least:
@@ -653,6 +827,7 @@ Validators SHOULD diagnose at least:
   <li>target part names not declared by the target class or not justified by the relevant realization publication,</li>
   <li>target states not declared by the associated realization record,</li>
   <li>target variants not declared by the associated realization record,</li>
+  <li>target skins not declared by the associated realization record or skin publication,</li>
   <li>anchor or text-region resources that are referenced but not published,</li>
   <li>resources whose declared role contradicts their declared kind,</li>
   <li>resource usage that implies asset-baked semantic text as the only embodiment path for a dynamic public text-bearing part.</li>
@@ -666,19 +841,20 @@ Validators MAY also diagnose:
   <li>needlessly coarse widget-level scoping when a stable part-level or region-level scope is available,</li>
   <li>ambiguous overlap between multiple anchor or text-region resources targeting the same part without explicit precedence posture,</li>
   <li>resource records whose scoping does not match the published asset naming posture closely enough to remain inspectable,</li>
-  <li>variant-specific resources that appear to smuggle a new implicit class split into realization packaging.</li>
+  <li>variant-specific resources that appear to smuggle a new implicit class split into realization packaging,</li>
+  <li>skin-specific resources that appear to smuggle semantic divergence into what should remain bounded styling support.</li>
 </ul>
 
 <hr/>
 
-<h2 id="summary">13. Summary</h2>
+<h2 id="summary">14. Summary</h2>
 
 <p>
 The default realization resource model defines how official realization resources are identified, scoped, and published.
 </p>
 
 <p>
-It covers visual assets, anchors, text regions, layer maps, and related support artifacts while keeping those resources explicit, structured, and subordinate to the realization and class layers above them.
+It covers visual assets, anchors, text regions, layer maps, style-token maps, vector templates, and related support artifacts while keeping those resources explicit, structured, and subordinate to the realization and class layers above them.
 </p>
 
 <p>
@@ -689,6 +865,6 @@ Its preferred architecture is:
   <li>visual resources for visual embodiment,</li>
   <li>state maps for state-sensitive realization posture,</li>
   <li>placement resources for dynamic public surfaces rendered by the host,</li>
-  <li>variant-aware scoping when compatible embodiment choices are published,</li>
-  <li>clear separation between resource inventory, part bindings, and semantic widget meaning.</li>
+  <li>variant-aware and skin-aware scoping when compatible embodiment choices are published,</li>
+  <li>clear separation between resource inventory, part bindings, styling support, and semantic widget meaning.</li>
 </ul>
