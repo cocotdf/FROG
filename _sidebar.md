@@ -113,7 +113,6 @@
   - [UI Widget Classes](/Profiles/UI%20Widget%20Classes.md)
 - [IDE](/IDE/Readme.md)
   - [Debugging](/IDE/Debugging.md)
-  - [Execution observability](/IDE/Execution%20observability.md)
   - [Express](/IDE/Express.md)
   - [Observability](/IDE/Observability.md)
   - [Palette](/IDE/Palette.md)

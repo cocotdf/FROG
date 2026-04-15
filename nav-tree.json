@@ -811,13 +811,6 @@
               "children": []
             },
             {
-              "key": "ide/execution-observability.md",
-              "title": "Execution observability",
-              "path": "/IDE/Execution%20observability.md",
-              "kind": "page",
-              "children": []
-            },
-            {
               "key": "ide/express.md",
               "title": "Express",
               "path": "/IDE/Express.md",
@@ -2779,7 +2772,6 @@
     "/Profiles/UI%20Widget%20Classes.md",
     "/Profiles/Readme.md",
     "/IDE/Debugging.md",
-    "/IDE/Execution%20observability.md",
     "/IDE/Express.md",
     "/IDE/Observability.md",
     "/IDE/Palette.md",
