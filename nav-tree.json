@@ -2389,7 +2389,45 @@
               "title": "LLVM",
               "path": "/Implementations/Reference/LLVM/Readme.md",
               "kind": "category",
-              "children": []
+              "children": [
+                {
+                  "key": "implementations/reference/llvm/bridge/",
+                  "title": "bridge",
+                  "path": null,
+                  "kind": "category",
+                  "children": [
+                    {
+                      "key": "implementations/reference/llvm/bridge/fir_to_lowering.md",
+                      "title": "fir to lowering",
+                      "path": "/Implementations/Reference/LLVM/bridge/fir_to_lowering.md",
+                      "kind": "page",
+                      "children": []
+                    },
+                    {
+                      "key": "implementations/reference/llvm/bridge/lowering_to_llvm.md",
+                      "title": "lowering to llvm",
+                      "path": "/Implementations/Reference/LLVM/bridge/lowering_to_llvm.md",
+                      "kind": "page",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "key": "implementations/reference/llvm/examples/",
+                  "title": "examples",
+                  "path": null,
+                  "kind": "category",
+                  "children": [
+                    {
+                      "key": "implementations/reference/llvm/examples/05_bounded_ui_accumulator/",
+                      "title": "05 bounded ui accumulator",
+                      "path": "/Implementations/Reference/LLVM/examples/05_bounded_ui_accumulator/Readme.md",
+                      "kind": "category",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
             },
             {
               "key": "implementations/reference/loader/",
@@ -2937,6 +2975,9 @@
     "/Implementations/Reference/Deriver/responsibilities.md",
     "/Implementations/Reference/Deriver/reference_deriver.py",
     "/Implementations/Reference/Deriver/Readme.md",
+    "/Implementations/Reference/LLVM/bridge/fir_to_lowering.md",
+    "/Implementations/Reference/LLVM/bridge/lowering_to_llvm.md",
+    "/Implementations/Reference/LLVM/examples/05_bounded_ui_accumulator/Readme.md",
     "/Implementations/Reference/LLVM/Readme.md",
     "/Implementations/Reference/Loader/responsibilities.md",
     "/Implementations/Reference/Loader/reference_loader.py",

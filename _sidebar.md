@@ -334,6 +334,11 @@
     - [responsibilities](/Implementations/Reference/Deriver/responsibilities.md)
     - [reference_deriver.py](/Implementations/Reference/Deriver/reference_deriver.py)
   - [LLVM](/Implementations/Reference/LLVM/Readme.md)
+    - bridge
+      - [fir to lowering](/Implementations/Reference/LLVM/bridge/fir_to_lowering.md)
+      - [lowering to llvm](/Implementations/Reference/LLVM/bridge/lowering_to_llvm.md)
+    - examples
+      - [05 bounded ui accumulator](/Implementations/Reference/LLVM/examples/05_bounded_ui_accumulator/Readme.md)
   - [Loader](/Implementations/Reference/Loader/Readme.md)
     - [responsibilities](/Implementations/Reference/Loader/responsibilities.md)
     - [reference_loader.py](/Implementations/Reference/Loader/reference_loader.py)
