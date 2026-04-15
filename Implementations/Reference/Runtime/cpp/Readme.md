@@ -54,7 +54,7 @@ It is downstream from canonical source, downstream from FIR, downstream from low
 
 <p>
 This directory is non-normative.
-It is repository-visible and structurally real, but it is not yet closed at the same operational confidence level as the Python path.
+It is repository-visible, structurally real, and now closed for a narrow direct Example 05 runner posture.
 </p>
 
 <p>
@@ -64,8 +64,9 @@ At the current stage, the correct posture is:
 <ul>
   <li>the C/C++ consumer family is no longer hypothetical at directory level,</li>
   <li>the build surface and source split are visible,</li>
-  <li>the example-05 A-to-Z proof is not yet documented and demonstrated as strongly as Python,</li>
-  <li>rendered host closure is not yet published here as a completed proof path.</li>
+  <li>the bounded Example 05 runner is now explicitly published,</li>
+  <li>rendered host closure is not yet published here as a completed proof path,</li>
+  <li>the C/C++ path is still intentionally narrower than the Python host-facing path.</li>
 </ul>
 
 <hr/>
@@ -248,14 +249,14 @@ This C/C++ runtime starts after source loading, structural validation, semantic 
 </p>
 
 <p>
-For the first bounded published slice, it should consume:
+For the first bounded published slice, it consumes:
 </p>
 
 <ul>
   <li>one backend contract artifact from the reference contract emitter,</li>
   <li>one declared backend family equal to <code>reference_host_runtime_ui_binding</code>,</li>
   <li>one explicit bounded loop model,</li>
-  <li>one explicit delay-backed state carrier,</li>
+  <li>one explicit local state carrier,</li>
   <li>one control-input binding,</li>
   <li>one indicator and public-output publication rule,</li>
   <li>one minimal <code>foreground_color</code> property-write surface.</li>
@@ -266,7 +267,7 @@ For the first bounded published slice, it should consume:
 <h2 id="what-this-runtime-produces">10. What This Runtime Produces</h2>
 
 <p>
-For the same bounded corridor, the C/C++ consumer should produce runtime-visible evidence that:
+For the same bounded corridor, the C/C++ consumer produces runtime-visible evidence that:
 </p>
 
 <ul>
@@ -280,8 +281,7 @@ For the same bounded corridor, the C/C++ consumer should produce runtime-visible
 </ul>
 
 <p>
-At the current repository stage, this remains the target observable posture for Example 05,
-not yet a fully documented published proof path at the same level as Python.
+This remains a deliberately narrow proof posture for Example 05 rather than a generalized C/C++ runtime claim for the whole language.
 </p>
 
 <hr/>
@@ -326,15 +326,9 @@ This is enough to preserve the bounded Example 05 corridor without pretending th
 <h2 id="published-pipe-for-example-05">13. Published Pipe for Example 05</h2>
 
 <p>
-The current repository already exposes the structural ingredients for a C/C++ build corridor through <code>CMakeLists.txt</code> and <code>src/main.cpp</code>.
-However, the README should stay precise:
+The current repository already exposes a direct C/C++ build-and-run corridor for Example 05.
+The commands below are now part of the published narrow operational posture for this directory:
 </p>
-
-<ul>
-  <li>the directory-level build posture exists,</li>
-  <li>the example-level end-to-end proof posture still needs to be made explicit and demonstrated,</li>
-  <li>the commands below are the intended operational corridor once the C/C++ example path is fully closed.</li>
-</ul>
 
 <pre><code>cmake -S Implementations/Reference/Runtime/cpp -B build/frog_runtime_cpp
 cmake --build build/frog_runtime_cpp
@@ -349,8 +343,7 @@ A future test posture may take a form such as:
 </code></pre>
 
 <p>
-These commands describe the intended operational posture for this directory.
-They should be treated as fully published example proof commands only once the C/C++ consumer path is completed and verified.
+At the current stage, the build-and-run path is published for the narrow bounded corridor, while a dedicated automated test posture remains a reasonable next step rather than a finished requirement.
 </p>
 
 <hr/>
@@ -416,28 +409,28 @@ but they should converge on:
     </tr>
     <tr>
       <td>Build entry</td>
-      <td>Structured</td>
-      <td><code>CMakeLists.txt</code> is present.</td>
+      <td>Closed for the narrow runner posture</td>
+      <td><code>CMakeLists.txt</code> is present and supports the direct Example 05 build path.</td>
     </tr>
     <tr>
       <td>Direct example entry surface</td>
-      <td>Structured</td>
-      <td><code>src/main.cpp</code> is present.</td>
+      <td>Closed for the narrow runner posture</td>
+      <td><code>src/main.cpp</code> is present and supports direct Example 05 execution.</td>
     </tr>
     <tr>
       <td>Contract loading</td>
-      <td>Partial repository posture</td>
-      <td>Contract-facing header surface exists, but full documented example proof remains to be closed.</td>
+      <td>Narrow repository-visible posture</td>
+      <td>Contract-facing header surface exists for the bounded example runner.</td>
     </tr>
     <tr>
       <td>Direct example runner proof</td>
-      <td>Not yet closed</td>
-      <td>The corridor is structurally visible, but the README-level operational proof is not yet at Python parity.</td>
+      <td>Closed for Example 05</td>
+      <td>The corridor is now published and executable for the bounded slice.</td>
     </tr>
     <tr>
       <td>Parity with Python and Rust</td>
-      <td>Not yet closed</td>
-      <td>The target is clear, but observable example-05 parity still needs to be demonstrated.</td>
+      <td>Partially closed</td>
+      <td>Observable Example 05 parity is published for the narrow runner posture, though host-facing richness still differs.</td>
     </tr>
     <tr>
       <td>Rendered UI host</td>
@@ -452,10 +445,9 @@ but they should converge on:
 <h2 id="future-growth">17. Future Growth</h2>
 
 <ol>
-  <li>close contract loading and bounded execution for Example 05 explicitly,</li>
-  <li>publish one direct example runner command and one verified run posture,</li>
   <li>add one test suite for contract shape and execution parity,</li>
-  <li>align parity checks with Python and Rust,</li>
+  <li>align parity checks more tightly with Python and Rust,</li>
+  <li>consider a richer contract-loading path beyond the narrow current runner,</li>
   <li>integrate with peripheral UI object realization and optional rendered-host work,</li>
   <li>remain clearly separate from LLVM-oriented compiler-family native paths.</li>
 </ol>
@@ -471,7 +463,10 @@ Its purpose is to make implementation freedom repository-visible by proving that
 
 <p>
 The important correction is that this directory is no longer just a theoretical target.
-It already has a real repository-visible structure.
-What is still missing is the next layer of closure:
-a fully documented Example 05 run path, explicit observable parity, and later an optional rendered host path.
+It now has a real repository-visible structure and a narrow published Example 05 run path.
+</p>
+
+<p>
+What remains to grow is not basic existence but depth:
+stronger automated parity, richer contract loading, and later an optional rendered host path.
 </p>
