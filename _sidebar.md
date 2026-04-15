@@ -339,6 +339,8 @@
       - [lowering to llvm](/Implementations/Reference/LLVM/bridge/lowering_to_llvm.md)
     - examples
       - [05 bounded ui accumulator](/Implementations/Reference/LLVM/examples/05_bounded_ui_accumulator/Readme.md)
+    - tools
+      - [emit_llvm_module.py](/Implementations/Reference/LLVM/tools/emit_llvm_module.py)
   - [Loader](/Implementations/Reference/Loader/Readme.md)
     - [responsibilities](/Implementations/Reference/Loader/responsibilities.md)
     - [reference_loader.py](/Implementations/Reference/Loader/reference_loader.py)

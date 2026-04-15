@@ -2426,6 +2426,21 @@
                       "children": []
                     }
                   ]
+                },
+                {
+                  "key": "implementations/reference/llvm/tools/",
+                  "title": "tools",
+                  "path": null,
+                  "kind": "category",
+                  "children": [
+                    {
+                      "key": "implementations/reference/llvm/tools/emit_llvm_module.py",
+                      "title": "emit_llvm_module.py",
+                      "path": "/Implementations/Reference/LLVM/tools/emit_llvm_module.py",
+                      "kind": "code",
+                      "children": []
+                    }
+                  ]
                 }
               ]
             },
@@ -2978,6 +2993,7 @@
     "/Implementations/Reference/LLVM/bridge/fir_to_lowering.md",
     "/Implementations/Reference/LLVM/bridge/lowering_to_llvm.md",
     "/Implementations/Reference/LLVM/examples/05_bounded_ui_accumulator/Readme.md",
+    "/Implementations/Reference/LLVM/tools/emit_llvm_module.py",
     "/Implementations/Reference/LLVM/Readme.md",
     "/Implementations/Reference/Loader/responsibilities.md",
     "/Implementations/Reference/Loader/reference_loader.py",
