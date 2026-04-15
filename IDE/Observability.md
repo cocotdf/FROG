@@ -2,7 +2,7 @@
   <img src="../FROG logo.svg" alt="FROG logo" width="140" />
 </p>
 
-<h1 align="center">FROG IDE Observability Specification</h1>
+<h1 align="center">FROG IDE Observability</h1>
 
 <p align="center">
   <strong>Source-aligned execution observability for FROG IDEs</strong><br/>
@@ -15,7 +15,7 @@
 
 <ul>
   <li><a href="#overview">1. Overview</a></li>
-  <li><a href="#scope-for-v01">2. Scope for v0.1</a></li>
+  <li><a href="#document-role">2. Document Role</a></li>
   <li><a href="#repository-position-and-dependencies">3. Repository Position and Dependencies</a></li>
   <li><a href="#ownership-boundary">4. Ownership Boundary</a></li>
   <li><a href="#why-observability-is-a-separate-layer">5. Why Observability Is a Separate Layer</a></li>
@@ -29,12 +29,11 @@
   <li><a href="#probes-and-watches">13. Probes and Watches</a></li>
   <li><a href="#debugging-consumption-of-observability">14. Debugging Consumption of Observability</a></li>
   <li><a href="#fault-observability">15. Fault Observability</a></li>
-  <li><a href="#minimum-v01-observability-baseline">16. Minimum v0.1 Observability Baseline</a></li>
+  <li><a href="#minimum-observability-baseline">16. Minimum Observability Baseline</a></li>
   <li><a href="#illustrative-observability-objects">17. Illustrative Observability Objects</a></li>
   <li><a href="#directory-navigation">18. Directory Navigation</a></li>
-  <li><a href="#out-of-scope-for-v01">19. Out of Scope for v0.1</a></li>
+  <li><a href="#out-of-scope">19. Out of Scope</a></li>
   <li><a href="#summary">20. Summary</a></li>
-  <li><a href="#license">21. License</a></li>
 </ul>
 
 <hr/>
@@ -80,39 +79,30 @@ IDE/Debugging.md
 
 <hr/>
 
-<h2 id="scope-for-v01">2. Scope for v0.1</h2>
+<h2 id="document-role">2. Document Role</h2>
 
 <p>
-For FROG v0.1, this document standardizes the IDE-facing meaning of:
+This document is the observability-focused document of the <code>IDE/</code> family.
+Its role is to define the source-aligned visible world that IDE tools consume when they need to inspect or control a live execution.
+</p>
+
+<p>
+It should be read together with:
 </p>
 
 <ul>
-  <li>source-aligned observable execution objects,</li>
-  <li>observable execution events,</li>
-  <li>observable snapshots,</li>
-  <li>pause-consistent observation,</li>
-  <li>identity and mapping preservation for execution projection,</li>
-  <li>minimum source-level context required for inspection,</li>
-  <li>the observability relationship with probes, watches, and debugging.</li>
+  <li><code>IDE/Readme.md</code> for the overall IDE architecture and ownership boundary,</li>
+  <li><code>IDE/Debugging.md</code> for interactive debugging control,</li>
+  <li><code>IDE/Probes.md</code> for local inspection tools,</li>
+  <li><code>IDE/Watch.md</code> for persistent centralized inspection,</li>
+  <li><code>IR/Execution IR.md</code> and <code>IR/Derivation rules.md</code> for execution-facing attribution and mapping posture.</li>
 </ul>
 
 <p>
-This document does <strong>not</strong> standardize:
+This document is intentionally modular.
+It defines observability only.
+It does not absorb execution semantics, debugger control, probe behavior in full, watch behavior in full, or implementation-private runtime design.
 </p>
-
-<ul>
-  <li>the execution model itself,</li>
-  <li>the exact runtime transport protocol,</li>
-  <li>the exact serialization of deep values,</li>
-  <li>the complete rendering style of execution overlays,</li>
-  <li>the exact probe UI,</li>
-  <li>the exact watch UI,</li>
-  <li>the exact debugger UI,</li>
-  <li>profiling semantics,</li>
-  <li>reverse execution,</li>
-  <li>deterministic replay,</li>
-  <li>cross-machine distributed tracing.</li>
-</ul>
 
 <hr/>
 
@@ -136,6 +126,8 @@ This document depends on the following repository surfaces:
 <ul>
   <li><code>IDE/Readme.md</code> — architectural ownership of authoring, observability, debugging, probes, and watches,</li>
   <li><code>IDE/Debugging.md</code> — interactive debugging controls that consume observability,</li>
+  <li><code>IDE/Probes.md</code> — local inspection tools built on the observable layer,</li>
+  <li><code>IDE/Watch.md</code> — persistent centralized inspection built on the observable layer,</li>
   <li><code>Expression/Readme.md</code> — canonical source layer,</li>
   <li><code>Expression/Diagram.md</code> — source-visible executable graph objects,</li>
   <li><code>Expression/Front panel.md</code> — source-visible front-panel layer,</li>
@@ -149,19 +141,18 @@ This document depends on the following repository surfaces:
   <li><code>IR/Derivation rules.md</code> — source-to-execution-facing correspondence rules.</li>
 </ul>
 
-<h3>3.3 Repository navigation</h3>
+<h3>3.3 Dependency diagram</h3>
 
-<p>
-A reader using this document will usually also need the following neighboring IDE documents:
-</p>
-
-<pre><code>IDE/
-├── Readme.md
-│   -&gt; IDE ownership boundary and document map
-├── Observability.md
-│   -&gt; this document
-└── Debugging.md
-    -&gt; debugger control built on this observability layer
+<pre><code>Expression/ + Language/ + Libraries/ + Profiles/
+                      |
+                      v
+                     IR/
+                      |
+                      v
+          IDE/Observability.md
+             /       |        \
+            v        v         v
+   IDE/Debugging.md  Probes   Watches
 </code></pre>
 
 <hr/>
@@ -308,7 +299,7 @@ An observable object is a source-aligned execution object for which the observab
 <h3>8.2 Minimum object families</h3>
 
 <p>
-For v0.1, the minimum standardized observable object families are:
+The minimum standardized observable object families are:
 </p>
 
 <ul>
@@ -418,7 +409,7 @@ Therefore, observability must preserve not only static identity, but also releva
 <h3>10.2 Minimum context fields</h3>
 
 <p>
-For v0.1, the observability layer SHOULD preserve, when relevant:
+The observability layer SHOULD preserve, when relevant:
 </p>
 
 <ul>
@@ -624,10 +615,10 @@ A backend-private crash address alone is not sufficient as FROG-level fault obse
 
 <hr/>
 
-<h2 id="minimum-v01-observability-baseline">16. Minimum v0.1 Observability Baseline</h2>
+<h2 id="minimum-observability-baseline">16. Minimum Observability Baseline</h2>
 
 <p>
-For FROG v0.1, a minimum observability-capable IDE/runtime pairing SHOULD be able to expose at least:
+A minimum observability-capable IDE/runtime pairing SHOULD be able to expose at least:
 </p>
 
 <ul>
@@ -732,8 +723,12 @@ This document is easier to use when read together with the neighboring IDE docum
 │   -&gt; overall IDE ownership, components, and document map
 ├── Observability.md
 │   -&gt; this document; source-aligned execution visibility
-└── Debugging.md
-    -&gt; interactive debugger control built on this observable layer
+├── Debugging.md
+│   -&gt; interactive debugger control built on this observable layer
+├── Probes.md
+│   -&gt; local inspection tools consuming the observable layer
+└── Watch.md
+    -&gt; persistent inspection tools consuming the observable layer
 </code></pre>
 
 <p>
@@ -755,7 +750,7 @@ IDE/Observability.md
 
 <hr/>
 
-<h2 id="out-of-scope-for-v01">19. Out of Scope for v0.1</h2>
+<h2 id="out-of-scope">19. Out of Scope</h2>
 
 <p>
 The following topics remain intentionally out of scope for this document:
@@ -783,7 +778,7 @@ It is the architectural substrate used by execution overlays, probes, watches, a
 </p>
 
 <p>
-For FROG v0.1, this specification standardizes:
+This specification standardizes:
 </p>
 
 <ul>
@@ -805,11 +800,3 @@ This preserves the core architectural distinction between:
   <li>interactive debugger control,</li>
   <li>inspection tools built on top of that visible world.</li>
 </ul>
-
-<hr/>
-
-<h2 id="license">21. License</h2>
-
-<p>
-This specification is part of the FROG repository and is governed by the repository license and contribution rules.
-</p>
