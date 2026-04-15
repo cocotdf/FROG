@@ -17,16 +17,15 @@
   <li><a href="#why-this-directory-should-exist">2. Why This Directory Should Exist</a></li>
   <li><a href="#architectural-boundary">3. Architectural Boundary</a></li>
   <li><a href="#current-published-directory-shape">4. Current Published Directory Shape</a></li>
-  <li><a href="#target-directory-shape">5. Target Directory Shape</a></li>
-  <li><a href="#role-of-each-file">6. Role of Each File</a></li>
-  <li><a href="#target-corridor">7. Target Corridor</a></li>
-  <li><a href="#what-this-directory-owns">8. What This Directory Owns</a></li>
-  <li><a href="#what-this-directory-does-not-own">9. What This Directory Does Not Own</a></li>
-  <li><a href="#example-facing-posture">10. Example-Facing Posture</a></li>
-  <li><a href="#design-rules">11. Design Rules</a></li>
-  <li><a href="#closure-status">12. LLVM Closure Status</a></li>
-  <li><a href="#future-growth">13. Future Growth</a></li>
-  <li><a href="#summary">14. Summary</a></li>
+  <li><a href="#role-of-each-file">5. Role of Each File</a></li>
+  <li><a href="#target-corridor">6. Target Corridor</a></li>
+  <li><a href="#what-this-directory-owns">7. What This Directory Owns</a></li>
+  <li><a href="#what-this-directory-does-not-own">8. What This Directory Does Not Own</a></li>
+  <li><a href="#example-facing-posture">9. Example-Facing Posture</a></li>
+  <li><a href="#design-rules">10. Design Rules</a></li>
+  <li><a href="#closure-status">11. LLVM Closure Status</a></li>
+  <li><a href="#future-growth">12. Future Growth</a></li>
+  <li><a href="#summary">13. Summary</a></li>
 </ul>
 
 <hr/>
@@ -42,6 +41,11 @@ Its role is to make native-path closure explicit without collapsing FROG into LL
 The important architectural point is that LLVM remains downstream from FROG.
 It is one possible compiler-family consumer of lowered FROG artifacts.
 It is not the definition of the language, not the owner of FIR, and not the owner of widget semantics.
+</p>
+
+<p>
+At the current published state, this directory is no longer only a boundary marker.
+It now exposes a first repository-visible LLVM-oriented closure dossier for the canonical Example 05 corridor, together with bridge notes and a small helper emission tool.
 </p>
 
 <hr/>
@@ -60,6 +64,11 @@ A serious example closure strategy should support two complementary downstream d
 <p>
 This directory therefore exists to keep the compiler-family path explicit and separate from runtime-family contract consumption.
 That separation matters because a runtime-family corridor and a compiler-family corridor solve different downstream problems.
+</p>
+
+<p>
+The runtime-family path proves backend-contract consumption and host execution posture.
+The LLVM-oriented path proves that a lowered example corridor can also be carried into a native executable posture without redefining the language around LLVM.
 </p>
 
 <hr/>
@@ -101,40 +110,13 @@ For front-panel examples, the native corridor must also make explicit how the UI
 A native executable is not, by itself, proof of rendered front-panel closure.
 </p>
 
+<p>
+Accordingly, the first LLVM-oriented closure published here should be read as a narrow native arithmetic proof corridor for Example 05 rather than as a full native rendered-host closure for all front-panel obligations.
+</p>
+
 <hr/>
 
 <h2 id="current-published-directory-shape">4. Current Published Directory Shape</h2>
-
-<pre><code>Implementations/Reference/LLVM/
-└── Readme.md
-</code></pre>
-
-<p>
-At the current published repository state, this directory is primarily a posture and architecture boundary marker.
-It does not yet publish a full example-local LLVM artifact tree.
-</p>
-
-<p>
-However, the Example 05 corridor already publishes two important upstream artifacts elsewhere in the repository:
-</p>
-
-<ul>
-  <li><code>Examples/05_bounded_ui_accumulator/main.fir.json</code>,</li>
-  <li><code>Examples/05_bounded_ui_accumulator/main.lowering.json</code>.</li>
-</ul>
-
-<p>
-Accordingly, the right statement is not that FIR and lowering are absent from the repository.
-The right statement is that the dedicated LLVM-oriented downstream corridor built from them is not yet materially closed in this directory.
-</p>
-
-<hr/>
-
-<h2 id="target-directory-shape">5. Target Directory Shape</h2>
-
-<p>
-A useful future LLVM-oriented structure may look like:
-</p>
 
 <pre><code>Implementations/Reference/LLVM/
 ├── Readme.md
@@ -154,13 +136,17 @@ A useful future LLVM-oriented structure may look like:
 </code></pre>
 
 <p>
-This is a target organization for making the native-path corridor inspectable.
-It should not be mistaken for a claim that the repository already publishes all of these artifacts inside this directory today.
+This matters because the LLVM-oriented downstream corridor is now materially published in this directory rather than discussed only as a future target.
+</p>
+
+<p>
+The Example 05 FIR and lowering artifacts also remain published upstream in the canonical example directory.
+Their presence here should be read as example-local native-path dossier material for the compiler-family corridor, not as a transfer of ownership away from the canonical example publication.
 </p>
 
 <hr/>
 
-<h2 id="role-of-each-file">6. Role of Each File</h2>
+<h2 id="role-of-each-file">5. Role of Each File</h2>
 
 <ul>
   <li><code>Readme.md</code><br/>
@@ -170,10 +156,10 @@ It should not be mistaken for a claim that the repository already publishes all 
       Example-local native-path dossier for one named example.</li>
 
   <li><code>examples/&lt;example&gt;/main.fir.json</code><br/>
-      Example-local FIR artifact used as the execution-facing basis for the native path. For Example 05, such an artifact is already published upstream in the example directory.</li>
+      Example-local FIR artifact used as the execution-facing basis for the native path.</li>
 
   <li><code>examples/&lt;example&gt;/main.lowering.json</code><br/>
-      Example-local lowered artifact used as the compiler-facing bridge. For Example 05, such an artifact is already published upstream in the example directory.</li>
+      Example-local lowered artifact used as the compiler-facing bridge.</li>
 
   <li><code>examples/&lt;example&gt;/module.ll</code><br/>
       LLVM-family textual module emitted for the example.</li>
@@ -196,7 +182,7 @@ It should not be mistaken for a claim that the repository already publishes all 
 
 <hr/>
 
-<h2 id="target-corridor">7. Target Corridor</h2>
+<h2 id="target-corridor">6. Target Corridor</h2>
 
 <p>
 The target corridor for a serious native example is:
@@ -235,9 +221,14 @@ That means the corridor is only fully closed when a reader can inspect:
   <li>and, when relevant, the front-panel host realization boundary.</li>
 </ul>
 
+<p>
+For the first corridor published here, the closure target is intentionally narrower:
+the repository now exposes the example-local FIR artifact, the example-local lowered artifact, one LLVM textual module, one native build path, and one expected observable result dossier for Example 05.
+</p>
+
 <hr/>
 
-<h2 id="what-this-directory-owns">8. What This Directory Owns</h2>
+<h2 id="what-this-directory-owns">7. What This Directory Owns</h2>
 
 <ul>
   <li>reference compiler-family posture for LLVM-oriented native paths,</li>
@@ -248,7 +239,7 @@ That means the corridor is only fully closed when a reader can inspect:
 
 <hr/>
 
-<h2 id="what-this-directory-does-not-own">9. What This Directory Does Not Own</h2>
+<h2 id="what-this-directory-does-not-own">8. What This Directory Does Not Own</h2>
 
 <ul>
   <li>the canonical <code>.frog</code> source model,</li>
@@ -268,10 +259,10 @@ It does not become the owner of upstream language truth.
 
 <hr/>
 
-<h2 id="example-facing-posture">10. Example-Facing Posture</h2>
+<h2 id="example-facing-posture">9. Example-Facing Posture</h2>
 
 <p>
-The first serious target for this directory should be:
+The first serious target for this directory is:
 </p>
 
 <pre><code>Examples/05_bounded_ui_accumulator/</code></pre>
@@ -303,12 +294,13 @@ It is to prove that one reader can inspect:
 </ul>
 
 <p>
-For Example 05 specifically, native closure should eventually state how the final indicator and any rendered front-panel realization are handled at the native boundary.
+For Example 05 specifically, the currently published LLVM-native corridor proves the native arithmetic behavior of the bounded slice and its observable output parity for the narrow proof target.
+It does not yet claim full native rendered front-panel closure.
 </p>
 
 <hr/>
 
-<h2 id="design-rules">11. Design Rules</h2>
+<h2 id="design-rules">10. Design Rules</h2>
 
 <ul>
   <li>Keep FIR explicitly distinct from LLVM IR.</li>
@@ -321,7 +313,7 @@ For Example 05 specifically, native closure should eventually state how the fina
 
 <hr/>
 
-<h2 id="closure-status">12. LLVM Closure Status</h2>
+<h2 id="closure-status">11. LLVM Closure Status</h2>
 
 <table>
   <thead>
@@ -339,28 +331,28 @@ For Example 05 specifically, native closure should eventually state how the fina
     </tr>
     <tr>
       <td>Example-local FIR artifact for Example 05</td>
-      <td>Published upstream</td>
-      <td><code>main.fir.json</code> already exists in <code>Examples/05_bounded_ui_accumulator/</code>, but is not yet materialized as part of a dedicated LLVM dossier here.</td>
+      <td>Published here and upstream</td>
+      <td><code>main.fir.json</code> is visible in the canonical example directory and in the LLVM-oriented example dossier.</td>
     </tr>
     <tr>
       <td>Example-local lowered artifact for Example 05</td>
-      <td>Published upstream</td>
-      <td><code>main.lowering.json</code> already exists in <code>Examples/05_bounded_ui_accumulator/</code>, but is not yet materialized as part of a dedicated LLVM dossier here.</td>
+      <td>Published here and upstream</td>
+      <td><code>main.lowering.json</code> is visible in the canonical example directory and in the LLVM-oriented example dossier.</td>
     </tr>
     <tr>
       <td>LLVM-family module emission</td>
-      <td>Missing</td>
-      <td>No published <code>module.ll</code> is currently exposed for Example 05.</td>
+      <td>Published</td>
+      <td>A repository-visible <code>module.ll</code> is exposed for Example 05.</td>
     </tr>
     <tr>
       <td>Bridge documentation inside this directory</td>
-      <td>Missing</td>
-      <td>No dedicated <code>bridge/</code> material is currently published here.</td>
+      <td>Published</td>
+      <td>Dedicated <code>bridge/</code> material is now visible here.</td>
     </tr>
     <tr>
       <td>Native build path</td>
-      <td>Missing</td>
-      <td>No published native build and run sequence is currently exposed for Example 05.</td>
+      <td>Published</td>
+      <td>A native build-and-run sequence is now exposed for Example 05.</td>
     </tr>
     <tr>
       <td>Rendered front-panel native closure</td>
@@ -372,21 +364,19 @@ For Example 05 specifically, native closure should eventually state how the fina
 
 <hr/>
 
-<h2 id="future-growth">13. Future Growth</h2>
+<h2 id="future-growth">12. Future Growth</h2>
 
 <ol>
-  <li>materialize one example-local LLVM dossier for Example 05 inside this directory,</li>
-  <li>reuse or mirror the already-published Example 05 FIR artifact,</li>
-  <li>reuse or mirror the already-published Example 05 lowered artifact,</li>
-  <li>publish one LLVM-family emitted module,</li>
-  <li>publish one native build and run command sequence,</li>
-  <li>publish expected observable outputs or parity checks,</li>
-  <li>for front-panel examples, publish the rendered host boundary explicitly.</li>
+  <li>tighten the relation between the canonical example-local FIR and lowering artifacts and the LLVM-oriented dossier copies or mirrors,</li>
+  <li>grow beyond the first narrow arithmetic proof into a more explicit lowered execution mapping,</li>
+  <li>publish additional example-local LLVM dossiers for other slices,</li>
+  <li>add stronger parity automation around expected outputs,</li>
+  <li>for front-panel examples, publish the rendered native host boundary explicitly.</li>
 </ol>
 
 <hr/>
 
-<h2 id="summary">14. Summary</h2>
+<h2 id="summary">13. Summary</h2>
 
 <p>
 This directory defines the LLVM-oriented compiler-family posture for native executable closure.
@@ -399,10 +389,11 @@ The important correction at the current repository state is this:
 
 <ul>
   <li>Example 05 FIR and lowering artifacts already exist in the repository,</li>
-  <li>but the dedicated LLVM-oriented downstream corridor built from them is not yet materially published here.</li>
+  <li>and the dedicated LLVM-oriented downstream corridor built from them is now materially published here for a first narrow native proof path.</li>
 </ul>
 
 <p>
-That is the next closure step:
-turn already-published upstream artifacts into one explicit, inspectable, example-local native path.
+The next closure step is not initial existence anymore.
+It is depth:
+stronger mapping fidelity, broader example coverage, and later an explicit native front-panel host boundary where relevant.
 </p>
