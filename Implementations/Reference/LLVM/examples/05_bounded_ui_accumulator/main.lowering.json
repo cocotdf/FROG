@@ -1,0 +1,20 @@
+{
+  "example": "05_bounded_ui_accumulator",
+  "lowering_family": "reference_native_llvm_example_slice",
+  "entry": "frog_example05_accumulate",
+  "parameters": [
+    {
+      "name": "input_value",
+      "type": "i16"
+    }
+  ],
+  "returns": {
+    "type": "i16"
+  },
+  "algorithm": {
+    "iterations": 5,
+    "initial_state": 0,
+    "body": "state = state + input_value",
+    "return": "state"
+  }
+}
