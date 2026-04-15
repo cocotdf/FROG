@@ -115,6 +115,7 @@
   - [Debugging](/IDE/Debugging.md)
   - [Execution observability](/IDE/Execution%20observability.md)
   - [Express](/IDE/Express.md)
+  - [Observability](/IDE/Observability.md)
   - [Palette](/IDE/Palette.md)
   - [Probes](/IDE/Probes.md)
   - [Snippet](/IDE/Snippet.md)

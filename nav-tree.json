@@ -825,6 +825,13 @@
               "children": []
             },
             {
+              "key": "ide/observability.md",
+              "title": "Observability",
+              "path": "/IDE/Observability.md",
+              "kind": "page",
+              "children": []
+            },
+            {
               "key": "ide/palette.md",
               "title": "Palette",
               "path": "/IDE/Palette.md",
@@ -2774,6 +2781,7 @@
     "/IDE/Debugging.md",
     "/IDE/Execution%20observability.md",
     "/IDE/Express.md",
+    "/IDE/Observability.md",
     "/IDE/Palette.md",
     "/IDE/Probes.md",
     "/IDE/Snippet.md",
