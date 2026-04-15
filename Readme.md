@@ -36,7 +36,6 @@
   <a href="#internal-documentation-map">Internal documentation map</a> •
   <a href="#recommended-reading-path">Recommended reading path</a> •
   <a href="#specification-architecture">Specification architecture</a> •
-  <a href="#specification-versioning">Specification versioning</a> •
   <a href="#program-representation">Program representation</a> •
   <a href="#execution-architecture">Execution architecture</a> •
   <a href="#execution-observability-debugging-and-inspection">Execution observability, debugging, and inspection</a> •
@@ -92,7 +91,7 @@ FROG is intended to scale from accessible graphical authoring to demanding execu
 
 <p>
 This repository defines the <strong>published FROG specification</strong>.
-It is the repository where the language and its surrounding specification layers are written, clarified, stabilized, versioned, and progressively closed.
+It is the repository where the language and its surrounding specification layers are written, clarified, stabilized, and progressively closed.
 </p>
 
 <p>
@@ -156,7 +155,7 @@ The repository also contains repository-level support areas and repository-level
   <li><strong><code>Examples/</code></strong> — illustrative named source slices, applicative vertical-slice anchors, and bounded compiler-corridor mirrors,</li>
   <li><strong><code>Conformance/</code></strong> — public accept / reject / preserve expectations for the published repository state,</li>
   <li><strong><code>Implementations/Reference/</code></strong> — a non-normative reference implementation workspace used to exercise disciplined execution paths,</li>
-  <li><strong><code>Versioning/</code></strong> — centralized specification-version governance and current-status reporting for the published specification corpus,</li>
+  <li><strong><code>Versioning/</code></strong> — centralized specification-governance and current-status reporting for the published specification corpus,</li>
   <li><strong><code>Strategy/</code></strong> — a non-normative strategic framing layer distinct from normative ownership,</li>
   <li><strong><code>Roadmap/</code></strong> — a non-normative closure-sequencing layer distinct from both strategy and specification.</li>
 </ul>
@@ -205,7 +204,7 @@ The current published runtime and native surface already includes:
 </ul>
 
 <p>
-At the same time, the repository does <strong>not yet</strong> claim full generalized symmetry across all future examples, all runtime families, or full rendered-native front-panel closure.
+At the same time, the repository does <strong>not</strong> claim full generalized symmetry across all future examples, all runtime families, or full rendered-native front-panel closure.
 The correct current statement is narrower:
 the repository now materially exposes a <strong>repository-visible bounded symmetry</strong> for the canonical Example 05 corridor across Python, Rust, C/C++, and a first LLVM-oriented native proof path.
 </p>
@@ -642,7 +641,7 @@ The current repository-level support and governance areas are:
   <li><strong><code>Examples/</code></strong> — illustrative named source cases and executable closure dossiers,</li>
   <li><strong><code>Conformance/</code></strong> — expected outcomes for validation, preservation, and rejection,</li>
   <li><strong><code>Implementations/Reference/</code></strong> — non-normative prototype workspace used to exercise the current reference path,</li>
-  <li><strong><code>Versioning/</code></strong> — centralized current corpus-version governance and per-surface current-status reporting.</li>
+  <li><strong><code>Versioning/</code></strong> — centralized current corpus-governance and per-surface current-status reporting.</li>
 </ul>
 
 <hr/>
@@ -778,8 +777,12 @@ The map below summarizes the intended role of the major Markdown documents in th
 │   │   -&gt; IDE architecture entry point
 │   ├── Observability.md
 │   │   -&gt; probes, watches, execution projection, and inspection-facing posture
-│   └── Debugging.md
-│       -&gt; debugging semantics, stop points, step posture, and runtime-to-source projection
+│   ├── Debugging.md
+│   │   -&gt; debugging control, stop semantics at the IDE layer, and runtime-to-source projection consumption
+│   ├── Probes.md
+│   │   -&gt; local live inspection tools
+│   └── Watch.md
+│       -&gt; persistent centralized inspection tools
 │
 ├── Implementations/Reference/Runtime/
 │   ├── Readme.md
@@ -918,29 +921,6 @@ what is expected      -&gt; Conformance/
 what is prototyped    -&gt; Implementations/Reference/
 what version means    -&gt; Versioning/
 </pre>
-
-<hr/>
-
-<h2 id="specification-versioning">Specification versioning</h2>
-
-<p>
-FROG distinguishes three version notions that must remain explicit and must not be collapsed:
-</p>
-
-<ul>
-  <li><strong>specification corpus version</strong> — the version of the published FROG specification repository as a whole,</li>
-  <li><strong><code>.frog spec_version</code></strong> — the source-format / compatibility target declared by a source artifact,</li>
-  <li><strong><code>metadata.program_version</code></strong> — the version of one authored FROG program artifact.</li>
-</ul>
-
-<p>
-Cross-version governance is centralized in:
-</p>
-
-<ul>
-  <li><strong><code>Versioning/Readme.md</code></strong> — corpus-version doctrine, current published version, additive-evolution rule, degraded readability posture, and transition policy,</li>
-  <li><strong><code>Versioning/Matrix.md</code></strong> — detailed current-status table by repository surface.</li>
-</ul>
 
 <hr/>
 
@@ -1167,7 +1147,7 @@ Its long-term goal is to provide an <strong>open industrial graphical programmin
 <h2 id="security-and-optimization-by-design">Security and optimization by design</h2>
 
 <p>
-FROG integrates validation, inspectability, version governance, and optimization into its architecture.
+FROG integrates validation, inspectability, governance, and optimization into its architecture.
 </p>
 
 <p>
@@ -1190,7 +1170,7 @@ FROG is designed for interoperability at several levels:
   <li><strong>semantic interoperability</strong>,</li>
   <li><strong>IR interoperability</strong>,</li>
   <li><strong>execution interoperability</strong>,</li>
-  <li><strong>version interoperability</strong>,</li>
+  <li><strong>governance interoperability</strong>,</li>
   <li><strong>ecosystem interoperability</strong>.</li>
 </ul>
 
@@ -1246,7 +1226,7 @@ At the modeling level, FROG also separates:
   <li>public interface from front panel,</li>
   <li>natural widget value flow from object-style widget interaction,</li>
   <li>program execution meaning from probes and watches,</li>
-  <li>specification corpus version from <code>.frog spec_version</code>,</li>
+  <li>specification corpus governance from <code>.frog spec_version</code>,</li>
   <li><code>.frog spec_version</code> from <code>metadata.program_version</code>.</li>
 </ul>
 
@@ -1264,13 +1244,18 @@ The current governance model is steward-led.
 Graiphic is the initial steward of the FROG specification repository and is responsible for maintaining architectural coherence, reviewing proposed changes, and publishing authoritative repository revisions.
 </p>
 
+<p>
+Version governance, transition rules, and current repository status belong to the dedicated repository governance surfaces under <code>Versioning/</code>.
+Individual architectural documents should remain modular and should not become standalone version-governance documents.
+</p>
+
 <hr/>
 
 <h2 id="project-status">Project status</h2>
 
 <p>
 FROG is currently under active design, cleanup, stabilization, and executable-corridor closure.
-The repository already contains substantial material across canonical source representation, source-schema posture, language semantics, execution-facing IR architecture, intrinsic standardized primitive libraries, optional profile architecture, IDE architecture, specification-version governance, strategic framing, roadmap posture, examples, conformance material, and a non-normative reference implementation workspace.
+The repository already contains substantial material across canonical source representation, source-schema posture, language semantics, execution-facing IR architecture, intrinsic standardized primitive libraries, optional profile architecture, IDE architecture, governance surfaces, strategic framing, roadmap posture, examples, conformance material, and a non-normative reference implementation workspace.
 </p>
 
 <p>
@@ -1298,7 +1283,7 @@ The current direction is therefore twofold:
 </ul>
 
 <p>
-The long-term ambition is to establish a durable open graphical programming ecosystem that can scale from experimentation to deeply integrated industrial deployment while remaining inspectable across the source, semantic, execution-facing, observability, and version-governance layers.
+The long-term ambition is to establish a durable open graphical programming ecosystem that can scale from experimentation to deeply integrated industrial deployment while remaining inspectable across the source, semantic, execution-facing, observability, and governance layers.
 </p>
 
 <hr/>
