@@ -1,0 +1,16 @@
+{
+  "example": "05_bounded_ui_accumulator",
+  "ir": "FIR",
+  "entry": "main",
+  "types": {
+    "input": "u16",
+    "state": "u16",
+    "output": "u16"
+  },
+  "execution": {
+    "initial_state": 0,
+    "iterations": 5,
+    "operation": "state = state + input",
+    "publication": "public_output = state"
+  }
+}
