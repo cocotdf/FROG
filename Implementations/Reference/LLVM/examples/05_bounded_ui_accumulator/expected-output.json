@@ -1,0 +1,20 @@
+{
+  "example": "05_bounded_ui_accumulator",
+  "cases": [
+    {
+      "input": 0,
+      "final_state": 0,
+      "public_output": 0
+    },
+    {
+      "input": 3,
+      "final_state": 15,
+      "public_output": 15
+    },
+    {
+      "input": 7,
+      "final_state": 35,
+      "public_output": 35
+    }
+  ]
+}
