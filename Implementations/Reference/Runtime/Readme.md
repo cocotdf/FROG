@@ -62,7 +62,7 @@ It now acts as the visible coordination point for:
 
 <p>
 This runtime family is non-normative.
-It exists to prove that the published repository corridor is no longer only prose. :contentReference[oaicite:1]{index=1}
+It exists to prove that the published repository corridor is no longer only prose.
 </p>
 
 <p>
@@ -72,9 +72,13 @@ At the current published structure, symmetry between runtime languages is now vi
 <ul>
   <li>one Python runtime posture with contract execution, UI runtime files, CLI, and tests,</li>
   <li>one Rust runtime posture with manifest, source split, and tests,</li>
-  <li>one C/C++ runtime posture with build entry, headers, and source entry point,</li>
-  <li>optional shared runtime-family helpers at the parent level. :contentReference[oaicite:2]{index=2}</li>
+  <li>one C/C++ runtime posture with build entry, headers, and direct example execution entry point,</li>
+  <li>optional shared runtime-family helpers at the parent level.</li>
 </ul>
+
+<p>
+The maturity level is still not perfectly symmetrical across languages, but the parent runtime family is now materially repository-visible across Python, Rust, and C/C++.
+</p>
 
 <hr/>
 
@@ -149,7 +153,7 @@ This family should be understood as a backend-family consumer posture, not as a 
 </code></pre>
 
 <p>
-This matters because the runtime-family posture is now materially visible in the published tree rather than only described abstractly. :contentReference[oaicite:3]{index=3}
+This matters because the runtime-family posture is now materially visible in the published tree rather than only described abstractly.
 </p>
 
 <hr/>
@@ -188,7 +192,7 @@ The important parent-level point is that this directory now holds both:
 
 <ul>
   <li>shared runtime-family material,</li>
-  <li>parallel language-specific runtime consumers. :contentReference[oaicite:4]{index=4}</li>
+  <li>parallel language-specific runtime consumers.</li>
 </ul>
 
 <hr/>
@@ -244,7 +248,7 @@ The current bounded corridor supports:
 </ul>
 
 <p>
-For Example 05, the strongest rendered-host proof path currently exists on the Python side, while Rust and C/C++ remain at different closure levels. :contentReference[oaicite:5]{index=5}
+For Example 05, the strongest rendered-host proof path currently exists on the Python side, while Rust and C/C++ provide additional contract-faithful execution proof paths with different closure styles.
 </p>
 
 <hr/>
@@ -268,6 +272,12 @@ cd Implementations/Reference/Runtime/rust
 cargo test
 </code></pre>
 
+<pre><code>C/C++ direct example execution
+cmake -S Implementations/Reference/Runtime/cpp -B build/frog_runtime_cpp
+cmake --build build/frog_runtime_cpp
+build/frog_runtime_cpp/frog_runtime_cpp_example05 3
+</code></pre>
+
 <p>
 The intended long-term symmetry is:
 </p>
@@ -277,14 +287,14 @@ The intended long-term symmetry is:
    -> rendered UI runner
 
 Rust
-   -> direct example runner plus tests
+   -> direct example runner and tests
 
 C/C++
-   -> direct example runner plus tests where useful
+   -> direct example runner and tests where useful
 </code></pre>
 
 <p>
-At the current published state, Python is the most operational path, Rust is the strongest secondary proof path, and C/C++ is structurally present but not yet closed at the same example-facing level. :contentReference[oaicite:6]{index=6}
+At the current published state, Python remains the most operational host-facing path, Rust is the strongest secondary proof path, and C/C++ is now a real narrow operational proof path for Example 05 rather than a merely structural placeholder.
 </p>
 
 <hr/>
@@ -317,8 +327,8 @@ At the current published state, Python is the most operational path, Rust is the
     </tr>
     <tr>
       <td>C/C++ consumer</td>
-      <td>Structured but not yet operationally closed</td>
-      <td>Build entry, headers, and source entry point are published, but example-facing proof remains incomplete.</td>
+      <td>Closed for the narrow Example 05 runner posture</td>
+      <td>Build entry, headers, and source entry point are published and support the direct Example 05 run corridor.</td>
     </tr>
     <tr>
       <td>Rendered host UI</td>
@@ -365,7 +375,7 @@ They may differ in private structures and host mechanics, but they should remain
 </ul>
 
 <p>
-The parent directory exists precisely to make that parallel-consumer posture explicit. :contentReference[oaicite:7]{index=7}
+The parent directory exists precisely to make that parallel-consumer posture explicit.
 </p>
 
 <hr/>
@@ -407,9 +417,9 @@ reference runtime != universal FROG runtime
 <h2 id="next-closure-targets">13. Next Closure Targets</h2>
 
 <ol>
-  <li>publish one explicit C/C++ example-05 operational proof path,</li>
   <li>publish one clearer direct Rust runner posture in addition to the tests,</li>
   <li>tighten the relation between the Python rendered path and the contract-driven path,</li>
+  <li>add C/C++ test posture where useful for parity automation,</li>
   <li>keep runtime-family consumers aligned with the same example-local artifact set,</li>
   <li>maintain clean separation from the downstream LLVM-oriented native executable corridor.</li>
 </ol>
@@ -425,7 +435,7 @@ It proves executability, but it does not become the language definition.
 
 <p>
 The important correction at the current published state is that the multi-runtime posture is no longer just an aspiration.
-It is already visible in the repository tree through Python, Rust, and C/C++ consumer directories with distinct levels of maturity. :contentReference[oaicite:8]{index=8}
+It is already visible in the repository tree through Python, Rust, and C/C++ consumer directories with distinct but real closure levels.
 </p>
 
 <p>
@@ -434,6 +444,6 @@ The current closure direction is therefore:
 
 <ul>
   <li>keep the same canonical example corridor consumable through several runtime languages,</li>
-  <li>raise Rust and C/C++ toward stronger example-facing operational parity,</li>
+  <li>raise Rust toward a stronger direct runner posture while keeping C/C++ aligned,</li>
   <li>preserve the architectural rule that runtime families remain downstream from source, meaning, FIR, lowering, and backend handoff.</li>
 </ul>
