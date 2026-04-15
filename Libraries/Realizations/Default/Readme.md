@@ -5,7 +5,7 @@
 <h1 align="center">FROG Default Realization Family</h1>
 
 <p align="center">
-  <strong>Normative default official realization family for the intrinsic standardized widget baseline</strong><br/>
+  <strong>Normative default official realization family for the intrinsic standardized widget baseline and authorized anticipatory realization publication</strong><br/>
   <em>FROG — Free Open Graphical Language</em>
 </p>
 
@@ -59,6 +59,10 @@ It includes:
   <li>example-corridor posture.</li>
 </ul>
 
+<p>
+The family may also publish anticipatory realization material for classes that are not yet intrinsically standardized, provided that such material remains explicitly realization-side, subordinate to future intrinsic standardization, and non-authoritative for class law.
+</p>
+
 <hr/>
 
 <h2 id="purpose">2. Purpose</h2>
@@ -71,7 +75,8 @@ The <code>Default</code> family exists to provide:
   <li>a first serious standard visual embodiment of the baseline widget classes,</li>
   <li>a reference family for examples and runtime interpretation,</li>
   <li>a stable place for state-sensitive embodiment, structural part correspondence, and realization-side placement metadata,</li>
-  <li>a clean separation between class law and realization detail.</li>
+  <li>a clean separation between class law and realization detail,</li>
+  <li>a repository-visible realization publication corridor that may prepare future class families without silently standardizing them intrinsically.</li>
 </ul>
 
 <p>
@@ -107,6 +112,11 @@ Those classes remain defined by the standardized widget baseline.
 The <code>Default</code> family only defines one official realization posture for them.
 </p>
 
+<p>
+The family MAY also publish realization-side preparation for additional classes such as <code>array</code>, <code>cluster</code>, <code>enum</code>, <code>path</code>, <code>tab</code>, <code>tree</code>, <code>table</code>, <code>picture</code>, <code>listbox</code>, and other future-facing widget families.
+When such publication exists, it must be interpreted as anticipatory realization material rather than as proof that the corresponding intrinsic class law has already been standardized in <code>Libraries/Widgets/</code>.
+</p>
+
 <hr/>
 
 <h2 id="family-goals">4. Family Goals</h2>
@@ -123,7 +133,8 @@ The default family is designed to be:
   <li>part-aware,</li>
   <li>inspectable at the publication level,</li>
   <li>suitable for SVG-backed or host-native realization,</li>
-  <li>usable as the first official embodiment interpreted by runtimes.</li>
+  <li>usable as the first official embodiment interpreted by runtimes,</li>
+  <li>capable of hosting anticipatory realization work without introducing semantic drift.</li>
 </ul>
 
 <p>
@@ -180,6 +191,11 @@ while the default family owns where and how that label is visually placed and em
 
 <p>
 More generally, the same architectural distinction matters for numeric value surfaces, string value surfaces, chart titles, axis labels, and other future dynamic public surfaces.
+</p>
+
+<p>
+The same distinction also governs anticipatory realization material:
+visual publication may be prepared ahead of intrinsic class standardization, but such publication must not be mistaken for intrinsic ownership of public semantics.
 </p>
 
 <hr/>
@@ -341,6 +357,10 @@ Likewise, the existence of a visual asset near a dynamic public surface must not
 When multiple compatible embodiment variants exist for the same class, their resource inventories may differ, but the published part meaning and the family-level publication rules must remain stable.
 </p>
 
+<p>
+When anticipatory realization material is published for classes that are not yet intrinsically standardized, the same resource and binding posture still applies, but that publication remains realization-side preparation only.
+</p>
+
 <hr/>
 
 <h2 id="shared-fallback-posture">9. Shared Fallback Posture</h2>
@@ -425,6 +445,10 @@ Hosts MAY choose among compatible family-supported embodiment variants when the 
 That choice remains valid only if published class meaning and realization inspectability remain preserved.
 </p>
 
+<p>
+Hosts MAY also consume anticipatory realization material for example, prototype, or experimental runtime purposes, but such use must not be presented as evidence that intrinsic class standardization has already been closed.
+</p>
+
 <hr/>
 
 <h2 id="documents-in-this-family">11. Documents in this Family</h2>
@@ -443,6 +467,10 @@ That choice remains valid only if published class meaning and realization inspec
   <li><code>Assets/Naming.md</code> — asset naming posture for the family</li>
   <li><code>Examples/Readme.md</code> — example-corridor posture for the family</li>
 </ul>
+
+<p>
+Additional per-class or future-facing realization documents MAY be published in this family before the corresponding intrinsic class standardization is closed, but such publication remains realization-side preparation unless and until <code>Libraries/Widgets/</code> standardizes the class intrinsically.
+</p>
 
 <hr/>
 
@@ -478,4 +506,8 @@ Its preferred family-wide architecture is:
 
 <p>
 Within that architecture, compatible visible embodiment variants may coexist inside the same realization family as long as they remain realization choices rather than hidden class splits.
+</p>
+
+<p>
+The same architecture also allows anticipatory realization publication for future-facing widget families, provided that such publication remains subordinate to intrinsic class law and is never mistaken for intrinsic standardization itself.
 </p>
