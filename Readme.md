@@ -69,7 +69,8 @@ Instead of describing a program primarily through ordered text, FROG describes a
   <li>directed graph connections,</li>
   <li>structured control regions,</li>
   <li>explicit public interface boundaries,</li>
-  <li>optional front-panel widgets and interaction layers.</li>
+  <li>optional front-panel widgets and interaction layers,</li>
+  <li>explicit observability surfaces such as probes, watches, and inspection-aware source objects.</li>
 </ul>
 
 <p>
@@ -176,7 +177,7 @@ The first repository-visible applicative vertical-slice anchor is:
 <pre><code>Examples/05_bounded_ui_accumulator/</code></pre>
 
 <p>
-That slice is currently the primary named source-to-contract-to-runtime anchor because it visibly combines:
+That slice is currently the primary named source-to-runtime-to-native anchor because it visibly combines:
 </p>
 
 <ul>
@@ -187,33 +188,31 @@ That slice is currently the primary named source-to-contract-to-runtime anchor b
   <li>explicit local state,</li>
   <li>public output publication,</li>
   <li>a published backend contract artifact,</li>
-  <li>and published downstream reference runtime consumers.</li>
+  <li>published downstream reference runtime consumers,</li>
+  <li>and a first LLVM-oriented native proof corridor.</li>
 </ul>
 
 <p>
-The current published runtime surface already includes:
+The current published runtime and native surface already includes:
 </p>
 
 <ul>
   <li>a repository-visible runtime directory under <code>Implementations/Reference/Runtime/</code>,</li>
   <li>a Python execution entry point for the published bounded slice,</li>
-  <li>and a Rust runtime-side consumer posture under <code>Implementations/Reference/Runtime/rust/</code>.</li>
+  <li>a Rust runtime-side consumer posture under <code>Implementations/Reference/Runtime/rust/</code>,</li>
+  <li>a C/C++ runtime-side consumer posture under <code>Implementations/Reference/Runtime/cpp/</code>,</li>
+  <li>and a first LLVM-oriented downstream dossier under <code>Implementations/Reference/LLVM/</code>.</li>
 </ul>
 
 <p>
-At the same time, the repository does <strong>not yet</strong> materially expose full symmetry between:
+At the same time, the repository does <strong>not yet</strong> claim full generalized symmetry across all future examples, all runtime families, or full rendered-native front-panel closure.
+The correct current statement is narrower:
+the repository now materially exposes a <strong>repository-visible bounded symmetry</strong> for the canonical Example 05 corridor across Python, Rust, C/C++, and a first LLVM-oriented native proof path.
 </p>
-
-<ul>
-  <li>Python mini runtime,</li>
-  <li>Rust mini runtime,</li>
-  <li>C/C++ mini runtime,</li>
-  <li>and LLVM-oriented native executable closure.</li>
-</ul>
 
 <p>
 That distinction matters.
-The published direction already supports language/runtime separation, but the repository-visible executable closure still needs to become more explicit and more symmetrical across runtime families.
+The published direction already supports language/runtime/compiler separation, and the repository-visible executable closure is now materially stronger than before, while still remaining example-scoped and intentionally non-generalized.
 </p>
 
 <hr/>
@@ -241,6 +240,25 @@ A serious example should progressively converge toward:
   <li>one Rust mini runtime path,</li>
   <li>one C/C++ mini runtime path,</li>
   <li>and, where applicable, one LLVM-oriented native executable path.</li>
+</ul>
+
+<p>
+The canonical repository anchor for that campaign is currently:
+</p>
+
+<pre><code>Examples/05_bounded_ui_accumulator/</code></pre>
+
+<p>
+That slice should be read as the first repository-visible proof that the same named example can be carried through:
+</p>
+
+<ul>
+  <li>source,</li>
+  <li>front-panel package,</li>
+  <li>FIR,</li>
+  <li>lowering,</li>
+  <li>runtime-family consumption,</li>
+  <li>and a first native compiler-family corridor.</li>
 </ul>
 
 <p>
@@ -401,7 +419,7 @@ That makes it naturally compatible with tooling pipelines, validation workflows,
 <p>
 FROG keeps the executable structure explicit at the language level.
 The program is not primarily hidden behind text parsing, coding idioms, or reconstruction tooling.
-A reviewer can inspect nodes, ports, graph connections, structures, state boundaries, interface boundaries, and widget interaction paths directly as program objects.
+A reviewer can inspect nodes, ports, graph connections, structures, state boundaries, interface boundaries, widget interaction paths, probes, watch surfaces, and other source-meaningful execution objects directly as program objects.
 </p>
 
 <h3>Inspectable execution-facing IR</h3>
@@ -488,11 +506,11 @@ Usability, execution depth, and auditability are treated as complementary goals 
 
 <hr/>
 
-<h2 id="core-concept-diagram-front-panel-and-public-interface">Core concept: Diagram, Front Panel, and Public Interface</h2>
+<h2 id="core-concept-diagram-front-panel-and-public-interface">Core concept: Diagram, Front Panel, Public Interface</h2>
 
 <p>
 A FROG program combines multiple related but distinct source-level concepts.
-The repository deliberately separates them so that execution meaning, public API, and UI-facing authoring remain coherent over time.
+The repository deliberately separates them so that execution meaning, public API, UI-facing authoring, and observability posture remain coherent over time.
 </p>
 
 <h3>Diagram — the authoritative executable graph</h3>
@@ -512,6 +530,7 @@ It contains:
   <li>sub-FROG invocations,</li>
   <li>interface boundary nodes,</li>
   <li>widget-related graph nodes,</li>
+  <li>probe and watch attachment points when declared by the source or IDE model,</li>
   <li>directed graph edges,</li>
   <li>source-level annotations and documentation.</li>
 </ul>
@@ -546,6 +565,25 @@ FROG distinguishes two widget interaction paths:
   <li><strong>natural value path</strong> — widget primary value participation through <code>widget_value</code>,</li>
   <li><strong>object-style path</strong> — explicit widget access through <code>widget_reference</code> together with <code>frog.ui.property_read</code>, <code>frog.ui.property_write</code>, and <code>frog.ui.method_invoke</code>.</li>
 </ul>
+
+<h3>Observability model</h3>
+
+<p>
+FROG also treats execution observability as a first-class architectural concern rather than as an afterthought.
+The long-term IDE-facing posture should support at least:
+</p>
+
+<ul>
+  <li><strong>probes</strong> — local inspection objects attached to wires, ports, nodes, structure boundaries, or other graph-meaningful surfaces in order to expose live or sampled values,</li>
+  <li><strong>watches</strong> — persistent observation surfaces that follow selected program objects, values, references, or execution-local states across editing, execution, and debugging workflows,</li>
+  <li><strong>projection back to source-meaningful objects</strong> rather than debugger-only opaque runtime internals.</li>
+</ul>
+
+<p>
+Probes and watches do not redefine the program’s executable meaning.
+They belong to the observability, debugging, and IDE-facing architecture.
+They matter because graphical dataflow systems are especially strong when live execution can be inspected directly on the graph and on its public interaction surfaces.
+</p>
 
 <hr/>
 
@@ -643,8 +681,19 @@ Python mini runtime            Rust mini runtime               C/C++ mini runtim
 </code></pre>
 
 <p>
+For the canonical Example 05 slice, the repository now materially exposes this direction in bounded form:
+</p>
+
+<ul>
+  <li>a Python runtime path,</li>
+  <li>a Rust runtime verification path,</li>
+  <li>a C/C++ narrow runner path,</li>
+  <li>and a first LLVM-oriented native proof path.</li>
+</ul>
+
+<p>
 This does not imply that all of these paths are already closed for all published examples.
-It defines the explicit repository direction and the closure target.
+It defines the explicit repository direction and, for Example 05, a first repository-visible bounded closure.
 </p>
 
 <p>
@@ -723,6 +772,14 @@ The map below summarizes the intended role of the major Markdown documents in th
 │   │   -&gt; lowering boundary toward target-oriented executable forms
 │   └── Backend contract.md
 │       -&gt; backend-facing contract for downstream consumers
+│
+├── IDE/
+│   ├── Readme.md
+│   │   -&gt; IDE architecture entry point
+│   ├── Observability.md
+│   │   -&gt; probes, watches, execution projection, and inspection-facing posture
+│   └── Debugging.md
+│       -&gt; debugging semantics, stop points, step posture, and runtime-to-source projection
 │
 ├── Implementations/Reference/Runtime/
 │   ├── Readme.md
@@ -808,7 +865,7 @@ That second path answers a staged set of questions:
   <li><strong><code>Conformance/</code></strong> — what those slices are expected to validate, preserve, or reject,</li>
   <li><strong><code>Implementations/Reference/</code></strong> — how a non-normative prototype pipeline currently tries to process them,</li>
   <li><strong><code>Runtime/</code></strong> — how the shared runtime family is organized,</li>
-  <li><strong><code>python/</code>, <code>rust/</code>, <code>cpp/</code></strong> — how the example corridor is or should be consumed per runtime language,</li>
+  <li><strong><code>python/</code>, <code>rust/</code>, <code>cpp/</code></strong> — how the example corridor is consumed per runtime language,</li>
   <li><strong><code>LLVM/</code></strong> — how the native compiler-oriented path stays downstream from FROG rather than defining it.</li>
 </ul>
 
@@ -957,50 +1014,79 @@ lowering / backend-facing handoff
 A conforming FROG ecosystem should separate <strong>authoring</strong>, <strong>canonical source</strong>, <strong>structural validity</strong>, <strong>validated program meaning</strong>, <strong>canonical open execution-facing representation</strong>, and <strong>target-specific execution realization</strong>.
 </p>
 
+<p>
+The architectural posture below deliberately combines three requirements:
+</p>
+
+<ul>
+  <li>a clear source-to-execution derivation corridor,</li>
+  <li>a clear downstream split between runtime-family and compiler-family consumers,</li>
+  <li>and a clear observability/debugging branch that preserves probes and watches as first-class IDE-facing concepts without turning them into program semantics.</li>
+</ul>
+
 <pre>
-                              FROG IDE
-                   +-------------------------------+
-                   | Diagram + Front Panel UI      |
-                   +---------------+---------------+
-                                   |
-                                   v
-                        FROG Program Model
-                    (editable in-memory model)
-                                   |
-                     +-------------+-------------+
-                     |                           |
-                     | save / load               | execute / validate
-                     v                           v
-        🟩 OPEN SOURCE LAYER                Validation against
-        🟩 FROG Expression                 +----------------------+
-        (.frog, canonical source)         | Expression/          |
-                                          | Language/            |
-                                          | Libraries/           |
-                                          | Profiles/            |
-                                          +----------+-----------+
-                                                     |
-                                                     v
-                                  🟦 OPEN EXECUTION LAYER
-                                  🟦 FROG execution-facing representation
-                                                     |
-                                                     v
-                               Identity / Mapping preservation
-                                                     |
-                                                     v
-                              Lowering / backend-facing handoff
-                                                     |
-                      +------------------------------+------------------------------+
-                      |                              |                              |
-                      v                              v                              v
-             Python runtime family          Rust runtime family              C/C++ runtime family
-                      \                              |                              /
-                       \                             |                             /
-                        \-------------------- LLVM-oriented native path ----------/
+                                   FROG IDE
+                 +--------------------------------------------------+
+                 | Diagram + Front Panel UI + Probes + Watches      |
+                 +--------------------------+-----------------------+
+                                            |
+                                            v
+                                 FROG Program Model
+                           (editable in-memory source model)
+                                            |
+                     +----------------------+----------------------+
+                     |                                             |
+                     | save / load                                 | execute / validate
+                     v                                             v
+           OPEN SOURCE LAYER                              Validation against
+           FROG Expression                                +----------------------+
+           (.frog, canonical source)                      | Expression/          |
+                                                          | Language/            |
+                                                          | Libraries/           |
+                                                          | Profiles/            |
+                                                          +----------+-----------+
+                                                                     |
+                                                                     v
+                                                   OPEN EXECUTION LAYER
+                                                   FROG Execution IR
+                        (canonical execution-facing document, derived, inspectable,
+                           source-attributed, execution-facing, not backend-private)
+                                                                     |
+                                                                     v
+                                                     Identity / Mapping preservation
+                                                                     |
+                                                                     v
+                                                    Lowering / backend-facing handoff
+                                                                     |
+                                                                     v
+                                          Compiler(s) / Backend(s) / Runtime(s)
+                                                                     |
+                                                                     v
+                                                       Target execution instance
+                                                                     |
+                          +------------------------------------------+------------------------------------------+
+                          |                                                                                     |
+                          v                                                                                     v
+        Source-aligned execution observability                                                     Runtime activity on the active target
+        (mapped back to meaningful FROG objects)
+                          |
+                          v
+       Debugging / inspection / pause / resume / break / step
+                          |
+                +---------+----------+
+                |                    |
+                v                    v
+             Probes                Watches
 </pre>
 
 <p>
 A serious downstream compiler path MAY eventually target compiler families such as LLVM.
 However, those downstream families remain consumers of lowered FROG forms rather than the definition of FROG itself.
+</p>
+
+<p>
+Likewise, probes and watches belong to the execution-observability and IDE-facing posture layered on top of execution projection.
+They do not redefine the validated executable meaning of the program.
 </p>
 
 <hr/>
@@ -1014,8 +1100,35 @@ They are performed on a live execution derived from validated program content an
 
 <p>
 In FROG, debugging and inspection are dataflow-first rather than line-oriented.
-They operate on observable graph activity, structures, sub-FROG scopes, value flow, local memory, and explicit UI-related execution objects rather than on a fictional sequential instruction list.
+They operate on observable graph activity, structures, sub-FROG scopes, value flow, local memory, UI-related execution objects, probes, watch surfaces, and public-interface participation rather than on a fictional sequential instruction list.
 </p>
+
+<p>
+A useful long-term observability posture includes:
+</p>
+
+<ul>
+  <li><strong>probes</strong> for localized value inspection on wires, ports, nodes, structures, and other graph-facing surfaces,</li>
+  <li><strong>watches</strong> for persistent observation of selected values, references, state cells, widget objects, or public-interface objects,</li>
+  <li><strong>source projection</strong> so that runtime observations remain attributable to source-meaningful objects rather than to opaque backend-private internals,</li>
+  <li><strong>host-independent semantics</strong> so that observability remains an architectural capability of the ecosystem rather than a private trick of one runtime.</li>
+</ul>
+
+<p>
+This matters especially for graphical dataflow programming because live inspection is not an optional luxury.
+It is part of the practical readability and engineering power of the model.
+</p>
+
+<p>
+In this architecture:
+</p>
+
+<ul>
+  <li><strong>probes</strong> are best understood as local, execution-projected inspection points placed near graph-meaningful surfaces,</li>
+  <li><strong>watches</strong> are best understood as persistent observation surfaces that remain useful across longer debugging and analysis workflows,</li>
+  <li><strong>break / pause / resume / step</strong> belong to debugging control posture,</li>
+  <li><strong>runtime telemetry alone</strong> is not sufficient unless it can be mapped back to meaningful FROG objects.</li>
+</ul>
 
 <hr/>
 
@@ -1132,6 +1245,7 @@ At the modeling level, FROG also separates:
   <li>runtime families from LLVM-oriented native compilation,</li>
   <li>public interface from front panel,</li>
   <li>natural widget value flow from object-style widget interaction,</li>
+  <li>program execution meaning from probes and watches,</li>
   <li>specification corpus version from <code>.frog spec_version</code>,</li>
   <li><code>.frog spec_version</code> from <code>metadata.program_version</code>.</li>
 </ul>
@@ -1160,7 +1274,21 @@ The repository already contains substantial material across canonical source rep
 </p>
 
 <p>
-At the same time, the repository has not yet reached full multi-runtime executable symmetry or full native executable closure for serious examples.
+At the current published state, the repository has now reached a stronger closure milestone than before:
+it materially exposes a repository-visible bounded Example 05 corridor across source, front-panel package, FIR, lowering, Python runtime, Rust runtime, C/C++ runtime, and a first LLVM-oriented native path.
+</p>
+
+<p>
+At the same time, the repository has not yet reached:
+</p>
+
+<ul>
+  <li>full generalized multi-runtime symmetry across all serious examples,</li>
+  <li>full native rendered front-panel closure,</li>
+  <li>or final depth across all observability, debugging, and IDE-facing surfaces.</li>
+</ul>
+
+<p>
 The current direction is therefore twofold:
 </p>
 
@@ -1170,7 +1298,7 @@ The current direction is therefore twofold:
 </ul>
 
 <p>
-The long-term ambition is to establish a durable open graphical programming ecosystem that can scale from experimentation to deeply integrated industrial deployment while remaining inspectable across the source, semantic, execution-facing, and version-governance layers.
+The long-term ambition is to establish a durable open graphical programming ecosystem that can scale from experimentation to deeply integrated industrial deployment while remaining inspectable across the source, semantic, execution-facing, observability, and version-governance layers.
 </p>
 
 <hr/>
