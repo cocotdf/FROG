@@ -1,98 +1,155 @@
 {
-  "artifact_kind": "frog_ui_object_realization",
-  "artifact_version": "0.1-draft",
-  "example_ref": {
+  "artifact_kind": "frog_backend_contract",
+  "artifact_governance_ref": {
+    "path": "Versioning/Readme.md"
+  },
+  "backend_family": "reference_host_runtime_ui_binding",
+  "producer": {
+    "implementation": "FROG Reference ContractEmitter",
+    "implementation_kind": "non_normative_reference_emitter",
+    "version_governance_ref": "Versioning/Readme.md"
+  },
+  "compatibility": "family_specific",
+  "source_ref": {
     "example_id": "05_bounded_ui_accumulator",
-    "source_path": "Examples/05_bounded_ui_accumulator/main.frog"
+    "path": "Examples/05_bounded_ui_accumulator/main.frog",
+    "entry_unit": "main"
   },
-  "ownership_boundary": {
-    "semantic_authority": "canonical_source",
-    "object_contract_authority": "published_widget_contracts",
-    "host_realization_authority": "this_file",
-    "notes": [
-      "This file is downstream from canonical source-owned meaning.",
-      "This file must not redefine executable semantics.",
-      "This file may define concrete host widgets, styles, bindings, and realization-specific metadata."
-    ]
+  "derived_from": {
+    "fir_path": "Examples/05_bounded_ui_accumulator/main.fir.json",
+    "lowering_path": "Examples/05_bounded_ui_accumulator/main.lowering.json",
+    "ui_package_path": "Examples/05_bounded_ui_accumulator/ui/accumulator_panel.wfrog"
   },
-  "host_family": {
-    "name": "reference_host_runtime_ui_binding",
-    "ui_host_kind": "reference_windowed_host",
-    "rendering_model": "immediate_value_and_property_application"
-  },
-  "window": {
-    "id": "main_window",
-    "title": "Bounded UI Accumulator",
-    "width": 460,
-    "height": 170,
-    "resizable": false,
-    "background": "#F5F7FA"
-  },
-  "objects": [
-    {
-      "object_id": "ctrl_input",
-      "widget_id": "ctrl_input",
-      "widget_class": "frog.ui.numeric_control",
-      "host_class": "reference.numeric_spinbox",
-      "layout": {
-        "x": 20,
-        "y": 24,
-        "width": 140,
-        "height": 32
-      },
-      "visual": {
-        "caption_text": "Input value",
-        "face_color": "#D8E6FF",
-        "text_color": "#1F2937",
-        "font_family": "default_sans",
-        "font_size": 12,
-        "border_radius": 4
-      },
-      "value_model": {
-        "value_type": "u16",
-        "default_value": 3,
-        "minimum": 0,
-        "maximum": 65535,
-        "step": 1
-      },
-      "runtime_binding": {
+  "assumptions": {
+    "runtime_family": {
+      "name": "reference_host_runtime_ui_binding",
+      "host_model": "single_process_host_runtime",
+      "ui_binding": {
         "widget_value_binding": true,
-        "widget_reference_binding": true,
-        "supported_members": [
-          "face_color"
-        ]
+        "widget_reference_binding": true
       }
     },
+    "scheduling": {
+      "family_rule": "deterministic_step_execution",
+      "parallelism_claim": "none"
+    },
+    "execution_start": {
+      "input_binding_complete": true,
+      "ui_host_available": true,
+      "initial_state_materialized": true
+    },
+    "numeric_behavior": {
+      "value_domain": "u16",
+      "overflow_behavior": "family_private_reject_or_fail_if_unhandled"
+    }
+  },
+  "units": [
     {
-      "object_id": "ind_result",
-      "widget_id": "ind_result",
-      "widget_class": "frog.ui.numeric_indicator",
-      "host_class": "reference.numeric_display",
-      "layout": {
-        "x": 240,
-        "y": 24,
-        "width": 160,
-        "height": 32
-      },
-      "visual": {
-        "caption_text": "Accumulated result",
-        "face_color": "#D8E6FF",
-        "text_color": "#1F2937",
-        "font_family": "default_sans",
-        "font_size": 12,
-        "border_radius": 4
-      },
-      "value_model": {
-        "value_type": "u16",
-        "default_value": 0
-      },
-      "runtime_binding": {
-        "widget_value_binding": true,
-        "widget_reference_binding": true,
-        "supported_members": [
-          "face_color"
+      "unit_id": "main",
+      "kind": "bounded_executable_ui_unit",
+      "public_interface": {
+        "inputs": [
+          {
+            "id": "input_value",
+            "type": "u16",
+            "binding_origin": "widget.ctrl_input.value"
+          }
+        ],
+        "outputs": [
+          {
+            "id": "result",
+            "type": "u16",
+            "binding_target": "interface.result"
+          }
         ]
+      },
+      "ui_binding": {
+        "package_refs": [
+          "Examples/05_bounded_ui_accumulator/ui/accumulator_panel.wfrog"
+        ],
+        "widgets": [
+          {
+            "widget_id": "ctrl_input",
+            "widget_class": "frog.widgets.numeric_control",
+            "value_type": "u16",
+            "role": "control",
+            "binding": {
+              "mode": "widget_value",
+              "public_input_id": "input_value"
+            }
+          },
+          {
+            "widget_id": "ind_result",
+            "widget_class": "frog.widgets.numeric_indicator",
+            "value_type": "u16",
+            "role": "indicator",
+            "binding": {
+              "mode": "widget_value",
+              "public_output_id": "result"
+            }
+          }
+        ],
+        "widget_reference_support": [
+          {
+            "widget_id": "ctrl_input",
+            "supported_members": [
+              "foreground_color"
+            ]
+          },
+          {
+            "widget_id": "ind_result",
+            "supported_members": [
+              "foreground_color"
+            ]
+          }
+        ]
+      },
+      "state_model": {
+        "explicit_state": true,
+        "carrier": {
+          "primitive": "frog.core.delay",
+          "state_id": "accumulator_state",
+          "type": "u16",
+          "initial_value": 0
+        },
+        "commit_rule": "state_next becomes state_current at the loop iteration commit point"
+      },
+      "execution_model": {
+        "structure": "for_loop",
+        "iteration_count": 5,
+        "iteration_variable": "i",
+        "body_rule": {
+          "kind": "accumulate_with_explicit_state",
+          "expression": "state_next = state_current + input_value"
+        },
+        "final_result_rule": "final_state is published to public output result and to indicator ind_result"
+      },
+      "property_writes": [
+        {
+          "operation": "frog.ui.property_write",
+          "widget_id": "ctrl_input",
+          "member": "foreground_color",
+          "value": {
+            "type": "frog.color.rgba8",
+            "value": "#5B9BD5"
+          }
+        },
+        {
+          "operation": "frog.ui.property_write",
+          "widget_id": "ind_result",
+          "member": "foreground_color",
+          "value": {
+            "type": "frog.color.rgba8",
+            "value": "#70AD47"
+          }
+        }
+      ],
+      "public_output_publication": {
+        "output_id": "result",
+        "source": "final_state"
       }
     }
-  ]
+  ],
+  "unsupported": [],
+  "diagnostics": []
 }
