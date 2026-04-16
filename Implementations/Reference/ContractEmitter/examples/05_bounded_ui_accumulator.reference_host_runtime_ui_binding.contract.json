@@ -20,6 +20,24 @@
     "lowering_path": "Examples/05_bounded_ui_accumulator/main.lowering.json",
     "ui_package_path": "Examples/05_bounded_ui_accumulator/ui/accumulator_panel.wfrog"
   },
+  "ownership_boundary": {
+    "semantic_authority": "canonical_source_and_execution_facing_artifacts",
+    "semantic_authority_refs": [
+      "Examples/05_bounded_ui_accumulator/main.frog",
+      "Examples/05_bounded_ui_accumulator/main.fir.json",
+      "Examples/05_bounded_ui_accumulator/main.lowering.json"
+    ],
+    "ui_package_authority": "published_front_panel_package",
+    "ui_package_authority_refs": [
+      "Examples/05_bounded_ui_accumulator/ui/accumulator_panel.wfrog"
+    ],
+    "contract_authority": "this_file",
+    "notes": [
+      "This contract is downstream from canonical source, FIR, lowering, and the published UI package.",
+      "This contract must not redefine source semantics.",
+      "If this file diverges from the canonical execution-facing artifacts, those upstream artifacts win."
+    ]
+  },
   "assumptions": {
     "runtime_family": {
       "name": "reference_host_runtime_ui_binding",
