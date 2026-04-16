@@ -31,8 +31,9 @@
   <li><a href="#relationship-with-probes-and-watches">15. Relationship with Probes and Watches</a></li>
   <li><a href="#ide-requirements">16. IDE Requirements</a></li>
   <li><a href="#illustrative-debug-objects">17. Illustrative Debug Objects</a></li>
-  <li><a href="#out-of-scope">18. Out of Scope</a></li>
-  <li><a href="#summary">19. Summary</a></li>
+  <li><a href="#directory-navigation">18. Directory Navigation</a></li>
+  <li><a href="#out-of-scope">19. Out of Scope</a></li>
+  <li><a href="#summary">20. Summary</a></li>
 </ul>
 
 <hr/>
@@ -102,7 +103,7 @@ This document should be read together with:
 <p>
 This document is intentionally modular.
 It defines debugging control meaning only.
-It does not absorb observability, probe, watch, IR, or language ownership.
+It does not absorb observability, probe ownership, watch ownership, IR ownership, or language ownership.
 </p>
 
 <hr/>
@@ -179,8 +180,8 @@ This document depends on the following repository surfaces:
 <ul>
   <li><code>IDE/Readme.md</code> — architectural ownership of tooling behavior in the IDE layer,</li>
   <li><code>IDE/Observability.md</code> — source-aligned observability projection consumed by debugging,</li>
-  <li><code>IDE/Probes.md</code> — probe behavior used together with debugging,</li>
-  <li><code>IDE/Watch.md</code> — watch behavior used together with debugging,</li>
+  <li><code>IDE/Probes.md</code> — local inspection tools used together with debugging,</li>
+  <li><code>IDE/Watch.md</code> — persistent inspection tools used together with debugging,</li>
   <li><code>Expression/Diagram.md</code> — canonical node, edge, and executable-graph representation,</li>
   <li><code>Expression/Front panel.md</code> — front-panel source concepts used for source-aligned UI reflection,</li>
   <li><code>Expression/Widget.md</code> — source-visible widget identities,</li>
@@ -200,13 +201,16 @@ This document depends on the following repository surfaces:
                       |
                       v
           IDE/Observability.md
-                      |
-                      v
-            IDE/Debugging.md
-               /          \
-              v            v
-      IDE/Probes.md   IDE/Watch.md
+             /         |         \
+            v          v          v
+IDE/Debugging.md  IDE/Probes.md  IDE/Watch.md
 </code></pre>
+
+<p>
+This diagram is intentional.
+Debugging, probes, and watches are parallel IDE-side consumers of the observable execution world.
+Debugging does not own probes or watches.
+</p>
 
 <hr/>
 
@@ -249,7 +253,7 @@ IDE/Debugging.md
 
 <p>
 Debugging MUST be expressed in terms of source-visible concepts:
-nodes, edges, structures, regions, sub-FROG calls, local-memory observations, probes, watches, and widget-related execution objects when relevant.
+nodes, edges, structures, regions, sub-FROG calls, local-memory observations, and widget-related execution objects when relevant.
 The user MUST NOT be required to reason about runtime-private artifacts.
 </p>
 
@@ -968,7 +972,48 @@ They are <strong>not</strong> a required transport format.
 
 <hr/>
 
-<h2 id="out-of-scope">18. Out of Scope</h2>
+<h2 id="directory-navigation">18. Directory Navigation</h2>
+
+<p>
+This document is easier to use when read together with the neighboring IDE documents:
+</p>
+
+<pre><code>IDE/
+├── Readme.md
+│   -&gt; overall IDE ownership, components, and document map
+├── Observability.md
+│   -&gt; source-aligned execution visibility consumed by tools
+├── Debugging.md
+│   -&gt; this document; interactive debugger control
+├── Probes.md
+│   -&gt; local inspection tools compatible with debugging
+└── Watch.md
+    -&gt; persistent inspection tools compatible with debugging
+</code></pre>
+
+<p>
+For readers following repository ownership boundaries, the main cross-layer path is:
+</p>
+
+<pre><code>Expression/
+    -&gt; what source objects exist
+
+Language/
+    -&gt; what execution means
+
+IR/
+    -&gt; what execution-facing derivation preserves
+
+IDE/Observability.md
+    -&gt; how execution becomes visible back in source terms
+
+IDE/Debugging.md
+    -&gt; how the IDE controls that visible execution world
+</code></pre>
+
+<hr/>
+
+<h2 id="out-of-scope">19. Out of Scope</h2>
 
 <p>
 The following topics remain intentionally out of scope for this document:
@@ -993,7 +1038,7 @@ The following topics remain intentionally out of scope for this document:
 
 <hr/>
 
-<h2 id="summary">19. Summary</h2>
+<h2 id="summary">20. Summary</h2>
 
 <p>
 FROG interactive debugging defines the IDE-facing meaning of pause, resume, abort, breakpoints, and stepping for live executions of FROG programs.
