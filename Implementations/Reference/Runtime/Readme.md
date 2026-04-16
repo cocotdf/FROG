@@ -32,7 +32,6 @@
 <hr/>
 
 <h2 id="overview">1. Overview</h2>
-
 <p>
 This directory contains runtime-family consumers of backend contracts in the non-normative FROG reference implementation.
 Its role is to accept a contract for one selected backend family and realize execution privately while staying faithful to the declared contract obligations.
@@ -45,8 +44,7 @@ It does not replace or absorb the layers that produced those contracts.
 </p>
 
 <p>
-At the current published state, this parent directory is no longer just a placeholder.
-It now acts as the visible coordination point for:
+At the current published state, this parent directory acts as the visible coordination point for:
 </p>
 
 <ul>
@@ -59,14 +57,13 @@ It now acts as the visible coordination point for:
 <hr/>
 
 <h2 id="status">2. Status</h2>
-
 <p>
 This runtime family is non-normative.
-It exists to prove that the published repository corridor is no longer only prose.
+It exists to prove that the published repository corridor is not only documentation.
 </p>
 
 <p>
-At the current published structure, symmetry between runtime languages is now visible at repository level:
+At the current published structure, multi-runtime symmetry is visible at repository level:
 </p>
 
 <ul>
@@ -77,13 +74,15 @@ At the current published structure, symmetry between runtime languages is now vi
 </ul>
 
 <p>
-The maturity level is still not perfectly symmetrical across languages, but the parent runtime family is now materially repository-visible across Python, Rust, and C/C++.
+The maturity level is still not perfectly symmetrical across languages.
+Python is the most operational host-facing path.
+Rust is the strongest secondary parity-verification path.
+C/C++ is a real narrow direct-runner posture for Example 05.
 </p>
 
 <hr/>
 
 <h2 id="reference-runtime-family">3. Reference Runtime Family</h2>
-
 <p>
 The first published runtime family is:
 </p>
@@ -108,7 +107,6 @@ This family should be understood as a backend-family consumer posture, not as a 
 <hr/>
 
 <h2 id="current-published-directory-shape">4. Current Published Directory Shape</h2>
-
 <pre><code>Implementations/Reference/Runtime/
 ├── Readme.md
 ├── accept_contract_and_execute.md
@@ -153,16 +151,15 @@ This family should be understood as a backend-family consumer posture, not as a 
 </code></pre>
 
 <p>
-This matters because the runtime-family posture is now materially visible in the published tree rather than only described abstractly.
+This matters because the runtime-family posture is materially visible in the published tree rather than only described abstractly.
 </p>
 
 <hr/>
 
 <h2 id="role-of-each-file-and-subdirectory">5. Role of Each File and Subdirectory</h2>
-
 <ul>
   <li><code>Runtime/Readme.md</code><br/>
-      Explains the runtime-family boundary, directory shape, and multi-runtime direction.</li>
+      Explains the runtime-family boundary, directory shape, and multi-runtime posture.</li>
 
   <li><code>accept_contract_and_execute.md</code><br/>
       Non-normative explanation of how accepted contracts are consumed and executed.</li>
@@ -187,7 +184,7 @@ This matters because the runtime-family posture is now materially visible in the
 </ul>
 
 <p>
-The important parent-level point is that this directory now holds both:
+The important parent-level point is that this directory holds both:
 </p>
 
 <ul>
@@ -198,7 +195,6 @@ The important parent-level point is that this directory now holds both:
 <hr/>
 
 <h2 id="published-reference-contract-artifact">6. Published Reference Contract Artifact</h2>
-
 <p>
 The first named executable slice has a repository-visible backend contract artifact:
 </p>
@@ -208,7 +204,7 @@ The first named executable slice has a repository-visible backend contract artif
 </code></pre>
 
 <p>
-That artifact is the published handoff surface this runtime family consumes for the bounded applicative vertical slice:
+That artifact is the published handoff surface this runtime family consumes for the bounded vertical slice:
 </p>
 
 <pre><code>Examples/05_bounded_ui_accumulator/</code></pre>
@@ -228,10 +224,9 @@ The runtime-family posture should therefore be read as:
 <hr/>
 
 <h2 id="first-execution-posture">7. First Execution Posture</h2>
-
 <p>
 The first execution posture is intentionally bounded.
-It is designed for the first named applicative vertical slice, not for the full future FROG runtime surface.
+It is designed for the first named vertical slice, not for the full future FROG runtime surface.
 </p>
 
 <p>
@@ -244,7 +239,7 @@ The current bounded corridor supports:
   <li>one explicit state cell initialized to zero,</li>
   <li>one final public result publication,</li>
   <li>one indicator publication path,</li>
-  <li>and bounded object-style UI property writes for <code>foreground_color</code>.</li>
+  <li>bounded object-style UI property writes for <code>foreground_color</code>.</li>
 </ul>
 
 <p>
@@ -254,7 +249,6 @@ For Example 05, the strongest rendered-host proof path currently exists on the P
 <hr/>
 
 <h2 id="published-demonstration-entry-points">8. Published Demonstration Entry Points</h2>
-
 <p>
 This directory already contains repository-visible entry points that exercise the published contract artifact directly rather than through a private simplified schema.
 </p>
@@ -283,24 +277,23 @@ The intended long-term symmetry is:
 </p>
 
 <pre><code>Python
-   -> direct example runner
-   -> rendered UI runner
+   -&gt; direct example runner
+   -&gt; rendered UI runner
 
 Rust
-   -> direct example runner and tests
+   -&gt; direct runner posture and tests
 
 C/C++
-   -> direct example runner and tests where useful
+   -&gt; direct runner posture and tests where useful
 </code></pre>
 
 <p>
-At the current published state, Python remains the most operational host-facing path, Rust is the strongest secondary proof path, and C/C++ is now a real narrow operational proof path for Example 05 rather than a merely structural placeholder.
+At the current published state, Python remains the most operational host-facing path, Rust is the strongest secondary parity-verification path, and C/C++ is a real narrow operational proof path for Example 05 rather than only a structural placeholder.
 </p>
 
 <hr/>
 
 <h2 id="runtime-closure-status">9. Runtime Closure Status</h2>
-
 <table>
   <thead>
     <tr>
@@ -327,7 +320,7 @@ At the current published state, Python remains the most operational host-facing 
     </tr>
     <tr>
       <td>C/C++ consumer</td>
-      <td>Closed for the narrow Example 05 runner posture</td>
+      <td>Narrow direct runner posture</td>
       <td>Build entry, headers, and source entry point are published and support the direct Example 05 run corridor.</td>
     </tr>
     <tr>
@@ -346,7 +339,6 @@ At the current published state, Python remains the most operational host-facing 
 <hr/>
 
 <h2 id="multi-runtime-posture">10. Multi-Runtime Posture</h2>
-
 <p>
 This directory defines a runtime-family boundary, not a single mandatory runtime language.
 </p>
@@ -381,7 +373,6 @@ The parent directory exists precisely to make that parallel-consumer posture exp
 <hr/>
 
 <h2 id="what-this-directory-owns">11. What This Directory Owns</h2>
-
 <ul>
   <li>private execution realization of accepted backend contracts,</li>
   <li>state management for the reference family,</li>
@@ -395,7 +386,6 @@ The parent directory exists precisely to make that parallel-consumer posture exp
 <hr/>
 
 <h2 id="what-this-directory-does-not-own">12. What This Directory Does Not Own</h2>
-
 <ul>
   <li>the language,</li>
   <li>the canonical <code>.frog</code> source model,</li>
@@ -415,7 +405,6 @@ reference runtime != universal FROG runtime
 <hr/>
 
 <h2 id="next-closure-targets">13. Next Closure Targets</h2>
-
 <ol>
   <li>publish one clearer direct Rust runner posture in addition to the tests,</li>
   <li>tighten the relation between the Python rendered path and the contract-driven path,</li>
@@ -427,14 +416,13 @@ reference runtime != universal FROG runtime
 <hr/>
 
 <h2 id="summary">14. Summary</h2>
-
 <p>
 The reference runtime is the first private consumer-side realization of the reference backend family.
 It proves executability, but it does not become the language definition.
 </p>
 
 <p>
-The important correction at the current published state is that the multi-runtime posture is no longer just an aspiration.
+The important correction at the current published state is that the multi-runtime posture is no longer only an aspiration.
 It is already visible in the repository tree through Python, Rust, and C/C++ consumer directories with distinct but real closure levels.
 </p>
 
@@ -444,6 +432,6 @@ The current closure direction is therefore:
 
 <ul>
   <li>keep the same canonical example corridor consumable through several runtime languages,</li>
-  <li>raise Rust toward a stronger direct runner posture while keeping C/C++ aligned,</li>
+  <li>raise Rust toward a stronger direct-runner posture while keeping C/C++ aligned,</li>
   <li>preserve the architectural rule that runtime families remain downstream from source, meaning, FIR, lowering, and backend handoff.</li>
 </ul>
