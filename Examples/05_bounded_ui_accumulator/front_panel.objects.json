@@ -6,23 +6,47 @@
   "example_ref": {
     "example_id": "05_bounded_ui_accumulator",
     "source_path": "Examples/05_bounded_ui_accumulator/main.frog",
+    "fir_path": "Examples/05_bounded_ui_accumulator/main.fir.json",
+    "lowering_path": "Examples/05_bounded_ui_accumulator/main.lowering.json",
     "ui_package_path": "Examples/05_bounded_ui_accumulator/ui/accumulator_panel.wfrog"
   },
+  "realization_scope": {
+    "kind": "derived_host_projection",
+    "host_family": "reference_host_runtime_ui_binding",
+    "ui_host_kind": "reference_windowed_host",
+    "semantic_authority_owned_here": false,
+    "widget_contract_authority_owned_here": false,
+    "execution_authority_owned_here": false,
+    "purpose": "Expose one concrete host projection for the published Example 05 front-panel slice without redefining source, FIR, lowering, or widget-contract meaning."
+  },
   "ownership_boundary": {
-    "semantic_authority": "canonical_source_and_published_widget_contracts",
-    "object_contract_authority": "published_widget_contracts",
+    "semantic_authority": "canonical_source_and_execution_facing_artifacts",
+    "semantic_authority_refs": [
+      "Examples/05_bounded_ui_accumulator/main.frog",
+      "Examples/05_bounded_ui_accumulator/main.fir.json",
+      "Examples/05_bounded_ui_accumulator/main.lowering.json"
+    ],
+    "widget_contract_authority": "published_widget_contracts_and_ui_package",
+    "widget_contract_authority_refs": [
+      "Libraries/Widgets/Numeric.md",
+      "Examples/05_bounded_ui_accumulator/ui/accumulator_panel.wfrog"
+    ],
     "host_realization_authority": "this_file",
     "notes": [
-      "This file is downstream from canonical source-owned meaning.",
-      "This file must not redefine executable semantics.",
+      "This file is downstream from canonical source-owned and execution-facing meaning.",
+      "This file must not redefine executable semantics, FIR structure, or lowering obligations.",
       "This file may define concrete host widgets, layout, styling, and host-private realization metadata.",
-      "Widget class names in this file must stay aligned with published widget contracts."
+      "Widget class names in this file must remain aligned with the published widget surface used by the example corridor.",
+      "If this file diverges from the canonical source, FIR, lowering, or published UI package, those upstream artifacts win."
     ]
   },
-  "host_family": {
-    "name": "reference_host_runtime_ui_binding",
-    "ui_host_kind": "reference_windowed_host",
-    "rendering_model": "immediate_value_and_property_application"
+  "host_runtime_model": {
+    "rendering_model": "immediate_value_and_property_application",
+    "value_binding_model": "widget_value",
+    "reference_binding_model": "widget_reference",
+    "property_write_surface": [
+      "foreground_color"
+    ]
   },
   "window": {
     "id": "main_window",
@@ -44,13 +68,12 @@
         "width": 140,
         "height": 32
       },
-      "semantic_surface": {
+      "canonical_alignment": {
         "value_type": "u16",
-        "value_binding_mode": "widget_value",
-        "reference_binding": true,
-        "label.text": "Input",
-        "interaction.visible": true,
-        "default_value": 3
+        "value_mode": "widget_value",
+        "reference_mode": true,
+        "label": "Input",
+        "package_asset_ref": "Examples/05_bounded_ui_accumulator/ui/assets/numeric_control.svg"
       },
       "host_realization": {
         "host_class": "reference.numeric_spinbox",
@@ -62,10 +85,11 @@
           "font_size": 12,
           "border_radius": 4
         },
-        "constraints": {
+        "value_constraints": {
           "minimum": 0,
           "maximum": 65535,
-          "step": 1
+          "step": 1,
+          "default_value": 3
         }
       },
       "runtime_binding": {
@@ -73,7 +97,8 @@
         "widget_reference_binding": true,
         "supported_members": [
           "foreground_color"
-        ]
+        ],
+        "public_input_id": "input_value"
       }
     },
     {
@@ -87,13 +112,12 @@
         "width": 160,
         "height": 32
       },
-      "semantic_surface": {
+      "canonical_alignment": {
         "value_type": "u16",
-        "value_binding_mode": "widget_value",
-        "reference_binding": true,
-        "label.text": "Accumulated result",
-        "interaction.visible": true,
-        "default_value": 0
+        "value_mode": "widget_value",
+        "reference_mode": true,
+        "label": "Accumulated result",
+        "package_asset_ref": "Examples/05_bounded_ui_accumulator/ui/assets/numeric_indicator.svg"
       },
       "host_realization": {
         "host_class": "reference.numeric_display",
@@ -104,6 +128,9 @@
           "font_family": "default_sans",
           "font_size": 12,
           "border_radius": 4
+        },
+        "value_constraints": {
+          "default_value": 0
         }
       },
       "runtime_binding": {
@@ -111,7 +138,8 @@
         "widget_reference_binding": true,
         "supported_members": [
           "foreground_color"
-        ]
+        ],
+        "public_output_id": "result"
       }
     }
   ]
