@@ -898,8 +898,9 @@ They allow an IDE to observe values or source-level execution state associated w
 </p>
 
 <p>
-Probes belong to the inspection and debugging layer.
+Probes belong to the inspection layer.
 They do not alter program semantics, and they are not part of the canonical <code>.frog</code> source representation.
+They remain compatible with debugging, but they are not owned by debugger control.
 </p>
 
 <pre><code>Probe mental model
@@ -1089,7 +1090,7 @@ In that architecture:
   <li>storage operates through the canonical FROG Expression,</li>
   <li>execution-facing systems remain separate from IDE ownership,</li>
   <li>runtime activity becomes visible through execution observability,</li>
-  <li>debugging, probes, and watches consume that observable view,</li>
+  <li>debugging, probes, and watches consume that observable view as parallel IDE-side tools,</li>
   <li>snippets provide portable, image-backed authoring-fragment reuse workflows,</li>
   <li>Express authoring provides guided insertion and reconfiguration without creating a separate language layer,</li>
   <li>the Program Model remains distinct from canonical Execution IR and from runtime-private realization.</li>
