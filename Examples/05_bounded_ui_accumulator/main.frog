@@ -3,7 +3,7 @@
   "metadata": {
     "name": "05_bounded_ui_accumulator",
     "summary": "Bounded front-panel accumulation example with explicit state, five-loop execution, minimal u16 widgets, object-style UI property writes, and final indicator/public output publication.",
-    "description": "Reads one u16 numeric control value from the front panel, executes a bounded loop of exactly five iterations, carries explicit state through frog.core.delay initialized to 0, and writes the final accumulated value both to one public output and to one u16 numeric indicator. The canonical source remains the owner of program meaning and widget participation, while the peripheral .wfrog package owns widget-oriented panel realization, initial widget realization state, and visual resource references.",
+    "description": "Reads one u16 numeric control value from the front panel, exposes that value through the example public input surface, executes a bounded loop of exactly five iterations, carries explicit state through frog.core.delay initialized to 0, and writes the final accumulated value both to one public output and to one u16 numeric indicator. The canonical source remains the owner of program meaning and widget participation, while the peripheral .wfrog package owns widget-oriented panel realization, initial widget realization state, and visual resource references.",
     "author": "Graiphic",
     "program_version": "0.1.0",
     "tags": [
@@ -26,7 +26,13 @@
     "license": "Apache-2.0"
   },
   "interface": {
-    "inputs": [],
+    "inputs": [
+      {
+        "id": "input_value",
+        "type": "u16",
+        "binding_origin": "widget.ctrl_input.value"
+      }
+    ],
     "outputs": [
       {
         "id": "result",
