@@ -105,8 +105,9 @@ validated canonical content is handed to execution-facing systems
         v
 runtime activity comes back through source-aligned observability
         |
-        v
-debugging / probes / watch / visual inspection in the IDE
+        +-&gt; debugging
+        +-&gt; probes
+        \-&gt; watches
 </code></pre>
 
 <hr/>
@@ -153,10 +154,8 @@ The current IDE-facing repository family is organized as follows:
 │   -&gt; local inspection probes for values and selected execution state
 ├── Watch.md
 │   -&gt; persistent centralized watch-based inspection model
-├── Snippet.md
-│   -&gt; image-backed snippet capture, transport, paste, and reuse workflows
-└── FROG Snippet.md
-    -&gt; legacy redirect document pointing to Snippet.md
+└── Snippet.md
+    -&gt; image-backed snippet capture, transport, paste, and reuse workflows
 </code></pre>
 
 <p>
@@ -397,19 +396,15 @@ The IDE architecture combines:
                                                                      v
                                                        Target execution instance
                                                                      |
-                          +------------------------------------------+------------------------------------------+
-                          |                                                                                     |
-                          v                                                                                     v
-        Source-aligned execution observability                                                     Runtime activity on the active target
-        (mapped back to meaningful FROG objects)
-                          |
-                          v
-       Debugging / inspection / pause / resume / break / step
-                          |
-                +---------+----------+
-                |                    |
-                v                    v
-             Probes                Watches
+                                                                     v
+                                           Source-aligned execution observability
+                                          (mapped back to meaningful FROG objects)
+                                               /                |                 \
+                                              /                 |                  \
+                                             v                  v                   v
+                                       Debugging            Probes               Watches
+                                  pause / resume /      local source-       persistent centralized
+                                   break / step         attached view          inspection view
 </code></pre>
 
 <p>
@@ -435,6 +430,10 @@ execution-facing systems
             |
             v
 observability back to the IDE
+            |
+            +-&gt; debugging
+            +-&gt; probes
+            \-&gt; watches
 </code></pre>
 
 <hr/>
@@ -462,10 +461,8 @@ The IDE layer is currently organized as follows:
 │   -&gt; live local inspection probes for values and selected execution state
 ├── Watch.md
 │   -&gt; persistent centralized watch-based inspection model
-├── Snippet.md
-│   -&gt; image-backed snippet capture, transport, paste, and reuse workflows
-└── FROG Snippet.md
-    -&gt; legacy redirect document pointing to Snippet.md
+└── Snippet.md
+    -&gt; image-backed snippet capture, transport, paste, and reuse workflows
 </code></pre>
 
 <p>
@@ -849,7 +846,7 @@ observable source-aligned events
       |
       +-&gt; debugging
       +-&gt; probes
-      +-&gt; watch
+      +-&gt; watches
       \-&gt; visual execution overlays
 </code></pre>
 
