@@ -150,9 +150,9 @@ This document depends on the following repository surfaces:
                       |
                       v
           IDE/Observability.md
-             /       |        \
-            v        v         v
-   IDE/Debugging.md  Probes   Watches
+             /         |         \
+            v          v          v
+   IDE/Debugging.md  IDE/Probes.md  IDE/Watch.md
 </code></pre>
 
 <hr/>
@@ -242,9 +242,22 @@ target execution instance
 source-aligned observability projection
         |
         +-- execution highlighting
+        +-- debugging
         +-- probes
-        +-- watches
-        \-- debugging
+        \-- watches
+</code></pre>
+
+<p>
+A more explicit architectural reading is:
+</p>
+
+<pre><code>target execution instance
+        |
+        v
+source-aligned observability projection
+   /              |               |                 \
+  v               v               v                  v
+debugging   local probes   watch entries   execution overlays
 </code></pre>
 
 <p>
@@ -588,6 +601,11 @@ Accordingly:
 debugging
     -&gt; controls execution using that visible source-aligned world
 </code></pre>
+
+<p>
+The same architectural rule must remain visible at repository level:
+debugging, probes, and watches are parallel consumers of observability, not subfeatures hidden inside one another.
+</p>
 
 <hr/>
 
