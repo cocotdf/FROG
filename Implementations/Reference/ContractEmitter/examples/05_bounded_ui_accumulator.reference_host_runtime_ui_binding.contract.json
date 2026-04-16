@@ -1,18 +1,24 @@
 {
   "artifact_kind": "frog_backend_contract",
-  "artifact_version": "0.1",
+  "artifact_governance_ref": {
+    "path": "Versioning/Readme.md"
+  },
   "backend_family": "reference_host_runtime_ui_binding",
   "producer": {
     "implementation": "FROG Reference ContractEmitter",
     "implementation_kind": "non_normative_reference_emitter",
-    "version": "0.1-dev"
+    "version_governance_ref": "Versioning/Readme.md"
   },
   "compatibility": "family_specific",
   "source_ref": {
     "example_id": "05_bounded_ui_accumulator",
     "path": "Examples/05_bounded_ui_accumulator/main.frog",
-    "entry_unit": "main",
-    "spec_version": "0.1"
+    "entry_unit": "main"
+  },
+  "derived_from": {
+    "fir_path": "Examples/05_bounded_ui_accumulator/main.fir.json",
+    "lowering_path": "Examples/05_bounded_ui_accumulator/main.lowering.json",
+    "ui_package_path": "Examples/05_bounded_ui_accumulator/ui/accumulator_panel.wfrog"
   },
   "assumptions": {
     "runtime_family": {
@@ -45,21 +51,26 @@
         "inputs": [
           {
             "id": "input_value",
-            "type": "u16"
+            "type": "u16",
+            "binding_origin": "widget.ctrl_input.value"
           }
         ],
         "outputs": [
           {
             "id": "result",
-            "type": "u16"
+            "type": "u16",
+            "binding_target": "interface.result"
           }
         ]
       },
       "ui_binding": {
+        "package_refs": [
+          "Examples/05_bounded_ui_accumulator/ui/accumulator_panel.wfrog"
+        ],
         "widgets": [
           {
             "widget_id": "ctrl_input",
-            "widget_class": "frog.ui.numeric_control",
+            "widget_class": "frog.widgets.numeric_control",
             "value_type": "u16",
             "role": "control",
             "binding": {
@@ -69,7 +80,7 @@
           },
           {
             "widget_id": "ind_result",
-            "widget_class": "frog.ui.numeric_indicator",
+            "widget_class": "frog.widgets.numeric_indicator",
             "value_type": "u16",
             "role": "indicator",
             "binding": {
@@ -82,13 +93,13 @@
           {
             "widget_id": "ctrl_input",
             "supported_members": [
-              "face_color"
+              "foreground_color"
             ]
           },
           {
             "widget_id": "ind_result",
             "supported_members": [
-              "face_color"
+              "foreground_color"
             ]
           }
         ]
@@ -117,19 +128,19 @@
         {
           "operation": "frog.ui.property_write",
           "widget_id": "ctrl_input",
-          "member": "face_color",
+          "member": "foreground_color",
           "value": {
-            "type": "frog.ui.color_literal",
-            "value": "#D8E6FF"
+            "type": "frog.color.rgba8",
+            "value": "#5B9BD5"
           }
         },
         {
           "operation": "frog.ui.property_write",
           "widget_id": "ind_result",
-          "member": "face_color",
+          "member": "foreground_color",
           "value": {
-            "type": "frog.ui.color_literal",
-            "value": "#D8E6FF"
+            "type": "frog.color.rgba8",
+            "value": "#70AD47"
           }
         }
       ],
