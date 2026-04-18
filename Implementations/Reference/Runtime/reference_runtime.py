@@ -1,15 +1,21 @@
 from __future__ import annotations
 
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List
 
 from Implementations.Reference.common import (
     DEFAULT_BACKEND_FAMILY,
     BackendContract,
-    DEMO_ARTIFACT_VERSION,
     FrogPipelineError,
     RuntimeResult,
     ensure,
 )
+
+SUPPORTED_WIDGETS = {
+    "ctrl_input": "frog.widgets.numeric_control",
+    "ind_result": "frog.widgets.numeric_indicator",
+}
+SUPPORTED_WIDGET_MEMBER = "foreground_color"
+SUPPORTED_COLOR_TYPE = "frog.color.rgba8"
 
 
 def _ensure_dict(value: Any, *, stage: str, error_code: str, message: str) -> Dict[str, Any]:
@@ -41,19 +47,25 @@ def _coerce_u16(value: Any, *, stage: str, error_code: str, label: str) -> int:
     return numeric
 
 
-def _extract_face_color(write: Dict[str, Any], *, stage: str) -> str:
+def _extract_foreground_color(write: Dict[str, Any], *, stage: str) -> str:
     value = _ensure_dict(
         write.get("value"),
         stage=stage,
         error_code="invalid_property_write_value",
         message="Property write value must be a JSON object.",
     )
+    ensure(
+        value.get("type") == SUPPORTED_COLOR_TYPE,
+        stage=stage,
+        error_code="unsupported_property_write_value_type",
+        message=f"{SUPPORTED_WIDGET_MEMBER} property writes must carry {SUPPORTED_COLOR_TYPE} values.",
+    )
     literal = value.get("value")
     ensure(
         isinstance(literal, str) and literal != "",
         stage=stage,
         error_code="invalid_property_write_literal",
-        message="face_color property writes must carry a non-empty string literal value.",
+        message=f"{SUPPORTED_WIDGET_MEMBER} property writes must carry a non-empty string literal value.",
     )
     return literal
 
@@ -229,13 +241,78 @@ class ReferenceHostRuntime:
             message="Demo runtime expects exactly two widgets.",
         )
 
-        widget_ids = {widget.get("widget_id") for widget in widgets}
+        widget_map: Dict[str, Dict[str, Any]] = {}
+        for raw_widget in widgets:
+            widget = _ensure_dict(
+                raw_widget,
+                stage="runtime-accept",
+                error_code="invalid_widget_binding",
+                message="Widget entries must be JSON objects.",
+            )
+            widget_id = widget.get("widget_id")
+            ensure(
+                widget_id in SUPPORTED_WIDGETS,
+                stage="runtime-accept",
+                error_code="unsupported_widget_ids",
+                message="Demo runtime expects ctrl_input and ind_result widget ids.",
+            )
+            ensure(
+                widget.get("widget_class") == SUPPORTED_WIDGETS[widget_id],
+                stage="runtime-accept",
+                error_code="unsupported_widget_class",
+                message=f"Widget {widget_id} must use class {SUPPORTED_WIDGETS[widget_id]}.",
+            )
+            widget_map[widget_id] = widget
+
         ensure(
-            widget_ids == {"ctrl_input", "ind_result"},
+            set(widget_map) == set(SUPPORTED_WIDGETS),
             stage="runtime-accept",
-            error_code="unsupported_widget_ids",
-            message="Demo runtime expects ctrl_input and ind_result widget ids.",
+            error_code="missing_required_widgets",
+            message="Demo runtime expects ctrl_input and ind_result widget bindings.",
         )
+        ensure(
+            widget_map["ctrl_input"].get("role") == "control",
+            stage="runtime-accept",
+            error_code="unsupported_widget_role",
+            message="ctrl_input must have role control.",
+        )
+        ensure(
+            widget_map["ind_result"].get("role") == "indicator",
+            stage="runtime-accept",
+            error_code="unsupported_widget_role",
+            message="ind_result must have role indicator.",
+        )
+
+        widget_reference_support = _ensure_list(
+            ui_binding.get("widget_reference_support"),
+            stage="runtime-accept",
+            error_code="missing_widget_reference_support",
+            message="Runtime expected widget_reference_support declarations.",
+        )
+        supported_members: Dict[str, List[str]] = {}
+        for raw_support in widget_reference_support:
+            support = _ensure_dict(
+                raw_support,
+                stage="runtime-accept",
+                error_code="invalid_widget_reference_support",
+                message="widget_reference_support entries must be JSON objects.",
+            )
+            widget_id = support.get("widget_id")
+            members = _ensure_list(
+                support.get("supported_members"),
+                stage="runtime-accept",
+                error_code="invalid_supported_members",
+                message="supported_members must be a JSON array.",
+            )
+            supported_members[str(widget_id)] = [str(member) for member in members]
+
+        for widget_id in SUPPORTED_WIDGETS:
+            ensure(
+                SUPPORTED_WIDGET_MEMBER in supported_members.get(widget_id, []),
+                stage="runtime-accept",
+                error_code="missing_supported_member",
+                message=f"{widget_id} must support {SUPPORTED_WIDGET_MEMBER}.",
+            )
 
         property_writes = _ensure_list(
             unit.get("property_writes"),
@@ -250,6 +327,7 @@ class ReferenceHostRuntime:
             message="Demo runtime expects exactly two property_write operations.",
         )
 
+        seen_targets: set[str] = set()
         for write in property_writes:
             write_dict = _ensure_dict(
                 write,
@@ -264,18 +342,27 @@ class ReferenceHostRuntime:
                 message="Demo runtime only supports frog.ui.property_write operations.",
             )
             ensure(
-                write_dict.get("member") == "face_color",
+                write_dict.get("member") == SUPPORTED_WIDGET_MEMBER,
                 stage="runtime-accept",
                 error_code="unsupported_property_write_member",
-                message="Demo runtime only supports face_color property writes.",
+                message=f"Demo runtime only supports {SUPPORTED_WIDGET_MEMBER} property writes.",
             )
+            widget_id = write_dict.get("widget_id")
             ensure(
-                write_dict.get("widget_id") in {"ctrl_input", "ind_result"},
+                widget_id in SUPPORTED_WIDGETS,
                 stage="runtime-accept",
                 error_code="unsupported_property_write_widget",
                 message="Property writes must target ctrl_input or ind_result.",
             )
-            _extract_face_color(write_dict, stage="runtime-accept")
+            seen_targets.add(str(widget_id))
+            _extract_foreground_color(write_dict, stage="runtime-accept")
+
+        ensure(
+            seen_targets == set(SUPPORTED_WIDGETS),
+            stage="runtime-accept",
+            error_code="missing_property_write_targets",
+            message="Property writes must cover ctrl_input and ind_result.",
+        )
 
         return {
             "status": "ok",
@@ -313,16 +400,16 @@ class ReferenceHostRuntime:
             label="Control value",
         )
 
-        widget_face_colors: Dict[str, str] = {}
+        widget_foreground_colors: Dict[str, str] = {}
         applied_widget_references: List[Dict[str, Any]] = []
         for write in unit["property_writes"]:
-            widget_id = write["widget_id"]
-            color = _extract_face_color(write, stage="run")
-            widget_face_colors[widget_id] = color
+            widget_id = str(write["widget_id"])
+            color = _extract_foreground_color(write, stage="run")
+            widget_foreground_colors[widget_id] = color
             applied_widget_references.append(
                 {
                     "widget_id": widget_id,
-                    "member": "face_color",
+                    "member": SUPPORTED_WIDGET_MEMBER,
                     "value": write["value"],
                 }
             )
@@ -340,14 +427,14 @@ class ReferenceHostRuntime:
 
         final_value = state_current
 
-        artifact = {
+        runtime_artifact = {
             "artifact_kind": "frog_runtime_result",
-            "artifact_version": DEMO_ARTIFACT_VERSION,
+            "artifact_governance_ref": {"path": "Versioning/Readme.md"},
             "status": "ok",
             "contract_ref": {
                 "unit_ids": [unit["unit_id"]],
-                "backend_family": contract.artifact["backend_family"],
-                "source_ref": contract.artifact.get("source_ref"),
+                "backend_family": artifact["backend_family"],
+                "source_ref": artifact.get("source_ref"),
             },
             "execution_summary": {
                 "mode": "deterministic_step_execution",
@@ -372,14 +459,14 @@ class ReferenceHostRuntime:
                         "widget_id": "ctrl_input",
                         "runtime": {
                             "value": control_value,
-                            "face_color": widget_face_colors.get("ctrl_input"),
+                            "foreground_color": widget_foreground_colors.get("ctrl_input"),
                         },
                     },
                     {
                         "widget_id": "ind_result",
                         "runtime": {
                             "value": final_value,
-                            "face_color": widget_face_colors.get("ind_result"),
+                            "foreground_color": widget_foreground_colors.get("ind_result"),
                         },
                     },
                 ],
@@ -387,7 +474,7 @@ class ReferenceHostRuntime:
             },
             "diagnostics": [],
         }
-        return RuntimeResult(artifact=artifact)
+        return RuntimeResult(artifact=runtime_artifact)
 
 
 def create_runtime_for_family(backend_family: str = DEFAULT_BACKEND_FAMILY) -> ReferenceHostRuntime:

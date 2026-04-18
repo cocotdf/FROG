@@ -2,16 +2,28 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct ArtifactReference {
+    pub path: String,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct BackendContract {
     pub artifact_kind: String,
-    pub artifact_version: String,
+    #[serde(default)]
+    pub artifact_governance_ref: Option<ArtifactReference>,
     pub backend_family: String,
     pub producer: ProducerInfo,
     pub compatibility: String,
     pub source_ref: SourceRef,
+    #[serde(default)]
+    pub derived_from: Option<DerivedFrom>,
+    #[serde(default)]
+    pub ownership_boundary: Option<Value>,
     pub assumptions: ContractAssumptions,
     pub units: Vec<ContractUnit>,
+    #[serde(default)]
     pub unsupported: Vec<Value>,
+    #[serde(default)]
     pub diagnostics: Vec<RuntimeDiagnostic>,
 }
 
@@ -19,7 +31,10 @@ pub struct BackendContract {
 pub struct ProducerInfo {
     pub implementation: String,
     pub implementation_kind: String,
-    pub version: String,
+    #[serde(default)]
+    pub version_governance_ref: Option<String>,
+    #[serde(default)]
+    pub version: Option<String>,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -27,7 +42,18 @@ pub struct SourceRef {
     pub example_id: String,
     pub path: String,
     pub entry_unit: String,
-    pub spec_version: String,
+    #[serde(default)]
+    pub spec_version: Option<String>,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct DerivedFrom {
+    #[serde(default)]
+    pub fir_path: Option<String>,
+    #[serde(default)]
+    pub lowering_path: Option<String>,
+    #[serde(default)]
+    pub ui_package_path: Option<String>,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -93,10 +119,16 @@ pub struct InterfacePort {
     pub id: String,
     #[serde(rename = "type")]
     pub port_type: String,
+    #[serde(default)]
+    pub binding_origin: Option<String>,
+    #[serde(default)]
+    pub binding_target: Option<String>,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct UnitUiBinding {
+    #[serde(default)]
+    pub package_refs: Vec<String>,
     pub widgets: Vec<WidgetBinding>,
     pub widget_reference_support: Vec<WidgetReferenceSupport>,
 }
@@ -113,7 +145,9 @@ pub struct WidgetBinding {
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct WidgetBindingMode {
     pub mode: String,
+    #[serde(default)]
     pub public_input_id: Option<String>,
+    #[serde(default)]
     pub public_output_id: Option<String>,
 }
 
@@ -143,7 +177,8 @@ pub struct StateCarrier {
 pub struct ExecutionModel {
     pub structure: String,
     pub iteration_count: u32,
-    pub iteration_variable: String,
+    #[serde(default)]
+    pub iteration_variable: Option<String>,
     pub body_rule: BodyRule,
     pub final_result_rule: String,
 }
@@ -177,15 +212,17 @@ pub struct PublicOutputPublication {
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct RuntimeDiagnostic {
-    pub severity: String,
-    pub kind: String,
+    #[serde(default)]
+    pub severity: Option<String>,
+    #[serde(default)]
+    pub kind: Option<String>,
     pub message: String,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct ExecutionResult {
     pub artifact_kind: String,
-    pub artifact_version: String,
+    pub artifact_governance_ref: ArtifactReference,
     pub status: String,
     pub contract_ref: ContractRef,
     pub execution_summary: ExecutionSummary,
@@ -232,7 +269,8 @@ pub struct RuntimeWidget {
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct RuntimeWidgetState {
     pub value: Value,
-    pub face_color: Option<String>,
+    #[serde(default)]
+    pub foreground_color: Option<String>,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]

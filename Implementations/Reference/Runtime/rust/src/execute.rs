@@ -1,11 +1,15 @@
 use serde_json::{json, Map, Value};
 
 use crate::contract::{
-    AppliedWidgetReference, BackendContract, ContractRef, ExecutionOutputs, ExecutionResult,
-    ExecutionSummary, RuntimeDiagnostic, RuntimeWidget, RuntimeWidgetState, UiRuntimeState,
+    AppliedWidgetReference, ArtifactReference, BackendContract, ContractRef, ExecutionOutputs,
+    ExecutionResult, ExecutionSummary, RuntimeDiagnostic, RuntimeWidget, RuntimeWidgetState,
+    UiRuntimeState,
 };
 use crate::diagnostics::RuntimeError;
 use crate::runtime::RuntimeContext;
+
+const SUPPORTED_WIDGET_MEMBER: &str = "foreground_color";
+const SUPPORTED_COLOR_TYPE: &str = "frog.color.rgba8";
 
 pub fn execute_contract(
     contract: &BackendContract,
@@ -80,6 +84,18 @@ pub fn execute_contract(
         )));
     }
 
+    if unit.public_interface.inputs.len() != 1 || unit.public_interface.inputs[0].id != "input_value" {
+        return Err(RuntimeError::Execution(
+            "runtime expects one public input named input_value".into(),
+        ));
+    }
+
+    if unit.public_interface.outputs.len() != 1 || unit.public_interface.outputs[0].id != "result" {
+        return Err(RuntimeError::Execution(
+            "runtime expects one public output named result".into(),
+        ));
+    }
+
     let initial_state = unit.state_model.carrier.initial_value;
     let control_value = control_value_override.unwrap_or(0);
 
@@ -97,6 +113,17 @@ pub fn execute_contract(
         .find(|w| w.widget_id == "ind_result")
         .ok_or(RuntimeError::MissingField("ind_result widget"))?;
 
+    if control_widget.widget_class != "frog.widgets.numeric_control" {
+        return Err(RuntimeError::Execution(
+            "ctrl_input must use frog.widgets.numeric_control".into(),
+        ));
+    }
+    if indicator_widget.widget_class != "frog.widgets.numeric_indicator" {
+        return Err(RuntimeError::Execution(
+            "ind_result must use frog.widgets.numeric_indicator".into(),
+        ));
+    }
+
     if control_widget.binding.mode != "widget_value"
         || control_widget.binding.public_input_id.as_deref() != Some("input_value")
     {
@@ -113,8 +140,19 @@ pub fn execute_contract(
         ));
     }
 
-    let mut ctrl_face_color: Option<String> = None;
-    let mut ind_face_color: Option<String> = None;
+    for support in &unit.ui_binding.widget_reference_support {
+        if (support.widget_id == "ctrl_input" || support.widget_id == "ind_result")
+            && !support.supported_members.iter().any(|member| member == SUPPORTED_WIDGET_MEMBER)
+        {
+            return Err(RuntimeError::Execution(format!(
+                "widget {} must support {}",
+                support.widget_id, SUPPORTED_WIDGET_MEMBER
+            )));
+        }
+    }
+
+    let mut ctrl_foreground_color: Option<String> = None;
+    let mut ind_foreground_color: Option<String> = None;
     let mut applied_widget_references: Vec<AppliedWidgetReference> = Vec::new();
 
     for write in &unit.property_writes {
@@ -125,16 +163,23 @@ pub fn execute_contract(
             )));
         }
 
-        if write.member != "face_color" {
+        if write.member != SUPPORTED_WIDGET_MEMBER {
             return Err(RuntimeError::Execution(format!(
                 "unsupported property write member: {}",
                 write.member
             )));
         }
 
+        if write.value.value_type != SUPPORTED_COLOR_TYPE {
+            return Err(RuntimeError::Execution(format!(
+                "unsupported property write value type: {}",
+                write.value.value_type
+            )));
+        }
+
         match write.widget_id.as_str() {
-            "ctrl_input" => ctrl_face_color = Some(write.value.value.clone()),
-            "ind_result" => ind_face_color = Some(write.value.value.clone()),
+            "ctrl_input" => ctrl_foreground_color = Some(write.value.value.clone()),
+            "ind_result" => ind_foreground_color = Some(write.value.value.clone()),
             other => {
                 return Err(RuntimeError::Execution(format!(
                     "unsupported property write widget id: {other}"
@@ -176,7 +221,9 @@ pub fn execute_contract(
 
     Ok(ExecutionResult {
         artifact_kind: "frog_runtime_result".into(),
-        artifact_version: "0.1-dev".into(),
+        artifact_governance_ref: ArtifactReference {
+            path: "Versioning/Readme.md".into(),
+        },
         status: "ok".into(),
         contract_ref: ContractRef {
             unit_ids: vec![unit.unit_id.clone()],
@@ -201,22 +248,22 @@ pub fn execute_contract(
                     widget_id: "ctrl_input".into(),
                     runtime: RuntimeWidgetState {
                         value: Value::from(control_value),
-                        face_color: ctrl_face_color,
+                        foreground_color: ctrl_foreground_color,
                     },
                 },
                 RuntimeWidget {
                     widget_id: "ind_result".into(),
                     runtime: RuntimeWidgetState {
                         value: Value::from(final_value),
-                        face_color: ind_face_color,
+                        foreground_color: ind_foreground_color,
                     },
                 },
             ],
             applied_widget_references,
         },
         diagnostics: vec![RuntimeDiagnostic {
-            severity: "info".into(),
-            kind: "execution_completed".into(),
+            severity: Some("info".into()),
+            kind: Some("execution_completed".into()),
             message: "The reference Rust runtime completed deterministic execution.".into(),
         }],
     })

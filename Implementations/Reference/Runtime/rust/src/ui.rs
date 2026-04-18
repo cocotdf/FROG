@@ -8,11 +8,11 @@ pub struct NumericControl {
 pub struct NumericIndicator {
     pub widget_id: String,
     pub value: u16,
-    pub face_color: Option<String>,
+    pub foreground_color: Option<String>,
 }
 
 impl NumericIndicator {
-    pub fn write_face_color(&mut self, color: String) {
-        self.face_color = Some(color);
+    pub fn write_foreground_color(&mut self, color: String) {
+        self.foreground_color = Some(color);
     }
 }

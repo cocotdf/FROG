@@ -33,7 +33,7 @@ fn slice05_published_contract_accumulates_five_times() {
         .find(|w| w.widget_id == "ctrl_input")
         .expect("ctrl_input widget state must exist");
     assert_eq!(ctrl_widget.runtime.value, serde_json::json!(3));
-    assert_eq!(ctrl_widget.runtime.face_color.as_deref(), Some("#D8E6FF"));
+    assert_eq!(ctrl_widget.runtime.foreground_color.as_deref(), Some("#5B9BD5"));
 
     let ind_widget = result
         .ui_runtime
@@ -42,5 +42,5 @@ fn slice05_published_contract_accumulates_five_times() {
         .find(|w| w.widget_id == "ind_result")
         .expect("ind_result widget state must exist");
     assert_eq!(ind_widget.runtime.value, serde_json::json!(15));
-    assert_eq!(ind_widget.runtime.face_color.as_deref(), Some("#D8E6FF"));
+    assert_eq!(ind_widget.runtime.foreground_color.as_deref(), Some("#70AD47"));
 }
