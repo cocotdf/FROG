@@ -2543,6 +2543,13 @@
                   "kind": "category",
                   "children": [
                     {
+                      "key": "implementations/reference/runtime/python/__init__.py",
+                      "title": "__init__.py",
+                      "path": "/Implementations/Reference/Runtime/python/__init__.py",
+                      "kind": "code",
+                      "children": []
+                    },
+                    {
                       "key": "implementations/reference/runtime/python/cli.py",
                       "title": "cli.py",
                       "path": "/Implementations/Reference/Runtime/python/cli.py",
@@ -3050,6 +3057,7 @@
     "/Implementations/Reference/Runtime/reference_runtime.py",
     "/Implementations/Reference/Runtime/run_slice05_contract.py",
     "/Implementations/Reference/Runtime/cpp/Readme.md",
+    "/Implementations/Reference/Runtime/python/__init__.py",
     "/Implementations/Reference/Runtime/python/cli.py",
     "/Implementations/Reference/Runtime/python/execute_contract.py",
     "/Implementations/Reference/Runtime/python/run_slice05_ui.py",

@@ -355,6 +355,7 @@
     - [run_slice05_contract.py](/Implementations/Reference/Runtime/run_slice05_contract.py)
     - [cpp](/Implementations/Reference/Runtime/cpp/Readme.md)
     - [python](/Implementations/Reference/Runtime/python/Readme.md)
+      - [__init__.py](/Implementations/Reference/Runtime/python/__init__.py)
       - [cli.py](/Implementations/Reference/Runtime/python/cli.py)
       - [execute_contract.py](/Implementations/Reference/Runtime/python/execute_contract.py)
       - [run_slice05_ui.py](/Implementations/Reference/Runtime/python/run_slice05_ui.py)
