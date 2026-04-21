@@ -1,307 +1,175 @@
-<p align="center">
-  <img src="../../../FROG logo.svg" alt="FROG logo" width="140" />
-</p>
+<h1>Reference Contract Emitter</h1>
 
-<h1 align="center">Reference Contract Emitter</h1>
+<p>Backend-contract emission stage for the non-normative FROG reference implementation.</p>
 
-<p align="center">
-  <strong>Backend contract emission stage for the non-normative FROG reference implementation</strong><br/>
-  <em>FROG — Free Open Graphical Language</em>
+<p>
+  Repository governance and publication state are centralized in
+  <a href="../../../Versioning/Readme.md"><code>Versioning/Readme.md</code></a>.
 </p>
 
 <hr/>
 
-<h2>Contents</h2>
-<ul>
-  <li><a href="#overview">1. Overview</a></li>
-  <li><a href="#non-normative-status">2. Non-Normative Status</a></li>
-  <li><a href="#architectural-position">3. Architectural Position</a></li>
-  <li><a href="#published-example-contract-artifacts">4. Published Example Contract Artifacts</a></li>
-  <li><a href="#what-this-directory-owns">5. What This Directory Owns</a></li>
-  <li><a href="#what-this-directory-does-not-own">6. What This Directory Does Not Own</a></li>
-  <li><a href="#first-slice-responsibilities">7. First-Slice Responsibilities</a></li>
-  <li><a href="#relation-with-examples">8. Relation with Examples</a></li>
-  <li><a href="#relation-with-runtime-consumers">9. Relation with Runtime Consumers</a></li>
-  <li><a href="#design-rules">10. Design Rules</a></li>
-  <li><a href="#summary">11. Summary</a></li>
-</ul>
+<h2>Directory navigation</h2>
 
-<hr/>
-
-<h2 id="overview">1. Overview</h2>
+<pre><code>Implementations/Reference/ContractEmitter/
+├── Readme.md
+├── __init__.py
+├── emit_backend_contract.md
+├── emit_backend_contract.py
+├── reference_contract_emitter.py
+├── responsibilities.md
+└── examples/
+    └── 05_bounded_ui_accumulator.reference_host_runtime_ui_binding.contract.json</code></pre>
 
 <p>
-This directory contains the stage that emits backend contracts from lowered execution forms.
-Its role is to produce a standardized consumer-facing handoff aligned with the published backend-contract boundary.
+Generated cache directories may appear beside these files in the published tree.
+They are not part of the intended source surface of this stage.
+</p>
+
+<h2>Role</h2>
+
+<p>
+This directory emits backend-family handoff artifacts from published execution-facing artifacts.
+For the current published slice, the active target is a single backend family:
+</p>
+
+<pre><code>reference_host_runtime_ui_binding</code></pre>
+
+<p>
+The emitted contract is downstream from canonical source, FIR, lowering, and the published front-panel package.
+It exists to make runtime-family consumption explicit.
+It must not redefine source semantics.
+</p>
+
+<h2>Current bounded scope</h2>
+
+<p>
+The current emitter is intentionally narrow.
+It is designed for the Example 05 corridor documented in
+<a href="../../../Examples/05_bounded_ui_accumulator/Readme.md"><code>Examples/05_bounded_ui_accumulator/</code></a>.
 </p>
 
 <p>
-The emitted artifacts are downstream from canonical source, structural validation, semantic interpretation, Execution IR, and lowering.
-They are upstream from runtime-side or backend-family-side private realization.
+The current code path accepts the published lowering artifact for that slice and emits one contract artifact for the same slice.
+It is <strong>not</strong> a general lowering-to-contract compiler for arbitrary programs.
 </p>
 
-<hr/>
+<h2>Published input and output</h2>
 
-<h2 id="non-normative-status">2. Non-Normative Status</h2>
+<h3>Input</h3>
 
-<p>
-This directory belongs to the non-normative reference implementation.
-It does not redefine the normative backend-contract boundary.
-</p>
+<pre><code>Examples/05_bounded_ui_accumulator/main.lowering.json</code></pre>
 
-<p>
-Its role is to materialize repository-visible contract artifacts that are aligned with the published specification surfaces strongly enough to support executable corridor inspection and reference-family consumption.
-</p>
-
-<p>
-Accordingly, the emitter implementation is not the owner of:
-</p>
-
-<ul>
-  <li>source law,</li>
-  <li>semantic law,</li>
-  <li>Execution IR law,</li>
-  <li>or backend-contract law.</li>
-</ul>
-
-<p>
-It is a reference producer of artifacts, not the normative source of backend-contract meaning.
-</p>
-
-<hr/>
-
-<h2 id="architectural-position">3. Architectural Position</h2>
-
-<pre><code>canonical .frog source
-      |
-      v
-structural validation
-      |
-      v
-semantic interpretation
-      |
-      v
-Execution IR
-      |
-      v
-lowering
-      |
-      v
-backend contract emission   &lt;-- this directory
-      |
-      v
-backend contract artifact
-      |
-      v
-consumer-side realization</code></pre>
-
-<p>
-The architectural rule remains explicit:
-</p>
-
-<pre><code>lowering != backend contract emission
-backend contract emission != runtime realization
-emitted artifact != private consumer implementation</code></pre>
-
-<hr/>
-
-<h2 id="published-example-contract-artifacts">4. Published Example Contract Artifacts</h2>
-
-<p>
-This directory may publish repository-visible contract artifacts for named example slices under:
-</p>
-
-<pre><code>Implementations/Reference/ContractEmitter/examples/</code></pre>
-
-<p>
-These artifacts are intended to make a bounded handoff corridor materially inspectable.
-They are example-aligned emitted artifacts, not canonical source files.
-</p>
-
-<p>
-For the first applicative vertical slice, the published artifact is:
-</p>
+<h3>Output</h3>
 
 <pre><code>Implementations/Reference/ContractEmitter/examples/
 └── 05_bounded_ui_accumulator.reference_host_runtime_ui_binding.contract.json</code></pre>
 
 <p>
-That file is the first repository-visible reference contract artifact for the named example:
+The contract artifact is consumed by the runtime-family directories documented in
+<a href="../Runtime/Readme.md"><code>Implementations/Reference/Runtime/</code></a>.
 </p>
 
-<pre><code>Examples/05_bounded_ui_accumulator/</code></pre>
+<h2>What the current emitter preserves</h2>
 
 <p>
-It exists to make the backend handoff explicit rather than leaving it as prose-only expectation.
-</p>
-
-<hr/>
-
-<h2 id="what-this-directory-owns">5. What This Directory Owns</h2>
-
-<ul>
-  <li>material emission of backend-contract artifacts for the selected family,</li>
-  <li>declaration of family assumptions,</li>
-  <li>declaration of consumable execution units,</li>
-  <li>declaration of preserved attribution and unsupported features,</li>
-  <li>selection of emitted artifact shape for the non-normative reference corridor,</li>
-  <li>and repository-visible publication of reference contract artifacts where that helps close an executable slice.</li>
-</ul>
-
-<hr/>
-
-<h2 id="what-this-directory-does-not-own">6. What This Directory Does Not Own</h2>
-
-<ul>
-  <li>the normative backend-contract rules themselves,</li>
-  <li>runtime-private realization,</li>
-  <li>deployment packaging,</li>
-  <li>debugger protocol definition,</li>
-  <li>the canonical example source,</li>
-  <li>or semantic acceptance of the example.</li>
-</ul>
-
-<p>
-In particular:
+For Example 05, the emitted contract preserves the repository-visible corridor instead of inventing a new private schema.
+The emitted surface includes:
 </p>
 
 <ul>
-  <li><code>Examples/</code> owns the named illustrative source slice,</li>
-  <li>the specification layers own the meaning of that slice,</li>
-  <li><code>ContractEmitter/</code> owns emitted reference artifacts,</li>
-  <li>and <code>Runtime/</code> owns private consumption of accepted artifacts.</li>
+  <li>backend family <code>reference_host_runtime_ui_binding</code>,</li>
+  <li>the source, FIR, lowering, and <code>.wfrog</code> references used to derive the contract,</li>
+  <li>one executable unit named <code>main</code>,</li>
+  <li>one public input <code>input_value : u16</code>,</li>
+  <li>one public output <code>result : u16</code>,</li>
+  <li>one control widget binding to <code>ctrl_input</code>,</li>
+  <li>one indicator widget binding to <code>ind_result</code>,</li>
+  <li>widget-reference support for <code>foreground_color</code> on both widgets,</li>
+  <li>two emitted <code>frog.ui.property_write</code> operations for <code>foreground_color</code>,</li>
+  <li>one explicit state model based on <code>frog.core.delay</code>,</li>
+  <li>one bounded execution model with exactly five iterations,</li>
+  <li>one final result publication to both public output and indicator.</li>
 </ul>
 
-<hr/>
+<p>
+The current emitted property-write surface is <code>foreground_color</code>.
+The current emitted color type is <code>frog.color.rgba8</code>.
+</p>
 
-<h2 id="first-slice-responsibilities">7. First-Slice Responsibilities</h2>
+<h2>Current entry points</h2>
+
+<h3><code>emit_backend_contract.py</code></h3>
 
 <p>
-For the first slice, the emitter should produce artifacts rich enough to make explicit:
+Library-side emission helpers and validation for the bounded Example 05 contract shape.
+The current implementation enforces the current slice very explicitly:
+one lowered unit, one public input, one public output, one control binding, one indicator binding,
+two reference writes, one <code>u16</code> state carrier, and five iterations.
+</p>
+
+<h3><code>reference_contract_emitter.py</code></h3>
+
+<p>
+Command-line entry point that emits the published Example 05 contract from the published lowering artifact.
+From the repository root:
+</p>
+
+<pre><code>python -m Implementations.Reference.ContractEmitter.reference_contract_emitter</code></pre>
+
+<p>
+Useful overrides:
+</p>
+
+<pre><code>python -m Implementations.Reference.ContractEmitter.reference_contract_emitter \
+  --lowering Examples/05_bounded_ui_accumulator/main.lowering.json \
+  --output Implementations/Reference/ContractEmitter/examples/05_bounded_ui_accumulator.reference_host_runtime_ui_binding.contract.json</code></pre>
+
+<h2>Ownership boundary</h2>
+
+<ul>
+  <li>This directory <strong>owns</strong> the emission of backend-family handoff artifacts for the current reference slice.</li>
+  <li>This directory does <strong>not own</strong> source semantics, FIR semantics, lowering semantics, widget semantics, runtime implementation, or compiler-family implementation.</li>
+</ul>
+
+<p>
+The contract emitter is a downstream publication stage.
+If the emitted contract diverges from the canonical source-owned and execution-facing artifacts, the upstream artifacts win.
+</p>
+
+<h2>Relationship to Example 05 and the runtime family</h2>
+
+<p>
+The current bounded corridor is:
+</p>
+
+<pre><code>main.frog
+  -&gt; main.fir.json
+  -&gt; main.lowering.json
+  -&gt; emitted backend contract
+  -&gt; runtime-family consumer</code></pre>
+
+<p>
+The emitted contract is therefore the explicit handoff between:
 </p>
 
 <ul>
-  <li>contract identity,</li>
-  <li>backend family orientation,</li>
-  <li>declared assumptions,</li>
-  <li>consumable executable units,</li>
-  <li>state semantics where present,</li>
-  <li>UI participation or UI-object interaction support where relevant,</li>
-  <li>diagnostic and attribution support.</li>
+  <li>the example corridor published under <code>Examples/05_bounded_ui_accumulator/</code>,</li>
+  <li>the runtime-family consumers published under <code>Implementations/Reference/Runtime/</code>.</li>
 </ul>
 
-<p>
-For the first published applicative slice, this means the emitted contract must preserve at least:
-</p>
+<h2>Non-goals</h2>
 
 <ul>
-  <li>the existence of one bounded executable unit,</li>
-  <li>the fact that the loop runs for exactly five iterations,</li>
-  <li>the fact that explicit state is required,</li>
-  <li>the deterministic initial value of <code>0</code>,</li>
-  <li>the public input / output binding posture,</li>
-  <li>the indicator publication posture,</li>
-  <li>and the minimal object-style property-write support for <code>face_color</code>.</li>
+  <li>General backend-contract emission for arbitrary programs.</li>
+  <li>Ownership of the front-panel package.</li>
+  <li>Ownership of runtime behavior.</li>
+  <li>Ownership of LLVM or compiler-family lowering.</li>
 </ul>
 
-<hr/>
-
-<h2 id="relation-with-examples">8. Relation with Examples</h2>
+<h2>Summary</h2>
 
 <p>
-The emitted artifacts under <code>examples/</code> are related to named repository examples, but they are not the examples themselves.
-</p>
-
-<p>
-The ownership model remains:
-</p>
-
-<pre><code>Examples/
-   -&gt; illustrate named source-level and corridor-level slices
-
-Implementations/Reference/ContractEmitter/examples/
-   -&gt; publish emitted backend-contract artifacts for selected example slices</code></pre>
-
-<p>
-This distinction matters because the canonical <code>.frog</code> source remains the source-owned representation of the example,
-while the emitted contract artifact is a downstream handoff product for a selected consumer family.
-</p>
-
-<p>
-Accordingly, an emitted example contract:
-</p>
-
-<ul>
-  <li>must remain attributable to the named example slice,</li>
-  <li>must remain downstream from the published ownership chain,</li>
-  <li>must not silently add new semantic law,</li>
-  <li>and must not be mistaken for the canonical saved program.</li>
-</ul>
-
-<hr/>
-
-<h2 id="relation-with-runtime-consumers">9. Relation with Runtime Consumers</h2>
-
-<p>
-The primary downstream consumers of these emitted artifacts live under:
-</p>
-
-<pre><code>Implementations/Reference/Runtime/</code></pre>
-
-<p>
-That means the reading corridor for the first bounded executable slice is now materially inspectable as:
-</p>
-
-<pre><code>Examples/05_bounded_ui_accumulator/
-      |
-      v
-Implementations/Reference/ContractEmitter/examples/
-05_bounded_ui_accumulator.reference_host_runtime_ui_binding.contract.json
-      |
-      v
-Implementations/Reference/Runtime/</code></pre>
-
-<p>
-The runtime consumer must treat the emitted artifact as a declared contract boundary.
-It may accept, reject, or fail during execution according to the runtime family posture,
-but it must not treat the emitted artifact as optional prose.
-</p>
-
-<p>
-Likewise, the emitter must not collapse into runtime-private assumptions that are not declared in the artifact.
-</p>
-
-<hr/>
-
-<h2 id="design-rules">10. Design Rules</h2>
-
-<ul>
-  <li>Do not hide undeclared assumptions.</li>
-  <li>Do not erase state semantics.</li>
-  <li>Do not erase UI participation distinctions when the family claims support for them.</li>
-  <li>Make rejection conditions explicit.</li>
-  <li>Keep emitted artifacts attributable to their source slice.</li>
-  <li>Do not promote reference-emitter convenience into normative backend-contract law.</li>
-  <li>Do not mix canonical source ownership with emitted artifact ownership.</li>
-</ul>
-
-<hr/>
-
-<h2 id="summary">11. Summary</h2>
-
-<p>
-The contract emitter is the stage that turns lowered implementation-facing forms into declared consumer-facing backend contracts for the reference family.
-</p>
-
-<p>
-It now also serves as the publication point for repository-visible example-aligned contract artifacts under <code>examples/</code>.
-Those artifacts help close the first executable corridor more explicitly:
-the source slice is visible,
-the emitted contract is visible,
-and the runtime-side consumer boundary is visible.
-</p>
-
-<p>
-That makes the first applicative vertical slice materially easier to inspect from source to contract to reference execution,
-while keeping the ownership boundaries explicit.
+Read this directory as the narrow but explicit handoff stage that turns the published Example 05 lowering artifact into the published
+<code>reference_host_runtime_ui_binding</code> contract artifact consumed by the current Python, Rust, and C/C++ runtimes.
 </p>
