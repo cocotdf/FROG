@@ -1,0 +1,329 @@
+#include "runtime.hpp"
+
+#include <algorithm>
+#include <set>
+#include <stdexcept>
+
+namespace frog::runtime {
+
+namespace {
+
+using frog::json::Array;
+using frog::json::Object;
+using frog::json::Value;
+
+constexpr const char* SUPPORTED_WIDGET_PROPERTIES[] = {
+    "value",
+    "label",
+    "visible",
+    "enabled",
+    "foreground_color",
+};
+
+void require(bool condition, const std::string& message) {
+    if (!condition) {
+        throw std::runtime_error(message);
+    }
+}
+
+std::string json_string(const Object& object, const std::string& key, const std::string& fallback = "") {
+    const auto it = object.find(key);
+    if (it == object.end() || !it->second.is_string()) {
+        return fallback;
+    }
+    return it->second.as_string();
+}
+
+bool json_bool(const Object& object, const std::string& key, bool fallback = false) {
+    const auto it = object.find(key);
+    if (it == object.end() || !it->second.is_bool()) {
+        return fallback;
+    }
+    return it->second.as_bool();
+}
+
+std::uint16_t json_u16(const Object& object, const std::string& key, std::uint16_t fallback = 0) {
+    const auto it = object.find(key);
+    if (it == object.end() || !it->second.is_number()) {
+        return fallback;
+    }
+    const auto value = it->second.as_i64();
+    require(value >= 0 && value <= 65535, "Widget value must remain in the u16 domain.");
+    return static_cast<std::uint16_t>(value);
+}
+
+Value make_object(std::initializer_list<std::pair<const std::string, Value>> fields) {
+    return Value(Object(fields));
+}
+
+Value make_array(std::initializer_list<Value> values) {
+    return Value(Array(values));
+}
+
+} // namespace
+
+Slice05RuntimeCore::Slice05RuntimeCore(std::filesystem::path contract_path_, std::filesystem::path wfrog_path_)
+    : contract_path(std::move(contract_path_)),
+      wfrog_path(std::move(wfrog_path_)),
+      contract(load_contract_from_path(contract_path)),
+      package(load_wfrog_from_path(wfrog_path)),
+      unit(load_and_validate()),
+      panel(package.front_panels.at(0)) {
+    for (const auto& asset : package.svg_assets) {
+        asset_map.emplace(asset.asset_id, std::filesystem::absolute(wfrog_path.parent_path() / asset.path));
+    }
+    widgets = build_widgets();
+    apply_contract_property_writes();
+}
+
+std::uint16_t Slice05RuntimeCore::checked_u16(std::uint32_t value, const std::string& label) {
+    if (value > 65535u) {
+        throw std::runtime_error(label + " must remain in the u16 domain.");
+    }
+    return static_cast<std::uint16_t>(value);
+}
+
+ContractUnit Slice05RuntimeCore::load_and_validate() const {
+    require(contract.backend_family == REFERENCE_BACKEND_FAMILY, "Unexpected backend family.");
+    require(contract.units.size() == 1, "Expected exactly one contract unit.");
+    const ContractUnit& current_unit = contract.units.front();
+    require(current_unit.unit_id == "main", "Expected unit_id main.");
+    require(current_unit.kind == "bounded_executable_ui_unit", "Unexpected runtime unit kind.");
+    require(current_unit.public_interface.inputs.size() == 1, "Expected one public input.");
+    require(current_unit.public_interface.outputs.size() == 1, "Expected one public output.");
+    require(current_unit.public_interface.inputs.front().id == "input_value", "Expected public input input_value.");
+    require(current_unit.public_interface.outputs.front().id == "result", "Expected public output result.");
+    require(current_unit.execution_model.iteration_count == 5, "Slice 05 expects five iterations.");
+    require(current_unit.state_model.carrier.initial_value == 0, "Slice 05 expects initial state 0.");
+
+    require(package.front_panels.size() == 1, "Expected exactly one front panel.");
+    const auto& current_panel = package.front_panels.front();
+    require(current_panel.host_binding_ref == "reference_host_default", "Expected host_binding_ref reference_host_default.");
+
+    const auto host_it = std::find_if(
+        package.host_bindings.begin(),
+        package.host_bindings.end(),
+        [&](const HostBinding& binding) { return binding.binding_id == "reference_host_default"; });
+    require(host_it != package.host_bindings.end(), "Missing reference_host_default host binding.");
+    const std::set<std::string> required(host_it->required_capabilities.begin(), host_it->required_capabilities.end());
+    require(required.count("window") == 1, "Missing host capability window.");
+    require(required.count("basic_widget_rendering") == 1, "Missing host capability basic_widget_rendering.");
+    require(required.count("property_write") == 1, "Missing host capability property_write.");
+    require(required.count("widget_value_binding") == 1, "Missing host capability widget_value_binding.");
+
+    std::map<std::string, const PanelWidget*> panel_widgets;
+    for (const auto& widget : current_panel.widgets) {
+        panel_widgets.emplace(widget.instance_id, &widget);
+    }
+    for (const auto& binding : current_unit.ui_binding.widgets) {
+        const auto widget_it = panel_widgets.find(binding.widget_id);
+        require(widget_it != panel_widgets.end(), "Missing panel widget " + binding.widget_id + ".");
+        require(widget_it->second->class_ref == binding.widget_class, "Class mismatch for widget " + binding.widget_id + ".");
+        require(
+            binding.widget_class == "frog.widgets.numeric_control" || binding.widget_class == "frog.widgets.numeric_indicator",
+            "Unsupported widget class " + binding.widget_class + ".");
+    }
+
+    std::map<std::string, std::set<std::string>> support;
+    for (const auto& entry : current_unit.ui_binding.widget_reference_support) {
+        support.emplace(entry.widget_id, std::set<std::string>(entry.supported_members.begin(), entry.supported_members.end()));
+    }
+    for (const auto& property_write : current_unit.property_writes) {
+        const bool supported_property = std::any_of(
+            std::begin(SUPPORTED_WIDGET_PROPERTIES),
+            std::end(SUPPORTED_WIDGET_PROPERTIES),
+            [&](const char* name) { return property_write.member == name; });
+        require(supported_property, "Unsupported property write " + property_write.member + ".");
+        const auto it = support.find(property_write.widget_id);
+        require(it != support.end(), "Missing widget reference support for " + property_write.widget_id + ".");
+        require(it->second.count(property_write.member) == 1, "Unsupported widget reference member " + property_write.widget_id + "." + property_write.member + ".");
+    }
+
+    return current_unit;
+}
+
+std::map<std::string, WidgetState> Slice05RuntimeCore::build_widgets() const {
+    std::map<std::string, std::set<std::string>> support;
+    for (const auto& entry : unit.ui_binding.widget_reference_support) {
+        support.emplace(entry.widget_id, std::set<std::string>(entry.supported_members.begin(), entry.supported_members.end()));
+    }
+
+    std::map<std::string, const PanelWidget*> panel_widgets;
+    for (const auto& widget : panel.widgets) {
+        panel_widgets.emplace(widget.instance_id, &widget);
+    }
+
+    std::map<std::string, WidgetState> result;
+    for (const auto& binding : unit.ui_binding.widgets) {
+        const auto* panel_widget = panel_widgets.at(binding.widget_id);
+        std::optional<std::string> asset_id;
+        std::filesystem::path asset_path;
+        if (const auto visual_it = panel_widget->visual.find("asset_ref"); visual_it != panel_widget->visual.end() && visual_it->second.is_string()) {
+            const std::string& asset_ref = visual_it->second.as_string();
+            if (asset_ref.rfind("asset:", 0) == 0) {
+                asset_id = asset_ref.substr(6);
+                const auto asset_it = asset_map.find(*asset_id);
+                if (asset_it != asset_map.end()) {
+                    asset_path = asset_it->second;
+                }
+            }
+        }
+
+        auto properties = panel_widget->props;
+        properties.emplace("value", properties.count("value") ? properties.at("value") : Value(0));
+        properties.emplace("label", properties.count("label") ? properties.at("label") : Value(""));
+        properties.emplace("visible", properties.count("visible") ? properties.at("visible") : Value(true));
+        properties.emplace("enabled", properties.count("enabled") ? properties.at("enabled") : Value(true));
+        properties.emplace("foreground_color", properties.count("foreground_color") ? properties.at("foreground_color") : Value("#D8D8D8"));
+
+        const auto support_it = support.find(binding.widget_id);
+        std::vector<std::string> supported_members;
+        if (support_it != support.end()) {
+            supported_members.assign(support_it->second.begin(), support_it->second.end());
+        }
+
+        result.emplace(
+            binding.widget_id,
+            WidgetState{
+                binding.widget_id,
+                binding.widget_class,
+                binding.role,
+                panel_widget->layout,
+                std::move(properties),
+                asset_id,
+                asset_path,
+                std::move(supported_members),
+            });
+    }
+    return result;
+}
+
+void Slice05RuntimeCore::apply_contract_property_writes() {
+    applied_widget_references.clear();
+    for (const auto& property_write : unit.property_writes) {
+        auto widget_it = widgets.find(property_write.widget_id);
+        require(widget_it != widgets.end(), "Unknown widget " + property_write.widget_id + ".");
+        const auto& supported = widget_it->second.supported_members;
+        require(
+            std::find(supported.begin(), supported.end(), property_write.member) != supported.end(),
+            "Property " + property_write.member + " is not supported by widget " + property_write.widget_id + ".");
+        widget_it->second.properties[property_write.member] = Value(property_write.value.value);
+        applied_widget_references.push_back(make_object({
+            {"widget_id", Value(property_write.widget_id)},
+            {"member", Value(property_write.member)},
+            {"value", Value(property_write.value.value)},
+        }));
+    }
+}
+
+void Slice05RuntimeCore::set_control_value(std::uint16_t value) {
+    widgets.at("ctrl_input").properties["value"] = Value(static_cast<std::int64_t>(value));
+}
+
+std::uint16_t Slice05RuntimeCore::control_value() const {
+    return json_u16(widgets.at("ctrl_input").properties, "value", 0);
+}
+
+void Slice05RuntimeCore::reset_to_default_style(const std::string& widget_id) {
+    const auto widget_it = std::find_if(
+        panel.widgets.begin(), panel.widgets.end(), [&](const PanelWidget& widget) { return widget.instance_id == widget_id; });
+    require(widget_it != panel.widgets.end(), "Unknown widget " + widget_id + ".");
+    auto properties = widget_it->props;
+    properties["value"] = properties.count("value") ? properties.at("value") : Value(0);
+    properties["label"] = properties.count("label") ? properties.at("label") : Value("");
+    properties["visible"] = properties.count("visible") ? properties.at("visible") : Value(true);
+    properties["enabled"] = properties.count("enabled") ? properties.at("enabled") : Value(true);
+    properties["foreground_color"] = properties.count("foreground_color") ? properties.at("foreground_color") : Value("#D8D8D8");
+    widgets.at(widget_id).properties = std::move(properties);
+}
+
+void Slice05RuntimeCore::invoke_method(const std::string& widget_id, const std::string& method_name) {
+    if (widget_id == "ctrl_input" && method_name == "focus") {
+        return;
+    }
+    if (widget_id == "ind_result" && method_name == "reset_to_default_style") {
+        reset_to_default_style(widget_id);
+        return;
+    }
+    throw std::runtime_error("Unsupported method invocation: " + widget_id + "." + method_name + ".");
+}
+
+Value Slice05RuntimeCore::execute(std::optional<std::uint16_t> control_value_override) {
+    apply_contract_property_writes();
+    if (control_value_override.has_value()) {
+        set_control_value(*control_value_override);
+    }
+    const std::uint32_t input_value = control_value();
+    std::uint32_t state = unit.state_model.carrier.initial_value;
+    for (std::uint32_t index = 0; index < unit.execution_model.iteration_count; ++index) {
+        state = checked_u16(state + input_value, "final_state");
+    }
+    last_final_state = static_cast<std::uint16_t>(state);
+    widgets.at("ind_result").properties["value"] = Value(static_cast<std::int64_t>(last_final_state));
+    return execution_artifact();
+}
+
+Value Slice05RuntimeCore::execution_artifact() const {
+    Array widget_entries;
+    for (const auto& entry : widgets) {
+        const auto& widget = entry.second;
+        widget_entries.push_back(make_object({
+            {"widget_id", Value(widget.widget_id)},
+            {"class_ref", Value(widget.class_ref)},
+            {"role", Value(widget.role)},
+            {"layout", widget.layout},
+            {"runtime", make_object({
+                {"value", widget.properties.count("value") ? widget.properties.at("value") : Value(0)},
+                {"label", Value(json_string(widget.properties, "label"))},
+                {"visible", Value(json_bool(widget.properties, "visible", true))},
+                {"enabled", Value(json_bool(widget.properties, "enabled", true))},
+                {"foreground_color", Value(json_string(widget.properties, "foreground_color", "#D8D8D8"))},
+                {"asset_ref", widget.asset_id.has_value() ? Value("asset:" + *widget.asset_id) : Value(nullptr)},
+            })},
+        }));
+    }
+
+    Array applied = applied_widget_references;
+    return make_object({
+        {"artifact_kind", Value("frog_runtime_execution_result")},
+        {"artifact_governance_ref", make_object({{"path", Value("Versioning/Readme.md")}})},
+        {"status", Value("ok")},
+        {"contract_ref", make_object({
+            {"unit_ids", make_array({Value(unit.unit_id)})},
+            {"backend_family", Value(contract.backend_family)},
+            {"source_ref", make_object({
+                {"example_id", Value(contract.source_ref.example_id)},
+                {"path", Value(contract.source_ref.path)},
+                {"entry_unit", Value(contract.source_ref.entry_unit)},
+            })},
+        })},
+        {"execution_summary", make_object({
+            {"mode", Value("contract_and_wfrog")},
+            {"executed_unit", Value(unit.unit_id)},
+            {"iterations", Value(static_cast<std::int64_t>(unit.execution_model.iteration_count))},
+            {"state_initialized", Value(true)},
+            {"initial_state", Value(static_cast<std::int64_t>(unit.state_model.carrier.initial_value))},
+            {"final_state", Value(static_cast<std::int64_t>(last_final_state))},
+        })},
+        {"outputs", make_object({
+            {"public", make_object({{"result", Value(static_cast<std::int64_t>(last_final_state))}})},
+            {"ui", make_object({
+                {"ctrl_input", Value(static_cast<std::int64_t>(control_value()))},
+                {"ind_result", Value(static_cast<std::int64_t>(last_final_state))},
+            })},
+        })},
+        {"ui_runtime", make_object({
+            {"panel", make_object({
+                {"panel_id", Value(panel.panel_id)},
+                {"title", Value(panel.title)},
+                {"class_ref", Value(panel.class_ref)},
+                {"layout", panel.layout},
+            })},
+            {"widgets", Value(widget_entries)},
+            {"applied_widget_references", Value(applied)},
+        })},
+        {"diagnostics", Value(Array{})},
+    });
+}
+
+} // namespace frog::runtime

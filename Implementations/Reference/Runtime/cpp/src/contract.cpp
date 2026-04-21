@@ -1,0 +1,329 @@
+#include "contract.hpp"
+
+#include <set>
+#include <stdexcept>
+
+#ifndef FROG_RUNTIME_CPP_SOURCE_DIR
+#define FROG_RUNTIME_CPP_SOURCE_DIR "."
+#endif
+
+namespace frog::runtime {
+
+namespace {
+
+using frog::json::Array;
+using frog::json::Object;
+using frog::json::Value;
+
+void require(bool condition, const std::string& message) {
+    if (!condition) {
+        throw std::runtime_error(message);
+    }
+}
+
+const Object& as_object(const Value& value, const std::string& message) {
+    require(value.is_object(), message);
+    return value.as_object();
+}
+
+const Array& as_array(const Value& value, const std::string& message) {
+    require(value.is_array(), message);
+    return value.as_array();
+}
+
+std::string get_string(const Object& object, const std::string& key) {
+    const auto it = object.find(key);
+    require(it != object.end() && it->second.is_string(), "Expected string field: " + key);
+    return it->second.as_string();
+}
+
+const Value* optional_field(const Object& object, const std::string& key) {
+    const auto it = object.find(key);
+    if (it == object.end()) {
+        return nullptr;
+    }
+    return &it->second;
+}
+
+std::optional<std::string> get_optional_string(const Object& object, const std::string& key) {
+    const auto it = object.find(key);
+    if (it == object.end() || it->second.is_null()) {
+        return std::nullopt;
+    }
+    require(it->second.is_string(), "Expected string field: " + key);
+    return it->second.as_string();
+}
+
+std::int64_t get_i64(const Object& object, const std::string& key) {
+    const auto it = object.find(key);
+    require(it != object.end() && it->second.is_number(), "Expected integer field: " + key);
+    return it->second.as_i64();
+}
+
+bool get_bool(const Object& object, const std::string& key) {
+    const auto it = object.find(key);
+    require(it != object.end() && it->second.is_bool(), "Expected boolean field: " + key);
+    return it->second.as_bool();
+}
+
+std::vector<std::string> parse_string_vector(const Value& value, const std::string& label) {
+    std::vector<std::string> result;
+    for (const auto& item : as_array(value, label)) {
+        require(item.is_string(), "Expected string item in " + label);
+        result.push_back(item.as_string());
+    }
+    return result;
+}
+
+InterfacePort parse_interface_port(const Value& value) {
+    const auto& object = as_object(value, "Expected interface port object.");
+    return InterfacePort{
+        get_string(object, "id"),
+        get_string(object, "type"),
+        get_optional_string(object, "binding_origin"),
+        get_optional_string(object, "binding_target"),
+    };
+}
+
+WidgetBindingMode parse_widget_binding_mode(const Value& value) {
+    const auto& object = as_object(value, "Expected widget binding mode object.");
+    return WidgetBindingMode{
+        get_string(object, "mode"),
+        get_optional_string(object, "public_input_id"),
+        get_optional_string(object, "public_output_id"),
+    };
+}
+
+WidgetBinding parse_widget_binding(const Value& value) {
+    const auto& object = as_object(value, "Expected widget binding object.");
+    return WidgetBinding{
+        get_string(object, "widget_id"),
+        get_string(object, "widget_class"),
+        get_string(object, "value_type"),
+        get_string(object, "role"),
+        parse_widget_binding_mode(object.at("binding")),
+    };
+}
+
+WidgetReferenceSupport parse_widget_reference_support(const Value& value) {
+    const auto& object = as_object(value, "Expected widget reference support object.");
+    return WidgetReferenceSupport{
+        get_string(object, "widget_id"),
+        parse_string_vector(object.at("supported_members"), "supported_members"),
+    };
+}
+
+PropertyWrite parse_property_write(const Value& value) {
+    const auto& object = as_object(value, "Expected property write object.");
+    const auto& value_object = as_object(object.at("value"), "Expected property write value object.");
+    return PropertyWrite{
+        get_string(object, "operation"),
+        get_string(object, "widget_id"),
+        get_string(object, "member"),
+        PropertyWriteValue{get_string(value_object, "type"), get_string(value_object, "value")},
+    };
+}
+
+WidgetClass parse_widget_class(const Value& value) {
+    const auto& object = as_object(value, "Expected widget class object.");
+    WidgetClass result;
+    result.class_id = get_string(object, "class_id");
+    if (const auto* properties = optional_field(object, "properties")) {
+        for (const auto& item : as_array(*properties, "widget_class.properties")) {
+            const auto& entry = as_object(item, "Expected widget property object.");
+            result.properties.push_back(WidgetProperty{get_string(entry, "name")});
+        }
+    }
+    if (const auto* methods = optional_field(object, "methods")) {
+        for (const auto& item : as_array(*methods, "widget_class.methods")) {
+            const auto& entry = as_object(item, "Expected widget method object.");
+            result.methods.push_back(WidgetMethod{get_string(entry, "name")});
+        }
+    }
+    return result;
+}
+
+SvgAsset parse_svg_asset(const Value& value) {
+    const auto& object = as_object(value, "Expected svg asset object.");
+    return SvgAsset{get_string(object, "asset_id"), get_string(object, "path"), get_string(object, "kind")};
+}
+
+HostBinding parse_host_binding(const Value& value) {
+    const auto& object = as_object(value, "Expected host binding object.");
+    HostBinding binding;
+    binding.binding_id = get_string(object, "binding_id");
+    binding.target = get_string(object, "target");
+    if (const auto* required = optional_field(object, "required_capabilities")) {
+        binding.required_capabilities = parse_string_vector(*required, "required_capabilities");
+    }
+    if (const auto* optional = optional_field(object, "optional_capabilities")) {
+        binding.optional_capabilities = parse_string_vector(*optional, "optional_capabilities");
+    }
+    return binding;
+}
+
+PanelWidget parse_panel_widget(const Value& value) {
+    const auto& object = as_object(value, "Expected panel widget object.");
+    PanelWidget widget;
+    widget.instance_id = get_string(object, "instance_id");
+    widget.class_ref = get_string(object, "class_ref");
+    widget.layout = object.at("layout");
+    if (const auto* props = optional_field(object, "props")) {
+        widget.props = as_object(*props, "Expected panel widget props object.");
+    }
+    if (const auto* visual = optional_field(object, "visual")) {
+        widget.visual = as_object(*visual, "Expected panel widget visual object.");
+    }
+    return widget;
+}
+
+FrontPanel parse_front_panel(const Value& value) {
+    const auto& object = as_object(value, "Expected front panel object.");
+    FrontPanel panel;
+    panel.panel_id = get_string(object, "panel_id");
+    panel.title = get_string(object, "title");
+    panel.class_ref = get_string(object, "class_ref");
+    panel.layout = object.at("layout");
+    panel.host_binding_ref = get_string(object, "host_binding_ref");
+    for (const auto& item : as_array(object.at("widgets"), "front_panel.widgets")) {
+        panel.widgets.push_back(parse_panel_widget(item));
+    }
+    return panel;
+}
+
+} // namespace
+
+std::filesystem::path find_repo_root(const std::filesystem::path& start) {
+    auto current = std::filesystem::absolute(start);
+    for (auto candidate = current; !candidate.empty(); candidate = candidate.parent_path()) {
+        if (std::filesystem::is_directory(candidate / "Examples") && std::filesystem::is_directory(candidate / "Implementations")) {
+            return candidate;
+        }
+        if (candidate == candidate.root_path()) {
+            break;
+        }
+    }
+    throw std::runtime_error("Unable to locate the repository root from the current path.");
+}
+
+std::filesystem::path default_contract_path() {
+    const auto repo_root = find_repo_root(std::filesystem::path(FROG_RUNTIME_CPP_SOURCE_DIR));
+    return repo_root / "Implementations" / "Reference" / "ContractEmitter" / "examples" /
+           "05_bounded_ui_accumulator.reference_host_runtime_ui_binding.contract.json";
+}
+
+std::filesystem::path default_wfrog_path() {
+    const auto repo_root = find_repo_root(std::filesystem::path(FROG_RUNTIME_CPP_SOURCE_DIR));
+    return repo_root / "Examples" / "05_bounded_ui_accumulator" / "ui" / "accumulator_panel.wfrog";
+}
+
+BackendContract load_contract_from_path(const std::filesystem::path& path) {
+    const auto root = as_object(frog::json::parse_file(path), "Expected contract JSON object.");
+    BackendContract contract;
+    contract.artifact_kind = get_string(root, "artifact_kind");
+    require(contract.artifact_kind == "frog_backend_contract", "Expected frog_backend_contract.");
+    if (const auto* governance = optional_field(root, "artifact_governance_ref"); governance != nullptr && governance->is_object()) {
+        const auto& governance_object = governance->as_object();
+        contract.artifact_governance_ref = ArtifactReference{get_string(governance_object, "path")};
+    }
+    contract.backend_family = get_string(root, "backend_family");
+    require(contract.backend_family == REFERENCE_BACKEND_FAMILY, "Unsupported backend family.");
+    {
+        const auto& source = as_object(root.at("source_ref"), "Expected source_ref object.");
+        contract.source_ref = SourceRef{get_string(source, "example_id"), get_string(source, "path"), get_string(source, "entry_unit")};
+    }
+    for (const auto& unit_value : as_array(root.at("units"), "contract.units")) {
+        const auto& unit_object = as_object(unit_value, "Expected contract unit object.");
+        ContractUnit unit;
+        unit.unit_id = get_string(unit_object, "unit_id");
+        unit.kind = get_string(unit_object, "kind");
+        {
+            const auto& public_interface = as_object(unit_object.at("public_interface"), "Expected public_interface object.");
+            for (const auto& item : as_array(public_interface.at("inputs"), "public_interface.inputs")) {
+                unit.public_interface.inputs.push_back(parse_interface_port(item));
+            }
+            for (const auto& item : as_array(public_interface.at("outputs"), "public_interface.outputs")) {
+                unit.public_interface.outputs.push_back(parse_interface_port(item));
+            }
+        }
+        {
+            const auto& ui_binding = as_object(unit_object.at("ui_binding"), "Expected ui_binding object.");
+            if (const auto* package_refs = optional_field(ui_binding, "package_refs")) {
+                unit.ui_binding.package_refs = parse_string_vector(*package_refs, "ui_binding.package_refs");
+            }
+            for (const auto& item : as_array(ui_binding.at("widgets"), "ui_binding.widgets")) {
+                unit.ui_binding.widgets.push_back(parse_widget_binding(item));
+            }
+            for (const auto& item : as_array(ui_binding.at("widget_reference_support"), "ui_binding.widget_reference_support")) {
+                unit.ui_binding.widget_reference_support.push_back(parse_widget_reference_support(item));
+            }
+        }
+        {
+            const auto& state_model = as_object(unit_object.at("state_model"), "Expected state_model object.");
+            const auto& carrier = as_object(state_model.at("carrier"), "Expected state carrier object.");
+            unit.state_model = StateModel{
+                get_bool(state_model, "explicit_state"),
+                StateCarrier{
+                    get_string(carrier, "primitive"),
+                    get_string(carrier, "state_id"),
+                    get_string(carrier, "type"),
+                    static_cast<std::uint16_t>(get_i64(carrier, "initial_value")),
+                },
+                get_string(state_model, "commit_rule"),
+            };
+        }
+        {
+            const auto& execution_model = as_object(unit_object.at("execution_model"), "Expected execution_model object.");
+            const auto& body_rule = as_object(execution_model.at("body_rule"), "Expected body_rule object.");
+            unit.execution_model = ExecutionModel{
+                get_string(execution_model, "structure"),
+                static_cast<std::uint32_t>(get_i64(execution_model, "iteration_count")),
+                get_optional_string(execution_model, "iteration_variable"),
+                BodyRule{get_string(body_rule, "kind"), get_string(body_rule, "expression")},
+                get_string(execution_model, "final_result_rule"),
+            };
+        }
+        if (const auto* property_writes = optional_field(unit_object, "property_writes")) {
+            for (const auto& item : as_array(*property_writes, "property_writes")) {
+                unit.property_writes.push_back(parse_property_write(item));
+            }
+        }
+        {
+            const auto& publication = as_object(unit_object.at("public_output_publication"), "Expected public_output_publication object.");
+            unit.public_output_publication = PublicOutputPublication{get_string(publication, "output_id"), get_string(publication, "source")};
+        }
+        contract.units.push_back(std::move(unit));
+    }
+    return contract;
+}
+
+WfrogPackage load_wfrog_from_path(const std::filesystem::path& path) {
+    const auto root = as_object(frog::json::parse_file(path), "Expected .wfrog JSON object.");
+    WfrogPackage package;
+    package.format = get_string(root, "format");
+    require(package.format == "frog.wfrog", "Unsupported .wfrog format.");
+    package.kind = get_string(root, "kind");
+    require(package.kind == "front_panel_package", "Only front_panel_package is supported.");
+
+    if (const auto* widget_classes = optional_field(root, "widget_classes")) {
+        for (const auto& item : as_array(*widget_classes, "widget_classes")) {
+            package.widget_classes.push_back(parse_widget_class(item));
+        }
+    }
+    if (const auto* svg_assets = optional_field(root, "svg_assets")) {
+        for (const auto& item : as_array(*svg_assets, "svg_assets")) {
+            package.svg_assets.push_back(parse_svg_asset(item));
+        }
+    }
+    if (const auto* host_bindings = optional_field(root, "host_bindings")) {
+        for (const auto& item : as_array(*host_bindings, "host_bindings")) {
+            package.host_bindings.push_back(parse_host_binding(item));
+        }
+    }
+    for (const auto& item : as_array(root.at("front_panels"), "front_panels")) {
+        package.front_panels.push_back(parse_front_panel(item));
+    }
+    return package;
+}
+
+} // namespace frog::runtime

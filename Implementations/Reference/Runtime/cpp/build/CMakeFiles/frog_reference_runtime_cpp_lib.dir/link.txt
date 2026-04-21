@@ -1,0 +1,2 @@
+/usr/bin/ar qc libfrog_reference_runtime_cpp_lib.a CMakeFiles/frog_reference_runtime_cpp_lib.dir/src/json.cpp.o CMakeFiles/frog_reference_runtime_cpp_lib.dir/src/contract.cpp.o CMakeFiles/frog_reference_runtime_cpp_lib.dir/src/runtime.cpp.o CMakeFiles/frog_reference_runtime_cpp_lib.dir/src/execute.cpp.o CMakeFiles/frog_reference_runtime_cpp_lib.dir/src/ui.cpp.o
+/usr/bin/ranlib libfrog_reference_runtime_cpp_lib.a

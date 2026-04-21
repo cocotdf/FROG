@@ -1,0 +1,19 @@
+Start testing: Apr 21 17:12 UTC
+----------------------------------------------------------
+1/1 Testing: frog_reference_runtime_cpp_tests
+1/1 Test: frog_reference_runtime_cpp_tests
+Command: "/mnt/data/frog_runtime_closure_proposal/Implementations/Reference/Runtime/cpp/build/frog_reference_runtime_cpp_tests"
+Directory: /mnt/data/frog_runtime_closure_proposal/Implementations/Reference/Runtime/cpp/build
+"frog_reference_runtime_cpp_tests" start time: Apr 21 17:12 UTC
+Output:
+----------------------------------------------------------
+C++ runtime tests passed.
+<end of output>
+Test time =   0.04 sec
+----------------------------------------------------------
+Test Passed.
+"frog_reference_runtime_cpp_tests" end time: Apr 21 17:12 UTC
+"frog_reference_runtime_cpp_tests" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Apr 21 17:12 UTC

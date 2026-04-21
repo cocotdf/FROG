@@ -1,0 +1,1 @@
+/usr/bin/c++ -Wl,--dependency-file=CMakeFiles/frog_reference_runtime_cpp.dir/link.d CMakeFiles/frog_reference_runtime_cpp.dir/src/main.cpp.o -o frog_reference_runtime_cpp  libfrog_reference_runtime_cpp_lib.a

@@ -1,9 +1,16 @@
 #pragma once
 
-#include "runtime.hpp"
+#include <cstdint>
+#include <filesystem>
+#include <optional>
 
-namespace frog::runtime::cpp_ref {
+#include "json.hpp"
 
-runtime_state execute_example05(const example05_contract& contract, std::uint16_t control_value);
+namespace frog::runtime {
 
-} // namespace frog::runtime::cpp_ref
+frog::json::Value execute_contract(
+    std::uint16_t input_value,
+    std::optional<std::filesystem::path> contract_path = std::nullopt,
+    std::optional<std::filesystem::path> wfrog_path = std::nullopt);
+
+} // namespace frog::runtime
