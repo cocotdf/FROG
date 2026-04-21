@@ -3,7 +3,7 @@ use thiserror::Error;
 #[derive(Debug, Error)]
 pub enum RuntimeError {
     #[error("{0}")]
-    Usage(String),
+    Message(String),
 
     #[error("I/O error: {0}")]
     Io(#[from] std::io::Error),
@@ -11,15 +11,16 @@ pub enum RuntimeError {
     #[error("JSON error: {0}")]
     Json(#[from] serde_json::Error),
 
-    #[error("unsupported contract family: {0}")]
-    UnsupportedContractFamily(String),
+    #[error("Parse error: {0}")]
+    ParseInt(#[from] std::num::ParseIntError),
+}
 
-    #[error("missing required field: {0}")]
-    MissingField(&'static str),
+pub type Result<T> = std::result::Result<T, RuntimeError>;
 
-    #[error("type mismatch: {0}")]
-    TypeMismatch(String),
-
-    #[error("execution error: {0}")]
-    Execution(String),
+pub fn ensure(condition: bool, message: impl Into<String>) -> Result<()> {
+    if condition {
+        Ok(())
+    } else {
+        Err(RuntimeError::Message(message.into()))
+    }
 }
