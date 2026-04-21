@@ -1,13 +1,301 @@
 from __future__ import annotations
 
-from Implementations.Reference.Runtime.reference_runtime import (
-    ReferenceHostRuntime,
-    create_runtime_for_family,
-)
+import json
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 
-DEFAULT_RUNTIME_FAMILY = "reference_host_runtime_ui_binding"
+REFERENCE_BACKEND_FAMILY = "reference_host_runtime_ui_binding"
+SUPPORTED_WIDGET_CLASSES = {
+    "frog.widgets.numeric_control": "control",
+    "frog.widgets.numeric_indicator": "indicator",
+}
+SUPPORTED_WIDGET_PROPERTIES = {"value", "label", "visible", "enabled", "foreground_color"}
 
 
-def build_runtime_core() -> ReferenceHostRuntime:
-    return create_runtime_for_family(DEFAULT_RUNTIME_FAMILY)
+class RuntimeValidationError(RuntimeError):
+    """Raised when the contract or the UI package do not satisfy the bounded runtime surface."""
+
+
+class RuntimeExecutionError(RuntimeError):
+    """Raised when execution cannot proceed."""
+
+
+def find_repo_root(start: Path) -> Path:
+    current = start.resolve()
+    for candidate in [current, *current.parents]:
+        if (candidate / "Examples").is_dir() and (candidate / "Implementations").is_dir():
+            return candidate
+    raise RuntimeValidationError("Unable to locate the repository root from the current path.")
+
+
+def default_contract_path() -> Path:
+    repo_root = find_repo_root(Path(__file__).resolve())
+    return (
+        repo_root
+        / "Implementations"
+        / "Reference"
+        / "ContractEmitter"
+        / "examples"
+        / "05_bounded_ui_accumulator.reference_host_runtime_ui_binding.contract.json"
+    )
+
+
+def default_wfrog_path() -> Path:
+    repo_root = find_repo_root(Path(__file__).resolve())
+    return repo_root / "Examples" / "05_bounded_ui_accumulator" / "ui" / "accumulator_panel.wfrog"
+
+
+def load_json(path: Path | str) -> Dict[str, Any]:
+    return json.loads(Path(path).read_text(encoding="utf-8"))
+
+
+def ensure(condition: bool, message: str) -> None:
+    if not condition:
+        raise RuntimeValidationError(message)
+
+
+def checked_u16(value: int, *, label: str) -> int:
+    if value < 0 or value > 65535:
+        raise RuntimeExecutionError(f"{label} must remain in the u16 domain.")
+    return value
+
+
+@dataclass
+class WidgetState:
+    widget_id: str
+    class_ref: str
+    role: str
+    layout: Dict[str, Any]
+    properties: Dict[str, Any]
+    asset_id: Optional[str]
+    asset_path: Optional[Path]
+    supported_members: List[str]
+
+
+class Slice05RuntimeCore:
+    """Strict, minimal runtime core for the published Example 05 contract corridor."""
+
+    def __init__(self, contract_path: Path | str | None = None, wfrog_path: Path | str | None = None) -> None:
+        self.contract_path = Path(contract_path or default_contract_path()).resolve()
+        self.wfrog_path = Path(wfrog_path or default_wfrog_path()).resolve()
+        self.contract = load_json(self.contract_path)
+        self.package = load_json(self.wfrog_path)
+        self.unit = self._load_and_validate()
+        self.panel = dict(self.package["front_panels"][0])
+        self.asset_map = {
+            item["asset_id"]: (self.wfrog_path.parent / Path(item["path"])).resolve()
+            for item in self.package.get("svg_assets", [])
+        }
+        self.widgets = self._build_widgets()
+        self.last_final_state: int = 0
+        self.last_public_outputs: Dict[str, int] = {"result": 0}
+        self.diagnostics: List[Dict[str, Any]] = []
+        self.applied_widget_references: List[Dict[str, Any]] = []
+        self.apply_contract_property_writes()
+
+    def _load_and_validate(self) -> Dict[str, Any]:
+        ensure(self.contract.get("artifact_kind") == "frog_backend_contract", "Expected frog_backend_contract.")
+        ensure(
+            self.contract.get("backend_family") == REFERENCE_BACKEND_FAMILY,
+            f"Expected backend family {REFERENCE_BACKEND_FAMILY}.",
+        )
+        units = self.contract.get("units")
+        ensure(isinstance(units, list) and len(units) == 1, "Expected exactly one contract unit.")
+        unit = units[0]
+        ensure(unit.get("unit_id") == "main", "Expected unit_id main.")
+        ensure(unit.get("kind") == "bounded_executable_ui_unit", "Unexpected runtime unit kind.")
+
+        ensure(self.package.get("format") == "frog.wfrog", "Unsupported .wfrog format.")
+        ensure(self.package.get("kind") == "front_panel_package", "Only front_panel_package is supported.")
+        front_panels = self.package.get("front_panels")
+        ensure(isinstance(front_panels, list) and len(front_panels) == 1, "Expected exactly one front panel.")
+        widget_classes = {entry["class_id"]: entry for entry in self.package.get("widget_classes", [])}
+        ensure("frog.widgets.numeric_control" in widget_classes, "Missing numeric_control class in .wfrog.")
+        ensure("frog.widgets.numeric_indicator" in widget_classes, "Missing numeric_indicator class in .wfrog.")
+        host_bindings = {entry["binding_id"]: entry for entry in self.package.get("host_bindings", [])}
+        ensure("reference_host_default" in host_bindings, "Missing reference_host_default host binding.")
+        required_capabilities = set(host_bindings["reference_host_default"].get("required_capabilities", []))
+        ensure({"window", "basic_widget_rendering", "property_write", "widget_value_binding"} <= required_capabilities, "Host binding is missing required capabilities.")
+
+        public_inputs = unit["public_interface"]["inputs"]
+        public_outputs = unit["public_interface"]["outputs"]
+        ensure(len(public_inputs) == 1 and public_inputs[0]["id"] == "input_value", "Expected public input input_value.")
+        ensure(len(public_outputs) == 1 and public_outputs[0]["id"] == "result", "Expected public output result.")
+        ensure(unit["execution_model"]["iteration_count"] == 5, "Slice 05 expects five iterations.")
+        ensure(unit["state_model"]["carrier"]["initial_value"] == 0, "Slice 05 expects initial state 0.")
+
+        panel_widgets = {entry["instance_id"]: entry for entry in front_panels[0].get("widgets", [])}
+        for contract_widget in unit["ui_binding"]["widgets"]:
+            widget_id = contract_widget["widget_id"]
+            ensure(widget_id in panel_widgets, f"Panel is missing widget {widget_id}.")
+            panel_widget = panel_widgets[widget_id]
+            ensure(
+                panel_widget["class_ref"] == contract_widget["widget_class"],
+                f"Class mismatch for widget {widget_id}.",
+            )
+            ensure(
+                panel_widget["class_ref"] in SUPPORTED_WIDGET_CLASSES,
+                f"Unsupported widget class {panel_widget['class_ref']}.",
+            )
+
+        reference_support = {item["widget_id"]: item["supported_members"] for item in unit["ui_binding"]["widget_reference_support"]}
+        for item in unit["property_writes"]:
+            widget_id = item["widget_id"]
+            member = item["member"]
+            ensure(member in SUPPORTED_WIDGET_PROPERTIES, f"Unsupported property write {member}.")
+            ensure(widget_id in reference_support and member in reference_support[widget_id], f"Unsupported widget reference member {widget_id}.{member}.")
+        return unit
+
+    def _build_widgets(self) -> Dict[str, WidgetState]:
+        panel_widgets = {entry["instance_id"]: entry for entry in self.panel.get("widgets", [])}
+        support = {item["widget_id"]: list(item["supported_members"]) for item in self.unit["ui_binding"]["widget_reference_support"]}
+        widgets: Dict[str, WidgetState] = {}
+        for contract_widget in self.unit["ui_binding"]["widgets"]:
+            widget_id = contract_widget["widget_id"]
+            panel_widget = panel_widgets[widget_id]
+            visual = panel_widget.get("visual", {})
+            asset_ref = visual.get("asset_ref")
+            asset_id = None
+            asset_path = None
+            if isinstance(asset_ref, str) and asset_ref.startswith("asset:"):
+                asset_id = asset_ref.split(":", 1)[1]
+                asset_path = self.asset_map.get(asset_id)
+            props = dict(panel_widget.get("props", {}))
+            props.setdefault("value", 0)
+            props.setdefault("label", "")
+            props.setdefault("visible", True)
+            props.setdefault("enabled", True)
+            props.setdefault("foreground_color", "#D8D8D8")
+            widgets[widget_id] = WidgetState(
+                widget_id=widget_id,
+                class_ref=contract_widget["widget_class"],
+                role=contract_widget["role"],
+                layout=dict(panel_widget.get("layout", {})),
+                properties=props,
+                asset_id=asset_id,
+                asset_path=asset_path,
+                supported_members=support.get(widget_id, []),
+            )
+        return widgets
+
+    def apply_contract_property_writes(self) -> None:
+        self.applied_widget_references = []
+        for item in self.unit.get("property_writes", []):
+            widget = self.widgets[item["widget_id"]]
+            member = item["member"]
+            value = item["value"]["value"]
+            ensure(member in widget.supported_members, f"Property {member} is not supported by widget {widget.widget_id}.")
+            widget.properties[member] = value
+            self.applied_widget_references.append(
+                {"widget_id": widget.widget_id, "member": member, "value": value}
+            )
+
+    def set_control_value(self, value: int) -> None:
+        value = checked_u16(int(value), label="input_value")
+        self.widgets["ctrl_input"].properties["value"] = value
+
+    def get_control_value(self) -> int:
+        return checked_u16(int(self.widgets["ctrl_input"].properties.get("value", 0)), label="input_value")
+
+    def reset_to_default_style(self, widget_id: str) -> None:
+        panel_widgets = {entry["instance_id"]: entry for entry in self.panel.get("widgets", [])}
+        panel_widget = panel_widgets[widget_id]
+        props = dict(panel_widget.get("props", {}))
+        props.setdefault("visible", True)
+        props.setdefault("enabled", True)
+        props.setdefault("foreground_color", "#D8D8D8")
+        props.setdefault("label", "")
+        props.setdefault("value", 0)
+        self.widgets[widget_id].properties.update(props)
+
+    def invoke_method(self, widget_id: str, method_name: str) -> None:
+        if widget_id == "ind_result" and method_name == "reset_to_default_style":
+            self.reset_to_default_style(widget_id)
+            return
+        if widget_id == "ctrl_input" and method_name == "focus":
+            return
+        raise RuntimeExecutionError(f"Unsupported method invocation: {widget_id}.{method_name}")
+
+    def execute(self, *, control_value: Optional[int] = None) -> Dict[str, Any]:
+        self.diagnostics = []
+        self.apply_contract_property_writes()
+        if control_value is not None:
+            self.set_control_value(control_value)
+        input_value = self.get_control_value()
+        iterations = int(self.unit["execution_model"]["iteration_count"])
+        state = int(self.unit["state_model"]["carrier"]["initial_value"])
+        for _ in range(iterations):
+            state = checked_u16(state + input_value, label="final_state")
+        self.widgets["ind_result"].properties["value"] = state
+        self.last_final_state = state
+        self.last_public_outputs = {"result": state}
+        return self.execution_artifact()
+
+    def execution_artifact(self) -> Dict[str, Any]:
+        ui_widget_entries = []
+        for widget in self.widgets.values():
+            ui_widget_entries.append(
+                {
+                    "widget_id": widget.widget_id,
+                    "class_ref": widget.class_ref,
+                    "role": widget.role,
+                    "layout": dict(widget.layout),
+                    "runtime": {
+                        "value": widget.properties.get("value", 0),
+                        "label": widget.properties.get("label", ""),
+                        "visible": bool(widget.properties.get("visible", True)),
+                        "enabled": bool(widget.properties.get("enabled", True)),
+                        "foreground_color": str(widget.properties.get("foreground_color", "#D8D8D8")),
+                        "asset_ref": f"asset:{widget.asset_id}" if widget.asset_id else None,
+                    },
+                }
+            )
+
+        return {
+            "artifact_kind": "frog_runtime_execution_result",
+            "artifact_governance_ref": {"path": "Versioning/Readme.md"},
+            "status": "ok",
+            "contract_ref": {
+                "unit_ids": [self.unit["unit_id"]],
+                "backend_family": self.contract["backend_family"],
+                "source_ref": dict(self.contract["source_ref"]),
+            },
+            "execution_summary": {
+                "mode": "contract_and_wfrog",
+                "executed_unit": self.unit["unit_id"],
+                "iterations": int(self.unit["execution_model"]["iteration_count"]),
+                "state_initialized": True,
+                "initial_state": int(self.unit["state_model"]["carrier"]["initial_value"]),
+                "final_state": int(self.last_final_state),
+            },
+            "outputs": {
+                "public": dict(self.last_public_outputs),
+                "ui": {
+                    "ctrl_input": self.get_control_value(),
+                    "ind_result": int(self.widgets["ind_result"].properties.get("value", 0)),
+                },
+            },
+            "ui_runtime": {
+                "panel": {
+                    "panel_id": self.panel["panel_id"],
+                    "title": self.panel["title"],
+                    "class_ref": self.panel["class_ref"],
+                    "layout": dict(self.panel["layout"]),
+                },
+                "widgets": ui_widget_entries,
+                "applied_widget_references": list(self.applied_widget_references),
+            },
+            "diagnostics": list(self.diagnostics),
+        }
+
+
+def execute_slice05_contract(
+    control_value: int = 3,
+    *,
+    contract_path: Path | str | None = None,
+    wfrog_path: Path | str | None = None,
+) -> Dict[str, Any]:
+    runtime = Slice05RuntimeCore(contract_path=contract_path, wfrog_path=wfrog_path)
+    return runtime.execute(control_value=control_value)

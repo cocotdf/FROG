@@ -1,337 +1,288 @@
 from __future__ import annotations
 
+import html
 import json
-from dataclasses import dataclass, field
+import threading
+import urllib.parse
+import webbrowser
+from http import HTTPStatus
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any, Dict, Optional
 
-import tkinter as tk
-from tkinter import ttk
+try:
+    from .runtime_core import Slice05RuntimeCore, default_contract_path, default_wfrog_path
+except ImportError:  # pragma: no cover
+    from runtime_core import Slice05RuntimeCore, default_contract_path, default_wfrog_path
 
 
-SUPPORTED_WIDGET_CLASSES = {
-    "frog.widgets.numeric_control",
-    "frog.widgets.numeric_indicator",
-}
+class BrowserUiRuntime:
+    def __init__(
+        self,
+        *,
+        contract_path: str | Path | None = None,
+        wfrog_path: str | Path | None = None,
+        host: str = "127.0.0.1",
+        port: int = 0,
+        open_browser: bool = True,
+    ) -> None:
+        self.runtime = Slice05RuntimeCore(contract_path=contract_path, wfrog_path=wfrog_path)
+        self.host = host
+        self.port = port
+        self.open_browser = open_browser
+        self.last_error: Optional[str] = None
+        self._httpd: Optional[ThreadingHTTPServer] = None
 
-SUPPORTED_PROPERTIES = {
-    "value",
-    "label",
-    "visible",
-    "enabled",
-    "foreground_color",
-}
+    def build_server(self) -> ThreadingHTTPServer:
+        runtime = self
 
+        class Handler(BaseHTTPRequestHandler):
+            def do_GET(self) -> None:  # noqa: N802
+                runtime._handle_get(self)
 
-@dataclass
-class WidgetInstance:
-    instance_id: str
-    class_ref: str
-    role: str
-    layout: Dict[str, Any]
-    properties: Dict[str, Any] = field(default_factory=dict)
-    default_properties: Dict[str, Any] = field(default_factory=dict)
-    visual: Dict[str, Any] = field(default_factory=dict)
+            def do_POST(self) -> None:  # noqa: N802
+                runtime._handle_post(self)
 
-    frame: Optional[tk.Frame] = None
-    label_widget: Optional[tk.Label] = None
-    value_widget: Optional[tk.Widget] = None
-    tk_variable: Optional[tk.StringVar] = None
+            def log_message(self, format: str, *args: Any) -> None:  # noqa: A003
+                return
 
-    def get_property(self, name: str) -> Any:
-        return self.properties.get(name)
+        self._httpd = ThreadingHTTPServer((self.host, self.port), Handler)
+        return self._httpd
 
-    def set_property(self, name: str, value: Any) -> None:
-        self.properties[name] = value
+    def state_snapshot(self) -> Dict[str, Any]:
+        return self.runtime.execution_artifact()
 
-    def reset_to_default_style(self) -> None:
-        self.properties = dict(self.default_properties)
-        self.sync_to_view()
+    def render_html(self) -> str:
+        snapshot = self.state_snapshot()
+        widgets = {entry["widget_id"]: entry for entry in snapshot["ui_runtime"]["widgets"]}
+        ctrl = widgets["ctrl_input"]["runtime"]
+        ind = widgets["ind_result"]["runtime"]
+        ctrl_asset = widgets["ctrl_input"]["runtime"].get("asset_ref")
+        ind_asset = widgets["ind_result"]["runtime"].get("asset_ref")
+        ctrl_asset_url = f"/asset/{ctrl_asset.split(':', 1)[1]}" if ctrl_asset else ""
+        ind_asset_url = f"/asset/{ind_asset.split(':', 1)[1]}" if ind_asset else ""
 
-    def sync_to_view(self) -> None:
-        if self.frame is None:
-            return
-
-        visible = bool(self.properties.get("visible", True))
-        enabled = bool(self.properties.get("enabled", True))
-        foreground_color = str(self.properties.get("foreground_color", "#D8D8D8"))
-        label_text = str(self.properties.get("label", ""))
-
-        if visible:
-            self.frame.place(
-                x=int(self.layout.get("x", 0)),
-                y=int(self.layout.get("y", 0)),
-                width=int(self.layout.get("width", 100)),
-                height=int(self.layout.get("height", 60)),
+        error_block = ""
+        if self.last_error:
+            error_block = (
+                "<div class='diagnostic error'>"
+                + html.escape(self.last_error)
+                + "</div>"
             )
-        else:
-            self.frame.place_forget()
 
-        self.frame.configure(bg=foreground_color)
+        return f"""<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>{html.escape(snapshot['ui_runtime']['panel']['title'])}</title>
+<style>
+body {{
+  font-family: Segoe UI, Arial, sans-serif;
+  margin: 24px;
+  background: #f3f6f8;
+  color: #1f2933;
+}}
+h1 {{ margin: 0 0 12px 0; font-size: 24px; }}
+p.meta {{ margin: 0 0 20px 0; color: #52606d; }}
+.panel {{
+  width: 460px;
+  min-height: 170px;
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 16px;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+}}
+.widgets {{
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}}
+.widget {{
+  width: 180px;
+  padding: 12px;
+  border-radius: 8px;
+  border: 2px solid #cbd2d9;
+  background: #fbfdff;
+}}
+.widget svg, .widget img {{
+  display: block;
+  width: 100%;
+  height: 32px;
+  object-fit: contain;
+  margin-bottom: 8px;
+}}
+.widget label {{
+  display: block;
+  margin-bottom: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}}
+.widget input, .widget output {{
+  display: block;
+  width: 100%;
+  padding: 8px 10px;
+  box-sizing: border-box;
+  border-radius: 6px;
+  border: 1px solid #9aa5b1;
+  font-size: 16px;
+}}
+.widget output {{
+  background: #f8fff0;
+}}
+.actions {{
+  margin-top: 16px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}}
+button {{
+  padding: 8px 14px;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #0f62fe;
+  color: #ffffff;
+  font-weight: 600;
+}}
+.diagnostic {{
+  margin: 12px 0;
+  padding: 10px 12px;
+  border-radius: 6px;
+}}
+.diagnostic.error {{
+  background: #fff1f2;
+  color: #9f1239;
+  border: 1px solid #fecdd3;
+}}
+summary {{
+  cursor: pointer;
+  margin-top: 16px;
+  font-weight: 600;
+}}
+pre {{
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: #0b1020;
+  color: #dbeafe;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 12px;
+}}
+</style>
+</head>
+<body>
+<h1>{html.escape(snapshot['ui_runtime']['panel']['title'])}</h1>
+<p class="meta">Example 05 — contract + .wfrog + browser host runtime</p>
+{error_block}
+<div class="panel">
+  <form method="post" action="/run">
+    <div class="widgets">
+      <section class="widget" style="border-color:{html.escape(str(ctrl['foreground_color']))}">
+        <label>{html.escape(str(ctrl['label']))}</label>
+        <img src="{html.escape(ctrl_asset_url)}" alt="">
+        <input name="input_value" type="number" min="0" max="65535" value="{html.escape(str(ctrl['value']))}" {'disabled' if not ctrl['enabled'] else ''}>
+      </section>
+      <section class="widget" style="border-color:{html.escape(str(ind['foreground_color']))}">
+        <label>{html.escape(str(ind['label']))}</label>
+        <img src="{html.escape(ind_asset_url)}" alt="">
+        <output>{html.escape(str(ind['value']))}</output>
+      </section>
+    </div>
+    <div class="actions">
+      <button type="submit">Run Example 05</button>
+      <a href="/state.json">state.json</a>
+    </div>
+  </form>
+  <details>
+    <summary>Current runtime snapshot</summary>
+    <pre>{html.escape(json.dumps(snapshot, indent=2))}</pre>
+  </details>
+</div>
+</body>
+</html>
+"""
 
-        if self.label_widget is not None:
-            self.label_widget.configure(text=label_text, bg=foreground_color, fg="#FFFFFF")
+    def _serve_bytes(self, handler: BaseHTTPRequestHandler, body: bytes, content_type: str, status: int = 200) -> None:
+        handler.send_response(status)
+        handler.send_header("Content-Type", content_type)
+        handler.send_header("Content-Length", str(len(body)))
+        handler.end_headers()
+        handler.wfile.write(body)
 
-        if self.class_ref == "frog.widgets.numeric_control":
-            if self.value_widget is not None:
-                try:
-                    self.value_widget.configure(state="normal" if enabled else "disabled")
-                except tk.TclError:
-                    pass
-            if self.tk_variable is not None:
-                self.tk_variable.set(str(self.properties.get("value", 0)))
-        elif self.class_ref == "frog.widgets.numeric_indicator":
-            if self.value_widget is not None:
-                self.value_widget.configure(
-                    text=str(self.properties.get("value", 0)),
-                    bg="#F8FFF0",
-                    fg="#1E1E1E",
-                )
+    def _redirect(self, handler: BaseHTTPRequestHandler, target: str) -> None:
+        handler.send_response(HTTPStatus.SEE_OTHER)
+        handler.send_header("Location", target)
+        handler.end_headers()
 
-
-class FrogUIRuntime:
-    def __init__(self, wfrog_path: str | Path, *, headless: bool = False) -> None:
-        self.wfrog_path = Path(wfrog_path).resolve()
-        self.package_dir = self.wfrog_path.parent
-        self.headless = headless
-
-        self.root: Optional[tk.Tk] = None
-        self.widgets: Dict[str, WidgetInstance] = {}
-        self.panel_spec: Dict[str, Any] = {}
-        self.window_layout: Dict[str, Any] = {}
-
-    def load_package(self) -> None:
-        with self.wfrog_path.open("r", encoding="utf-8") as f:
-            data = json.load(f)
-
-        if data.get("format") != "frog.wfrog":
-            raise ValueError("Unsupported widget package format")
-
-        if data.get("kind") != "front_panel_package":
-            raise ValueError("Only front_panel_package is supported by this runtime")
-
-        panels = data.get("front_panels", [])
-        if not panels:
-            raise ValueError("No front_panels section found in package")
-
-        self.panel_spec = dict(panels[0])
-        self.window_layout = dict(self.panel_spec.get("layout", {}))
-        self.widgets.clear()
-
-        for widget_data in self.panel_spec.get("widgets", []):
-            class_ref = str(widget_data.get("class_ref", ""))
-            if class_ref not in SUPPORTED_WIDGET_CLASSES:
-                raise ValueError(f"Unsupported widget class: {class_ref}")
-
-            instance_id = str(widget_data["instance_id"])
-            props = dict(widget_data.get("props", {}))
-            default_value = props.get("value", 0)
-            props.setdefault("visible", True)
-            props.setdefault("enabled", True)
-            props.setdefault("foreground_color", "#D8D8D8")
-            props.setdefault("label", "")
-            props.setdefault("value", default_value)
-
-            role = "control" if class_ref == "frog.widgets.numeric_control" else "indicator"
-
-            widget = WidgetInstance(
-                instance_id=instance_id,
-                class_ref=class_ref,
-                role=role,
-                layout=dict(widget_data.get("layout", {})),
-                properties=dict(props),
-                default_properties=dict(props),
-                visual=dict(widget_data.get("visual", {})),
-            )
-            self.widgets[instance_id] = widget
-
-    def build_window(self) -> None:
-        if not self.panel_spec:
-            raise RuntimeError("Package must be loaded before building the window")
-
-        if self.headless:
+    def _handle_get(self, handler: BaseHTTPRequestHandler) -> None:
+        parsed = urllib.parse.urlparse(handler.path)
+        path = parsed.path
+        if path == "/":
+            payload = self.render_html().encode("utf-8")
+            self._serve_bytes(handler, payload, "text/html; charset=utf-8")
             return
-
-        self.root = tk.Tk()
-        self.root.title(str(self.panel_spec.get("title", "FROG UI Runtime")))
-
-        width = int(self.window_layout.get("width", 640))
-        height = int(self.window_layout.get("height", 240))
-        self.root.geometry(f"{width}x{height}")
-        self.root.resizable(False, False)
-        self.root.configure(bg="#F4F6F8")
-
-        for widget in self.widgets.values():
-            self._create_widget_view(widget)
-
-        self.root.bind("<Return>", lambda _event: self.run_example_05())
-
-    def _create_widget_view(self, widget: WidgetInstance) -> None:
-        assert self.root is not None
-
-        foreground_color = str(widget.properties.get("foreground_color", "#D8D8D8"))
-        layout = widget.layout
-
-        frame = tk.Frame(self.root, bg=foreground_color, bd=1, relief="solid", highlightthickness=0)
-        widget.frame = frame
-        frame.place(
-            x=int(layout.get("x", 0)),
-            y=int(layout.get("y", 0)),
-            width=int(layout.get("width", 100)),
-            height=int(layout.get("height", 60)),
-        )
-
-        label = tk.Label(
-            frame,
-            text=str(widget.properties.get("label", "")),
-            anchor="w",
-            bg=foreground_color,
-            fg="#FFFFFF",
-            font=("Segoe UI", 10, "bold"),
-        )
-        label.place(x=10, y=6, width=max(int(layout.get("width", 100)) - 20, 40), height=18)
-        widget.label_widget = label
-
-        if widget.class_ref == "frog.widgets.numeric_control":
-            var = tk.StringVar(value=str(widget.properties.get("value", 0)))
-            entry = tk.Entry(frame, textvariable=var, font=("Consolas", 13))
-            entry.place(x=10, y=28, width=max(int(layout.get("width", 100)) - 20, 40), height=24)
-            widget.value_widget = entry
-            widget.tk_variable = var
-        elif widget.class_ref == "frog.widgets.numeric_indicator":
-            value_label = tk.Label(
-                frame,
-                text=str(widget.properties.get("value", 0)),
-                anchor="w",
-                bg="#F8FFF0",
-                fg="#1E1E1E",
-                font=("Consolas", 13, "bold"),
-                relief="solid",
-                bd=1,
-            )
-            value_label.place(x=10, y=28, width=max(int(layout.get("width", 100)) - 20, 40), height=24)
-            widget.value_widget = value_label
-
-        widget.sync_to_view()
-
-    def property_read(self, widget_id: str, member: str) -> Any:
-        widget = self._get_widget(widget_id)
-        self._validate_member_access(member)
-
-        if member == "value" and widget.class_ref == "frog.widgets.numeric_control":
-            return self._read_control_value(widget)
-
-        return widget.get_property(member)
-
-    def property_write(self, widget_id: str, member: str, value: Any) -> None:
-        widget = self._get_widget(widget_id)
-        self._validate_member_access(member)
-
-        if member == "value":
-            if widget.class_ref in {"frog.widgets.numeric_control", "frog.widgets.numeric_indicator"}:
-                widget.set_property("value", int(value))
-            else:
-                raise ValueError(f"'value' is not supported on class {widget.class_ref}")
-        elif member in {"label", "visible", "enabled", "foreground_color"}:
-            widget.set_property(member, value)
-        else:
-            raise ValueError(f"Unsupported property: {member}")
-
-        widget.sync_to_view()
-
-    def method_invoke(self, widget_id: str, method_name: str) -> None:
-        widget = self._get_widget(widget_id)
-
-        if method_name == "focus":
-            if widget.value_widget is not None:
-                try:
-                    widget.value_widget.focus_set()
-                except tk.TclError:
-                    pass
-        elif method_name == "reset_to_default_style":
-            widget.reset_to_default_style()
-        else:
-            raise ValueError(f"Unsupported method: {method_name}")
-
-    def run_example_05(self) -> int:
-        input_widget = self._get_widget("ctrl_input")
-        self.method_invoke("ctrl_input", "focus")
-
-        input_value = self._read_control_value(input_widget)
-
-        state = 0
-        for _ in range(5):
-            state += input_value
-
-        self.property_write("ctrl_input", "foreground_color", self._get_widget("ctrl_input").default_properties["foreground_color"])
-        self.property_write("ind_result", "foreground_color", self._get_widget("ind_result").default_properties["foreground_color"])
-        self.property_write("ind_result", "value", state)
-
-        return state
-
-    def reset_all_styles(self) -> None:
-        for widget in self.widgets.values():
-            widget.reset_to_default_style()
-
-    def snapshot(self) -> Dict[str, Any]:
-        return {
-            "panel": {
-                "title": str(self.panel_spec.get("title", "")),
-                "layout": dict(self.window_layout),
-            },
-            "widgets": {
-                widget_id: {
-                    "class_ref": widget.class_ref,
-                    "role": widget.role,
-                    "layout": dict(widget.layout),
-                    "properties": dict(widget.properties),
-                }
-                for widget_id, widget in self.widgets.items()
-            },
-        }
-
-    def mainloop(self) -> None:
-        if self.headless:
+        if path == "/state.json":
+            payload = json.dumps(self.state_snapshot(), indent=2).encode("utf-8")
+            self._serve_bytes(handler, payload, "application/json; charset=utf-8")
             return
-        if self.root is None:
-            raise RuntimeError("Window has not been built")
-        self.root.mainloop()
+        if path.startswith("/asset/"):
+            asset_id = path.split("/", 2)[2]
+            asset_path = self.runtime.asset_map.get(asset_id)
+            if asset_path is None or not asset_path.exists():
+                self._serve_bytes(handler, b"missing asset", "text/plain; charset=utf-8", status=404)
+                return
+            self._serve_bytes(handler, asset_path.read_bytes(), "image/svg+xml")
+            return
+        self._serve_bytes(handler, b"not found", "text/plain; charset=utf-8", status=404)
 
-    def _get_widget(self, widget_id: str) -> WidgetInstance:
-        if widget_id not in self.widgets:
-            raise ValueError(f"Unknown widget instance: {widget_id}")
-        return self.widgets[widget_id]
-
-    def _validate_member_access(self, member: str) -> None:
-        if member not in SUPPORTED_PROPERTIES:
-            raise ValueError(f"Unsupported property '{member}'")
-
-    def _read_control_value(self, widget: WidgetInstance) -> int:
-        if widget.class_ref != "frog.widgets.numeric_control":
-            raise ValueError(f"Widget '{widget.instance_id}' is not a numeric_control")
-
-        raw = widget.properties.get("value", 0)
-        if widget.tk_variable is not None:
-            raw = widget.tk_variable.get()
-
+    def _handle_post(self, handler: BaseHTTPRequestHandler) -> None:
+        parsed = urllib.parse.urlparse(handler.path)
+        if parsed.path != "/run":
+            self._serve_bytes(handler, b"not found", "text/plain; charset=utf-8", status=404)
+            return
+        length = int(handler.headers.get("Content-Length", "0"))
+        body = handler.rfile.read(length).decode("utf-8")
+        form = urllib.parse.parse_qs(body, keep_blank_values=True)
+        raw_value = form.get("input_value", ["0"])[0]
         try:
-            value = int(raw)
-        except (TypeError, ValueError):
-            value = 0
+            self.runtime.execute(control_value=int(raw_value))
+            self.last_error = None
+        except Exception as exc:  # pragma: no cover - exact error rendering is covered through state.json/headless tests
+            self.last_error = str(exc)
+        self._redirect(handler, "/")
 
-        if value < 0:
-            value = 0
-        if value > 65535:
-            value = 65535
+    def serve(self) -> None:
+        httpd = self.build_server()
+        address = f"http://{httpd.server_address[0]}:{httpd.server_address[1]}/"
+        if self.open_browser:
+            webbrowser.open(address)
+        print(address)
+        try:
+            httpd.serve_forever()
+        finally:
+            httpd.server_close()
 
-        widget.set_property("value", value)
-        widget.sync_to_view()
-        return value
+    def serve_in_thread(self) -> tuple[ThreadingHTTPServer, threading.Thread]:
+        httpd = self.build_server()
+        thread = threading.Thread(target=httpd.serve_forever, daemon=True)
+        thread.start()
+        return httpd, thread
 
 
-
-def build_runtime(wfrog_path: str | Path, *, headless: bool = False) -> FrogUIRuntime:
-    runtime = FrogUIRuntime(wfrog_path, headless=headless)
-    runtime.load_package()
-    runtime.build_window()
-    return runtime
+def build_runtime(
+    *,
+    contract_path: str | Path | None = None,
+    wfrog_path: str | Path | None = None,
+    host: str = "127.0.0.1",
+    port: int = 0,
+    open_browser: bool = True,
+) -> BrowserUiRuntime:
+    return BrowserUiRuntime(
+        contract_path=contract_path or default_contract_path(),
+        wfrog_path=wfrog_path or default_wfrog_path(),
+        host=host,
+        port=port,
+        open_browser=open_browser,
+    )
