@@ -1,336 +1,284 @@
 from __future__ import annotations
 
-from copy import deepcopy
+import json
+from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from Implementations.Reference.common import (
-    BackendContract,
-    DEFAULT_BACKEND_FAMILY,
-    DEMO_ARTIFACT_VERSION,
-    FrogPipelineError,
-    LoweredForm,
-    ensure,
-)
+
+REFERENCE_BACKEND_FAMILY = "reference_host_runtime_ui_binding"
+EXAMPLE_ID = "05_bounded_ui_accumulator"
+DEFAULT_UI_PACKAGE_SUFFIX = "ui/accumulator_panel.wfrog"
 
 
-LLVM_FAMILY_ID = "llvm_cpu_v1"
+class ContractEmissionError(RuntimeError):
+    """Raised when the lowered artifact cannot be emitted as a reference runtime contract."""
 
 
-def _infer_contract_family(lowered_backend_family: str) -> str:
-    if lowered_backend_family == LLVM_FAMILY_ID:
-        return LLVM_FAMILY_ID
-    if lowered_backend_family == DEFAULT_BACKEND_FAMILY:
-        return DEFAULT_BACKEND_FAMILY
-    return lowered_backend_family
+def _ensure(condition: bool, message: str) -> None:
+    if not condition:
+        raise ContractEmissionError(message)
 
 
-def _extract_main_unit(lowered: LoweredForm) -> Dict[str, Any]:
-    units = lowered.artifact.get("units", [])
-    ensure(
-        isinstance(units, list) and len(units) == 1,
-        stage="emit-backend-contract",
-        error_code="invalid_lowered_units",
-        message="Reference contract emission expects exactly one lowered entry unit.",
-    )
-    unit = units[0]
-    ensure(
-        isinstance(unit, dict),
-        stage="emit-backend-contract",
-        error_code="invalid_lowered_unit_shape",
-        message="Lowered entry unit must be an object.",
-    )
+def _expect_single_unit(lowering: Dict[str, Any]) -> Dict[str, Any]:
+    lowered_units = lowering.get("lowered_units")
+    _ensure(isinstance(lowered_units, list) and len(lowered_units) == 1, "Expected exactly one lowered unit.")
+    unit = lowered_units[0]
+    _ensure(isinstance(unit, dict), "Lowered unit must be an object.")
     return unit
 
 
-def _collect_operations_by_kind(operations: List[Dict[str, Any]]) -> Dict[str, List[Dict[str, Any]]]:
-    grouped: Dict[str, List[Dict[str, Any]]] = {}
-    for op in operations:
-        grouped.setdefault(op["kind"], []).append(op)
-    return grouped
+def _expect_public_io(unit: Dict[str, Any]) -> Dict[str, Any]:
+    public_io = unit.get("public_io")
+    _ensure(isinstance(public_io, dict), "Missing public_io section.")
+    inputs = public_io.get("inputs")
+    outputs = public_io.get("outputs")
+    _ensure(isinstance(inputs, list) and len(inputs) == 1, "Expected exactly one public input.")
+    _ensure(isinstance(outputs, list) and len(outputs) == 1, "Expected exactly one public output.")
+    return public_io
 
 
-def _infer_program_io(
-    operations: List[Dict[str, Any]],
-) -> Dict[str, Any]:
-    public_inputs: List[Dict[str, Any]] = []
-    public_outputs: List[Dict[str, Any]] = []
-    ui_inputs: List[Dict[str, Any]] = []
-    ui_outputs: List[Dict[str, Any]] = []
-    ui_widget_refs: List[Dict[str, Any]] = []
-    ui_property_writes: List[Dict[str, Any]] = []
-
-    for op in operations:
-        kind = op["kind"]
-
-        if kind == "public_input":
-            public_inputs.append(
-                {
-                    "interface_port": op["interface_port"],
-                    "value_type": op["value_type"],
-                    "source_operation": op["id"],
-                }
-            )
-
-        elif kind == "public_output":
-            public_outputs.append(
-                {
-                    "interface_port": op["interface_port"],
-                    "value_type": op["value_type"],
-                    "source_operation": op["id"],
-                }
-            )
-
-        elif kind == "ui_value_input":
-            ui_inputs.append(
-                {
-                    "widget_id": op["widget_id"],
-                    "widget_class": op["widget_class"],
-                    "value_type": op["value_type"],
-                    "ui_participation_kind": op["ui_participation_kind"],
-                    "source_operation": op["id"],
-                    **({"default_value": op["default_value"]} if "default_value" in op else {}),
-                }
-            )
-
-        elif kind == "ui_value_output":
-            ui_outputs.append(
-                {
-                    "widget_id": op["widget_id"],
-                    "widget_class": op["widget_class"],
-                    "value_type": op["value_type"],
-                    "ui_participation_kind": op["ui_participation_kind"],
-                    "source_operation": op["id"],
-                }
-            )
-
-        elif kind == "ui_widget_reference":
-            ui_widget_refs.append(
-                {
-                    "widget_id": op["widget_id"],
-                    "widget_class": op["widget_class"],
-                    "widget_role": op["widget_role"],
-                    "ui_participation_kind": op["ui_participation_kind"],
-                    "source_operation": op["id"],
-                }
-            )
-
-        elif kind == "ui_property_write":
-            ui_property_writes.append(
-                {
-                    "target_widget_id": op.get("target_widget_id"),
-                    "target_widget_class": op.get("target_widget_class"),
-                    "widget_member": deepcopy(op["widget_member"]),
-                    "value_type": op["value_type"],
-                    "source_operation": op["id"],
-                }
-            )
-
-    return {
-        "public_inputs": public_inputs,
-        "public_outputs": public_outputs,
-        "ui_inputs": ui_inputs,
-        "ui_outputs": ui_outputs,
-        "ui_widget_references": ui_widget_refs,
-        "ui_property_writes": ui_property_writes,
-    }
+def _expect_ui_bindings(unit: Dict[str, Any]) -> Dict[str, Any]:
+    ui_bindings = unit.get("ui_bindings")
+    _ensure(isinstance(ui_bindings, dict), "Missing ui_bindings section.")
+    control_bindings = ui_bindings.get("control_bindings")
+    indicator_bindings = ui_bindings.get("indicator_bindings")
+    reference_writes = ui_bindings.get("reference_writes")
+    _ensure(isinstance(control_bindings, list) and len(control_bindings) == 1, "Expected exactly one control binding.")
+    _ensure(isinstance(indicator_bindings, list) and len(indicator_bindings) == 1, "Expected exactly one indicator binding.")
+    _ensure(isinstance(reference_writes, list) and len(reference_writes) == 2, "Expected exactly two reference writes.")
+    return ui_bindings
 
 
-def _infer_state_contract(
-    operations: List[Dict[str, Any]],
-    region_units: List[Dict[str, Any]],
-) -> Dict[str, Any]:
-    state_cells: List[Dict[str, Any]] = []
-
-    for op in operations:
-        if op["kind"] == "state_init":
-            state_cells.append(
-                {
-                    "state_id": op["state_id"],
-                    "state_kind": op["state_kind"],
-                    "value_type": op["value_type"],
-                    "initial_value": op.get("initial_value"),
-                    "source_operation": op["id"],
-                    "scope": "entry_unit",
-                }
-            )
-
-    for region_unit in region_units:
-        for op in region_unit.get("operations", []):
-            if op["kind"] == "state_init":
-                state_cells.append(
-                    {
-                        "state_id": op["state_id"],
-                        "state_kind": op["state_kind"],
-                        "value_type": op["value_type"],
-                        "initial_value": op.get("initial_value"),
-                        "source_operation": op["id"],
-                        "scope": region_unit["id"],
-                    }
-                )
-
-    return {
-        "explicit_local_memory": len(state_cells) > 0,
-        "state_cells": state_cells,
-    }
+def _expect_execution_kernel(unit: Dict[str, Any]) -> Dict[str, Any]:
+    kernel = unit.get("execution_kernel")
+    _ensure(isinstance(kernel, dict), "Missing execution_kernel section.")
+    _ensure(kernel.get("state_type") == "u16", "Slice 05 only supports u16 state.")
+    _ensure(kernel.get("iteration_count") == 5, "Slice 05 expects exactly five iterations.")
+    body = kernel.get("iteration_body")
+    _ensure(isinstance(body, list) and len(body) == 1, "Slice 05 expects exactly one iteration body operation.")
+    operation = body[0]
+    _ensure(operation.get("op") == "add", "Slice 05 expects an add iteration body.")
+    _ensure(operation.get("src") == ["state_current", "input_value"], "Unexpected iteration body sources.")
+    publication = kernel.get("final_publication")
+    _ensure(isinstance(publication, list) and len(publication) == 2, "Slice 05 expects exactly two final publications.")
+    return kernel
 
 
-def _infer_loop_contract(
-    operations: List[Dict[str, Any]],
-    region_units: List[Dict[str, Any]],
-) -> Dict[str, Any]:
-    loop_ops = [op for op in operations if op["kind"] == "counted_loop_execute"]
+def _infer_ui_package_path(lowering: Dict[str, Any], explicit_ui_package_path: Optional[str]) -> str:
+    if explicit_ui_package_path:
+        return explicit_ui_package_path
+    source_ref = lowering.get("source_ref", {})
+    source_path = source_ref.get("path")
+    _ensure(isinstance(source_path, str) and source_path.endswith("main.frog"), "Unable to infer UI package path from source_ref.path.")
+    example_dir = Path(source_path).parent
+    return str(example_dir / DEFAULT_UI_PACKAGE_SUFFIX)
 
-    if not loop_ops:
-        return {
-            "bounded_loop_present": False,
-            "counted_loops": [],
-        }
 
-    counted_loops: List[Dict[str, Any]] = []
+def _build_widget_bindings(ui_bindings: Dict[str, Any], public_io: Dict[str, Any]) -> Dict[str, Any]:
+    public_input = public_io["inputs"][0]
+    public_output = public_io["outputs"][0]
 
-    for loop_op in loop_ops:
-        matching_regions = [
-            region_unit
-            for region_unit in region_units
-            if region_unit.get("parent_loop_object") == loop_op["source_object"]
-        ]
+    control_binding = ui_bindings["control_bindings"][0]
+    indicator_binding = ui_bindings["indicator_bindings"][0]
+    reference_writes = ui_bindings["reference_writes"]
 
-        counted_loops.append(
+    _ensure(control_binding.get("widget_id") == "ctrl_input", "Expected control widget ctrl_input.")
+    _ensure(control_binding.get("mode") == "widget_value", "Control binding must use widget_value mode.")
+    _ensure(control_binding.get("public_input_id") == public_input.get("id"), "Unexpected control public_input_id.")
+
+    _ensure(indicator_binding.get("widget_id") == "ind_result", "Expected indicator widget ind_result.")
+    _ensure(indicator_binding.get("mode") == "widget_value", "Indicator binding must use widget_value mode.")
+    _ensure(indicator_binding.get("public_output_id") == public_output.get("id"), "Unexpected indicator public_output_id.")
+
+    widget_reference_support = []
+    property_writes = []
+    for item in reference_writes:
+        widget_id = item.get("widget_id")
+        member = item.get("member")
+        value_type = item.get("value_type")
+        value_literal = item.get("value_literal")
+        _ensure(widget_id in {"ctrl_input", "ind_result"}, f"Unexpected widget reference target: {widget_id}")
+        _ensure(member == "foreground_color", "Slice 05 only supports foreground_color property writes.")
+        _ensure(value_type == "frog.color.rgba8", "foreground_color writes must use frog.color.rgba8.")
+        widget_reference_support.append({"widget_id": widget_id, "supported_members": [member]})
+        property_writes.append(
             {
-                "operation_id": loop_op["id"],
-                "structure_type": loop_op.get("structure_type", "for_loop"),
-                "iteration_count": loop_op["iteration_count"],
-                "count_value": loop_op.get("count_value", loop_op["iteration_count"]),
-                "value_type": loop_op["value_type"],
-                "boundary": deepcopy(loop_op.get("boundary", {})),
-                "structure_terminals": deepcopy(loop_op.get("structure_terminals", {})),
-                "initial_value": loop_op.get("initial_value"),
-                "region_units": [region_unit["id"] for region_unit in matching_regions],
-                "source_operation": loop_op["id"],
+                "operation": "frog.ui.property_write",
+                "widget_id": widget_id,
+                "member": member,
+                "value": {"type": value_type, "value": value_literal},
             }
         )
 
-    return {
-        "bounded_loop_present": True,
-        "counted_loops": counted_loops,
-    }
+    # preserve control then indicator order
+    support_by_id = {entry["widget_id"]: entry for entry in widget_reference_support}
+    ordered_support = [support_by_id["ctrl_input"], support_by_id["ind_result"]]
 
-
-def _infer_core_operations(
-    operations: List[Dict[str, Any]],
-    region_units: List[Dict[str, Any]],
-) -> Dict[str, Any]:
-    top_level_adds = [op for op in operations if op["kind"] == "core_primitive_add"]
-    region_adds = [
-        op
-        for region_unit in region_units
-        for op in region_unit.get("operations", [])
-        if op["kind"] == "core_primitive_add"
+    widgets = [
+        {
+            "widget_id": "ctrl_input",
+            "widget_class": "frog.widgets.numeric_control",
+            "value_type": public_input.get("type"),
+            "role": "control",
+            "binding": {"mode": "widget_value", "public_input_id": public_input.get("id")},
+        },
+        {
+            "widget_id": "ind_result",
+            "widget_class": "frog.widgets.numeric_indicator",
+            "value_type": public_output.get("type"),
+            "role": "indicator",
+            "binding": {"mode": "widget_value", "public_output_id": public_output.get("id")},
+        },
     ]
-
-    return {
-        "top_level_add_count": len(top_level_adds),
-        "region_add_count": len(region_adds),
-        "total_add_count": len(top_level_adds) + len(region_adds),
-    }
+    return {"widgets": widgets, "widget_reference_support": ordered_support, "property_writes": property_writes}
 
 
-def emit_backend_contract(lowered: LoweredForm) -> BackendContract:
-    ensure(
-        lowered.artifact.get("artifact_kind") == "frog_lowered_form",
-        stage="emit-backend-contract",
-        error_code="invalid_lowered_artifact_kind",
-        message="Backend contract emission requires a lowered form artifact.",
+def emit_reference_host_runtime_contract(
+    lowering: Dict[str, Any],
+    *,
+    ui_package_path: Optional[str] = None,
+) -> Dict[str, Any]:
+    _ensure(lowering.get("artifact_kind") == "frog_lowered_unit", "Expected artifact_kind == frog_lowered_unit.")
+    source_ref = lowering.get("source_ref")
+    fir_ref = lowering.get("fir_ref")
+    _ensure(isinstance(source_ref, dict), "Missing source_ref.")
+    _ensure(isinstance(fir_ref, dict), "Missing fir_ref.")
+    _ensure(source_ref.get("example_id") == EXAMPLE_ID, "Only Example 05 is supported by this emitter.")
+    lowering_intent = lowering.get("lowering_intent")
+    _ensure(isinstance(lowering_intent, dict), "Missing lowering_intent.")
+    _ensure(
+        lowering_intent.get("backend_family_target") == REFERENCE_BACKEND_FAMILY,
+        f"Expected lowering_intent.backend_family_target == {REFERENCE_BACKEND_FAMILY}.",
     )
 
-    lowered_backend_family = lowered.artifact.get("backend_family")
-    contract_family = _infer_contract_family(lowered_backend_family)
+    unit = _expect_single_unit(lowering)
+    _ensure(unit.get("unit_id") == "main", "Expected lowered unit main.")
+    _ensure(unit.get("kind") == "bounded_accumulator_kernel_with_ui_bindings", "Unexpected lowered unit kind.")
 
-    main_unit = _extract_main_unit(lowered)
-    operations = deepcopy(main_unit.get("operations", []))
-    connections = deepcopy(main_unit.get("connections", []))
-    region_units = deepcopy(main_unit.get("region_units", []))
-    ui_declarations = deepcopy(main_unit.get("ui_declarations", {"widgets": []}))
-    non_semantic_ui_metadata = deepcopy(main_unit.get("non_semantic_ui_metadata", {}))
-    assumptions = deepcopy(lowered.artifact.get("assumptions", {}))
+    public_io = _expect_public_io(unit)
+    ui_bindings = _expect_ui_bindings(unit)
+    execution_kernel = _expect_execution_kernel(unit)
+    ui_package_path_value = _infer_ui_package_path(lowering, ui_package_path)
+    widget_artifacts = _build_widget_bindings(ui_bindings, public_io)
 
-    ensure(
-        isinstance(operations, list),
-        stage="emit-backend-contract",
-        error_code="invalid_lowered_operations_shape",
-        message="Lowered entry unit 'operations' must be an array.",
-    )
-    ensure(
-        isinstance(connections, list),
-        stage="emit-backend-contract",
-        error_code="invalid_lowered_connections_shape",
-        message="Lowered entry unit 'connections' must be an array.",
-    )
-    ensure(
-        isinstance(region_units, list),
-        stage="emit-backend-contract",
-        error_code="invalid_lowered_region_units_shape",
-        message="Lowered entry unit 'region_units' must be an array.",
-    )
+    public_input = public_io["inputs"][0]
+    public_output = public_io["outputs"][0]
 
-    grouped_ops = _collect_operations_by_kind(operations)
-    io_contract = _infer_program_io(operations)
-    state_contract = _infer_state_contract(operations, region_units)
-    loop_contract = _infer_loop_contract(operations, region_units)
-    core_contract = _infer_core_operations(operations, region_units)
-
-    contract_unit: Dict[str, Any] = {
-        "id": "contract_unit:main",
-        "role": "entry_unit",
-        "consumer_surface": {
-            "public_inputs": io_contract["public_inputs"],
-            "public_outputs": io_contract["public_outputs"],
-            "ui_inputs": io_contract["ui_inputs"],
-            "ui_outputs": io_contract["ui_outputs"],
-            "ui_widget_references": io_contract["ui_widget_references"],
-            "ui_property_writes": io_contract["ui_property_writes"],
-        },
-        "execution_requirements": {
-            "bounded_loop": loop_contract,
-            "state": state_contract,
-            "core_operations": core_contract,
-        },
-        "operations": operations,
-        "connections": connections,
-        "region_units": region_units,
-        "ui_declarations": ui_declarations,
-        "non_semantic_ui_metadata": non_semantic_ui_metadata,
-        "preserved_attribution": {
-            "operation_groups": {kind: [op["id"] for op in ops] for kind, ops in grouped_ops.items()},
-            "source_stage": "lowered_form",
-        },
-    }
-
-    contract_assumptions = {
-        "backend_family": contract_family,
-        "lowered_backend_family": lowered_backend_family,
-        "ui_binding_enabled": assumptions.get("ui_binding_enabled", False),
-        "ui_binding_kind": assumptions.get("ui_binding_kind", "none"),
-        "ui_object_surface_enabled": assumptions.get("ui_object_surface_enabled", False),
-        "explicit_local_memory": assumptions.get("explicit_local_memory", False),
-        "state_model": assumptions.get("state_model", "none"),
-        "execution_mode": assumptions.get("execution_mode", "deterministic_step_execution"),
-        "bounded_loop_lowering_mode": assumptions.get("bounded_loop_lowering_mode", "none"),
-        "presentation_template_runtime_support": assumptions.get("presentation_template_runtime_support", "optional"),
-        "non_semantic_ui_metadata_preserved": assumptions.get("non_semantic_ui_metadata_preserved", False),
-        "llvm_orientation": contract_family == LLVM_FAMILY_ID,
-    }
-
-    artifact = {
+    contract = {
         "artifact_kind": "frog_backend_contract",
-        "artifact_version": DEMO_ARTIFACT_VERSION,
-        "source_ref": dict(lowered.artifact["source_ref"]),
-        "program_id": lowered.artifact.get("program_id"),
-        "contract_family": contract_family,
-        "contract_version": "0.1",
-        "assumptions": contract_assumptions,
-        "units": [contract_unit],
+        "artifact_governance_ref": {"path": "Versioning/Readme.md"},
+        "backend_family": REFERENCE_BACKEND_FAMILY,
+        "producer": {
+            "implementation": "FROG Reference ContractEmitter",
+            "implementation_kind": "non_normative_reference_emitter",
+            "version_governance_ref": "Versioning/Readme.md",
+        },
+        "compatibility": "family_specific",
+        "source_ref": {
+            "example_id": source_ref.get("example_id"),
+            "path": source_ref.get("path"),
+            "entry_unit": source_ref.get("entry_unit"),
+        },
+        "derived_from": {
+            "fir_path": fir_ref.get("path"),
+            "lowering_path": source_ref.get("path", "").replace("main.frog", "main.lowering.json"),
+            "ui_package_path": ui_package_path_value,
+        },
+        "ownership_boundary": {
+            "semantic_authority": "canonical_source_and_execution_facing_artifacts",
+            "semantic_authority_refs": [
+                source_ref.get("path"),
+                fir_ref.get("path"),
+                source_ref.get("path", "").replace("main.frog", "main.lowering.json"),
+            ],
+            "ui_package_authority": "published_front_panel_package",
+            "ui_package_authority_refs": [ui_package_path_value],
+            "contract_authority": "this_file",
+            "notes": [
+                "This contract is downstream from canonical source, FIR, lowering, and the published UI package.",
+                "This contract must not redefine source semantics.",
+                "If this file diverges from the canonical execution-facing artifacts, those upstream artifacts win.",
+            ],
+        },
+        "assumptions": {
+            "runtime_family": {
+                "name": REFERENCE_BACKEND_FAMILY,
+                "host_model": "single_process_host_runtime",
+                "ui_binding": {"widget_value_binding": True, "widget_reference_binding": True},
+            },
+            "scheduling": {"family_rule": "deterministic_step_execution", "parallelism_claim": "none"},
+            "execution_start": {"input_binding_complete": True, "ui_host_available": True, "initial_state_materialized": True},
+            "numeric_behavior": {"value_domain": "u16", "overflow_behavior": "family_private_reject_or_fail_if_unhandled"},
+        },
+        "units": [
+            {
+                "unit_id": "main",
+                "kind": "bounded_executable_ui_unit",
+                "public_interface": {
+                    "inputs": [
+                        {
+                            "id": public_input.get("id"),
+                            "type": public_input.get("type"),
+                            "binding_origin": "widget.ctrl_input.value",
+                        }
+                    ],
+                    "outputs": [
+                        {
+                            "id": public_output.get("id"),
+                            "type": public_output.get("type"),
+                            "binding_target": "interface.result",
+                        }
+                    ],
+                },
+                "ui_binding": {
+                    "package_refs": [ui_package_path_value],
+                    "widgets": widget_artifacts["widgets"],
+                    "widget_reference_support": widget_artifacts["widget_reference_support"],
+                },
+                "state_model": {
+                    "explicit_state": True,
+                    "carrier": {
+                        "primitive": "frog.core.delay",
+                        "state_id": "accumulator_state",
+                        "type": execution_kernel.get("state_type"),
+                        "initial_value": execution_kernel.get("initial_state"),
+                    },
+                    "commit_rule": "state_next becomes state_current at the loop iteration commit point",
+                },
+                "execution_model": {
+                    "structure": "for_loop",
+                    "iteration_count": execution_kernel.get("iteration_count"),
+                    "iteration_variable": "i",
+                    "body_rule": {
+                        "kind": "accumulate_with_explicit_state",
+                        "expression": "state_next = state_current + input_value",
+                    },
+                    "final_result_rule": "final_state is published to public output result and to indicator ind_result",
+                },
+                "property_writes": widget_artifacts["property_writes"],
+                "public_output_publication": {"output_id": public_output.get("id"), "source": "final_state"},
+            }
+        ],
+        "unsupported": [],
         "diagnostics": [],
     }
+    return contract
 
-    return BackendContract(artifact=artifact)
+
+def load_lowering_from_path(path: Path | str) -> Dict[str, Any]:
+    lowering_path = Path(path)
+    return json.loads(lowering_path.read_text(encoding="utf-8"))
+
+
+def emit_contract_to_path(
+    lowering_path: Path | str,
+    output_path: Path | str,
+    *,
+    ui_package_path: Optional[str] = None,
+) -> Dict[str, Any]:
+    lowering = load_lowering_from_path(lowering_path)
+    contract = emit_reference_host_runtime_contract(lowering, ui_package_path=ui_package_path)
+    output = Path(output_path)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(json.dumps(contract, indent=2) + "\n", encoding="utf-8")
+    return contract
