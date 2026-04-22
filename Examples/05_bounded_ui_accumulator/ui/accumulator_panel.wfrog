@@ -9,7 +9,7 @@
   "metadata": {
     "title": "Accumulator Panel Package",
     "summary": "Peripheral front-panel package for Example 05 with one numeric control, one numeric indicator, bounded widget realization metadata, and SVG-backed visual resources.",
-    "description": "This .wfrog package provides the widget-oriented realization layer for Example 05. It does not redefine program meaning. It publishes the bounded front-panel package, widget realization metadata, visual resource references, host realization hints, and the small widget class subset used by the example corridor.",
+    "description": "This .wfrog package provides the widget-oriented realization layer for Example 05.\nIt does not redefine program meaning.\nIt publishes the bounded front-panel package, widget realization metadata, visual resource references, host realization hints, and the small widget class subset used by the example corridor.",
     "author": "Graiphic",
     "license": "Apache-2.0",
     "tags": [
@@ -300,7 +300,8 @@
         "window",
         "basic_widget_rendering",
         "property_write",
-        "widget_value_binding"
+        "widget_value_binding",
+        "widget_reference_binding"
       ],
       "optional_capabilities": [
         "event_observe",

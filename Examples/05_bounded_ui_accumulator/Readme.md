@@ -1,20 +1,56 @@
-<h1>Example 05 — Bounded UI Accumulator</h1>
+# Example 05 — Bounded UI Accumulator
 
-<p>
-Canonical bounded corridor from <code>.frog</code> source to front-panel package, FIR, lowering,
-runtime-family consumption, and a separate narrow LLVM proof path.
-</p>
+<p>Canonical bounded corridor from <code>.frog</code> source to UI package, FIR, lowering, runtime-family consumption, and first downstream LLVM proof</p>
+<p>FROG — Free Open Graphical Language</p>
 
-<p>
-  Repository governance and publication state are centralized in
-  <a href="../../Versioning/Readme.md"><code>Versioning/Readme.md</code></a>.
-</p>
+---
 
-<hr/>
+## Navigation
 
-<h2>Directory navigation</h2>
+- Examples index: [`../Readme.md`](../Readme.md)
+- Example UI package: [`ui/Readme.md`](ui/Readme.md)
+- Runtime-family parent: [`../../Implementations/Reference/Runtime/Readme.md`](../../Implementations/Reference/Runtime/Readme.md)
+- Python runtime consumer: [`../../Implementations/Reference/Runtime/python/Readme.md`](../../Implementations/Reference/Runtime/python/Readme.md)
+- Rust runtime consumer: [`../../Implementations/Reference/Runtime/rust/Readme.md`](../../Implementations/Reference/Runtime/rust/Readme.md)
+- C/C++ runtime consumer: [`../../Implementations/Reference/Runtime/cpp/Readme.md`](../../Implementations/Reference/Runtime/cpp/Readme.md)
+- Contract handoff family: [`../../Implementations/Reference/ContractEmitter/Readme.md`](../../Implementations/Reference/ContractEmitter/Readme.md)
+- LLVM proof corridor: [`../../Implementations/Reference/LLVM/examples/05_bounded_ui_accumulator/Readme.md`](../../Implementations/Reference/LLVM/examples/05_bounded_ui_accumulator/Readme.md)
 
-<pre><code>Examples/05_bounded_ui_accumulator/
+## Overview
+
+This example is the canonical bounded vertical slice for the current published FROG corridor.
+
+It is the small but serious reference case used to read one connected chain:
+
+```text
+main.frog
+  -> ui/accumulator_panel.wfrog
+  -> main.fir.json
+  -> main.lowering.json
+  -> backend-family contract
+  -> runtime-family consumers
+  -> first downstream LLVM proof
+```
+
+This example exists to prove corridor integrity, not to model a large application.
+
+## Goal of the example
+
+The goal is to publish one inspectable end-to-end slice that is concrete enough to support:
+
+- canonical source publication,
+- front-panel package publication,
+- execution-facing publication,
+- backend-family runtime handoff,
+- host-visible runtime realization,
+- downstream compiler-family experimentation.
+
+The example therefore matters as a closure anchor, not as a feature showcase.
+
+## Current published directory shape
+
+```text
+Examples/05_bounded_ui_accumulator/
 ├── Readme.md
 ├── front_panel.objects.json
 ├── main.fir.json
@@ -25,192 +61,198 @@ runtime-family consumption, and a separate narrow LLVM proof path.
     ├── accumulator_panel.wfrog
     └── assets/
         ├── numeric_control.svg
-        └── numeric_indicator.svg</code></pre>
+        └── numeric_indicator.svg
+```
 
-<h2>Purpose</h2>
+## Role of each published artifact
 
-<p>
-This directory is the current reference slice for the first executable corridor that includes:
-</p>
+### `main.frog`
 
-<ul>
-  <li>canonical source-owned program meaning,</li>
-  <li>a published minimal front-panel package,</li>
-  <li>execution-facing artifacts,</li>
-  <li>a backend-family contract,</li>
-  <li>runtime-family consumption with a real visible UI,</li>
-  <li>a separate downstream compiler-family proof path.</li>
-</ul>
+Canonical source publication of the example. This remains the owner of example meaning.
 
-<p>
-The current example is intentionally narrow:
-one numeric control, one numeric indicator, one explicit <code>u16</code> state,
-one bounded loop of exactly five iterations, one public output, and bounded widget-reference property writes for <code>foreground_color</code>.
-</p>
+### `main.fir.json`
 
-<h2>Published corridor</h2>
+Execution-facing FIR publication for the same example corridor.
 
-<pre><code>main.frog
-  -&gt; ui/accumulator_panel.wfrog + ui/assets/*.svg
-  -&gt; main.fir.json
-  -&gt; main.lowering.json
-  -&gt; reference_host_runtime_ui_binding contract
-  -&gt; Python / Rust / C/C++ browser-host runtimes
-  -&gt; separate narrow LLVM proof path</code></pre>
+### `main.lowering.json`
 
-<h2>What each published artifact owns</h2>
+Lowered execution-facing handoff posture used by downstream runtime-family and compiler-family consumers.
 
-<h3><code>main.frog</code></h3>
+### `ui/accumulator_panel.wfrog`
 
-<p>
-The canonical source of the example.
-It owns the program meaning, the public interface, the diagram,
-the participation of <code>widget_value</code>, the availability of <code>widget_reference</code>,
-and the two <code>frog.ui.property_write</code> operations that target <code>foreground_color</code>.
-</p>
+Published front-panel package for the example-local realization layer.
 
-<h3><code>main.fir.json</code></h3>
+### `ui/assets/numeric_control.svg` and `ui/assets/numeric_indicator.svg`
 
-<p>
-The execution-facing IR artifact for the same slice.
-It remains downstream from the canonical source.
-</p>
+Minimal SVG realization assets referenced by the published package.
 
-<h3><code>main.lowering.json</code></h3>
+### `front_panel.objects.json`
 
-<p>
-The bounded lowering artifact that makes the runtime-family and compiler-family handoff visible.
-For this example it preserves:
-</p>
+Derived host-oriented realization material for the same example.
 
-<ul>
-  <li>one public input <code>input_value : u16</code>,</li>
-  <li>one public output <code>result : u16</code>,</li>
-  <li>one control binding to <code>ctrl_input</code>,</li>
-  <li>one indicator binding to <code>ind_result</code>,</li>
-  <li>two reference writes to <code>foreground_color</code>,</li>
-  <li>one explicit bounded kernel with exactly five iterations.</li>
-</ul>
+It is useful for host work, inspection, and comparison, but it stays downstream from canonical source, widget contracts, FIR, lowering, and the published `.wfrog` package. It does not redefine executable meaning.
 
-<h3><code>ui/accumulator_panel.wfrog</code> and <code>ui/assets/</code></h3>
+## Observable example meaning
 
-<p>
-The published front-panel package and its SVG realization assets.
-These files define the package-level widget realization surface for this example:
-panel metadata, widget class references, default props, layout, assets, and host-binding metadata.
-They do not redefine program meaning.
-</p>
+The example meaning is intentionally simple and fully inspectable:
 
-<h3><code>front_panel.objects.json</code></h3>
+- one numeric control provides the public input value,
+- the loop starts from zero,
+- the loop runs exactly five iterations,
+- each iteration adds the input value to the carried explicit state,
+- the final state is published as public output `result`,
+- the same final state is written to the numeric indicator,
+- the bounded UI object surface includes one `foreground_color` write for the control and one `foreground_color` write for the indicator.
 
-<p>
-A derived host projection for the same slice.
-This file is useful as a concrete host-facing realization view, but it is not the required runtime-family input,
-and it is not the semantic or contractual authority.
-</p>
+The example is small on purpose. Its value comes from publication clarity, not complexity.
 
-<h2>Runtime-family handoff</h2>
+## Downstream runtime-family handoff
 
-<p>
-The runtime-family contract for this example is emitted under:
-</p>
+This example is paired with the following repository-visible backend contract artifact:
 
-<pre><code>Implementations/Reference/ContractEmitter/examples/
-└── 05_bounded_ui_accumulator.reference_host_runtime_ui_binding.contract.json</code></pre>
+```text
+Implementations/Reference/ContractEmitter/examples/
+└── 05_bounded_ui_accumulator.reference_host_runtime_ui_binding.contract.json
+```
 
-<p>
-That contract is downstream from <code>main.frog</code>, <code>main.fir.json</code>, <code>main.lowering.json</code>,
-and <code>ui/accumulator_panel.wfrog</code>.
-It is the handoff surface consumed by the runtime-family directories under
-<a href="../../Implementations/Reference/Runtime/Readme.md"><code>Implementations/Reference/Runtime/</code></a>.
-</p>
+That contract is the current handoff surface for the first named runtime family:
 
-<h2>Current runtime closure</h2>
+```text
+reference_host_runtime_ui_binding
+```
 
-<p>
-For the runtime-family slice, Example 05 now has three published browser-host realizations:
-</p>
+The runtime-family reading posture is therefore:
 
-<ul>
-  <li><a href="../../Implementations/Reference/Runtime/python/Readme.md">Python</a>,</li>
-  <li><a href="../../Implementations/Reference/Runtime/rust/Readme.md">Rust</a>,</li>
-  <li><a href="../../Implementations/Reference/Runtime/cpp/Readme.md">C/C++</a>.</li>
-</ul>
+```text
+canonical example source
+  -> published .wfrog package
+  -> FIR
+  -> lowering
+  -> backend-family contract
+  -> runtime-family consumer
+```
 
-<p>
-All three are expected to consume the same emitted contract and the same published <code>.wfrog</code> package.
-The UI closure for this slice is therefore:
-</p>
+The LLVM proof corridor is also downstream from this example, but it belongs to a compiler-family path rather than to the runtime-family definition itself.
 
-<pre><code>contract + .wfrog + SVG assets
-=&gt; headless runtime result
-and
-=&gt; browser-host panel with real widgets</code></pre>
+## Published runtime and compiler posture
 
-<h2>Published runtime commands</h2>
+For this example, the repository now publishes two different downstream families:
 
-<p>Representative commands from the repository root:</p>
+### Runtime-family posture
 
-<pre><code># Python
+The runtime-family posture uses the contract artifact together with the `.wfrog` package and its SVG assets.
+
+At the current published code state, the runtime-family corridor is visible in three consumer languages:
+
+- Python headless execution and browser-host UI,
+- Rust headless execution and browser-host UI,
+- C/C++ headless execution and browser-host UI.
+
+All three remain intentionally narrow. They close the first host-visible runtime slice for this example. They do **not** claim native compiled UI closure.
+
+### Compiler-family posture
+
+The LLVM example remains a separate downstream compiler-family proof path. It shares the same example corridor, but it is not the runtime family.
+
+```text
+runtime-family UI closure
+  !=
+native compiled UI closure
+```
+
+## Current repository-visible run surfaces
+
+### Python
+
+Primary language-specific CLI:
+
+```text
 python -m Implementations.Reference.Runtime.python.cli run 3
 python -m Implementations.Reference.Runtime.python.cli ui
+python -m Implementations.Reference.Runtime.python.cli ui --host 127.0.0.1 --port 8080 --no-open-browser
+```
 
-# Rust
-cd Implementations/Reference/Runtime/rust
+Example-specific convenience wrappers:
+
+```text
+python -m Implementations.Reference.Runtime.run_slice05_contract 3
+python Implementations/Reference/Runtime/python/run_slice05_ui.py
+```
+
+### Rust
+
+From `Implementations/Reference/Runtime/rust/`:
+
+```text
+cargo test
 cargo run -- 3
 cargo run -- ui
+cargo run -- ui --host 127.0.0.1 --port 8080 --no-open-browser
+```
 
-# C/C++
+### C/C++
+
+From the repository root:
+
+```text
 cmake -S Implementations/Reference/Runtime/cpp -B build/frog_runtime_cpp
 cmake --build build/frog_runtime_cpp
+ctest --test-dir build/frog_runtime_cpp
 build/frog_runtime_cpp/frog_reference_runtime_cpp 3
-build/frog_runtime_cpp/frog_reference_runtime_cpp ui</code></pre>
+build/frog_runtime_cpp/frog_reference_runtime_cpp ui
+build/frog_runtime_cpp/frog_reference_runtime_cpp ui --host 127.0.0.1 --port 8080 --no-open-browser
+```
 
-<h2>LLVM note</h2>
+### LLVM
 
-<p>
-This example also remains the anchor for a first LLVM-oriented proof path.
-That compiler-family path is downstream and separate from the runtime-family closure.
-It should not be read as a compiled native UI closure.
-</p>
+The LLVM proof corridor stays under the dedicated compiler-family example directory:
 
-<p>
-The current split is therefore:
-</p>
+```text
+Implementations/Reference/LLVM/examples/05_bounded_ui_accumulator/
+```
 
-<pre><code>runtime family
-  =&gt; browser-host UI and runtime result
+Read that path as a separate downstream proof corridor.
 
-compiler family
-  =&gt; narrow native execution proof path</code></pre>
+## Boundary
 
-<h2>Current remaining gaps</h2>
+This example is a bounded closure slice, not the whole language.
 
-<p>
-This example closes the first visible runtime-family UI slice, but three edges remain intentionally open:
-</p>
+```text
+canonical bounded slice
+  !=
+full language closure
 
-<ul>
-  <li>The published <code>.wfrog</code> host binding still needs explicit convergence with the contract on widget-reference binding.</li>
-  <li>The contract still carries a family-specific overflow wording instead of a single fully normalized corridor-wide rule.</li>
-  <li>The LLVM proof path is still separate from host-rendered UI closure.</li>
-</ul>
+published browser-host runtime UI
+  !=
+native compiled UI closure
 
-<h2>How to read this example correctly</h2>
+derived host realization
+  !=
+semantic authority
+```
 
-<ul>
-  <li><code>main.frog</code> owns the source meaning.</li>
-  <li><code>ui/accumulator_panel.wfrog</code> owns example-local package publication.</li>
-  <li><code>front_panel.objects.json</code> is a downstream host projection.</li>
-  <li>The emitted backend contract is the runtime-family handoff artifact.</li>
-  <li>The three runtime directories consume the same slice in parallel.</li>
-  <li>LLVM is downstream and separate.</li>
-</ul>
+In particular:
 
-<h2>Summary</h2>
+- `main.frog` remains the source-side owner of example meaning,
+- `ui/accumulator_panel.wfrog` remains the package-side owner of the published front-panel realization contract,
+- `front_panel.objects.json` remains derived host-oriented realization material,
+- runtime-family consumers remain downstream from lowering and backend-family handoff,
+- the LLVM proof remains downstream and separate from the runtime-family definition.
 
-<p>
-This example is the current reference corridor for closing the first real host-facing slice.
-It already proves that the published source, package, lowering, contract, and assets are sufficient for a real minimal UI runtime in Python, Rust, and C/C++.
-What it does <strong>not</strong> yet prove is compiled native UI closure through LLVM.
-</p>
+## Summary
+
+Example 05 is the reference corridor used to close the first serious FROG execution slice.
+
+The correct repository reading posture is now:
+
+```text
+one canonical source example
+  -> one published .wfrog package
+  -> one FIR publication
+  -> one lowering publication
+  -> one runtime-family handoff contract
+  -> several runtime-family consumers
+  -> one separate compiler-family proof path
+```
+
+That is why this example is the anchor for runtime closure, package closure, and the next wave of widget-definition work.

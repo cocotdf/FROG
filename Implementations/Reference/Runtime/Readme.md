@@ -1,17 +1,61 @@
-<h1>Reference Runtime</h1>
+# Reference Runtime
 
-<p>Runtime-family consumers for the non-normative FROG reference implementation.</p>
+<p>Runtime-family consumers for the non-normative FROG reference implementation</p>
+<p>FROG — Free Open Graphical Language</p>
 
-<p>
-  Repository governance and publication state are centralized in
-  <a href="../../../Versioning/Readme.md"><code>Versioning/Readme.md</code></a>.
-</p>
+---
 
-<hr/>
+## Navigation
 
-<h2>Directory navigation</h2>
+- Parent reference implementation: [`../Readme.md`](../Readme.md)
+- Runtime-family responsibilities: [`responsibilities.md`](responsibilities.md)
+- Contract-consumption note: [`accept_contract_and_execute.md`](accept_contract_and_execute.md)
+- Example-specific Python wrapper: [`run_slice05_contract.py`](run_slice05_contract.py)
+- Python consumer: [`python/Readme.md`](python/Readme.md)
+- Rust consumer: [`rust/Readme.md`](rust/Readme.md)
+- C/C++ consumer: [`cpp/Readme.md`](cpp/Readme.md)
+- Example corridor anchor: [`../../../Examples/05_bounded_ui_accumulator/Readme.md`](../../../Examples/05_bounded_ui_accumulator/Readme.md)
+- Contract artifact family: [`../ContractEmitter/Readme.md`](../ContractEmitter/Readme.md)
 
-<pre><code>Implementations/Reference/Runtime/
+## Overview
+
+This directory is the parent coordination point for the first published FROG runtime family in the non-normative reference implementation.
+
+Its job is narrow and downstream:
+
+```text
+canonical .frog source
+  -> semantic acceptance
+  -> FIR
+  -> lowering
+  -> backend-family contract
+  -> runtime-family consumer
+```
+
+The runtime family begins **after** source, meaning, FIR, lowering, and backend-contract emission. It consumes published contract artifacts. It does not define the language, the widget law, the front panel, or the compiler-family corridor.
+
+## Published runtime family
+
+The first published runtime family is:
+
+```text
+reference_host_runtime_ui_binding
+```
+
+For the current bounded corridor, the family reads:
+
+- one single-process host execution posture,
+- one deterministic bounded execution model,
+- one explicit state carrier,
+- one minimal UI binding surface,
+- one browser-host realization path for the first visible runtime UI slice.
+
+The current family is intentionally small. It exists to close one inspectable corridor, not to claim general runtime closure for the whole language.
+
+## Current published repository shape
+
+```text
+Implementations/Reference/Runtime/
 ├── Readme.md
 ├── accept_contract_and_execute.md
 ├── reference_runtime.py
@@ -30,172 +74,207 @@
 │   ├── Readme.md
 │   ├── Cargo.toml
 │   ├── src/
+│   │   ├── cli.rs
+│   │   ├── contract.rs
+│   │   ├── diagnostics.rs
+│   │   ├── execute.rs
+│   │   ├── lib.rs
+│   │   ├── main.rs
+│   │   ├── runtime.rs
+│   │   └── ui.rs
 │   └── tests/
 └── cpp/
     ├── Readme.md
     ├── CMakeLists.txt
     ├── include/
+    │   ├── contract.hpp
+    │   ├── execute.hpp
+    │   ├── runtime.hpp
+    │   └── ui.hpp
     ├── src/
-    └── tests/</code></pre>
+    └── tests/
+```
 
-<p>
-Generated cache and build directories may appear in the published tree. They are not part of the intended runtime-family source surface.
-</p>
+### Published repository note
 
-<h2>Overview</h2>
+At the current published GitHub tree, two non-source artifacts are also visible:
 
-<p>
-This directory contains runtime-family consumers of backend contracts for the published reference corridor.
-It starts <strong>after</strong> canonical source acceptance, FIR derivation, lowering, and backend-contract emission.
-Its job is to consume a published backend-family contract and a published front-panel package, then realize execution privately without redefining FROG semantics.
-</p>
+```text
+Implementations/Reference/Runtime/python/__pycache__/
+Implementations/Reference/Runtime/cpp/build/
+```
 
-<p>
-The first active runtime family is <code>reference_host_runtime_ui_binding</code>.
-The current reference slice for that family is
-<a href="../../../Examples/05_bounded_ui_accumulator/Readme.md"><code>Examples/05_bounded_ui_accumulator/</code></a>.
-</p>
+They are repository artifacts, not part of the intended runtime-family source contract.
 
-<h2>Current published execution corridor</h2>
+## First corridor this directory coordinates
 
-<pre><code>main.frog
-  -&gt; main.fir.json
-  -&gt; main.lowering.json
-  -&gt; backend-family contract
-  -&gt; runtime-family consumer
-  -&gt; .wfrog package + SVG assets
-  -&gt; browser-host UI and runtime result</code></pre>
+The current canonical runtime slice is anchored in:
 
-<p>
-For the current published slice, the runtime-family handoff is the contract artifact emitted under
-<a href="../ContractEmitter/Readme.md"><code>Implementations/Reference/ContractEmitter/</code></a>,
-and the front-panel package is the published <code>.wfrog</code> package inside Example 05.
-</p>
+```text
+Examples/05_bounded_ui_accumulator/
+```
 
-<h2>What this directory consumes</h2>
+The runtime-family handoff for that slice is the published backend contract artifact:
 
-<ul>
-  <li>A backend contract for <code>reference_host_runtime_ui_binding</code>.</li>
-  <li>A published <code>.wfrog</code> front-panel package.</li>
-  <li>The SVG assets referenced by that package.</li>
-</ul>
+```text
+Implementations/Reference/ContractEmitter/examples/
+└── 05_bounded_ui_accumulator.reference_host_runtime_ui_binding.contract.json
+```
 
-<p>
-The intended common input shape for the current runtime-family slice is therefore:
-</p>
+The family-level reading posture is therefore:
 
-<pre><code>contract JSON
-+ .wfrog package
-+ package-referenced SVG assets</code></pre>
+```text
+Examples/05_bounded_ui_accumulator/main.frog
+  -> Examples/05_bounded_ui_accumulator/main.fir.json
+  -> Examples/05_bounded_ui_accumulator/main.lowering.json
+  -> backend-family contract
+  -> runtime-family consumer
+  -> headless result and/or browser-host UI
+```
 
-<p>
-The runtime family does not need <code>main.frog</code> to execute after the contract has been emitted.
-It also does not need <code>front_panel.objects.json</code> as a required input.
-That file is a derived host projection for the example corridor, not the semantic or contractual authority.
-</p>
+## Inputs consumed by the first common runtime slice
 
-<h2>What this directory produces</h2>
+For the current bounded slice, the runtime-family consumers share the same logical inputs:
 
-<ul>
-  <li>A headless execution result artifact for the bounded Example 05 slice.</li>
-  <li>A minimal browser-host UI that renders the panel, widgets, labels, values, and SVG assets.</li>
-  <li>A runtime snapshot surface exposed by the browser host.</li>
-</ul>
+- the emitted backend contract artifact,
+- the example-local `.wfrog` package,
+- the SVG assets referenced by that package.
 
-<p>
-Across the language-specific realizations, the output model is intentionally narrow:
-one numeric control, one numeric indicator, one bounded loop of five iterations, one explicit state carrier,
-one public output publication, and bounded widget reference writes for <code>foreground_color</code>.
-</p>
+For Example 05, the package input is:
 
-<h2>Language-specific realizations</h2>
+```text
+Examples/05_bounded_ui_accumulator/ui/accumulator_panel.wfrog
+```
 
-<p>
-This parent directory coordinates three parallel realizations of the same family:
-</p>
+and the referenced assets are:
 
-<ul>
-  <li><a href="python/Readme.md"><code>python/</code></a> — no-build path with headless execution, browser-host UI, and Python tests.</li>
-  <li><a href="rust/Readme.md"><code>rust/</code></a> — Cargo-based path with headless execution, browser-host UI, and Rust tests.</li>
-  <li><a href="cpp/Readme.md"><code>cpp/</code></a> — CMake-based path with headless execution, browser-host UI, and C/C++ tests.</li>
-</ul>
+```text
+Examples/05_bounded_ui_accumulator/ui/assets/numeric_control.svg
+Examples/05_bounded_ui_accumulator/ui/assets/numeric_indicator.svg
+```
 
-<p>
-The parent-level files <code>reference_runtime.py</code> and <code>run_slice05_contract.py</code> remain useful compatibility and demonstration helpers,
-but the main runtime-family closure now lives in the three language-specific directories.
-</p>
+The runtime family does **not** take semantic authority away from `main.frog`, FIR, lowering, or the `.wfrog` package.
 
-<h2>Published acceptance surface for Example 05</h2>
+## Current published entry points
 
-<p>From the repository root:</p>
+### Parent-level Python convenience entry points
 
-<pre><code># Python
+```text
+python -m Implementations.Reference.Runtime.run_slice05_contract 3
+python Implementations/Reference/Runtime/python/run_slice05_ui.py
+```
+
+These remain useful example-specific entry points, but they are convenience surfaces rather than the full parent-level definition of the runtime family.
+
+### Python consumer
+
+```text
 python -m Implementations.Reference.Runtime.python.cli run 3
 python -m Implementations.Reference.Runtime.python.cli ui
+python -m Implementations.Reference.Runtime.python.cli ui --host 127.0.0.1 --port 8080 --no-open-browser
+```
 
-# Rust
+### Rust consumer
+
+```text
 cd Implementations/Reference/Runtime/rust
 cargo test
 cargo run -- 3
 cargo run -- ui
+cargo run -- ui --host 127.0.0.1 --port 8080 --no-open-browser
+```
 
-# C/C++
+### C/C++ consumer
+
+```text
 cmake -S Implementations/Reference/Runtime/cpp -B build/frog_runtime_cpp
 cmake --build build/frog_runtime_cpp
 ctest --test-dir build/frog_runtime_cpp
 build/frog_runtime_cpp/frog_reference_runtime_cpp 3
-build/frog_runtime_cpp/frog_reference_runtime_cpp ui</code></pre>
+build/frog_runtime_cpp/frog_reference_runtime_cpp ui
+build/frog_runtime_cpp/frog_reference_runtime_cpp ui --host 127.0.0.1 --port 8080 --no-open-browser
+```
 
-<p>
-All three language paths are expected to consume the same published contract and the same published <code>.wfrog</code> package.
-The UI mode is intentionally a browser-host proof path, not a claim of native compiled UI closure.
-</p>
+## Multi-runtime posture
 
-<h2>Ownership boundary</h2>
+This parent directory no longer documents only one host-facing Python path plus secondary parity placeholders.
 
-<ul>
-  <li>This directory <strong>owns</strong> runtime-family consumption, host realization, and narrow execution proof for the reference slice.</li>
-  <li>This directory does <strong>not own</strong> canonical source syntax, language semantics, FIR definition, lowering definition, widget-class law, or compiler-family design.</li>
-</ul>
+At the current published code state, all three consumer languages expose:
 
-<p>
-The runtime is downstream from the language and downstream from the execution-facing artifacts.
-It must follow the contract and package that it consumes.
-It must not redefine FROG.
-</p>
+- a headless execution path for the bounded contract,
+- a browser-host UI path driven by the same bounded runtime core,
+- a repository-visible test or build posture,
+- the same example-local contract and `.wfrog` package corridor.
 
-<h2>Current closure and current limits</h2>
+That does **not** mean the three implementations are already identical in tooling maturity. It means the first common runtime-family slice is now visible across Python, Rust, and C/C++ at the level of published code structure and command surfaces.
 
-<p>
-For Example 05, the repository now publishes browser-host runtime entry points in Python, Rust, and C/C++.
-That closes the first common runtime-family shape much more clearly than an execution-only or test-only posture.
-</p>
+## What this directory owns
 
-<p>
-The runtime-family corridor is still intentionally bounded.
-It does not yet claim:
-</p>
+This directory owns runtime-family concerns only:
 
-<ul>
-  <li>general widget coverage beyond the current Example 05 slice,</li>
-  <li>general runtime acceptance for arbitrary lowered units,</li>
-  <li>compiled native UI closure through LLVM,</li>
-  <li>authority over widget semantics or compiler-family contracts.</li>
-</ul>
+- contract consumption after backend-family handoff,
+- runtime-private state and scheduling mechanics,
+- runtime-private success and failure reporting,
+- minimal host-side UI realization for the accepted slice,
+- coordination between the Python, Rust, and C/C++ consumers.
 
-<p>
-LLVM remains a downstream compiler-family corridor and should be read separately from the runtime-family boundary documented here.
-</p>
+## What this directory does not own
 
-<h2>Summary</h2>
+This directory does not own:
 
-<p>
-Read this directory as the coordination point for one published runtime family, one shared handoff model,
-and three parallel language-specific consumers.
-For the first executable corridor, the runtime-family contract is:
-</p>
+- the language,
+- the canonical `.frog` source model,
+- semantic acceptance,
+- FIR,
+- lowering,
+- the backend-contract boundary,
+- widget-law ownership,
+- compiler-family behavior,
+- LLVM-native executable definition.
 
-<pre><code>published contract
-+ published .wfrog package
-+ published SVG assets
-=&gt; headless execution result and browser-host UI</code></pre>
+```text
+runtime-family consumer != language definition
+runtime-private structures != backend contract
+browser-host UI != native compiled UI closure
+```
+
+## Current closure reading
+
+For the published Example 05 corridor, the runtime-family closure should now be read as:
+
+```text
+contract + .wfrog + SVG assets
+  -> Python runtime core
+  -> Rust runtime core
+  -> C/C++ runtime core
+  -> headless result and/or browser-host UI
+```
+
+LLVM remains a separate downstream compiler-family corridor. It is related to the same example, but it is not part of the runtime-family definition itself.
+
+## Immediate cleanup targets
+
+The next useful cleanup in this directory is no longer “invent three runtimes”.
+
+It is to keep the published runtime family coherent:
+
+1. remove non-source artifacts from the published tree,
+2. keep all three consumers aligned on the same contract shape,
+3. keep all three consumers aligned on the same `.wfrog` package shape,
+4. keep the browser-host UI surface minimal and identical in meaning,
+5. preserve the rule that runtime remains downstream from source, meaning, FIR, lowering, and contract emission.
+
+## Summary
+
+Read this directory as the coordination boundary for the first common runtime-family slice in the reference implementation.
+
+The important repository-level posture is now:
+
+```text
+one canonical example
+  -> one runtime-family contract
+  -> three language-specific consumers
+  -> one bounded host-visible UI family
+```
+
+That closure remains intentionally narrow, but it is now a real published corridor rather than a future-only aspiration.
