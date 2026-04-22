@@ -353,6 +353,7 @@
     - [responsibilities](/Implementations/Reference/Runtime/responsibilities.md)
     - [reference_runtime.py](/Implementations/Reference/Runtime/reference_runtime.py)
     - [run_slice05_contract.py](/Implementations/Reference/Runtime/run_slice05_contract.py)
+    - [acceptance](/Implementations/Reference/Runtime/acceptance/Readme.md)
     - [cpp](/Implementations/Reference/Runtime/cpp/Readme.md)
     - [python](/Implementations/Reference/Runtime/python/Readme.md)
       - [__init__.py](/Implementations/Reference/Runtime/python/__init__.py)
@@ -362,6 +363,8 @@
       - [runtime_core.py](/Implementations/Reference/Runtime/python/runtime_core.py)
       - [ui_runtime.py](/Implementations/Reference/Runtime/python/ui_runtime.py)
       - tests
+        - [test_runtime_slice05.py](/Implementations/Reference/Runtime/python/tests/test_runtime_slice05.py)
+        - [test_runtime_ui_slice05.py](/Implementations/Reference/Runtime/python/tests/test_runtime_ui_slice05.py)
         - [test_slice05_contract.py](/Implementations/Reference/Runtime/python/tests/test_slice05_contract.py)
         - [test_slice05_ui_runtime.py](/Implementations/Reference/Runtime/python/tests/test_slice05_ui_runtime.py)
     - [rust](/Implementations/Reference/Runtime/rust/Readme.md)

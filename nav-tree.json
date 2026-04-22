@@ -2530,6 +2530,13 @@
                   "children": []
                 },
                 {
+                  "key": "implementations/reference/runtime/acceptance/",
+                  "title": "acceptance",
+                  "path": "/Implementations/Reference/Runtime/acceptance/Readme.md",
+                  "kind": "category",
+                  "children": []
+                },
+                {
                   "key": "implementations/reference/runtime/cpp/",
                   "title": "cpp",
                   "path": "/Implementations/Reference/Runtime/cpp/Readme.md",
@@ -2590,6 +2597,20 @@
                       "path": null,
                       "kind": "category",
                       "children": [
+                        {
+                          "key": "implementations/reference/runtime/python/tests/test_runtime_slice05.py",
+                          "title": "test_runtime_slice05.py",
+                          "path": "/Implementations/Reference/Runtime/python/tests/test_runtime_slice05.py",
+                          "kind": "code",
+                          "children": []
+                        },
+                        {
+                          "key": "implementations/reference/runtime/python/tests/test_runtime_ui_slice05.py",
+                          "title": "test_runtime_ui_slice05.py",
+                          "path": "/Implementations/Reference/Runtime/python/tests/test_runtime_ui_slice05.py",
+                          "kind": "code",
+                          "children": []
+                        },
                         {
                           "key": "implementations/reference/runtime/python/tests/test_slice05_contract.py",
                           "title": "test_slice05_contract.py",
@@ -3056,6 +3077,7 @@
     "/Implementations/Reference/Runtime/responsibilities.md",
     "/Implementations/Reference/Runtime/reference_runtime.py",
     "/Implementations/Reference/Runtime/run_slice05_contract.py",
+    "/Implementations/Reference/Runtime/acceptance/Readme.md",
     "/Implementations/Reference/Runtime/cpp/Readme.md",
     "/Implementations/Reference/Runtime/python/__init__.py",
     "/Implementations/Reference/Runtime/python/cli.py",
@@ -3063,6 +3085,8 @@
     "/Implementations/Reference/Runtime/python/run_slice05_ui.py",
     "/Implementations/Reference/Runtime/python/runtime_core.py",
     "/Implementations/Reference/Runtime/python/ui_runtime.py",
+    "/Implementations/Reference/Runtime/python/tests/test_runtime_slice05.py",
+    "/Implementations/Reference/Runtime/python/tests/test_runtime_ui_slice05.py",
     "/Implementations/Reference/Runtime/python/tests/test_slice05_contract.py",
     "/Implementations/Reference/Runtime/python/tests/test_slice05_ui_runtime.py",
     "/Implementations/Reference/Runtime/python/Readme.md",
