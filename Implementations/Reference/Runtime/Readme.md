@@ -1,6 +1,6 @@
 # Reference Runtime
 
-<p>Runtime-family consumers for the non-normative FROG reference implementation</p>
+<p>Runtime-family consumers for the non-normative FROG reference implementation.</p>
 <p>FROG — Free Open Graphical Language</p>
 
 ---
@@ -10,6 +10,7 @@
 - Parent reference implementation: [`../Readme.md`](../Readme.md)
 - Runtime-family responsibilities: [`responsibilities.md`](responsibilities.md)
 - Contract-consumption note: [`accept_contract_and_execute.md`](accept_contract_and_execute.md)
+- Shared acceptance material: [`acceptance/Readme.md`](acceptance/Readme.md)
 - Example-specific Python wrapper: [`run_slice05_contract.py`](run_slice05_contract.py)
 - Python consumer: [`python/Readme.md`](python/Readme.md)
 - Rust consumer: [`rust/Readme.md`](rust/Readme.md)
@@ -52,12 +53,34 @@ For the current bounded corridor, the family reads:
 
 The current family is intentionally small. It exists to close one inspectable corridor, not to claim general runtime closure for the whole language.
 
+## Shared acceptance posture
+
+The runtime family now carries a shared acceptance layer under:
+
+```text
+Implementations/Reference/Runtime/acceptance/
+```
+
+That acceptance layer exists to keep the three consumer languages aligned on:
+
+- the accepted contract family,
+- the accepted `.wfrog` package shape,
+- the accepted SVG asset surface,
+- the accepted execution result for the bounded slice,
+- the accepted browser-host UI snapshot surface.
+
+Acceptance artifacts are shared inputs for Python, Rust, and C/C++ consumers. They are not a substitute for source, FIR, lowering, or backend-contract ownership.
+
 ## Current published repository shape
 
 ```text
 Implementations/Reference/Runtime/
 ├── Readme.md
 ├── accept_contract_and_execute.md
+├── acceptance/
+│   ├── Readme.md
+│   ├── example05_input_3.snapshot.json
+│   └── example05_runtime_family.acceptance.json
 ├── reference_runtime.py
 ├── responsibilities.md
 ├── run_slice05_contract.py
@@ -70,6 +93,8 @@ Implementations/Reference/Runtime/
 │   ├── runtime_core.py
 │   ├── ui_runtime.py
 │   └── tests/
+│       ├── test_runtime_slice05.py
+│       └── test_runtime_ui_slice05.py
 ├── rust/
 │   ├── Readme.md
 │   ├── Cargo.toml
@@ -83,28 +108,23 @@ Implementations/Reference/Runtime/
 │   │   ├── runtime.rs
 │   │   └── ui.rs
 │   └── tests/
+│       ├── slice05_runtime.rs
+│       └── slice05_ui.rs
 └── cpp/
     ├── Readme.md
     ├── CMakeLists.txt
     ├── include/
     │   ├── contract.hpp
     │   ├── execute.hpp
+    │   ├── json.hpp
     │   ├── runtime.hpp
     │   └── ui.hpp
     ├── src/
     └── tests/
+        └── test_slice05.cpp
 ```
 
-### Published repository note
-
-At the current published GitHub tree, two non-source artifacts are also visible:
-
-```text
-Implementations/Reference/Runtime/python/__pycache__/
-Implementations/Reference/Runtime/cpp/build/
-```
-
-They are repository artifacts, not part of the intended runtime-family source contract.
+Generated cache and build artifacts are not part of the intended runtime-family source contract and should not be versioned.
 
 ## First corridor this directory coordinates
 
@@ -138,7 +158,8 @@ For the current bounded slice, the runtime-family consumers share the same logic
 
 - the emitted backend contract artifact,
 - the example-local `.wfrog` package,
-- the SVG assets referenced by that package.
+- the SVG assets referenced by that package,
+- the shared acceptance reading posture published under `acceptance/`.
 
 For Example 05, the package input is:
 
@@ -204,9 +225,10 @@ At the current published code state, all three consumer languages expose:
 - a headless execution path for the bounded contract,
 - a browser-host UI path driven by the same bounded runtime core,
 - a repository-visible test or build posture,
-- the same example-local contract and `.wfrog` package corridor.
+- the same example-local contract and `.wfrog` package corridor,
+- the same acceptance-driven reading posture.
 
-That does **not** mean the three implementations are already identical in tooling maturity. It means the first common runtime-family slice is now visible across Python, Rust, and C/C++ at the level of published code structure and command surfaces.
+That does **not** mean the three implementations are already identical in tooling maturity. It means the first common runtime-family slice is now visible across Python, Rust, and C/C++ at the level of published code structure, command surfaces, and shared acceptance artifacts.
 
 ## What this directory owns
 
@@ -216,6 +238,7 @@ This directory owns runtime-family concerns only:
 - runtime-private state and scheduling mechanics,
 - runtime-private success and failure reporting,
 - minimal host-side UI realization for the accepted slice,
+- shared acceptance alignment across the Python, Rust, and C/C++ consumers,
 - coordination between the Python, Rust, and C/C++ consumers.
 
 ## What this directory does not own
@@ -244,10 +267,9 @@ For the published Example 05 corridor, the runtime-family closure should now be 
 
 ```text
 contract + .wfrog + SVG assets
-  -> Python runtime core
-  -> Rust runtime core
-  -> C/C++ runtime core
-  -> headless result and/or browser-host UI
+  -> Python runtime core or browser-host UI
+  -> Rust runtime core or browser-host UI
+  -> C/C++ runtime core or browser-host UI
 ```
 
 LLVM remains a separate downstream compiler-family corridor. It is related to the same example, but it is not part of the runtime-family definition itself.
@@ -258,11 +280,13 @@ The next useful cleanup in this directory is no longer “invent three runtimes�
 
 It is to keep the published runtime family coherent:
 
-1. remove non-source artifacts from the published tree,
-2. keep all three consumers aligned on the same contract shape,
-3. keep all three consumers aligned on the same `.wfrog` package shape,
-4. keep the browser-host UI surface minimal and identical in meaning,
-5. preserve the rule that runtime remains downstream from source, meaning, FIR, lowering, and contract emission.
+1. keep the acceptance layer and per-language tests aligned,
+2. remove duplicated pre-acceptance smoke tests once the acceptance-driven line is published,
+3. remove generated cache or build artifacts from version control,
+4. keep all three consumers aligned on the same contract shape,
+5. keep all three consumers aligned on the same `.wfrog` package shape,
+6. keep the browser-host UI surface minimal and identical in meaning,
+7. preserve the rule that runtime remains downstream from source, meaning, FIR, lowering, and contract emission.
 
 ## Summary
 
@@ -273,8 +297,9 @@ The important repository-level posture is now:
 ```text
 one canonical example
   -> one runtime-family contract
+  -> one shared acceptance layer
   -> three language-specific consumers
-  -> one bounded host-visible UI family
+  -> one bounded browser-host UI family
 ```
 
 That closure remains intentionally narrow, but it is now a real published corridor rather than a future-only aspiration.

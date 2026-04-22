@@ -1,4 +1,4 @@
-<h1>Reference Runtime (Python)</h1>
+# Reference Runtime (Python)
 
 <p>Python realization of the published <code>reference_host_runtime_ui_binding</code> family.</p>
 
@@ -20,12 +20,11 @@
 ├── runtime_core.py
 ├── ui_runtime.py
 └── tests/
-    ├── test_slice05_contract.py
-    └── test_slice05_ui_runtime.py</code></pre>
+    ├── test_runtime_slice05.py
+    └── test_runtime_ui_slice05.py</code></pre>
 
 <p>
-Generated cache directories may appear next to these files in the published tree.
-They are not part of the intended source surface of this runtime.
+Generated cache directories such as <code>tests/__pycache__/</code> are not part of the intended source surface of this runtime and should not be versioned.
 </p>
 
 <h2>Role</h2>
@@ -79,22 +78,19 @@ It is still useful as a small example-specific launcher, but <code>cli.py</code>
 <h3><code>execute_contract.py</code> and <code>runtime_core.py</code></h3>
 
 <p>
-These files hold the actual execution path.
-The current runtime core validates the bounded Example 05 contract and package shape, then produces a runtime result artifact.
+These files hold the actual execution path. The current runtime core validates the bounded Example 05 contract and package shape, then produces a runtime result artifact.
 </p>
 
 <h3><code>ui_runtime.py</code></h3>
 
 <p>
-Browser-host realization for the same runtime core.
-The published tests exercise HTML rendering and the JSON snapshot endpoint.
+Browser-host realization for the same runtime core. The published tests exercise HTML rendering and the JSON snapshot endpoint.
 </p>
 
 <h2>Current bounded surface</h2>
 
 <p>
-The Python runtime is intentionally strict.
-The currently published bounded surface is:
+The Python runtime is intentionally strict. The currently published bounded surface is:
 </p>
 
 <ul>
@@ -110,9 +106,8 @@ The currently published bounded surface is:
 </ul>
 
 <p>
-The Python runtime validates the published host binding for
-<code>window</code>, <code>basic_widget_rendering</code>, <code>property_write</code>, and <code>widget_value_binding</code>.
-Widget-reference member support is then validated from the contract unit itself through <code>widget_reference_support</code> and <code>property_writes</code>.
+The current accepted slice also requires widget-value and widget-reference binding support for the published members it consumes.
+The Python runtime reads those requirements from the emitted contract and the accepted package shape before execution begins.
 </p>
 
 <h2>Inputs and outputs</h2>
@@ -123,70 +118,73 @@ Widget-reference member support is then validated from the contract unit itself 
   <li>The emitted contract artifact under <code>Implementations/Reference/ContractEmitter/examples/</code>.</li>
   <li>The Example 05 package <code>Examples/05_bounded_ui_accumulator/ui/accumulator_panel.wfrog</code>.</li>
   <li>The SVG assets referenced by that package.</li>
+  <li>The shared acceptance reading posture under <code>Implementations/Reference/Runtime/acceptance/</code>.</li>
 </ul>
 
 <h3>Outputs</h3>
 
 <ul>
-  <li>A headless runtime result artifact with public output publication and UI snapshot data.</li>
-  <li>A browser-host page that renders both widgets and serves a runtime snapshot endpoint.</li>
+  <li>A headless runtime result artifact.</li>
+  <li>A browser-host page driven by the same runtime core.</li>
+  <li>A runtime snapshot JSON surface for the accepted Example 05 slice.</li>
 </ul>
 
+<h2>Acceptance-driven tests</h2>
+
 <p>
-The browser-host UI is intentionally minimal.
-It is a proof that the published contract and the published package are sufficient to realize the first host-facing slice.
-It is not a claim of native desktop UI closure.
+From the repository root:
 </p>
 
-<h2>Tests</h2>
-
-<p>From the repository root:</p>
-
-<pre><code>python -m unittest \
-  Implementations.Reference.Runtime.python.tests.test_slice05_contract \
-  Implementations.Reference.Runtime.python.tests.test_slice05_ui_runtime</code></pre>
+<pre><code>python -m pytest Implementations/Reference/Runtime/python/tests/test_runtime_slice05.py
+python -m pytest Implementations/Reference/Runtime/python/tests/test_runtime_ui_slice05.py</code></pre>
 
 <p>
-The published tests currently check:
+The published Python tests are acceptance-driven and should remain aligned with
+<a href="../acceptance/Readme.md"><code>Implementations/Reference/Runtime/acceptance/Readme.md</code></a>.
 </p>
 
 <ul>
-  <li>headless execution with input <code>3</code> and final result <code>15</code>,</li>
-  <li>foreground-color application on both widgets,</li>
-  <li>runtime rejection when accumulation leaves the <code>u16</code> domain,</li>
-  <li>browser-host HTML rendering with both widget labels and both asset routes,</li>
-  <li>JSON snapshot publication through the HTTP runtime host.</li>
+  <li><code>test_runtime_slice05.py</code> checks headless acceptance for the bounded runtime corridor.</li>
+  <li><code>test_runtime_ui_slice05.py</code> checks browser-host HTML rendering and snapshot acceptance for the same corridor.</li>
 </ul>
 
-<h2>Relationship to the parent runtime directory</h2>
+<p>
+Legacy pre-acceptance smoke tests should not be kept in parallel once the acceptance-driven line is the published source of truth.
+</p>
+
+<h2>Relationship to the other runtime consumers</h2>
 
 <p>
-This directory is one language-specific realization of the family described in
+This directory should remain aligned with the Rust and C/C++ consumers on:
+</p>
+
+<ul>
+  <li>contract acceptance,</li>
+  <li>package acceptance,</li>
+  <li>execution semantics for the bounded accumulator slice,</li>
+  <li>the minimal widget-property surface,</li>
+  <li>the browser-host UI shape for Example 05,</li>
+  <li>the shared acceptance artifacts for the runtime family.</li>
+</ul>
+
+<p>
+The parent runtime-family definition is documented in
 <a href="../Readme.md"><code>Implementations/Reference/Runtime/Readme.md</code></a>.
-It should remain aligned with the Rust and C/C++ consumers on:
 </p>
-
-<ul>
-  <li>accepted contract shape,</li>
-  <li>accepted <code>.wfrog</code> package shape,</li>
-  <li>execution result meaning,</li>
-  <li>minimal widget and property surface,</li>
-  <li>browser-host UI obligations for Example 05.</li>
-</ul>
 
 <h2>Non-goals</h2>
 
 <ul>
-  <li>General-purpose runtime support for arbitrary lowered artifacts.</li>
-  <li>Authority over widget-class semantics.</li>
-  <li>Compiler-family behavior or LLVM lowering.</li>
+  <li>General runtime support for arbitrary contracts.</li>
+  <li>Widget-law ownership.</li>
+  <li>Compiler-family responsibilities.</li>
   <li>Native compiled UI closure.</li>
 </ul>
 
 <h2>Summary</h2>
 
 <p>
-Read this directory as the easiest no-build realization of the published runtime family:
+Read this directory as the Python consumer of the current runtime family:
 </p>
 
 <pre><code>contract + .wfrog + SVG assets

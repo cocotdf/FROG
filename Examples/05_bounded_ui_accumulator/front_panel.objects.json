@@ -13,11 +13,11 @@
   "realization_scope": {
     "kind": "derived_host_projection",
     "host_family": "reference_host_runtime_ui_binding",
-    "ui_host_kind": "reference_windowed_host",
+    "ui_host_kind": "reference_browser_host",
     "semantic_authority_owned_here": false,
     "widget_contract_authority_owned_here": false,
     "execution_authority_owned_here": false,
-    "purpose": "Expose one concrete host projection for the published Example 05 front-panel slice without redefining source, FIR, lowering, or widget-contract meaning."
+    "purpose": "Expose one concrete browser-host projection for the published Example 05 front-panel slice without redefining source, FIR, lowering, or widget-contract meaning."
   },
   "ownership_boundary": {
     "semantic_authority": "canonical_source_and_execution_facing_artifacts",
