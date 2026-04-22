@@ -1044,10 +1044,10 @@ The architectural posture below deliberately combines three requirements:
                                                                      v
                                                        Target execution instance
                                                                      |
-                          +------------------------------------------+---------------------------------------+
-                          |                                                                                  |
-                          v                                                                                  v
-        Source-aligned execution observability                                             Runtime activity on the active target
+                          +------------------------------------------+-------------------------+
+                          |                                                                    |
+                          v                                                                    v
+        Source-aligned execution observability                            Runtime activity on the active target
         (mapped back to meaningful FROG objects)
                           |
                           v
