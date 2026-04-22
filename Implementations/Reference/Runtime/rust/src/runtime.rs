@@ -5,7 +5,7 @@ use serde_json::{json, Map, Value};
 
 use crate::contract::{
     load_contract_from_path, load_wfrog_from_path, BackendContract, ContractUnit, FrontPanel, HostBinding,
-    PanelWidget, WfrogPackage, REFERENCE_BACKEND_FAMILY,
+    PanelWidget, WfrogPackage, EXPECTED_OVERFLOW_BEHAVIOR, REFERENCE_BACKEND_FAMILY,
 };
 use crate::diagnostics::{ensure, Result, RuntimeError};
 
@@ -245,6 +245,29 @@ impl RuntimeCore {
 
 fn validate_contract_and_package(contract: &BackendContract, package: &WfrogPackage) -> Result<ContractUnit> {
     ensure(contract.backend_family == REFERENCE_BACKEND_FAMILY, "Unexpected backend family.")?;
+    ensure(
+        contract.assumptions.runtime_family.name == REFERENCE_BACKEND_FAMILY,
+        "Unexpected runtime-family assumption name.",
+    )?;
+    ensure(
+        contract.assumptions.runtime_family.ui_binding.widget_value_binding,
+        "Contract must require widget_value_binding.",
+    )?;
+    ensure(
+        contract.assumptions.runtime_family.ui_binding.widget_reference_binding,
+        "Contract must require widget_reference_binding.",
+    )?;
+    ensure(
+        contract.assumptions.numeric_behavior.value_domain == "u16",
+        "Contract numeric behavior must target the u16 domain.",
+    )?;
+    ensure(
+        contract.assumptions.numeric_behavior.overflow_behavior == EXPECTED_OVERFLOW_BEHAVIOR,
+        format!(
+            "Contract overflow behavior must be {}.",
+            EXPECTED_OVERFLOW_BEHAVIOR
+        ),
+    )?;
     ensure(contract.units.len() == 1, "Expected exactly one contract unit.")?;
     let unit = contract.units[0].clone();
     ensure(unit.unit_id == "main", "Expected unit_id main.")?;
@@ -273,6 +296,7 @@ fn validate_contract_and_package(contract: &BackendContract, package: &WfrogPack
     ensure(required.contains("basic_widget_rendering"), "Missing host capability basic_widget_rendering.")?;
     ensure(required.contains("property_write"), "Missing host capability property_write.")?;
     ensure(required.contains("widget_value_binding"), "Missing host capability widget_value_binding.")?;
+    ensure(required.contains("widget_reference_binding"), "Missing host capability widget_reference_binding.")?;
 
     let panel_widgets: HashMap<&str, &PanelWidget> = panel
         .widgets

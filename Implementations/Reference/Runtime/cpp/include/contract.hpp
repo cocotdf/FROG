@@ -11,6 +11,7 @@
 namespace frog::runtime {
 
 inline constexpr const char* REFERENCE_BACKEND_FAMILY = "reference_host_runtime_ui_binding";
+inline constexpr const char* EXPECTED_OVERFLOW_BEHAVIOR = "reject_execution_on_u16_overflow";
 
 struct ArtifactReference {
     std::string path;
@@ -20,6 +21,27 @@ struct SourceRef {
     std::string example_id;
     std::string path;
     std::string entry_unit;
+};
+
+struct UiBindingAssumptions {
+    bool widget_value_binding = false;
+    bool widget_reference_binding = false;
+};
+
+struct RuntimeFamilyAssumptions {
+    std::string name;
+    std::string host_model;
+    UiBindingAssumptions ui_binding;
+};
+
+struct NumericBehaviorAssumptions {
+    std::string value_domain;
+    std::string overflow_behavior;
+};
+
+struct ContractAssumptions {
+    RuntimeFamilyAssumptions runtime_family;
+    NumericBehaviorAssumptions numeric_behavior;
 };
 
 struct InterfacePort {
@@ -118,6 +140,7 @@ struct BackendContract {
     std::optional<ArtifactReference> artifact_governance_ref;
     std::string backend_family;
     SourceRef source_ref;
+    ContractAssumptions assumptions;
     std::vector<ContractUnit> units;
 };
 

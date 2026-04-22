@@ -1,0 +1,100 @@
+{
+  "artifact_kind": "frog_runtime_execution_result",
+  "artifact_governance_ref": {
+    "path": "Versioning/Readme.md"
+  },
+  "status": "ok",
+  "contract_ref": {
+    "unit_ids": [
+      "main"
+    ],
+    "backend_family": "reference_host_runtime_ui_binding",
+    "source_ref": {
+      "example_id": "05_bounded_ui_accumulator",
+      "path": "Examples/05_bounded_ui_accumulator/main.frog",
+      "entry_unit": "main"
+    }
+  },
+  "execution_summary": {
+    "mode": "contract_and_wfrog",
+    "executed_unit": "main",
+    "iterations": 5,
+    "state_initialized": true,
+    "initial_state": 0,
+    "final_state": 15
+  },
+  "outputs": {
+    "public": {
+      "result": 15
+    },
+    "ui": {
+      "ctrl_input": 3,
+      "ind_result": 15
+    }
+  },
+  "ui_runtime": {
+    "panel": {
+      "panel_id": "main_panel",
+      "title": "Bounded UI Accumulator",
+      "class_ref": "frog.widgets.panel",
+      "layout": {
+        "width": 460,
+        "height": 170,
+        "coordinate_space": "panel_pixels"
+      }
+    },
+    "widgets": [
+      {
+        "widget_id": "ctrl_input",
+        "class_ref": "frog.widgets.numeric_control",
+        "role": "control",
+        "layout": {
+          "x": 20,
+          "y": 24,
+          "width": 140,
+          "height": 32
+        },
+        "runtime": {
+          "value": 3,
+          "label": "Input",
+          "visible": true,
+          "enabled": true,
+          "foreground_color": "#5B9BD5",
+          "asset_ref": "asset:numeric_control_svg"
+        }
+      },
+      {
+        "widget_id": "ind_result",
+        "class_ref": "frog.widgets.numeric_indicator",
+        "role": "indicator",
+        "layout": {
+          "x": 240,
+          "y": 24,
+          "width": 160,
+          "height": 32
+        },
+        "runtime": {
+          "value": 15,
+          "label": "Accumulated result",
+          "visible": true,
+          "enabled": true,
+          "foreground_color": "#70AD47",
+          "asset_ref": "asset:numeric_indicator_svg"
+        }
+      }
+    ],
+    "applied_widget_references": [
+      {
+        "widget_id": "ctrl_input",
+        "member": "foreground_color",
+        "value": "#5B9BD5"
+      },
+      {
+        "widget_id": "ind_result",
+        "member": "foreground_color",
+        "value": "#70AD47"
+      }
+    ]
+  },
+  "diagnostics": []
+}

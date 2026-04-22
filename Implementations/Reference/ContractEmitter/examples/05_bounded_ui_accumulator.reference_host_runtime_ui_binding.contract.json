@@ -58,7 +58,7 @@
     },
     "numeric_behavior": {
       "value_domain": "u16",
-      "overflow_behavior": "family_private_reject_or_fail_if_unhandled"
+      "overflow_behavior": "reject_execution_on_u16_overflow"
     }
   },
   "units": [

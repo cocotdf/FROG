@@ -7,6 +7,7 @@ from typing import Any, Dict, List, Optional
 
 
 REFERENCE_BACKEND_FAMILY = "reference_host_runtime_ui_binding"
+EXPECTED_OVERFLOW_BEHAVIOR = "reject_execution_on_u16_overflow"
 SUPPORTED_WIDGET_CLASSES = {
     "frog.widgets.numeric_control": "control",
     "frog.widgets.numeric_indicator": "indicator",
@@ -101,6 +102,23 @@ class Slice05RuntimeCore:
             self.contract.get("backend_family") == REFERENCE_BACKEND_FAMILY,
             f"Expected backend family {REFERENCE_BACKEND_FAMILY}.",
         )
+        assumptions = self.contract.get("assumptions")
+        ensure(isinstance(assumptions, dict), "Missing contract assumptions.")
+        runtime_family = assumptions.get("runtime_family")
+        ensure(isinstance(runtime_family, dict), "Missing assumptions.runtime_family.")
+        ensure(runtime_family.get("name") == REFERENCE_BACKEND_FAMILY, "Unexpected assumptions.runtime_family.name.")
+        ui_binding = runtime_family.get("ui_binding")
+        ensure(isinstance(ui_binding, dict), "Missing assumptions.runtime_family.ui_binding.")
+        ensure(ui_binding.get("widget_value_binding") is True, "Contract must require widget_value_binding.")
+        ensure(ui_binding.get("widget_reference_binding") is True, "Contract must require widget_reference_binding.")
+        numeric_behavior = assumptions.get("numeric_behavior")
+        ensure(isinstance(numeric_behavior, dict), "Missing assumptions.numeric_behavior.")
+        ensure(numeric_behavior.get("value_domain") == "u16", "Contract numeric behavior must target the u16 domain.")
+        ensure(
+            numeric_behavior.get("overflow_behavior") == EXPECTED_OVERFLOW_BEHAVIOR,
+            f"Contract overflow behavior must be {EXPECTED_OVERFLOW_BEHAVIOR}.",
+        )
+
         units = self.contract.get("units")
         ensure(isinstance(units, list) and len(units) == 1, "Expected exactly one contract unit.")
         unit = units[0]
@@ -117,7 +135,11 @@ class Slice05RuntimeCore:
         host_bindings = {entry["binding_id"]: entry for entry in self.package.get("host_bindings", [])}
         ensure("reference_host_default" in host_bindings, "Missing reference_host_default host binding.")
         required_capabilities = set(host_bindings["reference_host_default"].get("required_capabilities", []))
-        ensure({"window", "basic_widget_rendering", "property_write", "widget_value_binding"} <= required_capabilities, "Host binding is missing required capabilities.")
+        ensure(
+            {"window", "basic_widget_rendering", "property_write", "widget_value_binding", "widget_reference_binding"}
+            <= required_capabilities,
+            "Host binding is missing required capabilities.",
+        )
 
         public_inputs = unit["public_interface"]["inputs"]
         public_outputs = unit["public_interface"]["outputs"]

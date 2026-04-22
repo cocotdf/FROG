@@ -2,16 +2,17 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 
 REFERENCE_BACKEND_FAMILY = "reference_host_runtime_ui_binding"
 EXAMPLE_ID = "05_bounded_ui_accumulator"
 DEFAULT_UI_PACKAGE_SUFFIX = "ui/accumulator_panel.wfrog"
+EXPECTED_OVERFLOW_BEHAVIOR = "reject_execution_on_u16_overflow"
 
 
 class ContractEmissionError(RuntimeError):
-    """Raised when the lowered artifact cannot be emitted as a reference runtime contract."""
+    """Raised when the published lowering cannot be emitted as the reference runtime-family contract."""
 
 
 def _ensure(condition: bool, message: str) -> None:
@@ -19,11 +20,31 @@ def _ensure(condition: bool, message: str) -> None:
         raise ContractEmissionError(message)
 
 
-def _expect_single_unit(lowering: Dict[str, Any]) -> Dict[str, Any]:
+def find_repo_root(start: Path) -> Path:
+    current = start.resolve()
+    for candidate in [current, *current.parents]:
+        if (candidate / "Examples").is_dir() and (candidate / "Implementations").is_dir():
+            return candidate
+    raise ContractEmissionError("Unable to locate repository root from the provided path.")
+
+
+def load_json_from_path(path: Path | str) -> Dict[str, Any]:
+    return json.loads(Path(path).read_text(encoding="utf-8"))
+
+
+def _expect_single_lowered_unit(lowering: Dict[str, Any]) -> Dict[str, Any]:
     lowered_units = lowering.get("lowered_units")
     _ensure(isinstance(lowered_units, list) and len(lowered_units) == 1, "Expected exactly one lowered unit.")
     unit = lowered_units[0]
     _ensure(isinstance(unit, dict), "Lowered unit must be an object.")
+    return unit
+
+
+def _expect_single_fir_unit(fir: Dict[str, Any]) -> Dict[str, Any]:
+    units = fir.get("units")
+    _ensure(isinstance(units, list) and len(units) == 1, "Expected exactly one FIR unit.")
+    unit = units[0]
+    _ensure(isinstance(unit, dict), "FIR unit must be an object.")
     return unit
 
 
@@ -74,6 +95,69 @@ def _infer_ui_package_path(lowering: Dict[str, Any], explicit_ui_package_path: O
     return str(example_dir / DEFAULT_UI_PACKAGE_SUFFIX)
 
 
+def _resolve_repo_relative_path(repo_root: Path, text_path: str) -> Path:
+    candidate = Path(text_path)
+    return candidate if candidate.is_absolute() else (repo_root / candidate)
+
+
+def _load_and_validate_fir(
+    lowering: Dict[str, Any],
+    *,
+    lowering_path: Path | str,
+    ui_package_path: str,
+) -> Dict[str, Any]:
+    fir_ref = lowering.get("fir_ref")
+    _ensure(isinstance(fir_ref, dict), "Missing fir_ref.")
+    fir_path_text = fir_ref.get("path")
+    _ensure(isinstance(fir_path_text, str) and fir_path_text.endswith("main.fir.json"), "Invalid fir_ref.path.")
+    repo_root = find_repo_root(Path(lowering_path).resolve())
+    fir_path = _resolve_repo_relative_path(repo_root, fir_path_text)
+    _ensure(fir_path.is_file(), f"Missing FIR artifact: {fir_path_text}")
+    fir = load_json_from_path(fir_path)
+
+    _ensure(fir.get("artifact_kind") == "frog_fir_unit", "Expected artifact_kind == frog_fir_unit.")
+    fir_source_ref = fir.get("source_ref")
+    lowering_source_ref = lowering.get("source_ref")
+    _ensure(isinstance(fir_source_ref, dict), "Missing FIR source_ref.")
+    _ensure(isinstance(lowering_source_ref, dict), "Missing lowering source_ref.")
+    for key in ("example_id", "path", "entry_unit"):
+        _ensure(fir_source_ref.get(key) == lowering_source_ref.get(key), f"FIR source_ref.{key} must match lowering source_ref.{key}.")
+
+    front_panel_ref = fir.get("front_panel_ref")
+    _ensure(isinstance(front_panel_ref, dict), "Missing front_panel_ref in FIR.")
+    _ensure(front_panel_ref.get("package_path") == ui_package_path, "FIR front_panel_ref.package_path must match the published UI package path.")
+    _ensure(front_panel_ref.get("panel_id") == "main_panel", "FIR front_panel_ref.panel_id must be main_panel.")
+
+    fir_unit = _expect_single_fir_unit(fir)
+    lowering_unit = _expect_single_lowered_unit(lowering)
+
+    _ensure(fir_unit.get("unit_id") == lowering_unit.get("unit_id"), "FIR unit_id must match lowering unit_id.")
+    _ensure(fir_unit.get("public_interface") == lowering_unit.get("public_io"), "FIR public_interface must match lowering public_io.")
+    _ensure(fir_unit.get("ui_bindings") == lowering_unit.get("ui_bindings"), "FIR ui_bindings must match lowering ui_bindings.")
+
+    fir_state_model = fir_unit.get("state_model")
+    execution_kernel = _expect_execution_kernel(lowering_unit)
+    _ensure(isinstance(fir_state_model, dict), "Missing FIR state_model.")
+    _ensure(fir_state_model.get("explicit_state") is True, "FIR must declare explicit_state = true.")
+    carrier = fir_state_model.get("carrier")
+    _ensure(isinstance(carrier, dict), "Missing FIR state_model.carrier.")
+    _ensure(carrier.get("primitive") == "frog.core.delay", "FIR state carrier must use frog.core.delay.")
+    _ensure(carrier.get("type") == execution_kernel.get("state_type"), "FIR state type must match lowering execution_kernel.state_type.")
+    _ensure(carrier.get("initial_value") == execution_kernel.get("initial_state"), "FIR initial_value must match lowering initial_state.")
+
+    fir_execution_model = fir_unit.get("execution_model")
+    _ensure(isinstance(fir_execution_model, dict), "Missing FIR execution_model.")
+    _ensure(fir_execution_model.get("structure") == "for_loop", "FIR execution_model.structure must be for_loop.")
+    _ensure(fir_execution_model.get("iteration_count") == execution_kernel.get("iteration_count"), "FIR iteration_count must match lowering iteration_count.")
+    body_rule = fir_execution_model.get("body_rule")
+    _ensure(isinstance(body_rule, dict), "Missing FIR execution_model.body_rule.")
+    _ensure(body_rule.get("kind") == "accumulate_with_explicit_state", "Unexpected FIR body_rule.kind.")
+    _ensure(body_rule.get("expression") == "state_next = state_current + input_value", "Unexpected FIR body_rule.expression.")
+
+    _ensure(fir_unit.get("publications") == execution_kernel.get("final_publication"), "FIR publications must match lowering final_publication.")
+    return fir
+
+
 def _build_widget_bindings(ui_bindings: Dict[str, Any], public_io: Dict[str, Any]) -> Dict[str, Any]:
     public_input = public_io["inputs"][0]
     public_output = public_io["outputs"][0]
@@ -110,7 +194,6 @@ def _build_widget_bindings(ui_bindings: Dict[str, Any], public_io: Dict[str, Any
             }
         )
 
-    # preserve control then indicator order
     support_by_id = {entry["widget_id"]: entry for entry in widget_reference_support}
     ordered_support = [support_by_id["ctrl_input"], support_by_id["ind_result"]]
 
@@ -137,6 +220,7 @@ def emit_reference_host_runtime_contract(
     lowering: Dict[str, Any],
     *,
     ui_package_path: Optional[str] = None,
+    lowering_path: Path | str | None = None,
 ) -> Dict[str, Any]:
     _ensure(lowering.get("artifact_kind") == "frog_lowered_unit", "Expected artifact_kind == frog_lowered_unit.")
     source_ref = lowering.get("source_ref")
@@ -151,7 +235,7 @@ def emit_reference_host_runtime_contract(
         f"Expected lowering_intent.backend_family_target == {REFERENCE_BACKEND_FAMILY}.",
     )
 
-    unit = _expect_single_unit(lowering)
+    unit = _expect_single_lowered_unit(lowering)
     _ensure(unit.get("unit_id") == "main", "Expected lowered unit main.")
     _ensure(unit.get("kind") == "bounded_accumulator_kernel_with_ui_bindings", "Unexpected lowered unit kind.")
 
@@ -159,6 +243,8 @@ def emit_reference_host_runtime_contract(
     ui_bindings = _expect_ui_bindings(unit)
     execution_kernel = _expect_execution_kernel(unit)
     ui_package_path_value = _infer_ui_package_path(lowering, ui_package_path)
+    if lowering_path is not None:
+        _load_and_validate_fir(lowering, lowering_path=lowering_path, ui_package_path=ui_package_path_value)
     widget_artifacts = _build_widget_bindings(ui_bindings, public_io)
 
     public_input = public_io["inputs"][0]
@@ -208,7 +294,7 @@ def emit_reference_host_runtime_contract(
             },
             "scheduling": {"family_rule": "deterministic_step_execution", "parallelism_claim": "none"},
             "execution_start": {"input_binding_complete": True, "ui_host_available": True, "initial_state_materialized": True},
-            "numeric_behavior": {"value_domain": "u16", "overflow_behavior": "family_private_reject_or_fail_if_unhandled"},
+            "numeric_behavior": {"value_domain": "u16", "overflow_behavior": EXPECTED_OVERFLOW_BEHAVIOR},
         },
         "units": [
             {
@@ -266,8 +352,7 @@ def emit_reference_host_runtime_contract(
 
 
 def load_lowering_from_path(path: Path | str) -> Dict[str, Any]:
-    lowering_path = Path(path)
-    return json.loads(lowering_path.read_text(encoding="utf-8"))
+    return load_json_from_path(path)
 
 
 def emit_contract_to_path(
@@ -277,7 +362,11 @@ def emit_contract_to_path(
     ui_package_path: Optional[str] = None,
 ) -> Dict[str, Any]:
     lowering = load_lowering_from_path(lowering_path)
-    contract = emit_reference_host_runtime_contract(lowering, ui_package_path=ui_package_path)
+    contract = emit_reference_host_runtime_contract(
+        lowering,
+        ui_package_path=ui_package_path,
+        lowering_path=Path(lowering_path),
+    )
     output = Path(output_path)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(contract, indent=2) + "\n", encoding="utf-8")

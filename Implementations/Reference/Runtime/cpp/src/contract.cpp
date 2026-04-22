@@ -75,6 +75,57 @@ std::vector<std::string> parse_string_vector(const Value& value, const std::stri
     return result;
 }
 
+
+UiBindingAssumptions parse_ui_binding_assumptions(const Object& object) {
+    UiBindingAssumptions ui_binding;
+    if (const auto* value = optional_field(object, "widget_value_binding")) {
+        ui_binding.widget_value_binding = get_bool(object, "widget_value_binding");
+    }
+    if (const auto* value = optional_field(object, "widget_reference_binding")) {
+        ui_binding.widget_reference_binding = get_bool(object, "widget_reference_binding");
+    }
+    return ui_binding;
+}
+
+RuntimeFamilyAssumptions parse_runtime_family_assumptions(const Value& value) {
+    const auto& object = as_object(value, "Expected runtime_family assumptions object.");
+    RuntimeFamilyAssumptions runtime_family;
+    if (const auto* name = optional_field(object, "name")) {
+        runtime_family.name = get_string(object, "name");
+    }
+    if (const auto* host_model = optional_field(object, "host_model")) {
+        runtime_family.host_model = get_string(object, "host_model");
+    }
+    if (const auto* ui_binding = optional_field(object, "ui_binding"); ui_binding != nullptr && ui_binding->is_object()) {
+        runtime_family.ui_binding = parse_ui_binding_assumptions(ui_binding->as_object());
+    }
+    return runtime_family;
+}
+
+NumericBehaviorAssumptions parse_numeric_behavior_assumptions(const Value& value) {
+    const auto& object = as_object(value, "Expected numeric_behavior assumptions object.");
+    NumericBehaviorAssumptions numeric_behavior;
+    if (const auto* value_domain = optional_field(object, "value_domain")) {
+        numeric_behavior.value_domain = get_string(object, "value_domain");
+    }
+    if (const auto* overflow_behavior = optional_field(object, "overflow_behavior")) {
+        numeric_behavior.overflow_behavior = get_string(object, "overflow_behavior");
+    }
+    return numeric_behavior;
+}
+
+ContractAssumptions parse_contract_assumptions(const Value& value) {
+    const auto& object = as_object(value, "Expected assumptions object.");
+    ContractAssumptions assumptions;
+    if (const auto* runtime_family = optional_field(object, "runtime_family")) {
+        assumptions.runtime_family = parse_runtime_family_assumptions(*runtime_family);
+    }
+    if (const auto* numeric_behavior = optional_field(object, "numeric_behavior")) {
+        assumptions.numeric_behavior = parse_numeric_behavior_assumptions(*numeric_behavior);
+    }
+    return assumptions;
+}
+
 InterfacePort parse_interface_port(const Value& value) {
     const auto& object = as_object(value, "Expected interface port object.");
     return InterfacePort{
@@ -231,6 +282,9 @@ BackendContract load_contract_from_path(const std::filesystem::path& path) {
     {
         const auto& source = as_object(root.at("source_ref"), "Expected source_ref object.");
         contract.source_ref = SourceRef{get_string(source, "example_id"), get_string(source, "path"), get_string(source, "entry_unit")};
+    }
+    if (const auto* assumptions = optional_field(root, "assumptions"); assumptions != nullptr && assumptions->is_object()) {
+        contract.assumptions = parse_contract_assumptions(*assumptions);
     }
     for (const auto& unit_value : as_array(root.at("units"), "contract.units")) {
         const auto& unit_object = as_object(unit_value, "Expected contract unit object.");

@@ -85,6 +85,11 @@ std::uint16_t Slice05RuntimeCore::checked_u16(std::uint32_t value, const std::st
 
 ContractUnit Slice05RuntimeCore::load_and_validate() const {
     require(contract.backend_family == REFERENCE_BACKEND_FAMILY, "Unexpected backend family.");
+    require(contract.assumptions.runtime_family.name == REFERENCE_BACKEND_FAMILY, "Unexpected runtime-family assumption name.");
+    require(contract.assumptions.runtime_family.ui_binding.widget_value_binding, "Contract must require widget_value_binding.");
+    require(contract.assumptions.runtime_family.ui_binding.widget_reference_binding, "Contract must require widget_reference_binding.");
+    require(contract.assumptions.numeric_behavior.value_domain == "u16", "Contract numeric behavior must target the u16 domain.");
+    require(contract.assumptions.numeric_behavior.overflow_behavior == EXPECTED_OVERFLOW_BEHAVIOR, "Unexpected contract overflow behavior.");
     require(contract.units.size() == 1, "Expected exactly one contract unit.");
     const ContractUnit& current_unit = contract.units.front();
     require(current_unit.unit_id == "main", "Expected unit_id main.");
@@ -110,6 +115,7 @@ ContractUnit Slice05RuntimeCore::load_and_validate() const {
     require(required.count("basic_widget_rendering") == 1, "Missing host capability basic_widget_rendering.");
     require(required.count("property_write") == 1, "Missing host capability property_write.");
     require(required.count("widget_value_binding") == 1, "Missing host capability widget_value_binding.");
+    require(required.count("widget_reference_binding") == 1, "Missing host capability widget_reference_binding.");
 
     std::map<std::string, const PanelWidget*> panel_widgets;
     for (const auto& widget : current_panel.widgets) {

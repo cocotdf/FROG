@@ -2,7 +2,7 @@
 
 @fmt_state = private unnamed_addr constant [16 x i8] c"final_state=%d\0A\00"
 @fmt_output = private unnamed_addr constant [18 x i8] c"public_output=%d\0A\00"
-@fmt_status = private unnamed_addr constant [10 x i8] c"status=ok\0A\00"
+@fmt_status = private unnamed_addr constant [11 x i8] c"status=ok\0A\00"
 
 declare i32 @printf(ptr, ...)
 declare i32 @atoi(ptr)
@@ -39,7 +39,7 @@ run:
   %fmt_output_ptr = getelementptr inbounds [18 x i8], ptr @fmt_output, i64 0, i64 0
   call i32 (ptr, ...) @printf(ptr %fmt_output_ptr, i32 %result_i32)
 
-  %fmt_status_ptr = getelementptr inbounds [10 x i8], ptr @fmt_status, i64 0, i64 0
+  %fmt_status_ptr = getelementptr inbounds [11 x i8], ptr @fmt_status, i64 0, i64 0
   call i32 (ptr, ...) @printf(ptr %fmt_status_ptr)
 
   ret i32 0

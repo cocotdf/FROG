@@ -6,6 +6,7 @@ use serde::{Deserialize, Serialize};
 use crate::diagnostics::{ensure, Result, RuntimeError};
 
 pub const REFERENCE_BACKEND_FAMILY: &str = "reference_host_runtime_ui_binding";
+pub const EXPECTED_OVERFLOW_BEHAVIOR: &str = "reject_execution_on_u16_overflow";
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct ArtifactReference {
@@ -19,6 +20,40 @@ pub struct SourceRef {
     pub entry_unit: String,
 }
 
+#[derive(Debug, Clone, Deserialize, Serialize, Default)]
+pub struct UiBindingAssumptions {
+    #[serde(default)]
+    pub widget_value_binding: bool,
+    #[serde(default)]
+    pub widget_reference_binding: bool,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize, Default)]
+pub struct RuntimeFamilyAssumptions {
+    #[serde(default)]
+    pub name: String,
+    #[serde(default)]
+    pub host_model: String,
+    #[serde(default)]
+    pub ui_binding: UiBindingAssumptions,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize, Default)]
+pub struct NumericBehaviorAssumptions {
+    #[serde(default)]
+    pub value_domain: String,
+    #[serde(default)]
+    pub overflow_behavior: String,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize, Default)]
+pub struct ContractAssumptions {
+    #[serde(default)]
+    pub runtime_family: RuntimeFamilyAssumptions,
+    #[serde(default)]
+    pub numeric_behavior: NumericBehaviorAssumptions,
+}
+
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct BackendContract {
     pub artifact_kind: String,
@@ -26,6 +61,8 @@ pub struct BackendContract {
     pub artifact_governance_ref: Option<ArtifactReference>,
     pub backend_family: String,
     pub source_ref: SourceRef,
+    #[serde(default)]
+    pub assumptions: ContractAssumptions,
     pub units: Vec<ContractUnit>,
 }
 
