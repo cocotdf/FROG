@@ -365,8 +365,6 @@
       - tests
         - [test_runtime_slice05.py](/Implementations/Reference/Runtime/python/tests/test_runtime_slice05.py)
         - [test_runtime_ui_slice05.py](/Implementations/Reference/Runtime/python/tests/test_runtime_ui_slice05.py)
-        - [test_slice05_contract.py](/Implementations/Reference/Runtime/python/tests/test_slice05_contract.py)
-        - [test_slice05_ui_runtime.py](/Implementations/Reference/Runtime/python/tests/test_slice05_ui_runtime.py)
     - [rust](/Implementations/Reference/Runtime/rust/Readme.md)
   - [UIHost](/Implementations/Reference/UIHost/Readme.md)
     - [responsibilities](/Implementations/Reference/UIHost/responsibilities.md)

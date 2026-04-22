@@ -2610,20 +2610,6 @@
                           "path": "/Implementations/Reference/Runtime/python/tests/test_runtime_ui_slice05.py",
                           "kind": "code",
                           "children": []
-                        },
-                        {
-                          "key": "implementations/reference/runtime/python/tests/test_slice05_contract.py",
-                          "title": "test_slice05_contract.py",
-                          "path": "/Implementations/Reference/Runtime/python/tests/test_slice05_contract.py",
-                          "kind": "code",
-                          "children": []
-                        },
-                        {
-                          "key": "implementations/reference/runtime/python/tests/test_slice05_ui_runtime.py",
-                          "title": "test_slice05_ui_runtime.py",
-                          "path": "/Implementations/Reference/Runtime/python/tests/test_slice05_ui_runtime.py",
-                          "kind": "code",
-                          "children": []
                         }
                       ]
                     }
@@ -3087,8 +3073,6 @@
     "/Implementations/Reference/Runtime/python/ui_runtime.py",
     "/Implementations/Reference/Runtime/python/tests/test_runtime_slice05.py",
     "/Implementations/Reference/Runtime/python/tests/test_runtime_ui_slice05.py",
-    "/Implementations/Reference/Runtime/python/tests/test_slice05_contract.py",
-    "/Implementations/Reference/Runtime/python/tests/test_slice05_ui_runtime.py",
     "/Implementations/Reference/Runtime/python/Readme.md",
     "/Implementations/Reference/Runtime/rust/Readme.md",
     "/Implementations/Reference/Runtime/Readme.md",
