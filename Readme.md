@@ -1,5 +1,5 @@
 <div class="go-pages-link" data-render-target="github">
-  <a href="https://graiphic.github.io/FROG/">
+  <a href="https://cocotdf.github.io/FROG/">
     <img src="./assets/open-github-pages-banner.svg" alt="Open the GitHub Pages version" />
   </a>
 </div>
@@ -288,7 +288,7 @@ Its ambition is to reduce the historical trade-off between:
 </ul>
 
 <p align="center">
-  <img src="frog-orville-chart.png" alt="FROG positioning chart" width="640" />
+  <img src="./assets/readme-positioning-map.png" alt="FROG positioning map: accessibility versus system-grade execution" width="760" />
 </p>
 
 <p align="center">
@@ -449,20 +449,15 @@ In instruction-sequenced programming, execution is primarily described as ordere
 In dataflow programming, operations become executable when their required input data is available.
 </p>
 
-<pre>
-Traditional execution
+<p align="center">
+  <img src="./assets/readme-dataflow-execution.png" alt="Traditional execution compared with dataflow execution" width="760" />
+</p>
 
-A → B → C → D
-
-
-Dataflow execution
-
-   A
-  / \
- B   C
-  \ /
-   D
-</pre>
+<p align="center">
+  <em>
+    In dataflow execution, order follows graph dependencies rather than a manually authored instruction sequence.
+  </em>
+</p>
 
 <p>
 Execution order therefore emerges from dependencies rather than from manually authored textual ordering.
@@ -894,22 +889,15 @@ This separation is deliberate.
 It prevents the language from being reduced to one editor, one runtime, one compiler, or one vendor implementation.
 </p>
 
-<pre>
-Expression/   -&gt; canonical source form and structural validity
-Language/     -&gt; validated program meaning
-IR/           -&gt; canonical open execution-facing representation
-Libraries/    -&gt; intrinsic standardized primitive vocabularies
-Profiles/     -&gt; optional standardized capability families
-IDE/          -&gt; authoring, observability, debugging, inspection
-</pre>
+<p align="center">
+  <img src="./assets/readme-specification-architecture.png" alt="FROG specification architecture layers" width="760" />
+</p>
 
-<pre>
-what is saved      -&gt; Expression/
-what is true       -&gt; Language/
-what is derived    -&gt; IR/
-what exists        -&gt; Libraries/ and Profiles/
-what is edited     -&gt; IDE/
-</pre>
+<p align="center">
+  <em>
+    The core specification layers deliberately separate saved source, validated meaning, derived IR, library/profile capability surfaces, and IDE-facing tooling concerns.
+  </em>
+</p>
 
 <p>
 Beyond those six core families, the published repository also contains support and governance areas that should not be confused with semantic owners:
@@ -964,27 +952,15 @@ A validated FROG is not executed directly from raw source text.
 A conforming toolchain validates the source-derived program representation and then derives a canonical open execution-facing representation suitable for execution preparation, analysis, normalization, optimization, lowering, or compilation.
 </p>
 
-<pre>
-.frog source
-    |
-    v
-loadability
-    |
-    v
-structural validity
-    |
-    v
-Program Model / validated source-derived program
-    |
-    v
-validated program meaning
-    |
-    v
-canonical execution-facing representation (FIR posture)
-    |
-    v
-lowering / backend-facing handoff
-</pre>
+<p align="center">
+  <img src="./assets/readme-program-representation-pipeline.png" alt="FROG program representation pipeline from source to FIR and lowering" width="760" />
+</p>
+
+<p align="center">
+  <em>
+    The program representation pipeline moves from canonical source toward validated meaning, FIR / Execution IR, and backend-facing lowering.
+  </em>
+</p>
 
 <hr/>
 
@@ -1004,60 +980,15 @@ The architectural posture below deliberately combines three requirements:
   <li>and a clear observability/debugging branch that preserves probes and watches as first-class IDE-facing concepts without turning them into program semantics.</li>
 </ul>
 
-<pre>
-                                   FROG IDE
-                 +--------------------------------------------------+
-                 | Diagram + Front Panel UI + Probes + Watches      |
-                 +--------------------------+-----------------------+
-                                            |
-                                            v
-                                 FROG Program Model
-                           (editable in-memory source model)
-                                            |
-                     +----------------------+----------------------+
-                     |                                             |
-                     | save / load                                 | execute / validate
-                     v                                             v
-           OPEN SOURCE LAYER                              Validation against
-           FROG Expression                                +----------------------+
-           (.frog, canonical source)                      | Expression/          |
-                                                          | Language/            |
-                                                          | Libraries/           |
-                                                          | Profiles/            |
-                                                          +----------+-----------+
-                                                                     |
-                                                                     v
-                                                   OPEN EXECUTION LAYER
-                                                   FROG Execution IR
-                        (canonical execution-facing document, derived, inspectable,
-                           source-attributed, execution-facing, not backend-private)
-                                                                     |
-                                                                     v
-                                                     Identity / Mapping preservation
-                                                                     |
-                                                                     v
-                                                    Lowering / backend-facing handoff
-                                                                     |
-                                                                     v
-                                          Compiler(s) / Backend(s) / Runtime(s)
-                                                                     |
-                                                                     v
-                                                       Target execution instance
-                                                                     |
-                          +------------------------------------------+-------------------------+
-                          |                                                                    |
-                          v                                                                    v
-        Source-aligned execution observability                            Runtime activity on the active target
-        (mapped back to meaningful FROG objects)
-                          |
-                          v
-       Debugging / inspection / pause / resume / break / step
-                          |
-                +---------+----------+
-                |                    |
-                v                    v
-             Probes                Watches
-</pre>
+<p align="center">
+  <img src="./assets/readme-execution-architecture.png" alt="FROG execution architecture from IDE authoring to target execution and observability" width="760" />
+</p>
+
+<p align="center">
+  <em>
+    Execution stays staged: IDE authoring and source remain upstream, FIR remains open and inspectable, and runtimes, compilers, native paths, probes, and watches remain downstream consumers or projections.
+  </em>
+</p>
 
 <p>
 A serious downstream compiler path MAY eventually target compiler families such as LLVM.
