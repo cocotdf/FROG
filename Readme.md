@@ -288,7 +288,7 @@ Its ambition is to reduce the historical trade-off between:
 </ul>
 
 <p align="center">
-  <img src="./assets/readme-positioning-map.svg" alt="FROG positioning map: accessibility versus system-grade execution" width="760" />
+  <img src="./assets/readme-positioning-map.png" alt="FROG positioning map: accessibility versus system-grade execution" width="760" />
 </p>
 
 <p align="center">
@@ -450,7 +450,7 @@ In dataflow programming, operations become executable when their required input 
 </p>
 
 <p align="center">
-  <img src="./assets/readme-dataflow-execution.svg" alt="Traditional execution compared with dataflow execution" width="760" />
+  <img src="./assets/readme-dataflow-execution.png" alt="Traditional execution compared with dataflow execution" width="760" />
 </p>
 
 <p align="center">
@@ -652,27 +652,15 @@ the same canonical example corridor should be consumable through <strong>multipl
 The preferred long-term reading for a serious executable example is:
 </p>
 
-<pre><code>canonical .frog source
-      |
-      v
-validated meaning
-      |
-      v
-FIR
-      |
-      v
-lowering
-      |
-      v
-backend contract and/or compiler-facing lowered artifact
-      |
-      +-------------------------------+-------------------------------+-------------------------------+
-      |                               |                               |
-      v                               v                               v
-Python mini runtime            Rust mini runtime               C/C++ mini runtime
-      |
-      \------------------------------- optional LLVM-oriented native path -------------------------------&gt;
-</code></pre>
+<p align="center">
+  <img src="./assets/readme-runtime-native-execution-direction.png" alt="Runtime and native execution direction from canonical source to runtimes and optional LLVM-oriented native path" width="760" />
+</p>
+
+<p align="center">
+  <em>
+    Runtime-family consumers and the optional LLVM-oriented native path remain downstream from the same canonical source-to-FIR corridor.
+  </em>
+</p>
 
 <p>
 For the canonical Example 05 slice, the repository now materially exposes this direction in bounded form:
@@ -890,7 +878,7 @@ It prevents the language from being reduced to one editor, one runtime, one comp
 </p>
 
 <p align="center">
-  <img src="./assets/readme-specification-architecture.svg" alt="FROG specification architecture layers" width="760" />
+  <img src="./assets/readme-specification-architecture.png" alt="FROG specification architecture layers" width="760" />
 </p>
 
 <p align="center">
@@ -953,7 +941,7 @@ A conforming toolchain validates the source-derived program representation and t
 </p>
 
 <p align="center">
-  <img src="./assets/readme-program-representation-pipeline.svg" alt="FROG program representation pipeline from source to FIR and lowering" width="760" />
+  <img src="./assets/readme-program-representation-pipeline.png" alt="FROG program representation pipeline from source to FIR and lowering" width="760" />
 </p>
 
 <p align="center">
@@ -981,7 +969,7 @@ The architectural posture below deliberately combines three requirements:
 </ul>
 
 <p align="center">
-  <img src="./assets/readme-execution-architecture.svg" alt="FROG execution architecture from IDE authoring to target execution and observability" width="760" />
+  <img src="./assets/readme-execution-architecture.png" alt="FROG execution architecture from IDE authoring to target execution and observability" width="760" />
 </p>
 
 <p align="center">
