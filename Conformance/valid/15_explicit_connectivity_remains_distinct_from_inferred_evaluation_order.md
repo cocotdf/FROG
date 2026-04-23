@@ -41,6 +41,13 @@ FROG — Free Open Graphical Language</p>
 
 <p>The conceptual shape is:</p>
 
+<div data-render-target="pages" hidden>
+<p align="center">
+  <img src="../../assets/ascii-flow-diagrams/ascii-flow-04-conformance-valid-15-explicit-connectivity-remains-distinct-from-inferred-evaluation-order.png" alt="ASCII flow diagram replacement for Conformance/valid/15_explicit_connectivity_remains_distinct_from_inferred_evaluation_order.md section 1. Overview" width="760" />
+</p>
+</div>
+
+<div data-render-target="github">
 <pre><code>diagram layout
 
   interface_input(x)
@@ -59,6 +66,7 @@ FROG — Free Open Graphical Language</p>
                    v
       interface_output(result)
 </code></pre>
+</div>
 
 <p>In this case, the two intermediate branches are both required before the final <code>frog.core.add</code>, but no rule says one branch must execute “first” merely because it appears above, below, left, or right.</p>
 

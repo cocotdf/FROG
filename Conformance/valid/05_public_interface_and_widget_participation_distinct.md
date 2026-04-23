@@ -39,6 +39,13 @@ FROG — Free Open Graphical Language</p>
 
 <p>The conceptual shape is:</p>
 
+<div data-render-target="pages" hidden>
+<p align="center">
+  <img src="../../assets/ascii-flow-diagrams/ascii-flow-03-conformance-valid-05-public-interface-and-widget-participation-distinct.png" alt="ASCII flow diagram replacement for Conformance/valid/05_public_interface_and_widget_participation_distinct.md section 1. Overview" width="760" />
+</p>
+</div>
+
+<div data-render-target="github">
 <pre><code>public input         widget value
      x                   gain
       \                 /
@@ -50,6 +57,7 @@ FROG — Free Open Graphical Language</p>
          public output
              result
 </code></pre>
+</div>
 
 <p>This case is valid only if the following distinction remains explicit:</p>
 

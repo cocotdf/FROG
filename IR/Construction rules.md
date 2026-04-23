@@ -292,6 +292,13 @@ That result MUST be:
   <li>distinct from any runtime-private realization artifact.</li>
 </ul>
 
+<div data-render-target="pages" hidden>
+<p align="center">
+  <img src="../assets/ascii-flow-diagrams/ascii-flow-20-ir-construction-rules.png" alt="ASCII flow diagram replacement for IR/Construction rules.md section 6. Construction Result" width="760" />
+</p>
+</div>
+
+<div data-render-target="github">
 <pre><code>one validated program
         |
         v
@@ -304,6 +311,7 @@ one canonical Execution IR Document
               +-- regions
               +-- source_map
               +-- correspondence</code></pre>
+</div>
 
 <p>
 For widget-related execution structure, the result MAY contain:

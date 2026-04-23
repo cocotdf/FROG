@@ -90,6 +90,13 @@ it shows that the canonical JSON carrier discipline and the architectural IR dis
 This case exercises the boundary across:
 </p>
 
+<div data-render-target="pages" hidden>
+<p align="center">
+  <img src="../../assets/ascii-flow-diagrams/ascii-flow-06-conformance-valid-53-schema-valid-canonical-ir-must-still-preserve-ir-architectural-distin.png" alt="ASCII flow diagram replacement for Conformance/valid/53_schema_valid_canonical_ir_must_still_preserve_ir_architectural_distinctions.md section 4. Boundary Being Exercised" width="760" />
+</p>
+</div>
+
+<div data-render-target="github">
 <pre><code>validated meaning
       |
       v
@@ -99,6 +106,7 @@ canonical Execution IR Document
       |
       +-- IR-valid architectural preservation
 </code></pre>
+</div>
 
 <p>
 The distinction under test is:

@@ -42,6 +42,13 @@ FROG — Free Open Graphical Language</p>
 
 <p>The conceptual shape is:</p>
 
+<div data-render-target="pages" hidden>
+<p align="center">
+  <img src="../../assets/ascii-flow-diagrams/ascii-flow-05-conformance-valid-21-explicit-structure-owned-state-remains-distinct-from-inferred-persist.png" alt="ASCII flow diagram replacement for Conformance/valid/21_explicit_structure_owned_state_remains_distinct_from_inferred_persistent_value_by_feedback_shape.md section 1. Overview" width="760" />
+</p>
+</div>
+
+<div data-render-target="github">
 <pre><code>structure iteration n
 
 explicit previous-state input
@@ -56,6 +63,7 @@ explicit previous-state input
 state persistence exists
 because the structure explicitly owns the carried value
 </code></pre>
+</div>
 
 <p>The required architectural rule is:</p>
 

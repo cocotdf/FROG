@@ -237,6 +237,13 @@ Embedded cache is allowed for convenience, but it is generally less desirable th
 The cache model is intentionally simple:
 </p>
 
+<div data-render-target="pages" hidden>
+<p align="center">
+  <img src="../assets/ascii-flow-diagrams/ascii-flow-09-expression-cache.png" alt="ASCII flow diagram replacement for Expression/Cache.md section 8. Cache Model" width="760" />
+</p>
+</div>
+
+<div data-render-target="github">
 <pre>Canonical source and derived cache
 
 authoritative source
@@ -280,6 +287,7 @@ In all cases cache is:
 - optional
 - non-authoritative
 - safe to delete</pre>
+</div>
 
 <p>
 The cache container is a derived snapshot keyed to some identifiable source state.

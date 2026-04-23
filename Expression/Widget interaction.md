@@ -1078,6 +1078,13 @@ Widget interaction nodes appear inside the authoritative executable <code>diagra
 Conceptually:
 </p>
 
+<div data-render-target="pages" hidden>
+<p align="center">
+  <img src="../assets/ascii-flow-diagrams/ascii-flow-12-expression-widget-interaction.png" alt="ASCII flow diagram replacement for Expression/Widget interaction.md section 15. Diagram Representation" width="760" />
+</p>
+</div>
+
+<div data-render-target="github">
 <pre><code>front_panel widget instance
         |
         +-- widget_value -----------------&gt; ordinary value flow
@@ -1089,6 +1096,7 @@ Conceptually:
                                              +-- frog.ui.method_invoke
                                              +-- frog.ui.event_observe
 </code></pre>
+</div>
 
 <p>
 The interaction node itself does not carry widget identity directly.

@@ -1212,6 +1212,13 @@ Versioning governance sits adjacent to those surfaces, but it is not reducible t
 <hr/>
 
 <h2 id="repository-wide-versioning-diagram">29. Repository-Wide Versioning Diagram</h2>
+<div data-render-target="pages" hidden>
+<p align="center">
+  <img src="../assets/ascii-flow-diagrams/ascii-flow-25-versioning-readme.png" alt="ASCII flow diagram replacement for Versioning/Readme.md section 29. Repository-Wide Versioning Diagram" width="760" />
+</p>
+</div>
+
+<div data-render-target="github">
 <pre><code>published FROG repository
     |
     +-- technical ownership layers
@@ -1258,6 +1265,7 @@ cumulative version model:
         +
     explicit bounded additions
 </code></pre>
+</div>
 
 <hr/>
 

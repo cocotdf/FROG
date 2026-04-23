@@ -703,6 +703,13 @@ The ideal future demonstration path is no longer only a straight line.
 Strategically, it should prove that one canonical source and one open FIR can feed multiple legitimate downstream combinations.
 </p>
 
+<div data-render-target="pages" hidden>
+<p align="center">
+  <img src="../../assets/ascii-flow-diagrams/ascii-flow-24-strategy-heilmeier-readme.png" alt="ASCII flow diagram replacement for Strategy/Heilmeier/Readme.md section 14. Future End-to-End POC Direction" width="760" />
+</p>
+</div>
+
+<div data-render-target="github">
 <pre><code>.frog canonical source
     |
     v
@@ -733,6 +740,7 @@ existing operational stacks                        vendor compiler families /
                  heterogeneous deployment targets
          CPU / ARM / edge / MCU / FPGA / vendor-specific systems
 </code></pre>
+</div>
 
 <p>
 For CPU-oriented execution, a future LLVM-oriented demonstration would be especially meaningful.

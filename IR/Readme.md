@@ -246,6 +246,13 @@ This architectural boundary also applies to UI and widget-related execution-faci
 The intended position of the IR layer is illustrated below:
 </p>
 
+<div data-render-target="pages" hidden>
+<p align="center">
+  <img src="../assets/ascii-flow-diagrams/ascii-flow-21-ir-readme.png" alt="ASCII flow diagram replacement for IR/Readme.md section 5. Position in the Representation Pipeline" width="760" />
+</p>
+</div>
+
+<div data-render-target="github">
 <pre><code>Authoring side
 --------------
 IDE Program Model
@@ -296,6 +303,7 @@ compiler preparation
 backend mapping
 runtime realization
 deployment-specific forms</code></pre>
+</div>
 
 <p>
 The transition into <code>IR/</code> begins after the program has validated program meaning. An implementation MAY derive IR directly from canonical source, from a validated Program Model, or from another equivalent validated internal form, but the resulting IR MUST remain semantically grounded in validated program meaning rather than in parser-only acceptance, structural-source admission alone, or editor-only convenience state.

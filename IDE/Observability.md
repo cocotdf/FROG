@@ -230,6 +230,13 @@ Observability is the shared source-aligned projection layer that makes both insp
 The high-level model is:
 </p>
 
+<div data-render-target="pages" hidden>
+<p align="center">
+  <img src="../assets/ascii-flow-diagrams/ascii-flow-14-ide-observability.png" alt="ASCII flow diagram replacement for IDE/Observability.md section 6. High-Level Observability Model" width="760" />
+</p>
+</div>
+
+<div data-render-target="github">
 <pre><code>validated program meaning
         |
         v
@@ -246,6 +253,7 @@ source-aligned observability projection
         +-- probes
         \-- watches
 </code></pre>
+</div>
 
 <p>
 A more explicit architectural reading is:

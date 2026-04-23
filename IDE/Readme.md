@@ -357,6 +357,13 @@ The IDE architecture combines:
   <li>debugging and inspection tools.</li>
 </ul>
 
+<div data-render-target="pages" hidden>
+<p align="center">
+  <img src="../assets/ascii-flow-diagrams/ascii-flow-16-ide-readme.png" alt="ASCII flow diagram replacement for IDE/Readme.md section 7. High-Level Architecture" width="760" />
+</p>
+</div>
+
+<div data-render-target="github">
 <pre><code>                                   FROG IDE
                  +--------------------------------------------------+
                  | Diagram + Front Panel UI + Probes + Watches      |
@@ -406,6 +413,7 @@ The IDE architecture combines:
                                   pause / resume /      local source-       persistent centralized
                                    break / step         attached view          inspection view
 </code></pre>
+</div>
 
 <p>
 This architecture is conceptual.

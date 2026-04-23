@@ -106,6 +106,13 @@ tool interpretation:
 Another invalid reading is:
 </p>
 
+<div data-render-target="pages" hidden>
+<p align="center">
+  <img src="../../assets/ascii-flow-diagrams/ascii-flow-02-conformance-invalid-52-primary-execution-object-without-recoverable-source-anchor-is-inval.png" alt="ASCII flow diagram replacement for Conformance/invalid/52_primary_execution_object_without_recoverable_source_anchor_is_invalid.md section 3. Intended Anti-Pattern" width="760" />
+</p>
+</div>
+
+<div data-render-target="github">
 <pre><code>validated delay primitive
       |
       +-- explicit state-bearing object emitted
@@ -114,6 +121,7 @@ Another invalid reading is:
       |
       +-- tool claims attribution remains available internally
 </code></pre>
+</div>
 
 <p>
 That is not a valid architectural reading of base FROG v0.1.

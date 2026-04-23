@@ -95,6 +95,13 @@ This workspace therefore exists to:
 
 <h2 id="architectural-position">4. Architectural Position</h2>
 
+<div data-render-target="pages" hidden>
+<p align="center">
+  <img src="../../assets/ascii-flow-diagrams/ascii-flow-18-implementations-reference-readme.png" alt="ASCII flow diagram replacement for Implementations/Reference/Readme.md section 4. Architectural Position" width="760" />
+</p>
+</div>
+
+<div data-render-target="github">
 <pre><code>canonical .frog source
       |
       v
@@ -119,6 +126,7 @@ reference implementation stages
       +-- LLVM/
       \-- CLI/
 </code></pre>
+</div>
 
 <p>
 The key rule is that this workspace follows the published corridor.
@@ -228,6 +236,13 @@ That contract is then consumed downstream by the reference runtime family under:
 This makes the first bounded executable corridor inspectable as:
 </p>
 
+<div data-render-target="pages" hidden>
+<p align="center">
+  <img src="../../assets/ascii-flow-diagrams/ascii-flow-19-implementations-reference-readme.png" alt="ASCII flow diagram replacement for Implementations/Reference/Readme.md section 8. Example -&gt; Contract -&gt; Runtime Reading" width="760" />
+</p>
+</div>
+
+<div data-render-target="github">
 <pre><code>Examples/05_bounded_ui_accumulator/
       |
       v
@@ -241,6 +256,7 @@ Runtime/
       +-- rust consumer
       \-- future cpp consumer
 </code></pre>
+</div>
 
 <hr/>
 

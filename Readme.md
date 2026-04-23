@@ -287,7 +287,7 @@ Its ambition is to reduce the historical trade-off between:
   <li>human auditability of program structure.</li>
 </ul>
 
-<p align="center">
+<p align="center" data-render-target="pages" hidden>
   <img src="./assets/readme-positioning-map.png" alt="FROG positioning map: accessibility versus system-grade execution" width="760" />
 </p>
 
@@ -449,7 +449,7 @@ In instruction-sequenced programming, execution is primarily described as ordere
 In dataflow programming, operations become executable when their required input data is available.
 </p>
 
-<p align="center">
+<p align="center" data-render-target="pages" hidden>
   <img src="./assets/readme-dataflow-execution.png" alt="Traditional execution compared with dataflow execution" width="760" />
 </p>
 
@@ -652,7 +652,7 @@ the same canonical example corridor should be consumable through <strong>multipl
 The preferred long-term reading for a serious executable example is:
 </p>
 
-<p align="center">
+<p align="center" data-render-target="pages" hidden>
   <img src="./assets/readme-runtime-native-execution-direction.png" alt="Runtime and native execution direction from canonical source to runtimes and optional LLVM-oriented native path" width="760" />
 </p>
 
@@ -819,6 +819,13 @@ IDE/Readme.md
 Readers who want to understand the currently published repository-level executable/reference path SHOULD then continue with:
 </p>
 
+<div data-render-target="pages" hidden>
+<p align="center">
+  <img src="assets/ascii-flow-diagrams/ascii-flow-23-readme.png" alt="ASCII flow diagram replacement for Readme.md section Recommended reading path" width="760" />
+</p>
+</div>
+
+<div data-render-target="github">
 <pre>
 Examples/Readme.md
    |
@@ -840,6 +847,7 @@ Implementations/Reference/Runtime/Readme.md
    |
    \-- Implementations/Reference/LLVM/Readme.md
 </pre>
+</div>
 
 <p>
 That second path answers a staged set of questions:
@@ -877,7 +885,7 @@ This separation is deliberate.
 It prevents the language from being reduced to one editor, one runtime, one compiler, or one vendor implementation.
 </p>
 
-<p align="center">
+<p align="center" data-render-target="pages" hidden>
   <img src="./assets/readme-specification-architecture.png" alt="FROG specification architecture layers" width="760" />
 </p>
 
@@ -940,7 +948,7 @@ A validated FROG is not executed directly from raw source text.
 A conforming toolchain validates the source-derived program representation and then derives a canonical open execution-facing representation suitable for execution preparation, analysis, normalization, optimization, lowering, or compilation.
 </p>
 
-<p align="center">
+<p align="center" data-render-target="pages" hidden>
   <img src="./assets/readme-program-representation-pipeline.png" alt="FROG program representation pipeline from source to FIR and lowering" width="760" />
 </p>
 
@@ -968,7 +976,7 @@ The architectural posture below deliberately combines three requirements:
   <li>and a clear observability/debugging branch that preserves probes and watches as first-class IDE-facing concepts without turning them into program semantics.</li>
 </ul>
 
-<p align="center">
+<p align="center" data-render-target="pages" hidden>
   <img src="./assets/readme-execution-architecture.png" alt="FROG execution architecture from IDE authoring to target execution and observability" width="760" />
 </p>
 

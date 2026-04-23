@@ -536,8 +536,12 @@
       padding: 0.5rem;
     }
 
-    .markdown-section .go-pages-link {
+    .markdown-section [data-render-target="github"] {
       display: none !important;
+    }
+
+    .markdown-section [data-render-target="pages"][hidden] {
+      display: block !important;
     }
 
     .theme-toggle {

@@ -393,6 +393,13 @@ Tools MAY scale icons for high-DPI or zoomed rendering.
 However, the source-level logical coordinate system SHOULD remain stable.
 </p>
 
+<div data-render-target="pages" hidden>
+<p align="center">
+  <img src="../assets/ascii-flow-diagrams/ascii-flow-10-expression-icon.png" alt="ASCII flow diagram replacement for Expression/Icon.md section 9. Coordinate System and Sizing" width="760" />
+</p>
+</div>
+
+<div data-render-target="github">
 <pre>Logical icon model
 
 source icon
@@ -407,6 +414,7 @@ tool rendering
    +-- MAY scale for zoom
    +-- MAY scale for DPI
    +-- MUST NOT change executable meaning</pre>
+</div>
 
 <hr/>
 
