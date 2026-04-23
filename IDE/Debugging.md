@@ -825,13 +825,7 @@ Debugging is not identical to probes or watches, but it must compose with both.
 The architectural relation is:
 </p>
 
-<div data-render-target="pages" hidden>
-<p align="center">
-  <img src="../assets/ascii-flow-diagrams/ascii-flow-13-ide-debugging.png" alt="ASCII flow diagram replacement for IDE/Debugging.md section 15. Relationship with Probes and Watches" width="760" />
-</p>
-</div>
 
-<div data-render-target="github">
 <pre><code>live execution
       |
       v
@@ -841,8 +835,6 @@ source-aligned observability
       +--&gt; probes
       \--&gt; watches
 </code></pre>
-</div>
-
 <h3>15.1 Probes</h3>
 
 <p>

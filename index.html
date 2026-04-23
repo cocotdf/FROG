@@ -536,12 +536,8 @@
       padding: 0.5rem;
     }
 
-    .markdown-section [data-render-target="github"] {
+    .markdown-section .go-pages-link {
       display: none !important;
-    }
-
-    .markdown-section [data-render-target="pages"][hidden] {
-      display: block !important;
     }
 
     .theme-toggle {
@@ -1543,8 +1539,11 @@
         function (hook, vm) {
           hook.beforeEach(function (markdown) {
             var currentFile = currentFileFromRoute(vm);
+            var renderedMarkdown = typeof window.applyPagesDiagramReplacements === "function"
+              ? window.applyPagesDiagramReplacements(markdown, currentFile)
+              : markdown;
 
-            return markdown.replace(
+            return renderedMarkdown.replace(
               /(<img\b[^>]*\bsrc=["'])([^"']+)(["'][^>]*>)/gi,
               function (match, prefix, rawSrc, suffix) {
                 var rewrittenSrc = resolveLocalAssetUrl(rawSrc, currentFile);
@@ -1600,6 +1599,7 @@
       ]
     };
   </script>
+  <script src="assets/pages-diagram-replacements.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/docsify@4"></script>
   <script src="https://cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
 </body>

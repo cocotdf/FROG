@@ -454,13 +454,7 @@ Unless otherwise defined, a typed connection or assignment context is valid when
   <li>an explicit conversion node is inserted by the author.</li>
 </ul>
 
-<div data-render-target="pages" hidden>
-<p align="center">
-  <img src="../assets/ascii-flow-diagrams/ascii-flow-11-expression-type.png" alt="ASCII flow diagram replacement for Expression/Type.md section 10. Type Compatibility Model" width="760" />
-</p>
-</div>
 
-<div data-render-target="github">
 <pre><code>Compatibility decision model
 
 source type
@@ -475,8 +469,6 @@ target type
     +-- explicit conversion inserted? - yes --> valid
     |
     +-- otherwise --------------------------- invalid</code></pre>
-</div>
-
 <p>
 This document defines value-type compatibility only.
 It does not define widget-reference compatibility, UI sequencing compatibility, or execution ordering semantics.

@@ -1049,13 +1049,7 @@ The <code>recoverability</code> section is optional and non-authoritative.
 
 <h3>20.5 Drag-and-drop behavior</h3>
 
-<div data-render-target="pages" hidden>
-<p align="center">
-  <img src="../assets/ascii-flow-diagrams/ascii-flow-17-ide-snippet.png" alt="ASCII flow diagram replacement for IDE/Snippet.md section 20.5 Drag-and-drop behavior" width="760" />
-</p>
-</div>
 
-<div data-render-target="github">
 <pre><code>user drags snippet image into FROG IDE
             |
             v
@@ -1074,8 +1068,6 @@ validate     reject as snippet
       |
       v
 insert fragment deterministically</code></pre>
-</div>
-
 <hr/>
 
 <h2 id="out-of-scope-for-v01">21. Out of Scope for v0.1</h2>

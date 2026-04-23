@@ -108,13 +108,7 @@ tool interpretation:
 Another invalid interpretation is:
 </p>
 
-<div data-render-target="pages" hidden>
-<p align="center">
-  <img src="../../assets/ascii-flow-diagrams/ascii-flow-01-conformance-invalid-50-identity-loss-must-not-be-disguised-as-intentional-non-primary-corr.png" alt="ASCII flow diagram replacement for Conformance/invalid/50_identity_loss_must_not_be_disguised_as_intentional_non_primary_correspondence.md section 3. Intended Anti-Pattern" width="760" />
-</p>
-</div>
 
-<div data-render-target="github">
 <pre><code>widget declaration referenced by widget_reference participation
       |
       +-- declaration identity disappears in IR
@@ -122,8 +116,6 @@ Another invalid interpretation is:
       +-- tool claims that no explicit linkage is needed
           because the declaration is "not executable"
 </code></pre>
-</div>
-
 <p>
 That is not a valid architectural reading of base FROG v0.1 where recoverability still requires explicit declaration-side correspondence.
 </p>

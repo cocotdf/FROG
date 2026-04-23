@@ -332,13 +332,7 @@ This slice matters because it is the first published example in this directory t
 The intended bounded reading corridor is therefore:
 </p>
 
-<div data-render-target="pages" hidden>
-<p align="center">
-  <img src="../assets/ascii-flow-diagrams/ascii-flow-08-examples-readme.png" alt="ASCII flow diagram replacement for Examples/Readme.md section 12. Applicative Vertical-Slice Anchor" width="760" />
-</p>
-</div>
 
-<div data-render-target="github">
 <pre><code>Examples/05_bounded_ui_accumulator/
       |
       v
@@ -353,8 +347,6 @@ Implementations/Reference/Runtime/
       |
       \-- Implementations/Reference/LLVM/  (native-path direction)
 </code></pre>
-</div>
-
 <hr/>
 
 <h2 id="compiler-corridor-positive-mirror">13. Compiler-Corridor Positive Mirror</h2>

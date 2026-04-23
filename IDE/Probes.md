@@ -64,13 +64,7 @@ Probes are primarily designed to make ordinary dataflow understandable at the le
   <li>certain UI-related execution objects under compatible observability support.</li>
 </ul>
 
-<div data-render-target="pages" hidden>
-<p align="center">
-  <img src="../assets/ascii-flow-diagrams/ascii-flow-15-ide-probes.png" alt="ASCII flow diagram replacement for IDE/Probes.md section 1. Overview" width="760" />
-</p>
-</div>
 
-<div data-render-target="github">
 <pre><code>execution-facing systems
         |
         v
@@ -83,8 +77,6 @@ execution observability
  source-attached         persistent list entry
  diagram-centric         monitoring-centric
 </code></pre>
-</div>
-
 <p>
 A probe therefore belongs to the <strong>IDE inspection layer</strong>.
 It may be used together with debugging, but it is not itself a debugger control object.

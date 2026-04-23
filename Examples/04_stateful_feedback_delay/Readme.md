@@ -115,13 +115,7 @@ The public interface declares:
 The executable diagram expresses:
 </p>
 
-<div data-render-target="pages" hidden>
-<p align="center">
-  <img src="../../assets/ascii-flow-diagrams/ascii-flow-07-examples-04-stateful-feedback-delay-readme.png" alt="ASCII flow diagram replacement for Examples/04_stateful_feedback_delay/Readme.md section 4. Source Shape" width="760" />
-</p>
-</div>
 
-<div data-render-target="github">
 <pre><code>interface_input(x) ------&gt; frog.core.add(a)
                              ^
                              |
@@ -134,8 +128,6 @@ The executable diagram expresses:
                              |
                              +------&gt; frog.core.delay(in)
 </code></pre>
-</div>
-
 <p>
 The delay node carries:
 </p>

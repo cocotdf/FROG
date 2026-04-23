@@ -420,13 +420,7 @@ then it belongs in Profiles/.
 Decision sketch:
 </p>
 
-<div data-render-target="pages" hidden>
-<p align="center">
-  <img src="../assets/ascii-flow-diagrams/ascii-flow-22-libraries-readme.png" alt="ASCII flow diagram replacement for Libraries/Readme.md section 8. Libraries vs Profiles" width="760" />
-</p>
-</div>
 
-<div data-render-target="github">
 <pre><code>                    New capability
                           |
                           v
@@ -441,8 +435,6 @@ Decision sketch:
                        Libraries/   -----> evaluate as Profiles/
                                             or implementation-specific extension
 </code></pre>
-</div>
-
 <p>
 Examples:
 </p>
