@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="../../FROG logo.svg" alt="FROG logo" width="200" />
+  <img src="../../FROG logo.svg" alt="FROG logo" width="140" />
 </p>
 
 <h1 align="center">🐸 FROG — Heilmeier Framing</h1>
@@ -36,7 +36,7 @@
 <h2 id="why-this-page-exists">1. Why this Page Exists</h2>
 
 <p>
-This page explains why FROG exists as a technological program, what gap it targets, why that gap matters, what is already demonstrated, and what still needs to be proven before the full long-term compiler/runtime vision is realized.
+This page explains why FROG exists as a technological program, what category gap it targets, why that gap matters now, what is already demonstrated in the repository, and what still needs to be proved before the long-term multi-runtime and multi-compiler vision is realized.
 </p>
 
 <p>
@@ -45,7 +45,19 @@ It is not the normative language definition.
 It is not the reference implementation documentation.
 It is not the roadmap.
 It is not the current corpus-version status surface.
-It is a program-framing document that explains the problem, the opportunity, the expected impact, and the execution logic behind FROG.
+It is a program-framing document that explains the problem, the opportunity, the expected impact, and the long-term execution logic behind FROG.
+</p>
+
+<p>
+It also clarifies an important strategic evolution in Graiphic’s trajectory.
+GO HW made visible how powerful graphical orchestration can be when software logic, AI, and hardware concerns are treated as one architectural system.
+FROG represents the next step in that trajectory:
+going deeper than one cockpit or one integration stack, and opening the language foundation itself.
+</p>
+
+<p>
+That shift is difficult, ambitious, and deliberate.
+It moves the center of gravity from “how to build and operate graphical systems well” toward “how to make the language, the execution-facing representation, and the downstream bridge boundaries themselves open, inspectable, modular, and governable.”
 </p>
 
 <hr/>
@@ -53,7 +65,7 @@ It is a program-framing document that explains the problem, the opportunity, the
 <h2 id="strategic-thesis">2. Strategic Thesis</h2>
 
 <p>
-FROG aims to make <strong>graphical system-grade programming open, inspectable, hardware-agnostic, auditable, and deployable</strong> across heterogeneous execution targets.
+FROG aims to make <strong>graphical system-grade programming open, inspectable, hardware-agnostic, compiler-agnostic, auditable, and deployable</strong> across heterogeneous execution targets.
 </p>
 
 <p>
@@ -65,7 +77,8 @@ It is about removing structural lock-in from graphical industrial programming by
   <li>the saved program format,</li>
   <li>the execution-facing dataflow representation,</li>
   <li>the lowering path toward backend families,</li>
-  <li>the contract boundary between open program semantics and downstream execution.</li>
+  <li>the contract boundary between open program semantics and downstream execution,</li>
+  <li>and the bridge surface through which runtime families and compiler families can be attached to one common language stack.</li>
 </ul>
 
 <p>
@@ -77,12 +90,13 @@ In practical terms, FROG seeks to combine:
   <li>the execution seriousness required for industrial and system-grade deployment,</li>
   <li>the openness and inspectability needed for modern interoperability and portability,</li>
   <li>the auditability and structured artifacts needed for AI-assisted generation and transformation workflows,</li>
-  <li>the sovereignty-preserving properties needed for long-term industrial independence from opaque vendor-controlled formats.</li>
+  <li>the sovereignty-preserving properties needed for long-term industrial independence from opaque vendor-controlled formats,</li>
+  <li>and the modularity needed to combine runtimes, compilers, hardware bridges, and deployment strategies without redefining the language each time.</li>
 </ul>
 
 <p>
 The strategic thesis is therefore not merely “open graphical programming”.
-It is that the next generation of industrial programming infrastructure must remain:
+It is that the next generation of graphical industrial programming infrastructure should be able to establish itself as the <strong>open-source standard foundation for graphical dataflow language infrastructure</strong>, while remaining:
 </p>
 
 <ul>
@@ -90,8 +104,14 @@ It is that the next generation of industrial programming infrastructure must rem
   <li>human-reviewable enough for security and engineering trust,</li>
   <li>open enough for multi-vendor implementation,</li>
   <li>structured enough to preserve meaning across validation, derivation, and backend handoff,</li>
-  <li>governable enough that current version posture remains explicit rather than hidden in one proprietary lifecycle.</li>
+  <li>modular enough to support multiple runtime and compiler combinations from the same source program,</li>
+  <li>and governable enough that current version posture remains explicit rather than hidden in one proprietary lifecycle.</li>
 </ul>
+
+<p>
+FROG is therefore not trying to make graphical programming merely more pleasant.
+It is trying to make it more open, more serious, more composable, and more future-proof.
+</p>
 
 <hr/>
 
@@ -102,14 +122,14 @@ FROG targets a missing zone in the current software landscape.
 </p>
 
 <p>
-At one end of the spectrum, syntax-first languages can deliver depth of control, determinism, and deployment seriousness, but they often impose substantial implementation burden on domain engineers and system integrators.
+At one end of the spectrum, syntax-first languages can deliver depth of control, determinism, and deployment seriousness, but they often impose substantial implementation burden on domain engineers, system integrators, and hardware-oriented teams.
 At the other end of the spectrum, accessible environments may reduce friction but often remain constrained by proprietary formats, opaque execution layers, limited backend openness, or hardware-vendor lock-in.
 </p>
 
 <p>
 The gap is now even wider in the AI era.
-Modern toolchains increasingly generate, rewrite, transform, or assist program structure.
-That increases the need for representations that are both machine-friendly and human-reviewable.
+Modern toolchains increasingly generate, rewrite, transform, explain, validate, and assist program structure.
+That increases the value of representations that are both machine-friendly and human-reviewable.
 Many current environments satisfy one side of that requirement better than the other.
 </p>
 
@@ -121,14 +141,16 @@ FROG targets the missing zone where the following properties are combined rather
   <li>visual dataflow programming rather than syntax-heavy implementation work,</li>
   <li>system-grade execution depth rather than shallow convenience scripting only,</li>
   <li>hardware agnosticism rather than ecosystem lock-in,</li>
+  <li>compiler agnosticism at the architectural boundary rather than one downstream toolchain becoming hidden language truth,</li>
   <li>open and inspectable program artifacts rather than opaque saved formats,</li>
   <li>a path from rapid prototyping to deployment rather than a permanent split between prototype tooling and production tooling,</li>
-  <li>structured machine-compatible source artifacts together with direct human structural review.</li>
+  <li>structured machine-compatible source artifacts together with direct human structural review,</li>
+  <li>and an open execution-facing IR that can be bridged toward existing operational runtimes or compiler families rather than forcing one execution doctrine for all targets.</li>
 </ul>
 
 <p>
 This is why FROG matters.
-The opportunity is not merely to imitate existing graphical tools.
+The opportunity is not merely to imitate historical graphical tools.
 The opportunity is to open a missing systems capability category.
 </p>
 
@@ -137,7 +159,7 @@ The opportunity is to open a missing systems capability category.
 <h2 id="heilmeier-h1">4. Heilmeier H1 — What are you trying to do?</h2>
 
 <p>
-FROG is trying to create an open, hardware-agnostic graphical dataflow language and associated architecture that can support a serious path from canonical saved source to execution-oriented IR, backend-specific lowering, backend contract generation, and eventually real compiler/runtime backends.
+FROG is trying to create an open, hardware-agnostic graphical dataflow language and associated architecture that can support a serious path from canonical saved source to execution-oriented IR, backend-specific lowering, backend contract generation, runtime-family bridging, compiler-family bridging, and eventually real deployable execution paths across heterogeneous hardware targets.
 </p>
 
 <p>
@@ -149,6 +171,8 @@ In simple terms, the project is trying to make the following possible:
   <li>validate those programs against published semantic rules,</li>
   <li>derive a standardized execution-facing FROG IR,</li>
   <li>lower that IR toward multiple backend families,</li>
+  <li>bridge that IR toward runtime families when execution should remain runtime-driven,</li>
+  <li>bridge that IR toward compiler families when deployment should become artifact-driven,</li>
   <li>run or compile those programs on heterogeneous targets without making one private vendor stack the definition of the language.</li>
 </ul>
 
@@ -162,7 +186,8 @@ It is an open language foundation that can eventually support:
   <li>robotics,</li>
   <li>embedded and edge systems,</li>
   <li>AI-assisted development and transformation workflows,</li>
-  <li>CPU, ARM, microcontroller, FPGA, and other backend-oriented execution paths.</li>
+  <li>CPU, ARM, microcontroller, FPGA, and other backend-oriented execution paths,</li>
+  <li>and deployment patterns where execution, observability, and front-panel interaction may be distributed across different machines or targets.</li>
 </ul>
 
 <p>
@@ -175,8 +200,39 @@ It aims to provide a language stack where:
   <li>the program structure remains graphically reviewable by humans,</li>
   <li>the execution-facing IR remains open to inspection,</li>
   <li>downstream compilation remains separate from the normative language definition,</li>
+  <li>downstream runtime realization remains separate from the normative language definition,</li>
   <li>and the repository can state its current corpus posture explicitly without forcing that truth into strategic prose.</li>
 </ul>
+
+<h3>Runtime and compiler complementarity</h3>
+
+<p>
+A key part of the FROG vision is that runtime and compiler are not opposing ideologies.
+They are complementary downstream strategies that can both begin from the same open upstream truth.
+</p>
+
+<p>
+A compiler path prepares a deployable artifact specialized for a target family.
+A runtime path provides the live execution engine, state handling, observability services, communication surfaces, and integration posture needed to make that execution operational.
+Different targets and industrial contexts require different mixes of those two roles.
+</p>
+
+<p>
+FROG therefore aims to support a world where one canonical <code>.frog</code> source and one open execution-facing IR can later be combined with:
+</p>
+
+<ul>
+  <li>compiler-heavy deployments,</li>
+  <li>runtime-heavy deployments,</li>
+  <li>hybrid deployments where compiled execution and runtime services coexist,</li>
+  <li>and bridge paths toward existing hardware-specific operational runtimes where that is the most credible industrial route.</li>
+</ul>
+
+<p>
+That is one of the most important strategic consequences of an open FIR:
+it does not merely preserve inspectability.
+It preserves combinability.
+</p>
 
 <hr/>
 
@@ -191,6 +247,7 @@ Today, the landscape is fragmented.
   <li>Graphical systems can provide accessibility but often remain proprietary, opaque, or tied to a specific vendor ecosystem.</li>
   <li>The saved program representation is often not designed as an open, durable, inspectable interoperability layer.</li>
   <li>The internal execution representation is often not designed to remain open, recoverable, or backend-neutral.</li>
+  <li>The runtime and compiler story is often hidden inside one integrated platform rather than exposed as a modular architecture.</li>
 </ul>
 
 <p>
@@ -202,7 +259,8 @@ The practical limits of the current situation are structural rather than cosmeti
   <li>difficulty of porting graphical system logic across hardware ecosystems,</li>
   <li>difficulty of integrating modern AI tooling with opaque graphical formats,</li>
   <li>difficulty of building an open multi-vendor ecosystem around system-grade graphical execution,</li>
-  <li>difficulty of cleanly separating source truth, execution-facing IR, backend lowering, and runtime realization,</li>
+  <li>difficulty of cleanly separating source truth, execution-facing IR, backend lowering, runtime realization, and compiler specialization,</li>
+  <li>difficulty of constructing combinable runtime + compiler deployment strategies from one open intermediate representation,</li>
   <li>difficulty of keeping version posture explicit rather than burying it in one vendor release logic.</li>
 </ul>
 
@@ -211,13 +269,29 @@ There is also a reviewability problem.
 Textual languages can certainly be audited, but structural understanding is often indirect:
 reviewers reconstruct system architecture from syntax, coding conventions, build context, and analysis tooling.
 In closed graphical systems, the problem is different but equally serious:
-the structure may be visual, yet the saved format and execution path remain opaque or vendor-bound.
+the structure may be visual, yet the saved format, the intermediate representation, and the downstream execution path remain opaque or vendor-bound.
+</p>
+
+<p>
+There is also a modularity problem.
+Many systems force a single execution philosophy.
+They implicitly say:
+one language means one runtime,
+or one language means one compiler,
+or one hardware vendor means one mandatory operational stack.
+That limits deployment freedom and makes it hard to reuse serious existing runtime or compiler infrastructure already present in industry.
 </p>
 
 <p>
 The issue is therefore not merely “better usability”.
 The issue is that graphical industrial programming has historically lacked a sufficiently open and standardized architectural foundation,
 and AI-era software generation is making the cost of opaque or weakly reviewable representations even higher.
+</p>
+
+<p>
+FROG departs from that pattern.
+It preserves the spirit of serious graphical system programming,
+but it does not accept the historical collapse of language, file format, IDE, runtime, compiler, and hardware ecosystem into one inseparable product stack.
 </p>
 
 <hr/>
@@ -232,10 +306,11 @@ What is new is the combination of the following architectural commitments inside
 <ul>
   <li>an open canonical <code>.frog</code> source representation,</li>
   <li>a canonical source model that is structured JSON rather than a private opaque file format,</li>
-  <li>an explicit separation between saved source, validated semantics, derived IR, lowering, backend contract, and runtime realization,</li>
+  <li>an explicit separation between saved source, validated semantics, derived IR, lowering, backend contract, runtime realization, and compiler realization,</li>
   <li>a standardized execution-facing FROG IR that remains inspectable and recoverable,</li>
   <li>a backend-family-oriented lowering path rather than one hidden private execution pipeline,</li>
   <li>a future path toward known backend/compiler targets without making those targets the definition of the language,</li>
+  <li>a runtime-bridge posture that allows execution services to remain modular rather than becoming hidden language truth,</li>
   <li>a centralized repository-visible versioning surface rather than scattered implicit version claims.</li>
 </ul>
 
@@ -248,7 +323,8 @@ The current slices already show that the published boundaries are not merely con
   <li>public input/output dataflow,</li>
   <li>natural widget-value participation,</li>
   <li>object-style UI interaction,</li>
-  <li>explicit local memory and valid feedback through delay.</li>
+  <li>explicit local memory and valid feedback through delay,</li>
+  <li>and a bounded vertical slice where canonical source, UI packaging, FIR publication, lowering output, and runtime-family consumption are all visible.</li>
 </ul>
 
 <p>
@@ -263,8 +339,71 @@ That does not yet prove the full compiler story.
 But it does provide technical evidence that the architecture is capable of sustaining a real execution path without collapsing all layers into one implementation shortcut.
 </p>
 
+<h3>The open FIR as the bridge surface</h3>
+
 <p>
-A particularly strong future demonstration would be to show that standardized FROG IR can be lowered toward a known CPU compiler pipeline such as LLVM, while keeping LLVM clearly downstream from FROG rather than letting LLVM become the normative language definition.
+One of the most strategically important ideas in FROG is that the open FIR is not merely an inspectable intermediate file.
+It is the public architectural bridge surface that makes downstream modularity possible.
+</p>
+
+<p>
+Because FIR remains open:
+</p>
+
+<ul>
+  <li>bridges can be built from FIR toward compiler families,</li>
+  <li>bridges can be built from FIR toward runtime families,</li>
+  <li>bridges can be built toward existing operational stacks already used by hardware vendors,</li>
+  <li>and the same upstream graphical program can support multiple deployment combinations without redefining the language itself.</li>
+</ul>
+
+<p>
+This matters a great deal in practice.
+Some hardware ecosystems expose their value primarily through runtime stacks.
+Others expose their value primarily through compiler flows.
+Others still rely on a hybrid model.
+An open FIR allows FROG to remain upstream from those differences instead of being captured by one of them.
+</p>
+
+<p>
+That means FROG can remain open even when the downstream operational bridge is proprietary.
+A hardware vendor may expose a FROG bridge toward its own operational runtime or compiler pipeline without forcing that private operational layer to become the language definition.
+This is strategically important for real industrial adoption, because it reduces the cost of integration with existing hardware ecosystems rather than demanding that every serious target be rebuilt from zero.
+</p>
+
+<h3>Reference runtime families as proof, not monopoly</h3>
+
+<p>
+Another important part of why we think this can work is that the repository does not treat runtime as a purely abstract future concept.
+It already publishes a bounded reference-runtime family corridor and reference consumers in multiple implementation languages.
+</p>
+
+<p>
+That matters strategically because it demonstrates three things at once:
+</p>
+
+<ul>
+  <li>the language can be consumed by more than one implementation culture,</li>
+  <li>runtime realization is not owned by one mandatory implementation language,</li>
+  <li>and the repository can eventually publish reusable runtime recipes rather than one monolithic runtime ideology.</li>
+</ul>
+
+<p>
+The long-term importance of this direction is larger than one example.
+It opens the door to runtime families specialized for:
+</p>
+
+<ul>
+  <li>pure operation,</li>
+  <li>operation plus observability,</li>
+  <li>operation plus IDE-facing development services,</li>
+  <li>operation plus communication variables and protocol bridges,</li>
+  <li>and distributed execution patterns where the operational target and the front panel are not co-located.</li>
+</ul>
+
+<p>
+That is not yet the same as saying the whole space is closed.
+It is the strategic claim that FROG is being shaped to make that space structurally possible.
 </p>
 
 <hr/>
@@ -276,18 +415,26 @@ If FROG succeeds, multiple groups should care.
 </p>
 
 <ul>
-  <li><strong>Industrial users and integrators</strong> gain an open graphical programming foundation that is not structurally locked to one hardware vendor.</li>
-  <li><strong>Hardware vendors</strong> gain a path to expose serious industrial capabilities through a shared open graphical execution model rather than through isolated proprietary stacks.</li>
-  <li><strong>System builders</strong> gain a cleaner way to target CPUs, embedded systems, edge devices, and future hardware families through one architectural language stack.</li>
+  <li><strong>Industrial users and integrators</strong> gain an open graphical programming foundation that is not structurally locked to one hardware vendor or one execution stack.</li>
+  <li><strong>Hardware vendors</strong> gain a path to expose serious industrial capabilities through open upstream language artifacts while still attaching their own downstream runtime or compiler bridges where appropriate.</li>
+  <li><strong>System builders</strong> gain a cleaner way to target CPUs, embedded systems, edge devices, FPGA-oriented flows, and future hardware families through one architectural language stack.</li>
   <li><strong>AI and tooling ecosystems</strong> gain structured source and open IR artifacts rather than opaque graphical artifacts.</li>
   <li><strong>Security and assurance stakeholders</strong> gain a more direct way to inspect generated or transformed logic across source and execution-facing layers.</li>
-  <li><strong>The broader engineering community</strong> gains an alternative model for graphical programming that is open, portable, and structurally modern.</li>
+  <li><strong>Runtime and compiler implementers</strong> gain a public bridge surface from which serious execution paths can be constructed without redefining the language.</li>
+  <li><strong>The broader engineering community</strong> gains an alternative model for graphical programming that is open, portable, modular, and structurally modern.</li>
   <li><strong>States, sovereign industrial actors, and strategic technology programs</strong> gain a path away from dependence on opaque vendor-controlled graphical programming infrastructure.</li>
 </ul>
 
 <p>
 The broader strategic consequence is large:
 FROG could help transform graphical system programming from a closed vendor capability into an open ecosystem capability.
+</p>
+
+<p>
+It could also support a healthier market structure.
+Multiple independent IDEs, runtimes, compiler bridges, analysis tools, and hardware integrations could coexist around one open language basis.
+That openness remains compatible with steward-controlled official branding and with a future Graiphic flagship IDE carrying official FROG identity.
+Openness of the language does not require branding collapse.
 </p>
 
 <hr/>
@@ -304,9 +451,12 @@ It would change the structure of the category.
   <li>The saved source could remain open, structured, machine-friendly, and durable.</li>
   <li>Execution-facing representations could become inspectable, standardizable, and portable.</li>
   <li>Graphical industrial programming could become hardware-agnostic by design rather than vendor-limited by default.</li>
+  <li>Graphical industrial programming could become architecturally compiler-agnostic rather than hidden behind one mandatory downstream toolchain.</li>
   <li>Multiple hardware manufacturers could participate in one open language ecosystem instead of forcing users into mutually isolated stacks.</li>
   <li>AI-assisted tooling could operate on open source and open IR artifacts rather than reverse-engineering closed graphical representations.</li>
   <li>Critical generated logic could become easier to review visually and structurally rather than only through indirect reconstruction.</li>
+  <li>Runtime-family and compiler-family combinations could become a deployment choice rather than a language limitation.</li>
+  <li>Operational execution could live on one target while front-panel interaction and observability could, where appropriate, live elsewhere through explicit communication layers rather than implicit vendor magic.</li>
   <li>Specification-corpus version posture could remain publicly readable and governable rather than hidden in one product lifecycle.</li>
 </ul>
 
@@ -318,7 +468,12 @@ FROG could shift graphical system-grade programming from vendor-controlled lock-
 <p>
 That difference is not only technical.
 It is also strategic.
-In industrial and security-sensitive domains, the ability to inspect, attribute, govern, and port logic matters for trust, resilience, and technological sovereignty.
+In industrial and security-sensitive domains, the ability to inspect, attribute, govern, port, compile, and bridge logic matters for trust, resilience, and technological sovereignty.
+</p>
+
+<p>
+If FROG succeeds fully, it could make possible something that has historically remained aspirational:
+a serious graphical language stack that can travel from authoring to operation across many kinds of hardware and many kinds of downstream execution infrastructure without surrendering the language to one proprietary execution authority.
 </p>
 
 <hr/>
@@ -333,23 +488,31 @@ Several important things still need to be proved.
   <li>The standardized FROG execution IR must be stabilized more fully.</li>
   <li>The lowering model toward backend families must be specified more deeply.</li>
   <li>A future backend/compiler-oriented path must be demonstrated more concretely.</li>
-  <li>Real deployable targets must be shown beyond the current minimal reference path.</li>
+  <li>Real deployable targets must be shown beyond the current bounded reference path.</li>
   <li>Backend diversity must be demonstrated without collapsing the architecture into one backend-specific truth.</li>
-  <li>The relationship between open IR, backend contracts, compiler backends, runtime realization, and deployment artifacts must be shown end to end.</li>
+  <li>The relationship between open IR, backend contracts, runtime-family bridges, compiler-family bridges, and deployment artifacts must be shown end to end.</li>
+  <li>Reference runtime recipes must grow beyond one bounded corridor strongly enough to prove that runtime plurality is architectural rather than rhetorical.</li>
+  <li>The relationship between operational targets, observability services, communication variables, and remote or distributed front-panel patterns must be shown more concretely.</li>
   <li>The claimed auditability advantage must remain disciplined and credible rather than overstated.</li>
   <li>The distinction between strategy, roadmap sequencing, and current version truth must remain explicit.</li>
 </ul>
 
 <p>
 The key risk is not that the idea is meaningless.
-The key risk is that the project could stop too early at the “interesting prototype” stage without closing the future standardized IR and backend/compiler story strongly enough.
+The key risk is that the project could stop too early at the “interesting prototype” stage without closing the future standardized IR, runtime-bridge, and compiler-bridge story strongly enough.
 </p>
 
 <p>
 Another risk is strategic overclaim.
 FROG should not claim that graphical representation automatically guarantees security or that textual languages cannot be reviewed.
 Its real claim is narrower and stronger:
-it can reduce structural opacity by combining machine-friendly source, direct graphical reviewability, open execution-facing representation, and explicit repository-visible version governance.
+it can reduce structural opacity by combining machine-friendly source, direct graphical reviewability, open execution-facing representation, modular downstream bridge boundaries, and explicit repository-visible version governance.
+</p>
+
+<p>
+A further risk is architectural drift.
+If FIR becomes too tied to one reference runtime, or too tied to one compiler corridor, the strategic value of the open bridge surface would weaken.
+That must be actively prevented.
 </p>
 
 <hr/>
@@ -361,19 +524,25 @@ At the current repository stage, the project should be understood as an architec
 </p>
 
 <p>
-The cost profile should eventually separate into at least four layers:
+The cost profile should eventually separate into at least five layers:
 </p>
 
 <ul>
   <li>normative specification work,</li>
   <li>reference implementation and executable slice closure,</li>
   <li>future backend/compiler/runtime proof of concept work,</li>
+  <li>bridge-family work toward heterogeneous hardware ecosystems,</li>
   <li>future IDE and ecosystem-enablement work.</li>
 </ul>
 
 <p>
 A later roadmap phase should convert this strategic framing into explicit work packages, milestones, cost ranges, and resource assumptions.
 The current corpus-version posture and current detailed repository-surface status remain governed centrally in <code>Versioning/</code>, not in this strategic framing.
+</p>
+
+<p>
+It is also likely that the cost of success will not be concentrated in one implementation only.
+An open language foundation creates value precisely because multiple implementers, hardware partners, and downstream runtime or compiler actors may contribute to different parts of the ecosystem over time.
 </p>
 
 <hr/>
@@ -391,7 +560,9 @@ Natural milestone categories are:
 <ul>
   <li><strong>Early exam</strong> — prove executable architectural slices from canonical source through runtime consumption.</li>
   <li><strong>Midterm exam</strong> — stabilize the execution-facing FROG IR and the backend-lowering story more fully.</li>
-  <li><strong>Advanced exam</strong> — demonstrate an end-to-end backend/compiler proof of concept, ideally including a known backend family such as LLVM for CPU-oriented execution.</li>
+  <li><strong>Advanced exam</strong> — demonstrate credible FIR bridge paths toward both runtime families and compiler families.</li>
+  <li><strong>Deeper advanced exam</strong> — demonstrate an end-to-end backend/compiler proof of concept, ideally including a known backend family such as LLVM for CPU-oriented execution.</li>
+  <li><strong>Distributed systems exam</strong> — demonstrate a credible path where operational execution can live on a target while observability and front-panel interaction can remain external through explicit communication layers.</li>
   <li><strong>Long-term exam</strong> — demonstrate a credible path toward a serious IDE, a broader primitive base, stronger structures, richer memory semantics, and multi-target deployment.</li>
 </ul>
 
@@ -408,7 +579,8 @@ In the AI-era framing, a particularly important exam is whether FROG can demonst
   <li>human graphical review,</li>
   <li>semantic validation,</li>
   <li>inspectable IR derivation,</li>
-  <li>backend handoff without loss of architectural traceability.</li>
+  <li>backend handoff without loss of architectural traceability,</li>
+  <li>and, eventually, the ability to select between runtime-heavy, compiler-heavy, or hybrid deployment strategies without changing the upstream language truth.</li>
 </ul>
 
 <p>
@@ -473,12 +645,16 @@ When that information is needed, the authoritative repository-visible entry poin
   <li><code>Versioning/Matrix.md</code>.</li>
 </ul>
 
+<p>
+This boundary matters especially in a project like FROG because strategy can explain why runtime/compiler modularity matters, but it must not silently redefine the normative ownership of FIR, lowering, profiles, runtime responsibilities, or implementation behavior.
+</p>
+
 <hr/>
 
 <h2 id="what-is-already-demonstrated-in-the-repository">13. What is Already Demonstrated in the Repository</h2>
 
 <p>
-The repository already demonstrates a minimal executable reference path through a sequence of small vertical slices.
+The repository already demonstrates a minimal executable reference path through a sequence of small vertical slices and a bounded vertical corridor that now extends into a UI-bearing runtime-family example.
 </p>
 
 <ul>
@@ -486,6 +662,7 @@ The repository already demonstrates a minimal executable reference path through 
   <li><strong>02_ui_value_roundtrip</strong> — natural widget-value path without object-style UI collapse.</li>
   <li><strong>03_ui_property_write</strong> — first explicit object-style UI interaction path.</li>
   <li><strong>04_stateful_feedback_delay</strong> — first explicit-memory and valid-feedback path.</li>
+  <li><strong>05_bounded_ui_accumulator</strong> — bounded vertical slice joining canonical source, front-panel object publication, widget packaging, FIR publication, lowering publication, backend contract emission, and runtime-family consumption.</li>
 </ul>
 
 <p>
@@ -497,8 +674,19 @@ They should be understood as proof of architectural viability, not as proof that
 </p>
 
 <p>
-They also matter strategically because they keep the project grounded in inspectable repository-visible artifacts.
-The strategic argument for openness, auditability, and downstream seriousness is stronger when each stage is already exercised in public slices.
+The repository also already publishes a bounded reference runtime-family workspace with multiple implementation-language consumers.
+That is strategically meaningful because it demonstrates that FROG is not tied to one mandatory runtime implementation language and that the runtime-family idea is already being exercised publicly.
+</p>
+
+<p>
+This remains a bounded proof corridor.
+It does not yet mean that all future runtime recipes are complete, nor that all compiler bridge families are already demonstrated.
+But it does mean that the architecture has moved beyond theory.
+</p>
+
+<p>
+These published slices also matter strategically because they keep the project grounded in inspectable repository-visible artifacts.
+The strategic argument for openness, auditability, modular downstream seriousness, and future FIR-bridge value is stronger when each stage is already exercised in public.
 The authoritative current repository-wide version posture of those published surfaces remains centralized in <code>Versioning/</code>.
 </p>
 
@@ -511,7 +699,8 @@ A future end-to-end proof of concept should demonstrate the full chain more expl
 </p>
 
 <p>
-The ideal future demonstration path is:
+The ideal future demonstration path is no longer only a straight line.
+Strategically, it should prove that one canonical source and one open FIR can feed multiple legitimate downstream combinations.
 </p>
 
 <pre><code>.frog canonical source
@@ -520,19 +709,29 @@ The ideal future demonstration path is:
 validation
     |
     v
-standardized FROG execution IR
+standardized FROG execution IR / FIR
     |
-    v
-backend-specific lowering
-    |
-    v
-backend contract / backend-oriented IR
-    |
-    v
-known compiler/runtime backend
-    |
-    v
-deployable artifact
+    +--------------------------------------------------+
+    |                                                  |
+    v                                                  v
+runtime bridge family                            compiler bridge family
+    |                                                  |
+    |                                                  |
+    |      pure operation                              |      target specialization
+    |      operation + observability                   |      native artifact generation
+    |      operation + communication                   |      deployment-oriented lowering
+    |      operation + distributed UI                  |      backend-specific compilation
+    |                                                  |
+    v                                                  v
+reference runtimes /                               LLVM / native CPU paths /
+existing operational stacks                        vendor compiler families /
+/ hardware runtime families                        future backend families
+    |                                                  |
+    +--------------------------+-----------------------+
+                               |
+                               v
+                 heterogeneous deployment targets
+         CPU / ARM / edge / MCU / FPGA / vendor-specific systems
 </code></pre>
 
 <p>
@@ -541,23 +740,30 @@ It would show that FROG is not merely a saved graphical representation or a toy 
 </p>
 
 <p>
-For hardware-oriented targets, the same logic should later extend toward backend families appropriate for embedded systems, microcontrollers, and FPGA-oriented flows.
+For hardware-oriented targets, the same logic should later extend toward backend families appropriate for embedded systems, microcontrollers, FPGA-oriented flows, and hardware ecosystems that already expose their own operational runtime layers.
 </p>
 
 <p>
-A particularly convincing future proof point would be an AI-assisted generation scenario in which:
+A particularly important proof point would be to demonstrate that FIR can bridge not only toward open reference runtimes and open compiler corridors, but also toward existing operational hardware stacks where that is the pragmatic industrial integration route.
+That would prove that FROG can become an upstream standard even when the downstream operational layer is vendor-specific.
+</p>
+
+<p>
+Another meaningful proof point would be a distributed execution demonstration in which:
 </p>
 
 <ul>
   <li>a valid canonical <code>.frog</code> source artifact is produced,</li>
   <li>its structure is reviewed graphically by a human,</li>
   <li>its validated meaning is derived into inspectable FROG IR,</li>
-  <li>that IR is lowered toward a serious backend path,</li>
+  <li>that IR is consumed by an operational target runtime or target-specific compiler path,</li>
+  <li>the operational logic runs on a remote target,</li>
+  <li>observability and front-panel interaction remain available through explicit communication surfaces,</li>
   <li>the end-to-end chain remains attributable and auditable.</li>
 </ul>
 
 <p>
-The strategic importance of that proof belongs here.
+The strategic importance of those proofs belongs here.
 The ordering of the work belongs to <code>Roadmap/</code>.
 The current corpus-version truth and detailed surface status belong to <code>Versioning/</code>.
 </p>
@@ -568,11 +774,11 @@ The current corpus-version truth and detailed surface status belong to <code>Ver
 
 <p>
 FROG is trying to open a missing category:
-accessible graphical programming with a serious path to system-grade execution, hardware agnosticism, inspectable intermediate representation, and future deployable backend/compiler integration.
+accessible graphical programming with a serious path to system-grade execution, hardware agnosticism, compiler agnosticism at the architectural boundary, inspectable intermediate representation, and future deployable backend/runtime integration.
 </p>
 
 <p>
-The repository already demonstrates meaningful parts of this architecture through executable reference slices, but it does not yet claim that the final industrial compiler/runtime story is complete.
+The repository already demonstrates meaningful parts of this architecture through executable reference slices and a bounded runtime-family corridor, but it does not yet claim that the final industrial runtime/compiler story is complete.
 </p>
 
 <p>
@@ -584,8 +790,10 @@ The strategic case for FROG is therefore clear:
   <li>keep that source structured and machine-friendly,</li>
   <li>make program structure graphically reviewable by humans,</li>
   <li>open and standardize the execution-facing dataflow representation,</li>
+  <li>treat the open FIR as the public bridge surface for downstream modularity,</li>
   <li>separate language truth from runtime-private realization,</li>
-  <li>prepare a future path toward known compiler/runtime backends,</li>
+  <li>separate language truth from compiler-private realization,</li>
+  <li>prepare future paths toward runtime-family and compiler-family combinations from one source program,</li>
   <li>enable an open, multi-vendor, industrial graphical programming ecosystem,</li>
   <li>reduce the auditability gap introduced by increasingly AI-assisted software generation,</li>
   <li>support industrial security and technological sovereignty through open, inspectable, and governable program artifacts.</li>
