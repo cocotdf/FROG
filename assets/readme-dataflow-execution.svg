@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 470" role="img" aria-labelledby="title desc">
+  <title id="title">Traditional execution and dataflow execution</title>
+  <desc id="desc">Traditional execution is A to B to C to D. Dataflow execution branches from A to B and C, then joins at D.</desc>
+  <defs>
+    <marker id="arrow-green" markerWidth="15" markerHeight="15" refX="12" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L12,5 L0,10 Z" fill="#38b86b"/>
+    </marker>
+    <marker id="arrow-blue" markerWidth="15" markerHeight="15" refX="12" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L12,5 L0,10 Z" fill="#2f75c9"/>
+    </marker>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="4" stdDeviation="3" flood-color="#1d3c5c" flood-opacity="0.18"/>
+    </filter>
+    <style>
+      .bg { fill: #f8fbfd; }
+      .panel { fill: #ffffff; stroke-width: 2.5; filter: url(#shadow); }
+      .green { stroke: #38b86b; }
+      .blue { stroke: #2f75c9; }
+      .title { font: 800 38px "Segoe UI", Arial, sans-serif; fill: #1d3c5c; }
+      .node-text { font: 800 38px "Segoe UI", Arial, sans-serif; fill: #1d3c5c; }
+      .node { fill: #ffffff; stroke-width: 4; }
+      .edge-green { stroke: #38b86b; stroke-width: 5; marker-end: url(#arrow-green); }
+      .edge-blue { stroke: #2f75c9; stroke-width: 5; marker-end: url(#arrow-blue); }
+      .line { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    </style>
+  </defs>
+
+  <rect class="bg" width="1200" height="470"/>
+  <rect class="panel green" x="38" y="42" width="524" height="390" rx="26"/>
+  <rect class="panel blue" x="638" y="42" width="524" height="390" rx="26"/>
+
+  <text class="title" x="300" y="116" text-anchor="middle">Traditional execution</text>
+  <line class="edge-green line" x1="151" y1="240" x2="229" y2="240"/>
+  <line class="edge-green line" x1="291" y1="240" x2="369" y2="240"/>
+  <line class="edge-green line" x1="431" y1="240" x2="509" y2="240"/>
+  <circle class="node green" cx="120" cy="240" r="38"/>
+  <circle class="node green" cx="260" cy="240" r="38"/>
+  <circle class="node green" cx="400" cy="240" r="38"/>
+  <circle class="node green" cx="540" cy="240" r="38"/>
+  <text class="node-text" x="120" y="253" text-anchor="middle">A</text>
+  <text class="node-text" x="260" y="253" text-anchor="middle">B</text>
+  <text class="node-text" x="400" y="253" text-anchor="middle">C</text>
+  <text class="node-text" x="540" y="253" text-anchor="middle">D</text>
+
+  <text class="title" x="900" y="116" text-anchor="middle">Dataflow execution</text>
+  <line class="edge-blue line" x1="878" y1="205" x2="787" y2="260"/>
+  <line class="edge-blue line" x1="922" y1="205" x2="1013" y2="260"/>
+  <line class="edge-blue line" x1="787" y1="320" x2="878" y2="360"/>
+  <line class="edge-blue line" x1="1013" y1="320" x2="922" y2="360"/>
+  <circle class="node blue" cx="900" cy="185" r="38"/>
+  <circle class="node blue" cx="760" cy="290" r="38"/>
+  <circle class="node blue" cx="1040" cy="290" r="38"/>
+  <circle class="node blue" cx="900" cy="385" r="38"/>
+  <text class="node-text" x="900" y="198" text-anchor="middle">A</text>
+  <text class="node-text" x="760" y="303" text-anchor="middle">B</text>
+  <text class="node-text" x="1040" y="303" text-anchor="middle">C</text>
+  <text class="node-text" x="900" y="398" text-anchor="middle">D</text>
+</svg>

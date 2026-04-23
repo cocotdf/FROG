@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 650" role="img" aria-labelledby="title desc">
+  <title id="title">FROG specification ownership model</title>
+  <desc id="desc">Specification ownership layers and support ownership questions.</desc>
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="4" stdDeviation="3" flood-color="#123143" flood-opacity="0.16"/>
+    </filter>
+    <style>
+      .bg { fill: #f8fbfd; }
+      .card { fill: #ffffff; stroke: #2f75c9; stroke-width: 2.5; filter: url(#shadow); }
+      .card2 { fill: #fffaf0; stroke: #d8a000; stroke-width: 2.5; filter: url(#shadow); }
+      .code { font: 600 20px "Cascadia Mono", "Consolas", monospace; fill: #1d3c5c; }
+      .muted { fill: #355f8f; }
+    </style>
+  </defs>
+
+  <rect class="bg" width="1600" height="650"/>
+
+  <rect class="card" x="48" y="56" width="900" height="260" rx="24"/>
+  <text class="code" x="84" y="108" xml:space="preserve">
+    <tspan x="84" dy="0">Expression/   -&gt; canonical source form and structural validity</tspan>
+    <tspan x="84" dy="36">Language/     -&gt; validated program meaning</tspan>
+    <tspan x="84" dy="36">IR/           -&gt; canonical open execution-facing representation</tspan>
+    <tspan x="84" dy="36">Libraries/    -&gt; intrinsic standardized primitive vocabularies</tspan>
+    <tspan x="84" dy="36">Profiles/     -&gt; optional standardized capability families</tspan>
+    <tspan x="84" dy="36">IDE/          -&gt; authoring, observability, debugging, inspection</tspan>
+  </text>
+
+  <rect class="card" x="990" y="56" width="560" height="260" rx="24"/>
+  <text class="code muted" x="1025" y="108" xml:space="preserve">
+    <tspan x="1025" dy="0">what is saved      -&gt; Expression/</tspan>
+    <tspan x="1025" dy="40">what is true       -&gt; Language/</tspan>
+    <tspan x="1025" dy="40">what is derived    -&gt; IR/</tspan>
+    <tspan x="1025" dy="40">what exists        -&gt; Libraries/ and Profiles/</tspan>
+    <tspan x="1025" dy="40">what is edited     -&gt; IDE/</tspan>
+  </text>
+
+  <rect class="card2" x="360" y="370" width="880" height="205" rx="24"/>
+  <text class="code" x="405" y="423" xml:space="preserve">
+    <tspan x="405" dy="0">what is exemplified   -&gt; Examples/</tspan>
+    <tspan x="405" dy="40">what is expected      -&gt; Conformance/</tspan>
+    <tspan x="405" dy="40">what is prototyped    -&gt; Implementations/Reference/</tspan>
+    <tspan x="405" dy="40">what version means    -&gt; Versioning/</tspan>
+  </text>
+</svg>
